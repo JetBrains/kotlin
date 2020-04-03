@@ -16,6 +16,6 @@ fun test() {
 
     Outer.Companion::Wrapper
     (Outer.Companion)::Wrapper
-    Outer::Wrapper
-    (Outer)::Wrapper
+    <!UNRESOLVED_REFERENCE!>Outer::Wrapper<!>
+    <!UNRESOLVED_REFERENCE!>(Outer)::Wrapper<!>
 }

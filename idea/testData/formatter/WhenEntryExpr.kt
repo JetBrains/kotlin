@@ -66,3 +66,4 @@ else
 }
 }
 }
+// SET_TRUE: ALLOW_TRAILING_COMMA

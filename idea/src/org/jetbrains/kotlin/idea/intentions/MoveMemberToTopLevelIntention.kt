@@ -20,6 +20,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-class MoveMemberToTopLevelIntention : MoveMemberOutOfObjectIntention("Move to top level") {
+class MoveMemberToTopLevelIntention : MoveMemberOutOfObjectIntention(KotlinBundle.message("move.to.top.level")) {
     override fun addConflicts(element: KtNamedDeclaration, conflicts: MultiMap<PsiElement, String>) {
         val packageViewDescriptor = element.findModuleDescriptor().getPackage(element.containingKtFile.packageFqName)
         val packageDescriptor = packageViewDescriptor.fragments.firstIsInstance<LazyPackageDescriptor>()
@@ -52,7 +53,14 @@ class MoveMemberToTopLevelIntention : MoveMemberOutOfObjectIntention("Move to to
         }
 
         if (isRedeclaration) {
-            conflicts.putValue(element, "Package '$packageName' already contains ${RefactoringUIUtil.getDescription(element, false)}")
+            conflicts.putValue(
+                element,
+                KotlinBundle.message(
+                    "package.0.already.contains.1",
+                    packageName,
+                    RefactoringUIUtil.getDescription(element, false)
+                )
+            )
         }
     }
 

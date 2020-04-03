@@ -13,8 +13,8 @@ interface B: A {
 
 fun test(a: A) {
     if (a is B && a is C) {
-        a.<!AMBIGUITY!>foo<!> = ""
-        a.<!AMBIGUITY!>foo<!> = null
-        a.<!AMBIGUITY!>foo<!>
+        a.foo = ""
+        a.foo = null
+        a.foo
     }
 }

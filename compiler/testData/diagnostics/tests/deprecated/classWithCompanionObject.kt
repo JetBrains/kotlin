@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     @Deprecated("deprecated") companion object
 

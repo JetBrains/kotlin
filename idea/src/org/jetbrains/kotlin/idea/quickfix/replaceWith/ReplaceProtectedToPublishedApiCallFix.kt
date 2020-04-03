@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -49,10 +50,13 @@ class ReplaceProtectedToPublishedApiCallFix(
     val isPublishedMemberAlreadyExists: Boolean
 ) : KotlinQuickFixAction<KtExpression>(element) {
 
-    override fun getFamilyName() = "Replace with @PublishedApi bridge call"
+    override fun getFamilyName() = KotlinBundle.message("replace.with.publishedapi.bridge.call")
 
     override fun getText() =
-        "Replace with generated @PublishedApi bridge call '${originalName.newNameQuoted}${if (!isProperty) "(...)" else ""}'"
+        KotlinBundle.message(
+            "replace.with.generated.publishedapi.bridge.call.0",
+            originalName.newNameQuoted + if (!isProperty) "(...)" else ""
+        )
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -90,7 +94,9 @@ class ReplaceProtectedToPublishedApiCallFix(
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val psiElement = diagnostic.psiElement as? KtExpression ?: return null
-            val descriptor = DiagnosticFactory.cast(diagnostic, Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE).a.let {
+            val descriptor = DiagnosticFactory.cast(
+                diagnostic, Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE, Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
+            ).a.let {
                 if (it is CallableMemberDescriptor) DescriptorUtils.getDirectMember(it) else it
             }
             val isProperty = descriptor is PropertyDescriptor

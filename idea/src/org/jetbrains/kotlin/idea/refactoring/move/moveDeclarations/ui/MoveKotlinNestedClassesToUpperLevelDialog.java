@@ -24,13 +24,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassBody;
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         this.innerClass = innerClass;
         this.targetContainer = targetContainer;
         this.innerClassDescriptor = (ClassDescriptor) ResolutionUtils.unsafeResolveToDescriptor(innerClass, BodyResolveMode.FULL);
-        setTitle("Move Nested Classes to Upper Level");
+        setTitle(KotlinBundle.message("title.move.nested.classes.to.upper.level"));
         init();
         packageNameLabel.setLabelFor(packageNameField.getChildComponent());
         classNameLabel.setLabelFor(classNameField);
@@ -89,7 +90,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
     @Override
     protected String getMovePropertySuffix() {
-        return "Nested Classes to Upper Level";
+        return KotlinBundle.message("text.nested.classes.to.upper.level");
     }
 
     @Override
@@ -99,7 +100,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
     @Override
     protected String getCbTitle() {
-        return "Open moved member in editor";
+        return KotlinBundle.message("checkbox.text.open.moved.files.in.editor");
     }
 
     public String getClassName() {
@@ -124,6 +125,19 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
     private KotlinType getOuterInstanceType() {
         return ((ClassDescriptor) innerClassDescriptor.getContainingDeclaration()).getDefaultType();
     }
+
+    private BitSet initializedCheckBoxesState;
+    private BitSet getCheckboxesState(boolean applyDefaults) {
+
+        BitSet state = new BitSet(3);
+
+        state.set(0, !applyDefaults && searchInCommentsCheckBox.isSelected()); //searchInCommentsCheckBox default is false
+        state.set(1, !applyDefaults && searchForTextOccurrencesCheckBox.isSelected()); //searchForTextOccurrencesCheckBox default is false
+        state.set(2, passOuterClassCheckBox.isSelected());
+
+        return state;
+    }
+
 
     @Override
     protected void init() {
@@ -181,6 +195,8 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         searchInCommentsCheckBox.setSelected(settings.MOVE_TO_UPPER_LEVEL_SEARCH_IN_COMMENTS);
 
         super.init();
+
+        initializedCheckBoxesState = getCheckboxesState(true);
     }
 
     @Override
@@ -232,7 +248,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         }
     }
 
-    private Model<MoveKotlinDeclarationsProcessor> getModel() {
+    private Model getModel() {
         return new MoveKotlinNestedClassesToUpperLevelModelWithUIChooser(
                 project,
                 innerClass,
@@ -250,9 +266,9 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
     @Override
     protected void doAction() {
 
-        MoveKotlinDeclarationsProcessor processor;
+        ModelResultWithFUSData modelResult;
         try {
-            processor = getModel().computeModelResult();
+            modelResult = getModel().computeModelResult();
         }
         catch (ConfigurationException e) {
             setErrorText(e.getMessage());
@@ -265,6 +281,12 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
         saveOpenInEditorOption();
 
-        invokeRefactoring(processor);
+        MoveUtilsKt.logFusForMoveRefactoring(
+                modelResult.getElementsCount(),
+                modelResult.getEntityToMove(),
+                modelResult.getDestination(),
+                getCheckboxesState(false).equals(initializedCheckBoxesState),
+                () -> invokeRefactoring(modelResult.getProcessor())
+        );
     }
 }

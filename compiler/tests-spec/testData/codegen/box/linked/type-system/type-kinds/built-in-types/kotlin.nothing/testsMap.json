@@ -1,0 +1,20 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check the allowance of returning Nothing where String is expected",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "todo",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

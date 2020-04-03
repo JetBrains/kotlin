@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtProperty
@@ -24,7 +25,7 @@ class LateinitVarOverridesLateinitVarInspection : AbstractKotlinInspection() {
             if (descriptor.overriddenDescriptors.any { (it as? PropertyDescriptor)?.let { d -> d.isLateInit && d.isVar } == true }) {
                 holder.registerProblem(
                     identifier,
-                    "lateinit var overrides lateinit var"
+                    KotlinBundle.message("lateinit.var.overrides.lateinit.var")
                 )
             }
         }

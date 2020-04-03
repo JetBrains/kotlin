@@ -172,10 +172,11 @@ fun JKType.arrayFqName(): String =
 fun JKClassSymbol.isArrayType(): Boolean =
     fqName in arrayFqNames
 
-private val arrayFqNames = JKJavaPrimitiveType.KEYWORD_TO_INSTANCE.values
-    .filterIsInstance<JKJavaPrimitiveType>()
-    .map { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() } +
-        KotlinBuiltIns.FQ_NAMES.array.asString()
+@OptIn(ExperimentalStdlibApi::class)
+private val arrayFqNames = buildList {
+    JKJavaPrimitiveType.ALL.mapTo(this) { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() }
+    add(KotlinBuiltIns.FQ_NAMES.array.asString())
+}
 
 fun JKType.isArrayType() =
     when (this) {
@@ -183,6 +184,9 @@ fun JKType.isArrayType() =
         is JKJavaArrayType -> true
         else -> false
     }
+
+fun JKType.isUnit() =
+    safeAs<JKClassType>()?.classReference?.fqName == KotlinBuiltIns.FQ_NAMES.unit.asString()
 
 val JKType.isCollectionType: Boolean
     get() = safeAs<JKClassType>()?.classReference?.fqName in collectionFqNames

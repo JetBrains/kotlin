@@ -7,24 +7,18 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.name.Name
 
@@ -45,13 +39,9 @@ class JavaClassUseSiteMemberScope(
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         declaredMemberScope.processFunctionsByName(name) {
             overrideCandidates += it
-            NEXT
         }
-
-
         superTypesScope.processFunctionsByName(name) {
             it.getOverridden(overrideCandidates)
-            NEXT
         }
     }
 
@@ -61,44 +51,46 @@ class JavaClassUseSiteMemberScope(
         overrideCandidates: MutableSet<FirCallableSymbol<*>>,
         isGetter: Boolean
     ): FirAccessorSymbol? {
-        if (functionSymbol is FirNamedFunctionSymbol) {
-            val fir = functionSymbol.fir
-            if (fir.isStatic) {
+        if (functionSymbol !is FirNamedFunctionSymbol) {
+            return null
+        }
+        val fir = functionSymbol.fir
+        if (fir.isStatic) {
+            return null
+        }
+        when (isGetter) {
+            true -> if (fir.valueParameters.isNotEmpty()) {
                 return null
             }
-            when (isGetter) {
-                true -> if (fir.valueParameters.isNotEmpty()) {
-                    return null
-                }
-                false -> if (fir.valueParameters.size != 1) {
-                    return null
-                }
+            false -> if (fir.valueParameters.size != 1) {
+                return null
             }
         }
         overrideCandidates += functionSymbol
-        val accessorSymbol = FirAccessorSymbol(
-            accessorId = functionSymbol.callableId,
-            callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, syntheticPropertyName)
-        )
-        if (functionSymbol is FirNamedFunctionSymbol) {
-            functionSymbol.fir.let { callableMember -> accessorSymbol.bind(callableMember) }
-        }
-        return accessorSymbol
+        return buildSyntheticProperty {
+            session = this@JavaClassUseSiteMemberScope.session
+            name = syntheticPropertyName
+            symbol = FirAccessorSymbol(
+                accessorId = functionSymbol.callableId,
+                callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, syntheticPropertyName)
+            )
+            delegateGetter = fir
+        }.symbol
     }
 
     private fun processAccessorFunctionsAndPropertiesByName(
         propertyName: Name,
         getterNames: List<Name>,
         setterName: Name?,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
+        processor: (FirVariableSymbol<*>) -> Unit
+    ) {
         val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
         val klass = symbol.fir
-        if (!declaredMemberScope.processPropertiesByName(propertyName) { variableSymbol ->
-                overrideCandidates += variableSymbol
-                processor(variableSymbol)
-            }
-        ) return STOP
+        declaredMemberScope.processPropertiesByName(propertyName) { variableSymbol ->
+            overrideCandidates += variableSymbol
+            processor(variableSymbol)
+        }
+
         if (klass is FirJavaClass) {
             for (getterName in getterNames) {
                 declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
@@ -109,12 +101,11 @@ class JavaClassUseSiteMemberScope(
                         // NB: accessor should not be processed directly unless we find matching property symbol in supertype
                         overrideCandidates += accessorSymbol
                     }
-                    NEXT
                 }
             }
         }
 
-        return superTypesScope.processPropertiesByName(propertyName) {
+        superTypesScope.processPropertiesByName(propertyName) {
             val firCallableMember = it.fir as? FirCallableMemberDeclaration<*>
             if (firCallableMember?.isStatic == true) {
                 processor(it)
@@ -122,38 +113,37 @@ class JavaClassUseSiteMemberScope(
                 when (val overriddenBy = it.getOverridden(overrideCandidates)) {
                     null -> processor(it)
                     is FirAccessorSymbol -> processor(overriddenBy)
-                    else -> NEXT
                 }
             }
         }
     }
 
-    override fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl {
+    override fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionBuilder {
         if (firSimpleFunction !is FirJavaMethod) return super.createFunctionCopy(firSimpleFunction, newSymbol)
-        return FirJavaMethod(
-            firSimpleFunction.session,
-            firSimpleFunction.source,
-            newSymbol,
-            firSimpleFunction.name,
-            firSimpleFunction.visibility,
-            firSimpleFunction.modality,
-            firSimpleFunction.returnTypeRef as FirJavaTypeRef,
-            firSimpleFunction.status.isStatic
-        )
+        return FirJavaMethodBuilder().apply {
+            session = firSimpleFunction.session
+            source = firSimpleFunction.source
+            symbol = newSymbol
+            name = firSimpleFunction.name
+            visibility = firSimpleFunction.visibility
+            modality = firSimpleFunction.modality
+            returnTypeRef = firSimpleFunction.returnTypeRef
+            isStatic = firSimpleFunction.status.isStatic
+        }
     }
 
-    override fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterImpl {
+    override fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterBuilder {
         if (parameter !is FirJavaValueParameter) return super.createValueParameterCopy(parameter, newDefaultValue)
-        return FirJavaValueParameter(
-            parameter.session,
-            parameter.source,
-            parameter.name,
-            parameter.returnTypeRef as FirJavaTypeRef,
-            parameter.isVararg
-        )
+        return FirJavaValueParameterBuilder().apply {
+            session = parameter.session
+            source = parameter.source
+            name = parameter.name
+            returnTypeRef = parameter.returnTypeRef as FirJavaTypeRef
+            isVararg = parameter.isVararg
+        }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         // Do not generate accessors at all?
         if (name.isSpecial) {
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)

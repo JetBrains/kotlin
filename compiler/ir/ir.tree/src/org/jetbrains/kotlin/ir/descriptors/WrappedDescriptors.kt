@@ -132,7 +132,7 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
         TODO("not implemented")
     }
 
-    override fun getValueParameters(): MutableList<ValueParameterDescriptor> {
+    override fun getValueParameters(): List<ValueParameterDescriptor> {
         TODO("not implemented")
     }
 
@@ -185,6 +185,8 @@ open class WrappedValueParameterDescriptor(
 
 
     override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getValueParameters(): List<ValueParameterDescriptor> = emptyList()
 
     override fun getOriginal() = this
 
@@ -423,10 +425,6 @@ open class WrappedSimpleFunctionDescriptor(
         if (owner.origin == IrDeclarationOrigin.FAKE_OVERRIDE) CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    override fun isHiddenToOvercomeSignatureClash(): Boolean {
-        TODO("not implemented")
-    }
-
     override fun copy(
         newOwner: DeclarationDescriptor?,
         modality: Modality?,
@@ -437,11 +435,10 @@ open class WrappedSimpleFunctionDescriptor(
         TODO("not implemented")
     }
 
-    override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean {
-        TODO("not implemented")
-    }
+    override fun isHiddenToOvercomeSignatureClash(): Boolean = false
+    override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean = false
 
-    override fun getInitialSignatureDescriptor() = null
+    override fun getInitialSignatureDescriptor(): FunctionDescriptor? = null
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
@@ -598,6 +595,8 @@ open class WrappedClassDescriptor(
 
     override fun isInline() = owner.isInline
 
+    override fun isFun() = owner.isFun
+
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.descriptor as ReceiverParameterDescriptor
 
     override fun getUnsubstitutedPrimaryConstructor() =
@@ -638,6 +637,14 @@ open class WrappedClassDescriptor(
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor!!.visitClassDescriptor(this, null)
+    }
+
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? {
+        TODO("not implemented")
+    }
+
+    override fun isDefinitelyNotSamInterface(): Boolean {
+        return owner.descriptor.isDefinitelyNotSamInterface
     }
 }
 
@@ -708,6 +715,8 @@ open class WrappedEnumEntryDescriptor(
 
     override fun isInline() = false
 
+    override fun isFun() = false
+
     override fun getThisAsReceiverParameter() = (owner.parent as IrClass).descriptor.thisAsReceiverParameter
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? {
@@ -750,6 +759,10 @@ open class WrappedEnumEntryDescriptor(
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor!!.visitClassDescriptor(this, null)
     }
+
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? = null
+
+    override fun isDefinitelyNotSamInterface() = true
 }
 
 
@@ -1042,13 +1055,9 @@ open class WrappedFieldDescriptor(
 
     override val isDelegated get() = false
 
-    override fun getBackingField(): FieldDescriptor? {
-        TODO("not implemented")
-    }
-
-    override fun getDelegateField(): FieldDescriptor? {
-        TODO("not implemented")
-    }
+    // Following functions are used in error reporting when rendering annotations on properties
+    override fun getBackingField(): FieldDescriptor? = null // TODO
+    override fun getDelegateField(): FieldDescriptor? = null // TODO
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
@@ -1056,7 +1065,7 @@ open class WrappedFieldDescriptor(
 private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
     val parent = declaration.parent
     val parentDescriptor = (parent as IrSymbolOwner).symbol.descriptor
-    return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS) {
+    return if (parent is IrClass && parent.isFileClass) {
         // JVM IR adds facade classes for IR of functions/properties loaded both from sources and dependencies. However, these shouldn't
         // exist in the descriptor hierarchy, since this is what the old backend (dealing with descriptors) expects.
         parentDescriptor.containingDeclaration!!

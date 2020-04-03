@@ -20,6 +20,8 @@ import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
+import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWithLog;
+
 /**
  * Please use KotlinLightCodeInsightFixtureTestCase as the base class for all new tests.
  */
@@ -35,5 +37,10 @@ public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+    }
+
+    @Override
+    protected boolean shouldRunTest() {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this);
     }
 }

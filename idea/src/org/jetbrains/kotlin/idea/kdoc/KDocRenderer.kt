@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.kdoc
@@ -25,6 +14,7 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.wrapTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -36,44 +26,43 @@ import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
 object KDocRenderer {
-    fun renderKDoc(docComment: KDocTag): String {
-        return if (docComment is KDocSection) {
-            renderKDocContent(docComment) + renderKDocSection(docComment)
-        } else {
-            renderKDocContent(docComment)
-        }
-    }
 
-    fun renderKDocContent(docComment: KDocTag): String {
-        return markdownToHtml(docComment.getContent(), allowSingleParagraph = true)
-    }
+    private fun renderKDocContent(docComment: KDocTag) =
+        markdownToHtml(docComment.getContent(), allowSingleParagraph = true)
 
-    fun StringBuilder.appendKDocContent(docComment: KDocTag) {
+    fun StringBuilder.appendKDocContent(docComment: KDocTag): StringBuilder =
         append(renderKDocContent(docComment))
-    }
 
+    fun StringBuilder.appendKDocSections(sections: List<KDocSection>) {
+        fun findTagsByName(name: String) =
+            sequence { sections.forEach { yieldAll(it.findTagsByName(name)) } }
+                .filterNotNull()
 
-    fun renderKDocSection(section: KDocSection): String = buildString {
-        appendKDocSection(section)
-    }
+        fun findTagByName(name: String) = findTagsByName(name).firstOrNull()
 
-    fun StringBuilder.appendKDocSection(section: KDocSection) {
-        renderTag(section.findTagByName("receiver"), "Receiver", this)
-        val paramTags = section.findTagsByName("param").filter { it.getSubjectName() != null }
-        renderTagList(paramTags, "Params", this)
+        renderTag(findTagByName("receiver"), KotlinBundle.message("kdoc.section.title.receiver"), this)
 
-        renderTag(section.findTagByName("return"), "Returns", this)
+        val paramTags = findTagsByName("param").filter { it.getSubjectName() != null }
+        renderTagList(paramTags, KotlinBundle.message("kdoc.section.title.parameters"), this)
 
-        val throwsTags = (section.findTagsByName("exception").union(section.findTagsByName("throws")))
-            .filter { it.getSubjectName() != null }
-        renderTagList(throwsTags, "Throws", this)
+        val propertyTags = findTagsByName("property").filter { it.getSubjectName() != null }
+        renderTagList(propertyTags, KotlinBundle.message("kdoc.section.title.properties"), this)
 
-        renderTag(section.findTagByName("author"), "Author", this)
-        renderTag(section.findTagByName("since"), "Since", this)
+        renderTag(findTagByName("constructor"), KotlinBundle.message("kdoc.section.title.constructor"), this)
 
-        renderSeeAlso(section, this)
+        renderTag(findTagByName("return"), KotlinBundle.message("kdoc.section.title.returns"), this)
 
-        val sampleTags = section.findTagsByName("sample").filter { it.getSubjectLink() != null }
+        val throwTags = findTagsByName("throws").filter { it.getSubjectName() != null }
+        val exceptionTags = findTagsByName("exception").filter { it.getSubjectName() != null }
+        renderThrows(throwTags, exceptionTags, this)
+
+        renderTag(findTagByName("author"), KotlinBundle.message("kdoc.section.title.author"), this)
+        renderTag(findTagByName("since"), KotlinBundle.message("kdoc.section.title.since"), this)
+        renderTag(findTagByName("suppress"), KotlinBundle.message("kdoc.section.title.suppress"), this)
+
+        renderSeeAlso(findTagsByName("see"), this)
+
+        val sampleTags = findTagsByName("sample").filter { it.getSubjectLink() != null }
         renderSamplesList(sampleTags, this)
     }
 
@@ -87,8 +76,7 @@ object KDocRenderer {
 
     private fun PsiElement.extractExampleText() = when (this) {
         is KtDeclarationWithBody -> {
-            val bodyExpression = bodyExpression
-            when (bodyExpression) {
+            when (val bodyExpression = bodyExpression) {
                 is KtBlockExpression -> bodyExpression.text.removeSurrounding("{", "}")
                 else -> bodyExpression!!.text
             }
@@ -110,10 +98,10 @@ object KDocRenderer {
         append(SECTION_END)
     }
 
-    private fun renderSamplesList(sampleTags: List<KDocTag>, to: StringBuilder) {
-        if (sampleTags.isEmpty()) return
+    private fun renderSamplesList(sampleTags: Sequence<KDocTag>, to: StringBuilder) {
+        if (!sampleTags.any()) return
 
-        to.renderSection("Samples") {
+        to.renderSection(KotlinBundle.message("kdoc.section.title.samples")) {
             sampleTags.forEach {
                 it.getSubjectLink()?.let { subjectLink ->
                     append("<p>")
@@ -121,9 +109,9 @@ object KDocRenderer {
                     val target = subjectLink.getTargetElement()
                     wrapTag("pre") {
                         wrapTag("code") {
-                            if (target == null)
-                                to.append("// Unresolved")
-                            else {
+                            if (target == null) {
+                                to.append("// " + KotlinBundle.message("kdoc.comment.unresolved"))
+                            } else {
                                 to.append(trimCommonIndent(target.extractExampleText()).htmlEscape())
                             }
                         }
@@ -133,32 +121,57 @@ object KDocRenderer {
         }
     }
 
-    private fun renderSeeAlso(docComment: KDocSection, to: StringBuilder) {
-        val seeTags = docComment.findTagsByName("see")
-        if (seeTags.isEmpty()) return
+    private fun renderSeeAlso(seeTags: Sequence<KDocTag>, to: StringBuilder) {
+        if (!seeTags.any()) return
 
-        to.renderSection("See Also") {
-            seeTags.forEachIndexed { index, tag ->
+        val iterator = seeTags.iterator()
+
+        to.renderSection(KotlinBundle.message("kdoc.section.title.see.also")) {
+            while (iterator.hasNext()) {
+                val tag = iterator.next()
                 val subjectName = tag.getSubjectName()
                 if (subjectName != null) {
                     DocumentationManagerUtil.createHyperlink(this, subjectName, subjectName, false)
                 } else {
                     append(tag.getContent())
                 }
-                if (index < seeTags.size - 1) {
+                if (iterator.hasNext()) {
                     append(", ")
                 }
             }
         }
     }
 
-    private fun renderTagList(tags: List<KDocTag>, title: String, to: StringBuilder) {
-        if (tags.isEmpty()) {
+    private fun renderThrows(throwsTags: Sequence<KDocTag>, exceptionsTags: Sequence<KDocTag>, to: StringBuilder) {
+        if (!throwsTags.any() && !exceptionsTags.any()) return
+
+        to.renderSection(KotlinBundle.message("kdoc.section.title.throws")) {
+
+            fun KDocTag.append() {
+                val subjectName = getSubjectName()
+                if (subjectName != null) {
+                    append("<p><code>")
+                    DocumentationManagerUtil.createHyperlink(this@renderSection, subjectName, subjectName, false)
+                    append("</code> - ${markdownToHtml(getContent().trimStart())}")
+                }
+            }
+
+            throwsTags.forEach { it.append() }
+            exceptionsTags.forEach { it.append() }
+        }
+    }
+
+
+    private fun renderTagList(tags: Sequence<KDocTag>, title: String, to: StringBuilder) {
+        if (!tags.any()) {
             return
         }
         to.renderSection(title) {
             tags.forEach {
-                append("<p><code>${it.getSubjectName()}</code> - ${markdownToHtml(it.getContent().trimStart())}")
+                val subjectName = it.getSubjectName()
+                if (subjectName != null) {
+                    append("<p><code>$subjectName</code> - ${markdownToHtml(it.getContent().trimStart())}")
+                }
             }
         }
     }
@@ -171,7 +184,7 @@ object KDocRenderer {
         }
     }
 
-    fun markdownToHtml(markdown: String, allowSingleParagraph: Boolean = false): String {
+    private fun markdownToHtml(markdown: String, allowSingleParagraph: Boolean = false): String {
         val markdownTree = MarkdownParser(CommonMarkFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
         val markdownNode = MarkdownNode(markdownTree, null, markdown)
 

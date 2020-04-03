@@ -5,9 +5,11 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SetsKt")
+@file:OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
+import kotlin.contracts.*
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -73,7 +75,10 @@ public inline fun <T> hashSetOf(): HashSet<T> = HashSet()
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
-/** Returns an empty new [LinkedHashSet]. */
+/**
+ * Returns an empty new [LinkedHashSet].
+ * @sample samples.collections.Collections.Sets.emptyLinkedHashSet
+ */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
@@ -81,8 +86,72 @@ public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
 /**
  * Returns a new [LinkedHashSet] with the given elements.
  * Elements of the set are iterated in the order they were specified.
+ * @sample samples.collections.Collections.Sets.linkedHashSet
  */
 public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
+
+/**
+ * Returns a new read-only set either with single given element, if it is not null, or empty set if the element is null.
+ * The returned set is serializable (JVM).
+ * @sample samples.collections.Collections.Sets.setOfNotNull
+ */
+@SinceKotlin("1.4")
+public fun <T : Any> setOfNotNull(element: T?): Set<T> = if (element != null) setOf(element) else emptySet()
+
+/**
+ * Returns a new read-only set only with those given elements, that are not null.
+ * Elements of the set are iterated in the order they were specified.
+ * The returned set is serializable (JVM).
+ * @sample samples.collections.Collections.Sets.setOfNotNull
+ */
+@SinceKotlin("1.4")
+public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
+    return elements.filterNotNullTo(LinkedHashSet())
+}
+
+/**
+ * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
+ * and returning a read-only set with the same elements.
+ *
+ * The set passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * Elements of the set are iterated in the order they were added by the [builderAction].
+ *
+ * @sample samples.collections.Builders.Sets.buildSetSample
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashSet<E>().apply(builderAction)
+}
+
+/**
+ * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
+ * and returning a read-only set with the same elements.
+ *
+ * The set passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * [capacity] is used to hint the expected number of elements added in the [builderAction].
+ *
+ * Elements of the set are iterated in the order they were added by the [builderAction].
+ *
+ * @throws IllegalArgumentException if the given [capacity] is negative.
+ *
+ * @sample samples.collections.Builders.Sets.buildSetSample
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    checkBuilderCapacity(capacity)
+    return LinkedHashSet<E>(mapCapacity(capacity)).apply(builderAction)
+}
+
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */
 @kotlin.internal.InlineOnly

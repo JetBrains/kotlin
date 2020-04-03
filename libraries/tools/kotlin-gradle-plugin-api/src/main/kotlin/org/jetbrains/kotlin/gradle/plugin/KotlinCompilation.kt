@@ -33,6 +33,8 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     val allKotlinSourceSets: Set<KotlinSourceSet>
 
+    val defaultSourceSetName: String
+
     val defaultSourceSet: KotlinSourceSet
 
     fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit)

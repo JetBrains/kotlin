@@ -17,10 +17,11 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
   PROPERTY name:arr visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Cannot bind 3 arguments to intArrayOf call with 1 parameters' type=kotlin.IntArray
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
+        CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+            CONST Int type=kotlin.Int value=3
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:public modality:FINAL <> () returnType:kotlin.IntArray
       correspondingProperty: PROPERTY name:arr visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -34,7 +35,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=EQ
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
           GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
@@ -42,7 +43,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=EQ
             CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
           GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=null
@@ -54,7 +55,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=EQ
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
@@ -62,7 +63,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=EQ
             CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
@@ -71,50 +72,50 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+            <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testPropPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+            <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.testPropPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
   FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Int [val]
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+            <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Int [val]
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+            <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_7: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
   FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.Int [val]
             CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
               index: CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Int [val]
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_8: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
             index: CONST Int type=kotlin.Int value=0
             value: GET_VAR 'val tmp_9: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_9: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
@@ -122,13 +123,13 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
             CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
               index: CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.Int [val]
             CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_10: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
             index: CONST Int type=kotlin.Int value=0
             value: GET_VAR 'val tmp_11: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
           GET_VAR 'val tmp_11: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
@@ -138,10 +139,10 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Int [val]
             CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
               index: CONST Int type=kotlin.Int value=0
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
             index: CONST Int type=kotlin.Int value=0
             value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_12: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
@@ -150,10 +151,10 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.Int [val]
             CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+              $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
               index: CONST Int type=kotlin.Int value=0
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
+            $this: CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
             index: CONST Int type=kotlin.Int value=0
             value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_13: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null

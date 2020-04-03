@@ -13,13 +13,18 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.invoke
 
 
-fun ConeKotlinType.createArrayOf(session: FirSession, nullable: Boolean = false): ConeKotlinType {
+fun ConeTypeProjection.createArrayOf(session: FirSession, nullable: Boolean = false): ConeKotlinType {
     val symbolProvider: FirSymbolProvider = session.firSymbolProvider
-    val type = lowerBoundIfFlexible()
-    if (type is ConeClassLikeType) {
-        val primitiveArrayId = StandardClassIds.primitiveArrayTypeByElementType[type.lookupTag.classId]
-        if (primitiveArrayId != null) {
-            return primitiveArrayId.invoke(symbolProvider).constructType(emptyArray(), nullable)
+
+    if (this is ConeKotlinTypeProjection) {
+        val type = type.lowerBoundIfFlexible()
+        if (type is ConeClassLikeType) {
+            val classId = type.lookupTag.classId
+            val primitiveArrayId =
+                StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
+            if (primitiveArrayId != null) {
+                return primitiveArrayId.invoke(symbolProvider).constructType(emptyArray(), nullable)
+            }
         }
     }
 
@@ -32,8 +37,8 @@ fun ConeKotlinType.arrayElementType(session: FirSession): ConeKotlinType? {
     if (type !is ConeClassLikeType) return null
     val classId = type.lookupTag.classId
     if (classId == StandardClassIds.Array)
-        return (type.typeArguments.first() as ConeTypedProjection).type
-    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId]
+        return (type.typeArguments.first() as ConeKotlinTypeProjection).type
+    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: StandardClassIds.elementTypeByUnsignedArrayType[classId]
     if (elementType != null) {
         return elementType.invoke(session.firSymbolProvider).constructType(emptyArray(), isNullable = false)
     }

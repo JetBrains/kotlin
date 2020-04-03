@@ -1,0 +1,7 @@
+public final class PropertyInitializerWithoutSetterKt {
+    @org.jetbrains.annotations.NotNull private static var withoutSetter: java.lang.String = "/sdcard"
+    public static final fun getWithoutSetter() : java.lang.String {
+        return field
+    }
+    public static final fun setWithoutSetter(@org.jetbrains.annotations.NotNull withoutSetter: java.lang.String) : void = UastEmptyExpression
+}

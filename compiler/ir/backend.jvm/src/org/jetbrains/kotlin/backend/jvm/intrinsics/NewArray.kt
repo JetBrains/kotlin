@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getArrayElementType
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isNullableArray
 import org.jetbrains.org.objectweb.asm.Type
 
 object NewArray : IntrinsicMethod() {
@@ -19,7 +20,7 @@ object NewArray : IntrinsicMethod() {
         codegen.gen(expression.getValueArgument(0)!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
         return with(codegen) {
             val elementIrType = expression.type.getArrayElementType(context.irBuiltIns)
-            if (expression.type.isArray()) {
+            if (expression.type.isArray() || expression.type.isNullableArray()) {
                 putReifiedOperationMarkerIfTypeIsReifiedParameter(elementIrType, ReifiedTypeInliner.OperationKind.NEW_ARRAY)
                 mv.newarray(typeMapper.boxType(elementIrType))
             } else {

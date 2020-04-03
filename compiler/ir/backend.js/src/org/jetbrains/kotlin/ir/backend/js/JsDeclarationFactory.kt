@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.js
 
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,14 +27,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
-class JsDeclarationFactory : DeclarationFactory {
-    private val singletonFieldDescriptors = HashMap<IrClass, IrField>()
-    private val outerThisFieldSymbols = HashMap<IrClass, IrField>()
-    private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
+class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
+    private val singletonFieldDescriptors = mapping.singletonFieldDescriptors
+    private val outerThisFieldSymbols = mapping.outerThisFieldSymbols
+    private val innerClassConstructors = mapping.innerClassConstructors
+    private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField = TODO()
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField = TODO()
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
@@ -65,7 +67,7 @@ class JsDeclarationFactory : DeclarationFactory {
             isFinal = true,
             isExternal = false,
             isStatic = false,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            isFakeOverride = false
         ).also {
             descriptor.bind(it)
             it.parent = parent
@@ -79,7 +81,17 @@ class JsDeclarationFactory : DeclarationFactory {
 
         return innerClassConstructors.getOrPut(innerClassConstructor) {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
+        }.also {
+            if (innerClassConstructor.isPrimary) {
+                originalInnerClassPrimaryConstructorByClass[innerClass] = innerClassConstructor
+            }
         }
+    }
+
+    override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor? {
+        assert(innerClass.isInner) { "Class is not inner: $innerClass" }
+
+        return originalInnerClassPrimaryConstructorByClass[innerClass]
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {

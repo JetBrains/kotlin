@@ -9,18 +9,35 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE") {}
 
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override val name: Name
-) : IrScript, IrDeclarationBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SCRIPT_ORIGIN) {
+) : IrScript, IrDeclaration {
+    override val startOffset: Int get() = UNDEFINED_OFFSET
+    override val endOffset: Int get() = UNDEFINED_OFFSET
+    override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
+
+    private var _parent: IrDeclarationParent? = null
+    override var parent: IrDeclarationParent
+        get() = _parent
+            ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
+        set(v) {
+            _parent = v
+        }
+
+    override var annotations: List<IrConstructorCall> = SmartList()
+    override val metadata: MetadataSource? get() = null
+
     override val declarations: MutableList<IrDeclaration> = mutableListOf()
     override val statements: MutableList<IrStatement> = mutableListOf()
 

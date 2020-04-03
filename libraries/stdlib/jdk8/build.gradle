@@ -1,21 +1,17 @@
 description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
 
-pill {
-    importAsLibrary = true
-}
-
 dependencies {
     compile project(':kotlin-stdlib')
     compile project(':kotlin-stdlib-jdk7')
     testCompile project(':kotlin-test:kotlin-test-junit')
+    testCompile project(':kotlin-coroutines-experimental-compat')
 }
 
 sourceSets {
@@ -85,9 +81,9 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmulti-platform",
-            "-Xuse-experimental=kotlin.Experimental",
-            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-            "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+            "-Xopt-in=kotlin.ExperimentalStdlibApi",
     ]
 }
 

@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -69,7 +69,7 @@ class ExtractKotlinFunctionHandler(
             EXTRACT_FUNCTION,
             editor,
             file,
-            "Select target code block",
+            KotlinBundle.message("title.select.target.code.block"),
             listOf(CodeInsightUtils.ElementKind.EXPRESSION),
             ::validateExpressionElements,
             { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
@@ -87,4 +87,4 @@ class ExtractKotlinFunctionHandler(
     }
 }
 
-val EXTRACT_FUNCTION: String = KotlinRefactoringBundle.message("extract.function")
+val EXTRACT_FUNCTION: String = KotlinBundle.message("extract.function")

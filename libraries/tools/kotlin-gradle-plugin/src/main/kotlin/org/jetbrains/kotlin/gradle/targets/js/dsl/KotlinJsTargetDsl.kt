@@ -9,13 +9,32 @@ import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
-interface KotlinJsTargetDsl {
+interface KotlinJsSubTargetContainerDsl : KotlinTarget {
+    val nodejs: KotlinJsNodeDsl
+
+    val browser: KotlinJsBrowserDsl
+
+    val isNodejsConfigured: Boolean
+
+    val isBrowserConfigured: Boolean
+
+    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit)
+
+    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
+}
+
+interface KotlinJsTargetDsl : KotlinTarget {
+    var moduleName: String?
+
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
     fun browser(fn: Closure<*>) {
@@ -32,7 +51,14 @@ interface KotlinJsTargetDsl {
         }
     }
 
+    fun useCommonJs()
+
+    val binaries: KotlinJsBinaryContainer
+
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
+
+    // Need to compatibility when users use KotlinJsCompilation specific in build script
+    override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
 }
 
 interface KotlinJsSubTargetDsl {

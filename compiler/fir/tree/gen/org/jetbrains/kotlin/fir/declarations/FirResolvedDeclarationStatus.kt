@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val source: FirSourceElement?
     override val visibility: Visibility
+    override val effectiveVisibility: FirEffectiveVisibility
     override val modality: Modality?
     override val isExpect: Boolean
     override val isActual: Boolean
@@ -34,6 +36,8 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isData: Boolean
     override val isSuspend: Boolean
     override val isStatic: Boolean
+    override val isFromSealedClass: Boolean
+    override val isFromEnumClass: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedDeclarationStatus(this, data)
 }

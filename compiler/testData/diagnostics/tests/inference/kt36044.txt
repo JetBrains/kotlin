@@ -1,0 +1,5 @@
+package
+
+public fun main(): kotlin.Unit
+public fun </*0*/ B> map(/*0*/ f: () -> B): B
+public fun </*0*/ A> select(/*0*/ x: A, /*1*/ f: () -> A): A

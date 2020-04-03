@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.3.61"
+    kotlin("multiplatform") version "1.3.70"
 }
 group = "testGroupId"
 version = "1.0-SNAPSHOT"
@@ -30,6 +30,10 @@ kotlin {
                 implementation(kotlin("stdlib-js"))
             }
         }
-        val browserTest by getting
+        val browserTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }

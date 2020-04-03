@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(useScriptArgs: Array<out Any?>?) {
     val constructorArgs: Array<out Any?> = arrayOf(useScriptArgs.orEmpty())
 }

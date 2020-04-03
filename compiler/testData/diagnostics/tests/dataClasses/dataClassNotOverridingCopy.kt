@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitDataClassesOverridingCopy
 
 interface WithCopy<T> {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -53,6 +52,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val classBuilderMode = state.classBuilderMode
     private val languageVersionSettings = state.languageVersionSettings
     private val isParamAssertionsDisabled = state.isParamAssertionsDisabled
+    private val unifiedNullChecks = state.unifiedNullChecks
     override val metadataVersion = state.metadataVersion
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
@@ -191,7 +191,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     }
 
     private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
-        if (languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) {
+        if (unifiedNullChecks) {
             // Since Kotlin 1.4, we generate a call to Intrinsics.checkNotNullParameter in inline functions which causes older compilers
             // (earlier than 1.3.50) to crash because a functional parameter in this position can't be inlined
             add(writeVersionRequirement(1, 3, 50, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 val <T> T.valProp: T
     get() = this
 

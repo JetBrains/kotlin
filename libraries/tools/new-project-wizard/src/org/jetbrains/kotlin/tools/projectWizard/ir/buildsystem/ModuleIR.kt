@@ -1,37 +1,33 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import java.nio.file.Path
 
 sealed class ModuleIR : IrsOwner, BuildSystemIR {
     abstract val name: String
     abstract val path: Path
-    abstract val type: ModuleType
+    abstract val template: Template?
+    abstract val originalModule: Module
+    abstract val sourcesets: List<SourcesetIR>
 }
 
-
-interface SourcesetIR : BuildSystemIR {
-    val sourcesetType: SourcesetType
-    val path: Path
-    val template: Template?
-    val original: Sourceset
-}
 
 data class SingleplatformModuleIR(
     override val name: String,
     override val path: Path,
-    override val irs: List<BuildSystemIR>,
-    override val type: ModuleType,
-    val sourcesets: List<SingleplatformSourcesetIR>
+    override val irs: PersistentList<BuildSystemIR>,
+    override val template: Template?,
+    override val originalModule: Module,
+    override val sourcesets: List<SingleplatformSourcesetIR>
 ) : ModuleIR() {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformModuleIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): SingleplatformModuleIR = copy(irs = irs)
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
@@ -47,42 +43,30 @@ data class SingleplatformModuleIR(
     }
 }
 
-data class SingleplatformSourcesetIR(
-    override val sourcesetType: SourcesetType,
-    override val path: Path,
-    override val irs: List<BuildSystemIR>,
-    override val template: Template?,
-    override val original: Sourceset
-) : SourcesetIR, IrsOwner {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformSourcesetIR = copy(irs = irs)
-    override fun BuildFilePrinter.render() = Unit
-}
 
-data class SourcesetModuleIR(
+data class MultiplatformModuleIR(
     override val name: String,
     override val path: Path,
-    override val irs: List<BuildSystemIR>,
-    override val type: ModuleType,
-    override val sourcesetType: SourcesetType,
+    override val irs: PersistentList<BuildSystemIR>,
     override val template: Template?,
-    override val original: Sourceset
-) : SourcesetIR, GradleIR, ModuleIR() {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SourcesetModuleIR = copy(irs = irs)
+    override val originalModule: Module,
+    override val sourcesets: List<MultiplatformSourcesetIR>
+) : GradleIR, ModuleIR() {
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): MultiplatformModuleIR = copy(irs = irs)
 
-    override fun GradlePrinter.renderGradle() = getting(name, prefix = null) {
-        val dependencies = irsOfType<DependencyIR>()
-        val needBody = dependencies.isNotEmpty() || dsl == GradlePrinter.GradleDsl.GROOVY
-        if (needBody) {
-            +" "
-            inBrackets {
-                if (dependencies.isNotEmpty()) {
-                    indent()
-                    sectionCall("dependencies", dependencies)
-                }
-            }
-        }
+    override fun GradlePrinter.renderGradle() {
+        sourcesets.map { sourceset ->
+            sourceset.withIrs(
+                irsOfType<DependencyIR>().filter { dependency ->
+                    dependency.dependencyType == sourceset.sourcesetType.toDependencyType()
+                }.map { it.withDependencyType(DependencyType.MAIN) }
+            )
+        }.listNl(needFirstIndent = false)
     }
 }
 
-val SourcesetModuleIR.targetName
-    get() = name.removeSuffix(sourcesetType.name.capitalize())
+fun MultiplatformModuleIR.neighbourTargetModules() =
+    originalModule.parent
+        ?.takeIf { it.kind == ModuleKind.multiplatform }
+        ?.subModules
+        .orEmpty()

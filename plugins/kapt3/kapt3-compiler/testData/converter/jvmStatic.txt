@@ -21,7 +21,7 @@ public final class JvmStaticTest {
     public static final class Companion {
 
         @java.lang.Deprecated()
-        public static void one$annotations() {
+        public static void getOne$annotations() {
         }
 
         public final int getOne() {

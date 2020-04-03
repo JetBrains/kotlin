@@ -1,0 +1,37 @@
+FILE: locals.kt
+    public? final? fun withLocals(p: Int): Int {
+        local final? class Local : R|kotlin/Any| {
+            public? constructor(pp: Int): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? val pp: Int = R|<local>/pp|
+                public? get(): Int
+
+            public? final? fun diff(): <implicit> {
+                ^diff pp#.minus#(p#)
+            }
+
+        }
+
+        lval x: <implicit> = Local#(IntegerLiteral(42)).diff#()
+        local final? fun sum(y: Int, z: Int, f: ( (Int, Int) -> Int )): Int {
+            ^sum x#.plus#(f#(y#.plus#(z#)))
+        }
+
+        lval code: <implicit> = object : Any {
+            private constructor(): R|anonymous| {
+                super<Any>()
+            }
+
+            public? final? fun foo(): <implicit> {
+                ^foo hashCode#()
+            }
+
+        }
+        .foo#()
+        ^withLocals sum#(code#, Local#(IntegerLiteral(1)).diff#(), fun <anonymous>(x: Int, y: Int): <implicit> {
+            ^ x#.plus#(y#)
+        }
+        )
+    }

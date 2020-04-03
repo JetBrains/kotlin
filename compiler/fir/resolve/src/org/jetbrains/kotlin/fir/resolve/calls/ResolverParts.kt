@@ -8,26 +8,30 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.utils.addToStdlib.min
 
 
 abstract class ResolutionStage {
@@ -36,6 +40,13 @@ abstract class ResolutionStage {
 
 abstract class CheckerStage : ResolutionStage()
 
+internal fun FirExpression.isSuperReferenceExpression(): Boolean {
+    return if (this is FirQualifiedAccessExpression) {
+        val calleeReference = calleeReference
+        calleeReference is FirSuperReference
+    } else false
+}
+
 internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val receiverKind = candidate.explicitReceiverKind
@@ -43,14 +54,19 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         // TODO: add invoke cases
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
-                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier)
+                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
                     return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                }
             }
             EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
-                if (explicitReceiver == null) return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                if (explicitReceiver == null) {
+                    return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                }
             }
             BOTH_RECEIVERS -> {
-                if (explicitReceiver == null) return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                if (explicitReceiver == null) {
+                    return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
+                }
                 // Here we should also check additional invoke receiver
             }
         }
@@ -84,7 +100,11 @@ internal sealed class CheckReceivers : ResolutionStage() {
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            return (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            val receiverType = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            if (receiverType != null) return receiverType
+            val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
+            if (!returnTypeRef.isExtensionFunctionType(bodyResolveComponents.session)) return null
+            return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeKotlinTypeProjection)?.type
         }
     }
 
@@ -100,7 +120,10 @@ internal sealed class CheckReceivers : ResolutionStage() {
         val explicitReceiverKind = candidate.explicitReceiverKind
 
         if (expectedReceiverType != null) {
-            if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeCheckedAgainstExplicit()) {
+            if (explicitReceiverExpression != null &&
+                explicitReceiverKind.shouldBeCheckedAgainstExplicit() &&
+                !explicitReceiverExpression.isSuperReferenceExpression()
+            ) {
                 candidate.resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
@@ -109,8 +132,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     sink = sink,
                     isReceiver = true,
                     isDispatch = this is Dispatch,
-                    isSafeCall = callInfo.isSafeCall,
-                    typeProvider = callInfo.typeProvider
+                    isSafeCall = callInfo.isSafeCall
                 )
                 sink.yieldIfNeed()
             } else {
@@ -136,11 +158,26 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
         val function = symbol.fir
-        val processor = FirCallArgumentsProcessor(function, callInfo.arguments)
-        val mappingResult = processor.process()
-        candidate.argumentMapping = mappingResult.argumentMapping
-        if (!mappingResult.isSuccess) {
-            return sink.yieldApplicability(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+
+        val mapping = mapArguments(callInfo.arguments, function)
+        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
+        mapping.parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
+            when (resolvedArgument) {
+                is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
+                is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
+                    argumentToParameterMapping[it] = valueParameter
+                }
+            }
+        }
+        candidate.argumentMapping = argumentToParameterMapping
+
+        var applicability = CandidateApplicability.RESOLVED
+        mapping.diagnostics.forEach {
+            candidate.diagnostics += it
+            applicability = min(applicability, it.applicability)
+        }
+        if (applicability < CandidateApplicability.RESOLVED) {
+            return sink.yieldApplicability(applicability)
         }
     }
 }
@@ -155,7 +192,6 @@ internal object CheckArguments : CheckerStage() {
                 parameter,
                 isReceiver = false,
                 isSafeCall = false,
-                typeProvider = callInfo.typeProvider,
                 sink = sink
             )
             if (candidate.system.hasContradiction) {
@@ -168,6 +204,7 @@ internal object CheckArguments : CheckerStage() {
 
 internal object EagerResolveOfCallableReferences : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms.filterIsInstance<ResolvedCallableReferenceAtom>()) {
             if (!candidate.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)) {
                 sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
@@ -194,8 +231,11 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         val returnTypeRef = candidate.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
 
         val resultingType: ConeKotlinType = when (fir) {
-            is FirFunction -> createKFunctionType(fir, resultingReceiverType, returnTypeRef)
-            is FirProperty -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
+            is FirFunction -> createKFunctionType(
+                fir, resultingReceiverType, returnTypeRef,
+                expectedParameterNumberWithReceiver = expectedType?.let { it.typeArguments.size - 1 }
+            )
+            is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
 
@@ -235,23 +275,33 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 }
 
 private fun createKPropertyType(
-    property: FirProperty,
+    propertyOrField: FirVariable<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef
 ): ConeKotlinType {
-    val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
+    val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $propertyOrField")
     return createKPropertyType(
-        receiverType, propertyType, isMutable = property.isVar
+        receiverType, propertyType, isMutable = propertyOrField.isVar
     )
 }
 
 private fun createKFunctionType(
     function: FirFunction<*>,
     receiverType: ConeKotlinType?,
-    returnTypeRef: FirResolvedTypeRef
+    returnTypeRef: FirResolvedTypeRef,
+    expectedParameterNumberWithReceiver: Int?
 ): ConeKotlinType {
-    val parameterTypes = function.valueParameters.map {
-        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
+    val parameterTypes = mutableListOf<ConeKotlinType>()
+    val expectedParameterNumber = when {
+        expectedParameterNumberWithReceiver == null -> null
+        receiverType != null -> expectedParameterNumberWithReceiver - 1
+        else -> expectedParameterNumberWithReceiver
+    }
+    for ((index, valueParameter) in function.valueParameters.withIndex()) {
+        if (expectedParameterNumber == null || index < expectedParameterNumber || valueParameter.defaultValue == null) {
+            parameterTypes += valueParameter.returnTypeRef.coneTypeSafe()
+                ?: ConeKotlinErrorType("No type for parameter $valueParameter")
+        }
     }
 
     return createFunctionalType(
@@ -285,11 +335,9 @@ internal object CheckVisibility : CheckerStage() {
     private fun ImplicitReceiverStack.canSeePrivateMemberOf(ownerId: ClassId): Boolean {
         for (implicitReceiverValue in receiversAsReversed()) {
             if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
+            if (implicitReceiverValue.companionFromSupertype) continue
             val boundSymbol = implicitReceiverValue.boundSymbol
             if (boundSymbol.classId.isSame(ownerId)) {
-                return true
-            }
-            if (boundSymbol is FirRegularClassSymbol && boundSymbol.fir.companionObject?.symbol?.classId?.isSame(ownerId) == true) {
                 return true
             }
         }
@@ -304,6 +352,11 @@ internal object CheckVisibility : CheckerStage() {
         if (classId in visited) return false
         visited += classId
         if (classId.isSame(ownerId)) return true
+
+        fir.companionObject?.let { companion ->
+            if (companion.classId.isSame(ownerId)) return true
+        }
+
         val superTypes = fir.superConeTypes
         for (superType in superTypes) {
             val superTypeSymbol = superType.lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: continue
@@ -317,6 +370,7 @@ internal object CheckVisibility : CheckerStage() {
         val visited = mutableSetOf<ClassId>()
         for (implicitReceiverValue in receiversAsReversed()) {
             if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
+            if (implicitReceiverValue.companionFromSupertype) continue
             val boundSymbol = implicitReceiverValue.boundSymbol
             val superTypes = boundSymbol.fir.superConeTypes
             for (superType in superTypes) {
@@ -373,7 +427,7 @@ internal object CheckVisibility : CheckerStage() {
             }
             Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
                 if (declaration.session == callInfo.session) {
-                    if (ownerId == null) {
+                    if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
                         // Top-level: visible in file
                         candidateFile == useSiteFile
                     } else {
@@ -421,6 +475,27 @@ internal object CheckVisibility : CheckerStage() {
             if (classSymbol is FirRegularClassSymbol) {
                 checkVisibility(classSymbol.fir, classSymbol, sink, callInfo)
             }
+        }
+    }
+}
+
+internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
+    private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
+        ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
+
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val annotations = when (val fir = candidate.symbol.fir) {
+            is FirSimpleFunction -> fir.annotations
+            is FirProperty -> fir.annotations
+            else -> return
+        }
+        val hasLowPriorityAnnotation = annotations.any {
+            val lookupTag = ((it.annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)?.lookupTag ?: return@any false
+            lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+        }
+
+        if (hasLowPriorityAnnotation) {
+            sink.reportApplicability(CandidateApplicability.RESOLVED_LOW_PRIORITY)
         }
     }
 }

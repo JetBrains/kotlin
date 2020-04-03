@@ -296,7 +296,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
 
         val mapValueForContract =
-            c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, c.typeDeserializer)
+            c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, local.typeDeserializer)
         if (mapValueForContract != null) {
             function.putInUserDataMap(mapValueForContract.first, mapValueForContract.second)
         }

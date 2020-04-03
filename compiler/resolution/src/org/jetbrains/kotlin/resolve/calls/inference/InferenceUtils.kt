@@ -30,20 +30,25 @@ fun ConstraintStorage.buildCurrentSubstitutor(
     return context.typeSubstitutorByTypeConstructor(fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings)
 }
 
-fun ConstraintStorage.buildAbstractResultingSubstitutor(context: TypeSystemInferenceExtensionContext): TypeSubstitutorMarker =
+fun ConstraintStorage.buildAbstractResultingSubstitutor(context: TypeSystemInferenceExtensionContext, transformTypeVariablesToErrorTypes: Boolean = true): TypeSubstitutorMarker =
     with(context) {
         if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
 
         val currentSubstitutorMap = fixedTypeVariables.entries.associate {
             it.key to it.value
         }
-        val uninferredSubstitutorMap = notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
-            freshTypeConstructor to context.createErrorTypeWithCustomConstructor(
-                "Uninferred type",
-                (typeVariable.typeVariable).freshTypeConstructor()
-            )
+        val uninferredSubstitutorMap = if (transformTypeVariablesToErrorTypes) {
+            notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+                freshTypeConstructor to context.createErrorTypeWithCustomConstructor(
+                    "Uninferred type",
+                    (typeVariable.typeVariable).freshTypeConstructor()
+                )
+            }
+        } else {
+            notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+                freshTypeConstructor to typeVariable.typeVariable.defaultType(this)
+            }
         }
-
         return context.typeSubstitutorByTypeConstructor(currentSubstitutorMap + uninferredSubstitutorMap)
     }
 
@@ -52,8 +57,8 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(cont
         notFixedTypeVariables.mapValues { context.createStubType(it.value.typeVariable) }
     )
 
-fun ConstraintStorage.buildResultingSubstitutor(context: TypeSystemInferenceExtensionContext): NewTypeSubstitutor {
-    return buildAbstractResultingSubstitutor(context) as NewTypeSubstitutor
+fun ConstraintStorage.buildResultingSubstitutor(context: TypeSystemInferenceExtensionContext, transformTypeVariablesToErrorTypes: Boolean = true): NewTypeSubstitutor {
+    return buildAbstractResultingSubstitutor(context, transformTypeVariablesToErrorTypes) as NewTypeSubstitutor
 }
 
 val CallableDescriptor.returnTypeOrNothing: UnwrappedType
@@ -75,21 +80,21 @@ fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDesc
 
 fun CallableDescriptor.substituteAndApproximateTypes(
     substitutor: NewTypeSubstitutor,
-    typeApproximator: TypeApproximator
+    typeApproximator: TypeApproximator?
 ): CallableDescriptor {
     val wrappedSubstitution = object : TypeSubstitution() {
         override fun get(key: KotlinType): TypeProjection? = null
 
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
             substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
-                typeApproximator.approximateToSuperType(
+                typeApproximator?.approximateToSuperType(
                     substitutedType,
                     TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
                 ) ?: substitutedType
             }
     }
 
-    return substitute(TypeSubstitutor.create(wrappedSubstitution))
+    return substitute(TypeSubstitutor.create(wrappedSubstitution)) ?: this
 }
 
 internal fun <E> MutableList<E>.trimToSize(newSize: Int) = subList(newSize, size).clear()

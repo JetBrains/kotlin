@@ -152,7 +152,12 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
-        return typeParameters;
+        List<TypeParameterDescriptor> parameters = typeParameters;
+        // Diagnostics for EA-212070
+        if (parameters == null) {
+            throw new IllegalStateException("typeParameters == null for " + this.toString());
+        }
+        return parameters;
     }
 
     @Override

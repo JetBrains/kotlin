@@ -4,19 +4,29 @@ import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.templates.Template
-import org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf
 
 inline class ModulePath(val parts: List<String>) {
+    constructor(path: String) : this(path.trim().split('.'))
+
     fun asString(separator: String = ".") = parts.joinToString(separator)
     override fun toString(): String = asString()
+
+    companion object {
+        val parser = valueParser { value, path ->
+            val (stringPath) = value.parseAs<String>(path)
+            ModulePath(stringPath)
+        }
+    }
+}
+
+fun ModulePath.considerSingleRootModuleMode(isSingleRootMode: Boolean) = when {
+    isSingleRootMode && parts.size > 1 -> ModulePath(parts.subList(1, parts.size))
+    else -> this
 }
 
 
@@ -35,27 +45,15 @@ data class PathBasedSourcesetDependency(val path: ModulePath) : SourcesetDepende
 // A `main` or `test` sourceset for single or multiplatform projects
 class Sourceset(
     val sourcesetType: SourcesetType,
-    val containingModuleType: ModuleType,
-    var template: Template?,
-    var dependencies: List<SourcesetDependency>,
+    var dependencies: List<SourcesetDependency> = emptyList(),
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(sourcesetType.name)
-) : DisplayableSettingItem, Validatable<Sourceset>, IdentificatorOwner {
-    override val validator: SettingValidator<Sourceset> = settingValidator { sourceset ->
-        val template = sourceset.template ?: return@settingValidator ValidationResult.OK
-        withSettingsOf(sourceset) {
-            template.settings.map { setting ->
-                val value = setting.reference.notRequiredSettingValue
-                    ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                setting.validator.validate(this@settingValidator, value)
-            }.fold()
-        }
-    }
+) : DisplayableSettingItem, IdentificatorOwner {
     override val text: String get() = sourcesetType.name
     override val greyText: String? get() = null
 
     companion object {
-        fun parser(moduleType: ModuleType) = mapParser { map, path ->
+        fun parser() = mapParser { map, path ->
             val (sourcesetType) = map.parseValue<SourcesetType>(this, path, "type", enumParser())
             val identificator = GeneratedIdentificator(sourcesetType.name)
             val (dependencies) = map.parseValue(
@@ -64,18 +62,18 @@ class Sourceset(
                 "dependencies",
                 listParser(PathBasedSourcesetDependency.parser)
             ) { emptyList() }
-            val template = map["template"]?.let {
-                Template.parser(identificator).parse(this, it, "$path.template")
-            }.nullableValue()
 
-            Sourceset(sourcesetType, moduleType, template, dependencies, identificator = identificator)
+            Sourceset(sourcesetType, dependencies, identificator = identificator)
         }
     }
 }
 
 @Suppress("EnumEntryName")
-enum class SourcesetType {
+enum class SourcesetType : DisplayableSettingItem {
     main, test;
+
+    override val text: String
+        get() = name
 
     companion object {
         val ALL = values().toSet()
@@ -83,15 +81,15 @@ enum class SourcesetType {
 }
 
 
-fun TaskRunningContext.updateBuildFiles(action: (BuildFileIR) -> TaskResult<BuildFileIR>): TaskResult<Unit> =
+fun Writer.updateBuildFiles(action: (BuildFileIR) -> TaskResult<BuildFileIR>): TaskResult<Unit> =
     BuildSystemPlugin::buildFiles.update { buildFiles ->
         buildFiles.mapSequence(action)
     }
 
-fun TaskRunningContext.updateModules(action: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<Unit> =
+fun Writer.updateModules(action: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<Unit> =
     updateBuildFiles { buildFile ->
         buildFile.withModulesUpdated { action(it) }
     }
 
-fun TaskRunningContext.forEachModule(action: (ModuleIR) -> TaskResult<Unit>): TaskResult<Unit> =
+fun Writer.forEachModule(action: (ModuleIR) -> TaskResult<Unit>): TaskResult<Unit> =
     updateModules { moduleIR -> action(moduleIR).map { moduleIR } }

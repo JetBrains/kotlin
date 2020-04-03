@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
@@ -34,16 +33,16 @@ class DefaultKotlinSourceSet(
 ) : KotlinSourceSet {
 
     override val apiConfigurationName: String
-        get() = disambiguateName("api")
+        get() = disambiguateName(API)
 
     override val implementationConfigurationName: String
-        get() = disambiguateName("implementation")
+        get() = disambiguateName(IMPLEMENTATION)
 
     override val compileOnlyConfigurationName: String
-        get() = disambiguateName("compileOnly")
+        get() = disambiguateName(COMPILE_ONLY)
 
     override val runtimeOnlyConfigurationName: String
-        get() = disambiguateName("runtimeOnly")
+        get() = disambiguateName(RUNTIME_ONLY)
 
     override val apiMetadataConfigurationName: String
         get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
@@ -156,7 +155,7 @@ class DefaultKotlinSourceSet(
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
             dependencyTransformations[scope]?.metadataDependencyResolutions
-                ?.associateBy { it.dependency.moduleGroup to it.dependency.moduleName }
+                ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
         val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
@@ -169,7 +168,7 @@ class DefaultKotlinSourceSet(
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
-            val projectPath = resolution.projectDependency?.dependencyProject?.path
+            val projectPath = resolution.projectDependency?.path
             when (resolution) {
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
 

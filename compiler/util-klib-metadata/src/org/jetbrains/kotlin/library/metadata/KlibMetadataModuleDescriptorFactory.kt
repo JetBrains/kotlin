@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleDescriptorFactory
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -17,6 +18,7 @@ interface KlibMetadataModuleDescriptorFactory {
     val descriptorFactory: KlibModuleDescriptorFactory
     val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
     val flexibleTypeDeserializer: FlexibleTypeDeserializer
+    val platformDependentTypeTransformer: PlatformDependentTypeTransformer
 
     fun createDescriptor(
         library: KotlinLibrary,

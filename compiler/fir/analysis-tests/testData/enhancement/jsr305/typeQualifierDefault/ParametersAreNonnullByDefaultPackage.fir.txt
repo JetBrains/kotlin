@@ -1,0 +1,20 @@
+public open class A : R|kotlin/Any| {
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
+
+    public open fun foo(q: R|ft<kotlin/String, kotlin/String?>!|, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>!|
+
+    @R|javax/annotation/Nonnull|() public open fun bar(): R|kotlin/String|
+
+    public constructor(): R|test/A|
+
+}
+public open class A2 : R|kotlin/Any| {
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
+
+    public open fun foo(q: R|ft<kotlin/String, kotlin/String?>!|, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>!|
+
+    @R|javax/annotation/Nonnull|() public open fun bar(): R|kotlin/String|
+
+    public constructor(): R|test2/A2|
+
+}

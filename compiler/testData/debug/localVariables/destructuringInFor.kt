@@ -16,5 +16,4 @@ fun box() {
 // TestKt:7: map:java.util.Collections$SingletonMap
 // TestKt:9: map:java.util.Collections$SingletonMap, a:java.lang.String, b:java.lang.String
 // TestKt:7: map:java.util.Collections$SingletonMap
-// TestKt:8: map:java.util.Collections$SingletonMap
 // TestKt:11: map:java.util.Collections$SingletonMap

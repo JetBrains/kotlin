@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -18,6 +19,6 @@ class IdeaBuildSystemAvailabilityWizardService : BuildSystemAvailabilityWizardSe
         else -> true
     }
 
-    private fun isPluginEnabled(id: String) =
-        PluginManager.getPlugin(PluginId.getId(id))?.isEnabled == true
+    private fun isPluginEnabled(@NonNls id: String) =
+        PluginManagerCore.getPlugin(PluginId.getId(id))?.isEnabled == true
 }

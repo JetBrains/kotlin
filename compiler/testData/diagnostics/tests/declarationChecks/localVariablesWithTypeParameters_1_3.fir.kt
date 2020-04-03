@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !LANGUAGE: -ProhibitTypeParametersForLocalVariables
+// !WITH_NEW_INFERENCE
 
 import kotlin.reflect.KProperty
 
@@ -10,7 +11,7 @@ fun test() {
     const val <T> a3 = 0
     lateinit val <T> a4 = 0
     val <T> a5 by Delegate<Int>()
-    val <T> a6 by Delegate<T>()
+    val <T> a6 by <!INAPPLICABLE_CANDIDATE!>Delegate<T>()<!>
 }
 
 class Delegate<F> {

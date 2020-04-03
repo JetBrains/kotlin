@@ -1,4 +1,4 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("Unresolved reference: toMutableMap");
+assertBuildLogHasLineThatContains("feature \"function types with big arity\" is only available since API version 1.3");

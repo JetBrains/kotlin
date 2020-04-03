@@ -1,6 +1,6 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
 import kotlin.reflect.KSuspendFunction0
 import kotlin.reflect.KSuspendFunction1

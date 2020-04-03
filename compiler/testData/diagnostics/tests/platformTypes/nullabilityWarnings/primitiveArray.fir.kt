@@ -21,11 +21,11 @@ fun test() {
     val platformJ = J.staticJ
 
     platformNN[0]
-    platformN[0]
+    <!INAPPLICABLE_CANDIDATE!>platformN[0]<!>
     platformJ[0]
 
     platformNN[0] = 1
-    platformN[0]  = 1
+    <!INAPPLICABLE_CANDIDATE!>platformN[0]  = 1<!>
     platformJ[0]  = 1
 }
 

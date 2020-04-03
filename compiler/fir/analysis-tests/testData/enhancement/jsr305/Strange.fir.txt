@@ -1,0 +1,10 @@
+public open class Strange : R|kotlin/Any| {
+    @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.UNKNOWN|()) public open field field: R|ft<kotlin/String, kotlin/String?>!|
+
+    @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.MAYBE|()) public open fun foo(@R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.ALWAYS|()) x: R|kotlin/String|, @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) y: R|kotlin/CharSequence?|): R|kotlin/String?|
+
+    @R|javax/annotation/Nonnull|() public open fun bar(): R|kotlin/String|
+
+    public constructor(): R|Strange|
+
+}

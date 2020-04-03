@@ -26,7 +26,7 @@ dependencies {
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
 
     if (Platform.P192.orHigher()) {
-        testRuntime(intellijDep()) { includeJars("lz4-java-1.6.0") }
+        testRuntime(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
     } else {
         testRuntime(intellijDep()) { includeJars("lz4-1.3.0") }
     }
@@ -39,7 +39,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
-    dependsOn(":compiler:ir.serialization.js:packFullRuntimeKLib")
+    dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
 }
 
 testsJar()

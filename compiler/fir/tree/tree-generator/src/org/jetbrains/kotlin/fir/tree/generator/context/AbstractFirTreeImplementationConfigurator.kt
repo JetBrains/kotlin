@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.fir.tree.generator.call
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
+import org.jetbrains.kotlin.fir.tree.generator.printer.call
 
 abstract class AbstractFirTreeImplementationConfigurator {
     private val elementsWithImpl = mutableSetOf<Element>()
@@ -89,17 +90,16 @@ abstract class AbstractFirTreeImplementationConfigurator {
 
         fun Implementation.withArg(argument: Importable): ImplementationWithArg = ImplementationWithArg(this, argument)
 
-        fun useTypes(vararg types: Importable) {
-            types.forEach { implementation.usedTypes += it }
+        fun optInToInternals() {
+            implementation.requiresOptIn = true
         }
 
-        fun lateinit(vararg fields: String) {
-            for (fieldName in fields) {
-                val field = getField(fieldName)
-                require(field.origin !is FieldList)
-                field.isLateinit = true
-                field.isMutable = true
-            }
+        fun publicImplementation() {
+            implementation.isPublic = true
+        }
+
+        fun useTypes(vararg types: Importable) {
+            types.forEach { implementation.usedTypes += it }
         }
 
         fun isMutable(vararg fields: String) {
@@ -151,7 +151,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
         }
 
         fun noSource() {
-            defaultNull("source")
+            defaultNull("source", withGetter = true)
         }
 
         fun defaultEmptyList(field: String) {
@@ -218,11 +218,11 @@ abstract class AbstractFirTreeImplementationConfigurator {
                 isMutable?.let { field.isMutable = it }
                 field.needAcceptAndTransform = needAcceptAndTransform
                 when {
-                    value != null -> field.defaultValue = value
+                    value != null -> field.defaultValueInImplementation = value
                     delegate != null -> {
                         val actualDelegateField = getField(delegate!!)
                         val name = delegateCall ?: field.name
-                        field.defaultValue = "${actualDelegateField.name}${actualDelegateField.call()}$name"
+                        field.defaultValueInImplementation = "${actualDelegateField.name}${actualDelegateField.call()}$name"
                     }
                 }
             }

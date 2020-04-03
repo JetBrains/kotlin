@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // dummy test of syntax error highlighting in tests
 
 fun get() {

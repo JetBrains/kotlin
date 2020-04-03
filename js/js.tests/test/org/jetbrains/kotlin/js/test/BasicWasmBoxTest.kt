@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
@@ -35,7 +37,7 @@ import java.io.File
 import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
-    loadKlib("compiler/ir/serialization.js/build/wasmRuntime/klib")
+    loadKlib("libraries/stdlib/js-ir/build/wasmRuntime/klib")
 
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
@@ -112,6 +114,7 @@ abstract class BasicWasmBoxTest(
         val compilerResult = compileWasm(
             project = config.project,
             files = filesToCompile,
+            analyzer = AnalyzerWithCompilerReport(config.configuration),
             configuration = config.configuration,
             phaseConfig = phaseConfig,
             // TODO: Bypass the resolver fow wasm.
@@ -156,7 +159,7 @@ abstract class BasicWasmBoxTest(
     }
 
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactoryNoModules<TestFile>(), Closeable {
-        override fun create(fileName: String, text: String, directives: MutableMap<String, String>): TestFile {
+        override fun create(fileName: String, text: String, directives: Directives): TestFile {
             val ktFile = KtPsiFactory(project).createFile(text)
             val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION }
             if (boxFunction != null) {

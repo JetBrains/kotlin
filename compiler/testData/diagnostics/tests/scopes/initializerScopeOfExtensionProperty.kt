@@ -6,7 +6,7 @@ val <T> List<T>.length = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD, UNRESOLVED_REF
 
 val <T> List<T>.length1 : Int get() = size
 
-val String.bd = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!><!NO_THIS!>this<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> "!"<!>
+val String.bd = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!><!NO_THIS!>this<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> "!"<!>
 
 val String.bd1 : String get() = this + "!"
 

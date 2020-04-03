@@ -36,12 +36,14 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
         // Delegate field is mapped to a new property descriptor with annotations of the original property delegate
         // (see IrPropertyDelegateDescriptorImpl), but annotations on backing fields should be processed manually here
         val annotatedDescriptor =
-            if (declaration is IrField && declaration.origin != IrDeclarationOrigin.DELEGATE)
+            if (declaration is IrField && declaration.origin != IrDeclarationOrigin.PROPERTY_DELEGATE)
                 declaration.descriptor.backingField
             else declaration.descriptor
 
-        annotatedDescriptor?.annotations?.mapNotNullTo(declaration.annotations) {
-            constantValueGenerator.generateAnnotationConstructorCall(it)
+        if (annotatedDescriptor != null) {
+            declaration.annotations += annotatedDescriptor.annotations.mapNotNull {
+                constantValueGenerator.generateAnnotationConstructorCall(it)
+            }
         }
     }
 }

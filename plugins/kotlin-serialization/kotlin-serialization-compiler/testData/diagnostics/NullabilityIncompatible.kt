@@ -13,4 +13,4 @@ class NopeNullableSerializer: KSerializer<Nope?> {
 }
 
 @Serializable
-class Foo(val foo: <!PLUGIN_ERROR("Type 'Nope' is non-nullable and therefore can not be serialized with serializer for nullable type 'NopeNullableSerializer'")!>Nope<!>)
+class Foo(val foo: <!SERIALIZER_NULLABILITY_INCOMPATIBLE("NopeNullableSerializer", "Nope")!>Nope<!>)

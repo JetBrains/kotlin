@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: AnnotationRetentions.java
 
 import java.lang.annotation.*;

@@ -1,4 +1,4 @@
-public open class InnerClassesInGeneric<P, Q> : R|kotlin/Any| {
-    public constructor<P, Q>(): R|test/InnerClassesInGeneric<P, Q>|
+public open class InnerClassesInGeneric<P : R|ft<kotlin/Any, kotlin/Any?>!|, Q : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|, Q : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/InnerClassesInGeneric<P, Q>|
 
 }

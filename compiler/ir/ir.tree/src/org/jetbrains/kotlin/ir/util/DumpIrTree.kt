@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrElement.dump(normalizeNames: Boolean = false): String =
-    StringBuilder().also { sb ->
-        accept(DumpIrTreeVisitor(sb, normalizeNames), "")
-    }.toString()
+    try {
+        StringBuilder().also { sb ->
+            accept(DumpIrTreeVisitor(sb, normalizeNames), "")
+        }.toString()
+    } catch (e: Exception) {
+        "(Full dump is not available: ${e.message})\n" + render()
+    }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
     val sb = StringBuilder()
@@ -373,20 +377,18 @@ class DumpTreeFromSourceLineVisitor(
 
 internal fun IrMemberAccessExpression.getValueParameterNamesForDebug(): List<String> {
     val expectedCount = valueArgumentsCount
-    return if (this is IrDeclarationReference && symbol.isBound) {
+    if (symbol.isBound) {
         val owner = symbol.owner
         if (owner is IrFunction) {
-            (0 until expectedCount).map {
+            return (0 until expectedCount).map {
                 if (it < owner.valueParameters.size)
                     owner.valueParameters[it].name.asString()
                 else
                     "${it + 1}"
             }
-        } else {
-            getPlaceholderParameterNames(expectedCount)
         }
-    } else
-        getPlaceholderParameterNames(expectedCount)
+    }
+    return getPlaceholderParameterNames(expectedCount)
 }
 
 internal fun getPlaceholderParameterNames(expectedCount: Int) =

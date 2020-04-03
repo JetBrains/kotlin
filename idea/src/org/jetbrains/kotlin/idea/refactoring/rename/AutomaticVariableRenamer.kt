@@ -137,13 +137,13 @@ open class AutomaticVariableRenamerFactory : AutomaticRenamerFactory {
         KotlinRefactoringSettings.instance.renameVariables = enabled
     }
 
-    override fun getOptionName() = RefactoringBundle.message("rename.variables")
+    override fun getOptionName(): String? = RefactoringBundle.message("rename.variables")
 }
 
 class AutomaticVariableRenamerFactoryForJavaClass : AutomaticVariableRenamerFactory() {
     override fun isApplicable(element: PsiElement) = element is PsiClass
 
-    override fun getOptionName() = null
+    override fun getOptionName(): String? = null
 }
 
 class AutomaticVariableInJavaRenamerFactory : AutomaticRenamerFactory {

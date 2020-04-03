@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1219 Incorrect 'unused value' error in closures
 
 package kt1219

@@ -25,7 +25,7 @@ package foobar.a
 
 // FILE: b.kt
 package foobar
-val x1 = <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
+val x1 = <!UNRESOLVED_REFERENCE!>a<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
 val x2 = foobar.a.a
 
 val y1 = foobar.a.b

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import junit.framework.Assert
+import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
+import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
 import org.junit.Ignore
@@ -49,26 +51,35 @@ class MainKtsIT {
 fun runWithKotlincAndMainKts(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
-    expectedExitCode: Int = 0
-) = runWithKotlinc(
-    scriptPath, expectedOutPatterns, expectedExitCode,
-    classpath = listOf(
-        File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-            Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
-        }
+    expectedExitCode: Int = 0,
+    cacheDir: File? = null
+) {
+    runWithKotlinc(
+        scriptPath, expectedOutPatterns, expectedExitCode,
+        classpath = listOf(
+            File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
+                Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+            }
+        ),
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.absolutePath ?: ""))
     )
-)
+}
 
 fun runWithK2JVMCompilerAndMainKts(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
-    expectedExitCode: Int = 0
-) = runWithK2JVMCompiler(
-    scriptPath, expectedOutPatterns, expectedExitCode,
-    classpath = listOf(
-        File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-            Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
-        }
-    )
-)
+    expectedExitCode: Int = 0,
+    cacheDir: File? = null
+) {
+    withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
+        runWithK2JVMCompiler(
+            scriptPath, expectedOutPatterns, expectedExitCode,
+            classpath = listOf(
+                File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
+                    Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+                }
+            )
+        )
+    }
+}
 

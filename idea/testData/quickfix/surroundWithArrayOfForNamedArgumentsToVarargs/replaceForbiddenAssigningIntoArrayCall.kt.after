@@ -1,5 +1,5 @@
 // "Surround with *arrayOf(...)" "true"
-// COMPILER_ARGUMENTS: -XXLanguage:+ProhibitAssigningSingleElementsToVarargsInNamedForm
+// COMPILER_ARGUMENTS: -XXLanguage:+ProhibitAssigningSingleElementsToVarargsInNamedForm -XXLanguage:-AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // DISABLE-ERRORS
 
 fun anyFoo(vararg a: Any) {}

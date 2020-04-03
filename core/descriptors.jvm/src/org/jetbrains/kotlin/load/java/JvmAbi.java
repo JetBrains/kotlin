@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.descriptors.*;
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
+
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -44,6 +47,20 @@ public final class JvmAbi {
     public static final String HIDDEN_INSTANCE_FIELD = "$$" + INSTANCE_FIELD;
 
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
+
+    /*
+        Line number is used when inlining function arguments to @InlineOnly functions.
+        All line information is stripped from the inlined implementation of such functions,
+        so if a lambda is on the same line with the call, the debugger can't stop on both 'line' and 'lambda' breakpoints.
+
+        Example:
+            > require(foo) { "foo is false" }
+     */
+    public static final int LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER = 65100;
+
+    public static final List<Integer> SYNTHETIC_MARKER_LINE_NUMBERS = CollectionsKt.listOf(
+            LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER
+    );
 
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";

@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -9,6 +8,7 @@ dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:deserialization"))
     compile(project(":compiler:util"))
+    compile(project(":compiler:config"))
     compile(project(":compiler:container"))
     compile(project(":compiler:resolution"))
     compile(project(":compiler:psi"))

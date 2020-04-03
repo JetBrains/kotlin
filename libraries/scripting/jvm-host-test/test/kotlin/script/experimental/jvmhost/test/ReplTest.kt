@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.BasicReplStageHistory
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerImpl
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.junit.Assert
 import org.junit.Test
 import kotlin.script.experimental.api.*
@@ -28,9 +29,7 @@ class ReplTest : TestCase() {
     @Test
     fun testCompileAndEval() {
         val out = captureOut {
-            chechEvaluateInRepl(
-                simpleScriptompilationConfiguration,
-                simpleScriptEvaluationConfiguration,
+            checkEvaluateInRepl(
                 sequenceOf(
                     "val x = 3",
                     "x + 4",
@@ -44,9 +43,7 @@ class ReplTest : TestCase() {
 
     @Test
     fun testEvalWithResult() {
-        chechEvaluateInRepl(
-            simpleScriptompilationConfiguration,
-            simpleScriptEvaluationConfiguration,
+        checkEvaluateInRepl(
             sequenceOf(
                 "val x = 5",
                 "x + 6",
@@ -58,9 +55,7 @@ class ReplTest : TestCase() {
 
     @Test
     fun testEvalWithIfResult() {
-        chechEvaluateInRepl(
-            simpleScriptompilationConfiguration,
-            simpleScriptEvaluationConfiguration,
+        checkEvaluateInRepl(
             sequenceOf(
                 "val x = 5",
                 "x + 6",
@@ -73,27 +68,25 @@ class ReplTest : TestCase() {
     @Test
     fun testImplicitReceiver() {
         val receiver = TestReceiver()
-        chechEvaluateInRepl(
-            simpleScriptompilationConfiguration.with {
-                implicitReceivers(TestReceiver::class)
-            },
-            simpleScriptEvaluationConfiguration.with {
-                implicitReceivers(receiver)
-            },
+        checkEvaluateInRepl(
             sequenceOf(
                 "val x = 4",
                 "x + prop1",
                 "res1 * 3"
             ),
-            sequenceOf(null, 7, 21)
+            sequenceOf(null, 7, 21),
+            simpleScriptompilationConfiguration.with {
+                implicitReceivers(TestReceiver::class)
+            },
+            simpleScriptEvaluationConfiguration.with {
+                implicitReceivers(receiver)
+            }
         )
     }
 
     @Test
     fun testEvalWithError() {
-        chechEvaluateInRepl(
-            simpleScriptompilationConfiguration,
-            simpleScriptEvaluationConfiguration,
+        checkEvaluateInRepl(
             sequenceOf(
                 "throw RuntimeException(\"abc\")",
                 "val x = 3",
@@ -102,12 +95,54 @@ class ReplTest : TestCase() {
             sequenceOf(RuntimeException("abc"), null, 4)
         )
     }
+
+    @Test
+    fun testSyntaxErrors() {
+        checkEvaluateInReplDiags(
+            sequenceOf(
+                "data class Q(val x: Int, val: String)",
+                "fun g(): Unit { return }}",
+                "fun f() : Int { return 1",
+                "6*7"
+            ),
+            sequenceOf(
+                makeFailureResult("Parameter name expected"),
+                makeFailureResult("Unexpected symbol"),
+                makeFailureResult("Expecting '}'"),
+                42.asSuccess()
+            )
+        )
+    }
+
+    @Test
+    fun testLongEval() {
+        checkEvaluateInRepl(
+            sequence {
+                var count = 0
+                while (true) {
+                    val prev = if (count == 0) "0" else "obj${count - 1}.prop${count - 1} + $count"
+                    yield("object obj$count { val prop$count = $prev }; $prev")
+                    count++
+                }
+            },
+            sequence {
+                var acc = 0
+                var count = 0
+                while (true) {
+                    yield(acc)
+                    acc += ++count
+                }
+            },
+            limit = 100
+        )
+    }
 }
 
 fun evaluateInRepl(
-    compilationConfiguration: ScriptCompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration?,
-    snippets: Sequence<String>
+    snippets: Sequence<String>,
+    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
+    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+    limit: Int = 0
 ): Sequence<ResultWithDiagnostics<EvaluationResult>> {
     val replCompilerProxy =
         KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
@@ -115,7 +150,8 @@ fun evaluateInRepl(
     val compilationHistory = BasicReplStageHistory<ScriptDescriptor>()
     val replEvaluator = BasicJvmScriptEvaluator()
     var currentEvalConfig = evaluationConfiguration ?: ScriptEvaluationConfiguration()
-    return snippets.mapIndexed { snippetNo, snippetText ->
+    val snipetsLimited = if (limit == 0) snippets else snippets.take(limit)
+    return snipetsLimited.mapIndexed { snippetNo, snippetText ->
         val snippetSource = snippetText.toScriptSource("Line_$snippetNo.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}")
         val snippetId = ReplSnippetIdImpl(snippetNo, 0, snippetSource)
         replCompilerProxy.compileReplSnippet(compilationState, snippetSource, snippetId, compilationHistory)
@@ -139,18 +175,25 @@ fun evaluateInRepl(
     }
 }
 
-fun chechEvaluateInRepl(
-    compilationConfiguration: ScriptCompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration?,
+fun checkEvaluateInReplDiags(
     snippets: Sequence<String>,
-    expected: Sequence<Any?>
+    expected: Sequence<ResultWithDiagnostics<Any?>>,
+    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
+    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+    limit: Int = 0
 ) {
-    val expectedIter = expected.iterator()
-    evaluateInRepl(compilationConfiguration, evaluationConfiguration, snippets).forEachIndexed { index, res ->
-        when (res) {
-            is ResultWithDiagnostics.Failure -> Assert.fail("#$index: Expected result, got $res")
-            is ResultWithDiagnostics.Success -> {
-                val expectedVal = expectedIter.next()
+    val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
+    evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
+        val expectedRes = expectedIter.next()
+        when {
+            res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
+                Assert.assertTrue(
+                    "#$index: Expected $expectedRes, got $res",
+                    res.reports.map { it.message } == expectedRes.reports.map { it.message }
+                )
+            }
+            res is ResultWithDiagnostics.Success && expectedRes is ResultWithDiagnostics.Success -> {
+                val expectedVal = expectedRes.value
                 when (val resVal = res.value.returnValue) {
                     is ResultValue.Value -> Assert.assertEquals(
                         "#$index: Expected $expectedVal, got $resVal",
@@ -165,8 +208,24 @@ fun chechEvaluateInRepl(
                     else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $resVal", expectedVal == null)
                 }
             }
+            else -> {
+                Assert.fail("#$index: Expected $expectedRes, got $res")
+            }
         }
     }
+    if (expectedIter.hasNext()) {
+        Assert.fail("Expected ${expectedIter.next()} got end of results stream")
+    }
 }
+
+fun checkEvaluateInRepl(
+    snippets: Sequence<String>,
+    expected: Sequence<Any?>,
+    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
+    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+    limit: Int = 0
+) = checkEvaluateInReplDiags(
+    snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit
+)
 
 class TestReceiver(val prop1: Int = 3)

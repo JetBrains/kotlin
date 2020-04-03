@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
           $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
   PROPERTY name:test3 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun qux (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'public final fun qux (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
           $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]

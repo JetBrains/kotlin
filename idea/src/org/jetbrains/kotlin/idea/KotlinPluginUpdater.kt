@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.ide.plugins.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.*
@@ -89,7 +90,10 @@ sealed class PluginUpdateStatus {
 class KotlinPluginUpdater : Disposable {
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
-    private val notificationGroup = NotificationGroup("Kotlin plugin updates", NotificationDisplayType.STICKY_BALLOON, true)
+    private val notificationGroup = NotificationGroup(
+        KotlinBundle.message("plugin.updater.notification.group"),
+        NotificationDisplayType.STICKY_BALLOON, true
+    )
 
     @Volatile
     private var checkQueued = false
@@ -155,7 +159,7 @@ class KotlinPluginUpdater : Disposable {
                     updateStatus = updateStatus.mergeWith(customUpdateStatus)
                 }
             } catch (e: Exception) {
-                updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
+                updateStatus = PluginUpdateStatus.fromException(KotlinBundle.message("plugin.updater.error.check.failed"), e)
             }
         }
 
@@ -176,7 +180,7 @@ class KotlinPluginUpdater : Disposable {
     }
 
     private fun initPluginDescriptor(newVersion: String): IdeaPluginDescriptor {
-        val originalPlugin = PluginManager.getPlugin(KotlinPluginUtil.KOTLIN_PLUGIN_ID)!!
+        val originalPlugin = PluginManagerCore.getPlugin(KotlinPluginUtil.KOTLIN_PLUGIN_ID)!!
         return PluginNode(KotlinPluginUtil.KOTLIN_PLUGIN_ID).apply {
             version = newVersion
             name = originalPlugin.name
@@ -196,7 +200,10 @@ class KotlinPluginUpdater : Disposable {
             JDOMUtil.load(it.inputStream)
         }
         if (responseDoc.name != "plugin-repository") {
-            return PluginUpdateStatus.CheckFailed("Unexpected plugin repository response", JDOMUtil.writeElement(responseDoc, "\n"))
+            return PluginUpdateStatus.CheckFailed(
+                KotlinBundle.message("plugin.updater.error.unexpected.repository.response"),
+                JDOMUtil.writeElement(responseDoc, "\n")
+            )
         }
         if (responseDoc.children.isEmpty()) {
             // No plugin version compatible with current IDEA build; don't retry updates
@@ -204,7 +211,7 @@ class KotlinPluginUpdater : Disposable {
         }
         val newVersion = responseDoc.getChild("category")?.getChild("idea-plugin")?.getChild("version")?.text
             ?: return PluginUpdateStatus.CheckFailed(
-                "Couldn't find plugin version in repository response",
+                KotlinBundle.message("plugin.updater.error.cant.find.plugin.version"),
                 JDOMUtil.writeElement(responseDoc, "\n")
             )
         val pluginDescriptor = initPluginDescriptor(newVersion)
@@ -215,7 +222,7 @@ class KotlinPluginUpdater : Disposable {
         val plugins = try {
             RepositoryHelper.loadPlugins(host, null)
         } catch (e: Exception) {
-            return PluginUpdateStatus.fromException("Checking custom plugin repository $host failed", e)
+            return PluginUpdateStatus.fromException(KotlinBundle.message("plugin.updater.error.custom.repository", host), e)
         }
 
         val kotlinPlugin = plugins.find { pluginDescriptor ->
@@ -240,15 +247,15 @@ class KotlinPluginUpdater : Disposable {
 
     private fun notifyPluginUpdateAvailable(update: PluginUpdateStatus.Update) {
         val notification = notificationGroup.createNotification(
-            "Kotlin",
-            "A new version ${update.pluginDescriptor.version} of the Kotlin plugin is available. <b><a href=\"#\">Install</a></b>",
-            NotificationType.INFORMATION
-        ) { notification, _ ->
-            notification.expire()
-            installPluginUpdate(update) {
-                notifyPluginUpdateAvailable(update)
-            }
-        }
+            KotlinBundle.message("plugin.updater.notification.title"),
+            KotlinBundle.message("plugin.updater.notification.message", update.pluginDescriptor.version),
+            NotificationType.INFORMATION,
+            NotificationListener { notification, _ ->
+                notification.expire()
+                installPluginUpdate(update) {
+                    notifyPluginUpdateAvailable(update)
+                }
+            })
 
         notification.notify(null)
     }
@@ -260,7 +267,7 @@ class KotlinPluginUpdater : Disposable {
         val descriptor = update.pluginDescriptor
         val pluginDownloader = PluginDownloader.createDownloader(descriptor, update.hostToInstallFrom, null)
         ProgressManager.getInstance().run(object : Task.Backgroundable(
-            null, "Downloading plugins", true, PluginManagerUISettings.getInstance()
+            null, KotlinBundle.message("plugin.updater.downloading"), true, PluginManagerUISettings.getInstance()
         ) {
             override fun run(indicator: ProgressIndicator) {
                 var installed = false
@@ -299,17 +306,20 @@ class KotlinPluginUpdater : Disposable {
     }
 
     private fun notifyNotInstalled(message: String?) {
-        val fullMessage = message?.let { ": $it" } ?: ""
         val notification = notificationGroup.createNotification(
-            "Kotlin",
-            "Plugin update was not installed$fullMessage. <a href=\"#\">See the log for more information</a>",
-            NotificationType.INFORMATION
-        ) { notification, _ ->
-            val logFile = File(PathManager.getLogPath(), "idea.log")
-            ShowFilePathAction.openFile(logFile)
+            KotlinBundle.message("plugin.updater.notification.title"),
+            when (message) {
+                null -> KotlinBundle.message("plugin.updater.not.installed")
+                else -> KotlinBundle.message("plugin.updater.not.installed.misc", message)
+            },
+            NotificationType.INFORMATION,
+            NotificationListener { notification, _ ->
+                val logFile = File(PathManager.getLogPath(), "idea.log")
+                RevealFileAction.openFile(logFile)
 
-            notification.expire()
-        }
+                notification.expire()
+            }
+        )
 
         notification.notify(null)
     }

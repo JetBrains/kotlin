@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -260,6 +260,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/javaStaticMethods.kt");
         }
 
+        @TestMetadata("kClass.kt")
+        public void testKClass() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kClass.kt");
+        }
+
         @TestMetadata("kt12206BasePropertyWithoutBackingField.kt")
         public void testKt12206BasePropertyWithoutBackingField() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
@@ -348,6 +353,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("nestedInlineArguments.kt")
         public void testNestedInlineArguments() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/nestedInlineArguments.kt");
+        }
+
+        @TestMetadata("nonAssignmentLValue.kt")
+        public void testNonAssignmentLValue() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/nonAssignmentLValue.kt");
         }
 
         @TestMetadata("nothing.kt")
@@ -902,6 +912,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("inlineFunThisKotlinVariables.kt")
             public void testInlineFunThisKotlinVariables() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/inlineFunThisKotlinVariables.kt");
+            }
+
+            @TestMetadata("lambdaAsValueArgument.kt")
+            public void testLambdaAsValueArgument() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/lambdaAsValueArgument.kt");
             }
 
             @TestMetadata("lambdaFun1.kt")

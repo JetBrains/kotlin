@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -88,6 +88,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("CoroutineContext.kt")
         public void testCoroutineContext() throws Exception {
             runTest("idea/idea-completion/testData/basic/common/CoroutineContext.kt");
+        }
+
+        @TestMetadata("CoroutineContextReleaseCoroutines.kt")
+        public void testCoroutineContextReleaseCoroutines() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/CoroutineContextReleaseCoroutines.kt");
         }
 
         @TestMetadata("DataClassMembers.kt")
@@ -1250,6 +1255,21 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiver.kt");
             }
 
+            @TestMetadata("CompanionObjectExplicitReceiverInfixExtension.kt")
+            public void testCompanionObjectExplicitReceiverInfixExtension() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiverInfixExtension.kt");
+            }
+
+            @TestMetadata("CompanionObjectExplicitReceiverNoPrefix.kt")
+            public void testCompanionObjectExplicitReceiverNoPrefix() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiverNoPrefix.kt");
+            }
+
+            @TestMetadata("CompanionObjectExplicitReceiverSafeAccess.kt")
+            public void testCompanionObjectExplicitReceiverSafeAccess() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiverSafeAccess.kt");
+            }
+
             @TestMetadata("CompanionObjectImplicitReceiver.kt")
             public void testCompanionObjectImplicitReceiver() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectImplicitReceiver.kt");
@@ -1792,6 +1812,21 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("InParameterExpression.kt")
             public void testInParameterExpression() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/namedArguments/InParameterExpression.kt");
+            }
+
+            @TestMetadata("NamedArgumentOnIncorrectPosition.kt")
+            public void testNamedArgumentOnIncorrectPosition() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentOnIncorrectPosition.kt");
+            }
+
+            @TestMetadata("NamedArgumentOnItsOwnPosition.kt")
+            public void testNamedArgumentOnItsOwnPosition() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentOnItsOwnPosition.kt");
+            }
+
+            @TestMetadata("NamedArgumentOnItsOwnPosition2.kt")
+            public void testNamedArgumentOnItsOwnPosition2() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentOnItsOwnPosition2.kt");
             }
 
             @TestMetadata("NamedArgumentsFromOverloads.kt")

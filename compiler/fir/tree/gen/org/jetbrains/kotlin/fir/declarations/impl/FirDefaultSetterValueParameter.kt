@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,27 +23,27 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirDefaultSetterValueParameter(
+internal class FirDefaultSetterValueParameter(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
-    override val symbol: FirVariableSymbol<FirValueParameter>
-) : FirValueParameter(), FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override var receiverTypeRef: FirTypeRef? = null
+    override var receiverTypeRef: FirTypeRef?,
+    override val symbol: FirVariableSymbol<FirValueParameter>,
+    override var initializer: FirExpression?,
+    override var delegate: FirExpression?,
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?,
+    override val isVar: Boolean,
+    override val isVal: Boolean,
+    override var getter: FirPropertyAccessor?,
+    override var setter: FirPropertyAccessor?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var defaultValue: FirExpression?,
+    override val isCrossinline: Boolean,
+    override val isNoinline: Boolean,
+    override val isVararg: Boolean,
+) : FirValueParameter() {
     override val name: Name = Name.identifier("value")
-    override var initializer: FirExpression? = null
-    override var delegate: FirExpression? = null
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>? = null
-    override val isVar: Boolean = false
-    override val isVal: Boolean = true
-    override var getter: FirPropertyAccessor? = null
-    override var setter: FirPropertyAccessor? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var defaultValue: FirExpression? = null
-    override val isCrossinline: Boolean = false
-    override val isNoinline: Boolean = false
-    override val isVararg: Boolean = false
 
     init {
         symbol.bind(this)
@@ -66,6 +65,7 @@ class FirDefaultSetterValueParameter(
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         transformInitializer(transformer, data)
+        transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
         transformOtherChildren(transformer, data)
@@ -87,6 +87,11 @@ class FirDefaultSetterValueParameter(
         return this
     }
 
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        delegate = delegate?.transformSingle(transformer, data)
+        return this
+    }
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         getter = getter?.transformSingle(transformer, data)
         return this
@@ -97,9 +102,13 @@ class FirDefaultSetterValueParameter(
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        delegate = delegate?.transformSingle(transformer, data)
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        transformAnnotations(transformer, data)
         defaultValue = defaultValue?.transformSingle(transformer, data)
         return this
     }
@@ -110,5 +119,9 @@ class FirDefaultSetterValueParameter(
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
+    }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        receiverTypeRef = newReceiverTypeRef
     }
 }

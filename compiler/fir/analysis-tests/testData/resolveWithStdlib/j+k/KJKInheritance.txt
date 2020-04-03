@@ -1,0 +1,22 @@
+FILE: K1.kt
+    public open class KFirst : R|kotlin/Any| {
+        public constructor(): R|KFirst| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: K2.kt
+    public final class K2 : R|J1| {
+        public constructor(): R|K2| {
+            super<R|J1|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            this@R|/K2|.R|/KFirst.foo|()
+            this@R|/K2|.R|/J1.baz|()
+        }
+
+    }

@@ -118,28 +118,29 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
     }
 
-    protected fun endCall(result: InlineResult) {
+    protected fun endCall(result: InlineResult, registerLineNumberAfterwards: Boolean) {
         leaveTemps()
 
         codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
 
         state.factory.removeClasses(result.calcClassesToRemove())
 
-        codegen.markLineNumberAfterInlineIfNeeded()
+        codegen.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
     }
 
     fun performInline(
         typeArguments: List<TypeParameterMarker>?,
         inlineDefaultLambdas: Boolean,
         mapDefaultSignature: Boolean,
-        typeSystem: TypeSystemCommonBackendContext
+        typeSystem: TypeSystemCommonBackendContext,
+        registerLineNumberAfterwards: Boolean
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = createInlineMethodNode(
                 functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
             )
-            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas))
+            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {
@@ -149,12 +150,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    @Suppress("UNREACHABLE_CODE")
     private fun canSkipStackSpillingOnInline(methodNode: MethodNode): Boolean {
-        // TODO: Temporary disable this optimization until
-        // https://issuetracker.google.com/issues/68796377 is fixed
-        // or until d8 substitute dex
-        return false
         // Stack spilling before inline function 'f' call is required if:
         //  - 'f' is a suspend function
         //  - 'f' has try-catch blocks
@@ -237,7 +233,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
             "Method inlining " + sourceCompiler.callElementText,
-            createNestedSourceMapper(nodeAndSmap, defaultSourceMapper), info.callSiteInfo,
+            NestedSourceMapper(defaultSourceMapper, nodeAndSmap.classSMAP), info.callSiteInfo,
             if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
@@ -395,7 +391,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
                 info.functionalArgument = when (kind) {
                     ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
-                        NonInlineableArgumentForInlineableParameterCalledInSuspend(kotlinType?.isSuspendFunctionTypeOrSubtype == true)
+                        NonInlineableArgumentForInlineableParameterCalledInSuspend
                     ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER -> NonInlineableArgumentForInlineableSuspendParameter
                     else -> null
                 }
@@ -580,7 +576,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 result ?: throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
             }
 
-            return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.node))
+            return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
         }
 
         private fun createDefaultFakeSMAP() = SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
@@ -707,11 +703,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 result.add(FIRST_FUN_LABEL)
             }
             return result
-        }
-
-
-        fun createNestedSourceMapper(nodeAndSmap: SMAPAndMethodNode, parent: SourceMapper): SourceMapper {
-            return NestedSourceMapper(parent, nodeAndSmap.sortedRanges, nodeAndSmap.classSMAP.sourceInfo)
         }
     }
 

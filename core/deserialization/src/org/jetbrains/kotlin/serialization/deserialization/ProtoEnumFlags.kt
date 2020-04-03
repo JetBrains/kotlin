@@ -108,4 +108,10 @@ object ProtoEnumFlags {
         ProtoBuf.Type.Argument.Projection.STAR ->
             throw IllegalArgumentException("Only IN, OUT and INV are supported. Actual argument: $projection")
     }
+
+    fun variance(variance: Variance) = when (variance) {
+        Variance.IN_VARIANCE -> TypeParameter.Variance.IN
+        Variance.OUT_VARIANCE -> TypeParameter.Variance.OUT
+        Variance.INVARIANT -> TypeParameter.Variance.INV
+    }
 }

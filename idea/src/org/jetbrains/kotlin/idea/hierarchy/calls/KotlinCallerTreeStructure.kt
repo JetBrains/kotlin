@@ -9,7 +9,6 @@ import com.intellij.find.findUsages.JavaFindUsagesOptions
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor
-import com.intellij.ide.hierarchy.call.CallerMethodsTreeStructure
 import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
@@ -66,7 +65,7 @@ class KotlinCallerTreeStructure(
     ): Collection<Any> {
         if (nodeDescriptor is CallHierarchyNodeDescriptor) {
             val psiMethod = nodeDescriptor.enclosingElement as? PsiMethod ?: return emptyList()
-            return CallerMethodsTreeStructure(myProject, psiMethod, scopeType).getChildElements(nodeDescriptor).toList()
+            return createCallerMethodsTreeStructure(myProject, psiMethod, scopeType).getChildElements(nodeDescriptor).toList()
         }
 
         if (element !is KtDeclaration) return emptyList()

@@ -14,5 +14,5 @@ fun <T : String?> foo(x: T) {
     bar2(x)
 
     <!INAPPLICABLE_CANDIDATE!>bar3<!>(x)
-    bar4(x)
+    <!INAPPLICABLE_CANDIDATE!>bar4<!>(x)
 }

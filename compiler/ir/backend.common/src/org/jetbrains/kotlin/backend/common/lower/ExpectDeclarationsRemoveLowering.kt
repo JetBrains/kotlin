@@ -6,20 +6,22 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.*
 
 /**
  * This pass removes all declarations with `isExpect == true`.
  */
-class ExpectDeclarationsRemoveLowering(val context: BackendContext, keepOptionalAnnotations: Boolean = false) : FileLoweringPass {
+class ExpectDeclarationsRemoveLowering(context: BackendContext, keepOptionalAnnotations: Boolean = false) : DeclarationTransformer {
 
-    val visitor = ExpectDeclarationRemover(context.ir.symbols.externalSymbolTable, doRemove = true, keepOptionalAnnotations)
+    private val remover = ExpectDeclarationRemover(
+        symbolTable = context.ir.symbols.externalSymbolTable,
+        doRemove = true,
+        keepOptionalAnnotations = keepOptionalAnnotations
+    )
 
-    override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(visitor)
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        return remover.transformFlat(declaration)
     }
 }

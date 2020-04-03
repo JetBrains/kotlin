@@ -1,0 +1,98 @@
+digraph annotatedLocalClass_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        2 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    0 -> {2};
+    2 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        3 [label="Enter class Ann" style="filled" fillcolor=red];
+        4 [label="Exit class Ann" style="filled" fillcolor=red];
+    }
+    3 -> {4} [color=green];
+
+    subgraph cluster_2 {
+        color=red
+        5 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            7 [label="Enter when"];
+            subgraph cluster_4 {
+                color=blue
+                9 [label="Enter when branch condition "];
+                10 [label="Access variable R|<local>/b|"];
+                11 [label="Exit when branch condition"];
+            }
+            18 [label="Synthetic else branch"];
+            12 [label="Enter when branch result"];
+            subgraph cluster_5 {
+                color=blue
+                13 [label="Enter block"];
+                14 [label="Jump: ^foo Unit"];
+                15 [label="Stub" style="filled" fillcolor=gray];
+                16 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            17 [label="Exit when branch result" style="filled" fillcolor=gray];
+            8 [label="Exit when"];
+        }
+        subgraph cluster_6 {
+            color=blue
+            19 [label="Enter annotation"];
+            20 [label="Exit annotation"];
+        }
+        21 [label="Exit local class foo"];
+        22 [label="Function call: R|/bar|()"];
+        6 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    5 -> {7};
+    7 -> {9};
+    8 -> {19};
+    9 -> {10};
+    10 -> {11};
+    11 -> {12 18};
+    12 -> {13};
+    13 -> {14};
+    14 -> {6};
+    14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
+    16 -> {17} [style=dotted];
+    17 -> {8} [style=dotted];
+    18 -> {8};
+    19 -> {20};
+    20 -> {21};
+    20 -> {23} [color=red];
+    21 -> {22};
+    22 -> {6};
+
+    subgraph cluster_7 {
+        color=red
+        23 [label="Enter function <init>" style="filled" fillcolor=red];
+        25 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        24 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    23 -> {25};
+    25 -> {24};
+
+    subgraph cluster_8 {
+        color=red
+        26 [label="Enter class Local" style="filled" fillcolor=red];
+        27 [label="Exit class Local" style="filled" fillcolor=red];
+    }
+    26 -> {27} [color=green];
+
+    subgraph cluster_9 {
+        color=red
+        28 [label="Enter function bar" style="filled" fillcolor=red];
+        29 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+    28 -> {29};
+
+}

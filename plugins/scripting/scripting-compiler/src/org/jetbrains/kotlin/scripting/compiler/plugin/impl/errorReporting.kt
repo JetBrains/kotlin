@@ -44,7 +44,7 @@ internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollec
                     )
                 )
             }
-            _diagnostics.add(ScriptDiagnostic(message, mappedSeverity, location?.path, mappedLocation))
+            _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
         }
         parentMessageCollector?.report(severity, message, location)
     }
@@ -99,7 +99,7 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::commonSources,
         K2JVMCompilerArguments::allWarningsAsErrors,
         K2JVMCompilerArguments::script,
-        K2JVMCompilerArguments::expressions,
+        K2JVMCompilerArguments::expression,
         K2JVMCompilerArguments::scriptTemplates,
         K2JVMCompilerArguments::scriptResolverEnvironment,
         K2JVMCompilerArguments::disableStandardScript,

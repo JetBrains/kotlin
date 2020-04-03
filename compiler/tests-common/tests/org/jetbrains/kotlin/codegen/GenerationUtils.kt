@@ -24,10 +24,12 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -36,17 +38,25 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 
 object GenerationUtils {
@@ -81,7 +91,7 @@ object GenerationUtils {
     ): GenerationState {
         val project = files.first().project
         val state = if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
+            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
         } else {
             compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
         }
@@ -101,7 +111,8 @@ object GenerationUtils {
         files: List<KtFile>,
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        trace: BindingTrace
     ): GenerationState {
         Extensions.getArea(project)
             .getExtensionPoint(PsiElementFinder.EP_NAME)
@@ -112,11 +123,12 @@ object GenerationUtils {
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSession(project, scope, librariesScope, "main", packagePartProvider)
 
-        val builder = RawFirBuilder(session, stubMode = false)
+        val firProvider = (session.firProvider as FirProviderImpl)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
         val resolveTransformer = FirTotalResolveTransformer()
         val firFiles = files.map {
             val firFile = builder.buildFirFile(it)
-            (session.firProvider as FirProviderImpl).recordFile(firFile)
+            firProvider.recordFile(firFile)
             firFile
         }.also {
             try {
@@ -125,17 +137,26 @@ object GenerationUtils {
                 throw e
             }
         }
-        val (moduleFragment, symbolTable, sourceManager) =
-            Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings)
+        val (moduleFragment, symbolTable, sourceManager, components) =
+            Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings, signaturer = IdSignatureDescriptor(
+                JvmManglerDesc()))
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+
+        // Create and initialize the test module and its dependencies
+        val container = TopDownAnalyzerFacadeForJVM.createContainer(
+            project, files, trace, configuration, packagePartProvider, ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
+            TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, files), emptyList()
+        )
         val generationState = GenerationState.Builder(
-            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, files, configuration
+            project, classBuilderFactory, container.get<ModuleDescriptor>(), dummyBindingContext, files, configuration
         ).codegenFactory(
             codegenFactory
         ).isIrBackend(
             true
+        ).jvmBackendClassResolver(
+            FirJvmBackendClassResolver(components)
         ).build()
 
         generationState.beforeCompile()
@@ -152,8 +173,17 @@ object GenerationUtils {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace
     ): GenerationState {
+        val logger = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.let { messageCollectorLogger(it) }
+            ?: DummyLogger
+        val resolvedKlibs = configuration.get(JVMConfigurationKeys.KLIB_PATHS)?.let { klibPaths ->
+            jvmResolveLibraries(klibPaths, logger)
+        }
+
         val analysisResult =
-            JvmResolveUtil.analyzeAndCheckForErrors(project, files, configuration, packagePartProvider, trace)
+            JvmResolveUtil.analyzeAndCheckForErrors(
+                project, files, configuration, packagePartProvider, trace,
+                klibList = resolvedKlibs?.getFullList() ?: emptyList()
+            )
         analysisResult.throwIfError()
 
         /* Currently Kapt3 only works with the old JVM backend, so disable IR for everything except actual bytecode generation. */

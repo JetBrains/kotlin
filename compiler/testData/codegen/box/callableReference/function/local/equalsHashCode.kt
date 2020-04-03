@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_IR
 
 fun box(): String {
     fun bar() {}

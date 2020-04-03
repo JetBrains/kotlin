@@ -1,5 +1,5 @@
 package test
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 data class Modifiers(val x: Int) {
     external fun extFun()

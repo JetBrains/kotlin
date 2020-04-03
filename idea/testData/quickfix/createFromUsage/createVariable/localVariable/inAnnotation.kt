@@ -1,6 +1,7 @@
 // "Create local variable 'defaultPreferencesName'" "false"
 // ACTION: Create parameter 'defaultPreferencesName'
 // ACTION: Create property 'defaultPreferencesName'
+// ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Rename reference
 // ERROR: Unresolved reference: defaultPreferencesName
 // ERROR: Default value of annotation parameter must be a compile-time constant

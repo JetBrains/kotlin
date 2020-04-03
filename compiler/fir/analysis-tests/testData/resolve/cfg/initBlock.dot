@@ -1,0 +1,85 @@
+digraph initBlock_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        2 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    0 -> {2};
+    2 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        9 [label="Enter class Foo" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_3 {
+                color=blue
+                5 [label="Enter block"];
+                6 [label="Const: Int(1)"];
+                7 [label="Variable declaration: lval x: R|kotlin/Int|"];
+                8 [label="Exit block"];
+            }
+            4 [label="Exit init block" style="filled" fillcolor=red];
+        }
+        10 [label="Exit class Foo" style="filled" fillcolor=red];
+    }
+    9 -> {3} [color=green];
+    3 -> {5};
+    4 -> {10} [color=green];
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {4};
+
+    subgraph cluster_4 {
+        color=red
+        11 [label="Enter function <init>" style="filled" fillcolor=red];
+        13 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        12 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    11 -> {13};
+    13 -> {12};
+
+    subgraph cluster_5 {
+        color=red
+        25 [label="Enter class Bar" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            14 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_7 {
+                color=blue
+                16 [label="Enter block"];
+                17 [label="Const: Int(1)"];
+                18 [label="Variable declaration: lval x: R|kotlin/Int|"];
+                19 [label="Function call: R|java/lang/Exception.Exception|()"];
+                20 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                21 [label="Stub" style="filled" fillcolor=gray];
+                22 [label="Const: Int(2)" style="filled" fillcolor=gray];
+                23 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
+                24 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            15 [label="Exit init block" style="filled" fillcolor=red];
+        }
+        26 [label="Exit class Bar" style="filled" fillcolor=red];
+    }
+    25 -> {14} [color=green];
+    14 -> {16};
+    15 -> {26} [color=green];
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {15};
+    20 -> {21} [style=dotted];
+    21 -> {22} [style=dotted];
+    22 -> {23} [style=dotted];
+    23 -> {24} [style=dotted];
+    24 -> {15} [style=dotted];
+
+}

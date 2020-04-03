@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -166,7 +168,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
     }
 
     fun testAddKotlinReflect() {
-        configureRuntime("mockRuntime11")
+        configureRuntime("actualRuntime")
         myFixture.configureByText(
             "foo.kt", """class Foo(val prop: Any) {
                 fun func() {}
@@ -175,7 +177,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
             fun y01() = Foo::prop.gett<caret>er
             """
         )
-        myFixture.launchAction(myFixture.findSingleIntention("Add kotlin-reflect.jar to the classpath"))
+        myFixture.launchAction(myFixture.findSingleIntention("Add 'kotlin-reflect.jar' to the classpath"))
         val kotlinRuntime = KotlinJavaModuleConfigurator.instance.getKotlinLibrary(module)!!
         val classes = kotlinRuntime.getFiles(OrderRootType.CLASSES).map { it.name }
         assertContainsElements(classes, "kotlin-reflect.jar")
@@ -185,9 +187,13 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     private fun configureRuntime(path: String) {
         val name = if (path == "mockRuntime106") "kotlin-runtime.jar" else "kotlin-stdlib.jar"
+        val sourcePath = when (path) {
+            "actualRuntime" -> PathUtil.kotlinPathsForIdeaPlugin.jar(KotlinPaths.Jar.StdLib)
+            else -> File("idea/testData/configuration/$path/$name")
+        }
         val tempFile = File(FileUtil.createTempDirectory("kotlin-update-configuration", null), name)
-        FileUtil.copy(File("idea/testData/configuration/$path/$name"), tempFile)
-        val tempVFile = LocalFileSystem.getInstance().findFileByIoFile(tempFile)!!
+        FileUtil.copy(sourcePath, tempFile)
+        val tempVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tempFile) ?: error("Can't find file: $tempFile")
 
         updateModel(myFixture.module) { model ->
             val editor = NewLibraryEditor()
@@ -217,7 +223,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
         get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.InlineClasses)
 
     override fun tearDown() {
-        resetProjectSettings(LanguageVersion.KOTLIN_1_3)
+        resetProjectSettings(LanguageVersion.LATEST_STABLE)
         FacetManager.getInstance(module).getFacetByType(KotlinFacetType.TYPE_ID)?.let {
             FacetUtil.deleteFacet(it)
         }

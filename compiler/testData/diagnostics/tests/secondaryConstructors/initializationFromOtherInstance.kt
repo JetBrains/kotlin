@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     val x: Int
     val y: Int

@@ -6,7 +6,7 @@ fun foo() {
     bar(if (x == null) 0 else x)
 
     if (x == null) {
-        bar(x)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
         return
     } else {
         bar(x)
@@ -17,14 +17,14 @@ fun foo() {
     if (y is Int) {
         bar(y)
     } else {
-        bar(y)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(y)
         return
     }
     bar(y)
 
     val z: Int? = null
     if (z != null) bar(z)
-    bar(z)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(z)
     bar(z!!)
     if (z != null) bar(z!!)
 }

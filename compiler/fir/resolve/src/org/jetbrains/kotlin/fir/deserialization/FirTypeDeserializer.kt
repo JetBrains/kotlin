@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.resolve.toTypeProjection
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -17,11 +19,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -35,6 +38,51 @@ class FirTypeDeserializer(
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     val parent: FirTypeDeserializer?
 ) {
+    private val typeParameterDescriptors: Map<Int, FirTypeParameterSymbol> = if (typeParameterProtos.isNotEmpty()) {
+        LinkedHashMap<Int, FirTypeParameterSymbol>()
+    } else {
+        mapOf()
+    }
+
+    private val typeParameterNames: Map<String, FirTypeParameterSymbol>
+
+    val ownTypeParameters: List<FirTypeParameterSymbol>
+        get() = typeParameterDescriptors.values.toList()
+
+    init {
+        if (typeParameterProtos.isNotEmpty()) {
+            typeParameterNames = mutableMapOf()
+            val result = typeParameterDescriptors as LinkedHashMap<Int, FirTypeParameterSymbol>
+            val builders = mutableListOf<FirTypeParameterBuilder>()
+            for (proto in typeParameterProtos) {
+                if (!proto.hasId()) continue
+                val name = nameResolver.getName(proto.name)
+                val symbol = FirTypeParameterSymbol().also {
+                    typeParameterNames[name.asString()] = it
+                }
+                builders += FirTypeParameterBuilder().apply {
+                    session = this@FirTypeDeserializer.session
+                    this.name = name
+                    this.symbol = symbol
+                    variance = proto.variance.convertVariance()
+                    isReified = proto.reified
+                }
+                result[proto.id] = symbol
+            }
+
+            for ((index, proto) in typeParameterProtos.withIndex()) {
+                val builder = builders[index]
+                builder.apply {
+                    proto.upperBoundList.mapTo(bounds) {
+                        buildResolvedTypeRef { type = type(it) }
+                    }
+                    addDefaultBoundIfNecessary()
+                }.build()
+            }
+        } else {
+            typeParameterNames = emptyMap()
+        }
+    }
 
     private fun computeClassifier(fqNameIndex: Int): ConeClassLikeLookupTag? {
         try {
@@ -47,7 +95,6 @@ class FirTypeDeserializer(
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
-            val id = nameResolver.getString(proto.flexibleTypeCapabilitiesId)
             val lowerBound = simpleType(proto)
             val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!)
             return ConeFlexibleType(lowerBound!!, upperBound!!)
@@ -56,7 +103,6 @@ class FirTypeDeserializer(
 
         return simpleType(proto) ?: ConeKotlinErrorType("?!id:0")
     }
-
 
     private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =
         typeParameterDescriptors[typeParameterId]?.toLookupTag() ?: parent?.typeParameterSymbol(typeParameterId)
@@ -69,46 +115,6 @@ class FirTypeDeserializer(
             ProtoBuf.TypeParameter.Variance.INV -> Variance.INVARIANT
         }
     }
-
-    private val typeParameterDescriptors: Map<Int, FirTypeParameterSymbol> =
-        if (typeParameterProtos.isEmpty()) {
-            mapOf()
-        } else {
-            val result = LinkedHashMap<Int, FirTypeParameterSymbol>()
-            for ((index, proto) in typeParameterProtos.withIndex()) {
-                if (!proto.hasId()) continue
-                val name = nameResolver.getName(proto.name)
-                val symbol = FirTypeParameterSymbol()
-                FirTypeParameterImpl(
-                    null,
-                    session,
-                    name,
-                    symbol,
-                    proto.variance.convertVariance(),
-                    proto.reified
-                )
-                result[proto.id] = symbol
-            }
-            result
-        }
-
-
-    init {
-        for ((index, proto) in typeParameterProtos.withIndex()) {
-            if (!proto.hasId()) continue
-            val symbol = typeParameterDescriptors[proto.id]!!
-            val declaration = symbol.fir as FirTypeParameterImpl
-            declaration.apply {
-                proto.upperBoundList.mapTo(bounds) {
-                    FirResolvedTypeRefImpl(null, type(it))
-                }
-                addDefaultBoundIfNecessary()
-            }
-        }
-    }
-
-    val ownTypeParameters: List<FirTypeParameterSymbol>
-        get() = typeParameterDescriptors.values.toList()
 
 
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
@@ -126,16 +132,72 @@ class FirTypeDeserializer(
         val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
-            //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
-            ConeClassErrorType("createSuspendFunctionType not supported")
+            createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable)
         } else {
             ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable)
         }
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
 
-        return ConeClassLikeTypeImpl(typeSymbol(abbreviatedTypeProto) as ConeClassLikeLookupTag, arguments, isNullable = false)
+        return simpleType(abbreviatedTypeProto)
 
+    }
+
+    private fun createSuspendFunctionTypeForBasicCase(
+        //annotations: Annotations, TODO?,
+        functionTypeConstructor: ConeClassLikeLookupTag,
+        arguments: Array<ConeTypeProjection>,
+        isNullable: Boolean
+    ): ConeClassLikeType? {
+        fun ConeClassLikeType.isContinuation(): Boolean {
+            if (this.typeArguments.size != 1) return false
+            if (this.lookupTag.classId != CONTINUATION_INTERFACE_CLASS_ID) return false
+            return true
+        }
+
+        val returnType = arguments.lastOrNull()
+        val continuationType = arguments.getOrNull(arguments.lastIndex - 1) as? ConeClassLikeType ?: return null
+
+        if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable)
+
+        val suspendReturnType = continuationType.typeArguments.single() as ConeKotlinTypeProjection
+
+        val valueParameters = arguments.dropLast(2)
+
+        val kind = FunctionClassDescriptor.Kind.SuspendFunction
+        return ConeClassLikeTypeImpl(
+            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size))),
+            (valueParameters + suspendReturnType).toTypedArray(),
+            isNullable
+        )
+    }
+
+    private fun createSuspendFunctionType(
+        //annotations: Annotations, TODO?
+        functionTypeConstructor: ConeClassLikeLookupTag,
+        arguments: Array<ConeTypeProjection>,
+        isNullable: Boolean
+    ): ConeClassLikeType {
+        val result =
+            when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParametersOwner>().typeParameters.size - arguments.size) {
+                0 -> createSuspendFunctionTypeForBasicCase(/* annotations, */ functionTypeConstructor, arguments, isNullable)
+//                 This case for types written by eap compiler 1.1
+                1 -> {
+                    val arity = arguments.size - 1
+                    if (arity >= 0) {
+                        val kind = FunctionClassDescriptor.Kind.SuspendFunction
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(arity))),
+                            arguments,
+                            isNullable
+                        )
+                    } else {
+                        null
+                    }
+                }
+                else -> null
+            }
+        return result ?: ConeClassErrorType("Bad suspend function in metadata with constructor: $functionTypeConstructor")
     }
 
     private fun typeSymbol(proto: ProtoBuf.Type): ConeClassifierLookupTag? {
@@ -146,16 +208,14 @@ class FirTypeDeserializer(
             proto.hasTypeParameter() -> typeParameterSymbol(proto.typeParameter)
             proto.hasTypeParameterName() -> {
                 val name = nameResolver.getString(proto.typeParameterName)
-
-                // TODO: Optimize
-                ownTypeParameters.find { it.name.asString() == name }?.toLookupTag()
+                typeParameterNames[name]?.toLookupTag()
             }
             else -> null
         }
     }
 
 
-    private fun typeArgument(typeArgumentProto: ProtoBuf.Type.Argument): ConeKotlinTypeProjection {
+    private fun typeArgument(typeArgumentProto: ProtoBuf.Type.Argument): ConeTypeProjection {
         if (typeArgumentProto.projection == ProtoBuf.Type.Argument.Projection.STAR) {
             return ConeStarProjection
         }

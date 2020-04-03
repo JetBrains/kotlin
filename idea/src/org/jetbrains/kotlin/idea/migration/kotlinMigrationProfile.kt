@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.migration
 
-import com.intellij.codeInspection.InspectionEP
-import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.codeInspection.ex.InspectionToolWrapper
@@ -16,6 +14,7 @@ import com.intellij.openapi.util.WriteExternalException
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import java.util.*
@@ -35,7 +34,7 @@ fun createMigrationProfile(
         rootProfile.collectDependentInspections(toolWrapper, allWrappers, managerEx.project)
     }
 
-    val model = createSimple("Migration", managerEx.project, migrationFixWrappers)
+    val model = createSimple(KotlinBundle.message("inspection.migration.profile.name"), managerEx.project, migrationFixWrappers)
     try {
         val element = Element("toCopy")
         for (wrapper in migrationFixWrappers) {
@@ -56,7 +55,7 @@ fun createMigrationProfile(
 
 fun applicableMigrationTools(migrationInfo: MigrationInfo) = applicableMigrationToolsImpl(migrationInfo)
 
-private fun applicableMigrationToolsImpl(migrationInfo: MigrationInfo?): List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>> {
+private fun applicableMigrationToolsImpl(migrationInfo: MigrationInfo?): List<InspectionToolWrapper<*, *>> {
     val rootProfile = InspectionProfileManager.getInstance().currentProfile
 
     return rootProfile.allTools.asSequence()

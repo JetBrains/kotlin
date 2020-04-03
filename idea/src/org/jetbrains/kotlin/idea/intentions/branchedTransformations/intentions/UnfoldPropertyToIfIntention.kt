@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
@@ -17,7 +18,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class UnfoldPropertyToIfIntention :
-    SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Replace property initializer with 'if' expression"),
+    SelfTargetingRangeIntention<KtProperty>(
+        KtProperty::class.java,
+        KotlinBundle.message("replace.property.initializer.with.if.expression")
+    ),
     LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (!element.isLocal) return null

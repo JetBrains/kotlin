@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.kt
 
 open class A<T>(val x: T)

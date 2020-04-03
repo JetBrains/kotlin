@@ -42,9 +42,8 @@ abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractF
         return listOf(compiledJavaPath) + testAnnotations
     }
 
-    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
-        if (files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SOURCE_RETENTION_ANNOTATIONS") }) return
-        super.analyzeAndCheck(testDataFile, files)
+    override fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+        return files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SOURCE_RETENTION_ANNOTATIONS") }
     }
 
     override fun isJavaSourceRootNeeded() = false

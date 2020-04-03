@@ -39,6 +39,26 @@ class MutableCollectionTest {
         }
     }
 
+    @Test fun removeFirst() {
+        val list = mutableListOf("first", "second")
+
+        assertEquals("first", list.removeFirst())
+        assertEquals("second", list.removeFirstOrNull())
+
+        assertNull(list.removeFirstOrNull())
+        assertFailsWith<NoSuchElementException> { list.removeFirst() }
+    }
+
+    @Test fun removeLast() {
+        val list = mutableListOf("first", "second")
+
+        assertEquals("second", list.removeLast())
+        assertEquals("first", list.removeLastOrNull())
+
+        assertNull(list.removeLastOrNull())
+        assertFailsWith<NoSuchElementException> { list.removeLast() }
+    }
+
     @Test fun removeAll() {
         val content = listOf("foo", "bar", "bar")
         val data = listOf("bar")

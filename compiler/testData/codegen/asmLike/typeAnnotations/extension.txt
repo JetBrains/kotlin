@@ -1,0 +1,11 @@
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final void foo2(java.lang.String $this$foo2, java.lang.String s)
+      @Lfoo/TypeAnn;([name="ext"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnn;([name="param"]) : METHOD_FORMAL_PARAMETER 1, null
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}

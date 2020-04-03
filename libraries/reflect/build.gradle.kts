@@ -1,9 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlinx.metadata.jvm.KmModuleVisitor
 import kotlinx.metadata.jvm.KotlinModuleMetadata
-import proguard.gradle.ProGuardTask
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 
@@ -17,16 +18,13 @@ buildscript {
 
 plugins {
     java
-    id("pill-configurable")
 }
+
+val JDK_16: String by rootProject.extra
 
 callGroovy("configureJavaOnlyJvm6Project", project)
 
 publish()
-
-pill {
-    importAsLibrary = true
-}
 
 val core = "$rootDir/core"
 val relocatedCoreSrc = "$buildDir/core-relocated"
@@ -46,7 +44,6 @@ dependencies {
 
     proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
-    proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))
 
     embedded(project(":core:type-system"))
     embedded(project(":kotlin-reflect-api"))
@@ -59,10 +56,11 @@ dependencies {
     embedded(project(":core:util.runtime"))
     embedded("javax.inject:javax.inject:1")
     embedded(protobufLite())
-    
+
     compileOnly("org.jetbrains:annotations:13.0")
 }
 
+@CacheableTransformer
 class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     @Suppress("ArrayInDataClass")
     private data class Entry(val path: String, val bytes: ByteArray)
@@ -108,8 +106,6 @@ val reflectShadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")
     configurations = listOf(embedded)
 
-    callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
-
     exclude("**/*.proto")
 
     if (kotlinBuildProperties.relocation) {
@@ -124,25 +120,35 @@ val stripMetadata by tasks.registering {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
-    inputs.file(inputJar)
+
+    inputs.file(inputJar).withNormalizer(ClasspathNormalizer::class.java)
+
     outputs.file(outputJar)
+    outputs.cacheIf { true }
+
     doLast {
-        stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar.get(), outputJar)
+        stripMetadata(
+            logger = logger,
+            classNamePattern = "kotlin/reflect/jvm/internal/impl/.*",
+            inFile = inputJar.get(),
+            outFile = outputJar,
+            preserveFileTimestamps = false
+        )
     }
 }
 
 val proguardOutput = "$libsDir/${property("archivesBaseName")}-proguard.jar"
 
-val proguard by task<ProGuardTask> {
+val proguard by task<CacheableProguardTask> {
     dependsOn(stripMetadata)
-    inputs.files(stripMetadata.get().outputs.files)
-    outputs.file(proguardOutput)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.get().outputs.files)
     injars(mapOf("filter" to "!META-INF/**,!**/*.kotlin_builtins"), proguardAdditionalInJars)
     outjars(proguardOutput)
 
+    jdkHome = File(JDK_16)
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
+    libraryjars(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!))
 
     configuration("$core/reflection.jvm/reflection.pro")
 }
@@ -170,6 +176,8 @@ val relocateCoreSources by task<Copy> {
     filter { line ->
         line.replace("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
     }
+
+    outputs.cacheIf { true }
 }
 
 tasks.getByName("jar").enabled = false
@@ -185,38 +193,37 @@ val sourcesJar = tasks.register<Jar>("sourcesJar") {
 addArtifact("archives", sourcesJar)
 addArtifact("sources", sourcesJar)
 
+val intermediate = when {
+    kotlinBuildProperties.proguard -> proguard
+    kotlinBuildProperties.relocation -> stripMetadata
+    else -> reflectShadowJar
+}
+    
 val result by task<Jar> {
-    val task = when {
-        kotlinBuildProperties.proguard -> proguard
-        kotlinBuildProperties.relocation -> stripMetadata
-        else -> reflectShadowJar
-    }
-    
-    dependsOn(task)
-    
+    dependsOn(intermediate)
     from {
-        zipTree(task.get().outputs.files.singleFile)
+        zipTree(intermediate.get().singleOutputFile())
     }
-    
     callGroovy("manifestAttributes", manifest, project, "Main")
 }
 
 val modularJar by task<Jar> {
-    dependsOn(proguard)
+    dependsOn(intermediate)
     archiveClassifier.set("modular")
-    from(zipTree(file(proguardOutput)))
-    from(zipTree(reflectShadowJar.get().archivePath)) {
+    from {
+        zipTree(intermediate.get().singleOutputFile())
+    }
+    from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
         include("META-INF/versions/**")
     }
     callGroovy("manifestAttributes", manifest, project, "Main", true)
 }
 
-val dexMethodCount by task<DexMethodCount> {
+dexMethodCount {
     dependsOn(result)
     jarFile = result.get().outputs.files.single()
     ownPackages = listOf("kotlin.reflect")
 }
-tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->

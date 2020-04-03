@@ -12,9 +12,6 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
     static method <clinit>(): void
     method <init>(): void
     public @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
-    public method getName(): java.lang.String
-    public method getOwner(): kotlin.reflect.KDeclarationContainer
-    public method getSignature(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -23,30 +20,21 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
     inner class NoReceiverInCallableReferenceClassesKt$A_foo$1
     static method <clinit>(): void
     method <init>(): void
-    public final method getName(): java.lang.String
-    public final method getOwner(): kotlin.reflect.KDeclarationContainer
-    public final method getSignature(): java.lang.String
     public final method invoke(@org.jetbrains.annotations.NotNull p0: A): void
-    public synthetic method invoke(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
     method <init>(p0: A): void
     public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
-    public method getName(): java.lang.String
-    public method getOwner(): kotlin.reflect.KDeclarationContainer
-    public method getSignature(): java.lang.String
 }
 
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
     inner class NoReceiverInCallableReferenceClassesKt$aFoo$1
     method <init>(p0: A): void
-    public final method getName(): java.lang.String
-    public final method getOwner(): kotlin.reflect.KDeclarationContainer
-    public final method getSignature(): java.lang.String
-    public synthetic method invoke(): java.lang.Object
+    public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
 

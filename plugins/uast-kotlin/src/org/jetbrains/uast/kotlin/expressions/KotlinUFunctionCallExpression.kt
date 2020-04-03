@@ -16,7 +16,6 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
@@ -34,13 +33,11 @@ import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.internal.TypedResolveResult
 import org.jetbrains.uast.kotlin.internal.getReferenceVariants
-import org.jetbrains.uast.kotlin.internal.multiResolveResults
 import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUFunctionCallExpression(
@@ -67,8 +64,13 @@ class KotlinUFunctionCallExpression(
     }
 
     override val methodIdentifier by lz {
-        val calleeExpression = sourcePsi.calleeExpression
-        when (calleeExpression) {
+        if (sourcePsi is KtSuperTypeCallEntry) {
+            ((sourcePsi.parent as? KtInitializerList)?.parent as? KtEnumEntry)?.let { ktEnumEntry ->
+                return@lz KotlinUIdentifier(ktEnumEntry.nameIdentifier, this)
+            }
+        }
+
+        when (val calleeExpression = sourcePsi.calleeExpression) {
             null -> null
             is KtNameReferenceExpression ->
                 KotlinUIdentifier(calleeExpression.getReferencedNameElement(), this)
@@ -78,7 +80,12 @@ class KotlinUFunctionCallExpression(
                 KotlinUIdentifier(
                     calleeExpression.constructorReferenceExpression?.getReferencedNameElement() ?: calleeExpression, this
                 )
-            else -> KotlinUIdentifier(calleeExpression, this)
+            is KtLambdaExpression ->
+                KotlinUIdentifier(calleeExpression.functionLiteral.lBrace, this)
+            else -> KotlinUIdentifier(
+                sourcePsi.valueArgumentList?.leftParenthesis
+                    ?: sourcePsi.lambdaArguments.singleOrNull()?.getLambdaExpression()?.functionLiteral?.lBrace
+                    ?: calleeExpression, this)
         }
     }
 
@@ -166,14 +173,6 @@ class KotlinUFunctionCallExpression(
 
     private val multiResolved by lazy(fun(): Iterable<TypedResolveResult<PsiMethod>> {
         val contextElement = sourcePsi
-
-        if (!Registry.`is`("kotlin.uast.multiresolve.enabled", true)) {
-            val calleeExpression = contextElement.calleeExpression ?: return emptyList()
-            return calleeExpression.multiResolveResults()
-                .mapNotNull { it.element.safeAs<PsiMethod>()?.let { TypedResolveResult(it) } }
-                .asIterable()
-        }
-
         val calleeExpression = contextElement.calleeExpression as? KtReferenceExpression ?: return emptyList()
         val methodName = methodName ?: calleeExpression.text ?: return emptyList()
         val variants = getReferenceVariants(calleeExpression, methodName)
@@ -196,6 +195,7 @@ class KotlinUFunctionCallExpression(
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitCallExpression(this)) return
+        annotations.acceptList(visitor)
         methodIdentifier?.accept(visitor)
         classReference.accept(visitor)
         valueArguments.acceptList(visitor)

@@ -20,10 +20,7 @@ import kotlin.reflect.KClass
 
 object ConfigureKotlinNotificationManager : KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project, excludeModules: List<Module> = emptyList()) {
-        val notificationState = ConfigureKotlinNotification.getNotificationState(project, excludeModules)
-        if (notificationState != null) {
-            notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
-        }
+        notify(this, project, excludeModules)
     }
 
     fun getVisibleNotifications(project: Project): Array<out ConfigureKotlinNotification> {

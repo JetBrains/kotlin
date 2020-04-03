@@ -1,5 +1,5 @@
 fun <caret>.
 
-// NUMBER: 0
+// NUMBER: 1
 
 // For KT-1894

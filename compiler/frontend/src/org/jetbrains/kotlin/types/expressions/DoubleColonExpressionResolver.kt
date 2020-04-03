@@ -83,7 +83,7 @@ private fun KotlinTypeRefiner.refineBareType(type: PossiblyBareType): PossiblyBa
     return PossiblyBareType.type(newType)
 }
 
-@UseExperimental(TypeRefinement::class)
+@OptIn(TypeRefinement::class)
 private fun <T : DoubleColonLHS> KotlinTypeRefiner.refineLHS(lhs: T): T = when (lhs) {
     is DoubleColonLHS.Expression -> {
         val newType = lhs.typeInfo.type?.let { refineType(it) }
@@ -373,7 +373,7 @@ class DoubleColonExpressionResolver(
         val resultForType = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsType) { expression, context ->
             resolveTypeOnLHS(expression, doubleColonExpression, context)?.let {
                 // If lhs is not expression then ExpressionTypingVisitor don't refine it's type and we should do this manually
-                @UseExperimental(TypeRefinement::class)
+                @OptIn(TypeRefinement::class)
                 DoubleColonLHS.Type(kotlinTypeRefiner.refineType(it.type), kotlinTypeRefiner.refineBareType(it.possiblyBareType))
             }
         }

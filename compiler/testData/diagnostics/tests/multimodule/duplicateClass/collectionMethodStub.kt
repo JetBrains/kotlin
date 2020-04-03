@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: f1.kt
 // SKIP_TXT
 

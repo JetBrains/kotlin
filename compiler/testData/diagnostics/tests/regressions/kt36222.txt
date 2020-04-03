@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ f: () -> kotlin.String): kotlin.Unit
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun test(): kotlin.Unit

@@ -44,11 +44,11 @@ public interface LoopOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getBody();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 5;</code>
+   * <code>optional int32 origin_name = 5;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 5;</code>
+   * <code>optional int32 origin_name = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
+  int getOriginName();
 }

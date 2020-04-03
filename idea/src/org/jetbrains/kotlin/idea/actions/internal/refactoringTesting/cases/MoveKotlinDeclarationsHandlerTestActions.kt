@@ -64,9 +64,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
                 "isSearchReferences = $isSearchReferences\n" +
                 "isSearchInComments = $isSearchInComments\n" +
                 "isSearchInNonJavaFiles = $isSearchInNonJavaFiles\n" +
-                "isDeleteEmptyFiles = $isDeleteEmptyFiles\n" +
-                "isUpdatePackageDirective = $isUpdatePackageDirective\n" +
-                "isFullFileMove = $isFullFileMove"
+                "isDeleteEmptyFiles = $isDeleteEmptyFiles\n"
     }
 
     private fun KotlinAwareMoveFilesOrDirectoriesModel.testDataString(): String {
@@ -104,7 +102,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
 
         caseDataKeeper.caseData = model.testDataString()
 
-        model.computeModelResult(throwOnConflicts = true).run()
+        model.computeModelResult(throwOnConflicts = true).processor.run()
     }
 
     private fun doWithMoveKotlinNestedClassesToUpperLevelModel(nestedClass: KtClassOrObject, targetContainer: PsiElement?) {
@@ -135,7 +133,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
 
         caseDataKeeper.caseData = model.testDataString()
 
-        model.computeModelResult(throwOnConflicts = true).run()
+        model.computeModelResult(throwOnConflicts = true).processor.run()
     }
 
     override fun invokeMoveKotlinNestedClassesRefactoring(
@@ -153,9 +151,6 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
         targetDirectory: PsiDirectory?,
         targetFile: KtFile?,
         moveToPackage: Boolean,
-        searchInComments: Boolean,
-        searchForTextOccurrences: Boolean,
-        deleteEmptySourceFiles: Boolean,
         moveCallback: MoveCallback?
     ) {
         val selectedElementsToMove = mutableSetOf<KtNamedDeclaration>()
@@ -179,14 +174,13 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
             isSearchInComments = randomBoolean(),
             isSearchInNonJavaFiles = randomBoolean(),
             isDeleteEmptyFiles = randomBoolean(),
-            isUpdatePackageDirective = randomBoolean(),
-            isFullFileMove = randomBoolean(),
+            applyMPPDeclarations = true,
             moveCallback = null
         )
 
         caseDataKeeper.caseData = model.testDataString()
 
-        model.computeModelResult(throwOnConflicts = true).run()
+        model.computeModelResult(throwOnConflicts = true).processor.run()
     }
 
     override fun invokeKotlinSelectNestedClassChooser(nestedClass: KtClassOrObject, targetContainer: PsiElement?) {
@@ -234,7 +228,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
         caseDataKeeper.caseData = model.testDataString()
 
         project.executeCommand(MoveHandler.REFACTORING_NAME) {
-            model.computeModelResult().run()
+            model.computeModelResult().processor.run()
         }
     }
 }

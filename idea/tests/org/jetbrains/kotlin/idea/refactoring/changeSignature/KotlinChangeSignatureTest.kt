@@ -74,7 +74,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun findCallers(method: PsiMethod): LinkedHashSet<PsiMethod> {
         val root = KotlinMethodNode(method, HashSet(), project, Runnable { })
         return (0..root.childCount - 1).flatMapTo(LinkedHashSet<PsiMethod>()) {
-            (root.getChildAt(it) as KotlinMethodNode).method.toLightMethods()
+            (root.getChildAt(it) as KotlinMethodNode).member.toLightMethods()
         }
     }
 
@@ -1237,4 +1237,18 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testKotlinOverridingJavaWithDifferentParamName() = doJavaTest {
         newParameters.add(ParameterInfoImpl(-1, "n", PsiType.INT))
     }
+
+    fun testAddParameterAfterLambdaParameter() = doTest {
+        addParameter(
+            KotlinParameterInfo(
+                callableDescriptor = originalBaseFunctionDescriptor,
+                name = "i",
+                originalTypeInfo = KotlinTypeInfo(false, BUILT_INS.intType),
+                defaultValueForCall = KtPsiFactory(project).createExpression("0")
+            )
+        )
+    }
+
+    fun testRemoveLambdaParameter2() = doTest { removeParameter(0) }
+
 }

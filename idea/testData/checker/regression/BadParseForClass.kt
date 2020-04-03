@@ -1,6 +1,6 @@
 // FIR_COMPARISON
 
-fun main(args: Array<String>) {
+fun main(<warning descr="[UNUSED_PARAMETER] Parameter 'args' is never used">args</warning>: Array<String>) {
     String.class<EOLError descr="Name expected"></EOLError>
 }
 

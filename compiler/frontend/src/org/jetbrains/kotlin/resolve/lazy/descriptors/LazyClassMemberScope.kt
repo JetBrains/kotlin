@@ -100,7 +100,7 @@ open class LazyClassMemberScope(
     }
 
     val supertypes by storageManager.createLazyValue {
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         kotlinTypeRefiner.refineSupertypes(thisDescriptor)
     }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
@@ -14,17 +13,19 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.name.FqName
 
 class WasmBackendContext(
@@ -34,12 +35,13 @@ class WasmBackendContext(
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration
-) : CommonBackendContext {
+) : JsCommonBackendContext {
     override val builtIns = module.builtIns
     override var inVerbosePhase: Boolean = false
     override val scriptMode = false
     override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
+    override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     // Place to store declarations excluded from code generation
     val excludedDeclarations: IrPackageFragment by lazy {
@@ -49,7 +51,9 @@ class WasmBackendContext(
         )
     }
 
-    override val declarationFactory = JsDeclarationFactory()
+    override val mapping = JsMapping()
+
+    override val declarationFactory = JsDeclarationFactory(mapping)
 
     val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
@@ -86,15 +90,17 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
     private var _owner: IrExternalPackageFragment? = null
     override val owner get() = _owner!!
 
-    override var uniqId: UniqId
-        get() = error("Operation is unsupported")
-        set(value) { error("Operation is unsupported") }
-
     override val isBound get() = _owner != null
 
     override fun bind(owner: IrExternalPackageFragment) {
         _owner = owner
     }
+
+    override val isPublicApi: Boolean
+        get() = error("Operation is unsupported")
+
+    override val signature: IdSignature
+        get() = error("Operation is unsupported")
 }
 
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-20
 
 class A() {

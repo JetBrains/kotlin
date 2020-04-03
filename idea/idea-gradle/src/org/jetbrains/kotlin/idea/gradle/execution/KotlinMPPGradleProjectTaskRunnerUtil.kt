@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.gradle.execution
 import com.intellij.openapi.module.Module
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 
-//BUNCH: 183
+// BUNCH: 191
 fun isDelegatedBuild(module: Module): Boolean {
     val projectUrl = module.project.presentableUrl
     if (projectUrl == null || !GradleProjectSettings.isDelegatedBuildEnabled(module)) {

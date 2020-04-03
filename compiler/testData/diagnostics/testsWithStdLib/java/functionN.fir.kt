@@ -46,7 +46,7 @@ fun main() {
     a.bar()
     a.baz(listOf())
 
-    a.<!AMBIGUITY!>manyParams<!>(null)
+    a.manyParams(null)
     a.manyParams(any<kotlin.jvm.functions.FunctionN<Unit>>())
 
     // Potentially, this would have better to forbid calling manyParams, too.

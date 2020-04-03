@@ -14,7 +14,7 @@ class C() : B() {
         this.c = 34
         super.c = 3535 //repeat for 'c'
 
-        getInt() = 12
+        <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
     fun foo1(c: C) {
@@ -42,27 +42,27 @@ fun cannotBe() {
     var i: Int = 5
 
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
-    "" = "";
-    foo() = Unit;
+    <!VARIABLE_EXPECTED!>""<!> = "";
+    <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
-    (i as Int) = 34
-    (i is Int) = false
-    A() = A()
-    5 = 34
+    (<!VARIABLE_EXPECTED!>i as Int<!>) = 34
+    (<!VARIABLE_EXPECTED!>i is Int<!>) = false
+    <!VARIABLE_EXPECTED!>A()<!> = A()
+    <!VARIABLE_EXPECTED!>5<!> = 34
 }
 
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    (label@ i) = 34
+    (<!VARIABLE_EXPECTED!>label@ i<!>) = 34
 
-    (label@ j) = 34 //repeat for j
+    (<!VARIABLE_EXPECTED!>label@ j<!>) = 34 //repeat for j
 
     val a = A()
-    (l@ a.a) = 3894
+    (<!VARIABLE_EXPECTED!>l@ a.a<!>) = 3894
 }
 
 fun canBe2(j: Int) {
-    (label@ j) = 34
+    (<!VARIABLE_EXPECTED!>label@ j<!>) = 34
 }
 
 class A() {
@@ -77,11 +77,11 @@ class Test() {
         <!VARIABLE_EXPECTED!>getInt()<!> += 343
         (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
 
-        1++
-        (r@ 1)++
+        <!VARIABLE_EXPECTED!>1<!>++
+        (<!VARIABLE_EXPECTED!>r@ 1<!>)++
 
-        getInt()++
-        (m@ getInt())++
+        <!VARIABLE_EXPECTED!>getInt()<!>++
+        (<!VARIABLE_EXPECTED!>m@ getInt()<!>)++
 
         this<!UNRESOLVED_REFERENCE!>++<!>
 
@@ -106,7 +106,7 @@ class Test() {
         <!VARIABLE_EXPECTED!>b<!> += 34
 
         a++
-        (l@ a)++
+        (<!VARIABLE_EXPECTED!>l@ a<!>)++
         (a)++
     }
 

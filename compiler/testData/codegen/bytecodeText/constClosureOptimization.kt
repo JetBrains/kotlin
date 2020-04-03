@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36637 Trivial closure optimizatin in JVM_IR
+
 fun test() {
 
     fun local(){

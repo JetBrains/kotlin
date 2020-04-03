@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-1188
 
 interface Foo {

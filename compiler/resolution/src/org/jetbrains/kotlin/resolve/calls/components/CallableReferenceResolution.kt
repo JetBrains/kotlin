@@ -59,7 +59,7 @@ class CallableReferenceCandidate(
     val extensionReceiver: CallableReceiver?,
     val explicitReceiverKind: ExplicitReceiverKind,
     val reflectionCandidateType: UnwrappedType,
-    val numDefaults: Int,
+    val callableReferenceAdaptation: CallableReferenceAdaptation?,
     val diagnostics: List<KotlinCallDiagnostic>
 ) : Candidate {
     override val resultingApplicability = getResultApplicability(diagnostics)
@@ -67,7 +67,16 @@ class CallableReferenceCandidate(
 
     var freshSubstitutor: FreshVariableNewTypeSubstitutor? = null
         internal set
+
+    val numDefaults get() = callableReferenceAdaptation?.defaults ?: 0
 }
+
+class CallableReferenceAdaptation(
+    val argumentTypes: Array<KotlinType>,
+    val coercionStrategy: CoercionStrategy,
+    val defaults: Int,
+    val mappedArguments: Map<ValueParameterDescriptor, ResolvedCallArgument>
+)
 
 /**
  * cases: class A {}, class B { companion object }, object C, enum class D { E }
@@ -85,11 +94,15 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
             return factory.createCallableProcessor(explicitReceiver)
         }
         is LHSResult.Type -> {
-            val static = factory.createCallableProcessor(lhsResult.qualifier)
+            val static = lhsResult.qualifier?.let(factory::createCallableProcessor)
             val unbound = factory.createCallableProcessor(lhsResult.unboundDetailedReceiver)
 
             // note that if we use PrioritizedCompositeScopeTowerProcessor then static will win over unbound members
-            val staticOrUnbound = SamePriorityCompositeScopeTowerProcessor(static, unbound)
+            val staticOrUnbound =
+                if (static != null)
+                    SamePriorityCompositeScopeTowerProcessor(static, unbound)
+                else
+                    unbound
 
             val asValue = lhsResult.qualifier?.classValueReceiverWithSmartCastInfo ?: return staticOrUnbound
             return PrioritizedCompositeScopeTowerProcessor(staticOrUnbound, factory.createCallableProcessor(asValue))
@@ -157,7 +170,8 @@ class CallableReferencesCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
     val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
-    val expectedType: UnwrappedType?
+    val expectedType: UnwrappedType?,
+    private val csBuilder: ConstraintSystemOperation
 ) : CandidateFactory<CallableReferenceCandidate> {
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
@@ -175,7 +189,7 @@ class CallableReferencesCandidateFactory(
         val candidateDescriptor = towerCandidate.descriptor
         val diagnostics = SmartList<KotlinCallDiagnostic>()
 
-        val (reflectionCandidateType, defaults) = buildReflectionType(
+        val (reflectionCandidateType, callableReferenceAdaptation) = buildReflectionType(
             candidateDescriptor,
             dispatchCallableReceiver,
             extensionCallableReceiver,
@@ -183,16 +197,17 @@ class CallableReferencesCandidateFactory(
             callComponents.builtIns
         )
 
-        if (defaults != 0 &&
+        if (callableReferenceAdaptation != null &&
+            callableReferenceAdaptation.defaults != 0 &&
             !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
         ) {
-            diagnostics.add(CallableReferencesDefaultArgumentUsed(argument, candidateDescriptor, defaults))
+            diagnostics.add(CallableReferencesDefaultArgumentUsed(argument, candidateDescriptor, callableReferenceAdaptation.defaults))
         }
 
         if (candidateDescriptor !is CallableMemberDescriptor) {
             return CallableReferenceCandidate(
                 candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-                explicitReceiverKind, reflectionCandidateType, defaults,
+                explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation,
                 listOf(NotCallableMemberReference(argument, candidateDescriptor))
             )
         }
@@ -222,7 +237,7 @@ class CallableReferencesCandidateFactory(
 
         return CallableReferenceCandidate(
             candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-            explicitReceiverKind, reflectionCandidateType, defaults, diagnostics
+            explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation, diagnostics
         )
     }
 
@@ -230,18 +245,18 @@ class CallableReferencesCandidateFactory(
         UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
     }
 
-    private fun getArgumentAndReturnTypeUseMappingByExpectedType(
+    private fun getCallableReferenceAdaptation(
         descriptor: FunctionDescriptor,
         expectedType: UnwrappedType?,
         unboundReceiverCount: Int,
         builtins: KotlinBuiltIns
-    ): Triple<Array<KotlinType>, CoercionStrategy, Int>? {
+    ): CallableReferenceAdaptation? {
         val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 
         val expectedArgumentCount = inputOutputTypes.inputTypes.size - unboundReceiverCount
         if (expectedArgumentCount < 0) return null
 
-        val fakeArguments = (0..(expectedArgumentCount - 1)).map { FakeKotlinCallArgumentForCallableReference(it) }
+        val fakeArguments = (0 until expectedArgumentCount).map { FakeKotlinCallArgumentForCallableReference(it) }
         val argumentMapping =
             callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
@@ -252,7 +267,9 @@ class CallableReferencesCandidateFactory(
          */
         var defaults = 0
         var varargMappingState = VarargMappingState.UNMAPPED
-        val mappedArguments = arrayOfNulls<KotlinType?>(fakeArguments.size)
+        val mappedArguments = linkedMapOf<ValueParameterDescriptor, ResolvedCallArgument>()
+        val mappedVarargElements = linkedMapOf<ValueParameterDescriptor, MutableList<KotlinCallArgument>>()
+        val mappedArgumentTypes = arrayOfNulls<KotlinType?>(fakeArguments.size)
 
         for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
             for (fakeArgument in resolvedArgument.arguments) {
@@ -262,30 +279,58 @@ class CallableReferencesCandidateFactory(
                 val mappedArgument: KotlinType?
                 if (substitutedParameter.isVararg) {
                     val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
-                        inputOutputTypes.inputTypes[index],
+                        inputOutputTypes.inputTypes[index + unboundReceiverCount],
                         substitutedParameter,
                         varargMappingState,
                         builtins
                     )
                     varargMappingState = newVarargMappingState
                     mappedArgument = varargType
+
+                    when (newVarargMappingState) {
+                        VarargMappingState.MAPPED_WITH_ARRAY -> {
+                            // If we've already mapped an argument to this value parameter, it'll always be a type mismatch.
+                            mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgument)
+                        }
+
+                        VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
+                            mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgument)
+                        }
+                    }
                 } else {
                     mappedArgument = substitutedParameter.type
+                    mappedArguments[valueParameter] = resolvedArgument
                 }
 
-                mappedArguments[index] = mappedArgument
+                mappedArgumentTypes[index] = mappedArgument
             }
-            if (resolvedArgument == ResolvedCallArgument.DefaultArgument) defaults++
+            if (resolvedArgument == ResolvedCallArgument.DefaultArgument) {
+                defaults++
+                mappedArguments[valueParameter] = resolvedArgument
+            }
         }
-        if (mappedArguments.any { it == null }) return null
+        if (mappedArgumentTypes.any { it == null }) return null
+
+        for ((valueParameter, varargElements) in mappedVarargElements) {
+            mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
+        }
 
         // lower(Unit!) = Unit
         val returnExpectedType = inputOutputTypes.outputType
 
         val coercion = if (returnExpectedType.isUnit()) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
 
-        @Suppress("UNCHECKED_CAST")
-        return Triple(mappedArguments as Array<KotlinType>, coercion, defaults)
+        val adaptedArguments =
+            if (expectedType != null && ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType))
+                emptyMap()
+            else
+                mappedArguments
+
+        return CallableReferenceAdaptation(
+            @Suppress("UNCHECKED_CAST") (mappedArgumentTypes as Array<KotlinType>),
+            coercion, defaults,
+            adaptedArguments
+        )
     }
 
     private fun varargParameterTypeByExpectedParameter(
@@ -299,7 +344,9 @@ class CallableReferencesCandidateFactory(
 
         return when (varargMappingState) {
             VarargMappingState.UNMAPPED -> {
-                if (KotlinBuiltIns.isArrayOrPrimitiveArray(expectedParameterType)) {
+                if (KotlinBuiltIns.isArrayOrPrimitiveArray(expectedParameterType) ||
+                    csBuilder.isTypeVariable(expectedParameterType)
+                ) {
                     val arrayType = builtins.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
                         ?: builtins.getArrayType(Variance.OUT_VARIANCE, elementType)
                     arrayType to VarargMappingState.MAPPED_WITH_ARRAY
@@ -324,7 +371,7 @@ class CallableReferencesCandidateFactory(
         extensionReceiver: CallableReceiver?,
         expectedType: UnwrappedType?,
         builtins: KotlinBuiltIns
-    ): Pair<UnwrappedType, /*defaults*/ Int> {
+    ): Pair<UnwrappedType, CallableReferenceAdaptation?> {
         val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2)
 
         if (dispatchReceiver is CallableReceiver.UnboundReference) {
@@ -352,35 +399,35 @@ class CallableReferencesCandidateFactory(
                     argumentsAndReceivers,
                     descriptorReturnType,
                     mutable
-                ) to 0
+                ) to null
             }
             is FunctionDescriptor -> {
-                val returnType: KotlinType
-                val defaults: Int
-                val argumentsAndExpectedTypeCoercion = getArgumentAndReturnTypeUseMappingByExpectedType(
+                val callableReferenceAdaptation = getCallableReferenceAdaptation(
                     descriptor, expectedType,
                     unboundReceiverCount = argumentsAndReceivers.size,
                     builtins = builtins
                 )
 
-                if (argumentsAndExpectedTypeCoercion == null) {
+                val returnType = if (callableReferenceAdaptation == null) {
                     descriptor.valueParameters.mapTo(argumentsAndReceivers) { it.type }
-                    returnType = descriptorReturnType
-                    defaults = 0
+                    descriptorReturnType
                 } else {
-                    val (arguments, coercion) = argumentsAndExpectedTypeCoercion
-                    defaults = argumentsAndExpectedTypeCoercion.third
+                    val arguments = callableReferenceAdaptation.argumentTypes
+                    val coercion = callableReferenceAdaptation.coercionStrategy
                     argumentsAndReceivers.addAll(arguments)
 
-                    returnType = if (coercion == CoercionStrategy.COERCION_TO_UNIT) descriptor.builtIns.unitType else descriptorReturnType
+                    if (coercion == CoercionStrategy.COERCION_TO_UNIT)
+                        descriptor.builtIns.unitType
+                    else
+                        descriptorReturnType
                 }
 
                 return callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
                     returnType, descriptor.builtIns, descriptor.isSuspend
-                ) to defaults
+                ) to callableReferenceAdaptation
             }
-            else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to 0
+            else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null
         }
     }
 

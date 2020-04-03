@@ -15,8 +15,9 @@ import org.gradle.api.internal.artifacts.ResolvableDependency
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 data class NpmDependency(
@@ -59,43 +60,20 @@ data class NpmDependency(
         return visited
     }
 
-    override fun resolve(transitive: Boolean): Set<File> {
-        val npmPackage = resolveProject() ?: return mutableSetOf()
-        val npmProject = npmPackage.npmProject
-
-        val all = mutableSetOf<File>()
-        val visited = mutableSetOf<NpmDependency>()
-
-        fun visit(item: NpmDependency) {
-            if (item in visited) return
-            visited.add(item)
-
-            npmProject.resolve(item.key)?.let {
-                if (it.isFile) all.add(it)
-                if (it.path.endsWith(".js")) {
-                    val baseName = it.path.removeSuffix(".js")
-                    val metaJs = File(baseName + ".meta.js")
-                    if (metaJs.isFile) all.add(metaJs)
-                    val kjsmDir = File(baseName)
-                    if (kjsmDir.isDirectory) {
-                        kjsmDir.walkTopDown()
-                            .filter { it.extension == "kjsm" }
-                            .forEach { all.add(it) }
-                    }
-                }
+    override fun resolve(transitive: Boolean): Set<File> =
+        resolveProject()
+            ?.let {
+                it
+                    .npmProject
+                    .nodeJs
+                    .packageManager
+                    .resolveDependency(
+                        it,
+                        this,
+                        transitive
+                    )
             }
-
-            if (transitive) {
-                item.dependencies.forEach {
-                    visit(it)
-                }
-            }
-        }
-
-        visit(this)
-
-        return all
-    }
+            ?: mutableSetOf()
 
     override fun resolve(): MutableSet<File> {
         val npmPackage = parent?.resolveProject()
@@ -148,3 +126,18 @@ data class NpmDependency(
 
     override fun getReason(): String? = reason
 }
+
+internal fun fileVersion(directory: File): String =
+    "$FILE_VERSION_PREFIX${directory.canonicalPath}"
+
+internal fun moduleName(directory: File): String {
+    val packageJson = directory.resolve(PACKAGE_JSON)
+
+    if (packageJson.isFile) {
+        return fromSrcPackageJson(packageJson)!!.name
+    }
+
+    return directory.name
+}
+
+const val FILE_VERSION_PREFIX = "file:"

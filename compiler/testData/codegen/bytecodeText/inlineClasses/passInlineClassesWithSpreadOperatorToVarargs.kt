@@ -10,7 +10,7 @@ fun <T> takeVarargs(vararg e: T) {}
 
 fun test(u1: UInt, u2: UInt, us: Array<UInt>) {
     takeVarargs(*us) // copy + checkcast (on non-ir backend)
-    takeVarargs(u1, u2, *us) // 2 box + ...
+    takeVarargs(u1, u2, *us) // 2 box + checkcast (on non-ir backend)
 }
 
 // @TestKt.class:
@@ -26,4 +26,4 @@ fun test(u1: UInt, u2: UInt, us: Array<UInt>) {
 // 2 CHECKCAST \[LUInt
 
 // JVM_IR_TEMPLATES
-// 1 CHECKCAST \[LUInt
+// 0 CHECKCAST \[LUInt

@@ -1,10 +1,10 @@
-// "Add '-Xuse-experimental=kotlin.Experimental' to module light_idea_test_case compiler arguments" "false"
-// COMPILER_ARGUMENTS: -version -Xuse-experimental=Something
+// "Add '-Xopt-in=kotlin.RequiresOptIn' to module light_idea_test_case compiler arguments" "false"
+// COMPILER_ARGUMENTS: -version -Xopt-in=Something
 // DISABLE-ERRORS
 // WITH_RUNTIME
 // ACTION: Introduce import alias
 // ACTION: Make internal
 // ACTION: Make private
 
-@Experimental<caret>
+@RequiresOptIn<caret>
 annotation class MyExperimentalAPI

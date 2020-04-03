@@ -14,6 +14,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.util.MoveRenameUsageInfo
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -112,7 +114,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             val what = UsageViewUtil.getType(declaration).capitalize()
             val withWhat = candidate.renderDescription()
             val where = candidate.representativeContainer()?.renderDescription() ?: return
-            val message = "$what after rename will clash with existing $withWhat in $where"
+            val message = KotlinBundle.message("text.0.will.clash.with.existing.1.in.2", what, withWhat, where)
             result += BasicUnresolvableCollisionUsageInfo(candidate, candidate, message)
         }
 
@@ -214,10 +216,15 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         val containsText: String? =
             deepestSuperDeclaration.fqName?.parent()?.asString() ?: (deepestSuperDeclaration.parent as? KtClassOrObject)?.name
 
+        val message = if (containsText != null)
+            KotlinBundle.message("text.do.you.want.to.rename.base.property.from.0", containsText)
+        else
+            KotlinBundle.message("text.do.you.want.to.rename.base.property")
+
         val result = Messages.showYesNoCancelDialog(
             deepestSuperDeclaration.project,
-            if (containsText != null) "Do you want to rename base property from \n$containsText" else "Do you want to rename base property",
-            "Rename warning",
+            message,
+            KotlinBundle.message("text.rename.warning"),
             Messages.getQuestionIcon()
         )
 
@@ -271,7 +278,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
 
         val superPsiMethods = listOfNotNull(deepestSuperDeclaration.getRepresentativeLightMethod())
-        checkSuperMethodsWithPopup(callableDeclaration, superPsiMethods, "Rename", editor) {
+        checkSuperMethodsWithPopup(callableDeclaration, superPsiMethods, RefactoringBundle.message("rename.title"), editor) {
             preprocessAndPass(if (it.size > 1) deepestSuperDeclaration else callableDeclaration)
         }
     }
@@ -307,8 +314,8 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             val accessorToRename = if (element == getter) setter else getter
             val newAccessorName = if (element == getter) JvmAbi.setterName(newPropertyName) else JvmAbi.getterName(newPropertyName)
             if (ApplicationManager.getApplication().isUnitTestMode || Messages.showYesNoDialog(
-                    "Do you want to rename ${accessorToRename.name}() as well?",
-                    "Rename",
+                    KotlinBundle.message("text.do.you.want.to.rename.0.as.well", accessorToRename.name),
+                    RefactoringBundle.message("rename.title"),
                     Messages.getQuestionIcon()
                 ) == Messages.YES
             ) {

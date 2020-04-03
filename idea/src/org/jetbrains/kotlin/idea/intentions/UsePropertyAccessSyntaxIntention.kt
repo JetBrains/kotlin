@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.configuration.ui.NotPropertyListPanel
@@ -79,7 +80,7 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
 
     override fun createOptionsPanel(): JComponent? {
         val list = NotPropertyListPanel(fqNameList)
-        return LabeledComponent.create(list, "Excluded methods")
+        return LabeledComponent.create(list, KotlinBundle.message("excluded.methods"))
     }
 
     override fun inspectionTarget(element: KtCallExpression): PsiElement? {
@@ -92,7 +93,7 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
             1 -> "setter"
             else -> null
         }
-        return "Use of $accessor method instead of property access syntax"
+        return KotlinBundle.message("use.of.0.method.instead.of.property.access.syntax", accessor.toString())
     }
 }
 
@@ -126,7 +127,10 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
 }
 
 class UsePropertyAccessSyntaxIntention :
-    SelfTargetingOffsetIndependentIntention<KtCallExpression>(KtCallExpression::class.java, "Use property access syntax") {
+    SelfTargetingOffsetIndependentIntention<KtCallExpression>(
+        KtCallExpression::class.java,
+        KotlinBundle.message("use.property.access.syntax")
+    ) {
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         return detectPropertyNameToUse(element) != null
     }

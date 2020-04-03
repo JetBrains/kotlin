@@ -14,9 +14,11 @@ fun test() {
     val x5: (Double) -> Unit = baz(id(<!UNRESOLVED_REFERENCE!>::foo<!>), id(id(<!UNRESOLVED_REFERENCE!>::foo<!>)))
 
 
-    id<(Int) -> Unit>(id(id(<!UNRESOLVED_REFERENCE!>::foo<!>)))
+    id<(Int) -> Unit>(id(id(::foo)))
     id(id<(Int) -> Unit>(::foo))
-    baz<(Int) -> Unit>(id(<!UNRESOLVED_REFERENCE!>::foo<!>), id(id(<!UNRESOLVED_REFERENCE!>::foo<!>)))
-    baz(id(<!UNRESOLVED_REFERENCE!>::foo<!>), id(id<(Int) -> Unit>(::foo)))
-    baz(id(<!UNRESOLVED_REFERENCE!>::foo<!>), id<(Int) -> Unit>(id(::foo)))
+    baz<(Int) -> Unit>(id(::foo), id(id(::foo)))
+    baz(id(::foo), id(id<(Int) -> Unit>(::foo)))
+    baz(id(::foo), id<(Int) -> Unit>(id(::foo)))
+
+    baz(id { it.inv() }, id<(Int) -> Unit> { })
 }

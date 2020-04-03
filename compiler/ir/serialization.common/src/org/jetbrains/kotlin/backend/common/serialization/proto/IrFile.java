@@ -55,21 +55,21 @@ public final class IrFile extends
           }
           case 8: {
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              declarationId_ = new java.util.ArrayList<java.lang.Long>();
+              declarationId_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000001;
             }
-            declarationId_.add(input.readInt64());
+            declarationId_.add(input.readInt32());
             break;
           }
           case 10: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
-              declarationId_ = new java.util.ArrayList<java.lang.Long>();
+              declarationId_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000001;
             }
             while (input.getBytesUntilLimit() > 0) {
-              declarationId_.add(input.readInt64());
+              declarationId_.add(input.readInt32());
             }
             input.popLimit(limit);
             break;
@@ -118,21 +118,21 @@ public final class IrFile extends
           }
           case 40: {
             if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-              explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Integer>();
+              explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Long>();
               mutable_bitField0_ |= 0x00000010;
             }
-            explicitlyExportedToCompiler_.add(input.readInt32());
+            explicitlyExportedToCompiler_.add(input.readInt64());
             break;
           }
           case 42: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
             if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
-              explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Integer>();
+              explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Long>();
               mutable_bitField0_ |= 0x00000010;
             }
             while (input.getBytesUntilLimit() > 0) {
-              explicitlyExportedToCompiler_.add(input.readInt32());
+              explicitlyExportedToCompiler_.add(input.readInt64());
             }
             input.popLimit(limit);
             break;
@@ -195,26 +195,27 @@ public final class IrFile extends
 
   private int bitField0_;
   public static final int DECLARATION_ID_FIELD_NUMBER = 1;
-  private java.util.List<java.lang.Long> declarationId_;
+  private java.util.List<java.lang.Integer> declarationId_;
   /**
-   * <code>repeated int64 declaration_id = 1;</code>
+   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
    */
-  public java.util.List<java.lang.Long>
+  public java.util.List<java.lang.Integer>
       getDeclarationIdList() {
     return declarationId_;
   }
   /**
-   * <code>repeated int64 declaration_id = 1;</code>
+   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
    */
   public int getDeclarationIdCount() {
     return declarationId_.size();
   }
   /**
-   * <code>repeated int64 declaration_id = 1;</code>
+   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
    */
-  public long getDeclarationId(int index) {
+  public int getDeclarationId(int index) {
     return declarationId_.get(index);
   }
+  private int declarationIdMemoizedSerializedSize = -1;
 
   public static final int FILE_ENTRY_FIELD_NUMBER = 2;
   private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry fileEntry_;
@@ -234,24 +235,25 @@ public final class IrFile extends
   public static final int FQ_NAME_FIELD_NUMBER = 3;
   private java.util.List<java.lang.Integer> fqName_;
   /**
-   * <code>repeated int32 fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
       getFqNameList() {
     return fqName_;
   }
   /**
-   * <code>repeated int32 fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
    */
   public int getFqNameCount() {
     return fqName_.size();
   }
   /**
-   * <code>repeated int32 fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
    */
   public int getFqName(int index) {
     return fqName_.get(index);
   }
+  private int fqNameMemoizedSerializedSize = -1;
 
   public static final int ANNOTATION_FIELD_NUMBER = 4;
   private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_;
@@ -289,26 +291,27 @@ public final class IrFile extends
   }
 
   public static final int EXPLICITLY_EXPORTED_TO_COMPILER_FIELD_NUMBER = 5;
-  private java.util.List<java.lang.Integer> explicitlyExportedToCompiler_;
+  private java.util.List<java.lang.Long> explicitlyExportedToCompiler_;
   /**
-   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
-  public java.util.List<java.lang.Integer>
+  public java.util.List<java.lang.Long>
       getExplicitlyExportedToCompilerList() {
     return explicitlyExportedToCompiler_;
   }
   /**
-   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
   public int getExplicitlyExportedToCompilerCount() {
     return explicitlyExportedToCompiler_.size();
   }
   /**
-   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
-  public int getExplicitlyExportedToCompiler(int index) {
+  public long getExplicitlyExportedToCompiler(int index) {
     return explicitlyExportedToCompiler_.get(index);
   }
+  private int explicitlyExportedToCompilerMemoizedSerializedSize = -1;
 
   public static final int ACTUALS_FIELD_NUMBER = 6;
   private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.Actual> actuals_;
@@ -386,20 +389,32 @@ public final class IrFile extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
+    if (getDeclarationIdList().size() > 0) {
+      output.writeRawVarint32(10);
+      output.writeRawVarint32(declarationIdMemoizedSerializedSize);
+    }
     for (int i = 0; i < declarationId_.size(); i++) {
-      output.writeInt64(1, declarationId_.get(i));
+      output.writeInt32NoTag(declarationId_.get(i));
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeMessage(2, fileEntry_);
     }
+    if (getFqNameList().size() > 0) {
+      output.writeRawVarint32(26);
+      output.writeRawVarint32(fqNameMemoizedSerializedSize);
+    }
     for (int i = 0; i < fqName_.size(); i++) {
-      output.writeInt32(3, fqName_.get(i));
+      output.writeInt32NoTag(fqName_.get(i));
     }
     for (int i = 0; i < annotation_.size(); i++) {
       output.writeMessage(4, annotation_.get(i));
     }
+    if (getExplicitlyExportedToCompilerList().size() > 0) {
+      output.writeRawVarint32(42);
+      output.writeRawVarint32(explicitlyExportedToCompilerMemoizedSerializedSize);
+    }
     for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
-      output.writeInt32(5, explicitlyExportedToCompiler_.get(i));
+      output.writeInt64NoTag(explicitlyExportedToCompiler_.get(i));
     }
     for (int i = 0; i < actuals_.size(); i++) {
       output.writeMessage(6, actuals_.get(i));
@@ -417,10 +432,15 @@ public final class IrFile extends
       int dataSize = 0;
       for (int i = 0; i < declarationId_.size(); i++) {
         dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt64SizeNoTag(declarationId_.get(i));
+          .computeInt32SizeNoTag(declarationId_.get(i));
       }
       size += dataSize;
-      size += 1 * getDeclarationIdList().size();
+      if (!getDeclarationIdList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      declarationIdMemoizedSerializedSize = dataSize;
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -433,7 +453,12 @@ public final class IrFile extends
           .computeInt32SizeNoTag(fqName_.get(i));
       }
       size += dataSize;
-      size += 1 * getFqNameList().size();
+      if (!getFqNameList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      fqNameMemoizedSerializedSize = dataSize;
     }
     for (int i = 0; i < annotation_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -443,10 +468,15 @@ public final class IrFile extends
       int dataSize = 0;
       for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
         dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32SizeNoTag(explicitlyExportedToCompiler_.get(i));
+          .computeInt64SizeNoTag(explicitlyExportedToCompiler_.get(i));
       }
       size += dataSize;
-      size += 1 * getExplicitlyExportedToCompilerList().size();
+      if (!getExplicitlyExportedToCompilerList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      explicitlyExportedToCompilerMemoizedSerializedSize = dataSize;
     }
     for (int i = 0; i < actuals_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -717,56 +747,56 @@ public final class IrFile extends
     }
     private int bitField0_;
 
-    private java.util.List<java.lang.Long> declarationId_ = java.util.Collections.emptyList();
+    private java.util.List<java.lang.Integer> declarationId_ = java.util.Collections.emptyList();
     private void ensureDeclarationIdIsMutable() {
       if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        declarationId_ = new java.util.ArrayList<java.lang.Long>(declarationId_);
+        declarationId_ = new java.util.ArrayList<java.lang.Integer>(declarationId_);
         bitField0_ |= 0x00000001;
        }
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
-    public java.util.List<java.lang.Long>
+    public java.util.List<java.lang.Integer>
         getDeclarationIdList() {
       return java.util.Collections.unmodifiableList(declarationId_);
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
     public int getDeclarationIdCount() {
       return declarationId_.size();
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
-    public long getDeclarationId(int index) {
+    public int getDeclarationId(int index) {
       return declarationId_.get(index);
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
     public Builder setDeclarationId(
-        int index, long value) {
+        int index, int value) {
       ensureDeclarationIdIsMutable();
       declarationId_.set(index, value);
       
       return this;
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
-    public Builder addDeclarationId(long value) {
+    public Builder addDeclarationId(int value) {
       ensureDeclarationIdIsMutable();
       declarationId_.add(value);
       
       return this;
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
     public Builder addAllDeclarationId(
-        java.lang.Iterable<? extends java.lang.Long> values) {
+        java.lang.Iterable<? extends java.lang.Integer> values) {
       ensureDeclarationIdIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, declarationId_);
@@ -774,7 +804,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated int64 declaration_id = 1;</code>
+     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
      */
     public Builder clearDeclarationId() {
       declarationId_ = java.util.Collections.emptyList();
@@ -851,26 +881,26 @@ public final class IrFile extends
        }
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getFqNameList() {
       return java.util.Collections.unmodifiableList(fqName_);
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public int getFqNameCount() {
       return fqName_.size();
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public int getFqName(int index) {
       return fqName_.get(index);
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public Builder setFqName(
         int index, int value) {
@@ -880,7 +910,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public Builder addFqName(int value) {
       ensureFqNameIsMutable();
@@ -889,7 +919,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public Builder addAllFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -900,7 +930,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated int32 fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3 [packed = true];</code>
      */
     public Builder clearFqName() {
       fqName_ = java.util.Collections.emptyList();
@@ -1034,56 +1064,56 @@ public final class IrFile extends
       return this;
     }
 
-    private java.util.List<java.lang.Integer> explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
+    private java.util.List<java.lang.Long> explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
     private void ensureExplicitlyExportedToCompilerIsMutable() {
       if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-        explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Integer>(explicitlyExportedToCompiler_);
+        explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Long>(explicitlyExportedToCompiler_);
         bitField0_ |= 0x00000010;
        }
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
-    public java.util.List<java.lang.Integer>
+    public java.util.List<java.lang.Long>
         getExplicitlyExportedToCompilerList() {
       return java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
     public int getExplicitlyExportedToCompilerCount() {
       return explicitlyExportedToCompiler_.size();
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
-    public int getExplicitlyExportedToCompiler(int index) {
+    public long getExplicitlyExportedToCompiler(int index) {
       return explicitlyExportedToCompiler_.get(index);
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
     public Builder setExplicitlyExportedToCompiler(
-        int index, int value) {
+        int index, long value) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.set(index, value);
       
       return this;
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
-    public Builder addExplicitlyExportedToCompiler(int value) {
+    public Builder addExplicitlyExportedToCompiler(long value) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.add(value);
       
       return this;
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
     public Builder addAllExplicitlyExportedToCompiler(
-        java.lang.Iterable<? extends java.lang.Integer> values) {
+        java.lang.Iterable<? extends java.lang.Long> values) {
       ensureExplicitlyExportedToCompilerIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, explicitlyExportedToCompiler_);
@@ -1091,7 +1121,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
      */
     public Builder clearExplicitlyExportedToCompiler() {
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();

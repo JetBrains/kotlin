@@ -23,8 +23,8 @@ fun <T> test(x: T) {
 
     baz<Int?, String?>(null, null, ::foo)
 
-    baz<Int, String?>(null, null, ::foo)
-    baz<Int?, String>(null, null, ::foo)
+    <!INAPPLICABLE_CANDIDATE!>baz<!><Int, String?>(null, null, ::foo)
+    <!INAPPLICABLE_CANDIDATE!>baz<!><Int?, String>(null, null, ::foo)
     baz(null, "", ::foo)
     baz(1, null, ::foo)
     baz(null, null, ::foo)

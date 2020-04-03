@@ -1,21 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -23,10 +19,9 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
-import org.jetbrains.kotlin.ir.backend.js.lower.ConstructorPair
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
@@ -47,11 +42,14 @@ class JsIrBackendContext(
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false
-) : CommonBackendContext {
-    override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
-    override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
+) : JsCommonBackendContext {
+    override val transformedFunction
+        get() = error("Use Mapping.inlineClassMemberToStatic instead")
 
-    val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
+    override val lateinitNullableFields
+        get() = error("Use Mapping.lateInitFieldToNullableField instead")
+
+    override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val builtIns = module.builtIns
 
@@ -59,15 +57,41 @@ class JsIrBackendContext(
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
 
-    var externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
-    lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment
+    val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
+    val externalDeclarations = hashSetOf<IrDeclaration>()
+    val bodilessBuiltInsPackageFragment: IrPackageFragment = run {
 
-    val externalNestedClasses = mutableListOf<IrClass>()
-    val packageLevelJsModules = mutableListOf<IrFile>()
+        class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {
+            override val descriptor: PackageFragmentDescriptor
+                get() = error("Operation is unsupported")
+
+            private var _owner: IrExternalPackageFragment? = null
+            override val owner get() = _owner!!
+
+            override val isPublicApi: Boolean
+                get() = TODO("Not yet implemented")
+
+            override val signature: IdSignature
+                get() = TODO("Not yet implemented")
+
+            override val isBound get() = _owner != null
+
+            override fun bind(owner: IrExternalPackageFragment) {
+                _owner = owner
+            }
+        }
+
+        IrExternalPackageFragmentImpl(
+            DescriptorlessExternalPackageFragmentSymbol(),
+            FqName("kotlin")
+        )
+    }
+
+    val packageLevelJsModules = mutableSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
     val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
-    val implicitDeclarationFile by lazy {
+    val implicitDeclarationFile by lazy2 {
         IrFileImpl(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
             override val maxOffset = UNDEFINED_OFFSET
@@ -102,7 +126,9 @@ class JsIrBackendContext(
         }
 
     override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
-    override val declarationFactory = JsDeclarationFactory()
+
+    override val mapping = JsMapping()
+    override val declarationFactory = JsDeclarationFactory(mapping)
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
@@ -135,12 +161,6 @@ class JsIrBackendContext(
 
     private val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
-
-    val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, IrSimpleFunction>()
-    val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
-    val enumEntryExternalToInstanceField = mutableMapOf<IrEnumEntrySymbol, IrField>()
-    val callableReferencesCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
-    val secondaryConstructorToFactoryCache = mutableMapOf<IrConstructor, ConstructorPair>()
 
     val intrinsics = JsIntrinsics(irBuiltIns, this)
 
@@ -243,7 +263,7 @@ class JsIrBackendContext(
     val coroutineGetContextJs
         get() = ir.symbols.coroutineGetContext
 
-    val coroutineEmptyContinuation = symbolTable.referenceField(getProperty(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal", "EmptyContinuation"))))
+    val coroutineEmptyContinuation = symbolTable.referenceProperty(getProperty(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal", "EmptyContinuation"))))
 
     val coroutineContextProperty: PropertyDescriptor
         get() {
@@ -263,27 +283,30 @@ class JsIrBackendContext(
     val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
     val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
 
-    val coroutineImplLabelPropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+    val coroutineImplLabelPropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
-    val primitiveClassProperties by lazy {
+    val primitiveClassProperties by lazy2 {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
     }
 
-    val primitiveClassFunctionClass by lazy {
+    val primitiveClassFunctionClass by lazy2 {
         primitiveClassesObject.owner.declarations
             .filterIsInstance<IrSimpleFunction>()
             .find { it.name == Name.identifier("functionClass") }!!
     }
 
-    val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
-    val defaultThrowableCtor by lazy { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
+    val throwableConstructors by lazy2 { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
+    val defaultThrowableCtor by lazy2 { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
+
+    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let { symbolTable.referenceSimpleFunction(it) }
+    val klocalDelegateBuilder = getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let { symbolTable.referenceSimpleFunction(it) }
 
     private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }
@@ -319,7 +342,7 @@ class JsIrBackendContext(
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
-        findFunctions(internalPackage.memberScope, Name.identifier(name)).single()
+        findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
 
     fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
         findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
@@ -334,3 +357,6 @@ class JsIrBackendContext(
         print(message)
     }
 }
+
+// TODO: investigate if it could be removed
+fun <T> lazy2(fn: () -> T) = lazy { stageController.withInitialIr(fn) }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A
 
 fun foo(invoke: A.()->Unit, a: A) {

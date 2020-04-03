@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.CreatePropertyDelegateAccessorsActionFactory
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -38,7 +39,8 @@ class ChangeVariableMutabilityFix(
 ) : KotlinQuickFixAction<KtValVarKeywordOwner>(element) {
 
     override fun getText() = actionText
-        ?: (if (makeVar) "Change to var" else "Change to val") + (if (deleteInitializer) " and delete initializer" else "")
+        ?: (if (makeVar) KotlinBundle.message("change.to.var") else KotlinBundle.message("change.to.val")) +
+        if (deleteInitializer) KotlinBundle.message("and.delete.initializer") else ""
 
     override fun getFamilyName(): String = text
 
@@ -125,7 +127,17 @@ class ChangeVariableMutabilityFix(
                 val property = element.getStrictParentOfType<KtProperty>() ?: return null
                 val info = CreatePropertyDelegateAccessorsActionFactory.extractFixData(property, diagnostic).singleOrNull() ?: return null
                 if (info.name != OperatorNameConventions.SET_VALUE.asString()) return null
-                return ChangeVariableMutabilityFix(property, makeVar = false, actionText = "Change to val")
+                return ChangeVariableMutabilityFix(property, makeVar = false, actionText = KotlinBundle.message("change.to.val"))
+            }
+        }
+
+        val MUST_BE_INITIALIZED_FACTORY = object : KotlinSingleIntentionActionFactory() {
+            override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                val property = Errors.MUST_BE_INITIALIZED.cast(diagnostic).psiElement as? KtProperty ?: return null
+                val getter = property.getter ?: return null
+                if (!getter.hasBody()) return null
+                if (getter.hasBlockBody() && property.typeReference == null) return null
+                return ChangeVariableMutabilityFix(property, makeVar = false)
             }
         }
     }

@@ -9,6 +9,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtAnnotation
@@ -39,9 +40,9 @@ class SortModifiersInspection : AbstractApplicabilityBasedInspection<KtModifierL
     }
 
     override fun inspectionText(element: KtModifierList) =
-        if (element.modifiersBeforeAnnotations()) "Modifiers should follow annotations" else "Non-canonical modifiers order"
+        if (element.modifiersBeforeAnnotations()) KotlinBundle.message("modifiers.should.follow.annotations") else KotlinBundle.message("non.canonical.modifiers.order")
 
-    override val defaultFixText = "Sort modifiers"
+    override val defaultFixText get() = KotlinBundle.message("sort.modifiers")
 
     override fun applyTo(element: KtModifierList, project: Project, editor: Editor?) {
         val owner = element.parent as? KtModifierListOwner ?: return

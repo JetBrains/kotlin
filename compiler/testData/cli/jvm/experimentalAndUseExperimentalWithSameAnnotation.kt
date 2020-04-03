@@ -1,4 +1,4 @@
 package org.test
 
-@Experimental
+@RequiresOptIn
 annotation class ExperimentalAPI

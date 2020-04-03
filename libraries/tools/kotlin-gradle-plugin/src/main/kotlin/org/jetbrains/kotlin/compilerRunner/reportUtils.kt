@@ -52,12 +52,22 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
         for (cpFile in compilerClasspath) {
             if (cpFile.isFile && cpFile.extension.toLowerCase() == "jar") {
                 ZipFile(cpFile).use { jar ->
-                    val bytes = jar.getInputStream(jar.getEntry(versionClassFileName)).use { it.readBytes() }
-                    checkVersion(bytes)
+                    val versionFileEntry = jar.getEntry(KotlinCompilerVersion.VERSION_FILE_PATH)
+                    if (versionFileEntry != null) {
+                        result = jar.getInputStream(versionFileEntry).bufferedReader().use { it.readText() }
+                    } else {
+                        val bytes = jar.getInputStream(jar.getEntry(versionClassFileName)).use { it.readBytes() }
+                        checkVersion(bytes)
+                    }
                 }
             } else if (cpFile.isDirectory) {
-                File(cpFile, versionClassFileName).takeIf { it.isFile }?.let {
-                    checkVersion(it.readBytes())
+                val versionFile = File(cpFile, KotlinCompilerVersion.VERSION_FILE_PATH)
+                if (versionFile.isFile) {
+                    result = versionFile.readText()
+                } else {
+                    File(cpFile, versionClassFileName).takeIf { it.isFile }?.let {
+                        checkVersion(it.readBytes())
+                    }
                 }
             }
             if (result != null) break

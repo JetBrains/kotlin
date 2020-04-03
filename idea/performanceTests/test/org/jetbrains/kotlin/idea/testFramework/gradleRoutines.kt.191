@@ -1,0 +1,31 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.idea.testFramework
+
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.project.Project
+import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
+import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.nio.file.Paths
+
+fun refreshGradleProject(projectPath: String, project: Project) {
+    GradleProjectOpenProcessor.openGradleProject(project, null, Paths.get(projectPath))
+
+    StatefulTestGradleProjectRefreshCallback(projectPath, project).use { callback ->
+        ExternalSystemUtil.refreshProjects(
+            ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+                .use(ProgressExecutionMode.MODAL_SYNC)
+                .forceWhenUptodate()
+                .withArguments(System.getProperty("kotlin.test.gradle.import.arguments"))
+                .callback(callback)
+                .build()
+        )
+    }
+
+    dispatchAllInvocationEvents()
+}

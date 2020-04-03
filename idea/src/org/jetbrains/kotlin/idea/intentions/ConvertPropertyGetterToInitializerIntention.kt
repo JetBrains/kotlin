@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class ConvertPropertyGetterToInitializerIntention : SelfTargetingIntention<KtPropertyAccessor>(
-    KtPropertyAccessor::class.java, "Convert property getter to initializer"
+    KtPropertyAccessor::class.java, KotlinBundle.lazyMessage("convert.property.getter.to.initializer")
 ) {
 
     override fun isApplicableTo(element: KtPropertyAccessor, caretOffset: Int): Boolean {
@@ -40,10 +41,7 @@ class ConvertPropertyGetterToInitializerIntention : SelfTargetingIntention<KtPro
     }
 }
 
-private fun KtPropertyAccessor.singleExpression(): KtExpression? {
-    val bodyExpression = this.bodyExpression
-    return if (bodyExpression is KtBlockExpression)
-        (bodyExpression.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
-    else
-        bodyExpression
+private fun KtPropertyAccessor.singleExpression(): KtExpression? = when (val bodyExpression = bodyExpression) {
+    is KtBlockExpression -> (bodyExpression.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
+    else -> bodyExpression
 }

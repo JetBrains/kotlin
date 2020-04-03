@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.properties.ReadWriteProperty
 import kotlin.properties.Delegates
 

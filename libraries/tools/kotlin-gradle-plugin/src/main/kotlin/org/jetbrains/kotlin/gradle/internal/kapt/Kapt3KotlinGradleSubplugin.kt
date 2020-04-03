@@ -9,6 +9,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import com.intellij.openapi.util.SystemInfo
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -46,15 +47,15 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         @JvmStatic
         fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String) =
-            File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
+            File(project.buildDir, "tmp/kapt3/classes/$sourceSetName")
 
         @JvmStatic
         fun getKaptGeneratedSourcesDir(project: Project, sourceSetName: String) =
-            File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
+            File(project.buildDir, "generated/source/kapt/$sourceSetName")
 
         @JvmStatic
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
-            File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
+            File(project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
     }
 
     override fun apply(project: Project) {
@@ -65,7 +66,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 project.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
                     val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
                     dependencies.add(project.dependencies.create(kaptDependency))
-                } ?: project.logger.error("Kotlin plugin should be enabled before 'kotlin-kapt'")
+                } ?: throw GradleException("Kotlin plugin should be enabled before 'kotlin-kapt'")
             }
         }
         registry.register(KaptModelBuilder())

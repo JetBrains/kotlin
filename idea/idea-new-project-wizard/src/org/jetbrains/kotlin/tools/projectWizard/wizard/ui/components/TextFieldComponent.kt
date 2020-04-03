@@ -1,54 +1,46 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidator
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
+import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.Nls
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
-import java.awt.BorderLayout
-import javax.swing.JComponent
 
 class TextFieldComponent(
-    private val valuesReadingContext: ValuesReadingContext,
-    private val initialText: String = "",
-    labelText: String? = "",
-    private val validator: StringValidator = settingValidator { ValidationResult.OK },
-    private val onSuccessValueUpdate: (String) -> Unit = {},
-    private val onAnyValueUpdate: (String) -> Unit = {}
-) : Component() {
-    private val validationIndicator = ValidationIndicator(defaultText = labelText, showText = true)
-    private val textField = textField(initialText, this::fireValueChanged)
+    context: Context,
+    labelText: String? = null,
+    initialValue: String? = null,
+    validator: SettingValidator<String>? = null,
+    onValueUpdate: (String) -> Unit = {}
+) : UIComponent<String>(
+    context,
+    labelText,
+    validator,
+    onValueUpdate
+) {
+    private var isDisabled: Boolean = false
+    private var cachedValueWhenDisabled: String? = null
 
-    override val component: JComponent = panel {
-        add(validationIndicator, BorderLayout.NORTH)
-        add(textField, BorderLayout.CENTER)
+    override val uiComponent: JBTextField = textField(initialValue.orEmpty(), ::fireValueUpdated)
+
+    override fun updateUiValue(newValue: String) = safeUpdateUi {
+        uiComponent.text = newValue
     }
 
-
-    var value: String
-        get() = textField.text
-        set(value) {
-            textField.text = value
-            fireValueChanged(value)
-        }
-
-    private fun fireValueChanged(text: String) {
-        validate(text)
-        if (validationIndicator.validationState == ValidationResult.OK) {
-            onSuccessValueUpdate(text)
-        }
-        onAnyValueUpdate(text)
+    fun disable(@Nls message: String) {
+        cachedValueWhenDisabled = getUiValue()
+        uiComponent.isEditable = false
+        uiComponent.foreground = UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER)
+        isDisabled = true
+        updateUiValue(message)
     }
 
-    override fun onInit() {
-        super.onInit()
-        validate(initialText)
+    override fun validate(value: String) {
+        if (isDisabled) return
+        super.validate(value)
     }
 
-    private fun validate(text: String) {
-        validationIndicator.validationState = validator.validate(valuesReadingContext, text)
-    }
+    override fun getUiValue(): String = cachedValueWhenDisabled ?: uiComponent.text
 }

@@ -182,3 +182,20 @@ internal actual fun checkCountOverflow(count: Int): Int {
     return count
 }
 
+
+/**
+ * JS map and set implementations do not make use of capacities or load factors.
+ */
+@PublishedApi
+internal actual fun mapCapacity(expectedSize: Int) = expectedSize
+
+/**
+ * Checks a collection builder function capacity argument.
+ * In JS no validation is made in Map/Set constructor yet.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@PublishedApi
+internal actual fun checkBuilderCapacity(capacity: Int) {
+    require(capacity >= 0) { "capacity must be non-negative." }
+}

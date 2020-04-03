@@ -88,7 +88,7 @@ public final class Test {
      */
     @Anno()
     @java.lang.Deprecated()
-    public static void prop2$annotations() {
+    public static void getProp2$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

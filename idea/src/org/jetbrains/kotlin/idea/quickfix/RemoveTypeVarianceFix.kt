@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -26,7 +27,7 @@ class RemoveTypeVarianceFix(
     private val type: String
 ) : KotlinQuickFixAction<KtTypeParameter>(typeParameter) {
 
-    override fun getText(): String = "Remove '${variance.label}' variance from '$type'"
+    override fun getText(): String = KotlinBundle.message("remove.0.variance.from.1", variance.label, type)
 
     override fun getFamilyName(): String = text
 

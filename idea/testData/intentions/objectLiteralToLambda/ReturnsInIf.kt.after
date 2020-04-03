@@ -5,12 +5,11 @@ import java.io.FileFilter
 fun foo(filter: FileFilter) {}
 
 fun bar() {
-    foo(FileFilter { file ->
+    foo { file ->
         val name = file.name
         if (name.startsWith("a")) {
             false
-        }
-        else {
+        } else {
             if (name.endsWith("b"))
                 true
             else {
@@ -18,5 +17,5 @@ fun bar() {
                 l > 10
             }
         }
-    })
+    }
 }

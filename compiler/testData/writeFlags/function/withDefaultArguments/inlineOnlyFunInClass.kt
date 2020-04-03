@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class MyClass() {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     @kotlin.internal.InlineOnly

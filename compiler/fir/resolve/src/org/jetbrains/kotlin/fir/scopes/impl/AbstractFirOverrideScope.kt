@@ -37,7 +37,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession, protected val o
             }
             is FirConstructor -> false
             is FirProperty -> baseDeclaration is FirProperty && isOverriddenProperty(overrideCandidate, baseDeclaration)
-            is FirField -> false
+            is FirField -> baseDeclaration is FirField
             else -> error("Unknown fir callable type: $overrideCandidate, $baseDeclaration")
         }
     }

@@ -1,0 +1,10 @@
+package
+
+public final class C {
+    public constructor C()
+    public final fun a(/*0*/ x: kotlin.Int = ...): kotlin.Unit
+    public final fun `a$default`(/*0*/ c: C, /*1*/ x: kotlin.Int, /*2*/ m: kotlin.Int, /*3*/ mh: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

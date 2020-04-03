@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class A {
     abstract val i: Int
 }

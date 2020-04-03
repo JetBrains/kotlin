@@ -160,13 +160,13 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             //
             // Namely, the structure which returns true if any one of the condition is true.
             for (branch in condition.branches) {
-                if (branch is IrElseBranch) {
+                candidates += if (branch is IrElseBranch) {
                     assert(branch.condition.isTrueConst()) { "IrElseBranch.condition should be const true: ${branch.condition.dump()}" }
-                    candidates += matchConditions(branch.result) ?: return null
+                    matchConditions(branch.result) ?: return null
                 } else {
                     if (!branch.result.isTrueConst())
                         return null
-                    candidates += matchConditions(branch.condition) ?: return null
+                    matchConditions(branch.condition) ?: return null
                 }
             }
 
@@ -220,14 +220,21 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         private fun genBranchTargets(): PromisedValue {
             with(codegen) {
                 val endLabel = Label()
+
                 for ((thenExpression, label) in expressionToLabels) {
                     mv.visitLabel(label)
-                    thenExpression.accept(codegen, data).coerce(expression.type).materialized
+                    thenExpression.accept(codegen, data).also {
+                        if (elseExpression != null) {
+                            it.materializedAt(expression.type)
+                        } else {
+                            it.discard()
+                        }
+                    }
                     mv.goTo(endLabel)
                 }
+
                 mv.visitLabel(defaultLabel)
-                val stackValue = elseExpression?.accept(codegen, data)?.coerce(expression.type) ?: defaultValue(expression.type)
-                val result = stackValue.materialized
+                val result = elseExpression?.accept(codegen, data)?.materializedAt(expression.type) ?: unitValue
                 mv.mark(endLabel)
                 return result
             }
@@ -245,10 +252,8 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         override fun shouldOptimize() = cases.size > 1
 
         override fun genSwitch() {
-            with(codegen) {
-                subject.accept(codegen, data).materialize()
-                genIntSwitch(cases)
-            }
+            subject.accept(codegen, data).materialize()
+            genIntSwitch(cases)
         }
     }
 

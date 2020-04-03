@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
@@ -42,7 +44,9 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
             val redundantVisibility = when {
                 visibilityModifier.node.elementType == implicitVisibility ->
                     implicitVisibility
-                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.containingClassOrObject?.isLocal == true ->
+                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.containingClassOrObject?.let {
+                    it.isLocal || it.isPrivate()
+                } == true ->
                     KtTokens.INTERNAL_KEYWORD
                 else ->
                     null
@@ -57,7 +61,7 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
 
             holder.registerProblem(
                 visibilityModifier,
-                "Redundant visibility modifier",
+                KotlinBundle.message("redundant.visibility.modifier"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 IntentionWrapper(
                     RemoveModifierFix(declaration, redundantVisibility, isRedundant = true),

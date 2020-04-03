@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -70,6 +71,8 @@ public class ForceResolveUtil {
     }
 
     private static void doForceResolveAllContents(Object object) {
+        ProgressManager.checkCanceled();
+
         if (object instanceof LazyEntity) {
             LazyEntity lazyEntity = (LazyEntity) object;
             lazyEntity.forceResolveAllContents();

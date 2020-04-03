@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
-import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileFormattingService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 
 interface IdeaWizardService : WizardService
@@ -15,14 +13,17 @@ interface IdeaWizardService : WizardService
 object IdeaServices {
     val PROJECT_INDEPENDENT: List<IdeaWizardService> = listOf(
         IdeaFileSystemWizardService(),
-        IdeaBuildSystemAvailabilityWizardService()
+        IdeaBuildSystemAvailabilityWizardService(),
+        IdeaKotlinVersionProviderService(),
+        IdeaSettingSavingWizardService(),
+        IdeaVelocityEngineTemplateService()
     )
 
-    fun createScopeDependent(project: Project, model: ModifiableModuleModel) = listOf(
+    fun createScopeDependent(project: Project) = listOfNotNull(
         IdeaGradleWizardService(project),
         IdeaMavenWizardService(project),
-        IdeaJpsWizardService(project, model),
-        IdeaFileFormattingService(project)
+        IdeaFileFormattingService(project),
+        IdeaRunConfigurationsService(project)
     )
 }
 

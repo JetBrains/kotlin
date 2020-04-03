@@ -12,9 +12,10 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -25,13 +26,13 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
@@ -40,7 +41,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (isRedundantCompanionReference(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Redundant Companion reference",
+                    KotlinBundle.message("redundant.companion.reference"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     RemoveRedundantCompanionReferenceFix()
                 )
@@ -51,19 +52,22 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     companion object {
         fun isRedundantCompanionReference(reference: KtReferenceExpression): Boolean {
             val parent = reference.parent as? KtDotQualifiedExpression ?: return false
+            val grandParent = parent.parent
             val selectorExpression = parent.selectorExpression
-            if (reference == selectorExpression && parent.parent !is KtDotQualifiedExpression) return false
+            if (reference == selectorExpression && grandParent !is KtDotQualifiedExpression) return false
             if (parent.getStrictParentOfType<KtImportDirective>() != null) return false
 
             val objectDeclaration = reference.mainReference.resolve() as? KtObjectDeclaration ?: return false
             if (!objectDeclaration.isCompanion()) return false
-            if (reference.text != objectDeclaration.name) return false
-
-            val context = reference.analyze()
+            val referenceText = reference.text
+            if (referenceText != objectDeclaration.name) return false
+            if (reference != selectorExpression && referenceText == (selectorExpression as? KtNameReferenceExpression)?.text) return false
 
             val containingClass = objectDeclaration.containingClass() ?: return false
             if (reference.containingClass() != containingClass && reference == parent.receiverExpression) return false
-            val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return false
+            val context = reference.analyze()
+            val containingClassDescriptor =
+                context[BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass] as? ClassDescriptor ?: return false
             when (val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
@@ -72,15 +76,8 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
                     val type = selectorDescriptor.type
                     val javaGetter = containingClassDescriptor.findMemberFunction(
                         Name.identifier(JvmAbi.getterName(name.asString()))
-                    ) as? JavaMethodDescriptor
+                    )?.takeIf { f -> f is JavaMethodDescriptor || f.overriddenDescriptors.any { it is JavaMethodDescriptor } }
                     if (javaGetter?.valueParameters?.isEmpty() == true && javaGetter.returnType?.makeNotNullable() == type) return false
-
-                    val javaSetter = containingClassDescriptor.findMemberFunction(
-                        Name.identifier(JvmAbi.setterName(name.asString()))
-                    ) as? JavaMethodDescriptor
-                    if (javaSetter?.valueParameters?.singleOrNull()?.type?.makeNotNullable() == type
-                        && javaSetter.returnType?.makeNotNullable()?.isUnit() == true
-                    ) return false
 
                     val variable = reference.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
                     if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return false
@@ -97,11 +94,18 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
                 ?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
                 ?.let { if (it != containingClassDescriptor) return false }
 
-            val grandParent = parent.parent as? KtQualifiedExpression
-            if (grandParent != null) {
+            if (grandParent is KtQualifiedExpression) {
                 val grandParentDescriptor = grandParent.getResolvedCall(context)?.resultingDescriptor ?: return false
                 if (grandParentDescriptor is ConstructorDescriptor || grandParentDescriptor is FakeCallableDescriptorForObject) return false
             }
+
+            if (selectorExpression is KtCallExpression && referenceText == selectorExpression.calleeExpression?.text) {
+                val newExpression = KtPsiFactory(reference).createExpressionByPattern("$0", selectorExpression)
+                val newContext = newExpression.analyzeAsReplacement(parent, context)
+                val descriptor = newExpression.getResolvedCall(newContext)?.resultingDescriptor as? FunctionDescriptor
+                if (descriptor?.isOperator == true) return false
+            }
+
             return true
         }
     }
@@ -136,7 +140,7 @@ private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: Clas
 }
 
 class RemoveRedundantCompanionReferenceFix : LocalQuickFix {
-    override fun getName() = "Remove redundant Companion reference"
+    override fun getName() = KotlinBundle.message("remove.redundant.companion.reference.fix.text")
 
     override fun getFamilyName() = name
 

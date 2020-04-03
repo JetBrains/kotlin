@@ -1,0 +1,63 @@
+FILE: branches.kt
+    public? final? fun foo(a: Int, b: Int): <implicit> {
+        ^foo when () {
+            CMP(>, a#.compareTo#(b#)) ->  {
+                a#
+            }
+            else ->  {
+                b#
+            }
+        }
+
+    }
+    public? final? fun bar(a: Double, b: Double): Double {
+        when () {
+            CMP(>, a#.compareTo#(b#)) ->  {
+                println#(a#)
+                ^bar a#
+            }
+            else ->  {
+                println#(b#)
+                ^bar b#
+            }
+        }
+
+    }
+    public? final? fun baz(a: Long, b: Long): Long {
+        when () {
+            CMP(>, a#.compareTo#(b#)) ->  {
+                println#(a#)
+                ^baz a#
+            }
+            else ->  {
+                ^baz b#
+            }
+        }
+
+    }
+    public? final? fun grade(g: Int): String {
+        ^grade when (g#) {
+            ==($subj$, IntegerLiteral(6)) || ==($subj$, IntegerLiteral(7)) ->  {
+                String(Outstanding)
+            }
+            ==($subj$, IntegerLiteral(5)) ->  {
+                String(Excellent)
+            }
+            ==($subj$, IntegerLiteral(4)) ->  {
+                String(Good)
+            }
+            ==($subj$, IntegerLiteral(3)) ->  {
+                String(Mediocre)
+            }
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(2)).contains#($subj$) ->  {
+                String(Fail)
+            }
+            ($subj$ is Number) ->  {
+                String(Number)
+            }
+            else ->  {
+                String(Unknown)
+            }
+        }
+
+    }

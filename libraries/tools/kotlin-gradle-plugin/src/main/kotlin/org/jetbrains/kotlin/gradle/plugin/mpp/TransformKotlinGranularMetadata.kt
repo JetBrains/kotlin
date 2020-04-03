@@ -11,8 +11,7 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.API_SCOPE
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.IMPLEMENTATION_SCOPE
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
@@ -70,12 +69,12 @@ open class TransformKotlinGranularMetadata
         GranularMetadataTransformation(
             project,
             kotlinSourceSet,
-            listOf(API_SCOPE, IMPLEMENTATION_SCOPE),
+            listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE),
             project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
             lazy {
                 KotlinMetadataTargetConfigurator.dependsOnWithInterCompilationDependencies(project, kotlinSourceSet).map {
                     project.tasks.withType(TransformKotlinGranularMetadata::class.java)
-                        .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it))
+                        .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
                         .transformation
                 }
             }

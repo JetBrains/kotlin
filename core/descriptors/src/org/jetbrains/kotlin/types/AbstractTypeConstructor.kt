@@ -45,7 +45,7 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
         result in deadlock
          */
         private val refinedSupertypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
             kotlinTypeRefiner.refineTypes(this@AbstractTypeConstructor.getSupertypes())
         }
 

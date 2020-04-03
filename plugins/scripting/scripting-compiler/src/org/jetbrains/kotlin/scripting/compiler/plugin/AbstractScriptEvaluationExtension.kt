@@ -53,8 +53,8 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         setupScriptConfiguration(configuration)
 
         val script = when {
-            arguments is K2JVMCompilerArguments && arguments.expressions != null -> {
-                StringScriptSource(arguments.expressions!!.joinToString("\n"), "script.kts")
+            arguments is K2JVMCompilerArguments && arguments.expression != null -> {
+                StringScriptSource(arguments.expression!!, "script.kts")
             }
             arguments.script -> {
                 val scriptFile = File(arguments.freeArgs.first())

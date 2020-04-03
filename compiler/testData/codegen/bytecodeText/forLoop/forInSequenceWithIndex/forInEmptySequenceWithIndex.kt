@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36774 Generate optimized loops over 'xs.withIndex()' in JVM_IR
 // TODO: Handle Sequences by extending DefaultIterableHandler.
 val xs = listOf<Any>().asSequence()
 

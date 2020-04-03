@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.annotations.TestOnly
 import java.io.File
+import java.io.IOException
 
 open class BasicMapsOwner(val cachesDir: File) {
     private val maps = arrayListOf<BasicMap<*, *>>()
@@ -35,16 +36,35 @@ open class BasicMapsOwner(val cachesDir: File) {
     }
 
     open fun clean() {
-        maps.forEach { it.clean() }
+        forEachMapSafe("clean", BasicMap<*, *>::clean)
     }
 
     open fun close() {
-        maps.forEach { it.close() }
+        forEachMapSafe("close", BasicMap<*, *>::close)
     }
 
     open fun flush(memoryCachesOnly: Boolean) {
-        maps.forEach { it.flush(memoryCachesOnly) }
+        forEachMapSafe("flush") { it.flush(memoryCachesOnly) }
     }
 
-    @TestOnly fun dump(): String = maps.joinToString("\n\n") { it.dump() }
+    private fun forEachMapSafe(actionName: String, action: (BasicMap<*, *>) -> Unit) {
+        val actionExceptions = LinkedHashMap<String, Exception>()
+        maps.forEach {
+            try {
+                action(it)
+            } catch (e: Exception) {
+                actionExceptions[it.storageFile.name] = e
+            }
+        }
+        if (actionExceptions.isNotEmpty()) {
+            val desc = "Could not $actionName incremental caches in $cachesDir: ${actionExceptions.keys.joinToString(", ")}"
+            val allIOExceptions = actionExceptions.all { it is IOException }
+            val ex = if (allIOExceptions) IOException(desc) else Exception(desc)
+            actionExceptions.forEach { (_, e) -> ex.addSuppressed(e) }
+            throw ex
+        }
+    }
+
+    @TestOnly
+    fun dump(): String = maps.joinToString("\n\n") { it.dump() }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import java.io.File
 
 /**
  * NodeJS package manager API
@@ -19,8 +20,15 @@ interface NpmApi {
     fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        skipExecution: Boolean,
+        cliArgs: List<String>
     )
+
+    fun resolveDependency(
+        npmResolution: KotlinCompilationNpmResolution,
+        dependency: NpmDependency,
+        transitive: Boolean
+    ): Set<File>
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =

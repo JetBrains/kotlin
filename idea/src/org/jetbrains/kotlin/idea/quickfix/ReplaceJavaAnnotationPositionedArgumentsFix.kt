@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
+import org.jetbrains.kotlin.idea.util.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.JavaAnnotationCallChecker
 
 class ReplaceJavaAnnotationPositionedArgumentsFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element),
     CleanupFix {
-    override fun getText(): String = "Replace invalid positioned arguments for annotation"
+    override fun getText(): String = KotlinBundle.message("replace.invalid.positioned.arguments.for.annotation")
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

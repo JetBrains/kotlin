@@ -82,7 +82,7 @@ public class SamWrapperCodegen {
         KotlinType functionType = samType.getKotlinFunctionType();
 
         ClassDescriptor classDescriptor = new ClassDescriptorImpl(
-                samType.getJavaClassDescriptor().getContainingDeclaration(),
+                samType.getClassDescriptor().getContainingDeclaration(),
                 fqName.shortName(),
                 Modality.FINAL,
                 ClassKind.CLASS,
@@ -132,7 +132,7 @@ public class SamWrapperCodegen {
     }
 
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(JvmDeclarationOriginKt.OtherOrigin(samType.getJavaClassDescriptor()),
+        MethodVisitor mv = cv.newMethod(JvmDeclarationOriginKt.OtherOrigin(samType.getClassDescriptor()),
                                         visibility, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
 
         if (state.getClassBuilderMode().generateBodies) {
@@ -198,7 +198,7 @@ public class SamWrapperCodegen {
                 "%s$sam%s$%s" + SAM_WRAPPER_SUFFIX,
                 outermostOwner.shortName().asString(),
                 (isInsideInline ? "$i" : ""),
-                DescriptorUtils.getFqNameSafe(samType.getJavaClassDescriptor()).asString().replace('.', '_')
+                DescriptorUtils.getFqNameSafe(samType.getClassDescriptor()).asString().replace('.', '_')
         );
         return outermostOwner.parent().child(Name.identifier(shortName));
     }

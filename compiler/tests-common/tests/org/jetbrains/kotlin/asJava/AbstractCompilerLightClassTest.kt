@@ -22,20 +22,17 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void, Void>() {
-    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
+abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule, KotlinBaseTest.TestFile>() {
 
     override fun isKotlinSourceRootNeeded(): Boolean = true
 
-    override fun doMultiFileTest(file: File, modules: MutableMap<String, ModuleAndDependencies>, files: MutableList<Void>) {
-        val environment = createEnvironment(file)
+    override fun doMultiFileTest(file: File, files: List<TestFile>) {
+        val environment = createEnvironment(file, files)
         val expectedFile = KotlinTestUtils.replaceExtension(file, "java")
         val allowFrontendExceptions = InTextDirectivesUtils.isDirectiveDefined(file.readText(), "// ALLOW_FRONTEND_EXCEPTION")
 
@@ -47,9 +44,18 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void
         )
     }
 
-    override fun createTestModule(name: String): Void? = null
+    override fun createTestModule(
+        name: String,
+        dependencies: List<String>,
+        friends: List<String>
+    ): TestModule? = null
 
-    override fun createTestFile(module: Void?, fileName: String, text: String, directives: Map<String, String>): Void? = null
+    override fun createTestFile(
+        module: TestModule?,
+        fileName: String,
+        text: String,
+        directives: Directives
+    ): TestFile = TestFile(fileName, text, directives)
 
     companion object {
         fun findLightClass(allowFrontendExceptions: Boolean, environment: KotlinCoreEnvironment, fqname: String): PsiClass? {

@@ -40,11 +40,6 @@ class CliScriptDependenciesProvider(project: Project) : ScriptDependenciesProvid
 
                 ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file.virtualFile, result.reports)
 
-                if (result is ResultWithDiagnostics.Success) {
-                    log.info("[kts] new cached deps for $path: ${result.value.dependenciesClassPath.joinToString(File.pathSeparator)}")
-                } else {
-                    log.info("[kts] new cached errors for $path:\n  ${result.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}")
-                }
                 cacheLock.write {
                     cache.put(path, result)
                 }
@@ -53,5 +48,3 @@ class CliScriptDependenciesProvider(project: Project) : ScriptDependenciesProvid
         }
     }
 }
-
-private val log = Logger.getInstance(ScriptDependenciesProvider::class.java)

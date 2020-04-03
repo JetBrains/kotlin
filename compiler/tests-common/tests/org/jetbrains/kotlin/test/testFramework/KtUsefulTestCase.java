@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
 import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
 import java.io.File;
@@ -98,8 +97,12 @@ public abstract class KtUsefulTestCase extends TestCase {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
 
+        // -- KOTLIN ADDITIONAL START --
+
         FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true;
+
+        // -- KOTLIN ADDITIONAL END --
     }
 
     protected boolean shouldContainTempFiles() {
@@ -108,11 +111,13 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
+        // -- KOTLIN ADDITIONAL START --
         application = ApplicationManager.getApplication();
 
         if (application != null && application.isDisposed()) {
             MockComponentManagerCreationTracer.diagnoseDisposedButNotClearedApplication(application);
         }
+        // -- KOTLIN ADDITIONAL END --
 
         super.setUp();
 
@@ -123,11 +128,13 @@ public abstract class KtUsefulTestCase extends TestCase {
             myTempDir = FileUtil.createTempDirectory(TEMP_DIR_MARKER, testName, false);
             FileUtil.resetCanonicalTempPathCache(myTempDir.getPath());
         }
+
         boolean isStressTest = isStressTest();
         ApplicationInfoImpl.setInStressTest(isStressTest);
         if (isPerformanceTest()) {
             Timings.getStatistics();
         }
+
         // turn off Disposer debugging for performance tests
         Disposer.setDebugMode(!isStressTest);
     }
@@ -165,27 +172,12 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         finally {
             super.tearDown();
-            resetApplicationToNull(application);
+            // -- KOTLIN ADDITIONAL START --
+            TestApplicationUtilKt.resetApplicationToNull(application);
             application = null;
+            // -- KOTLIN ADDITIONAL END --
         }
     }
-
-    public static void resetApplicationToNull(Application old) {
-        if (old != null) return;
-        resetApplicationToNull();
-    }
-
-    public static void resetApplicationToNull() {
-        try {
-            Field ourApplicationField = ApplicationManager.class.getDeclaredField("ourApplication");
-            ourApplicationField.setAccessible(true);
-            ourApplicationField.set(null, null);
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
 
     protected final void disposeRootDisposable() {
         Disposer.dispose(getTestRootDisposable());

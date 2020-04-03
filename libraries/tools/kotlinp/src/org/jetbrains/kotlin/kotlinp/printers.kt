@@ -444,7 +444,7 @@ private fun renderAnnotation(annotation: KmAnnotation): String =
             "$name = ${renderAnnotationArgument(argument)}"
         }
 
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
     when (arg) {
         is KmAnnotationArgument.ByteValue -> arg.value.toString() + ".toByte()"

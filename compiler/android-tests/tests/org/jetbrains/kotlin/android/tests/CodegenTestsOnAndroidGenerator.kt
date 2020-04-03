@@ -138,12 +138,12 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         private fun writeFiles(filesToCompile: List<KtFile>, environment: KotlinCoreEnvironment) {
             if (filesToCompile.isEmpty()) return
 
-            //3000 files per folder that would be used by flavor to avoid multidex usage,
+            //2500 files per folder that would be used by flavor to avoid multidex usage,
             // each folder would be jared by build.gradle script
             writtenFilesCount += filesToCompile.size
-            val index = writtenFilesCount / 3000
+            val index = writtenFilesCount / 2500
             val outputDir = File(pathManager.getOutputForCompiledFiles(index))
-            assertTrue("Add flavors for ktest$index", index < 2)
+            assertTrue("Add flavors for ktest$index", index < 3)
 
             println("Generating ${filesToCompile.size} files into ${outputDir.name}, configuration: '${environment.configuration}'...")
 
@@ -219,7 +219,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (hasBoxMethod(fullFileText)) {
                     val testFiles = createTestFiles(file, fullFileText)
                     val kind = extractConfigurationKind(testFiles)
-                    val jdkKind = getJdkKind(testFiles)
+                    val jdkKind = getTestJdkKind(testFiles)
                     val keyConfiguration = CompilerConfiguration()
                     updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
 
@@ -242,8 +242,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             file.name,
             expectedText,
             object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
-                    return TestFile(fileName, text)
+                override fun create(fileName: String, text: String, directives: Directives): TestFile {
+                    return TestFile(fileName, text, directives)
                 }
             }, false,
             "kotlin.coroutines"

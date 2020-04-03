@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperFinally
-// IGNORE_BACKEND_FIR: JVM_IR
 var result = ""
 
 fun test() {

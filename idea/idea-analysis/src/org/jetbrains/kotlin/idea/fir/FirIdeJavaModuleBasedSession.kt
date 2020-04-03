@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 
@@ -31,7 +33,7 @@ class FirIdeJavaModuleBasedSession(
     init {
         registerComponent(
             FirProvider::class,
-            FirIdeProvider(project, scope, this)
+            FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
         )
         registerComponent(
             FirSymbolProvider::class,

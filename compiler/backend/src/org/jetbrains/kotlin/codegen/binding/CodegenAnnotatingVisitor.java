@@ -797,7 +797,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
             if (valueArgument == null || newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) == null) continue;
 
-            valueParametersWithSAMConversion.add(valueParameter.getOriginal());
+            valueParametersWithSAMConversion.add(valueParameter);
         }
         writeSamValueForValueParameters(valueParametersWithSAMConversion, newResolvedCall.getValueArgumentsByIndex());
 
@@ -852,6 +852,19 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         withinUninitializedClass(call, () -> super.visitConstructorDelegationCall(call));
 
         checkSamCall(call);
+    }
+
+    @Override
+    public void visitParameter(@NotNull KtParameter parameter) {
+        PsiElement parent = parameter.getParent(); // KtParameterList
+        if (parent != null && parent.getParent() instanceof KtConstructor<?>) {
+            KtExpression defaultValue = parameter.getDefaultValue();
+            if (defaultValue != null) {
+                withinUninitializedClass(defaultValue, () -> defaultValue.accept(this));
+            }
+        } else {
+            super.visitParameter(parameter);
+        }
     }
 
     private void withinUninitializedClass(@NotNull KtElement element, @NotNull Runnable operation) {

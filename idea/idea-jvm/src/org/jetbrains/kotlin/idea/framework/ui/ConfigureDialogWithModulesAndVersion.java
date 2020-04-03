@@ -35,6 +35,7 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
@@ -76,12 +77,14 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     ) {
         super(project);
 
-        setTitle("Configure Kotlin with " + configurator.getPresentableText());
+        setTitle(KotlinJvmBundle.message("configure.kotlin.title", configurator.getPresentableText()));
 
         this.minimumVersion = minimumVersion;
         init();
 
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Find Kotlin Maven plugin versions", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(
+                project, KotlinJvmBundle.message("configure.kotlin.find.maven.versions"), false
+        ) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 loadKotlinVersions();
@@ -95,7 +98,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
             }
         });
 
-        kotlinVersionComboBox.addItem("loading...");
+        kotlinVersionComboBox.addItem(KotlinJvmBundle.message("configure.kotlin.loading"));
         kotlinVersionComboBox.setEnabled(false);
 
         processIcon.resume();
@@ -150,7 +153,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
             public void run() {
                 infoPanel.remove(processIcon);
                 infoPanel.add(new JLabel(UIUtil.getBalloonWarningIcon()), BorderLayout.CENTER);
-                infoPanel.setToolTipText("Couldn't load versions list from search.maven.org");
+                infoPanel.setToolTipText(KotlinJvmBundle.message("configure.kotlin.cant.load.versions"));
                 infoPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 infoPanel.updateUI();
             }
@@ -172,7 +175,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     }
 
     @NotNull
-    protected static Collection<String> loadVersions(String minimumVersion) throws Exception {
+        public static Collection<String> loadVersions(String minimumVersion) throws Exception {
         List<String> versions = Lists.newArrayList();
 
         String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion();

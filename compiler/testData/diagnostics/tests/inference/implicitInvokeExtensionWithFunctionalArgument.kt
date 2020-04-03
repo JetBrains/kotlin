@@ -25,5 +25,5 @@ fun test(s: SelectorFor<State>): Double {
     val e = s { return p1 }
     e checkType { _<AbstractSelector<State, Nothing>>() }
 
-    <!OI;UNREACHABLE_CODE!>return<!> null!!
+    <!UNREACHABLE_CODE!>return<!> null!!
 }

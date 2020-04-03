@@ -1,0 +1,462 @@
+digraph assignSafeCall_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        2 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    0 -> {2};
+    2 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        3 [label="Enter function foo" style="filled" fillcolor=red];
+        5 [label="Const: Int(1)"];
+        6 [label="Jump: ^foo Int(1)"];
+        7 [label="Stub" style="filled" fillcolor=gray];
+        4 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    3 -> {5};
+    5 -> {6};
+    6 -> {4};
+    6 -> {7} [style=dotted];
+    7 -> {4} [style=dotted];
+
+    subgraph cluster_2 {
+        color=red
+        13 [label="Enter function bar" style="filled" fillcolor=red];
+        14 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+    13 -> {14};
+
+    subgraph cluster_3 {
+        color=red
+        15 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            8 [label="Enter function getter" style="filled" fillcolor=red];
+            9 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_5 {
+            color=blue
+            10 [label="Enter property" style="filled" fillcolor=red];
+            12 [label="Const: Int(1)"];
+            11 [label="Exit property" style="filled" fillcolor=red];
+        }
+        16 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    15 -> {10} [color=green];
+    10 -> {12};
+    11 -> {16} [color=green];
+    12 -> {11};
+    8 -> {9};
+
+    subgraph cluster_6 {
+        color=red
+        17 [label="Enter function test_1" style="filled" fillcolor=red];
+        19 [label="Access variable R|<local>/a|"];
+        20 [label="Enter safe call"];
+        22 [label="Access variable R|/A.x|"];
+        21 [label="Exit safe call"];
+        23 [label="Variable declaration: lval x: R|kotlin/Int?|"];
+        subgraph cluster_7 {
+            color=blue
+            24 [label="Enter when"];
+            subgraph cluster_8 {
+                color=blue
+                26 [label="Enter when branch condition "];
+                27 [label="Access variable R|<local>/x|"];
+                28 [label="Const: Null(null)"];
+                29 [label="Operator !="];
+                30 [label="Exit when branch condition"];
+            }
+            37 [label="Synthetic else branch"];
+            31 [label="Enter when branch result"];
+            subgraph cluster_9 {
+                color=blue
+                32 [label="Enter block"];
+                33 [label="Access variable R|<local>/a|"];
+                34 [label="Function call: R|<local>/a|.R|/A.bar|()"];
+                35 [label="Exit block"];
+            }
+            36 [label="Exit when branch result"];
+            25 [label="Exit when"];
+        }
+        18 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
+    17 -> {19};
+    19 -> {20 21};
+    20 -> {22};
+    21 -> {23};
+    22 -> {21};
+    23 -> {24};
+    24 -> {26};
+    25 -> {18};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {31 37};
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+    35 -> {36};
+    36 -> {25};
+    37 -> {25};
+
+    subgraph cluster_10 {
+        color=red
+        38 [label="Enter function test_2" style="filled" fillcolor=red];
+        40 [label="Access variable R|<local>/a|"];
+        41 [label="Enter safe call"];
+        43 [label="Function call: R|<local>/a|?.R|/A.foo|()"];
+        42 [label="Exit safe call"];
+        44 [label="Variable declaration: lval x: R|kotlin/Int?|"];
+        subgraph cluster_11 {
+            color=blue
+            45 [label="Enter when"];
+            subgraph cluster_12 {
+                color=blue
+                47 [label="Enter when branch condition "];
+                48 [label="Access variable R|<local>/x|"];
+                49 [label="Const: Null(null)"];
+                50 [label="Operator !="];
+                51 [label="Exit when branch condition"];
+            }
+            58 [label="Synthetic else branch"];
+            52 [label="Enter when branch result"];
+            subgraph cluster_13 {
+                color=blue
+                53 [label="Enter block"];
+                54 [label="Access variable R|<local>/a|"];
+                55 [label="Function call: R|<local>/a|.R|/A.bar|()"];
+                56 [label="Exit block"];
+            }
+            57 [label="Exit when branch result"];
+            46 [label="Exit when"];
+        }
+        39 [label="Exit function test_2" style="filled" fillcolor=red];
+    }
+    38 -> {40};
+    40 -> {41 42};
+    41 -> {43};
+    42 -> {44};
+    43 -> {42};
+    44 -> {45};
+    45 -> {47};
+    46 -> {39};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52 58};
+    52 -> {53};
+    53 -> {54};
+    54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {46};
+    58 -> {46};
+
+    subgraph cluster_14 {
+        color=red
+        59 [label="Enter function test_3" style="filled" fillcolor=red];
+        subgraph cluster_15 {
+            color=blue
+            61 [label="Enter when"];
+            63 [label="Access variable R|<local>/x|"];
+            64 [label="Type operator: (R|<local>/x| as? R|A|)"];
+            65 [label="Variable declaration: lval <elvis>: R|A?|"];
+            subgraph cluster_16 {
+                color=blue
+                66 [label="Enter when branch condition "];
+                67 [label="Const: Null(null)"];
+                68 [label="Operator =="];
+                69 [label="Exit when branch condition"];
+            }
+            subgraph cluster_17 {
+                color=blue
+                76 [label="Enter when branch condition else"];
+                77 [label="Exit when branch condition"];
+            }
+            78 [label="Enter when branch result"];
+            subgraph cluster_18 {
+                color=blue
+                79 [label="Enter block"];
+                80 [label="Access variable R|<local>/<elvis>|"];
+                81 [label="Exit block"];
+            }
+            82 [label="Exit when branch result"];
+            70 [label="Enter when branch result"];
+            subgraph cluster_19 {
+                color=blue
+                71 [label="Enter block"];
+                72 [label="Jump: ^test_3 Unit"];
+                73 [label="Stub" style="filled" fillcolor=gray];
+                74 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            75 [label="Exit when branch result" style="filled" fillcolor=gray];
+            62 [label="Exit when"];
+        }
+        83 [label="Variable declaration: lval a: R|A|"];
+        84 [label="Access variable R|<local>/a|"];
+        85 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+        86 [label="Access variable R|<local>/x|"];
+        87 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+        60 [label="Exit function test_3" style="filled" fillcolor=red];
+    }
+    59 -> {61};
+    61 -> {63};
+    62 -> {83};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {68};
+    68 -> {69};
+    69 -> {70 76};
+    70 -> {71};
+    71 -> {72};
+    72 -> {60};
+    72 -> {73} [style=dotted];
+    73 -> {74} [style=dotted];
+    74 -> {75} [style=dotted];
+    75 -> {62} [style=dotted];
+    76 -> {77};
+    77 -> {78};
+    78 -> {79};
+    79 -> {80};
+    80 -> {81};
+    81 -> {82};
+    82 -> {62};
+    83 -> {84};
+    84 -> {85};
+    85 -> {86};
+    86 -> {87};
+    87 -> {60};
+
+    subgraph cluster_20 {
+        color=red
+        88 [label="Enter function foo" style="filled" fillcolor=red];
+        89 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    88 -> {89};
+
+    subgraph cluster_21 {
+        color=red
+        94 [label="Enter function bar" style="filled" fillcolor=red];
+        95 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+    94 -> {95};
+
+    subgraph cluster_22 {
+        color=red
+        96 [label="Enter class B" style="filled" fillcolor=red];
+        subgraph cluster_23 {
+            color=blue
+            90 [label="Enter function getter" style="filled" fillcolor=red];
+            91 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_24 {
+            color=blue
+            92 [label="Enter property" style="filled" fillcolor=red];
+            93 [label="Exit property" style="filled" fillcolor=red];
+        }
+        97 [label="Exit class B" style="filled" fillcolor=red];
+    }
+    96 -> {92} [color=green];
+    92 -> {93};
+    93 -> {97} [color=green];
+    90 -> {91};
+
+    subgraph cluster_25 {
+        color=red
+        98 [label="Enter function test_1" style="filled" fillcolor=red];
+        100 [label="Access variable R|<local>/a|"];
+        101 [label="Enter safe call"];
+        103 [label="Access variable R|/B.x|"];
+        102 [label="Exit safe call"];
+        104 [label="Variable declaration: lval x: R|kotlin/Int?|"];
+        subgraph cluster_26 {
+            color=blue
+            105 [label="Enter when"];
+            subgraph cluster_27 {
+                color=blue
+                107 [label="Enter when branch condition "];
+                108 [label="Access variable R|<local>/x|"];
+                109 [label="Const: Null(null)"];
+                110 [label="Operator !="];
+                111 [label="Exit when branch condition"];
+            }
+            118 [label="Synthetic else branch"];
+            112 [label="Enter when branch result"];
+            subgraph cluster_28 {
+                color=blue
+                113 [label="Enter block"];
+                114 [label="Access variable R|<local>/a|"];
+                115 [label="Function call: R|<local>/a|.R|/B.bar|()"];
+                116 [label="Exit block"];
+            }
+            117 [label="Exit when branch result"];
+            106 [label="Exit when"];
+        }
+        99 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
+    98 -> {100};
+    100 -> {101 102};
+    101 -> {103};
+    102 -> {104};
+    103 -> {102};
+    104 -> {105};
+    105 -> {107};
+    106 -> {99};
+    107 -> {108};
+    108 -> {109};
+    109 -> {110};
+    110 -> {111};
+    111 -> {112 118};
+    112 -> {113};
+    113 -> {114};
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
+    117 -> {106};
+    118 -> {106};
+
+    subgraph cluster_29 {
+        color=red
+        119 [label="Enter function test_2" style="filled" fillcolor=red];
+        121 [label="Access variable R|<local>/a|"];
+        122 [label="Enter safe call"];
+        124 [label="Function call: R|<local>/a|?.R|/B.foo|()"];
+        123 [label="Exit safe call"];
+        125 [label="Variable declaration: lval x: R|kotlin/Int?|"];
+        subgraph cluster_30 {
+            color=blue
+            126 [label="Enter when"];
+            subgraph cluster_31 {
+                color=blue
+                128 [label="Enter when branch condition "];
+                129 [label="Access variable R|<local>/x|"];
+                130 [label="Const: Null(null)"];
+                131 [label="Operator !="];
+                132 [label="Exit when branch condition"];
+            }
+            139 [label="Synthetic else branch"];
+            133 [label="Enter when branch result"];
+            subgraph cluster_32 {
+                color=blue
+                134 [label="Enter block"];
+                135 [label="Access variable R|<local>/a|"];
+                136 [label="Function call: R|<local>/a|.R|/B.bar|()"];
+                137 [label="Exit block"];
+            }
+            138 [label="Exit when branch result"];
+            127 [label="Exit when"];
+        }
+        120 [label="Exit function test_2" style="filled" fillcolor=red];
+    }
+    119 -> {121};
+    121 -> {122 123};
+    122 -> {124};
+    123 -> {125};
+    124 -> {123};
+    125 -> {126};
+    126 -> {128};
+    127 -> {120};
+    128 -> {129};
+    129 -> {130};
+    130 -> {131};
+    131 -> {132};
+    132 -> {133 139};
+    133 -> {134};
+    134 -> {135};
+    135 -> {136};
+    136 -> {137};
+    137 -> {138};
+    138 -> {127};
+    139 -> {127};
+
+    subgraph cluster_33 {
+        color=red
+        140 [label="Enter function test_3" style="filled" fillcolor=red];
+        subgraph cluster_34 {
+            color=blue
+            142 [label="Enter when"];
+            144 [label="Access variable R|<local>/x|"];
+            145 [label="Type operator: (R|<local>/x| as? R|B|)"];
+            146 [label="Variable declaration: lval <elvis>: R|B?|"];
+            subgraph cluster_35 {
+                color=blue
+                147 [label="Enter when branch condition "];
+                148 [label="Const: Null(null)"];
+                149 [label="Operator =="];
+                150 [label="Exit when branch condition"];
+            }
+            subgraph cluster_36 {
+                color=blue
+                157 [label="Enter when branch condition else"];
+                158 [label="Exit when branch condition"];
+            }
+            159 [label="Enter when branch result"];
+            subgraph cluster_37 {
+                color=blue
+                160 [label="Enter block"];
+                161 [label="Access variable R|<local>/<elvis>|"];
+                162 [label="Exit block"];
+            }
+            163 [label="Exit when branch result"];
+            151 [label="Enter when branch result"];
+            subgraph cluster_38 {
+                color=blue
+                152 [label="Enter block"];
+                153 [label="Jump: ^test_3 Unit"];
+                154 [label="Stub" style="filled" fillcolor=gray];
+                155 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            156 [label="Exit when branch result" style="filled" fillcolor=gray];
+            143 [label="Exit when"];
+        }
+        164 [label="Variable declaration: lval a: R|B|"];
+        165 [label="Access variable R|<local>/a|"];
+        166 [label="Function call: R|<local>/a|.R|/B.foo|()"];
+        167 [label="Access variable R|<local>/x|"];
+        168 [label="Function call: R|<local>/x|.R|/B.foo|()"];
+        141 [label="Exit function test_3" style="filled" fillcolor=red];
+    }
+    140 -> {142};
+    142 -> {144};
+    143 -> {164};
+    144 -> {145};
+    145 -> {146};
+    146 -> {147};
+    147 -> {148};
+    148 -> {149};
+    149 -> {150};
+    150 -> {151 157};
+    151 -> {152};
+    152 -> {153};
+    153 -> {141};
+    153 -> {154} [style=dotted];
+    154 -> {155} [style=dotted];
+    155 -> {156} [style=dotted];
+    156 -> {143} [style=dotted];
+    157 -> {158};
+    158 -> {159};
+    159 -> {160};
+    160 -> {161};
+    161 -> {162};
+    162 -> {163};
+    163 -> {143};
+    164 -> {165};
+    165 -> {166};
+    166 -> {167};
+    167 -> {168};
+    168 -> {141};
+
+}

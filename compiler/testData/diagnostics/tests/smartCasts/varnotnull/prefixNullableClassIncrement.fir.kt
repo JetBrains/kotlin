@@ -9,5 +9,5 @@ public fun box() {
     // type of j should be MyClass?
     var j = ++i
     // j is null so call should be unsafe
-    j.hashCode()
+    j.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
 }

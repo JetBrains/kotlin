@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -38,7 +39,7 @@ internal val assertionPhase = makeIrFilePhase(
     description = "Lower assert calls depending on the assertions mode",
     // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
     // class that contains it.
-    prerequisite = setOf(callableReferencePhase)
+    prerequisite = setOf(functionReferencePhase)
 )
 
 private class AssertionLowering(private val context: JvmBackendContext) :
@@ -67,10 +68,6 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         // to be false, meaning that assertions are checked.
         info.assertionsDisabledField?.let {
             declaration.declarations.add(0, it)
-
-            // Some parents of local declarations are not updated during ad-hoc inlining
-            // TODO: Remove when generic inliner is used
-            declaration.patchDeclarationParents(declaration.parent)
         }
 
         return declaration
@@ -112,7 +109,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
                 putValueArgument(
                     0,
                     when {
-                        lambda != null -> lambda.inline()
+                        lambda != null -> lambda.inline(parent)
                         lambdaArgument != null -> {
                             val invoke =
                                 lambdaArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
@@ -136,7 +133,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
 }
 
 private fun IrBuilderWithScope.getJavaClass(backendContext: JvmBackendContext, irClass: IrClass) =
-    with(CallableReferenceLowering) {
+    with(FunctionReferenceLowering) {
         javaClassReference(irClass.defaultType, backendContext)
     }
 
@@ -144,6 +141,7 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
     buildField {
         name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
         origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
+        visibility = JavaVisibilities.PACKAGE_VISIBILITY
         type = backendContext.irBuiltIns.booleanType
         isFinal = true
         isStatic = true

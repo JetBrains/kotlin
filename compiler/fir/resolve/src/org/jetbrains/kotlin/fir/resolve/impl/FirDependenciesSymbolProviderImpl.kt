@@ -48,14 +48,6 @@ open class FirDependenciesSymbolProviderImpl(val session: FirSession) : Abstract
         }
     }
 
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        return dependencyProviders.firstNotNullResult { it.getClassUseSiteMemberScope(classId, useSiteSession, scopeSession) }
-    }
-
     override fun getPackage(fqName: FqName): FqName? {
         return packageCache.lookupCacheOrCalculate(fqName) {
             for (provider in dependencyProviders) {

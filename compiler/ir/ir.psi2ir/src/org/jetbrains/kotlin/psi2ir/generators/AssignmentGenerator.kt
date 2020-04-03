@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -170,16 +168,17 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         origin: IrStatementOrigin,
         isAssignmentStatement: Boolean = true
     ): AssignmentReceiver {
-        if (ktLeft is KtArrayAccessExpression) {
-            return generateArrayAccessAssignmentReceiver(ktLeft, origin)
+        val ktExpr = KtPsiUtil.safeDeparenthesize(ktLeft)
+        if (ktExpr is KtArrayAccessExpression) {
+            return generateArrayAccessAssignmentReceiver(ktExpr, origin)
         }
 
-        val resolvedCall = getResolvedCall(ktLeft)
-            ?: return generateExpressionAssignmentReceiver(ktLeft, origin, isAssignmentStatement)
+        val resolvedCall = getResolvedCall(ktExpr)
+            ?: return generateExpressionAssignmentReceiver(ktExpr, origin, isAssignmentStatement)
         val descriptor = resolvedCall.resultingDescriptor
 
-        val startOffset = ktLeft.startOffsetSkippingComments
-        val endOffset = ktLeft.endOffset
+        val startOffset = ktExpr.startOffsetSkippingComments
+        val endOffset = ktExpr.endOffset
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {
                 val receiverValue =
@@ -188,7 +187,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                         resolvedCall,
                         descriptor
                     )
-                createBackingFieldLValue(ktLeft, descriptor.propertyDescriptor, receiverValue, origin)
+                createBackingFieldLValue(ktExpr, descriptor.propertyDescriptor, receiverValue, origin)
             }
             is LocalVariableDescriptor ->
                 @Suppress("DEPRECATION")
@@ -202,13 +201,13 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                         origin
                     )
                 else
-                    createVariableValue(ktLeft, descriptor, origin)
+                    createVariableValue(ktExpr, descriptor, origin)
             is PropertyDescriptor ->
-                generateAssignmentReceiverForProperty(descriptor, origin, ktLeft, resolvedCall, isAssignmentStatement)
+                generateAssignmentReceiverForProperty(descriptor, origin, ktExpr, resolvedCall, isAssignmentStatement)
             is ValueDescriptor ->
-                createVariableValue(ktLeft, descriptor, origin)
+                createVariableValue(ktExpr, descriptor, origin)
             else ->
-                OnceExpressionValue(ktLeft.genExpr())
+                OnceExpressionValue(ktExpr.genExpr())
         }
     }
 
@@ -277,16 +276,10 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                         isAssignmentReceiver = isAssignmentStatement
                     )
                 )
-            isValInitializationInConstructor(descriptor, resolvedCall) -> {
-                val thisClass = getThisClass()
-                val thisAsReceiverParameter = thisClass.thisAsReceiverParameter
-                val thisType = thisAsReceiverParameter.type.toIrType()
-                val irThis = IrGetValueImpl(
-                    ktLeft.startOffsetSkippingComments, ktLeft.endOffset,
-                    thisType,
-                    context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
-                )
-                createBackingFieldLValue(ktLeft, descriptor, RematerializableValue(irThis), null)
+            origin == IrStatementOrigin.EQ && !descriptor.isVar -> {
+                // An assignment to a val property can only be its initialization in the constructor.
+                val receiver = resolvedCall.dispatchReceiver ?: descriptor.dispatchReceiverParameter?.value
+                createBackingFieldLValue(ktLeft, descriptor, statementGenerator.generateReceiverOrNull(ktLeft, receiver), null)
             }
             else -> {
                 val propertyReceiver = statementGenerator.generateCallReceiver(
@@ -337,9 +330,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 propertyIrType,
                 getterSymbol,
-                getterDescriptor,
+                getterDescriptor?.let { computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it) },
                 setterSymbol,
-                setterDescriptor,
+                setterDescriptor?.let { computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it) },
                 typeArgumentsList,
                 propertyReceiver,
                 superQualifierSymbol
@@ -350,45 +343,31 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 context.symbolTable.referenceField(unwrappedPropertyDescriptor.original),
+                unwrappedPropertyDescriptor,
                 propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol
             )
     }
 
-    private fun isValInitializationInConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean =
-        !descriptor.isVar &&
-                descriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
-                resolvedCall.dispatchReceiver is ThisClassReceiver
-
-    private fun getThisClass(): ClassDescriptor {
-        val scopeOwner = statementGenerator.scopeOwner
-        return when (scopeOwner) {
-            is ClassConstructorDescriptor -> scopeOwner.containingDeclaration
-            is ClassDescriptor -> scopeOwner
-            else -> scopeOwner.containingDeclaration as ClassDescriptor
-        }
-    }
-
     private fun generateArrayAccessAssignmentReceiver(
-        ktLeft: KtArrayAccessExpression,
+        ktArrayExpr: KtArrayAccessExpression,
         origin: IrStatementOrigin
     ): ArrayAccessAssignmentReceiver {
-        val indexedGetResolvedCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
-        val indexedSetResolvedCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
+        val indexedGetResolvedCall = get(BindingContext.INDEXED_LVALUE_GET, ktArrayExpr)
+        val indexedSetResolvedCall = get(BindingContext.INDEXED_LVALUE_SET, ktArrayExpr)
 
         return ArrayAccessAssignmentReceiver(
-            ktLeft.arrayExpression!!.genExpr(),
-            ktLeft.indexExpressions,
-            ktLeft.indexExpressions.map { it.genExpr() },
+            ktArrayExpr.arrayExpression!!.genExpr(),
+            ktArrayExpr.indexExpressions,
+            ktArrayExpr.indexExpressions.map { it.genExpr() },
             indexedGetResolvedCall,
             indexedSetResolvedCall,
             { indexedGetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) } },
             { indexedSetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) } },
             CallGenerator(statementGenerator),
-            ktLeft.startOffsetSkippingComments,
-            ktLeft.endOffset,
+            ktArrayExpr.startOffsetSkippingComments,
+            ktArrayExpr.endOffset,
             origin
         )
     }

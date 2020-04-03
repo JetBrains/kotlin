@@ -1,0 +1,28 @@
+{
+  "8": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "Correct info after array like call",
+          "path": "compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "9": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "Correct info after array like call",
+          "path": "compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

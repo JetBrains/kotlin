@@ -1,14 +1,11 @@
 kotlin:
-  version: 1.3.61
   projectKind: Multiplatform
   modules:
     - type: multiplatform
-      kind: multiplatform
       name: a
       subModules:
-        - type: jvmTarget
-          kind: target
+        - type:
+            targetJvmVersion: "1.8"
+            name: jvmTarget
+            testFramework: JUNIT4
           name: jvm
-          sourcesets:
-            - type: main
-            - type: test

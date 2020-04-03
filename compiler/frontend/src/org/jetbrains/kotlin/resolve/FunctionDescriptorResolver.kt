@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
@@ -259,8 +258,9 @@ class FunctionDescriptorResolver(
         if (function !is KtNamedFunction) return null
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions)
+        val isAllowedOnMembers = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForNonOverridableMembers)
 
-        if (!isContractsEnabled || !function.mayHaveContract()) return null
+        if (!isContractsEnabled || !function.mayHaveContract(isAllowedOnMembers)) return null
 
         return LazyContractProvider(storageManager) {
             AstLoadingFilter.forceAllowTreeLoading(function.containingFile, ThrowableComputable {

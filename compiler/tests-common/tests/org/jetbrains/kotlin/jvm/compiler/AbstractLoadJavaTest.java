@@ -64,7 +64,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         List<File> kotlinSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt"), sourcesDir);
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
-                myTestRootDisposable, newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getClasspath(),
+                getTestRootDisposable(), newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getClasspath(),
                                                        Collections.emptyList()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
         registerJavacIfNeeded(environment);
@@ -163,7 +163,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     public static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
-        Map<String, String> directives = KotlinTestUtils.parseDirectives(content);
+        Directives directives = KotlinTestUtils.parseDirectives(content);
         LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings(directives);
         if (languageVersionSettings == null) {
             languageVersionSettings = CompilerTestLanguageVersionSettingsKt.defaultLanguageVersionSettings();
@@ -284,7 +284,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 new TestFiles.TestFileFactoryNoModules<File>() {
                     @NotNull
                     @Override
-                    public File create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                    public File create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
                         File targetFile = new File(srcDir, fileName);
                         try {
                             FileUtil.writeToFile(targetFile, text);
@@ -309,7 +309,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             @NotNull ConfigurationKind configurationKind
     ) throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestPackageAndBindingContextFromJavaRoot(outDir, myTestRootDisposable, getJdkKind(), configurationKind, true,
+        return loadTestPackageAndBindingContextFromJavaRoot(outDir, getTestRootDisposable(), getJdkKind(), configurationKind, true,
                                                             usePsiClassFilesReading(), useJavacWrapper(), null,
                                                             getExtraClasspath(), this::configureEnvironment);
     }

@@ -6,6 +6,6 @@ class J extends K {
 
 // FILE: K.kt
 
-class K : <!AMBIGUITY!>J<!>() {
+class K : J() {
     fun bar() {}
 }

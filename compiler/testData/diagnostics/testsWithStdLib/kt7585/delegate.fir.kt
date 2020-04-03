@@ -70,7 +70,7 @@ class My(val x: Int) {
         when {
             y > 0 -> MyBase.derivedWrapper()
             x < 0 -> MyBase.exoticWrapper(x)
-            else  -> throw java.lang.<!UNRESOLVED_REFERENCE!>NullPointerException<!>("")
+            else  -> throw java.lang.NullPointerException("")
         }
     }
 }

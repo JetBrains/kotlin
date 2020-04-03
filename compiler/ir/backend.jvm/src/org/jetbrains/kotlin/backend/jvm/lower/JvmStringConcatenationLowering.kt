@@ -15,15 +15,16 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irImplicitCast
-import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -77,19 +78,23 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
     private fun typeToAppendFunction(type: IrType): IrSimpleFunction =
         appendFunctions[type] ?: defaultAppendFunction
 
-    // There is no special append or valueOf function for byte and short on the JVM.
-    private fun IrBuilderWithScope.widenIntegerType(expression: IrExpression): IrExpression =
+    private fun IrBuilderWithScope.normalizeArgument(expression: IrExpression): IrExpression =
         if (expression.type.isByte() || expression.type.isShort()) {
+            // There is no special append or valueOf function for byte and short on the JVM.
             irImplicitCast(expression, context.irBuiltIns.intType)
+        } else if (expression is IrConst<*> && expression.kind == IrConstKind.String && (expression.value as String).length == 1) {
+            // PSI2IR generates const Strings for 1-length literals in string templates (e.g., the space between x and y in "$x $y").
+            // We want to use the more efficient `append(Char)` function in such cases. This mirrors the behavior of the non-IR backend.
+            //
+            // In addition, this also means `append(Char)` will be used for the space in the following case: `x + " " + y`. The non-IR
+            // backend will still use `append(String)` in this case.
+            irChar((expression.value as String)[0])
         } else {
             expression
         }
 
     private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
-        if (expression.type.isString())
-            return expression
-
-        val argument = widenIntegerType(expression)
+        val argument = normalizeArgument(expression)
         val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
 
         return irCall(backendContext.ir.symbols.typeToStringValueOfFunction(argumentType)).apply {
@@ -107,7 +112,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
         val toStringReplacement = backendContext.inlineClassReplacements.getReplacementFunction(toStringFunction)
             ?: return expression
 
-        return irCall(toStringReplacement.function).apply {
+        return irCall(toStringReplacement).apply {
             putValueArgument(0, expression)
         }
     }
@@ -115,6 +120,18 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
         return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+            // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
+            // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
+            // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove
+            // IMPLICIT_NOTNULL casts from all arguments (nullability checks are generated in JvmArgumentNullabilityAssertionsLowering).
+
+            fun IrExpression.unwrapImplicitNotNull() =
+                if (this is IrTypeOperatorCall && operator == IrTypeOperator.IMPLICIT_NOTNULL)
+                    argument
+                else
+                    this
+
+
             val arguments = expression.arguments.map { lowerInlineClassArgument(it) }
 
             when {
@@ -122,22 +139,27 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                     irString("")
 
                 arguments.size == 1 ->
-                    callToString(arguments.single())
+                    callToString(arguments.single().unwrapImplicitNotNull())
 
                 arguments.size == 2 && arguments[0].type.isStringClassType() ->
                     irCall(backendContext.ir.symbols.intrinsicStringPlus).apply {
-                        putValueArgument(0, arguments[0])
+                        putValueArgument(0, arguments[0].unwrapImplicitNotNull())
+
+                        // Unwrapping IMPLICIT_NOTNULL is not strictly necessary on 2nd argument (parameter type is `Any?`)
                         putValueArgument(1, arguments[1])
                     }
 
                 else -> {
                     var stringBuilder = irCall(constructor)
                     for (arg in arguments) {
-                        val argument = widenIntegerType(arg)
+                        val argument = normalizeArgument(arg)
                         val appendFunction = typeToAppendFunction(argument.type)
                         stringBuilder = irCall(appendFunction).apply {
                             dispatchReceiver = stringBuilder
-                            putValueArgument(0, argument)
+
+                            // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
+                            // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.
+                            putValueArgument(0, argument.unwrapImplicitNotNull())
                         }
                     }
                     irCall(toStringFunction).apply {

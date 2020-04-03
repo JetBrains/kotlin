@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import javax.inject.Inject
@@ -22,7 +23,8 @@ import javax.inject.Inject
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
 open class KotlinMetadataTarget @Inject constructor(project: Project) :
-    KotlinOnlyTarget<KotlinCommonCompilation>(project, KotlinPlatformType.common) {
+    KotlinOnlyTarget<AbstractKotlinCompilation<*>>(project, KotlinPlatformType.common) {
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (!project.isKotlinGranularMetadataEnabled)
             super.kotlinComponents
@@ -34,7 +36,9 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
 
             usageContexts += run {
                 val allMetadataJar = project.tasks.getByName(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-                val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { it.classifier = "all" }
+                val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) {
+                    it.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
+                }
 
                 DefaultKotlinUsageContext(
                     compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
@@ -44,28 +48,17 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
                 )
             }
 
-            // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one: publish the old metadata artifact as well:
-            usageContexts += run {
-                project.configurations.create(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
-                    isCanBeConsumed = false
-                    isCanBeResolved = false
-                    usesPlatformOf(this@KotlinMetadataTarget)
-                    attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(this@KotlinMetadataTarget)) // 'kotlin-api' usage
-
-                    val commonMainApiConfiguration = project.sourceSetDependencyConfigurationByScope(
-                        project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME),
-                        KotlinDependencyScope.API_SCOPE
+            if (PropertiesProvider(project).enableCompatibilityMetadataVariant == true) {
+                // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
+                // publish the old metadata artifact:
+                usageContexts += run {
+                    DefaultKotlinUsageContext(
+                        compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
+                        javaApiUsage,
+                        /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
+                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
                     )
-                    extendsFrom(commonMainApiConfiguration)
-
-                    project.artifacts.add(name, project.tasks.getByName(artifactsTaskName))
                 }
-
-                DefaultKotlinUsageContext(
-                    compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
-                    javaApiUsage,
-                    COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-                )
             }
 
             val component =

@@ -59,7 +59,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             },
             checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
             manifest: Manifest? = null,
-            vararg extraClassPath: File
+            extraClassPath: List<File> = emptyList()
     ): File {
         val sourceDir = File(testDataDirectory, libraryName)
         val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, sourceDir)
@@ -70,7 +70,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         val outputDir = if (isJar) File(tmpdir, "output-$libraryName") else destination
         if (kotlinFiles.isNotEmpty()) {
-            val output = compileKotlin(libraryName, outputDir, extraClassPath.toList(), K2JVMCompiler(), additionalOptions, expectedFileName = null)
+            val output = compileKotlin(libraryName, outputDir, extraClassPath, K2JVMCompiler(), additionalOptions, expectedFileName = null)
             checkKotlinOutput(normalizeOutput(output))
         }
 

@@ -9,24 +9,28 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirProviderImpl(val session: FirSession) : FirProvider() {
+class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirProvider() {
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
         symbol.overriddenSymbol?.let {
             return getFirCallableContainerFile(it)
+        }
+        if (symbol is FirAccessorSymbol) {
+            val fir = symbol.fir
+            if (fir is FirSyntheticProperty) {
+                return getFirCallableContainerFile(fir.getter.delegate.symbol)
+            }
         }
         return state.callableContainerMap[symbol]
     }
@@ -105,6 +109,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
 
             override fun visitProperty(property: FirProperty) {
                 visitCallableDeclaration(property)
+            }
+
+            override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+                visitCallableDeclaration(enumEntry)
             }
         })
     }
@@ -215,25 +223,6 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
             state.setFrom(newState)
         }
     }
-
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        return when (val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null) {
-            is FirRegularClassSymbol -> buildDefaultUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession)
-            is FirAnonymousObjectSymbol -> buildDefaultUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession)
-            is FirTypeAliasSymbol -> {
-                val expandedTypeRef = symbol.fir.expandedTypeRef as FirResolvedTypeRef
-                val expandedType = expandedTypeRef.type as? ConeLookupTagBasedType ?: return null
-                val lookupTag = expandedType.lookupTag as? ConeClassLikeLookupTag ?: return null
-                getClassUseSiteMemberScope(lookupTag.classId, useSiteSession, scopeSession)
-            }
-            else -> throw IllegalArgumentException("Unexpected FIR symbol in getClassUseSiteMemberScope: $symbol")
-        }
-    }
-
 }
 
 private const val rebuildIndex = true

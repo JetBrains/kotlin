@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: TYPE_MISMATCH: Type mismatch: inferred type is Test<Nothing?> but Base<T> was expected (7,38) in /KotlinClass.kt

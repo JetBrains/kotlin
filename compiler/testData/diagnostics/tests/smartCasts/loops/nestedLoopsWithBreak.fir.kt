@@ -12,7 +12,7 @@ public fun foo(p: String?, r: String?, q: String?): Int {
         if (!x()) break
     }
     // Smart cast is possible everywhere
-    r.<!INAPPLICABLE_CANDIDATE!>length<!>
+    r.length
     q.length
     return p.length
 }

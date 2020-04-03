@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -821,6 +821,29 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/jvmOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmOverloads extends AbstractIrWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvmOverloads() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("openFunction.kt")
+        public void testOpenFunction() throws Exception {
+            runTest("compiler/testData/writeFlags/jvmOverloads/openFunction.kt");
+        }
+
+        @TestMetadata("openFunction_1_3.kt")
+        public void testOpenFunction_1_3() throws Exception {
+            runTest("compiler/testData/writeFlags/jvmOverloads/openFunction_1_3.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/lambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -900,6 +923,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
 
         public void testAllFilesPresentInProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("enumFields.kt")
+        public void testEnumFields() throws Exception {
+            runTest("compiler/testData/writeFlags/property/enumFields.kt");
         }
 
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
@@ -1197,6 +1225,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
 
             public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("doNotUseGetterName.kt")
+            public void testDoNotUseGetterName() throws Exception {
+                runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/doNotUseGetterName.kt");
             }
 
             @TestMetadata("privateProperty.kt")

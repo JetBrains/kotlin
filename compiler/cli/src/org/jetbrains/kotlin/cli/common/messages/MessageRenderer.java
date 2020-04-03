@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.fileUtils.FileUtilsKt;
@@ -66,6 +67,23 @@ public interface MessageRenderer {
         @Override
         public String getName() {
             return "RelativePath";
+        }
+    };
+
+    MessageRenderer SYSTEM_INDEPENDENT_RELATIVE_PATHS = new PlainTextMessageRenderer() {
+        private final File cwd = new File(".").getAbsoluteFile();
+
+        @Nullable
+        @Override
+        protected String getPath(@NotNull CompilerMessageLocation location) {
+            return FileUtil.toSystemIndependentName(
+                    FileUtilsKt.descendantRelativeTo(new File(location.getPath()), cwd).getPath()
+            );
+        }
+
+        @Override
+        public String getName() {
+            return "SystemIndependentRelativePath";
         }
     };
 

@@ -15,7 +15,7 @@ fun Int.test(f: String.(Int) -> Unit) {
     f("", 0)
     <!INAPPLICABLE_CANDIDATE!>f<!>("")
     with("") {
-        <!INAPPLICABLE_CANDIDATE!>f<!>(0)
+        f(0)
         <!INAPPLICABLE_CANDIDATE!>f<!>(0.0)
     }
 }

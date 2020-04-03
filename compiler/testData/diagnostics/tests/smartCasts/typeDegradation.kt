@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class VeryBase
 
 open class Base : VeryBase()

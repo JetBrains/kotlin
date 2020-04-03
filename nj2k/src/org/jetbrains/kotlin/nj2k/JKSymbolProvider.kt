@@ -45,6 +45,7 @@ class JKSymbolProvider(private val resolver: JKResolver) {
             is PsiParameter -> JKMultiverseFieldSymbol(psi, typeFactory)
             is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, typeFactory)
             is PsiPackage -> JKMultiversePackageSymbol(psi, typeFactory)
+            is KtTypeAlias -> JKTypeAliasKtClassSymbol(psi, typeFactory)
             else -> TODO(psi::class.toString())
         }
 

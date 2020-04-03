@@ -5,22 +5,39 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
-interface KotlinMangler {
+interface KotlinMangler<D : Any> {
+
     val String.hashMangle: Long
-    val IrDeclaration.hashedMangle: Long
-    fun IrDeclaration.isExported(): Boolean
-    val IrFunction.functionName: String
-    val IrType.isInlined: Boolean
-    val Long.isSpecial: Boolean
 
-    companion object {
-        private val FUNCTION_PREFIX = "<BUILT-IN-FUNCTION>"
-        fun functionClassSymbolName(name: Name) = "ktype:$FUNCTION_PREFIX$name"
-        fun functionInvokeSymbolName(name: Name) = "kfun:$FUNCTION_PREFIX$name.invoke"
+    fun D.isExported(): Boolean
+    val D.mangleString: String
+    val D.signatureString: String
+    val D.fqnString: String
+
+    val D.hashedMangle: Long get() = mangleString.hashMangle
+    val D.signatureMangle: Long get() = signatureString.hashMangle
+    val D.fqnMangle: Long get() = fqnString.hashMangle
+
+    val manglerName: String
+
+    interface DescriptorMangler : KotlinMangler<DeclarationDescriptor> {
+        override val manglerName: String
+            get() = "Descriptor"
+
+        fun ClassDescriptor.isExportEnumEntry(): Boolean
+        fun ClassDescriptor.mangleEnumEntryString(): String
+
+        fun PropertyDescriptor.isExportField(): Boolean
+        fun PropertyDescriptor.mangleFieldString(): String
+    }
+
+    interface IrMangler : KotlinMangler<IrDeclaration> {
+        override val manglerName: String
+            get() = "Ir"
     }
 }

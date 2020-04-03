@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -22,7 +21,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(
             ConfigurationKind.ALL,
             files,
-            TestJdkKind.MOCK_JDK,
+            getTestJdkKind(files),
             *listOfNotNull(writeJavaFiles(files)).toTypedArray()
         )
         loadMultiFiles(files)

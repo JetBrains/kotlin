@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.KtFile
 
 class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
@@ -27,10 +28,13 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
         override fun getDaemonCodeAnalyzerStatus(severityRegistrar: SeverityRegistrar): DaemonCodeAnalyzerStatus {
             val status = super.getDaemonCodeAnalyzerStatus(severityRegistrar)
             if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
-                status.reasonWhySuspended = "Loading kotlin script definitions"
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.definitions")
                 status.errorAnalyzingFinished = false
-            } else if (!ScriptConfigurationManager.getInstance(project).hasConfiguration(file)) {
-                status.reasonWhySuspended = "Loading kotlin script dependencies"
+            } else if (
+                !ScriptConfigurationManager.getInstance(project).hasConfiguration(file)
+                && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
+            ) {
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.dependencies")
                 status.errorAnalyzingFinished = false
             }
             return status

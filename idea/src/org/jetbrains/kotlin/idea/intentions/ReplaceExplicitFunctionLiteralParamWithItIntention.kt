@@ -26,6 +26,7 @@ import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
+    override fun getFamilyName() = KotlinBundle.message("replace.explicit.lambda.parameter.with.it")
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset) ?: return false
@@ -49,7 +50,7 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
                 literal.usesName(element.text) && (!literal.hasParameterSpecification() || literal.usesName("it"))
             }) return false
 
-        text = "Replace explicit parameter '${parameter.name}' with 'it'"
+        text = KotlinBundle.message("replace.explicit.parameter.0.with.it", parameter.name.toString())
         return true
     }
 

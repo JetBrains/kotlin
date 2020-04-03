@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // check that there is no SOE on checking for instance
 interface Visitor<T>
 interface Acceptor<T>

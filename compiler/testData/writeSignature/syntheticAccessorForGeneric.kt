@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 class MyList<T> {
 
     private fun noSignature(): T? = null
@@ -7,7 +5,7 @@ class MyList<T> {
     fun withSignature(): T? = null
 
     fun removeHeader() {
-        fun a () {
+        {
             noSignature()
         }
     }

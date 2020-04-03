@@ -2,11 +2,11 @@
 // KT-451 Incorrect character literals cause assertion failures
 
 fun ff() {
-    val b = <!INFERENCE_ERROR, INFERENCE_ERROR!>''<!>
-    val c = <!INFERENCE_ERROR, INFERENCE_ERROR!>'23'<!>
-    val d = <!INFERENCE_ERROR, INFERENCE_ERROR!>'a<!>
-    val e = <!INFERENCE_ERROR, INFERENCE_ERROR!>'ab<!>
-    val f = <!INFERENCE_ERROR, INFERENCE_ERROR!>'\'<!>
+    val b = <!ILLEGAL_CONST_EXPRESSION!>''<!>
+    val c = <!ILLEGAL_CONST_EXPRESSION!>'23'<!>
+    val d = <!ILLEGAL_CONST_EXPRESSION!>'a<!>
+    val e = <!ILLEGAL_CONST_EXPRESSION!>'ab<!>
+    val f = <!ILLEGAL_CONST_EXPRESSION!>'\'<!>
 }
 
 fun test() {
@@ -19,19 +19,19 @@ fun test() {
     '\''
     '\\'
     '\$'
-    <!INFERENCE_ERROR!>'\x'<!>
-    <!INFERENCE_ERROR!>'\123'<!>
-    <!INFERENCE_ERROR!>'\ra'<!>
-    <!INFERENCE_ERROR!>'\000'<!>
-    <!INFERENCE_ERROR!>'\000'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\x'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\123'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\ra'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\000'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\000'<!>
     '\u0000'
     '\u000a'
     '\u000A'
-    <!INFERENCE_ERROR!>'\u'<!>
-    <!INFERENCE_ERROR!>'\u0'<!>
-    <!INFERENCE_ERROR!>'\u00'<!>
-    <!INFERENCE_ERROR!>'\u000'<!>
-    <!INFERENCE_ERROR!>'\u000z'<!>
-    <!INFERENCE_ERROR!>'\\u000'<!>
-    <!INFERENCE_ERROR, INFERENCE_ERROR!>'\'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\u'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\u0'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\u00'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\u000'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\u000z'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\\u000'<!>
+    <!ILLEGAL_CONST_EXPRESSION!>'\'<!>
 }

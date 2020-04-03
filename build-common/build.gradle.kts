@@ -1,4 +1,3 @@
-
 description = "Kotlin Build Common"
 
 plugins {
@@ -12,7 +11,7 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.serializer"))
-    compileOnly(project(":js:js.frontend"))
+    compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "util", rootProject = rootProject) }
@@ -23,8 +22,9 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
     testCompile(kotlinStdlib())
-    testCompileOnly(intellijDep()) { includeJars("openapi") }
-
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
     testRuntime(project(":kotlin-reflect"))
 }
 

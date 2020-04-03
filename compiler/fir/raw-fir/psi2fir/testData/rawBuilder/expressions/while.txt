@@ -1,0 +1,39 @@
+FILE: while.kt
+    public? final? fun foo(limit: Int): R|kotlin/Unit| {
+        lvar k: <implicit> = IntegerLiteral(0)
+        some@while(CMP(<, k#.compareTo#(limit#))) {
+            lval <unary>: <implicit> = k#
+            k# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
+            println#(k#)
+            while(==(k#, IntegerLiteral(13))) {
+                lval <unary>: <implicit> = k#
+                k# = R|<local>/<unary>|.inc#()
+                R|<local>/<unary>|
+                when () {
+                    CMP(<, k#.compareTo#(limit#)) ->  {
+                        break@@@[CMP(<, k#.compareTo#(limit#))]
+                    }
+                }
+
+                when () {
+                    CMP(>, k#.compareTo#(limit#)) ->  {
+                        continue@@@[==(k#, IntegerLiteral(13))]
+                    }
+                }
+
+            }
+
+        }
+
+    }
+    public? final? fun bar(limit: Int): R|kotlin/Unit| {
+        lvar k: <implicit> = limit#
+        do {
+            lval <unary>: <implicit> = k#
+            k# = R|<local>/<unary>|.dec#()
+            R|<local>/<unary>|
+            println#(k#)
+        }
+        while(CMP(>=, k#.compareTo#(IntegerLiteral(0))))
+    }

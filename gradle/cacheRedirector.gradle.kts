@@ -108,8 +108,10 @@ fun RepositoryHandler.redirect() {
     }
 }
 
-// teamcity.jetbrains.com is located in the same local network with build agents
-fun URI.isCachedOrLocal() = host == "cache-redirector.jetbrains.com" || scheme == "file" || host == "teamcity.jetbrains.com"
+fun URI.isCachedOrLocal() = scheme == "file" ||
+            host == "cache-redirector.jetbrains.com" ||
+            host == "teamcity.jetbrains.com" ||
+            host == "buildserver.labs.intellij.net"
 
 fun RepositoryHandler.findNonCachedRepositories(): List<String> {
     val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()

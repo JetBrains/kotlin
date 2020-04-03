@@ -48,7 +48,10 @@ class OperatorCallChecker : CallChecker {
         if (resolvedCall is VariableAsFunctionResolvedCall &&
             call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
             val outerCall = call.outerCall
-            if (isConventionCall(outerCall) || isWrongCallWithExplicitTypeArguments(resolvedCall, outerCall)) {
+            if (isConventionCall(outerCall)) {
+                val containingDeclarationName = functionDescriptor.containingDeclaration.fqNameUnsafe.asString()
+                context.trace.report(Errors.PROPERTY_AS_OPERATOR.on(reportOn, functionDescriptor, containingDeclarationName))
+            } else if (isWrongCallWithExplicitTypeArguments(resolvedCall, outerCall)) {
                 throw AssertionError(
                     "Illegal resolved call to variable with invoke for $outerCall. " +
                             "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +

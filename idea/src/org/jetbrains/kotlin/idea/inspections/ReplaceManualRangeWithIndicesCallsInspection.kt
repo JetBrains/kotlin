@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.getArguments
 import org.jetbrains.kotlin.idea.intentions.isSizeOrLength
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -60,7 +61,7 @@ class ReplaceManualRangeWithIndicesCallsInspection : AbstractKotlinInspection() 
                 ) {
                     holder.registerProblem(
                         range,
-                        "For loop over indices could be replaced with loop over elements",
+                        KotlinBundle.message("for.loop.over.indices.could.be.replaced.with.loop.over.elements"),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         ReplaceIndexLoopWithCollectionLoopQuickFix()
                     )
@@ -70,7 +71,7 @@ class ReplaceManualRangeWithIndicesCallsInspection : AbstractKotlinInspection() 
         }
         holder.registerProblem(
             range,
-            "Range could be replaced with '.indices' call",
+            KotlinBundle.message("range.could.be.replaced.with.indices.call"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             ReplaceManualRangeWithIndicesCallQuickFix()
         )
@@ -78,7 +79,7 @@ class ReplaceManualRangeWithIndicesCallsInspection : AbstractKotlinInspection() 
 }
 
 class ReplaceManualRangeWithIndicesCallQuickFix : LocalQuickFix {
-    override fun getName() = "Replace with indices"
+    override fun getName() = KotlinBundle.message("replace.manual.range.with.indices.call.quick.fix.text")
 
     override fun getFamilyName() = name
 
@@ -99,7 +100,7 @@ class ReplaceManualRangeWithIndicesCallQuickFix : LocalQuickFix {
 }
 
 class ReplaceIndexLoopWithCollectionLoopQuickFix : LocalQuickFix {
-    override fun getName() = "Replace with loop over elements"
+    override fun getName() = KotlinBundle.message("replace.index.loop.with.collection.loop.quick.fix.text")
 
     override fun getFamilyName() = name
 

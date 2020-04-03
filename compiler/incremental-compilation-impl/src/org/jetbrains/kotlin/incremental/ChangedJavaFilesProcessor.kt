@@ -23,8 +23,8 @@ import java.io.File
 import java.util.*
 
 internal class ChangedJavaFilesProcessor(
-        private val reporter: ICReporter,
-        private val psiFileFactory: (File) -> PsiFile?
+    private val reporter: ICReporter,
+    private val psiFileFactory: (File) -> PsiFile?
 ) {
     private val allSymbols = HashSet<LookupSymbol>()
 

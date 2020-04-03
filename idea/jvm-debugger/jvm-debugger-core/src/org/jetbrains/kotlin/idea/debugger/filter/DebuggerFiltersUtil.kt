@@ -20,7 +20,7 @@ import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.ui.classFilter.ClassFilter
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 
-private val KOTLIN_STDLIB_FILTER = "kotlin.*"
+private const val KOTLIN_STDLIB_FILTER = "kotlin.*"
 
 fun addKotlinStdlibDebugFilterIfNeeded() {
     if (!KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED) {

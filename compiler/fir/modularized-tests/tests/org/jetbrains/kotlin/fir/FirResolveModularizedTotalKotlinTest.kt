@@ -11,8 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
-import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -20,11 +19,10 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -36,9 +34,10 @@ private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 const val FIR_LOGS_PATH = "tmp/fir-logs"
 
-private val DUMP_FIR = System.getProperty("fir.bench.dump", "true") == "true"
+private val DUMP_FIR = System.getProperty("fir.bench.dump", "true").toBooleanLenient()!!
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
-internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false") == "true"
+internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false").toBooleanLenient()!!
+private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -58,11 +57,12 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
         val totalTransformer = FirTotalResolveTransformer()
 
+        val firProvider = session.firProvider as FirProviderImpl
         val firFiles = if (useLightTree) {
-            val lightTree2Fir = LightTree2Fir(session, stubMode = false)
+            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, stubMode = false)
             bench.buildFiles(lightTree2Fir, moduleData.sources.filter { it.extension == "kt" })
         } else {
-            val builder = RawFirBuilder(session, stubMode = false)
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
             bench.buildFiles(builder, ktFiles)
         }
 
@@ -105,18 +105,10 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val configurationKind = ConfigurationKind.ALL
-        val testJdkKind = TestJdkKind.FULL_JDK
-
-
         val disposable = Disposer.newDisposable()
 
-        val configuration =
-            KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, moduleData.classpath, moduleData.javaSourceRoots)
 
-        configuration.addAll(
-            CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+        val configuration = createDefaultConfiguration(moduleData)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         Extensions.getArea(environment.project)
@@ -164,7 +156,12 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     private fun printErrors(statistics: FirResolveBench.TotalStatistics) {
-        PrintStream(FileOutputStream(reportDir().resolve("errors-$reportDateStr.log"), true)).use(statistics::reportErrors)
+        PrintStream(
+            FileOutputStream(
+                reportDir().resolve("errors-$reportDateStr.log"),
+                APPEND_ERROR_REPORTS
+            )
+        ).use(statistics::reportErrors)
     }
 
     private fun printStatistics(statistics: FirResolveBench.TotalStatistics, header: String) {

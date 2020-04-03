@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
@@ -25,7 +26,7 @@ class IdeaFileSystemWizardService : FileSystemWizardService, IdeaWizardService {
             val directory =
                 VfsUtil.createDirectoryIfMissing(directoryPath.toFile().toString())!!
             val virtualFile = directory.createChildData(this, path.fileName.toString())
-            VfsUtil.saveText(virtualFile, text)
+            VfsUtil.saveText(virtualFile, StringUtil.convertLineSeparators(text))
         }
     }
 }

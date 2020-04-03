@@ -1,0 +1,7 @@
+package test
+
+public inline fun </*0*/ reified T, /*1*/ reified U> cast(/*0*/ value: kotlin.Any?, /*1*/ z: U): T
+    Returns(WILDCARD) -> value is T
+
+public inline fun </*0*/ reified T> requireIsInstance(/*0*/ value: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value is T

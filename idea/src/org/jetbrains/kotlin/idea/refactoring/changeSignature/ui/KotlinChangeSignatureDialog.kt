@@ -39,7 +39,6 @@ import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.Consumer
-import com.intellij.util.IJSwingUtilities
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.table.JBTableRow
 import com.intellij.util.ui.table.JBTableRowEditor
@@ -47,7 +46,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.validateElement
@@ -106,10 +105,10 @@ class KotlinChangeSignatureDialog(
         val typeText = item.typeCodeFragment.text
         val defaultValue = item.defaultValueCodeFragment.text
         val separator = StringUtil.repeatSymbol(' ', getParamNamesMaxLength() - parameterName.length + 1)
-        var text = "$valOrVar$parameterName:$separator$typeText"
-
-        if (StringUtil.isNotEmpty(defaultValue)) {
-            text += " // default value = $defaultValue"
+        val text = "$valOrVar$parameterName:$separator$typeText" + if (StringUtil.isNotEmpty(defaultValue)) {
+            KotlinBundle.message("text.default.value", defaultValue)
+        } else {
+            ""
         }
 
         val field = object : EditorTextField(" $text", project, fileType) {
@@ -236,7 +235,6 @@ class KotlinChangeSignatureDialog(
                     components.add(component)
                     panel.add(component)
                     add(panel)
-                    IJSwingUtilities.adjustComponentsOnMac(label, component)
                     column++
                 }
             }
@@ -332,11 +330,13 @@ class KotlinChangeSignatureDialog(
 
     override fun validateAndCommitData(): String? {
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
-            myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null
+            myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null
         ) {
-            if (Messages.showOkCancelDialog(
+            if (showOkCancelDialog(
                     myProject,
-                    "Return type '${myReturnTypeCodeFragment!!.text}' cannot be resolved.\nContinue?",
+                    KotlinBundle.message("message.text.return.type.cannot.be.resolved",
+                        myReturnTypeCodeFragment?.text.toString()
+                    ),
                     RefactoringBundle.message("changeSignature.refactoring.name"),
                     Messages.getWarningIcon()
                 ) != Messages.OK
@@ -346,11 +346,17 @@ class KotlinChangeSignatureDialog(
         }
 
         for (item in parametersTableModel.items) {
-            if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null) {
-                val paramText = if (item.parameter != parametersTableModel.receiver) "parameter '${item.parameter.name}'" else "receiver"
-                if (Messages.showOkCancelDialog(
+            if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null) {
+                val paramText = if (item.parameter != parametersTableModel.receiver)
+                    KotlinBundle.message("text.parameter.0", item.parameter.name)
+                else
+                    KotlinBundle.message("text.receiver")
+                if (showOkCancelDialog(
                         myProject,
-                        "Type '${item.typeCodeFragment.text}' for $paramText cannot be resolved.\nContinue?",
+                        KotlinBundle.message("message.type.for.cannot.be.resolved",
+                            item.typeCodeFragment.text,
+                            paramText
+                        ),
                         RefactoringBundle.message("changeSignature.refactoring.name"),
                         Messages.getWarningIcon()
                     ) != Messages.OK
@@ -364,23 +370,21 @@ class KotlinChangeSignatureDialog(
 
     override fun canRun() {
         if (myNamePanel.isVisible && myMethod.canChangeName() && !methodName.isIdentifier()) {
-            throw ConfigurationException(KotlinRefactoringBundle.message("function.name.is.invalid"))
+            throw ConfigurationException(KotlinBundle.message("function.name.is.invalid"))
         }
 
         if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite) {
-            (myReturnTypeCodeFragment as? KtTypeCodeFragment)
-                ?.validateElement(KotlinRefactoringBundle.message("return.type.is.invalid"))
+            (myReturnTypeCodeFragment as? KtTypeCodeFragment)?.validateElement(KotlinBundle.message("return.type.is.invalid"))
         }
 
         for (item in parametersTableModel.items) {
             val parameterName = item.parameter.name
 
             if (item.parameter != parametersTableModel.receiver && !parameterName.isIdentifier()) {
-                throw ConfigurationException(KotlinRefactoringBundle.message("parameter.name.is.invalid", parameterName))
+                throw ConfigurationException(KotlinBundle.message("parameter.name.is.invalid", parameterName))
             }
 
-            (item.typeCodeFragment as? KtTypeCodeFragment)
-                ?.validateElement(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
+            (item.typeCodeFragment as? KtTypeCodeFragment)?.validateElement(KotlinBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
         }
     }
 
@@ -455,10 +459,19 @@ class KotlinChangeSignatureDialog(
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-        fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean): KotlinTypeInfo {
+
+        private fun KtTypeCodeFragment.createCopy() =
+            KtPsiFactory(this).createTypeCodeFragment(text, this.context)
+
+        fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean, reanalyse: Boolean = false): KotlinTypeInfo {
             if (this !is KtTypeCodeFragment) return KotlinTypeInfo(isCovariant)
 
-            val typeRef = getContentElement()
+            /*
+            As we do not update our caches on every KtTypeCodeFragment change
+            Caches are old and we cannot resolve type for old KtTypeCodeFragment
+             */
+            val codeFragment = if (reanalyse) createCopy() else this
+            val typeRef = codeFragment.getContentElement()
             val type = typeRef?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeRef)
             return when {
                 type != null && !type.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef.text else null)

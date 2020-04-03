@@ -8,7 +8,7 @@ package kotlin.script.experimental.jvmhost.test
 import com.intellij.openapi.application.ApplicationManager
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.resetApplicationToNull
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -41,6 +41,13 @@ class LegacyReplTest : TestCase() {
 
             val result = repl.compileAndEval(repl.nextCodeLine("x"))
             assertEquals(res.second.toString(), 10, (result.second as? ReplEvalResult.ValueResult)?.value)
+        }
+    }
+
+    fun testReplSyntaxErrorsChecked() {
+        LegacyTestRepl().use { repl ->
+            val res = repl.compileAndEval(repl.nextCodeLine("data class Q(val x: Int, val: String)"))
+            TestCase.assertTrue("Expected compile error", res.first is ReplCompileResult.Error)
         }
     }
 

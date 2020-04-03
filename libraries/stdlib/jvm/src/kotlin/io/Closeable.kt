@@ -7,6 +7,7 @@
 package kotlin.io
 
 import java.io.Closeable
+import kotlin.contracts.*
 import kotlin.internal.*
 
 /**
@@ -19,6 +20,9 @@ import kotlin.internal.*
 @InlineOnly
 @RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
 public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
     var exception: Throwable? = null
     try {
         return block(this)

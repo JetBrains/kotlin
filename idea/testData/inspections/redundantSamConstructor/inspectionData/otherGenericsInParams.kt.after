@@ -4,9 +4,9 @@ import a.*
 
 fun test() {
     MyJavaClass.foo1({ }, 1)
-    MyJavaClass.foo1(Runnable { }, Runnable { })
+    MyJavaClass.foo1({ }, Runnable { })
     MyJavaClass.foo2(1, { })
-    MyJavaClass.foo2(Runnable { }, Runnable { })
+    MyJavaClass.foo2(Runnable { }, { })
 
     A<String>().foo({})
 }

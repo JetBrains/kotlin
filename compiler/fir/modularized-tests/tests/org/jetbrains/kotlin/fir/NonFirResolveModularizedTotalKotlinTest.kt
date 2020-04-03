@@ -64,27 +64,20 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val configurationKind = ConfigurationKind.ALL
-        val testJdkKind = TestJdkKind.FULL_JDK
-
-
         val disposable = Disposer.newDisposable()
 
 
-        val configuration =
-            KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, moduleData.classpath, moduleData.javaSourceRoots)
-        configuration.addAll(
-            CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+        val configuration = createDefaultConfiguration(moduleData)
 
-        if (USE_NI) {
-            configuration.languageVersionSettings =
-                LanguageVersionSettingsImpl(
-                    LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_3, specificFeatures = mapOf(
-                        LanguageFeature.NewInference to LanguageFeature.State.ENABLED
-                    )
+
+        configuration.languageVersionSettings =
+            LanguageVersionSettingsImpl(
+                configuration.languageVersionSettings.languageVersion,
+                configuration.languageVersionSettings.apiVersion,
+                specificFeatures = mapOf(
+                    LanguageFeature.NewInference to if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
                 )
-        }
+            )
 
         System.getProperty("fir.bench.oldfe.jvm_target")?.let {
             configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))

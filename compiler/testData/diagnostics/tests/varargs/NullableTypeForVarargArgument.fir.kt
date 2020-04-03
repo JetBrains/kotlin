@@ -31,7 +31,7 @@ fun getArr(): Array<String>? = null
 
 fun f() {
     A().foo(1, *args)
-    bar(2, *args)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(2, *args)
     <!INAPPLICABLE_CANDIDATE!>baz<!>(*args)
 }
 
@@ -55,7 +55,7 @@ fun h(b: B) {
 
 fun k() {
     A().foo(1, *getArr())
-    bar(2, *getArr())
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(2, *getArr())
     <!INAPPLICABLE_CANDIDATE!>baz<!>(*getArr())
 }
 

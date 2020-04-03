@@ -13,9 +13,9 @@ class C {
     }
 }
 
-val c = C.Self.<!UNRESOLVED_REFERENCE!>Self<!>()
-val n = C.Self.Nested()
-val x = C.Self.<!UNRESOLVED_REFERENCE!>X<!>
-val n2 = C.Nested.Root.<!UNRESOLVED_REFERENCE!>Nested<!>.<!UNRESOLVED_REFERENCE!>N2<!>()
-val ic = C.Self.<!UNRESOLVED_REFERENCE!>InCompanion<!>()
-val ok = C.Self.<!UNRESOLVED_REFERENCE!>ok<!>
+val c = C.<!UNRESOLVED_REFERENCE!>Self<!>.<!UNRESOLVED_REFERENCE!>Self<!>()
+val n = C.<!UNRESOLVED_REFERENCE!>Self<!>.<!UNRESOLVED_REFERENCE!>Nested<!>()
+val x = C.<!UNRESOLVED_REFERENCE!>Self<!>.<!UNRESOLVED_REFERENCE!>X<!>
+val n2 = C.Nested.<!UNRESOLVED_REFERENCE!>Root<!>.<!UNRESOLVED_REFERENCE!>Nested<!>.<!UNRESOLVED_REFERENCE!>N2<!>()
+val ic = C.<!UNRESOLVED_REFERENCE!>Self<!>.<!UNRESOLVED_REFERENCE!>InCompanion<!>()
+val ok = C.<!UNRESOLVED_REFERENCE!>Self<!>.<!UNRESOLVED_REFERENCE!>ok<!>

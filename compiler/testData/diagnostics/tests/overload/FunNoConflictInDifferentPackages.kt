@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: pkg1.kt
 // check no error in overload in different packages
 

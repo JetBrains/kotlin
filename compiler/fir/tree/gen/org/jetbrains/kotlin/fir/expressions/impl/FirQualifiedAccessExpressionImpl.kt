@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,18 +20,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirQualifiedAccessExpressionImpl(
-    override val source: FirSourceElement?
-) : FirQualifiedAccessExpression(), FirModifiableQualifiedAccess, FirAbstractAnnotatedElement {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var safe: Boolean = false
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
-    override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
-    override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override lateinit var calleeReference: FirReference
-
+internal class FirQualifiedAccessExpressionImpl(
+    override val source: FirSourceElement?,
+    override var typeRef: FirTypeRef,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var safe: Boolean,
+    override val typeArguments: MutableList<FirTypeProjection>,
+    override var explicitReceiver: FirExpression?,
+    override var dispatchReceiver: FirExpression,
+    override var extensionReceiver: FirExpression,
+    override var calleeReference: FirReference,
+) : FirQualifiedAccessExpression(), FirModifiableQualifiedAccess {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
@@ -49,7 +47,7 @@ class FirQualifiedAccessExpressionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -59,6 +57,11 @@ class FirQualifiedAccessExpressionImpl(
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
         transformCalleeReference(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -89,5 +92,10 @@ class FirQualifiedAccessExpressionImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
     }
 }

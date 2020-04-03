@@ -17,30 +17,176 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.BodyCarrier
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.Carrier
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.DeclarationCarrier
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-abstract class IrDeclarationBase(
+abstract class IrDeclarationBase<T : DeclarationCarrier<T>>(
     startOffset: Int,
     endOffset: Int,
-    override var origin: IrDeclarationOrigin
-) : IrElementBase(startOffset, endOffset),
-    IrDeclaration {
+    origin: IrDeclarationOrigin
+) : IrPersistingElementBase<T>(startOffset, endOffset),
+    IrDeclaration,
+    DeclarationCarrier<T> {
 
-    private var _parent: IrDeclarationParent? = null
+    override var parentField: IrDeclarationParent? = null
+
+    // TODO reduce boilerplate
     override var parent: IrDeclarationParent
-        get() = _parent
-            ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
-        set(v) {
-            _parent = v
+        get() = getCarrier().parentField ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
+        set(p) {
+            if (getCarrier().parentField !== p) {
+                setCarrier().parentField = p
+            }
         }
 
-    override val annotations: MutableList<IrConstructorCall> = ArrayList()
+    override var originField: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = getCarrier().originField
+        set(p) {
+            if (getCarrier().originField !== p) {
+                setCarrier().originField = p
+            }
+        }
+
+    var removedOn: Int = Int.MAX_VALUE
+
+    override var annotationsField: List<IrConstructorCall> = emptyList()
+
+    override var annotations: List<IrConstructorCall>
+        get() = getCarrier().annotationsField
+        set(v) {
+            if (getCarrier().annotationsField !== v) {
+                setCarrier().annotationsField = v
+            }
+        }
 
     override val metadata: MetadataSource?
         get() = null
+
+    override fun ensureLowered() {
+        if (stageController.currentStage > loweredUpTo) {
+            stageController.lazyLower(this)
+        }
+    }
+}
+
+abstract class IrPersistingElementBase<T : Carrier<T>>(
+    startOffset: Int,
+    endOffset: Int
+) : IrElementBase(startOffset, endOffset),
+    Carrier<T> {
+
+    override var lastModified: Int = stageController.currentStage
+
+    var loweredUpTo = stageController.currentStage
+
+    // TODO Array<T>?
+    private var values: Array<Any?>? = null
+
+    val createdOn: Int = stageController.currentStage
+//        get() = values?.let { (it[0] as T).lastModified } ?: lastModified
+
+    abstract fun ensureLowered()
+
+    protected fun getCarrier(): T {
+        stageController.currentStage.let { stage ->
+            ensureLowered()
+
+            if (stage >= lastModified) return this as T
+
+            if (stage < createdOn) error("Access before creation")
+
+            val v = values
+                ?: error("How come?")
+
+            var l = -1
+            var r = v.size
+            while (r - l > 1) {
+                val m = (l + r) / 2
+                if ((v[m] as T).lastModified <= stage) {
+                    l = m
+                } else {
+                    r = m
+                }
+            }
+            if (l < 0) {
+                error("access before creation")
+            }
+
+            return v[l] as T
+        }
+    }
+
+    // TODO naming? e.g. `mutableCarrier`
+    protected fun setCarrier(): T {
+        val stage = stageController.currentStage
+
+        ensureLowered()
+
+        if (!stageController.canModify(this)) {
+            error("Cannot modify this element!")
+        }
+
+        if (loweredUpTo > stage) {
+            error("retrospective modification")
+        }
+
+        // TODO move up? i.e. fast path
+        if (stage == lastModified) {
+            return this as T
+        } else {
+            val newValues = values?.let { oldValues ->
+                oldValues.copyOf(oldValues.size + 1)
+            } ?: arrayOfNulls<Any?>(1)
+
+            newValues[newValues.size - 1] = this.clone()
+
+            values = newValues
+        }
+
+        this.lastModified = stage
+
+        return this as T
+    }
+}
+
+abstract class IrBodyBase<B : IrBodyBase<B>>(
+    startOffset: Int,
+    endOffset: Int,
+    private var initializer: (B.() -> Unit)?
+) : IrPersistingElementBase<BodyCarrier>(startOffset, endOffset), IrBody, BodyCarrier {
+    override var containerField: IrDeclaration? = null
+
+    var container: IrDeclaration
+        get() = getCarrier().containerField!!
+        set(p) {
+            if (getCarrier().containerField !== p) {
+                setCarrier().containerField = p
+            }
+        }
+
+    protected fun <T> checkEnabled(fn: () -> T): T {
+        if (!stageController.bodiesEnabled) error("Bodies disabled!")
+        ensureLowered()
+        return fn()
+    }
+
+    override fun ensureLowered() {
+        initializer?.let { initFn ->
+            initializer = null
+            stageController.withStage(createdOn) {
+                stageController.bodyLowering {
+                    initFn.invoke(this as B)
+                }
+            }
+        }
+        if (loweredUpTo + 1 < stageController.currentStage) {
+            stageController.lazyLower(this)
+        }
+    }
 }

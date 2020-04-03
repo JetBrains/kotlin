@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Outer<T> {
     class Nested<U> : Outer<U>() {
         fun bar(): U = foo()

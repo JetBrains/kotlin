@@ -1,3 +1,4 @@
+//WITH_RUNTIME
 import java.util.stream.IntStream
 
 fun foo(s: IntStream) {

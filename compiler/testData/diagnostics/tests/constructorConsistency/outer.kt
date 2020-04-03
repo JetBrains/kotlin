@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Outer {
 
     fun foo() = 1

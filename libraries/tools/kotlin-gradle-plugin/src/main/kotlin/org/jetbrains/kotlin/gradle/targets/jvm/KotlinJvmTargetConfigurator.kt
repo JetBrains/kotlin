@@ -71,6 +71,6 @@ class KotlinJvmTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-        return Kotlin2JvmSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
+        return Kotlin2JvmSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
     }
 }

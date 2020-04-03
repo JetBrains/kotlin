@@ -4,5 +4,4 @@ class C {
             println("old value: " + this.x)
             field = x
         }
-
 }

@@ -86,4 +86,9 @@
       <option name="FOREGROUND" value="20999d" />
     </value>
   </option>
+  <option name="KOTLIN_COROUTINE_DEBUGGER_VALUE">
+    <value>
+      <option name="FOREGROUND" value="FF8C8B" />
+    </value>
+  </option>
 </list>

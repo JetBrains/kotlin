@@ -2,10 +2,10 @@ FILE fqName:<root> fileName:/whenReturn.kt
   FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
     VALUE_PARAMETER name:grade index:0 type:kotlin.String
     BLOCK_BODY
-      BLOCK type=kotlin.String origin=WHEN
+      BLOCK type=kotlin.Nothing origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String [val]
           GET_VAR 'grade: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
-        WHEN type=kotlin.String origin=WHEN
+        WHEN type=kotlin.Nothing origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'val tmp_0: kotlin.String [val] declared in <root>.toString' type=kotlin.String origin=null

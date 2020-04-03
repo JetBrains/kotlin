@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.process.internal.DefaultProcessForkOptions
@@ -21,16 +23,22 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
-open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
+open class KotlinJsTest :
+    KotlinTest(),
+    RequiresNpmDependencies {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
-    internal var testFramework: KotlinJsTestFramework? = null
+    var testFramework: KotlinJsTestFramework? = null
 
     @Suppress("unused")
     val testFrameworkSettings: String
         @Input get() = testFramework!!.settingsState
+
+    @InputFile
+    val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @Input
     var debug: Boolean = false
@@ -110,7 +118,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = compilation.npmProject.dir
-        forkOptions.executable = nodeJs.environment.nodeExecutable
+        forkOptions.executable = nodeJs.requireConfigured().nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 

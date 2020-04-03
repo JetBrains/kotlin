@@ -250,7 +250,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 else -> return
             }
             for (constructor in constructors) {
-                constructor.processDelegationCallConstructorUsages(constructor.useScope) {
+                constructor.processDelegationCallConstructorUsages((constructor as PsiElement).useScope) {
                     if (!getIgnoranceCondition().value(it)) {
                         usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(it, element, false))
                     }
@@ -339,7 +339,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 .filter { overridenDescriptor -> overridenDescriptor.modality == Modality.ABSTRACT }
                 .mapTo(ArrayList()) { overridenDescriptor ->
                     KotlinBundle.message(
-                        "x.implements.y",
+                        "override.declaration.x.implements.y",
                         formatFunction(declarationDescriptor, true),
                         formatClass(declarationDescriptor.containingDeclaration, true),
                         formatFunction(overridenDescriptor, true),
@@ -437,7 +437,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         if (ApplicationManager.getApplication().isUnitTestMode) return parameter.project.ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED
 
         return Messages.showYesNoDialog(
-            "Do you want to delete this parameter in expected declaration and all related actual ones?",
+            KotlinBundle.message("do.you.want.to.delete.this.parameter.in.expected.declaration.and.all.related.actual.ones"),
             RefactoringBundle.message("safe.delete.title"),
             Messages.getQuestionIcon()
         ) == Messages.YES
@@ -447,7 +447,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         if (ApplicationManager.getApplication().isUnitTestMode) return true
 
         return Messages.showYesNoDialog(
-            "Do you want to delete expected declaration together with all related actual ones?",
+            KotlinBundle.message("do.you.want.to.delete.expected.declaration.together.with.all.related.actual.ones"),
             RefactoringBundle.message("safe.delete.title"),
             Messages.getQuestionIcon()
         ) == Messages.YES
@@ -489,7 +489,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         return when (element) {
             is KtNamedFunction, is KtProperty ->
-                checkSuperMethods(element as KtDeclaration, allElementsToDelete, "delete (with usage search)")
+                checkSuperMethods(element as KtDeclaration, allElementsToDelete, KotlinBundle.message("delete.with.usage.search"))
             else ->
                 super.getElementsToSearch(element, module, allElementsToDelete)
         }

@@ -12,9 +12,9 @@ fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
         bar()
     }
 
-    kotlinClass.doSomething <!TYPE_MISMATCH!>{
+    kotlinClass.doSomething {
         bar()
-    }<!>
+    }
 
     javaClass.doSomething2 <!TYPE_MISMATCH!>{
         bar()

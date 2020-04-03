@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -30,7 +29,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.refactoring.introduce.ui.KotlinSignatureComponent;
@@ -44,6 +43,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         this.onAccept = onAccept;
 
         setModal(true);
-        setTitle(KotlinRefactoringBundle.message("extract.function"));
+        setTitle(KotlinBundle.message("extract.function"));
         init();
         update();
     }
@@ -211,7 +211,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         };
         parameterTablePanel.init(extractableCodeDescriptor.getReceiverParameter(), extractableCodeDescriptor.getParameters());
 
-        inputParametersPanel.setText("&Parameters");
+        inputParametersPanel.setText(KotlinBundle.message("text.parameters"));
         inputParametersPanel.setLabelFor(parameterTablePanel.getTable());
         inputParametersPanel.add(parameterTablePanel);
     }
@@ -281,7 +281,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             @NotNull List<ExtractFunctionParameterTablePanel.ParameterInfo> newParameterInfos,
             @Nullable KotlinType returnType
     ) {
-        Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
+        Map<Parameter, Parameter> oldToNewParameters = new LinkedHashMap<>();
         for (ExtractFunctionParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {
             oldToNewParameters.put(parameterInfo.getOriginalParameter(), parameterInfo.toParameter());
         }

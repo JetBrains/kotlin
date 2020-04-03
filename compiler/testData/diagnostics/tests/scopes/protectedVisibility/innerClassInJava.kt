@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: p1/BaseClass.java
 
 package p1;

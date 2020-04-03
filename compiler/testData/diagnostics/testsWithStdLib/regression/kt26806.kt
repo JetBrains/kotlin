@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 const val myPi = kotlin.math.PI
 
 annotation class Anno(val d: Double)

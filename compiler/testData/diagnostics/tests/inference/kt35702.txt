@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun </*0*/ T : A> test_1(/*0*/ b: kotlin.Boolean, /*1*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ T : A> test_2(/*0*/ b: kotlin.Boolean, /*1*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ T : A> test_3(/*0*/ b: kotlin.Boolean, /*1*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ T : A> test_4(/*0*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ T> uncheckedCast(/*0*/ value: kotlin.Any?): T
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

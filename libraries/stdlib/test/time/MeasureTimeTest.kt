@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseExperimental(ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class)
 package test.time
 
 import kotlin.random.Random
@@ -49,18 +49,18 @@ class MeasureTimeTest {
 
     @Test
     fun measureTimeTestClock() {
-        val clock = TestClock()
+        val timeSource = TestTimeSource()
         val expectedNs = Random.nextLong(1_000_000_000L)
-        val elapsed = clock.measureTime {
-            clock += expectedNs.nanoseconds
+        val elapsed = timeSource.measureTime {
+            timeSource += expectedNs.nanoseconds
         }
 
         assertEquals(expectedNs.nanoseconds, elapsed)
 
         val expectedResult: Long
 
-        val (result, elapsed2) = clock.measureTimedValue {
-            clock += expectedNs.nanoseconds
+        val (result, elapsed2) = timeSource.measureTimedValue {
+            timeSource += expectedNs.nanoseconds
             expectedResult = expectedNs
             expectedNs
         }

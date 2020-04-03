@@ -53,7 +53,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
         }
         val environment =
                 KotlinCoreEnvironment.createForTests(
-                        myTestRootDisposable,
+                        testRootDisposable,
                         configuration,
                         EnvironmentConfigFiles.JVM_CONFIG_FILES
                 ).apply {

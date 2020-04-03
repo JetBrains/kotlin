@@ -8,5 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 class FirFunctionTarget(
-    labelName: String?
+    labelName: String?,
+    val isLambda: Boolean
 ) : FirAbstractTarget<FirFunction<*>>(labelName)

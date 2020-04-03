@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Error: name should present
 enum class<!SYNTAX!><!>(val rgb : Int) {
     RED(0xFF000),

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.FileMapping;
 import org.jetbrains.kotlin.codegen.inline.SMAPBuilder;
+import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
@@ -37,8 +38,6 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     private String thisName;
 
     private final JvmSerializationBindings serializationBindings = new JvmSerializationBindings();
-
-    private final List<FileMapping> fileMappings = new ArrayList<>();
 
     private String sourceName;
 
@@ -106,15 +105,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void done() {
-        if (!fileMappings.isEmpty() && GENERATE_SMAP) {
-            FileMapping origin = fileMappings.get(0);
-            assert sourceName == null || origin.getName().equals(sourceName) : "Error " + origin.getName() +  " != "  + sourceName;
-            getVisitor().visitSource(origin.getName(), new SMAPBuilder(origin.getName(), origin.getPath(), fileMappings).build());
-        }
-        else {
-            getVisitor().visitSource(sourceName, debugInfo);
-        }
-
+        getVisitor().visitSource(sourceName, debugInfo);
         getVisitor().visitEnd();
     }
 
@@ -134,8 +125,19 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void visitSource(@NotNull String name, @Nullable String debug) {
+        assert sourceName == null || sourceName.equals(name) : "inconsistent file name: " + sourceName + " vs " + name;
         sourceName = name;
         debugInfo = debug;
+    }
+
+    @Override
+    public void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax) {
+        if (!GENERATE_SMAP) return;
+
+        List<FileMapping> fileMappings = smap.getResultMappings();
+        if (fileMappings.isEmpty()) return;
+
+        visitSource(fileMappings.get(0).getName(), SMAPBuilder.INSTANCE.build(fileMappings, backwardsCompatibleSyntax));
     }
 
     @Override
@@ -153,10 +155,5 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     public String getThisName() {
         assert thisName != null : "This name isn't set";
         return thisName;
-    }
-
-    @Override
-    public void addSMAP(FileMapping mapping) {
-        fileMappings.add(mapping);
     }
 }

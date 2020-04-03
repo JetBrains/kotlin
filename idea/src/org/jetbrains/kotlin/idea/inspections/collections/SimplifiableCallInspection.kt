@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.receiverType
@@ -36,7 +37,7 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 calleeExpression,
-                "${conversion.shortName} call could be simplified to $replacement",
+                KotlinBundle.message("0.call.could.be.simplified.to.1", conversion.shortName, replacement),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 SimplifyCallFix(conversion, replacement)
             )
@@ -140,7 +141,7 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
     }
 
     private class SimplifyCallFix(val conversion: Conversion, val replacement: String) : LocalQuickFix {
-        override fun getName() = "Convert '${conversion.shortName}' call to '$replacement'"
+        override fun getName() = KotlinBundle.message("simplify.call.fix.text", conversion.shortName, replacement)
 
         override fun getFamilyName() = name
 

@@ -5,22 +5,52 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.junit.Test
 
 class WorkersIT : BaseGradleIT() {
     @Test
     fun testParallelTasks() {
-        parallelTasksImpl(isParallel = true)
+        parallelTasksImpl(
+            isParallel = true,
+            jsCompilerType = KotlinJsCompilerType.LEGACY
+        )
+    }
+
+    @Test
+    fun testParallelTasksJsIr() {
+        parallelTasksImpl(
+            isParallel = true,
+            jsCompilerType = KotlinJsCompilerType.IR
+        )
     }
 
     @Test
     fun testNoParallelTasks() {
-        parallelTasksImpl(isParallel = false)
+        parallelTasksImpl(
+            isParallel = false,
+            jsCompilerType = KotlinJsCompilerType.LEGACY
+        )
     }
 
-    private fun parallelTasksImpl(isParallel: Boolean) =
+    @Test
+    fun testNoParallelTasksJsIr() {
+        parallelTasksImpl(
+            isParallel = false,
+            jsCompilerType = KotlinJsCompilerType.IR
+        )
+    }
+
+    private fun parallelTasksImpl(
+        isParallel: Boolean,
+        jsCompilerType: KotlinJsCompilerType
+    ) =
         with(Project("new-mpp-parallel")) {
-            val options = defaultBuildOptions().copy(parallelTasksInProject = isParallel, withDaemon = false)
+            val options = defaultBuildOptions().copy(
+                parallelTasksInProject = isParallel,
+                withDaemon = false,
+                jsCompilerType = jsCompilerType
+            )
             val traceLoading = "-Dorg.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading=true"
             build("assemble", traceLoading, options = options) {
                 assertSuccessful()
@@ -33,7 +63,8 @@ class WorkersIT : BaseGradleIT() {
                 val expectedKotlinOutputFiles = listOf(
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
-                    kotlinClassesDir(sourceSet = "js/main") + "new-mpp-parallel.js"
+                    kotlinClassesDir(sourceSet = "js/main") +
+                            if (jsCompilerType == KotlinJsCompilerType.IR) "default/manifest" else "new-mpp-parallel.js"
                 )
                 expectedKotlinOutputFiles.forEach { assertFileExists(it) }
                 assertSubstringCount("Loaded GradleKotlinCompilerWork", 1)

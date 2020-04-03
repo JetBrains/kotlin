@@ -25,8 +25,8 @@ fun main() {
     C.foo()
     C.bar()
 
-    K.a
-    K.b
-    K.foo()
-    K.bar()
+    K.<!UNRESOLVED_REFERENCE!>a<!>
+    K.<!UNRESOLVED_REFERENCE!>b<!>
+    K.<!UNRESOLVED_REFERENCE!>foo<!>()
+    K.<!UNRESOLVED_REFERENCE!>bar<!>()
 }

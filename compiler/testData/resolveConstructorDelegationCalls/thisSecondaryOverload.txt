@@ -8,6 +8,7 @@ class A(x: Double) {
 
 Resolved call:
 
+Candidate descriptor: constructor A(x: String) defined in A
 Resulting descriptor: constructor A(x: String) defined in A
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER

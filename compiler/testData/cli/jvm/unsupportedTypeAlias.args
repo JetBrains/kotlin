@@ -1,5 +1,0 @@
--language-version
-1.0
-$TESTDATA_DIR$/unsupportedTypeAlias.kt
--d
-$TEMP_DIR$

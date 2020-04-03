@@ -45,14 +45,14 @@ public final class DerivedC : Base1, Base2, Base3 {
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.Experimental(level = Level.WARNING) public final annotation class E1 : kotlin.Annotation {
+@kotlin.RequiresOptIn(level = Level.WARNING) public final annotation class E1 : kotlin.Annotation {
     public constructor E1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.Experimental(level = Level.WARNING) public final annotation class E3 : kotlin.Annotation {
+@kotlin.RequiresOptIn(level = Level.WARNING) public final annotation class E3 : kotlin.Annotation {
     public constructor E3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

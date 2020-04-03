@@ -12,7 +12,7 @@ object ComparableOps : TemplateGroupBase() {
     init {
         defaultBuilder {
             specialFor(Unsigned) {
-                since("1.3")
+                sinceAtLeast("1.3")
                 annotation("@ExperimentalUnsignedTypes")
             }
         }
@@ -259,6 +259,34 @@ object ComparableOps : TemplateGroupBase() {
         }
     }
 
+    val f_minOf_vararg = fn("minOf(a: T, vararg other: T)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+        include(Unsigned)
+    } builder {
+        sourceFile(f.sourceFileComparisons)
+        since("1.4")
+        typeParam("T : Comparable<T>")
+        returns("T")
+        receiver("")
+        // TODO: Add a note about NaN propagation for floats.
+        doc {
+            """
+            Returns the smaller of given values.
+            """
+        }
+        body {
+            """
+            var min = a
+            for (e in other) min = minOf(min, e)
+            return min
+            """
+        }
+        specialFor(Generic, Primitives) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        }
+    }
+
     val f_minOf_2_comparator = fn("minOf(a: T, b: T, comparator: Comparator<in T>)") {
         include(Generic)
     } builder {
@@ -291,6 +319,27 @@ object ComparableOps : TemplateGroupBase() {
         }
         body {
             "return minOf(a, minOf(b, c, comparator), comparator)"
+        }
+    }
+
+    val f_minOf_vararg_comparator = fn("minOf(a: T, vararg other: T, comparator: Comparator<in T>)") {
+        include(Generic)
+    } builder {
+        sourceFile(f.sourceFileComparisons)
+        since("1.4")
+        returns("T")
+        receiver("")
+        doc {
+            """
+            Returns the smaller of given values according to the order specified by the given [comparator].
+            """
+        }
+        body {
+            """
+            var min = a
+            for (e in other) if (comparator.compare(min, e) > 0) min = e
+            return min
+            """
         }
     }
 
@@ -398,6 +447,34 @@ object ComparableOps : TemplateGroupBase() {
         }
     }
 
+    val f_maxOf_vararg = fn("maxOf(a: T, vararg other: T)") {
+        include(Generic)
+        include(Primitives, numericPrimitives)
+        include(Unsigned)
+    } builder {
+        sourceFile(f.sourceFileComparisons)
+        since("1.4")
+        typeParam("T : Comparable<T>")
+        returns("T")
+        receiver("")
+        // TODO: Add a note about NaN propagation for floats.
+        doc {
+            """
+            Returns the greater of given values.
+            """
+        }
+        body {
+            """
+            var max = a
+            for (e in other) max = maxOf(max, e)
+            return max
+            """
+        }
+        specialFor(Generic, Primitives) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        }
+    }
+
     val f_maxOf_2_comparator = fn("maxOf(a: T, b: T, comparator: Comparator<in T>)") {
         include(Generic)
     } builder {
@@ -430,6 +507,27 @@ object ComparableOps : TemplateGroupBase() {
         }
         body {
             "return maxOf(a, maxOf(b, c, comparator), comparator)"
+        }
+    }
+
+    val f_maxOf_vararg_comparator = fn("maxOf(a: T, vararg other: T, comparator: Comparator<in T>)") {
+        include(Generic)
+    } builder {
+        sourceFile(f.sourceFileComparisons)
+        since("1.4")
+        returns("T")
+        receiver("")
+        doc {
+            """
+            Returns the greater of given values according to the order specified by the given [comparator].
+            """
+        }
+        body {
+            """
+            var max = a
+            for (e in other) if (comparator.compare(max, e) < 0) max = e
+            return max
+            """
         }
     }
 

@@ -47,7 +47,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
         this.capabilities = capabilities.toMutableMap()
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         this.capabilities[REFINER_CAPABILITY] = Ref(null)
     }
 

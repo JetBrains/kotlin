@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: SameClassNameResolveTest.kt
 package test
 

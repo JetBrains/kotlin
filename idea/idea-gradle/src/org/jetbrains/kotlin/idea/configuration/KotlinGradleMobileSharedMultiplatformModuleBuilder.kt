@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import java.io.BufferedWriter
 
 class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
@@ -25,10 +26,11 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobileshared"
 
-    override fun getPresentableName() = "Mobile Shared Library | Gradle"
+    override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.mobile.shared.library.gradle")
 
-    override fun getDescription() =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between two mobile platforms (JVM/Android and Native)"
+    override fun getDescription() = KotlinIdeaGradleBundle.message(
+        "description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.two.mobile.platforms.jvm.android.and.native"
+    )
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
@@ -146,7 +148,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
             kotlin {
                 jvm()
-                // This is for iPhone emulator
+                // This is for iPhone simulator
                 // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
                 iosX64("$nativeTargetName") {
                     binaries {
@@ -179,20 +181,6 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                     $nativeSourceName {
                     }
                     $nativeTestName {
-                    }
-                }
-            }
-
-            task $nativeTestName {
-                def device = project.findProperty("${nativeTargetName}Device")?.toString() ?: "iPhone 8"
-                dependsOn kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').linkTaskName
-                group = JavaBasePlugin.VERIFICATION_GROUP
-                description = "Runs tests for target '$nativeTargetName' on an iOS simulator"
-
-                doLast {
-                    def binary = kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').outputFile
-                    exec {
-                        commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
                     }
                 }
             }

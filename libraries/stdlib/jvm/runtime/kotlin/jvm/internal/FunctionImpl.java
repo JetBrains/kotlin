@@ -11,7 +11,7 @@ import kotlin.jvm.functions.*;
 
 import java.io.Serializable;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "rawtypes"})
 @Deprecated
 @kotlin.Deprecated(message = "This class is no longer supported, do not use it.", level = DeprecationLevel.ERROR)
 public abstract class FunctionImpl

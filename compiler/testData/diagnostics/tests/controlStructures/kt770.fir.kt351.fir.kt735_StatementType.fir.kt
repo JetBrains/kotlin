@@ -15,7 +15,7 @@ fun main() {
 }
 
 //KT-351 Distinguish statement and expression positions
-val w = <!INFERENCE_ERROR, INFERENCE_ERROR, INFERENCE_ERROR!>while (true) {}<!>
+val w = <!EXPRESSION_REQUIRED!>while (true) {}<!>
 
 fun foo() {
     var z = 2
@@ -140,7 +140,7 @@ fun testCoercionToAny() {
 fun fooWithAnuNullableResult(s: String?, name: String, optional: Boolean): Any? {
     return if (s == null) {
         if (!optional) {
-            throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>("Parameter '$name' was not found in the request")
+            throw java.lang.IllegalArgumentException("Parameter '$name' was not found in the request")
         }
         null
     } else {
@@ -152,12 +152,12 @@ fun bar(a: Unit) {}
 
 fun testStatementInExpressionContext() {
     var z = 34
-    val a1: Unit = <!INFERENCE_ERROR!>z = 334<!>
+    val a1: Unit = <!EXPRESSION_REQUIRED!>z = 334<!>
     val f = for (i in 1..10) {}
-    if (true) return <!INFERENCE_ERROR, INFERENCE_ERROR!>z = 34<!>
-    return <!INFERENCE_ERROR, INFERENCE_ERROR!>while (true) {}<!>
+    if (true) return <!EXPRESSION_REQUIRED!>z = 34<!>
+    return <!EXPRESSION_REQUIRED!>while (true) {}<!>
 }
 
 fun testStatementInExpressionContext2() {
-    val a2: Unit = <!INFERENCE_ERROR!>while(true) {}<!>
+    val a2: Unit = <!EXPRESSION_REQUIRED!>while(true) {}<!>
 }

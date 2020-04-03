@@ -42,10 +42,10 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -308,7 +308,7 @@ class ExpressionsOfTypeProcessor(
         }
 
         val file = psiClass.containingFile
-        (file ?: psiClass).useScope
+        if (file != null) file.useScope else psiClass.useScope
     }
 
     private fun addStaticMemberToProcess(psiMember: PsiMember, scope: SearchScope, processor: ReferenceProcessor) {
@@ -763,7 +763,7 @@ class ExpressionsOfTypeProcessor(
                 testLog { "Resolved java class to descriptor: ${psiClass.qualifiedName}" }
 
                 val classDescriptor = psiClass.getJavaMemberDescriptor() as? JavaClassDescriptor
-                if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
+                if (classDescriptor != null && getSingleAbstractMethodOrNull(classDescriptor) != null) {
                     addSamInterfaceToProcess(psiClass)
                     return true
                 }
@@ -927,6 +927,7 @@ class ExpressionsOfTypeProcessor(
 
     private fun searchReferences(parameters: ReferencesSearch.SearchParameters, processor: (PsiReference) -> Boolean) {
         ReferencesSearch.search(parameters).forEach(Processor { ref ->
+            ProgressManager.checkCanceled()
             runReadAction {
                 if (ref.element.isValid) {
                     processor(ref)

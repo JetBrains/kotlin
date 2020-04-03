@@ -1,0 +1,32 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Check of Nothing type",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Check of Nothing as a subtype of any type",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Check of Nothing type is a subtype of any types",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

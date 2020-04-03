@@ -22,3 +22,24 @@ object Boo {
     val z = foo()
     fun foo() = "abc"
 }
+
+class HavingState {
+    val state = State.START
+    val stateArray = arrayOf(State.START)
+    val stringArray = arrayOf("foo")
+    val stringList = listOf("foo")
+    val intArray = arrayOf(1)
+    val floatArray = floatArrayOf(-1.0f)
+    val intList = listOf(1)
+    val uint = 1U
+    val uintArray = arrayOf(1U)
+    val uintList = listOf(1U)
+    val clazz = State::class
+    val javaClass = State::class.java
+    val anonymous = (object {})::class
+}
+
+enum class State {
+    START,
+    FINISH,
+}

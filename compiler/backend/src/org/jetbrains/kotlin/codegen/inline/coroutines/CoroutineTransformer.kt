@@ -14,21 +14,11 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -66,29 +56,20 @@ class CoroutineTransformer(
             if (state.languageVersionSettings.isReleaseCoroutines()) superClassName.endsWith("ContinuationImpl")
             else methods.any { it.name == "getLabel" }
 
-    private fun crossinlineLambda(): PsiExpressionLambda? = inliningContext.expressionMap.values.find {
-        it is PsiExpressionLambda && it.isCrossInline
-    }?.cast()
-
     private fun isStateMachine(node: MethodNode): Boolean =
         node.instructions.asSequence().any { insn -> insn is LdcInsnNode && insn.cst == ILLEGAL_STATE_ERROR_MESSAGE }
 
     private fun isSuspendLambda(node: MethodNode) = isResumeImpl(node)
 
     fun newMethod(node: MethodNode): DeferredMethodVisitor {
-        // Find ANY element to report error about suspension point in monitor on.
-        val element = crossinlineLambda()?.functionWithBodyOrCallableReference
-            ?: inliningContext.root.sourceCompilerForInline.callElement as? KtElement
-            ?: error("crossinline lambda should have element")
-
         return when {
             isResumeImpl(node) -> {
                 assert(!isStateMachine(node)) {
                     "Inlining/transforming state-machine"
                 }
-                newStateMachineForLambda(node, element)
+                newStateMachineForLambda(node)
             }
-            isSuspendFunctionWithFakeConstructorCall(node) -> newStateMachineForNamedFunction(node, element)
+            isSuspendFunctionWithFakeConstructorCall(node) -> newStateMachineForNamedFunction(node)
             else -> error("no need to generate state maching for ${node.name}")
         }
     }
@@ -99,7 +80,7 @@ class CoroutineTransformer(
 
     private fun isSuspendFunctionWithFakeConstructorCall(node: MethodNode): Boolean = findFakeContinuationConstructorClassName(node) != null
 
-    private fun newStateMachineForLambda(node: MethodNode, element: KtElement): DeferredMethodVisitor {
+    private fun newStateMachineForLambda(node: MethodNode): DeferredMethodVisitor {
         val name = node.name.removeSuffix(FOR_INLINE_SUFFIX)
         return DeferredMethodVisitor(
             MethodNode(
@@ -107,13 +88,16 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
+            val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
             val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
                 node,
                 CoroutineTransformerMethodVisitor(
                     createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
                     obtainClassBuilderForCoroutineState = { classBuilder },
-                    element = element,
-                    diagnostics = state.diagnostics,
+                    reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
+                    // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
+                    lineNumber = sourceCompilerForInline.inlineCallSiteInfo.lineNumber,
+                    sourceFile = sourceCompilerForInline.callsiteFile?.name ?: "",
                     languageVersionSettings = state.languageVersionSettings,
                     shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                     containingClassInternalName = classBuilder.thisName,
@@ -137,7 +121,7 @@ class CoroutineTransformer(
         }
     }
 
-    private fun newStateMachineForNamedFunction(node: MethodNode, element: KtElement): DeferredMethodVisitor {
+    private fun newStateMachineForNamedFunction(node: MethodNode): DeferredMethodVisitor {
         val name = node.name.removeSuffix(FOR_INLINE_SUFFIX)
         val continuationClassName = findFakeContinuationConstructorClassName(node)
         assert(inliningContext is RegeneratedClassContext)
@@ -149,20 +133,23 @@ class CoroutineTransformer(
         ) {
             // If the node already has state-machine, it is safer to generate state-machine.
             val disableTailCallOptimization = methods.find { it.name == name && it.desc == node.desc }?.let { isStateMachine(it) } ?: false
+            val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
             val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
                 node,
                 CoroutineTransformerMethodVisitor(
                     createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
                     obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                    element = element,
-                    diagnostics = state.diagnostics,
+                    reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
+                    lineNumber = sourceCompilerForInline.inlineCallSiteInfo.lineNumber,
+                    sourceFile = sourceCompilerForInline.callsiteFile?.name ?: "",
                     languageVersionSettings = state.languageVersionSettings,
                     shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                     containingClassInternalName = classBuilder.thisName,
                     isForNamedFunction = true,
                     needDispatchReceiver = true,
                     internalNameForDispatchReceiver = classBuilder.thisName,
-                    disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization
+                    disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
+                    putContinuationParameterToLvt = !state.isIrBackend
                 )
             )
 
@@ -233,7 +220,7 @@ class CoroutineTransformer(
 
     fun oldContinuationFrom(method: MethodNode): String? =
         methods.find { it.name == method.name + FOR_INLINE_SUFFIX && it.desc == method.desc }
-                ?.let { findFakeContinuationConstructorClassName(it) }
+            ?.let { findFakeContinuationConstructorClassName(it) }
 
     companion object {
         fun findFakeContinuationConstructorClassName(node: MethodNode): String? {
@@ -253,6 +240,7 @@ class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
     override fun performTransformations(methodNode: MethodNode) {
         fun AbstractInsnNode.index() = methodNode.instructions.indexOf(this)
 
+        FixStackMethodTransformer().transform(thisName, methodNode)
         val sourceFrames = MethodTransformer.analyze(thisName, methodNode, SourceInterpreter())
 
         val noinlineInvokes = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
@@ -291,8 +279,7 @@ class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
 }
 
 private fun FunctionalArgument.isSuspendLambda(): Boolean =
-    (this is NonInlineableArgumentForInlineableParameterCalledInSuspend && isSuspend) ||
-            (this is PsiExpressionLambda && isSuspend)
+    this is NonInlineableArgumentForInlineableParameterCalledInSuspend || (this is ExpressionLambda && isSuspend)
 
 fun surroundInvokesWithSuspendMarkers(
     methodNode: MethodNode,

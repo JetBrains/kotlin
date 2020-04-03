@@ -3,7 +3,7 @@ package
 package api {
     @api.API public fun f(): kotlin.Unit
 
-    @kotlin.Experimental(level = Level.WARNING) public final annotation class API : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.WARNING) public final annotation class API : kotlin.Annotation {
         public constructor API()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

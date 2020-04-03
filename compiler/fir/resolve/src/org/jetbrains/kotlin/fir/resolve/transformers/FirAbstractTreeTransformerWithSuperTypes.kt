@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
@@ -25,9 +27,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         val result = l()
         val size = towerScope.scopes.size
         assert(size >= sizeBefore)
-        repeat(size - sizeBefore) {
-            towerScope.scopes.let { it.removeAt(it.size - 1) }
-        }
+        towerScope.dropLastScopes(size - sizeBefore)
         return result
     }
 
@@ -37,25 +37,26 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
     ): CompositeTransformResult<FirStatement> {
         return withScopeCleanup {
             // ? Is it Ok to use original file session here ?
-            lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session)
-                .asReversed().mapNotNullTo(towerScope.scopes) {
-                    session.firSymbolProvider.getNestedClassifierScope(it.lookupTag.classId)
+            val superTypes = lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session).asReversed()
+            for (superType in superTypes) {
+                session.getNestedClassifierScope(superType.lookupTag)?.let {
+                    towerScope.addScope(it)
                 }
+            }
             regularClass.addTypeParametersScope()
             val companionObject = regularClass.companionObject
             if (companionObject != null) {
-                towerScope.scopes += nestedClassifierScope(companionObject)
+                towerScope.addScope(nestedClassifierScope(companionObject))
             }
-            towerScope.scopes += nestedClassifierScope(regularClass)
+            towerScope.addScope(nestedClassifierScope(regularClass))
 
             transformElement(regularClass, data)
         }
     }
 
     protected fun FirMemberDeclaration.addTypeParametersScope() {
-        val scopes = towerScope.scopes
         if (typeParameters.isNotEmpty()) {
-            scopes += FirMemberTypeParameterScope(this)
+            towerScope.addScope(FirMemberTypeParameterScope(this))
         }
     }
 }

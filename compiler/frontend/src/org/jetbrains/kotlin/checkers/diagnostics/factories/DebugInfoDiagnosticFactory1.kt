@@ -34,7 +34,7 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
         languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
     ) = when (name) {
-        "EXPRESSION_TYPE" -> {
+        EXPRESSION_TYPE.name -> {
             val (type, dataFlowTypes) = CheckerTestUtil.getTypeInfo(
                 expression,
                 bindingContext,
@@ -44,6 +44,10 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
             )
 
             this.on(expression, Renderers.renderExpressionType(type, dataFlowTypes))
+        }
+        CALL.name -> {
+            val (fqName, typeCall) = CheckerTestUtil.getCallDebugInfo(expression, bindingContext)
+            this.on(expression, Renderers.renderCallInfo(fqName, typeCall))
         }
         else -> throw NotImplementedError("Creation diagnostic '$name' isn't supported.")
     }
@@ -64,6 +68,11 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     companion object {
         val EXPRESSION_TYPE = create(
             "EXPRESSION_TYPE",
+            Severity.INFO,
+            true
+        )
+        val CALL = create(
+            "CALL",
             Severity.INFO,
             true
         )

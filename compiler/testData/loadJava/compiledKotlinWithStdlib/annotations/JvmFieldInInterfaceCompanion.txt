@@ -4,9 +4,9 @@ public interface I {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        @field:kotlin.jvm.JvmField public final val x: kotlin.String = "x"
+        @field:kotlin.jvm.JvmField public final val x: kotlin.String
             public final fun <get-x>(): kotlin.String
-        @field:kotlin.jvm.JvmField public final val y: kotlin.String = "y"
+        @field:kotlin.jvm.JvmField public final val y: kotlin.String
             public final fun <get-y>(): kotlin.String
     }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -21,12 +10,12 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Remove braces") {
-
+class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, KotlinBundle.lazyMessage("remove.braces")) {
     private fun KtElement.findChildBlock() = when (this) {
         is KtBlockExpression -> this
         is KtLoopExpression -> body as? KtBlockExpression
@@ -37,6 +26,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val block = element.findChildBlock() ?: return false
         val singleStatement = block.statements.singleOrNull() ?: return false
+        if (singleStatement is KtLambdaExpression && singleStatement.functionLiteral.arrow == null) return false
         when (val container = block.parent) {
             is KtContainerNode -> {
                 if (singleStatement is KtIfExpression) {
@@ -45,17 +35,17 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
                 }
 
                 val description = container.description() ?: return false
-                text = "Remove braces from '$description' statement"
+                setTextGetter(KotlinBundle.lazyMessage("remove.braces.from.0.statement", description))
                 return true
             }
             is KtWhenEntry -> {
-                text = "Remove braces from 'when' entry"
+                setTextGetter(KotlinBundle.lazyMessage("remove.braces.from.when.entry"))
                 return singleStatement !is KtNamedDeclaration
-                        && !(singleStatement is KtLambdaExpression && singleStatement.functionLiteral.arrow == null)
             }
             else -> return false
         }
     }
+
 
     override fun applyTo(element: KtElement, editor: Editor?) {
         val block = element.findChildBlock() ?: return

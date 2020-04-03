@@ -21,7 +21,7 @@ fun test2(f: (String) -> Unit) {
 }
 
 fun test3(f: String.(String) -> Unit) {
-    "".<!UNRESOLVED_REFERENCE!>f<!>("")
-    "".<!UNRESOLVED_REFERENCE!>f<!>(p0 = "")
-    "".<!UNRESOLVED_REFERENCE!>f<!>(zzz = "")
+    "".f("")
+    "".<!INAPPLICABLE_CANDIDATE!>f<!>(p0 = "")
+    "".<!INAPPLICABLE_CANDIDATE!>f<!>(zzz = "")
 }

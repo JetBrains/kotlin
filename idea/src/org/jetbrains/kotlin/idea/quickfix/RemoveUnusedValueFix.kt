@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.sideEffectFree
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
@@ -40,15 +41,10 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
     private fun showDialog(variable: KtProperty, project: Project, element: KtBinaryExpression, rhs: KtExpression) {
         if (ApplicationManager.getApplication().isUnitTestMode) return doRemove(RemoveMode.KEEP_INITIALIZE, element, rhs)
 
-        val message =
-            """<html>
-                    <body>
-                        There are possible side effects found in expressions assigned to the variable '${variable.name}'<br>
-                        You can:<br>
-                        -&nbsp;<b>Remove</b> the entire assignment, or<br>
-                        -&nbsp;<b>Transform</b> assignment right-hand side into the statement on its own.<br>
-                    </body>
-                </html>"""
+        val message = "<html><body>${KotlinBundle.message(
+            "there.are.possible.side.effects.found.in.expressions.assigned.to.the.variable.0",
+            variable.name.toString()
+        )}</body></html>"
 
         ApplicationManager.getApplication().invokeLater {
             val exitCode = Messages.showYesNoCancelDialog(
@@ -66,7 +62,7 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
         }
     }
 
-    override fun getFamilyName() = "Remove redundant assignment"
+    override fun getFamilyName() = KotlinBundle.message("remove.redundant.assignment")
 
     override fun getText() = familyName
 

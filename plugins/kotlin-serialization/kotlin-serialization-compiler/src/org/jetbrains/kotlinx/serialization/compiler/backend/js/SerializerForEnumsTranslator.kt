@@ -53,7 +53,7 @@ class SerializerForEnumsTranslator(
         val ctor = serialDescForEnums.unsubstitutedPrimaryConstructor!!
         return JsNew(
             context.getInnerReference(ctor),
-            listOf(JsStringLiteral(serialName))
+            listOf(JsStringLiteral(serialName), JsIntLiteral(serializableDescriptor.enumEntries().size))
         )
     }
 

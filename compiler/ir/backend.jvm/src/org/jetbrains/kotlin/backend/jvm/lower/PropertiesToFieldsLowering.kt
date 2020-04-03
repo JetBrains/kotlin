@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -129,16 +130,7 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
         if (receiver != null && needBlock) {
             // Evaluate `dispatchReceiver` for the sake of its side effects, then return `setOrGetExpr`.
             return context.createIrBuilder(setOrGetExpr.symbol, setOrGetExpr.startOffset, setOrGetExpr.endOffset).irBlock(setOrGetExpr) {
-                // `coerceToUnit()` is private in InsertImplicitCasts, have to reproduce it here
-                val receiverVoid = IrTypeOperatorCallImpl(
-                    receiver.startOffset, receiver.endOffset,
-                    context.irBuiltIns.unitType,
-                    IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                    context.irBuiltIns.unitType,
-                    receiver
-                )
-
-                +receiverVoid
+                +receiver.coerceToUnit(context.irBuiltIns)
                 setOrGetExpr.receiver = null
                 +setOrGetExpr
             }

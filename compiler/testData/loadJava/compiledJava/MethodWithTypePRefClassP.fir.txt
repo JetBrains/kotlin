@@ -1,6 +1,6 @@
-public open class MethodWithTypePRefClassP<P> : R|kotlin/Any| {
-    public final operator fun <Q : R|P?|> f(): R|kotlin/Unit|
+public open class MethodWithTypePRefClassP<P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public final fun <Q : R|ft<P, P?>!|> f(): R|kotlin/Unit|
 
-    public constructor<P>(): R|test/MethodWithTypePRefClassP<P>|
+    public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/MethodWithTypePRefClassP<P>|
 
 }

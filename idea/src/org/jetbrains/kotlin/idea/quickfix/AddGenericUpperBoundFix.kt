@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtFile
@@ -30,8 +31,15 @@ class AddGenericUpperBoundFix(
 ) : KotlinQuickFixAction<KtTypeParameter>(typeParameter) {
     private val renderedUpperBound: String = IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBound)
 
-    override fun getText() = element?.let { "Add '$renderedUpperBound' as upper bound for ${it.name}" } ?: ""
-    override fun getFamilyName() = "Add generic upper bound"
+    override fun getText(): String {
+        val element = this.element
+        return when {
+            element != null -> KotlinBundle.message("fix.add.generic.upperbound.text", renderedUpperBound, element.name.toString())
+            else -> null
+        } ?: ""
+    }
+
+    override fun getFamilyName() = KotlinBundle.message("fix.add.generic.upperbound.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false

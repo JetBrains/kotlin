@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -146,6 +146,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             @TestMetadata("kt10105.kt")
             public void testKt10105() throws Exception {
                 runTest("compiler/testData/cfg/bugs/kt10105.kt");
+            }
+
+            @TestMetadata("kt37447.kt")
+            public void testKt37447() throws Exception {
+                runTest("compiler/testData/cfg/bugs/kt37447.kt");
             }
 
             @TestMetadata("kt7761.kt")

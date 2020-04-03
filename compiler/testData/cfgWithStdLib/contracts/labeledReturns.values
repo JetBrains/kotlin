@@ -137,12 +137,12 @@ myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { re
             }
         }
 ---------------------
-x                                                                                     <v0>: {<: Int?}                NEW: r(x) -> <v0>
-{ if (it == null) { return@outer Unit } else { return@outer Unit } }                  <v1>: {<: (Int?) -> Nothing}   NEW: r({ if (it == null) { return@outer Unit } else { return@outer Unit } }) -> <v1>
-inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }           <v1>: {<: (Int?) -> Nothing}   COPY
-myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }     !<v2>: *
-x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }   !<v2>: *                       COPY
-x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }   !<v2>: *                       COPY
+x                                                                                     <v0>: {<: Int?}             NEW: r(x) -> <v0>
+{ if (it == null) { return@outer Unit } else { return@outer Unit } }                  <v1>: {<: (Int?) -> Unit}   NEW: r({ if (it == null) { return@outer Unit } else { return@outer Unit } }) -> <v1>
+inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }           <v1>: {<: (Int?) -> Unit}   COPY
+myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }     <v2>: *                     NEW: call(myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }, myLet|<v0>, <v1>) -> <v2>
+x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }   <v2>: *                     COPY
+x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }   <v2>: *                     COPY
 =====================
 == inlined anonymous_4 ==
 {
@@ -163,6 +163,6 @@ return@outer Unit                                                  !<v4>: *
 Unit                                                               <v5>: Unit      NEW: r(Unit) -> <v5>
 return@outer Unit                                                  !<v6>: *
 { return@outer Unit }                                              !<v6>: *        COPY
-if (it == null) { return@outer Unit } else { return@outer Unit }   <v7>: Nothing   NEW: merge(if (it == null) { return@outer Unit } else { return@outer Unit }|!<v4>, !<v6>) -> <v7>
-if (it == null) { return@outer Unit } else { return@outer Unit }   <v7>: Nothing   COPY
+if (it == null) { return@outer Unit } else { return@outer Unit }   <v7>: *         NEW: merge(if (it == null) { return@outer Unit } else { return@outer Unit }|!<v4>, !<v6>) -> <v7>
+if (it == null) { return@outer Unit } else { return@outer Unit }   <v7>: *         COPY
 =====================

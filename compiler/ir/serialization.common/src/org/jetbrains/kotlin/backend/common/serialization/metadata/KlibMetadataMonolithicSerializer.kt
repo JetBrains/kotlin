@@ -1,8 +1,5 @@
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
-import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
-import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -19,16 +16,18 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
-    descriptorTable: DescriptorTable,
-    skipExpects: Boolean
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable, skipExpects) {
+    skipExpects: Boolean,
+    includeOnlyModuleContent: Boolean = false
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, skipExpects, includeOnlyModuleContent) {
 
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
-        // TODO: ModuleDescriptor should be able to return
-        // the package only with the contents of that module, without dependencies
+        val fragments = if (includeOnlyModuleContent) {
+            module.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName)
+        } else {
+            module.getPackage(fqName).fragments.filter { it.module == module }
+        }
 
-        val fragments = module.getPackage(fqName).fragments.filter { it.module == module }
         if (fragments.isEmpty()) return emptyList()
 
         val classifierDescriptors = DescriptorSerializer.sort(
@@ -59,7 +58,7 @@ class KlibMetadataMonolithicSerializer(
 
             val packageFqNameStr = packageFqName.asString()
 
-            if (packageProtos.all { it.getExtension(KlibMetadataProtoBuf.isEmpty)}) {
+            if (packageProtos.all { it.getExtension(KlibMetadataProtoBuf.isEmpty) }) {
                 emptyPackages.add(packageFqNameStr)
             }
             fragments.add(packageProtos.map { it.toByteArray() })

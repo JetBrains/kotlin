@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
@@ -46,7 +48,7 @@ abstract class ScratchExecutor(protected val file: ScratchFile) {
             handler.onFinish(file)
         }
 
-        if (e != null) LOG.error(e)
+        if (e != null && (e !is ControlFlowException)) LOG.error(e)
     }
 
     class CompositeOutputHandler : ScratchOutputHandler {
@@ -187,6 +189,7 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
         stopExecution {
             lock.release()
         }
+        // blocking UI thread!?
         check(lock.tryAcquire(2, TimeUnit.SECONDS)) {
             "Couldn't stop REPL process in 2 seconds"
         }

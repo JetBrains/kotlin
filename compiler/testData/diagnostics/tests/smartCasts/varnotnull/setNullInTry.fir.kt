@@ -6,5 +6,5 @@ fun foo() {
     try {
         s = null
     } catch (ex: Exception) {}
-    s.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+    s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
 }

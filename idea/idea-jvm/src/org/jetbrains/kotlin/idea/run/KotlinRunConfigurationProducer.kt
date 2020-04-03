@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.actions.LazyRunConfigurationProducer
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfiguration>(KotlinRunConfigurationType.getInstance()) {
+class KotlinRunConfigurationProducer : LazyRunConfigurationProducer<KotlinRunConfiguration>() {
     override fun setupConfigurationFromContext(
         configuration: KotlinRunConfiguration,
         context: ConfigurationContext,
@@ -111,4 +112,6 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             return element as KtDeclarationContainer?
         }
     }
+
+    override fun getConfigurationFactory(): ConfigurationFactory = KotlinRunConfigurationType.getInstance()
 }

@@ -101,3 +101,14 @@ class JKUnresolvedMethod(
         get() = emptyList()
 }
 
+class KtClassImplicitConstructorSymbol(
+    override val target: KtLightMethod,
+    override val typeFactory: JKTypeFactory
+) : JKMethodSymbol(), JKMultiverseSymbol<KtLightMethod> {
+    override val receiverType: JKType?
+        get() = null
+    override val parameterTypes: List<JKType>?
+        get() = emptyList()
+    override val returnType: JKType?
+        get() = target.returnType?.let(typeFactory::fromPsiType)
+}

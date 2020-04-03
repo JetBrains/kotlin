@@ -246,11 +246,15 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public boolean mayHaveContract() {
+        return mayHaveContract(true);
+    }
+
+    public boolean mayHaveContract(boolean isAllowedOnMembers) {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
             return stub.mayHaveContract();
         }
 
-        return KtPsiUtilKt.isContractPresentPsiCheck(this);
+        return KtPsiUtilKt.isContractPresentPsiCheck(this, isAllowedOnMembers);
     }
 }

@@ -13,7 +13,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.changeSignature.CallerChooserBase
-import com.intellij.refactoring.changeSignature.MethodNodeBase
+import com.intellij.refactoring.changeSignature.MemberNodeBase
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.hierarchy.calls.CalleeReferenceProcessor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyNodeDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -48,9 +49,9 @@ class KotlinCallerChooser(
 
     override fun findDeepestSuperMethods(method: PsiElement) = method.toLightMethods().singleOrNull()?.findDeepestSuperMethods()
 
-    override fun getEmptyCallerText() = "Caller text \nwith highlighted callee call would be shown here"
+    override fun getEmptyCallerText() = KotlinBundle.message("text.caller.text.with.highlighted.callee.call.would.be.shown.here")
 
-    override fun getEmptyCalleeText() = "Callee text would be shown here"
+    override fun getEmptyCalleeText() = KotlinBundle.message("text.callee.text.would.be.shown.here")
 }
 
 class KotlinMethodNode(
@@ -58,7 +59,7 @@ class KotlinMethodNode(
     called: HashSet<PsiElement>,
     project: Project,
     cancelCallback: Runnable
-) : MethodNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
+) : MemberNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
     override fun createNode(caller: PsiElement, called: HashSet<PsiElement>) = KotlinMethodNode(caller, called, myProject, myCancelCallback)
 
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {
@@ -74,7 +75,7 @@ class KotlinMethodNode(
 
         val renderedFunction = KotlinCallHierarchyNodeDescriptor.renderNamedFunction(descriptor)
         val renderedFunctionWithContainer = containerName?.let {
-            "${if (it.isSpecial) "[Anonymous]" else it.asString()}.$renderedFunction"
+            "${if (it.isSpecial) KotlinBundle.message("text.anonymous") else it.asString()}.$renderedFunction"
         } ?: renderedFunction
 
         val attributes = if (isEnabled)

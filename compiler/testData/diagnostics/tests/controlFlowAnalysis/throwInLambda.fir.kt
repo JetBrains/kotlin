@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // See KT-10913 Bogus unreachable code warning
 
 fun fn() : String? = null

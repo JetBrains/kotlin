@@ -1,25 +1,42 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NativeTargetInternalIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NonDefaultTargetConfigurationIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 interface NativeTargetConfigurator : TargetConfigurator {
-    override fun createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
-        +NativeTargetInternalIR("MAIN CLASS")
-    }
+    val isDesktopTarget: Boolean
 }
 
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
 ) : NativeTargetConfigurator, SimpleTargetConfigurator {
+    override val text: String = moduleSubType.name.capitalize()
+    override val isDesktopTarget: Boolean
+        get() = moduleSubType.isNativeDesktop
+
+    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) {
+        listOf(
+            GradleSectionIR("binaries") {
+                add(
+                    GradleSectionIR("framework") {
+                        add(GradleAssignmentIR("baseName", GradleStringConstIR(module.parent!!.name)))
+                    }
+                )
+            }
+        )
+    } else emptyList()
+
     companion object {
         val configurators = ModuleSubType.values()
             .filter { it.moduleType == ModuleType.native }
@@ -31,12 +48,20 @@ class RealNativeTargetConfigurator private constructor(
 
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
+    override val isDesktopTarget: Boolean = true
+
+    @NonNls
     override val id = "nativeForCurrentSystem"
-    override val text = "For Current System"
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.native.for.current.system")
 
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> {
+    override fun Reader.createTargetIrs(
+        module: Module
+    ): List<BuildSystemIR> {
         val moduleName = module.name
+        val variableName = "${moduleName}Target"
+
         return buildList {
             +CreateGradleValueIR("hostOs", RawGradleIR { +"System.getProperty(\"os.name\")" })
             +CreateGradleValueIR("isMingwX64", RawGradleIR { +"hostOs.startsWith(\"Windows\")" })
@@ -45,7 +70,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
             +RawGradleIR {
                 when (dsl) {
                     GradlePrinter.GradleDsl.KOTLIN -> {
-                        +"val $DEFAULT_TARGET_VARIABLE_NAME = when "
+                        +"val $variableName = when "
                         inBrackets {
                             indent()
                             +"""hostOs == "Mac OS X" -> macosX64("$moduleName")"""; nlIndented()
@@ -55,24 +80,31 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
                         }
                     }
                     GradlePrinter.GradleDsl.GROOVY -> {
-                        +"""org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests $DEFAULT_TARGET_VARIABLE_NAME"""; nlIndented()
-                        +"""if (hostOs == "Mac OS X") $DEFAULT_TARGET_VARIABLE_NAME = macosX64('$moduleName')"""; nlIndented()
-                        +"""else if (hostOs == "Linux") $DEFAULT_TARGET_VARIABLE_NAME = linuxX64("$moduleName")"""; nlIndented()
-                        +"""else if (isMingwX64) return $DEFAULT_TARGET_VARIABLE_NAME = mingwX64("$moduleName")"""; nlIndented()
+                        +"""KotlinNativeTargetWithTests $variableName"""; nlIndented()
+                        +"""if (hostOs == "Mac OS X") $variableName = macosX64('$moduleName')"""; nlIndented()
+                        +"""else if (hostOs == "Linux") $variableName = linuxX64("$moduleName")"""; nlIndented()
+                        +"""else if (isMingwX64) $variableName = mingwX64("$moduleName")"""; nlIndented()
                         +"""else throw new GradleException("Host OS is not supported in Kotlin/Native.")""";
                     }
                 }
                 nl()
             }
 
-
-
             +NonDefaultTargetConfigurationIR(
-                DEFAULT_TARGET_VARIABLE_NAME,
-                createInnerTargetIrs(module)
+                variableName = variableName,
+                targetName = moduleName,
+                irs = createInnerTargetIrs(this@createTargetIrs, module).toPersistentList()
             )
         }
     }
 
-    private const val DEFAULT_TARGET_VARIABLE_NAME = "nativeTarget"
+    override fun createBuildFileIRs(
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
+        module: Module
+    ): List<BuildSystemIR> = buildList {
+        if (configurationData.buildSystemType == BuildSystemType.GradleGroovyDsl) {
+            +GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests")
+        }
+    }
 }

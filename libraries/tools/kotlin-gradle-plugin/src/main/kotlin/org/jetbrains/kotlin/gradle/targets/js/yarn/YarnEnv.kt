@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
-internal data class YarnEnv(
+data class YarnEnv(
     val downloadUrl: String,
+    val cleanableStore: CleanableStore,
     val home: File
 )

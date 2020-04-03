@@ -47,7 +47,7 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
             }
 
             override fun visitLabel(label: Label) {
-                if (lastLabel != null && !labels2LineNumbers.containsKey(lastLabel) && lastLine >= 0) {
+                if (lastLabel != null && !labels2LineNumbers.containsKey(lastLabel!!) && lastLine >= 0) {
                     labels2LineNumbers[lastLabel!!] = lastLine.toString() // Inherited line number
                 }
                 lastLabel = label

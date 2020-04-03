@@ -1,11 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
-
-import kotlin.js.internal.BitUtils
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -13,7 +11,7 @@ import kotlin.js.internal.BitUtils
  */
 @SinceKotlin("1.2")
 public actual fun Double.toBits(): Long =
-    BitUtils.doubleToRawBits(if (this.isNaN()) Double.NaN else this)
+    doubleToRawBits(if (this.isNaN()) Double.NaN else this)
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -22,7 +20,7 @@ public actual fun Double.toBits(): Long =
  */
 @SinceKotlin("1.2")
 public actual fun Double.toRawBits(): Long =
-    BitUtils.doubleToRawBits(this)
+    doubleToRawBits(this)
 
 /**
  * Returns the [Double] value corresponding to a given bit representation.
@@ -30,7 +28,7 @@ public actual fun Double.toRawBits(): Long =
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public actual inline fun Double.Companion.fromBits(bits: Long): Double =
-    BitUtils.doubleFromBits(bits)
+    doubleFromBits(bits)
 
 /**
  * Returns a bit representation of the specified floating-point value as [Int]
@@ -41,7 +39,7 @@ public actual inline fun Double.Companion.fromBits(bits: Long): Double =
  */
 @SinceKotlin("1.2")
 public actual fun Float.toBits(): Int =
-    BitUtils.floatToRawBits(if (this.isNaN()) Float.NaN else this)
+    floatToRawBits(if (this.isNaN()) Float.NaN else this)
 
 /**
  * Returns a bit representation of the specified floating-point value as [Int]
@@ -53,7 +51,7 @@ public actual fun Float.toBits(): Int =
  */
 @SinceKotlin("1.2")
 public actual fun Float.toRawBits(): Int =
-    BitUtils.floatToRawBits(this)
+    floatToRawBits(this)
 
 /**
  * Returns the [Float] value corresponding to a given bit representation.
@@ -61,4 +59,4 @@ public actual fun Float.toRawBits(): Int =
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public actual inline fun Float.Companion.fromBits(bits: Int): Float =
-    BitUtils.floatFromBits(bits)
+    floatFromBits(bits)

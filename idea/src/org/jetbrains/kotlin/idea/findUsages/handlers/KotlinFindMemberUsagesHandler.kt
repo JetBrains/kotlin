@@ -30,6 +30,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
@@ -37,18 +38,15 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.debugger.readAction
-import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.findUsages.*
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -67,7 +65,6 @@ import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.source.getPsi
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
-import com.intellij.openapi.util.Key
 
 abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected constructor(
     declaration: T,
@@ -120,7 +117,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         factory: KotlinFindUsagesHandlerFactory
     ) : KotlinFindMemberUsagesHandler<KtNamedDeclaration>(propertyDeclaration, elementsToSearch, factory) {
 
-        override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+        override fun processElementUsages(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Boolean {
 
             if (ApplicationManager.getApplication().isUnitTestMode ||
                 !isPropertyOfDataClass ||
@@ -218,12 +215,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         }
     }
 
-    override fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Searcher {
         return MySearcher(element, processor, options)
     }
 
     private inner class MySearcher(
-        element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions
+        element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions
     ) : Searcher(element, processor, options) {
 
         private val kotlinOptions = options as KotlinCallableFindUsagesOptions
@@ -314,8 +311,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
 
         private const val DISABLE_ONCE = "DISABLE_ONCE"
         private const val DISABLE = "DISABLE"
-        private const val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT =
-            "<p>Find usages for data class components and destruction declarations<br/>could be <a href=\"$DISABLE_ONCE\">disabled once</a> or <a href=\"$DISABLE\">disabled for a project</a>.</p>"
+        private val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT = KotlinBundle.message(
+            "find.usages.text.find.usages.for.data.class.components.and.destruction.declarations",
+            DISABLE_ONCE,
+            DISABLE
+        )
+
         private const val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TIMEOUT = 5000
 
         private val FIND_USAGES_ONES_FOR_DATA_CLASS_KEY = Key<Boolean>("FIND_USAGES_ONES")

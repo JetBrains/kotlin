@@ -22,11 +22,17 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.COMPILE
+import org.jetbrains.kotlin.gradle.utils.RUNTIME
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -63,7 +69,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         cleanTask.delete(kotlinCompilation.output.allOutputs)
     }
 
-    protected open fun setupCompilationDependencyFiles(project: Project, compilation: KotlinCompilation<KotlinCommonOptions>) {
+    protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
+        val project = compilation.target.project
+
         compilation.compileDependencyFiles = project.configurations.maybeCreate(compilation.compileDependencyConfigurationName)
         if (compilation is KotlinCompilationToRunnableFiles) {
             compilation.runtimeDependencyFiles = project.configurations.maybeCreate(compilation.runtimeDependencyConfigurationName)
@@ -76,7 +84,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         target.compilations.all {
             project.registerOutputsForStaleOutputCleanup(it)
-            setupCompilationDependencyFiles(project, it)
+            setupCompilationDependencyFiles(it)
         }
 
         if (createTestCompilation) {
@@ -204,6 +212,19 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
+    @Deprecated("Remove when IR compiler to klib will not need transitive implementation dependencies")
+    protected fun implementationToApiElements(target: KotlinTargetType) {
+        val configurations = target.project.configurations
+
+        // The configuration and the main compilation are created by the base class.
+        val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        configurations.getByName(target.apiElementsConfigurationName).apply {
+            //  K/N and K/JS IR compiler doesn't divide libraries into implementation and api ones. So we need to add implementation
+            // dependencies into the outgoing configuration.
+            extendsFrom(configurations.getByName(mainCompilation.implementationConfigurationName))
+        }
+    }
+
     override fun configureBuild(target: KotlinTargetType) {
         val project = target.project
 
@@ -306,10 +327,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 }
 
 internal val KotlinCompilation<*>.deprecatedCompileConfigurationName: String
-    get() = disambiguateName("compile")
+    get() = disambiguateName(COMPILE)
 
 internal val KotlinCompilationToRunnableFiles<*>.deprecatedRuntimeConfigurationName: String
-    get() = disambiguateName("runtime")
+    get() = disambiguateName(RUNTIME)
 
 internal val KotlinTarget.testTaskName: String
     get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
@@ -322,7 +343,9 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
     createDefaultSourceSets,
     createTestCompilation
 ) {
-    internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinSourceSetProcessor<*>
+    open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
+
+    internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>
 
     override fun configureCompilations(target: KotlinTargetType) {
         super.configureCompilations(target)
@@ -335,12 +358,14 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
         }
     }
 
-    /** The implementations are expected to create a [Jar] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
-    protected open fun createJarTasks(target: KotlinOnlyTarget<KotlinCompilationType>) {
-        val result = target.project.tasks.create(target.artifactsTaskName, Jar::class.java)
-        result.description = "Assembles a jar archive containing the main classes."
-        result.group = BasePlugin.BUILD_GROUP
-        result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+    /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
+    protected open fun createArchiveTasks(target: KotlinTargetType): Zip {
+        //TODO Change Jar on Zip
+        return target.project.tasks.create(target.artifactsTaskName, Jar::class.java).apply {
+            description = "Assembles an archive containing the main classes."
+            group = BasePlugin.BUILD_GROUP
+            from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+        }
     }
 
     override fun configureArchivesAndComponent(target: KotlinTargetType) {
@@ -348,17 +373,16 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        createJarTasks(target)
-        val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
+        val task = createArchiveTasks(target)
 
-        target.disambiguationClassifier?.let { jar.appendix = it.toLowerCase() }
+        target.disambiguationClassifier?.let { task.appendix = it.toLowerCase() }
 
         // Workaround: adding the artifact during configuration seems to interfere with the Java plugin, which results into missing
         // task dependency 'assemble -> jar' if the Java plugin is applied after this steps
         project.afterEvaluate {
-            project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, jar) { jarArtifact ->
-                jarArtifact.builtBy(jar)
-                jarArtifact.type = ArtifactTypeDefinition.JAR_TYPE
+            project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, task) { jarArtifact ->
+                jarArtifact.builtBy(task)
+                jarArtifact.type = archiveType
 
                 val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
                 addJar(apiElementsConfiguration, jarArtifact)
@@ -379,7 +403,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         // Configure an implicit variant
         publications.artifacts.add(jarArtifact)
-        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
+        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, archiveType)
     }
 }
 
@@ -427,6 +451,15 @@ internal fun Project.usageByName(usageName: String): Usage =
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
+
+    if (target is KotlinJsTarget) {
+        attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
+    }
+
+    if (target is KotlinJsIrTarget) {
+        attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+
     // TODO: Provide an universal way to copy attributes from the target.
     if (target is KotlinNativeTarget) {
         attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)

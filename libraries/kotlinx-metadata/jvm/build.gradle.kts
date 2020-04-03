@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin JVM metadata manipulation library"
 
@@ -47,7 +48,6 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
 }
 
-
 if (deployVersion != null) {
     publish()
 }
@@ -67,6 +67,9 @@ tasks.register<ShadowJar>("shadowJar") {
     runtimeJarArtifactBy(this, artifactRef)
     addArtifact("runtime", this, artifactRef)
 }
+
+val test by tasks
+test.dependsOn("shadowJar")
 
 sourcesJar {
     for (dependency in shadows.dependencies) {

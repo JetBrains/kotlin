@@ -1,0 +1,269 @@
+digraph complex_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function close" style="filled" fillcolor=red];
+        1 [label="Exit function close" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class AutoCloseable" style="filled" fillcolor=red];
+        3 [label="Exit class AutoCloseable" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter function addSuppressed" style="filled" fillcolor=red];
+        5 [label="Exit function addSuppressed" style="filled" fillcolor=red];
+    }
+    4 -> {5};
+
+    subgraph cluster_3 {
+        color=red
+        6 [label="Enter function closeFinally" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            8 [label="Enter when"];
+            subgraph cluster_5 {
+                color=blue
+                10 [label="Enter when branch condition "];
+                11 [label="Access variable this@R|/closeFinally|"];
+                12 [label="Const: Null(null)"];
+                13 [label="Operator =="];
+                14 [label="Exit when branch condition"];
+            }
+            subgraph cluster_6 {
+                color=blue
+                19 [label="Enter when branch condition "];
+                20 [label="Access variable R|<local>/cause|"];
+                21 [label="Const: Null(null)"];
+                22 [label="Operator =="];
+                23 [label="Exit when branch condition"];
+            }
+            subgraph cluster_7 {
+                color=blue
+                29 [label="Enter when branch condition else"];
+                30 [label="Exit when branch condition"];
+            }
+            31 [label="Enter when branch result"];
+            subgraph cluster_8 {
+                color=blue
+                32 [label="Enter block"];
+                subgraph cluster_9 {
+                    color=blue
+                    33 [label="Try expression enter"];
+                    subgraph cluster_10 {
+                        color=blue
+                        35 [label="Try main block enter"];
+                        subgraph cluster_11 {
+                            color=blue
+                            37 [label="Enter block"];
+                            38 [label="Function call: this@R|/closeFinally|.R|/AutoCloseable.close|()"];
+                            39 [label="Exit block"];
+                        }
+                        40 [label="Try main block exit"];
+                    }
+                    subgraph cluster_12 {
+                        color=blue
+                        36 [label="Catch enter"];
+                        subgraph cluster_13 {
+                            color=blue
+                            41 [label="Enter block"];
+                            42 [label="Access variable R|<local>/cause|"];
+                            43 [label="Access variable R|<local>/closeException|"];
+                            44 [label="Function call: R|<local>/cause|.R|/addSuppressed|(...)"];
+                            45 [label="Exit block"];
+                        }
+                        46 [label="Catch exit"];
+                    }
+                    34 [label="Try expression exit"];
+                }
+                47 [label="Exit block"];
+            }
+            48 [label="Exit when branch result"];
+            24 [label="Enter when branch result"];
+            subgraph cluster_14 {
+                color=blue
+                25 [label="Enter block"];
+                26 [label="Function call: this@R|/closeFinally|.R|/AutoCloseable.close|()"];
+                27 [label="Exit block"];
+            }
+            28 [label="Exit when branch result"];
+            15 [label="Enter when branch result"];
+            subgraph cluster_15 {
+                color=blue
+                16 [label="Enter block"];
+                17 [label="Exit block"];
+            }
+            18 [label="Exit when branch result"];
+            9 [label="Exit when"];
+        }
+        49 [label="Jump: ^closeFinally when () {
+    ==(this@R|/closeFinally|, Null(null)) ->  {
+    }
+    ==(R|<local>/cause|, Null(null)) ->  {
+        this@R|/closeFinally|.R|/AutoCloseable.close|()
+    }
+    else ->  {
+        try {
+            this@R|/closeFinally|.R|/AutoCloseable.close|()
+        }
+        catch (closeException: R|kotlin/Throwable|) {
+            R|<local>/cause|.R|/addSuppressed|(R|<local>/closeException|)
+        }
+
+    }
+}
+"];
+        50 [label="Stub" style="filled" fillcolor=gray];
+        7 [label="Exit function closeFinally" style="filled" fillcolor=red];
+    }
+    6 -> {8};
+    8 -> {10};
+    9 -> {49};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15 19};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {9};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23};
+    23 -> {24 29};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {9};
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {35};
+    34 -> {47};
+    35 -> {7 36 37};
+    36 -> {7 41};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {34};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    46 -> {34};
+    47 -> {48};
+    48 -> {9};
+    49 -> {7};
+    49 -> {50} [style=dotted];
+    50 -> {7} [style=dotted];
+
+    subgraph cluster_16 {
+        color=red
+        51 [label="Enter function firstIsInstanceOrNull" style="filled" fillcolor=red];
+        53 [label="Access variable this@R|/firstIsInstanceOrNull|"];
+        54 [label="Function call: this@R|/firstIsInstanceOrNull|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()"];
+        55 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>|"];
+        subgraph cluster_17 {
+            color=blue
+            56 [label="Enter while loop"];
+            subgraph cluster_18 {
+                color=blue
+                58 [label="Enter loop condition"];
+                59 [label="Access variable R|<local>/<iterator>|"];
+                60 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                61 [label="Exit loop condition"];
+            }
+            subgraph cluster_19 {
+                color=blue
+                62 [label="Enter loop block"];
+                subgraph cluster_20 {
+                    color=blue
+                    63 [label="Enter block"];
+                    64 [label="Access variable R|<local>/<iterator>|"];
+                    65 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()"];
+                    66 [label="Variable declaration: lval element: R|kotlin/Any?|"];
+                    subgraph cluster_21 {
+                        color=blue
+                        67 [label="Enter when"];
+                        subgraph cluster_22 {
+                            color=blue
+                            69 [label="Enter when branch condition "];
+                            70 [label="Access variable R|<local>/element|"];
+                            71 [label="Type operator: (R|<local>/element| is R|T|)"];
+                            72 [label="Exit when branch condition"];
+                        }
+                        80 [label="Synthetic else branch"];
+                        73 [label="Enter when branch result"];
+                        subgraph cluster_23 {
+                            color=blue
+                            74 [label="Enter block"];
+                            75 [label="Access variable R|<local>/element|"];
+                            76 [label="Jump: ^firstIsInstanceOrNull R|<local>/element|"];
+                            77 [label="Stub" style="filled" fillcolor=gray];
+                            78 [label="Exit block" style="filled" fillcolor=gray];
+                        }
+                        79 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        68 [label="Exit when"];
+                    }
+                    81 [label="Exit block"];
+                }
+                82 [label="Exit loop block"];
+            }
+            57 [label="Exit whileloop"];
+        }
+        83 [label="Const: Null(null)"];
+        84 [label="Jump: ^firstIsInstanceOrNull Null(null)"];
+        85 [label="Stub" style="filled" fillcolor=gray];
+        52 [label="Exit function firstIsInstanceOrNull" style="filled" fillcolor=red];
+    }
+    51 -> {53};
+    53 -> {54};
+    54 -> {55};
+    55 -> {56};
+    56 -> {58};
+    57 -> {83};
+    58 -> {59};
+    59 -> {60};
+    60 -> {61};
+    61 -> {57 62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {69};
+    68 -> {81};
+    69 -> {70};
+    70 -> {71};
+    71 -> {72};
+    72 -> {73 80};
+    73 -> {74};
+    74 -> {75};
+    75 -> {76};
+    76 -> {52};
+    76 -> {77} [style=dotted];
+    77 -> {78} [style=dotted];
+    78 -> {79} [style=dotted];
+    79 -> {68} [style=dotted];
+    80 -> {68};
+    81 -> {82};
+    82 -> {58};
+    83 -> {84};
+    84 -> {52};
+    84 -> {85} [style=dotted];
+    85 -> {52} [style=dotted];
+
+}

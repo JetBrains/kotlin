@@ -10,19 +10,15 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
-import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
+import org.jetbrains.kotlin.fir.resolve.correspondingSupertypesCache
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.invoke
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -179,12 +175,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
-        require(this is ConeKotlinTypeProjection)
+        require(this is ConeTypeProjection)
         return this is ConeStarProjection
     }
 
     override fun TypeArgumentMarker.getVariance(): TypeVariance {
-        require(this is ConeKotlinTypeProjection)
+        require(this is ConeTypeProjection)
 
         return when (this.kind) {
             ProjectionKind.STAR -> error("Nekorrektno (c) Stas")
@@ -195,8 +191,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
-        require(this is ConeKotlinTypeProjection)
-        require(this is ConeTypedProjection) { "No type for StarProjection" }
+        require(this is ConeTypeProjection)
+        require(this is ConeKotlinTypeProjection) { "No type for StarProjection" }
         return this.type
     }
 
@@ -314,12 +310,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT) return@Array argument
 
             val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
-                (argument as ConeTypedProjection).type
+                (argument as ConeKotlinTypeProjection).type
             } else {
                 null
             }
 
-            ConeCapturedType(status, lowerType, argument as ConeKotlinTypeProjection)
+            ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
         }
 
         for (index in 0 until argumentsCount) {
@@ -402,6 +398,15 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         return when (type) {
             is ConeClassLikeType -> type.fullyExpandedType(session)
+            is ConeFlexibleType -> {
+                val lowerBound = prepareType(type.lowerBound)
+                if (lowerBound === type.lowerBound) return type
+
+                ConeFlexibleType(
+                    lowerBound as ConeKotlinType,
+                    prepareType(type.upperBound) as ConeKotlinType
+                )
+            }
             else -> type
         }
     }
@@ -417,7 +422,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ConeTypeParameterType /* || is TypeVariable */)
             return hasNullableSuperType(type)
 
-        // TODO: Intersection types
+        if (this is ConeIntersectionType && intersectedTypes.any { it.isNullableType() }) {
+            return true
+        }
+
         return false
     }
 
@@ -458,6 +466,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return toFirRegularClass()?.isInline == true
     }
 
+    override fun TypeConstructorMarker.isInnerClass(): Boolean {
+        return toFirRegularClass()?.isInner == true
+    }
+
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
         return this.fir.bounds.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }
@@ -479,7 +491,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         getClassFqNameUnsafe()?.startsWith(Name.identifier("kotlin")) == true
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? {
-        return toFirRegularClass()?.symbol?.toLookupTag()?.classId?.asSingleFqName()?.toUnsafe()
+        if (this !is FirClassLikeSymbol<*>) return null
+        return toLookupTag().classId.asSingleFqName().toUnsafe()
     }
 
     override fun TypeParameterMarker.getName() = (this as FirTypeParameterSymbol).name
@@ -512,7 +525,7 @@ class ConeTypeCheckerContext(
         val substitutor = if (declaration is FirTypeParametersOwner) {
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
-                    parameter.symbol to ((argument as? ConeTypedProjection)?.type
+                    parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.type)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
             substitutorByMap(substitution)
@@ -552,5 +565,12 @@ class ConeTypeCheckerContext(
             this
         else
             ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
+
+    override fun createTypeWithAlternativeForIntersectionResult(
+        firstCandidate: KotlinTypeMarker,
+        secondCandidate: KotlinTypeMarker
+    ): KotlinTypeMarker {
+        TODO("Not yet implemented")
+    }
 
 }

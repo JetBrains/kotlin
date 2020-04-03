@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: K.kt
 
 open class K {

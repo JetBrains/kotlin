@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNREACHABLE_CODE
 
-fun TODO(): Nothing = throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalStateException<!>()
+fun TODO(): Nothing = throw java.lang.IllegalStateException()
 
 open class OpenClass
 class FinalClass : OpenClass()

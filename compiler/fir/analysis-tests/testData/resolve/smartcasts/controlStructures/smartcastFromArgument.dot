@@ -1,0 +1,134 @@
+digraph smartcastFromArgument_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class A" style="filled" fillcolor=red];
+        3 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter function takeA" style="filled" fillcolor=red];
+        6 [label="Const: Boolean(true)"];
+        7 [label="Jump: ^takeA Boolean(true)"];
+        8 [label="Stub" style="filled" fillcolor=gray];
+        5 [label="Exit function takeA" style="filled" fillcolor=red];
+    }
+    4 -> {6};
+    6 -> {7};
+    7 -> {5};
+    7 -> {8} [style=dotted];
+    8 -> {5} [style=dotted];
+
+    subgraph cluster_3 {
+        color=red
+        9 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            11 [label="Enter when"];
+            subgraph cluster_5 {
+                color=blue
+                13 [label="Enter when branch condition "];
+                subgraph cluster_6 {
+                    color=blue
+                    14 [label="Enter when"];
+                    16 [label="Access variable R|<local>/a|"];
+                    17 [label="Type operator: (R|<local>/a| as? R|A|)"];
+                    18 [label="Variable declaration: lval <elvis>: R|A?|"];
+                    subgraph cluster_7 {
+                        color=blue
+                        19 [label="Enter when branch condition "];
+                        20 [label="Const: Null(null)"];
+                        21 [label="Operator =="];
+                        22 [label="Exit when branch condition"];
+                    }
+                    subgraph cluster_8 {
+                        color=blue
+                        29 [label="Enter when branch condition else"];
+                        30 [label="Exit when branch condition"];
+                    }
+                    31 [label="Enter when branch result"];
+                    subgraph cluster_9 {
+                        color=blue
+                        32 [label="Enter block"];
+                        33 [label="Access variable R|<local>/<elvis>|"];
+                        34 [label="Exit block"];
+                    }
+                    35 [label="Exit when branch result"];
+                    23 [label="Enter when branch result"];
+                    subgraph cluster_10 {
+                        color=blue
+                        24 [label="Enter block"];
+                        25 [label="Jump: ^test Unit"];
+                        26 [label="Stub" style="filled" fillcolor=gray];
+                        27 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    28 [label="Exit when branch result" style="filled" fillcolor=gray];
+                    15 [label="Exit when"];
+                }
+                36 [label="Function call: R|/takeA|(...)"];
+                37 [label="Exit when branch condition"];
+            }
+            44 [label="Synthetic else branch"];
+            38 [label="Enter when branch result"];
+            subgraph cluster_11 {
+                color=blue
+                39 [label="Enter block"];
+                40 [label="Access variable R|<local>/a|"];
+                41 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                42 [label="Exit block"];
+            }
+            43 [label="Exit when branch result"];
+            12 [label="Exit when"];
+        }
+        10 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    9 -> {11};
+    11 -> {13};
+    12 -> {10};
+    13 -> {14};
+    14 -> {16};
+    15 -> {36};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23 29};
+    23 -> {24};
+    24 -> {25};
+    25 -> {10};
+    25 -> {26} [style=dotted];
+    26 -> {27} [style=dotted];
+    27 -> {28} [style=dotted];
+    28 -> {15} [style=dotted];
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+    35 -> {15};
+    36 -> {37};
+    37 -> {38 44};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+    42 -> {43};
+    43 -> {12};
+    44 -> {12};
+
+}

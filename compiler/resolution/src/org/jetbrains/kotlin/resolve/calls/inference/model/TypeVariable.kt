@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
@@ -48,21 +49,27 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = this
 
     override fun toString() = "TypeVariable($debugName)"
+
+    var isContainedInInvariantOrContravariantPositions: Boolean = false
 }
 
 sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
-    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
+    val freshTypeConstructor = TypeVariableTypeConstructor(builtIns, name)
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
-    val defaultType: SimpleType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        Annotations.EMPTY, freshTypeConstructor, arguments = emptyList(),
-        nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope
-    )
-
+    val defaultType: SimpleType = freshTypeConstructor.typeForTypeVariable()
     abstract fun hasOnlyInputTypesAnnotation(): Boolean
 
     override fun toString() = freshTypeConstructor.toString()
+}
+
+fun TypeConstructor.typeForTypeVariable(): SimpleType {
+    require(this is TypeVariableTypeConstructor)
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        Annotations.EMPTY, this, arguments = emptyList(),
+        nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope
+    )
 }
 
 class TypeVariableFromCallableDescriptor(
@@ -73,6 +80,13 @@ class TypeVariableFromCallableDescriptor(
 
 class TypeVariableForLambdaReturnType(
     val lambdaArgument: LambdaKotlinCallArgument,
+    builtIns: KotlinBuiltIns,
+    name: String
+) : NewTypeVariable(builtIns, name) {
+    override fun hasOnlyInputTypesAnnotation(): Boolean = false
+}
+
+class TypeVariableForCallableReferenceReturnType(
     builtIns: KotlinBuiltIns,
     name: String
 ) : NewTypeVariable(builtIns, name) {

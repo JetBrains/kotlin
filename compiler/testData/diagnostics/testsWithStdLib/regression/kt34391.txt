@@ -10,7 +10,7 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.Experimental(level = Level.ERROR) public final annotation class ExperimentalTime : kotlin.Annotation {
+@kotlin.RequiresOptIn(level = Level.ERROR) public final annotation class ExperimentalTime : kotlin.Annotation {
     public constructor ExperimentalTime()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

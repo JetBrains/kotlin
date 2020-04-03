@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ data class YarnLock(val entries: List<Entry>) {
     }
 
     companion object {
-        fun key(packageKey: String, version: String) = "$packageKey@$version"
+        fun dependencyKey(packageKey: String, version: String) = "$packageKey@$version"
 
         private class Node(val parent: Node?, val value: String? = null) {
             var indent: String? = null

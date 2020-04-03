@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
 import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
@@ -57,7 +58,7 @@ class AbbreviatedType(override val delegate: SimpleType, val abbreviation: Simpl
     override fun replaceDelegate(delegate: SimpleType) = AbbreviatedType(delegate, abbreviation)
 
     @TypeRefinement
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): AbbreviatedType =
         AbbreviatedType(
             kotlinTypeRefiner.refineType(delegate) as SimpleType,
@@ -84,7 +85,7 @@ class LazyWrappedType(
     override fun isComputed(): Boolean = lazyValue.isComputed()
 
     @TypeRefinement
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = LazyWrappedType(storageManager) {
         kotlinTypeRefiner.refineType(computation())
     }
@@ -149,6 +150,9 @@ fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this)
         ?: makeIntersectionTypeDefinitelyNotNullOrNotNull()
         ?: makeNullableAsSpecified(false)
+
+fun NewCapturedType.withNotNullProjection() =
+    NewCapturedType(captureStatus, constructor, lowerType, annotations, isMarkedNullable, isProjectionNotNull = true)
 
 fun UnwrappedType.makeDefinitelyNotNullOrNotNull(): UnwrappedType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this)

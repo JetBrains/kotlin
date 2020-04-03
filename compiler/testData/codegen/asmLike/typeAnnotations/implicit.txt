@@ -1,0 +1,39 @@
+final class foo/Kotlin$foo4$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    final foo.Kotlin this$0
+
+    void <init>(foo.Kotlin p0)
+
+    public java.lang.Object invoke()
+
+    public final java.lang.String invoke()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final java.lang.String foo2()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final java.lang.String foo3()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final java.lang.String foo4()
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}

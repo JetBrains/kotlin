@@ -32,10 +32,16 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
         )
     }
 
-    override fun getEffectiveKind(library: LibraryEx): PersistentLibraryKind<*>? = when (val kind = library.kind) {
-        is KotlinLibraryKind -> kind
-        else -> synchronized(effectiveKindMap) {
-            effectiveKindMap.get(library)
+    override fun getEffectiveKind(library: LibraryEx): PersistentLibraryKind<*>? {
+        if (library.isDisposed) {
+            return null
+        }
+
+        return when (val kind = library.kind) {
+            is KotlinLibraryKind -> kind
+            else -> synchronized(effectiveKindMap) {
+                effectiveKindMap.get(library)
+            }
         }
     }
 }

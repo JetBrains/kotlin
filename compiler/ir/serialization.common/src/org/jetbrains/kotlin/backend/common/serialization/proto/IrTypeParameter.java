@@ -72,46 +72,24 @@ public final class IrTypeParameter extends
             break;
           }
           case 24: {
-            bitField0_ |= 0x00000004;
-            index_ = input.readInt32();
-            break;
-          }
-          case 32: {
-            int rawValue = input.readEnum();
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance value = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.valueOf(rawValue);
-            if (value == null) {
-              unknownFieldsCodedOutput.writeRawVarint32(tag);
-              unknownFieldsCodedOutput.writeRawVarint32(rawValue);
-            } else {
-              bitField0_ |= 0x00000008;
-              variance_ = value;
-            }
-            break;
-          }
-          case 40: {
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
               superType_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000004;
             }
             superType_.add(input.readInt32());
             break;
           }
-          case 42: {
+          case 26: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
               superType_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000004;
             }
             while (input.getBytesUntilLimit() > 0) {
               superType_.add(input.readInt32());
             }
             input.popLimit(limit);
-            break;
-          }
-          case 48: {
-            bitField0_ |= 0x00000010;
-            isReified_ = input.readBool();
             break;
           }
         }
@@ -122,7 +100,7 @@ public final class IrTypeParameter extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
         superType_ = java.util.Collections.unmodifiableList(superType_);
       }
       try {
@@ -181,80 +159,33 @@ public final class IrTypeParameter extends
     return name_;
   }
 
-  public static final int INDEX_FIELD_NUMBER = 3;
-  private int index_;
-  /**
-   * <code>required int32 index = 3;</code>
-   */
-  public boolean hasIndex() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
-  }
-  /**
-   * <code>required int32 index = 3;</code>
-   */
-  public int getIndex() {
-    return index_;
-  }
-
-  public static final int VARIANCE_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance_;
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-   */
-  public boolean hasVariance() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance getVariance() {
-    return variance_;
-  }
-
-  public static final int SUPER_TYPE_FIELD_NUMBER = 5;
+  public static final int SUPER_TYPE_FIELD_NUMBER = 3;
   private java.util.List<java.lang.Integer> superType_;
   /**
-   * <code>repeated int32 super_type = 5;</code>
+   * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
       getSuperTypeList() {
     return superType_;
   }
   /**
-   * <code>repeated int32 super_type = 5;</code>
+   * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   public int getSuperTypeCount() {
     return superType_.size();
   }
   /**
-   * <code>repeated int32 super_type = 5;</code>
+   * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   public int getSuperType(int index) {
     return superType_.get(index);
   }
-
-  public static final int IS_REIFIED_FIELD_NUMBER = 6;
-  private boolean isReified_;
-  /**
-   * <code>required bool is_reified = 6;</code>
-   */
-  public boolean hasIsReified() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>required bool is_reified = 6;</code>
-   */
-  public boolean getIsReified() {
-    return isReified_;
-  }
+  private int superTypeMemoizedSerializedSize = -1;
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
-    index_ = 0;
-    variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
     superType_ = java.util.Collections.emptyList();
-    isReified_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -267,18 +198,6 @@ public final class IrTypeParameter extends
       return false;
     }
     if (!hasName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIndex()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasVariance()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsReified()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -299,17 +218,12 @@ public final class IrTypeParameter extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt32(2, name_);
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt32(3, index_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeEnum(4, variance_.getNumber());
+    if (getSuperTypeList().size() > 0) {
+      output.writeRawVarint32(26);
+      output.writeRawVarint32(superTypeMemoizedSerializedSize);
     }
     for (int i = 0; i < superType_.size(); i++) {
-      output.writeInt32(5, superType_.get(i));
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeBool(6, isReified_);
+      output.writeInt32NoTag(superType_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -328,14 +242,6 @@ public final class IrTypeParameter extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(2, name_);
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, index_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeEnumSize(4, variance_.getNumber());
-    }
     {
       int dataSize = 0;
       for (int i = 0; i < superType_.size(); i++) {
@@ -343,11 +249,12 @@ public final class IrTypeParameter extends
           .computeInt32SizeNoTag(superType_.get(i));
       }
       size += dataSize;
-      size += 1 * getSuperTypeList().size();
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(6, isReified_);
+      if (!getSuperTypeList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      superTypeMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -447,14 +354,8 @@ public final class IrTypeParameter extends
       bitField0_ = (bitField0_ & ~0x00000001);
       name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
-      index_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000004);
-      variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
-      bitField0_ = (bitField0_ & ~0x00000008);
       superType_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isReified_ = false;
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -486,23 +387,11 @@ public final class IrTypeParameter extends
         to_bitField0_ |= 0x00000002;
       }
       result.name_ = name_;
-      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-        to_bitField0_ |= 0x00000004;
-      }
-      result.index_ = index_;
-      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000008;
-      }
-      result.variance_ = variance_;
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         superType_ = java.util.Collections.unmodifiableList(superType_);
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000004);
       }
       result.superType_ = superType_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.isReified_ = isReified_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -515,24 +404,15 @@ public final class IrTypeParameter extends
       if (other.hasName()) {
         setName(other.getName());
       }
-      if (other.hasIndex()) {
-        setIndex(other.getIndex());
-      }
-      if (other.hasVariance()) {
-        setVariance(other.getVariance());
-      }
       if (!other.superType_.isEmpty()) {
         if (superType_.isEmpty()) {
           superType_ = other.superType_;
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
           ensureSuperTypeIsMutable();
           superType_.addAll(other.superType_);
         }
         
-      }
-      if (other.hasIsReified()) {
-        setIsReified(other.getIsReified());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -545,18 +425,6 @@ public final class IrTypeParameter extends
         return false;
       }
       if (!hasName()) {
-        
-        return false;
-      }
-      if (!hasIndex()) {
-        
-        return false;
-      }
-      if (!hasVariance()) {
-        
-        return false;
-      }
-      if (!hasIsReified()) {
         
         return false;
       }
@@ -678,101 +546,34 @@ public final class IrTypeParameter extends
       return this;
     }
 
-    private int index_ ;
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public boolean hasIndex() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public int getIndex() {
-      return index_;
-    }
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public Builder setIndex(int value) {
-      bitField0_ |= 0x00000004;
-      index_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public Builder clearIndex() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      index_ = 0;
-      
-      return this;
-    }
-
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-     */
-    public boolean hasVariance() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance getVariance() {
-      return variance_;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-     */
-    public Builder setVariance(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      bitField0_ |= 0x00000008;
-      variance_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-     */
-    public Builder clearVariance() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
-      
-      return this;
-    }
-
     private java.util.List<java.lang.Integer> superType_ = java.util.Collections.emptyList();
     private void ensureSuperTypeIsMutable() {
-      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
         superType_ = new java.util.ArrayList<java.lang.Integer>(superType_);
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000004;
        }
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getSuperTypeList() {
       return java.util.Collections.unmodifiableList(superType_);
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public int getSuperTypeCount() {
       return superType_.size();
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public int getSuperType(int index) {
       return superType_.get(index);
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public Builder setSuperType(
         int index, int value) {
@@ -782,7 +583,7 @@ public final class IrTypeParameter extends
       return this;
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public Builder addSuperType(int value) {
       ensureSuperTypeIsMutable();
@@ -791,7 +592,7 @@ public final class IrTypeParameter extends
       return this;
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public Builder addAllSuperType(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -802,43 +603,11 @@ public final class IrTypeParameter extends
       return this;
     }
     /**
-     * <code>repeated int32 super_type = 5;</code>
+     * <code>repeated int32 super_type = 3 [packed = true];</code>
      */
     public Builder clearSuperType() {
       superType_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000010);
-      
-      return this;
-    }
-
-    private boolean isReified_ ;
-    /**
-     * <code>required bool is_reified = 6;</code>
-     */
-    public boolean hasIsReified() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>required bool is_reified = 6;</code>
-     */
-    public boolean getIsReified() {
-      return isReified_;
-    }
-    /**
-     * <code>required bool is_reified = 6;</code>
-     */
-    public Builder setIsReified(boolean value) {
-      bitField0_ |= 0x00000020;
-      isReified_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_reified = 6;</code>
-     */
-    public Builder clearIsReified() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isReified_ = false;
+      bitField0_ = (bitField0_ & ~0x00000004);
       
       return this;
     }

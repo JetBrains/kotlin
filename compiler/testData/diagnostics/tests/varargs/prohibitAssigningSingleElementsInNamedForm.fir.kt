@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class Anno1(vararg val s: String)
@@ -15,6 +15,6 @@ fun f2() {}
 fun foo(vararg ints: Int) {}
 
 fun test() {
-    foo(ints = 1)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(ints = 1)
     foo(ints = *intArrayOf(1))
 }

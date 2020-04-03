@@ -20,6 +20,7 @@ import com.intellij.util.Processor
 import com.intellij.util.Processors
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.indexing.IdFilter
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -48,13 +49,13 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     //region Classes
 
-    override fun processAllClassNames(processor: Processor<String>): Boolean {
+    override fun processAllClassNames(processor: StringProcessor): Boolean {
         if (disableSearch.get()) return true
         return KotlinClassShortNameIndex.getInstance().processAllKeys(project, processor) &&
                 KotlinFileFacadeShortNameIndex.INSTANCE.processAllKeys(project, processor)
     }
 
-    override fun processAllClassNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+    override fun processAllClassNames(processor: StringProcessor, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
         if (disableSearch.get()) return true
         return processAllClassNames(processor)
     }
@@ -149,7 +150,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     //region Methods
 
-    override fun processAllMethodNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+    override fun processAllMethodNames(processor: StringProcessor, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
         if (disableSearch.get()) return true
         return processAllMethodNames(processor)
     }
@@ -161,7 +162,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
     }
 
-    private fun processAllMethodNames(processor: Processor<String>): Boolean {
+    private fun processAllMethodNames(processor: StringProcessor): Boolean {
         if (disableSearch.get()) return true
         if (!KotlinFunctionShortNameIndex.getInstance().processAllKeys(project, processor)) {
             return false
@@ -205,11 +206,9 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                 filter,
                 KtNamedDeclaration::class.java
             ) { ktNamedDeclaration ->
-                val methods = ktNamedDeclaration.getAccessorLightMethods()
+                val methods: Sequence<PsiMethod> = ktNamedDeclaration.getAccessorLightMethods()
                     .asSequence()
                     .filter { it.name == name }
-                    .map { it as? PsiMethod }
-                    .filterNotNull()
 
                 return@processElements methods.all { method ->
                     processor.process(method)
@@ -246,7 +245,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
     }
 
-    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean {
+    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: PsiMethodProcessor): Boolean {
         if (disableSearch.get()) return true
         return ContainerUtil.process(getMethodsByName(name, scope), processor)
     }
@@ -254,7 +253,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     //region Fields
 
-    override fun processAllFieldNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+    override fun processAllFieldNames(processor: StringProcessor, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
         if (disableSearch.get()) return true
         return processAllFieldNames(processor)
     }
@@ -266,7 +265,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
     }
 
-    private fun processAllFieldNames(processor: Processor<String>): Boolean {
+    private fun processAllFieldNames(processor: StringProcessor): Boolean {
         if (disableSearch.get()) return true
         return KotlinPropertyShortNameIndex.getInstance().processAllKeys(project, processor)
     }
@@ -327,7 +326,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
     }
 
     private class CancelableArrayCollectProcessor<T> : Processor<T> {
-        val troveSet = ContainerUtil.newTroveSet<T>()
+        val troveSet = THashSet<T>()
         private val processor = Processors.cancelableCollectProcessor<T>(troveSet)
 
         override fun process(value: T): Boolean {

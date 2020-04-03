@@ -15,13 +15,4 @@ public interface IrConstructorOrBuilder extends
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase base = 1;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase getBase();
-
-  /**
-   * <code>required bool is_primary = 2;</code>
-   */
-  boolean hasIsPrimary();
-  /**
-   * <code>required bool is_primary = 2;</code>
-   */
-  boolean getIsPrimary();
 }

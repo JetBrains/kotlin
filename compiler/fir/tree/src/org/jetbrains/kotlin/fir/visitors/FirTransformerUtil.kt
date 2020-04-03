@@ -34,3 +34,21 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
     }
 }
 
+sealed class TransformData<out D> {
+    class Data<D>(val value: D) : TransformData<D>()
+    object Nothing : TransformData<kotlin.Nothing>()
+}
+
+inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, dataProducer: (Int) -> TransformData<D>) {
+    val iterator = this.listIterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        val next = iterator.next() as FirPureAbstractElement
+        val data = when (val data = dataProducer(index++)) {
+            is TransformData.Data<D> -> data.value
+            TransformData.Nothing -> continue
+        }
+        val result = next.transform<T, D>(transformer, data).single
+        iterator.set(result)
+    }
+}

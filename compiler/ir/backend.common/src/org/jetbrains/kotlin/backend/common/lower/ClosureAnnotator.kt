@@ -17,30 +17,27 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isLocal
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import kotlin.collections.set
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class Closure(val capturedValues: List<IrValueSymbol> = emptyList())
+data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(irFile: IrFile) {
+class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
 
     init {
         // Collect all closures for classes and functions. Collect call graph
-        irFile.acceptChildrenVoid(ClosureCollectorVisitor())
+        irElement.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
     }
 
     fun getFunctionClosure(declaration: IrFunction) = getClosure(declaration)
@@ -54,9 +51,12 @@ class ClosureAnnotator(irFile: IrFile) {
     }
 
     private class ClosureBuilder(val owner: IrDeclaration) {
-        val capturedValues = mutableSetOf<IrValueSymbol>()
+        private val capturedValues = mutableSetOf<IrValueSymbol>()
         private val declaredValues = mutableSetOf<IrValueDeclaration>()
         private val includes = mutableSetOf<ClosureBuilder>()
+
+        private val potentiallyCapturedTypeParameters = mutableSetOf<IrTypeParameter>()
+        private val capturedTypeParameters = mutableSetOf<IrTypeParameter>()
 
         var processed = false
 
@@ -66,15 +66,16 @@ class ClosureAnnotator(irFile: IrFile) {
          *                  variables declared in the node.
          */
         fun buildClosure(): Closure {
-            val result = mutableSetOf<IrValueSymbol>().apply { addAll(capturedValues) }
             includes.forEach { builder ->
                 if (!builder.processed) {
                     builder.processed = true
-                    builder.buildClosure().capturedValues.filterTo(result) { isExternal(it.owner) }
+                    val subClosure = builder.buildClosure()
+                    subClosure.capturedValues.filterTo(capturedValues) { isExternal(it.owner) }
+                    subClosure.capturedTypeParameters.filterTo(capturedTypeParameters) { isExternal(it) }
                 }
             }
             // TODO: We can save the closure and reuse it.
-            return Closure(result.toList())
+            return Closure(capturedValues.toList(), capturedTypeParameters.toList())
         }
 
 
@@ -83,120 +84,188 @@ class ClosureAnnotator(irFile: IrFile) {
         }
 
         fun declareVariable(valueDeclaration: IrValueDeclaration?) {
-            if (valueDeclaration != null)
+            if (valueDeclaration != null) {
                 declaredValues.add(valueDeclaration)
+                seeType(valueDeclaration.type)
+            }
         }
 
         fun seeVariable(value: IrValueSymbol) {
-            if (isExternal(value.owner))
+            if (isExternal(value.owner)) {
                 capturedValues.add(value)
+            }
         }
 
         fun isExternal(valueDeclaration: IrValueDeclaration): Boolean {
             return !declaredValues.contains(valueDeclaration)
         }
-    }
 
-    private inner class ClosureCollectorVisitor : IrElementVisitorVoid {
+        fun isExternal(typeParameter: IrTypeParameter): Boolean {
+            return potentiallyCapturedTypeParameters.contains(typeParameter)
+        }
 
-        val closuresStack = mutableListOf<ClosureBuilder>()
+        fun addPotentiallyCapturedTypeParameter(param: IrTypeParameter) {
+            potentiallyCapturedTypeParameters.add(param)
+        }
 
-        fun includeInParent(builder: ClosureBuilder) {
-            // We don't include functions or classes in a parent function when they are declared.
-            // Instead we will include them when are is used (use = call for a function or constructor call for a class).
-            val parentBuilder = closuresStack.peek()
-            if (parentBuilder != null && parentBuilder.owner !is IrFunction) {
-                parentBuilder.include(builder)
+        fun seeType(type: IrType) {
+            if (type !is IrSimpleType) return
+            val classifier = type.classifier
+            if (classifier is IrTypeParameterSymbol && isExternal(classifier.owner) && capturedTypeParameters.add(classifier.owner))
+                classifier.owner.superTypes.forEach(::seeType)
+            type.arguments.forEach {
+                (it as? IrTypeProjection)?.type?.let(::seeType)
+            }
+            type.abbreviation?.arguments?.forEach {
+                (it as? IrTypeProjection)?.type?.let(::seeType)
             }
         }
+    }
 
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
+    private fun includeInParent(builder: ClosureBuilder) {
+        // We don't include functions or classes in a parent function when they are declared.
+        // Instead we will include them when are is used (use = call for a function or constructor call for a class).
+        val parentBuilder = builder.owner.parentClosureBuilder
+        if (parentBuilder != null && parentBuilder.owner !is IrFunction) {
+            parentBuilder.include(builder)
         }
+    }
 
-        override fun visitClass(declaration: IrClass) {
-            val closureBuilder = ClosureBuilder(declaration)
-            closureBuilders[declaration] = closureBuilder
+    private val IrClass.closureBuilder: ClosureBuilder
+        get() = closureBuilders.getOrPut(this) {
+            val closureBuilder = ClosureBuilder(this)
 
-            closureBuilder.declareVariable(declaration.thisReceiver)
-            if (declaration.isInner) {
-                closureBuilder.declareVariable((declaration.parent as IrClass).thisReceiver)
+            collectPotentiallyCapturedTypeParameters(closureBuilder)
+
+            closureBuilder.declareVariable(this.thisReceiver)
+            if (this.isInner) {
+                closureBuilder.declareVariable((this.parent as IrClass).thisReceiver)
                 includeInParent(closureBuilder)
             }
 
-            declaration.declarations.firstOrNull { it is IrConstructor && it.isPrimary }?.let {
+            this.declarations.firstOrNull { it is IrConstructor && it.isPrimary }?.let {
                 val constructor = it as IrConstructor
                 constructor.valueParameters.forEach { v -> closureBuilder.declareVariable(v) }
             }
 
-            closuresStack.push(closureBuilder)
-            declaration.acceptChildrenVoid(this)
-            closuresStack.pop()
+            closureBuilder
         }
 
-        override fun visitFunction(declaration: IrFunction) {
-            val closureBuilder = ClosureBuilder(declaration)
-            closureBuilders[declaration] = closureBuilder
+    private val IrFunction.closureBuilder: ClosureBuilder
+        get() = closureBuilders.getOrPut(this) {
+            val closureBuilder = ClosureBuilder(this)
 
-            declaration.valueParameters.forEach { closureBuilder.declareVariable(it) }
-            closureBuilder.declareVariable(declaration.dispatchReceiverParameter)
-            closureBuilder.declareVariable(declaration.extensionReceiverParameter)
+            collectPotentiallyCapturedTypeParameters(closureBuilder)
 
-            if (declaration is IrConstructor) {
-                val constructedClass = (declaration.parent as IrClass)
+            this.valueParameters.forEach { closureBuilder.declareVariable(it) }
+            closureBuilder.declareVariable(this.dispatchReceiverParameter)
+            closureBuilder.declareVariable(this.extensionReceiverParameter)
+
+            if (this is IrConstructor) {
+                val constructedClass = (this.parent as IrClass)
                 closureBuilder.declareVariable(constructedClass.thisReceiver)
 
                 // Include closure of the class in the constructor closure.
-                val classBuilder = closuresStack.peek()
-                classBuilder?.let {
-                    assert(classBuilder.owner == constructedClass)
-                    closureBuilder.include(classBuilder)
-                }
+                val classBuilder = constructedClass.closureBuilder
+                closureBuilder.include(classBuilder)
             }
 
+            closureBuilder
+        }
 
-            closuresStack.push(closureBuilder)
-            declaration.acceptChildrenVoid(this)
-            closuresStack.pop()
+    private fun collectPotentiallyCapturedTypeParameters(closureBuilder: ClosureBuilder) {
+
+        fun ClosureBuilder.doCollect() {
+            if (owner !is IrClass) {
+                (owner as? IrTypeParametersContainer)?.let { container ->
+                    for (tp in container.typeParameters) {
+                        closureBuilder.addPotentiallyCapturedTypeParameter(tp)
+                    }
+                }
+
+                owner.parentClosureBuilder?.doCollect()
+            }
+        }
+
+        closureBuilder.owner.parentClosureBuilder?.doCollect()
+    }
+
+    private val IrDeclaration.parentClosureBuilder: ClosureBuilder?
+        get() = when (val p = parent) {
+            is IrClass -> p.closureBuilder
+            is IrFunction -> p.closureBuilder
+            is IrDeclaration -> p.parentClosureBuilder
+            else -> null
+        }
+
+    private val IrDeclaration.closureBuilderOrNull: ClosureBuilder?
+        get() = when (this) {
+            is IrClass -> closureBuilder
+            is IrFunction -> closureBuilder
+            else -> null
+        }
+
+    private inner class ClosureCollectorVisitor() : IrElementVisitor<Unit, ClosureBuilder?> {
+
+        override fun visitElement(element: IrElement, data: ClosureBuilder?) {
+            element.acceptChildren(this, data)
+        }
+
+        override fun visitClass(declaration: IrClass, data: ClosureBuilder?) {
+            declaration.acceptChildren(this, declaration.closureBuilder)
+        }
+
+        override fun visitFunction(declaration: IrFunction, data: ClosureBuilder?) {
+            val closureBuilder = declaration.closureBuilder
+
+            declaration.acceptChildren(this, closureBuilder)
 
             includeInParent(closureBuilder)
         }
 
-        override fun visitVariableAccess(expression: IrValueAccessExpression) {
-            closuresStack.peek()?.seeVariable(expression.symbol)
-            super.visitVariableAccess(expression)
+        override fun visitValueAccess(expression: IrValueAccessExpression, data: ClosureBuilder?) {
+            data?.seeVariable(expression.symbol)
+            super.visitValueAccess(expression, data)
         }
 
-        override fun visitVariable(declaration: IrVariable) {
-            closuresStack.peek()?.declareVariable(declaration)
-            super.visitVariable(declaration)
+        override fun visitVariable(declaration: IrVariable, data: ClosureBuilder?) {
+            data?.declareVariable(declaration)
+            super.visitVariable(declaration, data)
         }
 
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-            super.visitFunctionAccess(expression)
-            processMemberAccess(expression.symbol.owner)
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: ClosureBuilder?) {
+            super.visitFunctionAccess(expression, data)
+            processMemberAccess(expression.symbol.owner, data)
         }
 
-        override fun visitFunctionReference(expression: IrFunctionReference) {
-            super.visitFunctionReference(expression)
-            processMemberAccess(expression.symbol.owner)
+        override fun visitFunctionReference(expression: IrFunctionReference, data: ClosureBuilder?) {
+            super.visitFunctionReference(expression, data)
+            processMemberAccess(expression.symbol.owner, data)
         }
 
-        override fun visitPropertyReference(expression: IrPropertyReference) {
-            super.visitPropertyReference(expression)
-            expression.getter?.let { processMemberAccess(it.owner) }
-            expression.setter?.let { processMemberAccess(it.owner) }
+        override fun visitPropertyReference(expression: IrPropertyReference, data: ClosureBuilder?) {
+            super.visitPropertyReference(expression, data)
+            expression.getter?.let { processMemberAccess(it.owner, data) }
+            expression.setter?.let { processMemberAccess(it.owner, data) }
         }
 
-        private fun processMemberAccess(declaration: IrDeclaration) {
+        override fun visitExpression(expression: IrExpression, data: ClosureBuilder?) {
+            super.visitExpression(expression, data)
+            val typeParameterContainerScopeBuilder = data?.let {
+                (it.owner as? IrConstructor)?.closureBuilder ?: it
+            }
+            typeParameterContainerScopeBuilder?.seeType(expression.type)
+        }
+
+        private fun processMemberAccess(declaration: IrDeclaration, parentClosure: ClosureBuilder?) {
             if (declaration.isLocal) {
                 if (declaration is IrSimpleFunction && declaration.visibility != Visibilities.LOCAL) {
                     return
                 }
 
-                val builder = closureBuilders[declaration]
+                val builder = declaration.closureBuilderOrNull
                 builder?.let {
-                    closuresStack.peek()?.include(builder)
+                    parentClosure?.include(builder)
                 }
             }
         }

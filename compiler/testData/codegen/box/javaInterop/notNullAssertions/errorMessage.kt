@@ -6,7 +6,7 @@ fun f(x: String) = "Fail 1"
 fun box(): String {
     return try {
         f(J().s())
-    } catch (e: IllegalStateException) {
+    } catch (e: NullPointerException) {
         if (e.message == "J().s() must not be null")
             "OK"
         else

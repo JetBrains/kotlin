@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,17 +29,13 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.HyperlinkLabel
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.KotlinPluginUpdater
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.PluginUpdateStatus
+import org.jetbrains.kotlin.idea.*
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
-import java.text.MessageFormat
 import java.util.*
 import javax.swing.Icon
 import javax.swing.JLabel
@@ -67,10 +63,8 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 val badRootsInRuntimeLibraries = findBadRootsInRuntimeLibraries(badRuntimeLibraries, badVersionedRoots)
                 val otherBadRootsCount = badVersionedRoots.size - badRootsInRuntimeLibraries.size
 
-                val text = MessageFormat.format(
-                    "<html><b>{0,choice,0#|1#|1<Some }Kotlin runtime librar{0,choice,0#|1#y|1<ies}</b>" +
-                            "{1,choice,0#|1# and one other jar|1< and {1} other jars} " +
-                            "{1,choice,0#has|0<have} an unsupported binary format.</html>",
+                val text = KotlinJvmBundle.htmlMessage(
+                    "html.b.0.choice.0.1.1.some.kotlin.runtime.librar.0.choice.0.1.y.1.ies.b.1.choice.0.1.and.one.other.jar.1.and.1.other.jars.1.choice.0.has.0.have.an.unsupported.binary.format.html",
                     badRuntimeLibraries.size,
                     otherBadRootsCount
                 )
@@ -85,15 +79,16 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 val isPluginNewForAllRuntimeLibraries = badRootsInRuntimeLibraries.all { it.supportedVersion > it.version }
 
                 val updateAction = when {
-                    isPluginNewForAllRuntimeLibraries -> "Update"
-                    isPluginOldForAllRuntimeLibraries -> "Downgrade"
-                    else -> "Replace"
+                    isPluginNewForAllRuntimeLibraries -> KotlinJvmBundle.message("button.text.update.library")
+                    isPluginOldForAllRuntimeLibraries -> KotlinJvmBundle.message("button.text.downgrade.library")
+                    else -> KotlinJvmBundle.message("button.text.replace.library")
                 }
 
-                val actionLabelText = MessageFormat.format(
-                    "$updateAction {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ",
+                val actionLabelText = "$updateAction " + KotlinJvmBundle.message(
+                    "0.choice.0.1.1.all.kotlin.runtime.librar.0.choice.0.1.y.1.ies",
                     badRuntimeLibraries.size
                 )
+
                 answer.createActionLabel(actionLabelText) {
                     ApplicationManager.getApplication().invokeLater {
                         updateLibraries(project, badRuntimeLibraries)
@@ -107,41 +102,54 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
                 when {
                     isPluginOldForAllRoots -> {
-                        answer.setText("<html>Kotlin library <b>'$presentableName'</b> was compiled with a newer Kotlin compiler and can't be read. Please update Kotlin plugin.</html>")
+                        answer.setText(
+                            KotlinJvmBundle.htmlMessage(
+                                "html.kotlin.library.b.0.b.was.compiled.with.a.newer.kotlin.compiler.and.can.t.be.read.please.update.kotlin.plugin.html",
+                                presentableName
+                            )
+                        )
                         createUpdatePluginLink(answer)
                     }
 
                     isPluginNewForAllRoots ->
-                        answer.setText("<html>Kotlin library <b>'$presentableName'</b> has outdated binary format and can't be read by current plugin. Please update the library.</html>")
+                        answer.setText(
+                            KotlinJvmBundle.htmlMessage(
+                                "html.kotlin.library.b.0.b.has.outdated.binary.format.and.can.t.be.read.by.current.plugin.please.update.the.library.html",
+                                presentableName
+                            )
+                        )
 
                     else -> {
                         throw IllegalStateException("Bad root with compatible version found: $badVersionedRoot")
                     }
                 }
 
-                answer.createActionLabel("Go to $presentableName") { navigateToLibraryRoot(project, badVersionedRoot.file) }
+                answer.createActionLabel(KotlinJvmBundle.message("button.text.go.to.0", presentableName)) {
+                    navigateToLibraryRoot(
+                        project,
+                        badVersionedRoot.file
+                    )
+                }
             }
 
             isPluginOldForAllRoots -> {
                 answer.setText(
-                    "Some Kotlin libraries attached to this project were compiled with a newer Kotlin compiler and can't be read. " +
-                            "Please update Kotlin plugin."
+                    KotlinJvmBundle.message("some.kotlin.libraries.attached.to.this.project.were.compiled.with.a.newer.kotlin.compiler.and.can.t.be.read.please.update.kotlin.plugin")
                 )
                 createUpdatePluginLink(answer)
             }
 
             isPluginNewForAllRoots ->
                 answer.setText(
-                    "Some Kotlin libraries attached to this project have outdated binary format and can't be read by current plugin. " +
-                            "Please update found libraries."
+                    KotlinJvmBundle.message("some.kotlin.libraries.attached.to.this.project.have.outdated.binary.format.and.can.t.be.read.by.current.plugin.please.update.found.libraries")
                 )
 
             else ->
-                answer.setText("Some Kotlin libraries attached to this project have unsupported binary format. Please update the libraries or the plugin.")
+                answer.setText(KotlinJvmBundle.message("some.kotlin.libraries.attached.to.this.project.have.unsupported.binary.format.please.update.the.libraries.or.the.plugin"))
 
         }
 
-        createShowPathsActionLabel(module, answer, "Details")
+        createShowPathsActionLabel(module, answer, KotlinJvmBundle.message("button.text.details"))
 
         return answer
     }
@@ -153,7 +161,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
 
                 val listPopupModel = LibraryRootsPopupModel(
-                    "Unsupported format, plugin version: " + KotlinPluginUtil.getPluginVersion(),
+                    KotlinJvmBundle.message("unsupported.format.plugin.version.0", KotlinPluginUtil.getPluginVersion()),
                     project,
                     badRoots
                 )
@@ -162,12 +170,18 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
                 null
             }
-            DumbService.getInstance(project).tryRunReadActionInSmartMode(task, "Can't show all paths during index update")
+            DumbService.getInstance(project).tryRunReadActionInSmartMode(
+                task,
+                KotlinJvmBundle.message("can.t.show.all.paths.during.index.update")
+            )
         }
     }
 
     private fun createUpdatePluginLink(answer: ErrorNotificationPanel) {
-        answer.createProgressAction("     Check...", "Update plugin") { link, updateLink ->
+        answer.createProgressAction(
+            KotlinJvmBundle.message("progress.action.text.check"),
+            KotlinJvmBundle.message("progress.action.text.update.plugin")
+        ) { link, updateLink ->
             KotlinPluginUpdater.getInstance().runCachedUpdate { pluginUpdateStatus ->
                 when (pluginUpdateStatus) {
                     is PluginUpdateStatus.Update -> {
@@ -181,7 +195,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                         })
                     }
                     is PluginUpdateStatus.LatestVersionInstalled -> {
-                        link.text = "No updates found"
+                        link.text = KotlinJvmBundle.message("no.updates.found")
                     }
                 }
 
@@ -258,7 +272,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
         override fun getTextFor(root: BinaryVersionedFile<BinaryVersion>): String {
             val relativePath = VfsUtilCore.getRelativePath(root.file, project.baseDir, '/')
-            return "${relativePath ?: root.file.path} (${root.version}) - expected: ${root.supportedVersion}"
+            return KotlinJvmBundle.message("0.1.expected.2", relativePath ?: root.file.path, root.version, root.supportedVersion)
         }
 
         override fun getIconFor(aValue: BinaryVersionedFile<BinaryVersion>): Icon? {

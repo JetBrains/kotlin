@@ -5,7 +5,6 @@
 
 package org.jetbrains.uast.test.kotlin
 
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
 import com.intellij.testFramework.LightProjectDescriptor
@@ -29,10 +28,6 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    override fun setUp() {
-        super.setUp()
-        Registry.get("kotlin.uast.multiresolve.enabled").setValue(true, testRootDisposable)
-    }
 
     fun testResolveStringFromUast() {
         val file = myFixture.addFileToProject(

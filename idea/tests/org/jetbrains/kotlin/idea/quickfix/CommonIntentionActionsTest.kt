@@ -70,7 +70,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.launchAction(
             createModifierActions(
                 myFixture.atCaret(), TestModifierRequest(JvmModifier.FINAL, false)
-            ).findWithText("Make 'bar' open")
+            ).findWithText("Make 'bar' 'open'")
         )
         myFixture.checkResult(
             """
@@ -93,7 +93,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.launchAction(
             createModifierActions(
                 myFixture.atCaret(), TestModifierRequest(JvmModifier.PRIVATE, true)
-            ).findWithText("Make 'Foo' private")
+            ).findWithText("Make 'Foo' 'private'")
         )
         myFixture.checkResult(
             """

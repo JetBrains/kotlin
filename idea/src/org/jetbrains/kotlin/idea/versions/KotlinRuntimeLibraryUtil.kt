@@ -39,12 +39,12 @@ import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.util.projectStructure.version
-import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -184,18 +184,16 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
 fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
     Messages.showErrorDialog(
         project,
-        jarName + " is not found. Make sure plugin is properly installed.",
-        "No Runtime Found"
+        KotlinBundle.message("version.dialog.message.is.not.found.make.sure.plugin.is.properly.installed", jarName),
+        KotlinBundle.message("version.title.no.runtime.found")
     )
 }
 
 private val KOTLIN_JS_FQ_NAME = FqName("kotlin.js")
 
 fun hasKotlinJsKjsmFile(project: Project, scope: GlobalSearchScope): Boolean {
-    return runReadAction {
-        project.runWithAlternativeResolveEnabled {
-            KotlinJavaScriptMetaFileIndex.hasSomethingInPackage(KOTLIN_JS_FQ_NAME, scope)
-        }
+    return project.runReadActionInSmartMode {
+        KotlinJavaScriptMetaFileIndex.hasSomethingInPackage(KOTLIN_JS_FQ_NAME, scope)
     }
 }
 
@@ -296,13 +294,21 @@ val DEPRECATED_LIBRARIES_INFORMATION = listOf(
         oldGroupId = "org.jetbrains.kotlin",
         oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME,
         outdatedAfterVersion = "1.2.0-rc-39",
-        message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME}"
+        message = KotlinBundle.message(
+            "version.message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
+            PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME,
+            PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME
+        )
     ),
 
     deprecatedLib(
         oldGroupId = "org.jetbrains.kotlin",
         oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME,
         outdatedAfterVersion = "1.2.0-rc-39",
-        message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME}"
+        message = KotlinBundle.message(
+            "version.message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
+            PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME,
+            PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
+        )
     )
 )

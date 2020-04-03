@@ -1,4 +1,4 @@
-@file:UseExperimental(ExperimentalContracts::class)
+@file:OptIn(ExperimentalContracts::class)
 
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

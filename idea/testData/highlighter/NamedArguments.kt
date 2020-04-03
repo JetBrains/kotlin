@@ -1,3 +1,4 @@
+<info textAttributesKey="KOTLIN_ANNOTATION">@Suppress</info>(<info textAttributesKey="KOTLIN_ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES">names =</info> ["foo"])
 fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info>(<info textAttributesKey="KOTLIN_PARAMETER">p1</info>: <info textAttributesKey="KOTLIN_CLASS">Int</info>, <info textAttributesKey="KOTLIN_PARAMETER">p2</info>: <info textAttributesKey="KOTLIN_CLASS">String</info>): <info textAttributesKey="KOTLIN_CLASS">String</info> {
     return <info textAttributesKey="KOTLIN_PARAMETER">p2</info> + <info textAttributesKey="KOTLIN_PARAMETER">p1</info>
 }

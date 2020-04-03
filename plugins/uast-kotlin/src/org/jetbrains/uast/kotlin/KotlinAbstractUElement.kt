@@ -19,7 +19,7 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForLocalDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments,
@@ -61,9 +63,10 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
 
         }
 
-        if (psi is KtLightClassForLocalDeclaration) {
-            val originParent = psi.kotlinOrigin.parent
+        if (psi is KtLightElement<*, *> && sourcePsi.safeAs<KtClassOrObject>()?.isLocal == true) {
+            val originParent = psi.kotlinOrigin?.parent
             parent = when (originParent) {
+                null -> parent
                 is KtClassBody -> originParent.parent
                 else -> originParent
             }
@@ -84,16 +87,16 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
                              ?: parent
                 AnnotationUseSiteTarget.FIELD ->
                     parent = (parentUnwrapped as? KtProperty)
-                             ?: (parentUnwrapped as? KtParameter)
-                                     ?.takeIf { it.isPropertyParameter() }
-                                     ?.let(LightClassUtil::getLightClassBackingField)
-                             ?: parent
+                        ?: (parentUnwrapped as? KtParameter)
+                            ?.takeIf { it.isPropertyParameter() }
+                            ?.let(LightClassUtil::getLightClassBackingField)
+                                ?: parent
                 AnnotationUseSiteTarget.SETTER_PARAMETER ->
                     parent = (parentUnwrapped as? KtParameter)
-                                     ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
+                        ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
             }
         }
-        if (psi is UastKotlinPsiVariable && parent != null) {
+        if ((psi is UastKotlinPsiVariable || psi is UastKotlinPsiParameter) && parent != null) {
             parent = parent.parent
         }
 
@@ -194,15 +197,21 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     }
 
     if (result is KotlinUDestructuringDeclarationExpression &&
-        element.psi == (parent as KtDestructuringDeclaration).initializer) {
+        when (parent) {
+            is KtDestructuringDeclaration -> parent.initializer?.let { it == element.psi } == true
+            is KtDeclarationModifierList -> parent == element.sourcePsi?.parent
+            else -> false
+        }
+    ) {
         return result.tempVarAssignment
     }
 
-    if (result is KotlinUElvisExpression && parent is KtBinaryExpression) {
-        when (element.psi) {
-            parent.left -> return result.lhsDeclaration
-            parent.right -> return result.rhsIfExpression
-        }
+    if (result is KotlinUElvisExpression && parentUnwrapped is KtBinaryExpression) {
+        val branch: Sequence<PsiElement?> = element.psi?.parentsWithSelf.orEmpty().takeWhile { it != parentUnwrapped }
+        if (branch.contains(parentUnwrapped.left))
+            return result.lhsDeclaration
+        if (branch.contains(parentUnwrapped.right))
+            return result.rhsIfExpression
     }
 
     if ((result is UMethod || result is KotlinLocalFunctionULambdaExpression)

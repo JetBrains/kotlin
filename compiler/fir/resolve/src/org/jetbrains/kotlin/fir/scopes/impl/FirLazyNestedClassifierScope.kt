@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -23,14 +22,14 @@ class FirLazyNestedClassifierScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
+        processor: (FirClassifierSymbol<*>) -> Unit
+    ) {
         if (name !in existingNames) {
-            return ProcessorAction.NONE
+            return
         }
         val child = classId.createNestedClassId(name)
-        val symbol = symbolProvider.getClassLikeSymbolByFqName(child) ?: return ProcessorAction.NONE
+        val symbol = symbolProvider.getClassLikeSymbolByFqName(child) ?: return
 
-        return processor(symbol)
+        processor(symbol)
     }
 }

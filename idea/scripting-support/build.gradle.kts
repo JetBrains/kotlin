@@ -34,6 +34,7 @@ dependencies {
         testRuntime(intellijPluginDep("java"))
     }
 
+    testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))
 
     testCompileOnly(intellijDep())
@@ -44,7 +45,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
 }

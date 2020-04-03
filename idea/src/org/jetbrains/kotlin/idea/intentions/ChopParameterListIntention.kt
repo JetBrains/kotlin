@@ -21,9 +21,11 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -42,8 +44,8 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 
     override fun applyTo(element: TList, editor: Editor?) {
         val project = element.project
-        val document = editor!!.document
-        val startOffset = element.startOffset
+        val document = editor?.document ?: return
+        val pointer = element.createSmartPointer()
 
         val elements = element.elements()
         if (!hasLineBreakAfter(elements.last())) {
@@ -58,9 +60,7 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 
         val documentManager = PsiDocumentManager.getInstance(project)
         documentManager.commitDocument(document)
-        val psiFile = documentManager.getPsiFile(document) ?: return
-        val newList = PsiTreeUtil.getParentOfType(psiFile.findElementAt(startOffset) ?: return, listClass) ?: return
-        CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, newList.textRange)
+        pointer.element?.let { CodeStyleManager.getInstance(project).reformat(it) }
     }
 
     protected fun hasLineBreakAfter(element: TElement): Boolean {
@@ -99,7 +99,7 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, KtParameter>(
     KtParameterList::class.java,
     KtParameter::class.java,
-    "Put parameters on separate lines"
+    KotlinBundle.message("put.parameters.on.separate.lines")
 ) {
     override fun isApplicableTo(element: KtParameterList): Boolean {
         if (element.parent is KtFunctionLiteral) return false
@@ -110,5 +110,5 @@ class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, Kt
 class ChopArgumentListIntention : AbstractChopListIntention<KtValueArgumentList, KtValueArgument>(
     KtValueArgumentList::class.java,
     KtValueArgument::class.java,
-    "Put arguments on separate lines"
+    KotlinBundle.message("put.arguments.on.separate.lines")
 )

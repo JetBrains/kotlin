@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.TypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
@@ -27,12 +32,68 @@ class ConeOverloadConflictResolver(
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean
+    ): Set<Candidate> {
+        if (candidates.size == 1) return candidates
+        val fixedCandidates =
+            if (candidates.first().callInfo.candidateForCommonInvokeReceiver != null)
+                chooseCandidatesWithMostSpecificInvokeReceiver(candidates)
+            else
+                candidates
+
+        return chooseMaximallySpecificCandidates(
+            fixedCandidates, discriminateGenerics, discriminateAbstracts, discriminateSAMs = true
+        )
+    }
+
+    private fun chooseCandidatesWithMostSpecificInvokeReceiver(candidates: Set<Candidate>): Set<Candidate> {
+        val propertyReceiverCandidates = candidates.mapTo(mutableSetOf()) {
+            it.callInfo.candidateForCommonInvokeReceiver
+                ?: error("If one candidate within a group is property+invoke, other should be the same, but $it found")
+        }
+
+        val bestInvokeReceiver =
+            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false)
+                .singleOrNull() ?: return candidates
+
+        return candidates.filterTo(mutableSetOf()) { it.callInfo.candidateForCommonInvokeReceiver == bestInvokeReceiver }
+    }
+
+    private fun chooseMaximallySpecificCandidates(
+        candidates: Set<Candidate>,
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean,
+        discriminateSAMs: Boolean
     ): Set<Candidate> {
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
         if (discriminateGenerics) {
             findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
+        }
+
+        if (discriminateSAMs) {
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesSAM }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered, discriminateGenerics, discriminateAbstracts, discriminateSAMs = false
+                )
+            }
+        }
+
+        if (discriminateAbstracts) {
+            val filtered = candidates.filterTo(mutableSetOf()) { (it.symbol.fir as? FirMemberDeclaration)?.modality != Modality.ABSTRACT }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered, discriminateGenerics, discriminateAbstracts = false, discriminateSAMs = false
+                )
+            }
         }
 
         return candidates

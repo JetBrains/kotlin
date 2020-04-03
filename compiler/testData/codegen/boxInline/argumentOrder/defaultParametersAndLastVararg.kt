@@ -1,6 +1,10 @@
+// !LANGUAGE: -NewInference
+// IGNORE_BACKEND: JS
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
+
 package test
 
 open class A(val value: String)

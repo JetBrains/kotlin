@@ -5,52 +5,67 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.NAME_FOR_BACKING_FIELD
+import org.jetbrains.kotlin.fir.resolve.PersistentMultimap
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
-class FirLocalScope : FirScope() {
+class FirLocalScope(
+    properties: PersistentMap<Name, FirVariableSymbol<*>>,
+    functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
+    classes: PersistentMap<Name, FirRegularClassSymbol>
+) : FirScope() {
+    val properties: PersistentMap<Name, FirVariableSymbol<*>> = properties
+    val functions: PersistentMultimap<Name, FirFunctionSymbol<*>> = functions
+    val classes: PersistentMap<Name, FirRegularClassSymbol> = classes
 
-    val properties = mutableMapOf<Name, FirVariableSymbol<*>>()
-    val functions = mutableMapOf<Name, FirFunctionSymbol<*>>()
-    val classes = mutableMapOf<Name, FirRegularClassSymbol>()
+    constructor() : this(persistentMapOf(), PersistentMultimap(), persistentMapOf())
 
-    fun storeDeclaration(declaration: FirNamedDeclaration) {
-        when (declaration) {
-            is FirVariable<*> -> properties[declaration.name] = declaration.symbol
-            is FirSimpleFunction -> functions[declaration.name] = declaration.symbol as FirNamedFunctionSymbol
-            is FirRegularClass -> classes[declaration.name] = declaration.symbol
+    fun storeClass(klass: FirRegularClass): FirLocalScope {
+        return FirLocalScope(
+            properties, functions, classes.put(klass.name, klass.symbol)
+        )
+    }
+
+    fun storeFunction(function: FirSimpleFunction): FirLocalScope {
+        return FirLocalScope(
+            properties, functions.put(function.name, function.symbol as FirNamedFunctionSymbol), classes
+        )
+    }
+
+    fun storeVariable(variable: FirVariable<*>): FirLocalScope {
+        return FirLocalScope(
+            properties.put(variable.name, variable.symbol), functions, classes
+        )
+    }
+
+    fun storeBackingField(property: FirProperty): FirLocalScope {
+        return FirLocalScope(
+            properties.put(NAME_FOR_BACKING_FIELD, property.backingFieldSymbol), functions, classes
+        )
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+        for (function in functions[name]) {
+            processor(function)
         }
     }
 
-    fun storeBackingField(property: FirProperty) {
-        properties[NAME_FOR_BACKING_FIELD] = property.backingFieldSymbol
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        val function = functions[name]
-        if (function != null) {
-            return processor(function)
-        }
-        return ProcessorAction.NONE
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         val property = properties[name]
         if (property != null) {
-            return processor(property)
+            processor(property)
         }
-        return ProcessorAction.NONE
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
         val klass = classes[name]
         if (klass != null) {
-            return processor(klass)
+            processor(klass)
         }
-        return ProcessorAction.NONE
     }
 }

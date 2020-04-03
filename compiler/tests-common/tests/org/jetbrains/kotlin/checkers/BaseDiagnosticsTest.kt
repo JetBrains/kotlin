@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
 import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnosticFactory
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -43,19 +44,21 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
+import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
-import java.lang.IllegalStateException
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.reflect.jvm.javaField
@@ -73,27 +76,32 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         super.tearDown()
     }
 
-    override fun createTestModule(name: String): TestModule =
-        TestModule(name)
+    override fun createTestModule(
+        name: String,
+        dependencies: List<String>,
+        friends: List<String>
+    ): TestModule =
+        TestModule(name, dependencies, friends)
 
-    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile =
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile =
         TestFile(module, fileName, text, directives)
 
+
     override fun doMultiFileTest(
-        file: File,
-        modules: @JvmSuppressWildcards Map<String, ModuleAndDependencies>,
-        testFiles: List<TestFile>
+        wholeFile: File,
+        files: List<TestFile>
     ) {
-        for (moduleAndDependencies in modules.values) {
-            moduleAndDependencies.module.getDependencies().addAll(moduleAndDependencies.dependencies.map { name ->
-                modules[name]?.module ?: error("Dependency not found: $name for module ${moduleAndDependencies.module.name}")
-            })
+        environment = createEnvironment(wholeFile, files)
+        //after environment initialization cause of `tearDown` logic, maybe it's obsolete
+        if (shouldSkipTest(wholeFile, files)) {
+            println("${wholeFile.name} test is skipped")
+            return
         }
-
-        environment = createEnvironment(file)
-
-        analyzeAndCheck(file, testFiles)
+        setupEnvironment(environment)
+        analyzeAndCheck(wholeFile, files)
     }
+
+    protected open fun shouldSkipTest(wholeFile: File, files: List<TestFile>) : Boolean = false
 
     protected abstract fun analyzeAndCheck(testDataFile: File, files: List<TestFile>)
 
@@ -121,24 +129,17 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         return ktFiles
     }
 
-    class TestModule(val name: String) : Comparable<TestModule> {
+    class TestModule(name: String, dependencies: List<String>, friends: List<String>) :
+        KotlinBaseTest.TestModule(name, dependencies, friends) {
         lateinit var languageVersionSettings: LanguageVersionSettings
-
-        private val dependencies = ArrayList<TestModule>()
-
-        fun getDependencies(): MutableList<TestModule> = dependencies
-
-        override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
-
-        override fun toString(): String = name
     }
 
     inner class TestFile(
         val module: TestModule?,
         val fileName: String,
         textWithMarkers: String,
-        val directives: Map<String, String>
-    ) {
+        directives: Directives
+    ) : KotlinBaseTest.TestFile(fileName, textWithMarkers, directives) {
         val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
         private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
         val actualDiagnostics: MutableList<ActualDiagnostic> = mutableListOf()
@@ -156,6 +157,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val withNewInferenceDirective: Boolean
         val newInferenceEnabled: Boolean
         val renderDiagnosticMessages: Boolean
+        val renderDiagnosticsFullText: Boolean
 
         init {
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives, declareCheckType)
@@ -165,8 +167,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             this.withNewInferenceDirective = WITH_NEW_INFERENCE_DIRECTIVE in directives
-            this.newInferenceEnabled = customLanguageVersionSettings?.supportsFeature(LanguageFeature.NewInference) ?:
-                    shouldUseNewInferenceForTests()
+            this.newInferenceEnabled =
+                customLanguageVersionSettings?.supportsFeature(LanguageFeature.NewInference) ?: shouldUseNewInferenceForTests()
             if (fileName.endsWith(".java")) {
                 // TODO: check there are no syntax errors in .java sources
                 this.createKtFile = lazyOf(null)
@@ -174,10 +176,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 this.expectedText = this.clearText
             } else {
                 this.expectedText = textWithMarkers
-                this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges, diagnosedRangesToDiagnosticNames)
+                this.clearText =
+                    CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges, diagnosedRangesToDiagnosticNames)
                 this.createKtFile = lazy { TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project) }
             }
             this.renderDiagnosticMessages = RENDER_DIAGNOSTICS_MESSAGES in directives
+            this.renderDiagnosticsFullText = RENDER_DIAGNOSTICS_FULL_TEXT in directives
         }
 
         val ktFile: KtFile? by createKtFile
@@ -209,14 +213,14 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         private fun addImports(text: String, imports: String): String {
             var result = text
-            val pattern = Pattern.compile("^package [\\.\\w\\d]*\n", Pattern.MULTILINE)
+            val pattern = Pattern.compile("^package [.\\w\\d]*\n", Pattern.MULTILINE)
             val matcher = pattern.matcher(result)
-            if (matcher.find()) {
+            result = if (matcher.find()) {
                 // add imports after the package directive
-                result = result.substring(0, matcher.end()) + imports + result.substring(matcher.end())
+                result.substring(0, matcher.end()) + imports + result.substring(matcher.end())
             } else {
                 // add imports at the beginning
-                result = imports + result
+                imports + result
             }
             return result
         }
@@ -257,16 +261,18 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 ktFile,
                 markDynamicCalls,
                 dynamicCallDescriptors,
-                newInferenceEnabled,
-                languageVersionSettings,
+                DiagnosticsRenderingConfiguration(
+                    platform = null,
+                    withNewInference,
+                    languageVersionSettings,
+                ),
                 DataFlowValueFactoryImpl(languageVersionSettings),
                 moduleDescriptor,
                 this.diagnosedRangesToDiagnosticNames
             )
-            val filteredDiagnostics = ContainerUtil.filter(
-                diagnostics + jvmSignatureDiagnostics,
-                { whatDiagnosticsToConsider.value(it.diagnostic) }
-            )
+            val filteredDiagnostics = ContainerUtil.filter(diagnostics + jvmSignatureDiagnostics) {
+                whatDiagnosticsToConsider.value(it.diagnostic)
+            }
 
             actualDiagnostics.addAll(filteredDiagnostics)
 
@@ -319,11 +325,9 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
                     fun updateUncheckedDiagnostics(diagnostic: TextDiagnostic, start: Int, end: Int) {
                         diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
-                        uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end
-                    )
-                )
-                }
-            })
+                        uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end))
+                    }
+                })
 
             actualText.append(
                 CheckerTestUtil.addDiagnosticMarkersToText(
@@ -369,7 +373,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     companion object {
         private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers"
         val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
-        val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([\\+\\-!])(\\w+)\\s*")
+        val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([+\\-!])(\\w+)\\s*")
         val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
             Errors.UNRESOLVED_REFERENCE,
             Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
@@ -405,8 +409,13 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
 
+        val RENDER_DIAGNOSTICS_FULL_TEXT = "RENDER_DIAGNOSTICS_FULL_TEXT"
+
+        val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("<!>|<!(.*?(\\(\".*?\"\\)|\\(\\))??)+(?<!<)!>")
+        val SPEC_LINKS_IN_TESTDATA_PATTERN = Regex("""/\*\s+\*\s+RELEVANT SPEC SENTENCES[\w\W]*?\*/\n""")
+
         fun parseDiagnosticFilterDirective(
-            directiveMap: Map<String, String>,
+            directiveMap: Directives,
             allowUnderscoreUsage: Boolean
         ): Condition<Diagnostic> {
             val directives = directiveMap[DIAGNOSTICS_DIRECTIVE]
@@ -432,12 +441,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             if (!matcher.find()) {
                 Assert.fail(
                     "Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
-                                    "found: '$directives'\n" +
-                                    "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
-                                    "where '+' means 'include'\n" +
-                                    "      '-' means 'exclude'\n" +
-                                    "      '!' means 'exclude everything but this'\n" +
-                                    "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR"
+                            "found: '$directives'\n" +
+                            "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
+                            "where '+' means 'include'\n" +
+                            "      '-' means 'exclude'\n" +
+                            "      '!' means 'exclude everything but this'\n" +
+                            "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR"
                 )
             }
 
@@ -458,7 +467,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         if (!first) {
                             Assert.fail(
                                 "'$operation$name' appears in a position rather than the first one, " +
-                                                "which effectively cancels all the previous filters in this directive"
+                                        "which effectively cancels all the previous filters in this directive"
                             )
                         }
                         condition = newCondition
@@ -476,14 +485,25 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             )
         }
 
-        private val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("(<!>|(<!(.(\".*\")*?)+?!>))")
+        fun isJavacSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+            val testDataFileText = wholeFile.readText()
+            if (isDirectiveDefined(testDataFileText, "// JAVAC_SKIP")) {
+                return true
+            }
+            return false
+        }
 
-        fun loadTestDataWithoutDiagnostics(file: File): String {
-            return KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
+        //TODO: merge with isJavacSkipTest
+        fun isSkipJavacTest(wholeFile: File, files: List<TestFile>): Boolean {
+            val testDataFileText = wholeFile.readText()
+            if (isDirectiveDefined(testDataFileText, "// SKIP_JAVAC")) {
+                return true
+            }
+            return false
         }
     }
 
-    private fun parseJvmTarget(directiveMap: Map<String, String>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
+    private fun parseJvmTarget(directiveMap: Directives) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
 
     protected fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
         val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
@@ -491,7 +511,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
             nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
             nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
-            nameSuffix == "NATIVE" -> KonanPlatforms.defaultKonanPlatform
+            nameSuffix == "NATIVE" -> NativePlatforms.defaultNativePlatform
             nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
             else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
         }

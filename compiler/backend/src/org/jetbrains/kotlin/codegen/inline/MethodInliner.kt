@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -132,8 +132,6 @@ class MethodInliner(
         processReturns(resultNode, returnLabelOwner, remapReturn, end)
         //flush transformed node to output
         resultNode.accept(SkipMaxAndEndVisitor(adapter))
-
-        sourceMapper.endMapping()
         return result
     }
 
@@ -157,6 +155,7 @@ class MethodInliner(
             ), AsmTypeRemapper(remapper, result)
         )
 
+        val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
@@ -176,9 +175,7 @@ class MethodInliner(
                         inlineCallSiteInfo
                     )
                     val transformer = transformationInfo!!.createTransformer(
-                        childInliningContext,
-                        isSameModule,
-                        CoroutineTransformer.findFakeContinuationConstructorClassName(node)
+                        childInliningContext, isSameModule, fakeContinuationName
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
@@ -285,10 +282,9 @@ class MethodInliner(
 
                     val childSourceMapper =
                         if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                            NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                        else if (info is DefaultLambda) {
-                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                        } else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+                            NestedSourceMapper(sourceMapper, lambdaSMAP)
+                        else
+                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP, sameFile = info !is DefaultLambda)
 
                     val inliner = MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
@@ -309,7 +305,6 @@ class MethodInliner(
                         .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    childSourceMapper.endMapping()
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
@@ -439,7 +434,10 @@ class MethodInliner(
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
                 if (reorderIrLambdaParameters && lambdaInfo is IrExpressionLambda) {
-                    val extensionSize = if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0
+                    val extensionSize =
+                        if (lambdaInfo.isExtensionLambda && !lambdaInfo.isBoundCallableReference)
+                            lambdaInfo.invokeMethod.argumentTypes[0].size
+                        else 0
                     return when {
                         //                v-- extensionSize     v-- argsSizeOnStack
                         // |- extension -|- captured -|- real -|- locals -|    old descriptor
@@ -701,6 +699,9 @@ class MethodInliner(
     //   2) it is ASTORE'd right after
     //   3) it is passed to invoke of lambda
     private fun replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode: MethodNode) {
+        // in ir backend inline suspend lambdas do not use ALOAD 0 to get continuation, since they are generated as static functions
+        // instead they get continuation from parameter.
+        if (inliningContext.state.isIrBackend) return
         val lambdaInfo = inliningContext.lambdaInfo ?: return
         if (!lambdaInfo.isSuspend) return
         val sources = analyzeMethodNodeBeforeInline(processingNode)
@@ -854,9 +855,20 @@ class MethodInliner(
         needReification: Boolean,
         capturesAnonymousObjectThatMustBeRegenerated: Boolean
     ): AnonymousObjectTransformationInfo {
-
+        // In objects inside non-default inline lambdas, all reified type parameters are free (not from the function
+        // we're inlining into) so there's nothing to reify:
+        //
+        //     inline fun <reified T> f(x: () -> KClass<T> = { { T::class }() }) = x()
+        //     fun a() = f<Int>()
+        //     fun b() = f<Int> { { Int::class }() } // non-default lambda
+        //     inline fun <reified V> c() = f<V> { { V::class }() }
+        //
+        // -- in a(), the default inline lambda captures T so a regeneration is needed; but in b() and c(), the non-default
+        // inline lambda cannot possibly reference it, while V is not yet bound so regenerating the object while inlining
+        // the lambda into f() is pointless.
+        val inNonDefaultLambda = inliningContext.isInliningLambda && inliningContext.lambdaInfo !is DefaultLambda
         val info = AnonymousObjectTransformationInfo(
-            anonymousType, needReification, lambdaMapping,
+            anonymousType, needReification && !inNonDefaultLambda, lambdaMapping,
             inliningContext.classRegeneration,
             isAlreadyRegenerated(anonymousType),
             desc,
@@ -906,7 +918,7 @@ class MethodInliner(
             return
         }
 
-        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda && !inliningContext.parent!!.isInliningLambda) {
             val capturedVars = inliningContext.lambdaInfo.capturedVars
             var offset = parameters.realParametersSizeOnStack
             val map = capturedVars.map {

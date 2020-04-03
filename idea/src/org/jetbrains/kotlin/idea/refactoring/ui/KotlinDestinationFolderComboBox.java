@@ -27,6 +27,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination;
 import com.intellij.ui.*;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +40,7 @@ import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getKotlinAwareD
 
 // Based on com.intellij.refactoring.move.moveClassesOrPackages.DestinationFolderComboBox
 public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowseButton {
-    private static final String LEAVE_IN_SAME_SOURCE_ROOT = "Leave in same source root";
+    private static final String LEAVE_IN_SAME_SOURCE_ROOT = KotlinBundle.message("leave.in.same.source.root");
     private static final DirectoryChooser.ItemWrapper NULL_WRAPPER = new DirectoryChooser.ItemWrapper(null, null);
     private PsiDirectory myInitialTargetDirectory;
     private List<VirtualFile> mySourceRoots;
@@ -180,11 +181,11 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
             boolean inTestSourceContent = fileIndex.isInTestSourceContent(myInitialTargetDirectory.getVirtualFile());
             if (isSelectionInTestSourceContent != inTestSourceContent) {
                 if (inTestSourceContent && reportBaseInTestSelectionInSource()) {
-                    updateErrorMessage.pass("Source root is selected while the test root is expected");
+                    updateErrorMessage.pass(KotlinBundle.message("source.root.is.selected.while.the.test.root.is.expected"));
                 }
 
                 if (isSelectionInTestSourceContent && reportBaseInSourceSelectionInTest()) {
-                    updateErrorMessage.pass("Test root is selected while the source root is expected");
+                    updateErrorMessage.pass(KotlinBundle.message("test.root.is.selected.while.the.source.root.is.expected"));
                 }
             }
         }

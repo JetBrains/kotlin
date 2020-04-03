@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class A() {
 
     fun ok() = Foo.Bar.bar() + Foo.Bar.barv

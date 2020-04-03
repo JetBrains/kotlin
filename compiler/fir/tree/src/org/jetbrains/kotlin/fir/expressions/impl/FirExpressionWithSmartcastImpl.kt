@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-class FirExpressionWithSmartcastImpl(
+internal class FirExpressionWithSmartcastImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val typeRef: FirTypeRef,
-    override val typesFromSmartcast: Collection<ConeKotlinType>
+    override val typesFromSmartCast: Collection<ConeKotlinType>
 ) : FirExpressionWithSmartcast() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
@@ -64,6 +64,14 @@ class FirExpressionWithSmartcastImpl(
     }
 
     override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
+        throw IllegalStateException()
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
+        throw IllegalStateException()
+    }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         throw IllegalStateException()
     }
 

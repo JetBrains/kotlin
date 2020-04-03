@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,11 +61,15 @@ open class ScriptConfigurationMemoryCache(
 
     @Synchronized
     @Suppress("UNCHECKED_CAST")
-    override fun allApplied() =
-        memoryCache.entrySet().mapNotNull {
-            if (it.value.applied?.configuration == null) null
-            else it.key to it.value.applied?.configuration
-        } as Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+    override fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper> {
+        val result = hashMapOf<VirtualFile, ScriptCompilationConfigurationWrapper>()
+        for ((file, configuration) in memoryCache.entrySet()) {
+            if (configuration.applied?.configuration != null) {
+                result[file] = configuration.applied.configuration
+            }
+        }
+        return result
+    }
 
     @Synchronized
     override fun clear() {

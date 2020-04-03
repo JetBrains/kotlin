@@ -2,21 +2,25 @@
 
 // usages in build scripts are not tracked properly
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
-val Project.isSnapshotIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT")
+private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
+private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
 
-val Project.intellijRepo get() = "https://www.jetbrains.com/intellij-repository/" + if (isSnapshotIntellij) "snapshots" else "releases"
+val Project.intellijRepo get() =
+    when {
+        isEAPIntellij -> "https://www.jetbrains.com/intellij-repository/snapshots"
+        isNightlyIntellij -> "https://www.jetbrains.com/intellij-repository/nightly"
+        else -> "https://www.jetbrains.com/intellij-repository/releases"
+    }
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
@@ -128,6 +132,12 @@ fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = Fi
         if (it == null)
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
     }
+
+fun Project.toolsJarApi(): Any =
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync)
+        files(toolsJarFile() ?: error("tools.jar is not found!"))
+    else
+        dependencies.project(":dependencies:tools-jar-api")
 
 fun Project.toolsJar(): FileCollection = files(toolsJarFile() ?: error("tools.jar is not found!"))
 

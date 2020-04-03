@@ -1,0 +1,27 @@
+{
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 3,
+          "description": "Value equality expressions always have type kotlin.Boolean as does the equals method in kotlin.Any",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 3,
+          "description": "Value equality expressions always have type kotlin.Boolean as does the equals method in kotlin.Any",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

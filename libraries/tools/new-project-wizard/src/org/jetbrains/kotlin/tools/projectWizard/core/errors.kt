@@ -1,92 +1,69 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.VersionRange
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import java.io.IOException
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 abstract class Error {
+    @get:Nls
     abstract val message: String
 }
 
 abstract class ExceptionError : Error() {
     abstract val exception: Exception
     override val message: String
-        get() = exception.asString()
+        get() = exception::class.simpleName!!.removeSuffix("Exception").splitByWords() +
+                exception.message?.let { ": $it" }.orEmpty()
+
+    companion object {
+        private val wordRegex = "[A-Z][a-z0-9]+".toRegex()
+        private fun String.splitByWords() =
+            wordRegex.findAll(this).joinToString(separator = " ") { it.value }
+    }
 }
 
 data class IOError(override val exception: IOException) : ExceptionError()
 
 data class ExceptionErrorImpl(override val exception: Exception) : ExceptionError()
 
-data class ParseError(override val message: String) : Error()
+data class ParseError(@Nls override val message: String) : Error()
 
 data class TemplateNotFoundError(val id: String) : Error() {
     override val message: String
-        get() = "Template with an id `$id` is not found"
-}
-
-data class SettingNotFoundError(val settingName: String) : Error() {
-    override val message: String
-        get() = "Setting with name `$settingName` was not found"
+        get() = KotlinNewProjectWizardBundle.message("error.template.not.found", id)
 }
 
 data class RequiredSettingsIsNotPresentError(val settingNames: List<String>) : Error() {
     override val message: String
         get() = buildString {
-            append("The following required settings is not present: \n")
+            append(KotlinNewProjectWizardBundle.message("error.required.settings.are.not.present") + '\n')
             settingNames.joinTo(this, "\n") { "   $it" }
         }
 }
 
-data class BadApplicationExitCodeError(val applicationName: String, val exitCode: Int) : Error() {
-    override val message: String
-        get() = "Application $applicationName exited with code $exitCode"
-}
-
-
-data class CircularTaskDependencyError(val taskName: String) : Error() {
+data class CircularTaskDependencyError(@NonNls val taskName: String) : Error() {
+    @get:NonNls
     override val message: String
         get() = "$taskName task has circular dependencies"
 }
 
-data class BadSettingValueError(override val message: String) : Error()
-
-data class LibraryNotFoundError(val name: String) : Error() {
-    override val message: String
-        get() = "Library with name `$name` was not found"
-}
+data class BadSettingValueError(@Nls override val message: String) : Error()
 
 data class ConfiguratorNotFoundError(val id: String) : Error() {
     override val message: String
-        get() = "Module type `$id` was not found"
-}
-
-data class VersionIsNotInRangeError(val subject: String, val version: Version, val range: VersionRange) : Error() {
-    override val message: String
-        get() = "${subject.capitalize()}'s version $version is not in expected range $range"
+        get() = KotlinNewProjectWizardBundle.message("error.configurator.not.found", id)
 }
 
 data class ValidationError(val validationMessage: String) : Error() {
     override val message: String
-        get() = "Validation error: $validationMessage"
+        get() = validationMessage.capitalize()
 }
 
-data class InvalidSourceSetName(val name: String) : Error() {
+data class ProjectImportingError(@Nls override val message: String) : Error()
+
+data class InvalidModuleDependencyError(val from: Module, val to: Module, @Nls val reason: String? = null) : Error() {
     override val message: String
-        get() = "Source set name `$name` is invalid"
+        get() = KotlinNewProjectWizardBundle.message("error.invalid.module.dependency", from.name, to.name) + reason?.let { ": $it" }
 }
-
-data class ModuleNotFoundError(val path: String) : Error() {
-    override val message: String
-        get() = "Sourceset with a path `$path` was not found invalid"
-}
-
-
-fun Throwable.asString() =
-    this::class.simpleName!!.removeSuffix("Exception").splitByWords() + message?.let { ": $it" }.orEmpty()
-
-private val wordRegex = "[A-Z][a-z0-9]+".toRegex()
-private fun String.splitByWords() =
-    wordRegex.findAll(this).joinToString(separator = " ") { it.value }
-
-

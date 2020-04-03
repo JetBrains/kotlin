@@ -5,48 +5,45 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedReifiedParameterReferenceImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 
 class FirCallResolver(
-    components: BodyResolveComponents,
-    topLevelScopes: List<FirScope>,
-    localScopes: List<FirLocalScope>,
-    override val implicitReceiverStack: ImplicitReceiverStack,
-    private val qualifiedResolver: FirQualifiedNameResolver
+    private val components: BodyResolveComponents,
+    private val qualifiedResolver: FirQualifiedNameResolver,
 ) : BodyResolveComponents by components {
 
     private lateinit var transformer: FirExpressionsResolveTransformer
@@ -56,21 +53,21 @@ class FirCallResolver(
     }
 
     private val towerResolver = FirTowerResolver(
-        returnTypeCalculator, this, resolutionStageRunner,
-        topLevelScopes = topLevelScopes.asReversed(),
-        localScopes = localScopes.asReversed()
+        components, resolutionStageRunner,
     )
 
     private val conflictResolver =
         inferenceComponents.session.callConflictResolverFactory
             .create(TypeSpecificityComparator.NONE, inferenceComponents)
 
-    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, file: FirFile): FirFunctionCall {
+    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         var functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
-            .also { dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall) }
-            .transformArguments(transformer, ResolutionMode.ContextDependent)
+            .also {
+                dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall)
+                functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+            }
 
         var result = collectCandidates(functionCall)
 
@@ -86,7 +83,7 @@ class FirCallResolver(
             functionCall.calleeReference,
             functionCall.calleeReference.name,
             result.candidates,
-            result.applicability
+            result.applicability,
         )
 
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
@@ -98,8 +95,8 @@ class FirCallResolver(
                 explicitReceiver = candidate.callInfo.explicitReceiver,
                 dispatchReceiver = candidate.dispatchReceiverExpression(),
                 extensionReceiver = candidate.extensionReceiverExpression(),
-                arguments = candidate.callInfo.arguments,
-                safe = candidate.callInfo.isSafeCall
+                argumentList = candidate.callInfo.argumentList,
+                safe = candidate.callInfo.isSafeCall,
             )
         } else {
             resultExpression
@@ -111,88 +108,100 @@ class FirCallResolver(
         return resultFunctionCall
     }
 
-    private data class ResolutionResult(val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>)
+    private data class ResolutionResult(
+        val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>,
+    )
 
     private fun collectCandidates(functionCall: FirFunctionCall): ResolutionResult {
         val explicitReceiver = functionCall.explicitReceiver
-        val arguments = functionCall.arguments
+        val argumentList = functionCall.argumentList
         val typeArguments = functionCall.typeArguments
-        val name = functionCall.calleeReference.name
 
         val info = CallInfo(
             CallKind.Function,
+            functionCall.calleeReference.name,
             explicitReceiver,
-            arguments,
+            argumentList,
             functionCall.safe,
+            isPotentialQualifierPart = false,
             typeArguments,
             session,
             file,
-            transformer.components.implicitReceiverStack
-        ) { it.resultType }
+            transformer.components.implicitReceiverStack,
+        )
         towerResolver.reset()
-
-        val consumer = createFunctionConsumer(session, name, info, this, towerResolver.collector, towerResolver)
         val result = towerResolver.runResolver(
-            consumer,
             implicitReceiverStack.receiversAsReversed(),
-            shouldProcessExtensionsBeforeMembers = name in HIDES_MEMBERS_NAME_LIST,
-            shouldProcessExplicitReceiverScopeOnly = explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
+            info,
         )
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+            val onSuperReference = (functionCall.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            conflictResolver.chooseMaximallySpecificCandidates(
+                bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
+            )
         }
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
-    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, file: FirFile): FirStatement {
+    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         qualifiedResolver.initProcessingQualifiedAccess(qualifiedAccess, callee)
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
-        qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { return it }
+        qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { resolvedQualifierPart ->
+            return resolvedQualifierPart
+        }
 
         val info = CallInfo(
             CallKind.VariableAccess,
+            callee.name,
             qualifiedAccess.explicitReceiver,
-            emptyList(),
+            FirEmptyArgumentList,
             qualifiedAccess.safe,
+            qualifiedAccess.explicitReceiver is FirResolvedQualifier && qualifiedResolver.isPotentialQualifierPartPosition(),
             emptyList(),
             session,
             file,
-            transformer.components.implicitReceiverStack
-        ) { it.resultType }
-        towerResolver.reset()
-
-        val consumer = createVariableAndObjectConsumer(
-            session,
-            callee.name,
-            info, this,
-            towerResolver.collector
+            transformer.components.implicitReceiverStack,
         )
-        val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
+        towerResolver.reset()
+        val result = towerResolver.runResolver(
+            implicitReceiverStack.receiversAsReversed(),
+            info,
+        )
 
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+            val onSuperReference = (qualifiedAccess.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            conflictResolver.chooseMaximallySpecificCandidates(
+                bestCandidates, discriminateGenerics = false, discriminateAbstracts = onSuperReference
+            )
         }
         val nameReference = createResolvedNamedReference(
             callee,
             callee.name,
             reducedCandidates,
-            result.currentApplicability
+            result.currentApplicability,
         )
 
-        if (qualifiedAccess.explicitReceiver == null &&
-            (reducedCandidates.size <= 1 && result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED)
-        ) {
-            qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { return it }
+        if (qualifiedAccess.explicitReceiver == null) {
+            if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
+            ) {
+                // We should run QualifierResolver if no successful candidates are available
+                // Otherwise expression (even ambiguous) beat qualifier
+                qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { resolvedQualifier ->
+                    return resolvedQualifier
+                }
+            } else {
+                qualifiedResolver.reset()
+            }
         }
 
         val referencedSymbol = when (nameReference) {
@@ -201,27 +210,15 @@ class FirCallResolver(
             else -> null
         }
 
-        if (qualifiedAccess.explicitReceiver == null) {
-            qualifiedResolver.reset()
-        }
-
         when {
             referencedSymbol is FirClassLikeSymbol<*> -> {
-                val classId = referencedSymbol.classId
-                return FirResolvedQualifierImpl(nameReference.source, classId.packageFqName, classId.relativeClassName).apply {
-                    resultType = if (classId.isLocal) {
-                        typeForQualifierByDeclaration(referencedSymbol.fir, resultType)
-                            ?: resultType.resolvedTypeFromPrototype(
-                                session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
-                            )
-                    } else {
-                        typeForQualifier(this)
-                    }
-                }
+                return buildResolvedQualifierForClass(referencedSymbol, nameReference.source, qualifiedAccess.typeArguments)
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
-                return FirResolvedReifiedParameterReferenceImpl(nameReference.source, referencedSymbol).apply {
-                    resultType = typeForReifiedParameterReference(this)
+                return buildResolvedReifiedParameterReference {
+                    source = nameReference.source
+                    symbol = referencedSymbol
+                    typeRef = typeForReifiedParameterReference(this)
                 }
             }
         }
@@ -239,22 +236,25 @@ class FirCallResolver(
 
     fun resolveCallableReference(
         constraintSystemBuilder: ConstraintSystemBuilder,
-        resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom
+        resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom,
     ): Boolean {
         val callableReferenceAccess = resolvedCallableReferenceAtom.reference
         val lhs = resolvedCallableReferenceAtom.lhs
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
-        val result = CandidateCollector(this, resolutionStageRunner)
-        val consumer =
-            createCallableReferencesConsumerForLHS(
-                callableReferenceAccess, lhs,
-                result, expectedType,
-                constraintSystemBuilder
-            )
-
-        towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
+        val info = createCallableReferencesInfoForLHS(
+            callableReferenceAccess, lhs,
+            expectedType, constraintSystemBuilder,
+        )
+        // No reset here!
+        val localCollector = CandidateCollector(this, resolutionStageRunner)
+        val result = towerResolver.runResolver(
+            implicitReceiverStack.receiversAsReversed(),
+            info,
+            collector = localCollector,
+            manager = TowerResolveManager(localCollector),
+        )
         val bestCandidates = result.bestCandidates()
         val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
         val reducedCandidates = if (noSuccessfulCandidates) {
@@ -289,40 +289,40 @@ class FirCallResolver(
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         symbol: FirClassSymbol<*>,
-        typeArguments: List<FirTypeProjection>
+        typeArguments: List<FirTypeProjection>,
     ): FirDelegatedConstructorCall? {
-        val scope = symbol.fir.buildUseSiteMemberScope(session, scopeSession) ?: return null
+        val scope = symbol.fir.unsubstitutedScope(session, scopeSession)
+        val className = symbol.classId.shortClassName
         val callInfo = CallInfo(
-            CallKind.Function,
+            CallKind.DelegatingConstructorCall,
+            className,
             explicitReceiver = null,
-            delegatedConstructorCall.arguments,
+            delegatedConstructorCall.argumentList,
             isSafeCall = false,
+            isPotentialQualifierPart = false,
             typeArguments = typeArguments,
             session,
             file,
-            implicitReceiverStack
-        ) { it.resultType }
+            implicitReceiverStack,
+        )
         val candidateFactory = CandidateFactory(this, callInfo)
         val candidates = mutableListOf<Candidate>()
 
-        val className = symbol.classId.shortClassName
         scope.processFunctionsByName(className) {
             if (it is FirConstructorSymbol) {
-                candidates += candidateFactory.createCandidate(
-                    it,
-                    dispatchReceiverValue = null,
-                    implicitExtensionReceiverValue = null,
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-                )
+                val candidate = candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+                candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
+                candidates += candidate
             }
-            ProcessorAction.NEXT
         }
         return callResolver.selectCandidateFromGivenCandidates(delegatedConstructorCall, className, candidates)
     }
 
-    fun <T> selectCandidateFromGivenCandidates(call: T, name: Name, candidates: Collection<Candidate>): T where T : FirResolvable, T : FirCall {
+    private fun <T> selectCandidateFromGivenCandidates(
+        call: T, name: Name, candidates: Collection<Candidate>,
+    ): T where T : FirResolvable, T : FirCall {
         val result = CandidateCollector(this, resolutionStageRunner)
-        candidates.forEach { result.consumeCandidate(0, it) }
+        candidates.forEach { result.consumeCandidate(TowerGroup.Start, it) }
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
@@ -334,125 +334,95 @@ class FirCallResolver(
             call.calleeReference,
             name,
             reducedCandidates,
-            result.currentApplicability
+            result.currentApplicability,
         )
 
         return call.transformCalleeReference(StoreNameReference, nameReference) as T
     }
 
-    private fun createCallableReferencesConsumerForLHS(
+    private fun createCallableReferencesInfoForLHS(
         callableReferenceAccess: FirCallableReferenceAccess,
         lhs: DoubleColonLHS?,
-        resultCollector: CandidateCollector,
-        expectedType: ConeKotlinType?,
-        outerConstraintSystemBuilder: ConstraintSystemBuilder?
-    ): TowerDataConsumer {
-        val name = callableReferenceAccess.calleeReference.name
-
-        return when (lhs) {
-            is DoubleColonLHS.Expression, null -> createCallableReferencesConsumerForReceiver(
-                name, resultCollector, callableReferenceAccess.explicitReceiver, expectedType, outerConstraintSystemBuilder,
-                lhs
-            )
-            is DoubleColonLHS.Type -> createCallableReferencesConsumerForReceivers(
-                name,
-                resultCollector,
-                expectedType,
-                outerConstraintSystemBuilder,
-                lhs,
-                FirExpressionStub(callableReferenceAccess.source).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
-                callableReferenceAccess.explicitReceiver
-            )
-        }
-    }
-
-    private fun createCallableReferencesConsumerForReceivers(
-        name: Name,
-        resultCollector: CandidateCollector,
         expectedType: ConeKotlinType?,
         outerConstraintSystemBuilder: ConstraintSystemBuilder?,
-        lhs: DoubleColonLHS?,
-        vararg receivers: FirExpression?
-    ): TowerDataConsumer {
-        if (receivers.size == 1) {
-            return createCallableReferencesConsumerForReceiver(
-                name, resultCollector, receivers[0], expectedType, outerConstraintSystemBuilder, lhs
-            )
-        }
-
-        return PrioritizedTowerDataConsumer(
-            resultCollector,
-            *Array(receivers.size) { index ->
-                createCallableReferencesConsumerForReceiver(
-                    name, resultCollector, receivers[index], expectedType, outerConstraintSystemBuilder, lhs
-                )
-            }
-        )
-    }
-
-    private fun createCallableReferencesConsumerForReceiver(
-        name: Name,
-        resultCollector: CandidateCollector,
-        receiver: FirExpression?,
-        expectedType: ConeKotlinType?,
-        outerConstraintSystemBuilder: ConstraintSystemBuilder?,
-        lhs: DoubleColonLHS?
-    ): TowerDataConsumer {
-        val info = CallInfo(
+    ): CallInfo {
+        return CallInfo(
             CallKind.CallableReference,
-            receiver,
-            emptyList(),
+            callableReferenceAccess.calleeReference.name,
+            callableReferenceAccess.explicitReceiver,
+            FirEmptyArgumentList,
             false,
+            isPotentialQualifierPart = false,
             emptyList(),
             session,
             file,
             transformer.components.implicitReceiverStack,
+            candidateForCommonInvokeReceiver = null,
+            // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,
-            lhs
-        ) { it.resultType }
-
-        return createCallableReferencesConsumer(session, name, info, this, resultCollector)
+            lhs,
+            stubReceiver = if (lhs !is DoubleColonLHS.Type) null else buildExpressionStub {
+                source = callableReferenceAccess.source
+                typeRef = buildResolvedTypeRef {
+                    type = lhs.type
+                }
+            },
+        )
     }
 
     private fun createResolvedNamedReference(
         reference: FirReference,
         name: Name,
         candidates: Collection<Candidate>,
-        applicability: CandidateApplicability
+        applicability: CandidateApplicability,
     ): FirNamedReference {
         val source = reference.source
         return when {
-            candidates.isEmpty() -> FirErrorNamedReferenceImpl(
-                source, FirUnresolvedNameError(name)
-            )
+            candidates.isEmpty() -> buildErrorNamedReference {
+                this.source = source
+                diagnostic = ConeUnresolvedNameError(name)
+            }
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
-                FirErrorNamedReferenceImpl(
-                    source,
-                    FirInapplicableCandidateError(applicability, candidates.map {
-                        FirInapplicableCandidateError.CandidateInfo(
-                            it.symbol,
-                            if (it.systemInitialized) it.system.diagnostics else emptyList()
-                        )
-                    })
-                )
+                buildErrorNamedReference {
+                    this.source = source
+                    diagnostic = ConeInapplicableCandidateError(
+                        applicability,
+                        candidates.map {
+                            ConeInapplicableCandidateError.CandidateInfo(
+                                it.symbol,
+                                if (it.systemInitialized) it.system.diagnostics else emptyList(),
+                            )
+                        },
+                    )
+                }
             }
             candidates.size == 1 -> {
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 when {
-                    coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(source, null, coneSymbol)
+                    coneSymbol is FirBackingFieldSymbol -> buildBackingFieldReference {
+                        this.source = source
+                        resolvedSymbol = coneSymbol
+                    }
+
                     coneSymbol is FirVariableSymbol && (
                             coneSymbol !is FirPropertySymbol ||
                                     (coneSymbol.phasedFir() as FirMemberDeclaration).typeParameters.isEmpty()
-                            ) ->
-                        FirResolvedNamedReferenceImpl(source, name, coneSymbol)
+                            )
+                    -> buildResolvedNamedReference {
+                        this.source = source
+                        this.name = name
+                        resolvedSymbol = coneSymbol
+                    }
+
                     else -> FirNamedReferenceWithCandidate(source, name, candidate)
                 }
             }
-            else -> FirErrorNamedReferenceImpl(
-                source, FirAmbiguityError(name, candidates.map { it.symbol })
-            )
+            else -> buildErrorNamedReference {
+                this.source = source
+                diagnostic = ConeAmbiguityError(name, candidates.map { it.symbol })
+            }
         }
     }
 }

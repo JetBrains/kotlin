@@ -1,0 +1,8 @@
+FILE: main.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun <D : R|A|> foo(b: R|B<D>|): R|kotlin/Unit| {
+    }
+    public final fun main(b: R|B<*>|): R|kotlin/Unit| {
+        R|/foo|<R|CapturedType(*)|>(R|<local>/b|)
+    }

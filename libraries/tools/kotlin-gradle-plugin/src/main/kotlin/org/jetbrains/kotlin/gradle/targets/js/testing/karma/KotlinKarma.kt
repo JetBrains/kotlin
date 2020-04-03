@@ -25,11 +25,14 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
 
-class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
+class KotlinKarma(override val compilation: KotlinJsCompilation) :
+    KotlinJsTestFramework {
     private val project: Project = compilation.target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
@@ -37,11 +40,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private val config: KarmaConfig = KarmaConfig()
     private val requiredDependencies = mutableSetOf<RequiredKotlinJsDependency>()
 
-    private val configurators = mutableListOf<(KotlinJsTest) -> Unit>()
+    private val configurators = mutableListOf<(KotlinTest) -> Unit>()
     private val envJsCollector = mutableMapOf<String, String>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
-    private var configDirectory: File? = project.projectDir.resolve("karma.config.d").takeIf { it.isDirectory }
+    private var configDirectory: File by property {
+        project.projectDir.resolve("karma.config.d")
+    }
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = requiredDependencies.toList()
@@ -95,9 +100,37 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         )
     }
 
+    fun useChromeHeadless() {
+        useBrowser(
+            id = "ChromeHeadless",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
+    fun useChromium() {
+        useBrowser(
+            id = "Chromium",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
+    fun useChromiumHeadless() {
+        useBrowser(
+            id = "ChromiumHeadless",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
     fun useChromeCanary() {
         useBrowser(
             id = "ChromeCanary",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
+    fun useChromeCanaryHeadless() {
+        useBrowser(
+            id = "ChromeCanaryHeadless",
             dependency = versions.karmaChromeLauncher
         )
     }
@@ -115,16 +148,23 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         )
     }
 
-    fun useChromeHeadless() {
-        useBrowser(
-            id = "ChromeHeadless",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
-
     fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomJsLauncher)
 
     fun useFirefox() = useBrowser("Firefox", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxHeadless() = useBrowser("FirefoxHeadless", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxDeveloper() = useBrowser("FirefoxDeveloper", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxDeveloperHeadless() = useBrowser("FirefoxDeveloperHeadless", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxAurora() = useBrowser("FirefoxAurora", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxAuroraHeadless() = useBrowser("FirefoxAuroraHeadless", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxNightly() = useBrowser("FirefoxNightly", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxNightlyHeadless() = useBrowser("FirefoxNightlyHeadless", versions.karmaFirefoxLauncher)
 
     fun useOpera() = useBrowser("Opera", versions.karmaOperaLauncher)
 
@@ -152,7 +192,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         requiredDependencies.add(versions.webpack)
 
         val webpackConfigWriter = KotlinWebpackConfig(
-            configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
+            configDirectory = project.projectDir.resolve("webpack.config.d"),
             sourceMaps = true,
             devtool = null,
             export = false,
@@ -333,7 +373,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val karmaConfJs = npmProject.dir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use { confWriter ->
-            confWriter.println("// environment variables")
             envJsCollector.forEach { (envVar, value) ->
                 //language=JavaScript 1.8
                 confWriter.println("process.env.$envVar = $value")
@@ -438,19 +477,12 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     private fun Appendable.appendFromConfigDir() {
-        val configDirectory = configDirectory ?: return
-
-        check(configDirectory.isDirectory) {
-            "\"$configDirectory\" is not a directory"
+        if (!configDirectory.isDirectory) {
+            return
         }
 
         appendln()
         appendConfigsFromDir(configDirectory)
         appendln()
-    }
-
-    companion object {
-        const val CHROME_BIN = "CHROME_BIN"
-        const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
     }
 }

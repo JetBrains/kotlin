@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.withInitialIr
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -24,6 +25,7 @@ class IrLazyTypeAlias(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeAliasSymbol,
+    override val descriptor: TypeAliasDescriptor,
     override val name: Name,
     override val visibility: Visibility,
     override val isActual: Boolean,
@@ -37,18 +39,17 @@ class IrLazyTypeAlias(
         symbol.bind(this)
     }
 
-    override val descriptor: TypeAliasDescriptor
-        get() = symbol.descriptor
-
-    override val typeParameters: MutableList<IrTypeParameter> by lazy {
+    override var typeParameters: List<IrTypeParameter> by lazyVar {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
             stubGenerator.generateOrGetTypeParameterStub(it)
         }
     }
 
     override val expandedType: IrType by lazy {
-        typeTranslator.buildWithScope(this) {
-            descriptor.expandedType.toIrType()
+        withInitialIr {
+            typeTranslator.buildWithScope(this) {
+                descriptor.expandedType.toIrType()
+            }
         }
     }
 
@@ -60,6 +61,6 @@ class IrLazyTypeAlias(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters.transform { it.transform(transformer, data) }
+        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
     }
 }

@@ -20,10 +20,12 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.help.HelpManager
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtWhenExpression
 
 class KotlinInlineValDialog(
     property: KtProperty,
@@ -51,7 +53,7 @@ class KotlinInlineValDialog(
 
                 override fun shouldSaveOptionsOnCancel() = false
 
-                override fun getDoNotShowMessage() = "Do not show for local variables in future"
+                override fun getDoNotShowMessage() = KotlinBundle.message("message.do.not.show.for.local.variables.in.future")
             })
         }
         init()
@@ -66,12 +68,20 @@ class KotlinInlineValDialog(
     override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_LOCAL_THIS
 
     public override fun doAction() {
+        val isWhenSubjectVariable = (callable.parent as? KtWhenExpression)?.subjectVariable == callable
+        val deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration
         invokeRefactoring(
             KotlinInlineCallableProcessor(
                 project, replacementStrategy, callable, reference,
                 inlineThisOnly = isInlineThisOnly,
-                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
-                statementToDelete = assignmentToDelete
+                deleteAfter = deleteAfter && !isWhenSubjectVariable,
+                statementToDelete = assignmentToDelete,
+                postAction = { declaration ->
+                    if (deleteAfter && isWhenSubjectVariable) {
+                        val property = declaration as? KtProperty
+                        property?.initializer?.let { property.replace(it) }
+                    }
+                }
             )
         )
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
 
@@ -8,7 +7,7 @@ interface Foo<T>
 
 class FooImpl<T> : Foo<T>
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <T> myflow(@BuilderInference block: Foo<T>.() -> Unit): Foo<T> {
     val impl = FooImpl<T>()
     impl.block()

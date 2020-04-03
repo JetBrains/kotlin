@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import kotlin.contracts.*
 /**
  * Executes the given function [block] and returns the duration of elapsed time interval.
  *
- * The elapsed time is measured with [MonoClock].
+ * The elapsed time is measured with [TimeSource.Monotonic].
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
@@ -18,18 +18,18 @@ public inline fun measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    return MonoClock.measureTime(block)
+    return TimeSource.Monotonic.measureTime(block)
 }
 
 
 /**
  * Executes the given function [block] and returns the duration of elapsed time interval.
  *
- * The elapsed time is measured with the specified `this` [Clock] instance.
+ * The elapsed time is measured with the specified `this` [TimeSource] instance.
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-public inline fun Clock.measureTime(block: () -> Unit): Duration {
+public inline fun TimeSource.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
@@ -54,7 +54,7 @@ public data class TimedValue<T>(val value: T, val duration: Duration)
  * Executes the given function [block] and returns an instance of [TimedValue] class, containing both
  * the result of the function execution and the duration of elapsed time interval.
  *
- * The elapsed time is measured with [MonoClock].
+ * The elapsed time is measured with [TimeSource.Monotonic].
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
@@ -63,18 +63,18 @@ public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    return MonoClock.measureTimedValue(block)
+    return TimeSource.Monotonic.measureTimedValue(block)
 }
 
 /**
  * Executes the given [block] and returns an instance of [TimedValue] class, containing both
  * the result of function execution and the duration of elapsed time interval.
  *
- * The elapsed time is measured with the specified `this` [Clock] instance.
+ * The elapsed time is measured with the specified `this` [TimeSource] instance.
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-public inline fun <T> Clock.measureTimedValue(block: () -> T): TimedValue<T> {
+public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }

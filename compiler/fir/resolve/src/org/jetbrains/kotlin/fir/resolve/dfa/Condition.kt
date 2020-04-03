@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-enum class Condition {
+enum class Operation {
     EqTrue, EqFalse, EqNull, NotEqNull;
 
-    fun invert(): Condition = when (this) {
+    fun invert(): Operation = when (this) {
         EqTrue -> EqFalse
         EqFalse -> EqTrue
         EqNull -> NotEqNull
@@ -22,5 +22,3 @@ enum class Condition {
         NotEqNull -> "!= Null"
     }
 }
-
-fun Boolean.toEqBoolean(): Condition = if (this) Condition.EqTrue else Condition.EqFalse

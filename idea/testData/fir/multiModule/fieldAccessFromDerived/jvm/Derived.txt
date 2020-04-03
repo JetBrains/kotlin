@@ -5,11 +5,11 @@ FILE: Derived.kt
         }
 
         public final fun getValue(): R|kotlin/Int| {
-            ^getValue this@R|/Base|.R|/Base.value|
+            ^getValue this@R|/Derived|.R|/Base.value|
         }
 
         public final fun foo(): R|kotlin/Int| {
-            ^foo this@R|/Base|.R|/Base.value|
+            ^foo this@R|/Derived|.R|/Base.value|
         }
 
     }

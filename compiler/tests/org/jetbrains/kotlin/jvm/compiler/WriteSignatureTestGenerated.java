@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -653,6 +653,29 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/writeSignature/parameterlessMain/simple.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/writeSignature/suspendMain")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SuspendMain extends AbstractWriteSignatureTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuspendMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/suspendMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("parameterlessSuspendMain.kt")
+        public void testParameterlessSuspendMain() throws Exception {
+            runTest("compiler/testData/writeSignature/suspendMain/parameterlessSuspendMain.kt");
+        }
+
+        @TestMetadata("suspendMain.kt")
+        public void testSuspendMain() throws Exception {
+            runTest("compiler/testData/writeSignature/suspendMain/suspendMain.kt");
         }
     }
 }

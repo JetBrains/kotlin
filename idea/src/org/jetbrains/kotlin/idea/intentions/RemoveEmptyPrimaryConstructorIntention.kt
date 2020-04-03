@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
@@ -32,7 +33,10 @@ class RemoveEmptyPrimaryConstructorInspection : IntentionBasedInspection<KtPrima
 }
 
 class RemoveEmptyPrimaryConstructorIntention :
-    SelfTargetingOffsetIndependentIntention<KtPrimaryConstructor>(KtPrimaryConstructor::class.java, "Remove empty primary constructor") {
+    SelfTargetingOffsetIndependentIntention<KtPrimaryConstructor>(
+        KtPrimaryConstructor::class.java,
+        KotlinBundle.message("remove.empty.primary.constructor")
+    ) {
 
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) = element.delete()
 

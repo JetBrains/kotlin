@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36839 Generate 'when' with unsigned subject using TABLESWITCH/LOOKUPSWITCH in JVM_IR
 
 const val M1: UInt = 2147483648u
 

@@ -9,26 +9,24 @@ import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirCheckNotNullCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
+import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCallBuilder
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 fun FirFunctionCall.copy(
     annotations: List<FirAnnotationCall> = this.annotations,
-    arguments: List<FirExpression> = this.arguments,
+    argumentList: FirArgumentList = this.argumentList,
     calleeReference: FirNamedReference = this.calleeReference,
     explicitReceiver: FirExpression? = this.explicitReceiver,
     dispatchReceiver: FirExpression = this.dispatchReceiver,
@@ -38,21 +36,27 @@ fun FirFunctionCall.copy(
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
-    return if (this is FirIntegerOperatorCall) {
-        FirIntegerOperatorCall(source)
+    val builder = if (this is FirIntegerOperatorCall) {
+        FirIntegerOperatorCallBuilder().apply {
+            this.calleeReference = calleeReference
+        }
     } else {
-        FirFunctionCallImpl(source)
-    }.apply {
+        FirFunctionCallBuilder().apply {
+            this.calleeReference = calleeReference
+        }
+    }
+    builder.apply {
+        this.source = source
         this.safe = safe
         this.annotations.addAll(annotations)
-        this.arguments.addAll(arguments)
-        this.calleeReference = calleeReference
+        this.argumentList = argumentList
         this.explicitReceiver = explicitReceiver
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
         this.typeArguments.addAll(typeArguments)
         this.typeRef = resultType
     }
+    return (builder as FirCallBuilder).build() as FirFunctionCall
 }
 
 fun FirAnonymousFunction.copy(
@@ -68,7 +72,13 @@ fun FirAnonymousFunction.copy(
     controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
     invocationKind: InvocationKind? = this.invocationKind
 ): FirAnonymousFunction {
-    return FirAnonymousFunctionImpl(source, session, returnTypeRef, receiverTypeRef, symbol, isLambda).apply {
+    return buildAnonymousFunction {
+        this.source = source
+        this.session = session
+        this.returnTypeRef = returnTypeRef
+        this.receiverTypeRef = receiverTypeRef
+        symbol = this@copy.symbol
+        isLambda = this@copy.isLambda
         this.valueParameters.addAll(valueParameters)
         this.body = body
         this.annotations.addAll(annotations)
@@ -83,7 +93,9 @@ fun FirAnonymousFunction.copy(
 fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType
 ): FirResolvedTypeRef {
-    return FirResolvedTypeRefImpl(source, type).apply {
+    return buildResolvedTypeRef {
+        source = this@resolvedTypeFromPrototype.source
+        this.type = type
         annotations += this@resolvedTypeFromPrototype.annotations
     }
 }
@@ -91,10 +103,14 @@ fun FirTypeRef.resolvedTypeFromPrototype(
 fun FirTypeParameter.copy(
     bounds: List<FirTypeRef> = this.bounds,
     annotations: List<FirAnnotationCall> = this.annotations
-): FirTypeParameterImpl {
-    return FirTypeParameterImpl(
-        source, session, name, symbol, variance, isReified
-    ).apply {
+): FirTypeParameter {
+    return buildTypeParameter {
+        source = this@copy.source
+        session = this@copy.session
+        name = this@copy.name
+        symbol = this@copy.symbol
+        variance = this@copy.variance
+        isReified = this@copy.isReified
         this.bounds += bounds
         this.annotations += annotations
     }
@@ -104,10 +120,13 @@ fun FirWhenExpression.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference,
     annotations: List<FirAnnotationCall> = this.annotations
-): FirWhenExpressionImpl = FirWhenExpressionImpl(source, subject, subjectVariable).apply {
+): FirWhenExpression = buildWhenExpression {
+    source = this@copy.source
+    subject = this@copy.subject
+    subjectVariable = this@copy.subjectVariable
     this.calleeReference = calleeReference
-    this@apply.branches.addAll(this@copy.branches)
-    this.typeRef = resultType
+    branches += this@copy.branches
+    typeRef = resultType
     this.annotations += annotations
 }
 
@@ -115,10 +134,13 @@ fun FirTryExpression.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference,
     annotations: List<FirAnnotationCall> = this.annotations
-): FirTryExpressionImpl = FirTryExpressionImpl(source, tryBlock, finallyBlock).apply {
+): FirTryExpression = buildTryExpression {
+    source = this@copy.source
+    tryBlock = this@copy.tryBlock
+    finallyBlock = this@copy.finallyBlock
     this.calleeReference = calleeReference
-    this@apply.catches.addAll(this@copy.catches)
-    this.typeRef = resultType
+    catches += this@copy.catches
+    typeRef = resultType
     this.annotations += annotations
 }
 
@@ -126,9 +148,10 @@ fun FirCheckNotNullCall.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference,
     annotations: List<FirAnnotationCall> = this.annotations
-): FirCheckNotNullCallImpl = FirCheckNotNullCallImpl(source).apply {
+): FirCheckNotNullCall = buildCheckNotNullCall {
+    source = this@copy.source
     this.calleeReference = calleeReference
-    this@apply.arguments.addAll(this@copy.arguments)
+    argumentList = this@copy.argumentList
     this.typeRef = resultType
     this.annotations += annotations
 }

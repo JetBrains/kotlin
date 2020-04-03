@@ -7,9 +7,9 @@ class A {
     constructor(x: () -> Int)
     constructor() : this(
             {
-                foo() +
-                this.foo() +
-                this@A.foo() +
-                foobar()
+                <!UNRESOLVED_REFERENCE!>foo<!>() +
+                this.<!UNRESOLVED_REFERENCE!>foo<!>() +
+                this@A.<!UNRESOLVED_REFERENCE!>foo<!>() +
+                <!UNRESOLVED_REFERENCE!>foobar<!>()
             })
 }

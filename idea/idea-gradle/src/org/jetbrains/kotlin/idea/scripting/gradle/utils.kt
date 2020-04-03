@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
@@ -17,15 +19,33 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
 
 fun isGradleKotlinScript(virtualFile: VirtualFile) = virtualFile.name.endsWith(".gradle.kts")
 
+fun isInAffectedGradleProjectFiles(project: Project, filePath: String): Boolean {
+    if (filePath.endsWith("/gradle.properties")) return true
+    if (filePath.endsWith("/gradle-wrapper.properties")) return true
+
+    if (filePath.endsWith(".gradle") || filePath.endsWith(".gradle.kts")) {
+        if (ApplicationManager.getApplication().isUnitTestModeWithoutAffectedGradleProjectFilesCheck) {
+            return true
+        }
+
+        return filePath.substringBeforeLast("/") in project.service<GradleScriptInputsWatcher>().getGradleProjectsRoots()
+    }
+
+    return false
+}
+
 fun getGradleScriptInputsStamp(
     project: Project,
     file: VirtualFile,
-    givenKtFile: KtFile? = null
+    givenKtFile: KtFile? = null,
+    givenTimeStamp: Long = System.currentTimeMillis()
 ): GradleKotlinScriptConfigurationInputs? {
     if (!isGradleKotlinScript(file)) return null
 
@@ -56,8 +76,7 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            val relatedFilesTimeStamp = project.service<GradleScriptInputsWatcher>().lastModifiedFileTimeStamp(file)
-            GradleKotlinScriptConfigurationInputs(result.toString(), file.timeStamp, relatedFilesTimeStamp)
+            GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp)
         } else null
     }
 }

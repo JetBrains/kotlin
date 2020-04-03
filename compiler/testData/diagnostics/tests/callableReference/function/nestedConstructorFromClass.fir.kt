@@ -10,7 +10,7 @@ class A {
         val y = A::Nested
 
         checkSubtype<KFunction0<Nested>>(x)
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction0<Nested>>(y)
+        checkSubtype<KFunction0<Nested>>(y)
     }
     
     companion object {
@@ -18,16 +18,16 @@ class A {
             ::Nested
             val y = A::Nested
 
-            <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction0<A.Nested>>(y)
+            checkSubtype<KFunction0<A.Nested>>(y)
         }
     }
 }
 
 class B {
     fun main() {
-        ::Nested
+        <!UNRESOLVED_REFERENCE!>::Nested<!>
         val y = A::Nested
 
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction0<A.Nested>>(y)
+        checkSubtype<KFunction0<A.Nested>>(y)
     }
 }

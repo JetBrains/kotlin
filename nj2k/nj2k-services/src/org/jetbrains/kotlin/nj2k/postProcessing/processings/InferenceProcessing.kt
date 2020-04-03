@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtElement
 abstract class InferenceProcessing : ElementsBasedPostProcessing() {
     override fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext) {
         val kotlinElements = elements.filterIsInstance<KtElement>()
+        if (kotlinElements.isEmpty()) return
         val resolutionFacade = runReadAction {
             KotlinCacheService.getInstance(converterContext.project).getResolutionFacade(kotlinElements)
         }

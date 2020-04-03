@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
+import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 
-@UseExperimental(InternalNonStableExtensionPoints::class)
+@OptIn(InternalNonStableExtensionPoints::class)
 class CandidateInterceptor(project: Project) {
     private val extensions = getInstances(project)
 
@@ -30,8 +32,26 @@ class CandidateInterceptor(project: Project) {
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
-    ) = extensions.fold(candidates) { it, extension ->
+    ): Collection<NewResolutionOldInference.MyCandidate> = extensions.fold(candidates) { it, extension ->
         extension.interceptCandidates(it, context, candidateResolver, callResolver, name, kind, tracing)
+    }
+
+    fun interceptResolvedCandidates(
+        callResolutionResult: CallResolutionResult,
+        context: BasicCallResolutionContext,
+        callResolver: KotlinCallResolver,
+        name: Name,
+        kind: NewResolutionOldInference.ResolutionKind,
+        tracing: TracingStrategy
+    ): CallResolutionResult {
+        var resolutionResult = callResolutionResult
+        for (extension in extensions) {
+            resolutionResult = extension.interceptCandidates(
+                resolutionResult, context, callResolver, name, kind, tracing
+            )
+        }
+
+        return resolutionResult
     }
 
     fun interceptCandidates(

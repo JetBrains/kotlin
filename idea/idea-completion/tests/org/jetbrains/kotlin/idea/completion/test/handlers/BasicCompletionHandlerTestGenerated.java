@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -141,6 +141,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("KT23627.kt")
     public void testKT23627() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/KT23627.kt");
+    }
+
+    @TestMetadata("KT36306.kt")
+    public void testKT36306() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/KT36306.kt");
     }
 
     @TestMetadata("NestedTypeArg.kt")

@@ -1,0 +1,17 @@
+package
+
+public fun test_1(/*0*/ foo: Foo, /*1*/ x: kotlin.Any): kotlin.Unit
+public fun test_2(/*0*/ foo: Foo): kotlin.Int
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    public final fun require(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -189,7 +189,9 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
                 result = codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType(), fakeResolvedCall);
             }
             else {
-                result = codegen.generateConstructorCall(fakeResolvedCall, returnType);
+                //noinspection ConstantConditions
+                Type constructedType = codegen.typeMapper.mapType(referencedFunction.getReturnType());
+                result = codegen.generateConstructorCall(fakeResolvedCall, constructedType);
             }
         }
         else {
@@ -198,7 +200,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         }
 
         InstructionAdapter v = codegen.v;
-        result.put(returnType, v);
+        result.put(returnType, functionDescriptor.getReturnType(), v);
         v.areturn(returnType);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         if (state == ExplicitApiMode.DISABLED) return
 
         if (descriptor !is DeclarationDescriptorWithVisibility) return
+        if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) return // Enum entries does not have visibilities
         if (!descriptor.isEffectivelyPublicApi) return
 
         checkVisibilityModifier(state, declaration, descriptor, context)
@@ -76,6 +77,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
      * 2. Properties of data classes in public API
      * 3. Overrides of public API. Effectively, this means 'no report on overrides at all'
      * 4. Getters and setters (because getters can't change visibility and setter-only explicit visibility looks ugly)
+     * 5. Properties of annotations in public API
      *
      * Do we need something like @PublicApiFile to disable (or invert) this inspection per-file?
      */
@@ -84,6 +86,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         /* 2. */ if (descriptor is PropertyDescriptor && (descriptor.containingDeclaration as? ClassDescriptor)?.isData == true) return true
         /* 3. */ if ((descriptor as? CallableDescriptor)?.overriddenDescriptors?.isNotEmpty() == true) return true
         /* 4. */ if (descriptor is PropertyAccessorDescriptor) return true
+        /* 5. */ if (descriptor is PropertyDescriptor && (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ANNOTATION_CLASS) return true
         return false
     }
 

@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
@@ -38,9 +41,6 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
-import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
-import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 
 abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     companion object {
@@ -117,7 +117,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                     fileName,
                     text,
                     object : TestFileFactoryNoModules<File>() {
-                        override fun create(fileName: String, text: String, directives: Map<String, String>): File {
+                        override fun create(fileName: String, text: String, directives: Directives): File {
                             val targetFile = File(tmpdir, fileName)
                             targetFile.writeText(adaptJavaSource(text))
                             return targetFile
@@ -129,7 +129,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             }
             fileName.endsWith(".kt") -> {
                 val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                    myTestRootDisposable, ConfigurationKind.ALL, jdkKind
+                    testRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
                 for (root in environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)) {
                     LOG.info("root: $root")

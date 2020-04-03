@@ -105,32 +105,38 @@ class ClasspathEntryData : Serializable {
     var classDependencies = mutableMapOf<String, ClassDependencies>()
 
     private fun writeObject(output: ObjectOutputStream) {
-        val names = mutableMapOf<String, Int>()
-        classAbiHash.keys.forEach { names[it] = names.size }
-        classDependencies.values.forEach {
-            it.abiTypes.forEach {
-                if (!names.containsKey(it)) names[it] = names.size
+        // Sort only classDependencies, as all keys in this map are keys of classAbiHash map.
+        val sortedClassDependencies =
+            classDependencies.toSortedMap().mapValues { ClassDependencies(it.value.abiTypes.sorted(), it.value.privateTypes.sorted()) }
+
+        val names = LinkedHashMap<String, Int>()
+        sortedClassDependencies.forEach {
+            names[it.key] = names.size
+            it.value.abiTypes.forEach { type ->
+                if (type !in names) names[type] = names.size
             }
-            it.privateTypes.forEach {
-                if (!names.containsKey(it)) names[it] = names.size
+            it.value.privateTypes.forEach { type ->
+                if (type !in names) names[type] = names.size
             }
         }
 
         output.writeInt(names.size)
-        names.forEach { key, value ->
+        names.forEach { (key, value) ->
             output.writeInt(value)
             output.writeUTF(key)
         }
 
         output.writeInt(classAbiHash.size)
-        classAbiHash.forEach {
-            output.writeInt(names[it.key]!!)
-            output.writeInt(it.value.size)
-            output.write(it.value)
+        sortedClassDependencies.forEach { (key, _) ->
+            output.writeInt(names[key]!!)
+            classAbiHash[key]!!.let {
+                output.writeInt(it.size)
+                output.write(it)
+            }
         }
 
-        output.writeInt(classDependencies.size)
-        classDependencies.forEach {
+        output.writeInt(sortedClassDependencies.size)
+        sortedClassDependencies.forEach {
             output.writeInt(names[it.key]!!)
 
             output.writeInt(it.value.abiTypes.size)

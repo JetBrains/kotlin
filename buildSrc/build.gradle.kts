@@ -1,11 +1,12 @@
-extra["versions.shadow"] = "4.0.3"
 extra["versions.native-platform"] = "0.14"
 
 buildscript {
+
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
-    val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
+    extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
+    BootstrapOption.BintrayBootstrap("1.4.0-dev-1818", cacheRedirectorEnabled).applyToProject(project)
+//    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
         if (cacheRedirectorEnabled) {
@@ -16,27 +17,29 @@ buildscript {
             maven("https://kotlin.bintray.com/kotlin-dependencies")
         }
 
-        buildSrcKotlinRepo?.let {
+        project.bootstrapKotlinRepo?.let {
             maven(url = it)
         }
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$buildSrcKotlinVersion")
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$buildSrcKotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
     }
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-logger.info("buildSrcKotlinVersion: " + extra["buildSrcKotlinVersion"])
+logger.info("buildSrcKotlinVersion: " + extra["bootstrapKotlinVersion"])
 logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)
 logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 
 apply {
     plugin("kotlin")
     plugin("kotlin-sam-with-receiver")
+
+    from("../gradle/checkCacheability.gradle.kts")
 }
 
 plugins {
@@ -46,10 +49,6 @@ plugins {
 
 gradlePlugin {
     plugins {
-        register("pill-configurable") {
-            id = "pill-configurable"
-            implementationClass = "org.jetbrains.kotlin.pill.PillConfigurablePlugin"
-        }
         register("jps-compatible") {
             id = "jps-compatible"
             implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
@@ -72,10 +71,11 @@ val intellijUltimateEnabled by extra(kotlinBuildProperties.intellijUltimateEnabl
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 val verifyDependencyOutput by extra( getBooleanProperty("kotlin.build.dependency.output.verification") ?: isTeamcityBuild)
 
-extra["intellijReleaseType"] = if (extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true)
-    "snapshots"
-else
-    "releases"
+extra["intellijReleaseType"] = when {
+    extra["versions.intellijSdk"]?.toString()?.contains("-EAP-") == true -> "snapshots"
+    extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true -> "nightly"
+    else -> "releases"
+}
 
 extra["versions.androidDxSources"] = "5.0.0_r2"
 
@@ -87,21 +87,22 @@ repositories {
     maven("https://kotlin.bintray.com/kotlin-dependencies")
     gradlePluginPortal()
 
-    extra["buildSrcKotlinRepo"]?.let {
+    extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
 }
 
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
 
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
     implementation("com.jakewharton.dex:dex-method-list:3.0.0")
 
-    implementation("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    implementation("com.github.jengelman.gradle.plugins:shadow:${rootProject.extra["versions.shadow"]}")
+    implementation("net.sf.proguard:proguard-gradle:6.2.2")
     implementation("org.jetbrains.intellij.deps:asm-all:7.0.1")
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")

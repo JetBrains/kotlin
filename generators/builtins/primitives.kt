@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "minus" to "Subtracts the other value from this value.",
             "times" to "Multiplies this value by the other value.",
             "div" to "Divides this value by the other value.",
-            "mod" to "Calculates the remainder of dividing this value by the other value.",
             "rem" to "Calculates the remainder of dividing this value by the other value."
         )
         internal val unaryOperators: Map<String, String> = mapOf(
@@ -48,8 +47,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE)
         PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE)
         PrimitiveType.LONG -> listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
-//        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "0.0/0.0")
-//        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "0.0F/0.0F").map { it as? String ?: "${it}F" }
+        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "-(0.0/0.0)")
+        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "-(0.0F/0.0F)").map { it as? String ?: "${it}F" }
         else -> throw IllegalArgumentException("type: $type")
     }
 
@@ -61,32 +60,32 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             out.print("    companion object {")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
-                //val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
+                val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
                 out.println("""
         /**
          * A constant holding the smallest *positive* nonzero value of $className.
          */
-        public val MIN_VALUE: $className
+        public const val MIN_VALUE: $className = $minValue
 
         /**
          * A constant holding the largest positive finite value of $className.
          */
-        public val MAX_VALUE: $className
+        public const val MAX_VALUE: $className = $maxValue
 
         /**
          * A constant holding the positive infinity value of $className.
          */
-        public val POSITIVE_INFINITY: $className
+        public const val POSITIVE_INFINITY: $className = $posInf
 
         /**
          * A constant holding the negative infinity value of $className.
          */
-        public val NEGATIVE_INFINITY: $className
+        public const val NEGATIVE_INFINITY: $className = $negInf
 
         /**
          * A constant holding the "not a number" value of $className.
          */
-        public val NaN: $className""")
+        public const val NaN: $className = $nan""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
                 val (minValue, maxValue) = primitiveConstants(kind)
@@ -101,18 +100,19 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          */
         public const val MAX_VALUE: $className = $maxValue""")
             }
-            if (kind.isIntegral) {
+            if (kind.isIntegral || kind.isFloatingPoint) {
+                val sizeSince = if (kind.isFloatingPoint) "1.4" else "1.3"
                 out.println("""
         /**
          * The number of bytes used to represent an instance of $className in a binary form.
          */
-        @SinceKotlin("1.3")
+        @SinceKotlin("$sizeSince")
         public const val SIZE_BYTES: Int = ${kind.byteSize}
 
         /**
          * The number of bits used to represent an instance of $className in a binary form.
          */
-        @SinceKotlin("1.3")
+        @SinceKotlin("$sizeSince")
         public const val SIZE_BITS: Int = ${kind.bitSize}""")
             }
             out.println("""    }""")
@@ -172,9 +172,6 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             when (name) {
                 "rem" ->
                     out.println("    @SinceKotlin(\"1.1\")")
-
-                "mod" ->
-                    out.println("    @Deprecated(\"Use rem(other) instead\", ReplaceWith(\"rem(other)\"), DeprecationLevel.ERROR)")
             }
             out.println("    public operator fun $name(other: ${otherKind.capitalized}): ${returnType.capitalized}")
         }
@@ -344,6 +341,10 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateConversions(kind: PrimitiveType) {
+        fun isConversionDeprecated(otherKind: PrimitiveType): Boolean {
+            return kind in PrimitiveType.floatingPoint && otherKind in listOf(PrimitiveType.BYTE, PrimitiveType.SHORT)
+        }
+
         val thisName = kind.capitalized
         for (otherKind in PrimitiveType.exceptBoolean) {
             val otherName = otherKind.capitalized
@@ -367,6 +368,11 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 "    /**\n     * Converts this [$thisName] value to [$otherName].\n     *\n" + detail.replaceIndent("     ")
             }
             out.println(doc)
+
+            if (isConversionDeprecated(otherKind)) {
+                out.println("    @Deprecated(\"Unclear conversion. To achieve the same result convert to Int explicitly and then to $otherName.\", ReplaceWith(\"toInt().to$otherName()\"))")
+            }
+
             out.println("    public override fun to$otherName(): $otherName")
         }
     }

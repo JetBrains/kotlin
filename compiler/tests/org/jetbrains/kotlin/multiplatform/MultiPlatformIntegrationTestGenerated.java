@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,6 +51,11 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     @TestMetadata("explicitActualOnOverrideOfAbstractMethod")
     public void testExplicitActualOnOverrideOfAbstractMethod() throws Exception {
         runTest("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/");
+    }
+
+    @TestMetadata("funInterfaces")
+    public void testFunInterfaces() throws Exception {
+        runTest("compiler/testData/multiplatform/funInterfaces/");
     }
 
     @TestMetadata("genericDeclarations")
@@ -406,6 +411,19 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInExplicitActualOnOverrideOfAbstractMethod() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/funInterfaces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunInterfaces extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunInterfaces() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/funInterfaces"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 

@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -28,14 +29,14 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (isRecursivePropertyAccess(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Recursive property accessor",
+                    KotlinBundle.message("recursive.property.accessor"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceWithFieldFix()
                 )
             } else if (isRecursiveSyntheticPropertyAccess(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Recursive synthetic property accessor",
+                    KotlinBundle.message("recursive.synthetic.property.accessor"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 )
             }
@@ -44,7 +45,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
 
     class ReplaceWithFieldFix : LocalQuickFix {
 
-        override fun getName() = "Replace with 'field'"
+        override fun getName() = KotlinBundle.message("replace.with.field.fix.text")
 
         override fun getFamilyName() = name
 

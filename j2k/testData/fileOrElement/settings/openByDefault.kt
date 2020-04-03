@@ -1,4 +1,4 @@
-// !openByDefault: true
+// !OPEN_BY_DEFAULT: true
 
 internal open class A {
     internal open fun foo1() {}

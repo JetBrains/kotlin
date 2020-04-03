@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.codegen.inline.RangeMapping
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
 import org.jetbrains.kotlin.codegen.inline.toRange
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -45,7 +46,7 @@ object SMAPTestUtil {
         }
     }
 
-    private fun extractSmapFromTestDataFile(file: CodegenTestCase.TestFile, separateCompilation: Boolean): SMAPAndFile? {
+    private fun extractSmapFromTestDataFile(file: KotlinBaseTest.TestFile, separateCompilation: Boolean): SMAPAndFile? {
         if (!checkExtension(file, separateCompilation)) return null
 
         val content = buildString {
@@ -60,13 +61,13 @@ object SMAPTestUtil {
         return SMAPAndFile(if (content.isNotEmpty()) content else null, SMAPAndFile.getPath(file.name), "NOT_SORTED")
     }
 
-    private fun checkExtension(file: CodegenTestCase.TestFile, separateCompilation: Boolean) =
+    private fun checkExtension(file: KotlinBaseTest.TestFile, separateCompilation: Boolean) =
         file.name.run {
             endsWith(".smap") ||
                     if (separateCompilation) endsWith(".smap-separate-compilation") else endsWith(".smap-nonseparate-compilation")
         }
 
-    fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>, separateCompilation: Boolean) {
+    fun checkSMAP(inputFiles: List<KotlinBaseTest.TestFile>, outputFiles: Iterable<OutputFile>, separateCompilation: Boolean) {
         if (!GENERATE_SMAP) return
 
         val sourceData = inputFiles.mapNotNull { extractSmapFromTestDataFile(it, separateCompilation) }

@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -53,6 +52,8 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
+    private val stackFrameInterceptor: StackFrameInterceptor = myDebugProcess.project.getService()
+
     private val allKotlinFilesScope = object : DelegatingGlobalSearchScope(
         KotlinSourceFilterScope.projectAndLibrariesSources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
     ) {
@@ -80,9 +81,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? =
-        if (location.isInKotlinSources())
-            KotlinStackFrame(frame)
-        else
+        if (location.isInKotlinSources()) {
+            stackFrameInterceptor.createStackFrame(frame, debugProcess, location) ?: KotlinStackFrame(frame)
+        } else
             null
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
@@ -123,7 +124,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile !is KtFile) throw NoDataException.INSTANCE
 
-        val sourceLineNumber = location.safeSourceLineNumber()
+        // Zero-based line-number for Document.getLineStartOffset()
+        val sourceLineNumber = location.safeLineNumber() - 1
         if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
@@ -136,11 +138,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val elementInDeclaration = getElementForDeclarationLine(location, psiFile, sourceLineNumber)
         if (elementInDeclaration != null) {
             return SourcePosition.createFromElement(elementInDeclaration)
-        }
-
-        if (sourceLineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
-            val (line, ktFile) = ktLocationInfo(location, true, myDebugProcess.project, false, psiFile)
-            return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
         val sameLineLocations = location.safeMethod()?.safeAllLineLocations()?.filter {

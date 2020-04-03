@@ -15,16 +15,13 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -76,8 +73,12 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         // Always copy `lastExpression` is it may be used in multiple conditions.
         get() = field.deepCopyWithSymbols()
 
+    private val elementType: IrType
+
     init {
         with(builder) {
+            elementType = headerInfo.progressionType.elementType(context.irBuiltIns)
+
             // For this loop:
             //
             //   for (i in first()..last() step step())
@@ -89,7 +90,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             // LongProgression so last() should be cast to a Long.
             inductionVariable = scope.createTemporaryVariable(
                 headerInfo.first.castIfNecessary(
-                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    elementType,
                     headerInfo.progressionType.elementCastFunctionName
                 ),
                 nameHint = "inductionVariable",
@@ -102,7 +103,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             // TODO: Confirm if casting to non-nullable is still necessary
             val last = ensureNotNullable(
                 headerInfo.last.castIfNecessary(
-                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    elementType,
                     headerInfo.progressionType.elementCastFunctionName
                 )
             )
@@ -141,7 +142,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
-        val plusFun = inductionVariable.type.getClass()!!.functions.single {
+        val plusFun = elementType.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
                     it.valueParameters[0].type == stepVariable.type
@@ -303,6 +304,22 @@ internal class ProgressionLoopHeader(
         }
 }
 
+private class InitializerCallReplacer(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper, val replacementCall: IrCall) :
+    DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
+    var initializerCall: IrCall? = null
+
+    override fun visitCall(expression: IrCall): IrCall {
+        if (initializerCall == null) {
+            initializerCall = expression
+            return replacementCall
+        } else {
+            throw IllegalStateException(
+                "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
+            )
+        }
+    }
+}
+
 internal class IndexedGetLoopHeader(
     headerInfo: IndexedGetHeaderInfo,
     builder: DeclarationIrBuilder
@@ -319,11 +336,15 @@ internal class IndexedGetLoopHeader(
         with(builder) {
             // loopVariable = objectVariable[inductionVariable]
             val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
-            val get = irCall(indexedGetFun).apply {
+            val get = irCall(indexedGetFun.symbol).apply {
                 dispatchReceiver = irGet(headerInfo.objectVariable)
                 putValueArgument(0, irGet(inductionVariable))
             }
-            loopVariable?.initializer = get
+            // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
+            // Find and replace the call to preserve any type-casts.
+            loopVariable?.initializer = loopVariable?.initializer?.deepCopyWithSymbols { symbolRemapper, typeRemapper ->
+                InitializerCallReplacer(symbolRemapper, typeRemapper, get)
+            }
             // Even if there is no loop variable, we always want to call `get()` as it may have side-effects.
             // The un-lowered loop always calls `get()` on each iteration.
             listOf(loopVariable ?: get) + incrementInductionVariable(this)
@@ -356,6 +377,7 @@ internal class WithIndexLoopHeader(
     private val nestedLoopHeader: ForLoopHeader
     private val indexVariable: IrVariable
     private val ownsIndexVariable: Boolean
+    private val incrementIndexStatement: IrStatement?
 
     init {
         with(builder) {
@@ -378,6 +400,7 @@ internal class WithIndexLoopHeader(
             ) {
                 indexVariable = nestedLoopHeader.inductionVariable
                 ownsIndexVariable = false
+                incrementIndexStatement = null
             } else {
                 indexVariable = scope.createTemporaryVariable(
                     irInt(0),
@@ -385,11 +408,26 @@ internal class WithIndexLoopHeader(
                     isMutable = true
                 )
                 ownsIndexVariable = true
+                // `index++` during iteration initialization
+                // TODO: MUSTDO: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
+                val plusFun = indexVariable.type.getClass()!!.functions.first {
+                    it.name == OperatorNameConventions.PLUS &&
+                            it.valueParameters.size == 1 &&
+                            it.valueParameters[0].type.isInt()
+                }
+                incrementIndexStatement =
+                    irSetVar(
+                        indexVariable.symbol, irCallOp(
+                            plusFun.symbol, plusFun.returnType,
+                            irGet(indexVariable),
+                            irInt(1)
+                        )
+                    )
             }
         }
     }
 
-    // Add the index variable to the statements from the nested loop header.
+    // Add the index variable (if owned) to the statements from the nested loop header.
     override val loopInitStatements = nestedLoopHeader.loopInitStatements.let { if (ownsIndexVariable) it + indexVariable else it }
 
     override val consumesLoopVariableComponents = true
@@ -441,10 +479,10 @@ internal class WithIndexLoopHeader(
             //   if (inductionVar <= last) {
             //     do {
             //       val i = index   // ADDED
+            //       checkIndexOverflow(index++)   // ADDED
             //       val v = inductionVar
             //       inductionVar += step
             //       // Loop body
-            //       checkIndexOverflow(index++)   // ADDED
             //     } while (inductionVar <= last)
             //   }
             //
@@ -460,13 +498,14 @@ internal class WithIndexLoopHeader(
             //   var index = 0
             //   while (it.hasNext())
             //     val i = index
-            //     val v = it.next()
             //     checkIndexOverflow(index++)
+            //     val v = it.next()
+            //     // Loop body
             //   }
             //
             // We "wire" the 1st destructured component to index, and the 2nd to the loop variable value from the underlying iterable.
             loopVariableComponents[1]?.initializer = irGet(indexVariable)
-            listOfNotNull(loopVariableComponents[1]) + nestedLoopHeader.initializeIteration(
+            listOfNotNull(loopVariableComponents[1], incrementIndexStatement) + nestedLoopHeader.initializeIteration(
                 loopVariableComponents[2],
                 linkedMapOf(),
                 symbols,
@@ -476,28 +515,7 @@ internal class WithIndexLoopHeader(
 
     // Use the nested loop header to build the loop. More info in comments in initializeIteration().
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
-        nestedLoopHeader.buildLoop(builder, oldLoop, newBody).apply {
-            if (ownsIndexVariable) {
-                with(builder) {
-                    // Add `index++` to end of the loop.
-                    // TODO: MUSTDO: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
-                    val plusFun = indexVariable.type.getClass()!!.functions.first {
-                        it.name == OperatorNameConventions.PLUS &&
-                                it.valueParameters.size == 1 &&
-                                it.valueParameters[0].type.isInt()
-                    }
-                    (newLoop.body as IrContainerExpression).statements.add(
-                        irSetVar(
-                            indexVariable.symbol, irCallOp(
-                                plusFun.symbol, plusFun.returnType,
-                                irGet(indexVariable),
-                                irInt(1)
-                            )
-                        )
-                    )
-                }
-            }
-        }
+        nestedLoopHeader.buildLoop(builder, oldLoop, newBody)
 }
 
 internal class IterableLoopHeader(
@@ -517,10 +535,16 @@ internal class IterableLoopHeader(
             // loopVariable = iteratorVar.next()
             val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
             val next =
-                irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.NEXT && it.valueParameters.isEmpty() }).apply {
+                irCall(iteratorClass.functions.first {
+                    it.name == OperatorNameConventions.NEXT && it.valueParameters.isEmpty()
+                }.symbol).apply {
                     dispatchReceiver = irGet(headerInfo.iteratorVariable)
                 }
-            loopVariable?.initializer = next
+            // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
+            // Find and replace the call to preserve any type-casts.
+            loopVariable?.initializer = loopVariable?.initializer?.deepCopyWithSymbols { symbolRemapper, typeRemapper ->
+                InitializerCallReplacer(symbolRemapper, typeRemapper, next)
+            }
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
             listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
         }

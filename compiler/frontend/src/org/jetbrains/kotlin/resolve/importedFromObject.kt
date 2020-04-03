@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-fun FunctionDescriptor.asImportedFromObject(original: FunctionImportedFromObject? = null) =
-    FunctionImportedFromObject(this, original)
+fun FunctionDescriptor.asImportedFromObject(descriptor: FunctionImportedFromObject? = null) =
+    FunctionImportedFromObject(this, descriptor?.original)
 
-fun PropertyDescriptor.asImportedFromObject(original: PropertyImportedFromObject? = null) =
-    PropertyImportedFromObject(this, original)
+fun PropertyDescriptor.asImportedFromObject(descriptor: PropertyImportedFromObject? = null) =
+    PropertyImportedFromObject(this, descriptor?.original)
 
 abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemberDescriptor>(
     val callableFromObject: TCallable,

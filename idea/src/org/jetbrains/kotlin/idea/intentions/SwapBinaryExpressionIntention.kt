@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -17,8 +18,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Flip binary expression"),
-    LowPriorityAction {
+class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(
+    KtBinaryExpression::class.java,
+    KotlinBundle.lazyMessage("flip.binary.expression")
+), LowPriorityAction {
     companion object {
         private val SUPPORTED_OPERATIONS: Set<KtSingleValueToken> by lazy {
             setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
@@ -43,7 +46,7 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
         if (operationToken in SUPPORTED_OPERATIONS
             || operationToken == IDENTIFIER && operationTokenText in SUPPORTED_OPERATION_NAMES
         ) {
-            text = "Flip '$operationTokenText'"
+            setTextGetter(KotlinBundle.lazyMessage("flip.0", operationTokenText))
             return true
         }
         return false
@@ -51,16 +54,16 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         // Have to use text here to preserve names like "plus"
-        val operator = element.operationReference.text!!
-        val convertedOperator = when (operator) {
+        val convertedOperator = when (val operator = element.operationReference.text!!) {
             ">" -> "<"
             "<" -> ">"
             "<=" -> ">="
             ">=" -> "<="
             else -> operator
         }
-        val left = leftSubject(element)!!
-        val right = rightSubject(element)!!
+
+        val left = leftSubject(element) ?: return
+        val right = rightSubject(element) ?: return
         val rightCopy = right.copied()
         val leftCopy = left.copied()
         left.replace(rightCopy)
@@ -68,13 +71,11 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
         element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $convertedOperator $1", element.left!!, element.right!!))
     }
 
-    private fun leftSubject(element: KtBinaryExpression): KtExpression? {
-        return firstDescendantOfTighterPrecedence(element.left, PsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
-    }
+    private fun leftSubject(element: KtBinaryExpression): KtExpression? =
+        firstDescendantOfTighterPrecedence(element.left, PsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
 
-    private fun rightSubject(element: KtBinaryExpression): KtExpression? {
-        return firstDescendantOfTighterPrecedence(element.right, PsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
-    }
+    private fun rightSubject(element: KtBinaryExpression): KtExpression? =
+        firstDescendantOfTighterPrecedence(element.right, PsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
 
     private fun firstDescendantOfTighterPrecedence(
         expression: KtExpression?,
@@ -87,6 +88,7 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
                 return firstDescendantOfTighterPrecedence(expression.getChild(), precedence, getChild)
             }
         }
+
         return expression
     }
 }

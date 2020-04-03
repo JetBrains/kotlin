@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -195,6 +195,27 @@ public fun CharSequence.random(random: Random): Char {
 }
 
 /**
+ * Returns a random character from this char sequence, or `null` if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.randomOrNull(): Char? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random character from this char sequence using the specified source of randomness, or `null` if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun CharSequence.randomOrNull(random: Random): Char? {
+    if (isEmpty())
+        return null
+    return get(random.nextInt(length))
+}
+
+/**
  * Returns the single character, or throws an exception if the char sequence is empty or has more than one character.
  */
 public fun CharSequence.single(): Char {
@@ -345,6 +366,8 @@ public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequence {
     return filterTo(StringBuilder(), predicate)
@@ -352,6 +375,8 @@ public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequenc
 
 /**
  * Returns a string containing only those characters from the original string that match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun String.filter(predicate: (Char) -> Boolean): String {
     return filterTo(StringBuilder(), predicate).toString()
@@ -389,6 +414,8 @@ public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, 
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that do not match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence {
     return filterNotTo(StringBuilder(), predicate)
@@ -396,6 +423,8 @@ public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequ
 
 /**
  * Returns a string containing only those characters from the original string that do not match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
     return filterNotTo(StringBuilder(), predicate).toString()
@@ -710,7 +739,7 @@ public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destinatio
 }
 
 /**
- * Returns a [HashSet] of all characters.
+ * Returns a new [HashSet] of all characters.
  */
 public fun CharSequence.toHashSet(): HashSet<Char> {
     return toCollection(HashSet<Char>(mapCapacity(length)))
@@ -728,7 +757,7 @@ public fun CharSequence.toList(): List<Char> {
 }
 
 /**
- * Returns a [MutableList] filled with all characters of this char sequence.
+ * Returns a new [MutableList] filled with all characters of this char sequence.
  */
 public fun CharSequence.toMutableList(): MutableList<Char> {
     return toCollection(ArrayList<Char>(length))
@@ -1168,6 +1197,8 @@ public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
 
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1184,6 +1215,8 @@ public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Cha
  * to current accumulator value and each character with its index in the original char sequence.
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1196,7 +1229,46 @@ public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, 
 }
 
 /**
+ * Accumulates value starting with the first character and applying [operation] from left to right
+ * to current accumulator value and each character with its index in the original char sequence.
+ * Returns null if the char sequence is empty.
+ * @param [operation] function that takes the index of a character, current accumulator value
+ * and the character itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.4")
+public inline fun CharSequence.reduceIndexedOrNull(operation: (index: Int, acc: Char, Char) -> Char): Char? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character. Returns null if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -1213,6 +1285,8 @@ public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char)
  * to each character with its index in the original char sequence and current accumulator value.
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -1223,6 +1297,142 @@ public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, 
         --index
     }
     return accumulator
+}
+
+/**
+ * Accumulates value starting with last character and applying [operation] from right to left
+ * to each character with its index in the original char sequence and current accumulator value.
+ * Returns null if the char sequence is empty.
+ * @param [operation] function that takes the index of a character, the character itself
+ * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.4")
+public inline fun CharSequence.reduceRightIndexedOrNull(operation: (index: Int, Char, acc: Char) -> Char): Char? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value. Returns null if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each character and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and a character, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
+    if (isEmpty()) return listOf(initial)
+    val result = ArrayList<R>(length + 1).apply { add(initial) }
+    var accumulator = initial
+    for (element in this) {
+        accumulator = operation(accumulator, element)
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each character, its index in the original char sequence and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of a character, current accumulator value
+ * and the character itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
+    if (isEmpty()) return listOf(initial)
+    val result = ArrayList<R>(length + 1).apply { add(initial) }
+    var accumulator = initial
+    for (index in indices) {
+        accumulator = operation(index, accumulator, this[index])
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each character and current accumulator value that starts with the first character of this char sequence.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and a character, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scanReduce
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.scanReduce(operation: (acc: Char, Char) -> Char): List<Char> {
+    if (isEmpty()) return emptyList()
+    var accumulator = this[0]
+    val result = ArrayList<Char>(length).apply { add(accumulator) }
+    for (index in 1 until length) {
+        accumulator = operation(accumulator, this[index])
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each character, its index in the original char sequence and current accumulator value that starts with the first character of this char sequence.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of a character, current accumulator value
+ * and the character itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scanReduce
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.scanReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
+    if (isEmpty()) return emptyList()
+    var accumulator = this[0]
+    val result = ArrayList<Char>(length).apply { add(accumulator) }
+    for (index in 1 until length) {
+        accumulator = operation(index, accumulator, this[index])
+        result.add(accumulator)
+    }
+    return result
 }
 
 /**
@@ -1254,7 +1464,7 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.chunked
+ * @sample samples.text.Strings.chunked
  */
 @SinceKotlin("1.2")
 public fun CharSequence.chunked(size: Int): List<String> {
@@ -1317,6 +1527,8 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
+ * 
+ * @sample samples.text.Strings.partition
  */
 public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<CharSequence, CharSequence> {
     val first = StringBuilder()
@@ -1335,6 +1547,8 @@ public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<Cha
  * Splits the original string into pair of strings,
  * where *first* string contains characters for which [predicate] yielded `true`,
  * while *second* string contains characters for which [predicate] yielded `false`.
+ * 
+ * @sample samples.text.Strings.partition
  */
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()

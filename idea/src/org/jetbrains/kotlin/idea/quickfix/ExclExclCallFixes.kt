@@ -58,7 +58,7 @@ abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<Ps
 }
 
 class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix, HighPriorityAction {
-    override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
+    override fun getText(): String = KotlinBundle.message("fix.remove.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
         getExclExclPostfixExpression() != null
@@ -87,7 +87,7 @@ class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement
 class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement), LowPriorityAction {
     constructor(psiElement: PsiElement) : this(psiElement, true)
 
-    override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
+    override fun getText() = KotlinBundle.message("fix.introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
         getExpressionForIntroduceCall() != null

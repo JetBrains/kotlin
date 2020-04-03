@@ -1,13 +1,12 @@
-// IGNORE_BACKEND: JVM_IR
-enum class A { V }
+enum class A { V1, V2, V3 }
 
-fun box(): String {
-  val a: A = A.V
-  val b: Boolean
-  when (a) {
-    A.V -> b = true
-  }
-  return if (b) "OK" else "FAIL"
+fun test(a: A) {
+    val x: Int
+    when (a) {
+        A.V1 -> x = 11
+        A.V2 -> x = 22
+        A.V3 -> x = 33
+    }
 }
 
 // 1 TABLESWITCH

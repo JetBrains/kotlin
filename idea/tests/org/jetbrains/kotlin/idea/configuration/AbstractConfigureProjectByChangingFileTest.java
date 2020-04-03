@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.configuration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -21,7 +20,6 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.script.ScriptUtilsKt;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -44,12 +42,10 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         ApplicationManager.getApplication().runWriteAction(
                 () -> FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         );
-        ScriptUtilsKt.setScriptChangesNotifierDisabled(ApplicationManager.getApplication(), true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ScriptUtilsKt.setScriptChangesNotifierDisabled(ApplicationManager.getApplication(), false);
         moduleInfoFile = null;
         super.tearDown();
     }
@@ -116,22 +112,22 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return new SimpleLightProjectDescriptor(getModuleType(), getProjectJDK());
+        return new SimpleLightProjectDescriptor(getModuleTypeId(), getProjectJDK());
     }
 
     private static class SimpleLightProjectDescriptor extends LightProjectDescriptor {
-        @NotNull private final ModuleType myModuleType;
+        @NotNull private final String myModuleTypeId;
         @Nullable private final Sdk mySdk;
 
-        SimpleLightProjectDescriptor(@NotNull ModuleType moduleType, @Nullable Sdk sdk) {
-            myModuleType = moduleType;
+        SimpleLightProjectDescriptor(@NotNull String moduleTypeId, @Nullable Sdk sdk) {
+            myModuleTypeId = moduleTypeId;
             mySdk = sdk;
         }
 
         @NotNull
         @Override
-        public ModuleType getModuleType() {
-            return myModuleType;
+        public String getModuleTypeId() {
+            return myModuleTypeId;
         }
 
         @Nullable
@@ -147,13 +143,13 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
 
             SimpleLightProjectDescriptor that = (SimpleLightProjectDescriptor)o;
 
-            if (!myModuleType.equals(that.myModuleType)) return false;
+            if (!myModuleTypeId.equals(that.myModuleTypeId)) return false;
             return areJdksEqual(that.getSdk());
         }
 
         @Override
         public int hashCode() {
-            return myModuleType.hashCode();
+            return myModuleTypeId.hashCode();
         }
 
         private boolean areJdksEqual(Sdk newSdk) {

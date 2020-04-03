@@ -22,8 +22,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.idea.util.expectedDescriptors
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtClass
@@ -37,18 +37,18 @@ open class ImplementMembersHandler : OverrideImplementMembersHandler(), Intentio
             .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.FROM_TEMPLATE) }
     }
 
-    override fun getChooserTitle() = "Implement Members"
+    override fun getChooserTitle() = KotlinIdeaCoreBundle.message("implement.members.handler.title")
 
-    override fun getNoMembersFoundHint() = "No members to implement have been found"
+    override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("implement.members.handler.no.members.hint")
 
-    override fun getText() = KotlinBundle.message("implement.members")
-    override fun getFamilyName() = KotlinBundle.message("implement.members")
+    override fun getText() = familyName
+    override fun getFamilyName() = KotlinIdeaCoreBundle.message("implement.members.handler.family")
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = isValidFor(editor, file)
 }
 
 class ImplementAsConstructorParameter : ImplementMembersHandler() {
-    override fun getText() = "Implement as constructor parameters"
+    override fun getText() = KotlinIdeaCoreBundle.message("action.text.implement.as.constructor.parameters")
 
     override fun isValidForClass(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject !is KtClass || classOrObject is KtEnumEntry || classOrObject.isInterface()) return false

@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -25,19 +27,19 @@ inline infix fun <A : Any> ((A) -> A?).andThenNullable(crossinline then: (A) -> 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <T> idFunction(): (T) -> T = { it }
 
-operator fun Path.div(other: String): Path =
+operator fun Path.div(@NonNls other: String): Path =
     resolve(other)
 
 operator fun Path.div(other: Path): Path =
-    resolve(other)
+    resolve(other.toString())
 
-operator fun String.div(other: Path): Path =
+operator fun @receiver:NonNls String.div(other: Path): Path =
     Paths.get(this).resolve(other)
 
-operator fun String.div(other: String): Path =
+operator fun @receiver:NonNls String.div(@NonNls other: String): Path =
     Paths.get(this).resolve(other)
 
-fun String.asPath(): Path = Paths.get(this)
+fun @receiver:NonNls String.asPath(): Path = Paths.get(this)
 
 fun <T : Any> safe(operation: () -> T): TaskResult<T> =
     try {
@@ -86,11 +88,16 @@ class ListBuilder<T> {
         irs += this
     }
 
+    fun isNotEmpty(): Boolean = irs.isNotEmpty()
+
     fun build() = irs.toList()
 }
 
 fun <T> buildList(builder: ListBuilder<T>.() -> Unit) =
     ListBuilder<T>().apply(builder).build()
+
+fun <T> buildPersistenceList(builder: ListBuilder<T>.() -> Unit) =
+    buildList(builder).toPersistentList()
 
 object RandomIdGenerator {
     private val chars = ('a'..'z') + ('A'..'Z') + ('0'..'9')

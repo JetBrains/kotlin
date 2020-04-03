@@ -1,0 +1,70 @@
+FILE: lambdaArgInScopeFunction.kt
+    public final class KotlinClass : R|kotlin/Comparable<KotlinClass>| {
+        public constructor(name: R|kotlin/String|): R|KotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val name: R|kotlin/String| = R|<local>/name|
+            private get(): R|kotlin/String|
+
+        public final override operator fun compareTo(that: R|KotlinClass|): R|kotlin/Int| {
+            ^compareTo this@R|/KotlinClass|.R|/KotlinClass.name|.R|kotlin/String.compareTo|(R|<local>/that|.R|/KotlinClass.name|)
+        }
+
+    }
+    public final fun case1(kotlinClass: R|KotlinClass?|): R|kotlin/Unit| {
+        lval value: R|KotlinClass?| = R|<local>/kotlinClass|?.R|kotlin/let|<R|KotlinClass|, R|KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|KotlinClass| <kind=EXACTLY_ONCE>  {
+            ^ R|<local>/it|
+        }
+        )
+        R|<local>/value|.R|tests/_checkType/checkType|<R|KotlinClass?|>(<L> = checkType@fun R|tests/_checkType/Inv<KotlinClass?>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|KotlinClass?|>()
+        }
+        )
+        lval lambda: R|() -> KotlinClass| = R|<local>/kotlinClass|?.R|kotlin/let|<R|KotlinClass|, R|() -> KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|() -> KotlinClass| <kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|KotlinClass| {
+                ^ R|<local>/it|
+            }
+
+        }
+        )
+        R|<local>/lambda|.R|tests/_checkType/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function0<KotlinClass>?>|.<anonymous>(): R|kotlin/Unit| {
+            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Unit) -> KotlinClass?|>()
+        }
+        )
+    }
+    public final fun case2(kotlinClass: R|KotlinClass|): R|kotlin/Unit| {
+        lval value: R|KotlinClass| = R|<local>/kotlinClass|.R|kotlin/let|<R|KotlinClass|, R|KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|KotlinClass| <kind=EXACTLY_ONCE>  {
+            ^ R|<local>/it|
+        }
+        )
+        R|<local>/value|.R|tests/_checkType/checkType|<R|KotlinClass|>(<L> = checkType@fun R|tests/_checkType/Inv<KotlinClass>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|tests/_checkType/_|<R|KotlinClass|>()
+        }
+        )
+        lval lambda: R|() -> KotlinClass| = R|<local>/kotlinClass|.R|kotlin/let|<R|KotlinClass|, R|() -> KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|() -> KotlinClass| <kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|KotlinClass| {
+                ^ R|<local>/it|
+            }
+
+        }
+        )
+        R|<local>/lambda|.R|tests/_checkType/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function0<KotlinClass>>|.<anonymous>(): R|kotlin/Unit| {
+            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Unit) -> KotlinClass?|>()
+        }
+        )
+    }
+FILE: CHECK_TYPE.kt
+    public final fun <T> checkSubtype(t: R|T|): R|T| {
+        ^checkSubtype R|<local>/t|
+    }
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|tests/_checkType/Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <E> R|tests/_checkType/Inv<E>|._(): R|kotlin/Unit| {
+    }
+    public final infix fun <T> R|T|.checkType(f: R|tests/_checkType/Inv<T>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
+import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature.Kind.BUG_FIX
 import org.jetbrains.kotlin.config.LanguageFeature.State.ENABLED
@@ -204,6 +205,9 @@ abstract class CLITool<A : CommonToolArguments> {
             if (System.getProperty(PlainTextMessageRenderer.KOTLIN_COLORS_ENABLED_PROPERTY) == null) {
                 System.setProperty(PlainTextMessageRenderer.KOTLIN_COLORS_ENABLED_PROPERTY, "true")
             }
+
+            setupIdeaStandaloneExecution()
+
             val exitCode = doMainNoExit(compiler, args)
             if (exitCode != ExitCode.OK) {
                 exitProcess(exitCode.code)

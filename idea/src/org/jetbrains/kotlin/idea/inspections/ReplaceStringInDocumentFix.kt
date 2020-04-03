@@ -22,6 +22,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPointerManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 class ReplaceStringInDocumentFix(element: PsiElement, private val oldString: String, private val newString: String) : LocalQuickFix {
     private val elementRef = SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(element)
@@ -44,5 +45,5 @@ class ReplaceStringInDocumentFix(element: PsiElement, private val oldString: Str
         document.replaceString(start, end, newString)
     }
 
-    override fun getFamilyName() = "Replace '$oldString' with '$newString'"
+    override fun getFamilyName() = KotlinBundle.message("replace.0.with.1", oldString, newString)
 }

@@ -1,0 +1,9 @@
+FILE: B.kt
+    public abstract interface B : R|A| {
+        public abstract override fun <R, D> accept(visitor: R|KtVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+FILE: main.kt
+    public final fun test(visitor: R|KtVisitor<kotlin/String, kotlin/Unit>|, element: R|B|): R|kotlin/Unit| {
+        R|<local>/element|.R|/B.accept|<R|kotlin/String|, R|kotlin/Unit|>(R|<local>/visitor|, Q|kotlin/Unit|)
+    }

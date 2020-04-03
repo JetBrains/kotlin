@@ -1,0 +1,36 @@
+package
+
+public fun </*0*/ T> id(/*0*/ t1: T, /*1*/ t2: T): T
+public fun main(): kotlin.Unit
+public fun test(/*0*/ foo: Foo<*>, /*1*/ g: Bar<*>): kotlin.Unit
+
+public interface Bar</*0*/ T> {
+    public abstract val t: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class BarR : Bar<BarR> {
+    public constructor BarR()
+    public open override /*1*/ val t: BarR
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ F : Bar<F>> {
+    public constructor Foo</*0*/ F : Bar<F>>(/*0*/ f: F)
+    public final val f: F
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyBar</*0*/ T> : Bar<T> {
+    public constructor MyBar</*0*/ T>(/*0*/ t: T)
+    public open override /*1*/ val t: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

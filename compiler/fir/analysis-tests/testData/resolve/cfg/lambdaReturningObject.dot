@@ -1,0 +1,83 @@
+digraph lambdaReturningObject_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter class Out" style="filled" fillcolor=red];
+        1 [label="Exit class Out" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function bar" style="filled" fillcolor=red];
+        3 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+    2 -> {3};
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter class IrTypeArgument" style="filled" fillcolor=red];
+        5 [label="Exit class IrTypeArgument" style="filled" fillcolor=red];
+    }
+    4 -> {5} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        6 [label="Enter function <init>" style="filled" fillcolor=red];
+        8 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        7 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    6 -> {8};
+    8 -> {7};
+
+    subgraph cluster_4 {
+        color=red
+        9 [label="Enter class IrStarProjectionImpl" style="filled" fillcolor=red];
+        10 [label="Exit class IrStarProjectionImpl" style="filled" fillcolor=red];
+    }
+    9 -> {10} [color=green];
+
+    subgraph cluster_5 {
+        color=red
+        11 [label="Enter function MyOut" style="filled" fillcolor=red];
+        13 [label="Function call: R|kotlin/TODO|()"];
+        14 [label="Stub" style="filled" fillcolor=gray];
+        15 [label="Jump: ^MyOut R|kotlin/TODO|()" style="filled" fillcolor=gray];
+        16 [label="Stub" style="filled" fillcolor=gray];
+        12 [label="Exit function MyOut" style="filled" fillcolor=red];
+    }
+    11 -> {13};
+    13 -> {12};
+    13 -> {14} [style=dotted];
+    14 -> {15} [style=dotted];
+    15 -> {12 16} [style=dotted];
+    16 -> {12} [style=dotted];
+
+    subgraph cluster_6 {
+        color=red
+        17 [label="Enter function foo" style="filled" fillcolor=red];
+        19 [label="Postponed enter to lambda"];
+        subgraph cluster_7 {
+            color=blue
+            23 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            25 [label="Access qualifier /IrStarProjectionImpl"];
+            24 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+        }
+        20 [label="Postponed exit from lambda"];
+        21 [label="Function call: R|/MyOut|<R|IrStarProjectionImpl|>(...)"];
+        22 [label="Function call: R|/bar|(...)"];
+        18 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    17 -> {19};
+    19 -> {20 20} [color=green];
+    19 -> {23} [color=red];
+    20 -> {21};
+    21 -> {22};
+    22 -> {18};
+    23 -> {25};
+    25 -> {24};
+
+}

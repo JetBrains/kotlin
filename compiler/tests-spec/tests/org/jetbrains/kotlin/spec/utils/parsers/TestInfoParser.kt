@@ -30,7 +30,7 @@ data class ParsedTestFile(
     val exception: TestsExceptionType?
 )
 
-fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: SpecTestLinkedType): ParsedTestFile {
+private fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: SpecTestLinkedType): ParsedTestFile {
     val patterns = linkedTestType.patterns.value
     val testInfoByFilenameMatcher = patterns.testPathPattern.matcher(testFilePath)
 
@@ -60,4 +60,12 @@ fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: Sp
         helpers = helpers,
         exception = testInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
     )
+}
+
+fun tryParseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: SpecTestLinkedType): ParsedTestFile {
+    try {
+        return parseTestInfo(testFilePath, testFiles, linkedTestType)
+    } catch (e: Exception) {
+        error("Wrong format of file:\nfile://$testFilePath \n${e.message}")
+    }
 }

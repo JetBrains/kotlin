@@ -116,7 +116,8 @@ FILE fqName:<root> fileName:/initBlock.kt
           message: CONST String type=kotlin.String value="1"
     CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test5.TestInner
-      CONSTRUCTOR visibility:public <> () returnType:<root>.Test5.TestInner [primary]
+      CONSTRUCTOR visibility:public <> ($this:<root>.Test5.TestInner) returnType:<root>.Test5.TestInner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Test5.TestInner
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'

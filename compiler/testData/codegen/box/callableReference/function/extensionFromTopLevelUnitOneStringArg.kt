@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun run(arg1: A, arg2: String, funRef:A.(String) -> Unit): Unit {
     return arg1.funRef(arg2)
 }

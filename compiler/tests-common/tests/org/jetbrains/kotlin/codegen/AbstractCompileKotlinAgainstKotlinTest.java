@@ -49,9 +49,9 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) {
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) {
         boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
-        doTwoFileTest(files, !isIgnored);
+        doTwoFileTest((List<TestFile>) files, !isIgnored);
     }
 
     @NotNull
@@ -83,10 +83,18 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         callBoxMethodAndCheckResult(createGeneratedClassLoader(), className);
     }
 
+    @Override
+    protected boolean parseDirectivesPerFiles() {
+        return true;
+    }
+
     @NotNull
     private URLClassLoader createGeneratedClassLoader() throws Exception {
         return new URLClassLoader(
-                new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL() },
+                new URL[]{
+                        bDir.toURI().toURL(), aDir.toURI().toURL(),
+                        ForTestCompileRuntime.coroutinesCompatForTests().toURI().toURL()
+                },
                 ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
         );
     }
@@ -95,7 +103,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     private ClassFileFactory compileA(@NotNull TestFile testFile, List<TestFile> files) {
         Disposable compileDisposable = createDisposable("compileA");
         CompilerConfiguration configuration = createConfiguration(
-                ConfigurationKind.ALL, getJdkKind(files), Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+                ConfigurationKind.ALL, getTestJdkKind(files), Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
                 Collections.emptyList(), Collections.singletonList(testFile)
         );
 
@@ -117,7 +125,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) {
         String commonHeader = StringsKt.substringBefore(files.get(0).content, "FILE:", "");
         CompilerConfiguration configuration = createConfiguration(
-                ConfigurationKind.ALL, getJdkKind(files), Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
+                ConfigurationKind.ALL, getTestJdkKind(files), Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
                 Collections.emptyList(), Lists.newArrayList(testFile, new TestFile("header", commonHeader))
         );
 

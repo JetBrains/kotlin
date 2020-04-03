@@ -8,6 +8,6 @@ interface A : Collection<String> {
 }
 
 fun foo(x: List<String>, y: A) {
-    x.stream().filter { it.length > 0 }.<!INAPPLICABLE_CANDIDATE!>collect<!>(Collectors.toList())
+    x.stream().filter { it.length > 0 }.collect(Collectors.toList())
     y.stream().filter { it.length > 0 }
 }

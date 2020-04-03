@@ -12,11 +12,11 @@ fun foo() {}
 fun test_fun(s: String, arr: Array<String>) {
     <!INAPPLICABLE_CANDIDATE!>withVararg<!>(arr) // Error
     withVararg(*arr) // OK
-    <!INAPPLICABLE_CANDIDATE!>withVararg<!>(s = arr) // Error
+    withVararg(s = arr) // Error
     withVararg(s = *arr) // OK
 
     withVararg(s) // OK
-    withVararg(s = s) // Error
+    <!INAPPLICABLE_CANDIDATE!>withVararg<!>(s = s) // Error
 }
 
 fun test_ann(s: String, arr: Array<String>) {

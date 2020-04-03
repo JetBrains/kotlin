@@ -1,3 +1,17 @@
+// FIR_IDENTICAL
+/*
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-152, test type: pos):
+ *  - expressions, when-expression -> paragraph 2 -> sentence 1
+ *  - expressions, when-expression -> paragraph 5 -> sentence 1
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
+ *  - expressions, conditional-expression -> paragraph 4 -> sentence 1
+ *  - type-inference, local-type-inference -> paragraph 8 -> sentence 1
+ *  - type-inference, local-type-inference -> paragraph 2 -> sentence 1
+ *  - type-system, subtyping, subtyping-rules -> paragraph 2 -> sentence 3
+ *  - type-system, subtyping, subtyping-for-nullable-types -> paragraph 4 -> sentence 1
+ *  - type-system, subtyping, subtyping-for-nullable-types -> paragraph 4 -> sentence 2
+ */
+
 interface Maybe<T>
 class Some<T>(val value: T) : Maybe<T>
 class None<T> : Maybe<T>

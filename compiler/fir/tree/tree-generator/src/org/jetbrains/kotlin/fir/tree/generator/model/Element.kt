@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.fir.tree.generator.typeWithArguments
+import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
+import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 
 interface KindOwner : Importable {
     var kind: Implementation.Kind?
@@ -78,9 +78,9 @@ class Element(val name: String, kind: Kind) : AbstractElement {
             val overrides = !result.add(field)
             if (overrides) {
                 val existingField = result.first { it == field }
-                if (field.name != "symbol" && field.type == existingField.type) println("Duplicate [element: $this, field: $field]")
                 existingField.fromParent = true
                 existingField.needsSeparateTransform = existingField.needsSeparateTransform || field.needsSeparateTransform
+                existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || field.needTransformInOtherChildren
             }
         }
         result.toList().asReversed()

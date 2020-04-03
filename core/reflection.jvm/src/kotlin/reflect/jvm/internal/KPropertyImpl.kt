@@ -24,13 +24,13 @@ import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
 
-internal abstract class KPropertyImpl<out R> private constructor(
+internal abstract class KPropertyImpl<out V> private constructor(
     override val container: KDeclarationContainerImpl,
     override val name: String,
     val signature: String,
     descriptorInitialValue: PropertyDescriptor?,
     private val rawBoundReceiver: Any?
-) : KCallableImpl<R>(), KProperty<R> {
+) : KCallableImpl<V>(), KProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
         container, name, signature, null, boundReceiver
     )
@@ -96,7 +96,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
             throw IllegalPropertyDelegateAccessException(e)
         }
 
-    abstract override val getter: Getter<R>
+    abstract override val getter: Getter<V>
 
     private val _descriptor = ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findPropertyDescriptor(name, signature)
@@ -144,7 +144,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
         override val isSuspend: Boolean get() = descriptor.isSuspend
     }
 
-    abstract class Getter<out R> : Accessor<R, R>(), KProperty.Getter<R> {
+    abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
         override val name: String get() = "<get-${property.name}>"
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
@@ -157,7 +157,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
         }
     }
 
-    abstract class Setter<R> : Accessor<R, Unit>(), KMutableProperty.Setter<R> {
+    abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
         override val name: String get() = "<set-${property.name}>"
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {

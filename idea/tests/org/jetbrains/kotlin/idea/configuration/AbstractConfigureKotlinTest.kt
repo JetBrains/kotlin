@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -112,7 +113,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     override fun doCreateProject(projectFile: Path): Project {
-        return myProjectManager.loadProject(projectFile.toFile().path)!!
+        return loadProjectCompat(projectFile)
     }
 
     private val projectName: String
@@ -132,6 +133,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private fun assertNoFilesInDefaultPaths() {
         UsefulTestCase.assertDoesntExist(File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(project)))
         UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
+    }
+
+    override fun shouldRunTest(): Boolean {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
     }
 
     companion object {

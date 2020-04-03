@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun println(obj: Any?) = obj
 
 class Demo0 {

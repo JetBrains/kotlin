@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.withInitialIr
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -23,6 +24,7 @@ class IrLazyTypeParameter(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
+    override val descriptor: TypeParameterDescriptor,
     override val name: Name,
     override val index: Int,
     override val isReified: Boolean,
@@ -33,33 +35,16 @@ class IrLazyTypeParameter(
     IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrTypeParameter {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
-        stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
-    ) :
-            this(
-                startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name,
-                symbol.descriptor.index,
-                symbol.descriptor.isReified,
-                symbol.descriptor.variance,
-                stubGenerator, TypeTranslator
-            )
-
-    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
-
     init {
         symbol.bind(this)
     }
 
     override val superTypes: MutableList<IrType> by lazy {
-        typeTranslator.buildWithScope(this.parent as IrTypeParametersContainer) {
-            val descriptor = symbol.descriptor
-            descriptor.upperBounds.mapTo(arrayListOf()) { it.toIrType() }
+        withInitialIr {
+            typeTranslator.buildWithScope(this.parent as IrTypeParametersContainer) {
+                val descriptor = symbol.descriptor
+                descriptor.upperBounds.mapTo(arrayListOf()) { it.toIrType() }
+            }
         }
     }
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 // FILE: impl.kt
 class A(val result: String = "OK")

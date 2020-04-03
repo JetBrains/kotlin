@@ -2,15 +2,15 @@
 
 fun test() {
     (fun Foo.() {
-        <!UNRESOLVED_REFERENCE!>bar<!>()
+        bar()
         (fun Barr.() {
-            this.<!UNRESOLVED_REFERENCE!>bar<!>()
-            <!UNRESOLVED_REFERENCE!>bar<!>()
+            this.bar()
+            bar()
         })
     })
     (fun Barr.() {
-        this.<!UNRESOLVED_REFERENCE!>bar<!>()
-        <!UNRESOLVED_REFERENCE!>bar<!>()
+        this.bar()
+        bar()
     })
 }
 

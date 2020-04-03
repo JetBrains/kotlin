@@ -83,6 +83,9 @@ public class SpecialFiles {
 
         //special symbols in names
         excludedFiles.add("nameWithWhitespace.kt");
+
+        //some classes are moved from stdlib to compatibility package
+        excludedFiles.add("suspendFunction_1_2.kt");
     }
 
     private SpecialFiles() {

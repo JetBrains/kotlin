@@ -281,7 +281,7 @@ class ControlFlowInformationProvider private constructor(
 
     private fun reportUnreachableCode(unreachableCode: UnreachableCode) {
         for (element in unreachableCode.elements) {
-            trace.report(Errors.UNREACHABLE_CODE.on(element, unreachableCode.getUnreachableTextRanges(element)))
+            trace.report(Errors.UNREACHABLE_CODE.on(element, unreachableCode.reachableElements, unreachableCode.unreachableElements))
         }
     }
 
@@ -745,6 +745,11 @@ class ControlFlowInformationProvider private constructor(
                             }
                             return
                         }
+                        else -> {
+                            if (owner.containingClassOrObject != null) {
+                                return
+                            }
+                        }
                     }
                 }
                 if (functionDescriptor.isOperator && functionName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS) {
@@ -804,9 +809,14 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun markAnnotationArguments() {
-        when (subroutine) {
-            is KtAnnotationEntry -> markAnnotationArguments(subroutine)
-            is KtAnnotated -> subroutine.annotationEntries.forEach { markAnnotationArguments(it) }
+        if (subroutine is KtAnnotationEntry) {
+            markAnnotationArguments(subroutine)
+        } else {
+            subroutine.children.forEach { child ->
+                child.forEachDescendantOfType<KtAnnotationEntry>(
+                    canGoInside = { it !is KtDeclaration || it is KtParameter }
+                ) { markAnnotationArguments(it) }
+            }
         }
     }
 

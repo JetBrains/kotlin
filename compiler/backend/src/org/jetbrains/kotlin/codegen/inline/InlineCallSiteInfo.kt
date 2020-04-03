@@ -10,5 +10,6 @@ class InlineCallSiteInfo(
     val functionName: String?,
     val functionDesc: String?,
     val isInlineOrInsideInline: Boolean,
-    val isSuspend: Boolean
+    val isSuspend: Boolean,
+    val lineNumber: Int
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import javax.swing.JComponent
 
 class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
@@ -66,7 +67,10 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
         )
     }
 
-    object JSRootFilter : FileTypeBasedRootFilter(OrderRootType.CLASSES, false, PlainTextFileType.INSTANCE, "JS files") {
+    object JSRootFilter : FileTypeBasedRootFilter(
+        OrderRootType.CLASSES, false, PlainTextFileType.INSTANCE,
+        KotlinJvmBundle.message("presentable.type.js.files")
+    ) {
         override fun isFileAccepted(virtualFile: VirtualFile) = isAcceptedForJsLibrary(virtualFile.extension)
 
     }

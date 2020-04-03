@@ -8,7 +8,7 @@ package kotlin.test
 /**
  * Serves as a bridge to a testing framework.
  *
- * The tests structure is defined using internal functions suite and test, which delegate to correspoding functions of a [FrameworkAdapter].
+ * The tests structure is defined using internal functions suite and test, which delegate to corresponding functions of a [FrameworkAdapter].
  * Sample test layout:
  *
  * suite('a suite', false, function() {

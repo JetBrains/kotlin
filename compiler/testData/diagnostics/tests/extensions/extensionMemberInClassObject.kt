@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 interface JPAEntityClass<D> {
     fun <T> T.findByName(s: String): D {null!!}

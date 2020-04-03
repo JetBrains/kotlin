@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -24,7 +25,8 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 
 class InsertExplicitTypeArgumentsIntention :
-    SelfTargetingRangeIntention<KtCallExpression>(KtCallExpression::class.java, "Add explicit type arguments"), LowPriorityAction {
+    SelfTargetingRangeIntention<KtCallExpression>(KtCallExpression::class.java, KotlinBundle.message("add.explicit.type.arguments")),
+    LowPriorityAction {
     override fun applicabilityRange(element: KtCallExpression): TextRange? {
         return if (isApplicableTo(element, element.analyze())) element.calleeExpression?.textRange else null
     }

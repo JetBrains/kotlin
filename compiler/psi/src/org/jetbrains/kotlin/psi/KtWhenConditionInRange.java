@@ -29,7 +29,7 @@ public class KtWhenConditionInRange extends KtWhenCondition {
     }
 
     public boolean isNegated() {
-        return getNode().findChildByType(KtTokens.NOT_IN) != null;
+        return getOperationReference().getNode().findChildByType(KtTokens.NOT_IN) != null;
     }
 
     @Nullable @IfNotParsed

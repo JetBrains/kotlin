@@ -29,6 +29,7 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.gutter.ConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
@@ -67,7 +68,7 @@ class ReplOutputProcessor(
         printOutput(message, ReplColors.WARNING_INFO_CONTENT_TYPE, ReplIcons.BUILD_WARNING_INDICATOR)
 
         if (isAddHyperlink) {
-            consoleView.printHyperlink("Build module '${runner.module.name}' and restart") {
+            consoleView.printHyperlink(KotlinIdeaReplBundle.message("build.module.0.and.restart1", runner.module.name)) {
                 runner.compilerHelper.compileModule()
             }
         }
@@ -78,12 +79,12 @@ class ReplOutputProcessor(
     fun printBuildInfoWarningIfNeeded() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
         if (runner.previousCompilationFailed) return printWarningMessage(
-            "There were compilation errors in module ${runner.module.name}",
+            KotlinIdeaReplBundle.message("there.were.compilation.errors.in.module.0", runner.module.name),
             false
         )
         if (runner.compilerHelper.moduleIsUpToDate()) return
 
-        val compilerWarningMessage = "You’re running the REPL with outdated classes: "
+        val compilerWarningMessage = KotlinIdeaReplBundle.message("you.re.running.the.repl.with.outdated.classes")
         printWarningMessage(compilerWarningMessage, true)
     }
 
@@ -144,7 +145,7 @@ class ReplOutputProcessor(
     }
 
     fun printInternalErrorMessage(internalErrorText: String) = WriteCommandAction.runWriteCommandAction(project) {
-        val promptText = "Internal error occurred. Please, send report to developers.\n"
+        val promptText = KotlinIdeaReplBundle.message("internal.error.occurred.please.send.report.to.developers")
         printOutput(promptText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
         logError(this::class.java, internalErrorText)
     }

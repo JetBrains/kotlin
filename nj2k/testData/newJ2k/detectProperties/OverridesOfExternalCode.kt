@@ -8,25 +8,21 @@ internal open class A : KotlinClassWithProperties() {
         set(s) {
             super.someVar1 = s
         }
-
     override var someVar2: String
         get() = super.someVar2
         set(someVar2) {
             super.someVar2 = someVar2
         }
-
     override var someVar3: String
         get() = super.someVar3
         set(s) {
             super.someVar3 = s
         }
-
     override var someVar4: String
         get() = super.someVar4
         set(someVar4) {
             super.someVar4 = someVar4
         }
-
     override val someVal: String
         get() = super.someVal
 

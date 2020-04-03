@@ -37,12 +37,14 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
     ENUM_ENTRY name:ENTRY1
       annotations:
         TestAnn(x = 'ENTRY1')
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
     ENUM_ENTRY name:ENTRY2
       annotations:
         TestAnn(x = 'ENTRY2')
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY2'
-      class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public superTypes:[<root>.TestEnum]
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY2'
+      class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:private superTypes:[<root>.TestEnum]
         annotations:
           TestAnn(x = 'ENTRY2')
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum.ENTRY2
@@ -50,7 +52,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
           BLOCK_BODY
             TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public superTypes:[<root>.TestEnum]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:private superTypes:[<root>.TestEnum]'
         PROPERTY name:x visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
             EXPRESSION_BODY

@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -9,7 +11,9 @@ import kotlin.reflect.KMutableProperty0
 
 class TargetsModel(
     private val tree: ModulesEditorTree,
-    private val value: KMutableProperty0<List<Module>?>
+    private val value: KMutableProperty0<List<Module>?>,
+    private val context: Context,
+    private val uiEditorUsagesStats: UiEditorUsageStats?
 ) {
     private val root get() = tree.model.root as DefaultMutableTreeNode
 
@@ -20,14 +24,14 @@ class TargetsModel(
             DefaultMutableTreeNode(moduleToAdd).apply {
                 val userObject = parentToAdd.userObject
                 when {
-                    userObject is Module && userObject.kind == ModuleKind.singleplatform -> {
-                        val indexOfLastModule = parent.children()
+                    userObject is Module && userObject.kind == ModuleKind.singleplatformJvm -> {
+                        val indexOfLastModule = parentToAdd.children()
                             .toList()
                             .indexOfLast {
                                 it.safeAs<DefaultMutableTreeNode>()?.userObject is Module
                             }
-                        if (indexOfLastModule == -1) parent.insert(this, 0)
-                        else parent.insert(this, indexOfLastModule)
+                        if (indexOfLastModule == -1) parentToAdd.insert(this, 0)
+                        else parentToAdd.insert(this, indexOfLastModule)
                     }
                     else -> parentToAdd.add(this)
                 }
@@ -36,11 +40,13 @@ class TargetsModel(
                 moduleToAdd.subModules.forEach { subModule ->
                     add(subModule, this)
                 }
-                moduleToAdd.sourcesets.forEach { sourceset ->
-                    val sourcesetNode = DefaultMutableTreeNode(sourceset)
-                    add(sourcesetNode)
-                    pathsToExpand += TreePath(sourcesetNode.path)
-                }
+                // sourcesets for now does not provide functionality except storing dependencies
+                // so, there is no reason for now to show them for user
+                /*  moduleToAdd.sourcesets.forEach { sourceset ->
+                      val sourcesetNode = DefaultMutableTreeNode(sourceset)
+                      add(sourcesetNode)
+                      pathsToExpand += TreePath(sourcesetNode.path)
+                  }*/
             }
         }
 
@@ -57,7 +63,11 @@ class TargetsModel(
     }
 
     fun add(module: Module) {
+        uiEditorUsagesStats?.modulesCreated?.inc()
         addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
+        context.writeSettings {
+            module.apply { initDefaultValuesForSettings() }
+        }
     }
 
     fun update() {
@@ -70,6 +80,7 @@ class TargetsModel(
 
     fun removeSelected() {
         val selectedNode = tree.selectedNode?.takeIf { it.userObject is Module } ?: return
+        uiEditorUsagesStats?.modulesRemoved?.inc()
         when (val parent = selectedNode.parent.safeAs<DefaultMutableTreeNode>()?.userObject) {
             ModulesEditorTree.PROJECT_USER_OBJECT -> {
                 val index = selectedNode.parent.getIndex(selectedNode)

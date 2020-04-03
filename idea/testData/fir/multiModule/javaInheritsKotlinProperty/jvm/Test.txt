@@ -5,7 +5,7 @@ FILE: Test.kt
         }
 
         public final fun test(): R|kotlin/Int| {
-            ^test this@R|/Inheritor|.R|/Inheritor.x|
+            ^test this@R|/Tester|.R|/Inheritor.x|
         }
 
     }

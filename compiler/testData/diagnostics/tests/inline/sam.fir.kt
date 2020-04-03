@@ -19,8 +19,8 @@ inline fun inlineFunWithInvoke(s: (p: Int) -> Unit, ext: Int.(p: Int) -> Unit) {
         s.invoke(11)
         s invoke 11
 
-        11.<!UNRESOLVED_REFERENCE!>ext<!>(11)
-        11 <!UNRESOLVED_REFERENCE!>ext<!> 11
+        11.ext(11)
+        11 ext 11
 
         s
         ext
@@ -34,8 +34,8 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit, ext: Int.(
         s.invoke(11)
         s invoke 11
 
-        11.<!UNRESOLVED_REFERENCE!>ext<!>(11)
-        11 <!UNRESOLVED_REFERENCE!>ext<!> 11
+        11.ext(11)
+        11 ext 11
 
         s
         ext

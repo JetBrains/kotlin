@@ -20,13 +20,14 @@ import java.io.StringWriter
 data class KotlinWebpackConfig(
     val mode: Mode = Mode.DEVELOPMENT,
     val entry: File? = null,
+    val output: KotlinWebpackOutput? = null,
     val outputPath: File? = null,
     val outputFileName: String? = entry?.name,
     val configDirectory: File? = null,
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
     val devServer: DevServer? = null,
-    val devtool: Devtool? = Devtool.EVAL_SOURCE_MAP,
+    val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
     val export: Boolean = true,
@@ -77,11 +78,6 @@ data class KotlinWebpackConfig(
         val proxy: Map<String, Any>? = null,
         val contentBase: List<String>
     ) : Serializable
-
-    enum class Devtool(val code: String) {
-        EVAL_SOURCE_MAP("eval-source-map"),
-        SOURCE_MAP("source-map")
-    }
 
     fun save(configFile: File) {
         configFile.writer().use {
@@ -145,7 +141,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendFromConfigDir() {
-        if (configDirectory == null) return
+        if (configDirectory == null || !configDirectory.isDirectory) return
 
         appendln()
         appendConfigsFromDir(configDirectory)
@@ -198,14 +194,19 @@ data class KotlinWebpackConfig(
                         use: ["kotlin-source-map-loader"],
                         enforce: "pre"
                 });
-                config.devtool = ${devtool?.code?.let { "'$it'" } ?: false};
+                config.devtool = ${devtool?.let { "'$it'" } ?: false};
                 
             """.trimIndent()
         )
     }
 
     private fun Appendable.appendEntry() {
-        if (entry == null || outputPath == null) return
+        if (
+            entry == null
+            || outputPath == null
+            || output == null
+        )
+            return
 
         val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
 
@@ -223,7 +224,9 @@ data class KotlinWebpackConfig(
                         return chunkData.chunk.name === 'main'
                             ? ${outputFileName.jsQuoted()}
                             : ${multiEntryOutput.jsQuoted()};
-                    }
+                    },
+                    library: "${output.library}",
+                    libraryTarget: "${output.libraryTarget}",
                 };
                 
             """.trimIndent()

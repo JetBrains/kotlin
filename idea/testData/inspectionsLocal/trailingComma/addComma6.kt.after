@@ -1,0 +1,10 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+TrailingCommas
+// FIX: Add trailing comma
+
+val x = {
+    x: String,
+    y
+    : String,
+    ->
+                val a = 2
+}

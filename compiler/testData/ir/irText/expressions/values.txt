@@ -7,7 +7,8 @@ FILE fqName:<root> fileName:/values.kt
           <E>: <root>.Enum
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Enum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Enum>]'
     ENUM_ENTRY name:A
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Enum'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Enum'
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

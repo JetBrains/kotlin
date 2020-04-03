@@ -1,0 +1,186 @@
+FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
+  FUN name:use visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any
+    BLOCK_BODY
+  CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.P [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: kotlin.Int declared in <root>.P.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.P
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.P'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-x>' type=<root>.P origin=null
+    PROPERTY name:y visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'y: kotlin.Int declared in <root>.P.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.P
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.P'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-y>' type=<root>.P origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.P'
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int [operator] declared in <root>.P'
+          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (x:T1 of <root>.Q, y:T2 of <root>.Q) returnType:<root>.Q<T1 of <root>.Q, T2 of <root>.Q> [primary]
+      VALUE_PARAMETER name:x index:0 type:T1 of <root>.Q
+      VALUE_PARAMETER name:y index:1 type:T2 of <root>.Q
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Q visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: T1 of <root>.Q declared in <root>.Q.<init>' type=T1 of <root>.Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T1 of <root>.Q
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Q visibility:private [final]' type=T1 of <root>.Q origin=null
+              receiver: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.<get-x>' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    PROPERTY name:y visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:y type:T2 of <root>.Q visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'y: T2 of <root>.Q declared in <root>.Q.<init>' type=T2 of <root>.Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:T2 of <root>.Q visibility:private [final]' type=T2 of <root>.Q origin=null
+              receiver: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.<get-y>' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T1 of <root>.Q [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): T1 of <root>.Q [operator] declared in <root>.Q'
+          CALL 'public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q' type=T1 of <root>.Q origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component1' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q'
+          CALL 'public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q' type=T2 of <root>.Q origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component2' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.P [val]
+        CALL 'public open fun notNullP (): <root>.P declared in <root>.J' type=<root>.P origin=null
+      VAR name:x type:kotlin.Int [val]
+        CALL 'public final fun component1 (): kotlin.Int [operator] declared in <root>.P' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_0: <root>.P [val] declared in <root>.test1' type=<root>.P origin=null
+      VAR name:y type:kotlin.Int [val]
+        CALL 'public final fun component2 (): kotlin.Int [operator] declared in <root>.P' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_0: <root>.P [val] declared in <root>.test1' type=<root>.P origin=null
+      CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        x: GET_VAR 'val x: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+        y: GET_VAR 'val y: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Q<kotlin.String, kotlin.String?>? [val]
+        CALL 'public open fun notNullComponents (): <root>.Q<kotlin.String, kotlin.String?>? declared in <root>.J' type=<root>.Q<kotlin.String, kotlin.String?>? origin=null
+      VAR name:x type:kotlin.String [val]
+        CALL 'public final fun component1 (): T1 of <root>.Q [operator] declared in <root>.Q' type=kotlin.String origin=null
+          $this: GET_VAR 'val tmp_1: <root>.Q<kotlin.String, kotlin.String?>? [val] declared in <root>.test2' type=<root>.Q<kotlin.String, kotlin.String?>? origin=null
+      VAR name:y type:kotlin.String? [val]
+        CALL 'public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q' type=kotlin.String? origin=null
+          $this: GET_VAR 'val tmp_1: <root>.Q<kotlin.String, kotlin.String?>? [val] declared in <root>.test2' type=<root>.Q<kotlin.String, kotlin.String?>? origin=null
+      CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        x: GET_VAR 'val x: kotlin.String [val] declared in <root>.test2' type=kotlin.String origin=null
+        y: GET_VAR 'val y: kotlin.String? [val] declared in <root>.test2' type=kotlin.String? origin=null
+  FUN name:test2Desugared visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:tmp type:<root>.Q<kotlin.String, kotlin.String?>? [val]
+        CALL 'public open fun notNullComponents (): <root>.Q<kotlin.String, kotlin.String?>? declared in <root>.J' type=<root>.Q<kotlin.String, kotlin.String?>? origin=null
+      VAR name:x type:kotlin.String [val]
+        CALL 'public final fun component1 (): T1 of <root>.Q [operator] declared in <root>.Q' type=kotlin.String origin=null
+          $this: GET_VAR 'val tmp: <root>.Q<kotlin.String, kotlin.String?>? [val] declared in <root>.test2Desugared' type=<root>.Q<kotlin.String, kotlin.String?>? origin=null
+      VAR name:y type:kotlin.String? [val]
+        CALL 'public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q' type=kotlin.String? origin=null
+          $this: GET_VAR 'val tmp: <root>.Q<kotlin.String, kotlin.String?>? [val] declared in <root>.test2Desugared' type=<root>.Q<kotlin.String, kotlin.String?>? origin=null
+      CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        x: GET_VAR 'val x: kotlin.String [val] declared in <root>.test2Desugared' type=kotlin.String origin=null
+        y: GET_VAR 'val y: kotlin.String? [val] declared in <root>.test2Desugared' type=kotlin.String? origin=null
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Q<kotlin.String, kotlin.String?> [val]
+        CALL 'public open fun notNullQAndComponents (): <root>.Q<kotlin.String, kotlin.String?> declared in <root>.J' type=<root>.Q<kotlin.String, kotlin.String?> origin=null
+      VAR name:x type:kotlin.String [val]
+        CALL 'public final fun component1 (): T1 of <root>.Q [operator] declared in <root>.Q' type=kotlin.String origin=null
+          $this: GET_VAR 'val tmp_2: <root>.Q<kotlin.String, kotlin.String?> [val] declared in <root>.test3' type=<root>.Q<kotlin.String, kotlin.String?> origin=null
+      VAR name:y type:kotlin.String? [val]
+        CALL 'public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q' type=kotlin.String? origin=null
+          $this: GET_VAR 'val tmp_2: <root>.Q<kotlin.String, kotlin.String?> [val] declared in <root>.test3' type=<root>.Q<kotlin.String, kotlin.String?> origin=null
+      CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        x: GET_VAR 'val x: kotlin.String [val] declared in <root>.test3' type=kotlin.String origin=null
+        y: GET_VAR 'val y: kotlin.String? [val] declared in <root>.test3' type=kotlin.String? origin=null
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.IndexedValue<<root>.P?> [val]
+        CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=kotlin.collections.IndexedValue<<root>.P?> origin=null
+          <T>: kotlin.collections.IndexedValue<<root>.P?>
+          $receiver: CALL 'public final fun withIndex <T> (): kotlin.collections.Iterable<kotlin.collections.IndexedValue<T of kotlin.collections.withIndex>> declared in kotlin.collections' type=kotlin.collections.Iterable<kotlin.collections.IndexedValue<<root>.P?>> origin=null
+            <T>: <root>.P?
+            $receiver: CALL 'public open fun listOfNotNull (): kotlin.collections.List<<root>.P?>? declared in <root>.J' type=kotlin.collections.List<<root>.P?>? origin=null
+      VAR name:x type:kotlin.Int [val]
+        CALL 'public final fun component1 (): kotlin.Int [operator] declared in kotlin.collections.IndexedValue' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<<root>.P?> [val] declared in <root>.test4' type=kotlin.collections.IndexedValue<<root>.P?> origin=null
+      VAR name:y type:<root>.P? [val]
+        CALL 'public final fun component2 (): T of kotlin.collections.IndexedValue [operator] declared in kotlin.collections.IndexedValue' type=<root>.P? origin=null
+          $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<<root>.P?> [val] declared in <root>.test4' type=kotlin.collections.IndexedValue<<root>.P?> origin=null
+      CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        x: GET_VAR 'val x: kotlin.Int [val] declared in <root>.test4' type=kotlin.Int origin=null
+        y: GET_VAR 'val y: <root>.P? [val] declared in <root>.test4' type=<root>.P? origin=null

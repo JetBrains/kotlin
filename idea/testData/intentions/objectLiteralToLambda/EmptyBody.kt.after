@@ -3,5 +3,5 @@
 fun foo(runnable: Runnable) {}
 
 fun bar() {
-    foo(Runnable { })
+    foo { }
 }

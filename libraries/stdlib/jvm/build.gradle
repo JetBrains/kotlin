@@ -1,7 +1,6 @@
 description = 'Kotlin Standard Library for JVM'
 
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'pill-configurable'
 
 archivesBaseName = 'kotlin-stdlib'
 
@@ -12,38 +11,12 @@ configurations {
     distSources
 }
 
-pill {
-    importAsLibrary = true
-}
-
 sourceSets {
     main {
         java {
             srcDir "${rootDir}/core/builtins/src"
             srcDir 'runtime'
             srcDir 'src'
-        }
-    }
-    experimental {
-        kotlin {
-            srcDir "../experimental"
-        }
-    }
-    coroutinesExperimental {
-        kotlin {
-            srcDir '../coroutines-experimental/jvm/src'
-        }
-    }
-    coroutinesExperimentalTest {
-        kotlin {
-            srcDir '../coroutines-experimental/jvm/test'
-        }
-    }
-    coroutinesExperimentalMigrationTest {
-        kotlin {
-            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
-                srcDir '../coroutines-experimental/jvm/test'
-            }
         }
     }
     test {
@@ -65,12 +38,9 @@ sourceSets {
 
 configurations {
     commonSources
-    coroutinesExperimentalTestCompile.extendsFrom(testCompile)
-    coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
     longRunningTestCompile.extendsFrom(testCompile)
     builtins
     compileOnly.extendsFrom(builtins)
-    coroutinesExperimentalCompile.extendsFrom(builtins)
 }
 
 dependencies {
@@ -81,10 +51,7 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
-    testCompile sourceSets.coroutinesExperimental.output
-
-    coroutinesExperimentalCompile sourceSets.main.output
-    coroutinesExperimentalTestCompile sourceSets.test.output
+    testCompile project(':kotlin-coroutines-experimental-compat')
 
     builtins project(':core:builtins')
 }
@@ -95,15 +62,12 @@ jar {
     from {
         zipTree(configurations.builtins.singleFile)
     }
-    from sourceSets.experimental.output
-    from sourceSets.coroutinesExperimental.output
     // TODO: enable as soon as this doesn't cause D8/DX to crash
     // from sourceSets.java9.output
 }
 
 sourcesJar {
     from "${rootDir}/core/builtins/native"
-    from sourceSets.coroutinesExperimental.kotlin
 }
 
 task distSourcesJar(type: Jar) {
@@ -142,11 +106,10 @@ artifacts {
 
 javadocJar()
 
-task dexMethodCount(type: DexMethodCount) {
-    from jar
-    ownPackages = ['kotlin']
+DexMethodCountKt.dexMethodCount(project) { task ->
+    task.from(jar)
+    task.ownPackages = ['kotlin']
 }
-check.dependsOn(dexMethodCount)
 
 compileKotlin {
     kotlinOptions {
@@ -157,88 +120,29 @@ compileKotlin {
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
                 "-module-name", "kotlin-stdlib",
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.ExperimentalMultiplatform",
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xinline-classes"
         ]
     }
 }
 
 
-compileExperimentalKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = [
-                "-version",
-                "-Xallow-kotlin-package",
-                "-Xmultifile-parts-inherit",
-                "-module-name", "kotlin-stdlib-experimental"
-        ]
-    }
-}
-
-compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutinesExperimental.output])
-
-compileCoroutinesExperimentalKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = [
-                "-version",
-                "-Xallow-kotlin-package",
-                "-Xallow-result-return-type",
-                "-Xmultifile-parts-inherit",
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xcoroutines=enable",
-                "-XXLanguage:-ReleaseCoroutines",
-                "-module-name", "kotlin-stdlib-coroutines"
-        ]
-    }
-}
-
-compileCoroutinesExperimentalTestKotlin {
-    kotlinOptions {
-        languageVersion = "1.2"
-        apiVersion = "1.2"
-        freeCompilerArgs = [
-                "-Xcoroutines=enable"
-        ]
-    }
-}
-
-compileCoroutinesExperimentalMigrationTestKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = []
-    }
-}
-
-task coroutinesExperimentalTest(type: Test, dependsOn: coroutinesExperimentalTestClasses) {
-    group = "verification"
-    testClassesDirs = sourceSets.coroutinesExperimentalTest.output.classesDirs
-    classpath = sourceSets.coroutinesExperimentalTest.runtimeClasspath
-}
-task coroutinesExperimentalMigrationTest(type: Test, dependsOn: coroutinesExperimentalMigrationTestClasses) {
-    group = "verification"
-    testClassesDirs = sourceSets.coroutinesExperimentalMigrationTest.output.classesDirs
-    classpath = sourceSets.coroutinesExperimentalMigrationTest.runtimeClasspath
-}
-
-check.dependsOn(coroutinesExperimentalTest)
-check.dependsOn(coroutinesExperimentalMigrationTest)
+compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output])
 
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+                "-Xopt-in=kotlin.ExperimentalStdlibApi",
         ]
     }
+}
+
+compileLongRunningTestKotlin {
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
 }
 
 task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {

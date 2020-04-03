@@ -1,0 +1,8 @@
+package
+
+public fun </*0*/ T> id(/*0*/ arg: T): T
+public fun takeByte(/*0*/ ilt: kotlin.Byte): kotlin.Unit
+public fun takeInt(/*0*/ ilt: kotlin.Int): kotlin.Unit
+public fun takeLong(/*0*/ ilt: kotlin.Long): kotlin.Unit
+public fun takeShort(/*0*/ ilt: kotlin.Short): kotlin.Unit
+public fun test(): kotlin.Unit

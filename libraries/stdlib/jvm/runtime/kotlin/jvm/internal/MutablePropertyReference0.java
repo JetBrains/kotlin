@@ -10,6 +10,7 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty0;
 import kotlin.reflect.KProperty0;
 
+@SuppressWarnings({"rawtypes", "unused", "NullableProblems"})
 public abstract class MutablePropertyReference0 extends MutablePropertyReference implements KMutableProperty0 {
     public MutablePropertyReference0() {
     }
@@ -17,6 +18,11 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     @SinceKotlin(version = "1.1")
     public MutablePropertyReference0(Object receiver) {
         super(receiver);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public MutablePropertyReference0(Object receiver, Class owner, String name, String signature, int flags) {
+        super(receiver, owner, name, signature, flags);
     }
 
     @Override

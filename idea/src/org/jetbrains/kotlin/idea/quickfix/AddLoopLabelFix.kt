@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -31,9 +32,17 @@ class AddLoopLabelFix(
 
     private val existingLabelName = (loop.parent as? KtLabeledExpression)?.getLabelName()
 
-    private val description =
-        if (existingLabelName != null) "Add '@$existingLabelName' to ${jumpExpression.text}"
-        else "Add label to loop"
+    private val description = run {
+        when {
+            existingLabelName != null -> {
+                val labelName = "@$existingLabelName"
+                KotlinBundle.message("fix.add.loop.label.text", labelName, jumpExpression.text)
+            }
+            else -> {
+                KotlinBundle.message("fix.add.loop.label.text.generic")
+            }
+        }
+    }
 
     override fun getText() = description
     override fun getFamilyName() = text

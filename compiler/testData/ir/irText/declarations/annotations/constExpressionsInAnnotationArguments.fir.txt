@@ -1,13 +1,13 @@
 FILE fqName:<root> fileName:/constExpressionsInAnnotationArguments.kt
   PROPERTY name:ONE visibility:public modality:FINAL [const,val]
-    FIELD PROPERTY_BACKING_FIELD name:ONE type:kotlin.Int visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:ONE type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ONE> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:ONE visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-ONE> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ONE type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ONE type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
   CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.A [primary]

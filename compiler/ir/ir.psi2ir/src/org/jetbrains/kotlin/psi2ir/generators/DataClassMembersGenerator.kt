@@ -20,16 +20,20 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi2ir.containsNull
@@ -38,6 +42,7 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
@@ -53,6 +58,8 @@ class DataClassMembersGenerator(
     fun generateDataClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
         MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate()
     }
+
+    fun IrMemberAccessExpression.commitSubstituted(descriptor: CallableDescriptor) = context.run { commitSubstituted(descriptor) }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
         context.symbolTable.declareSimpleFunctionWithOverrides(
@@ -200,16 +207,26 @@ class DataClassMembersGenerator(
                 .let { context.symbolTable.referenceFunction(it) }
 
 
-        private fun getHashCodeFunction(type: KotlinType): FunctionDescriptor =
+        private fun MemberScope.findHashCodeFunctionOrNull() =
+            getContributedFunctions(Name.identifier("hashCode"), NoLookupLocation.FROM_BACKEND)
+                .find { it.valueParameters.isEmpty() }
+
+        private fun getHashCodeFunction(
+            type: KotlinType,
+            symbolResolve: (FunctionDescriptor) -> IrSimpleFunctionSymbol
+        ): IrSimpleFunctionSymbol =
             when (val typeConstructorDescriptor = type.constructor.declarationDescriptor) {
                 is ClassDescriptor ->
                     if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
-                        context.irBuiltIns.dataClassArrayMemberHashCode
+                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
                     else
-                        type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
+                        symbolResolve(
+                            type.memberScope.findHashCodeFunctionOrNull()
+                                ?: context.builtIns.any.unsubstitutedMemberScope.findHashCodeFunctionOrNull()!!
+                        )
 
                 is TypeParameterDescriptor ->
-                    getHashCodeFunction(typeConstructorDescriptor.representativeUpperBound)
+                    getHashCodeFunction(typeConstructorDescriptor.representativeUpperBound, symbolResolve)
 
                 else ->
                     throw AssertionError("Unexpected type: $type")
@@ -255,14 +272,19 @@ class DataClassMembersGenerator(
         }
 
         private fun MemberFunctionBuilder.getHashCodeOf(kotlinType: KotlinType, irValue: IrExpression): IrExpression {
-            val hashCodeFunctionDescriptor = getHashCodeFunction(kotlinType)
-            val hashCodeFunctionSymbol = declarationGenerator.context.symbolTable.referenceFunction(hashCodeFunctionDescriptor.original)
+            var substituted: FunctionDescriptor? = null
+            val hashCodeFunctionSymbol = getHashCodeFunction(kotlinType) {
+                substituted = it
+                declarationGenerator.context.symbolTable.referenceSimpleFunction(it.original)
+            }
+
             return irCall(hashCodeFunctionSymbol, context.irBuiltIns.intType).apply {
-                if (hashCodeFunctionDescriptor.dispatchReceiverParameter != null) {
+                if (hashCodeFunctionSymbol.descriptor.dispatchReceiverParameter != null) {
                     dispatchReceiver = irValue
                 } else {
                     putValueArgument(0, irValue)
                 }
+                commitSubstituted(substituted ?: hashCodeFunctionSymbol.descriptor)
             }
         }
 

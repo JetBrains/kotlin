@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,19 +7,11 @@ package org.jetbrains.kotlin.idea.project
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.idea.util.isDev
-import org.jetbrains.kotlin.idea.util.isEap
-import org.jetbrains.kotlin.idea.util.isSnapshot
 
 object NewInferenceForIDEAnalysisComponent {
     private const val inferenceOptionV1 = "kotlin.use.new.inference.for.ide.analysis"
     private const val inferenceOptionV2 = "kotlin.use.new.inference.for.ide.analysis.v2"
-    val defaultState: Boolean
-        get() {
-            val bundledVersion = KotlinCompilerVersion.VERSION
-            return isEap(bundledVersion) || isDev(bundledVersion) || isSnapshot(bundledVersion)
-        }
+    val defaultState: Boolean get() = true
 
     @JvmStatic
     fun setEnabled(project: Project, state: Boolean) {

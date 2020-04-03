@@ -24,6 +24,7 @@ import com.intellij.util.EventDispatcher;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.core.util.UiUtilsKt;
 
 import javax.swing.*;
@@ -45,8 +46,9 @@ public class CopyIntoPanel {
 
     public CopyIntoPanel(@Nullable Project project, @NotNull String defaultPath, @Nullable String labelText) {
         copyIntoField.addBrowseFolderListener(
-                "Copy Into...", "Choose folder where files will be copied", project,
-                FileChooserDescriptorFactory.createSingleFolderDescriptor());
+                KotlinJvmBundle.message("copy.into.title"),
+                KotlinJvmBundle.message("copy.into.description"),
+                project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
         UiUtilsKt.onTextChange(
                 copyIntoField.getTextField(),
                 (DocumentEvent e) -> {

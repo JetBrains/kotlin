@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,7 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     abstract override val source: FirSourceElement?
     abstract override val calleeReference: FirReference
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract val constructedTypeRef: FirTypeRef
     abstract val isThis: Boolean
     abstract val isSuper: Boolean
@@ -29,5 +29,5 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 }

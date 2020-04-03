@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityCo
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
+import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.util.CancellationChecker
 
 
 class CallableReferenceOverloadConflictResolver(
@@ -38,6 +40,7 @@ class CallableReferenceOverloadConflictResolver(
     module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
     platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
+    cancellationChecker: CancellationChecker,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
@@ -45,6 +48,7 @@ class CallableReferenceOverloadConflictResolver(
     module,
     specificityComparator,
     platformOverloadsSpecificityComparator,
+    cancellationChecker,
     { it.candidate },
     { statelessCallbacks.createConstraintSystemForOverloadResolution(constraintInjector, builtIns) },
     Companion::createFlatSignature,
@@ -54,7 +58,10 @@ class CallableReferenceOverloadConflictResolver(
 ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =
-            FlatSignature.createFromReflectionType(candidate, candidate.candidate, candidate.numDefaults, candidate.reflectionCandidateType)
+            FlatSignature.createFromReflectionType(
+                candidate, candidate.candidate, candidate.numDefaults, hasBoundExtensionReceiver = candidate.extensionReceiver != null,
+                candidate.reflectionCandidateType
+            )
     }
 }
 
@@ -74,11 +81,15 @@ class CallableReferenceResolver(
         val expectedType = resolvedAtom.expectedType?.let { (csBuilder.buildCurrentSubstitutor() as NewTypeSubstitutor).safeSubstitute(it) }
 
         val scopeTower = callComponents.statelessCallbacks.getScopeTowerForCallableReferenceArgument(argument)
-        val candidates = runRHSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
+        val candidates = runRHSResolution(scopeTower, argument, expectedType, csBuilder) { checkCallableReference ->
             csBuilder.runTransaction { checkCallableReference(this); false }
         }
 
         if (candidates.size > 1 && resolvedAtom is EagerCallableReferenceAtom) {
+            if (candidates.all { it.resultingApplicability.isInapplicable }) {
+                diagnosticsHolder.addDiagnostic(CallableReferenceCandidatesAmbiguity(argument, candidates))
+            }
+
             resolvedAtom.setAnalyzedResults(
                 candidate = null,
                 subResolvedAtoms = listOf(resolvedAtom.transformToPostponed())
@@ -125,9 +136,12 @@ class CallableReferenceResolver(
         scopeTower: ImplicitScopeTower,
         callableReference: CallableReferenceKotlinCallArgument,
         expectedType: UnwrappedType?, // this type can have not fixed type variable inside
+        csBuilder: ConstraintSystemBuilder,
         compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit // you can run anything throw this operation and all this operation will be rolled back
     ): Set<CallableReferenceCandidate> {
-        val factory = CallableReferencesCandidateFactory(callableReference, callComponents, scopeTower, compatibilityChecker, expectedType)
+        val factory = CallableReferencesCandidateFactory(
+            callableReference, callComponents, scopeTower, compatibilityChecker, expectedType, csBuilder
+        )
         val processor = createCallableReferenceProcessor(factory)
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true, name = callableReference.rhsName)
         return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(

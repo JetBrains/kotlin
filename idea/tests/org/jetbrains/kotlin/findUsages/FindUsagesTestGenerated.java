@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -351,6 +351,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/findClassUsages/javaDerivedInterfaceUsages2.0.kt");
             }
 
+            @TestMetadata("kotlinAliasedClassAllUsages.0.kt")
+            public void testKotlinAliasedClassAllUsages() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinAliasedClassAllUsages.0.kt");
+            }
+
             @TestMetadata("kotlinClassAllUsages.0.kt")
             public void testKotlinClassAllUsages() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassAllUsages.0.kt");
@@ -429,6 +434,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             @TestMetadata("kotlinClassFunctionUsages2.0.kt")
             public void testKotlinClassFunctionUsages2() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassFunctionUsages2.0.kt");
+            }
+
+            @TestMetadata("kotlinClassImportAliasAllUsages.0.kt")
+            public void testKotlinClassImportAliasAllUsages() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassImportAliasAllUsages.0.kt");
             }
 
             @TestMetadata("kotlinClassNonConstructorUsages.0.kt")
@@ -614,6 +624,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/jvmStaticJvmOverloadsFun.0.kt");
             }
 
+            @TestMetadata("kotlinAliasedMethodUsages.0.kt")
+            public void testKotlinAliasedMethodUsages() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinAliasedMethodUsages.0.kt");
+            }
+
             @TestMetadata("kotlinInternalMethodUsages.0.kt")
             public void testKotlinInternalMethodUsages() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinInternalMethodUsages.0.kt");
@@ -629,9 +644,19 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinLocalMethodUsages2.0.kt");
             }
 
+            @TestMetadata("kotlinMethodAliasedUsages.0.kt")
+            public void testKotlinMethodAliasedUsages() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinMethodAliasedUsages.0.kt");
+            }
+
             @TestMetadata("kotlinMethodUsages.0.kt")
             public void testKotlinMethodUsages() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinMethodUsages.0.kt");
+            }
+
+            @TestMetadata("kotlinMethodsAliasedUsages.0.kt")
+            public void testKotlinMethodsAliasedUsages() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinMethodsAliasedUsages.0.kt");
             }
 
             @TestMetadata("kotlinMultiRefInImport.0.kt")
@@ -717,6 +742,16 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             @TestMetadata("objectExpressionMemberInClass.0.kt")
             public void testObjectExpressionMemberInClass() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionMemberInClass.0.kt");
+            }
+
+            @TestMetadata("objectExpressionMemberInCompanion.0.kt")
+            public void testObjectExpressionMemberInCompanion() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionMemberInCompanion.0.kt");
+            }
+
+            @TestMetadata("objectExpressionMemberInTopLevel.0.kt")
+            public void testObjectExpressionMemberInTopLevel() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionMemberInTopLevel.0.kt");
             }
 
             @TestMetadata("synthesizedFunction.0.kt")
@@ -1526,6 +1561,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
 
             public void testAllFilesPresentInFindJavaClassUsages() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/java/findJavaClassUsages"), Pattern.compile("^(.+)\\.0\\.java$"), null, true);
+            }
+
+            @TestMetadata("JKAliasedClassAllUsages.0.java")
+            public void testJKAliasedClassAllUsages() throws Exception {
+                runTest("idea/testData/findUsages/java/findJavaClassUsages/JKAliasedClassAllUsages.0.java");
             }
 
             @TestMetadata("JKClassAllUsages.0.java")

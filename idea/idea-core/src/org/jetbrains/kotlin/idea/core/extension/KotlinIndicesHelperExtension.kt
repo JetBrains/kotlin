@@ -38,7 +38,11 @@ interface KotlinIndicesHelperExtension {
         appendExtensionCallables(consumer, moduleDescriptor, receiverTypes, nameFilter)
     }
 
-    @Deprecated("Use the appendExtensionCallables() with the 'file' parameter instead.")
+    @Deprecated(
+        "Override the appendExtensionCallables() with the 'lookupLocation' parameter instead. " +
+                "This method can then throw an exception. " +
+                "See 'DebuggerFieldKotlinIndicesHelperExtension' as an example."
+    )
     fun appendExtensionCallables(
         consumer: MutableList<in CallableDescriptor>,
         moduleDescriptor: ModuleDescriptor,

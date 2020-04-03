@@ -1,43 +1,58 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.core.buildPersistenceList
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
 
-interface TargetConfigurator : ModuleConfigurator {
+interface TargetConfigurator : ModuleConfiguratorWithModuleType {
     override val moduleKind get() = ModuleKind.target
 
     fun canCoexistsWith(other: List<TargetConfigurator>): Boolean = true
 
-    fun createTargetIrs(module: Module): List<BuildSystemIR>
-    fun createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
+    fun Reader.createTargetIrs(module: Module): List<BuildSystemIR>
+    fun createInnerTargetIrs(
+        reader: Reader,
+        module: Module
+    ): List<BuildSystemIR> = emptyList()
 }
+
+abstract class TargetConfiguratorWithTests : ModuleConfiguratorWithTests, TargetConfigurator
 
 interface SingleCoexistenceTargetConfigurator : TargetConfigurator {
     override fun canCoexistsWith(other: List<TargetConfigurator>): Boolean =
         other.none { it == this }
 }
 
-interface SimpleTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConfigurator {
+interface SimpleTargetConfigurator : TargetConfigurator {
     val moduleSubType: ModuleSubType
     override val moduleType get() = moduleSubType.moduleType
     override val id get() = "${moduleSubType.name}Target"
-    override val text get() = moduleSubType.name.capitalize()
 
     override val suggestedModuleName: String? get() = moduleSubType.name
 
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun Reader.createTargetIrs(
+        module: Module
+    ): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(moduleSubType),
-            createInnerTargetIrs(module)
+            createInnerTargetIrs(this@createTargetIrs, module).toPersistentList()
         )
     }
 }
@@ -49,19 +64,26 @@ private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     )
 
 
-interface JsTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConfigurator {
-    override val moduleType: ModuleType get() = ModuleType.js
-}
+interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator
 
-object JsBrowserTargetConfigurator : JsTargetConfigurator {
+object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
+    @NonNls
     override val id = "jsBrowser"
-    override val text = "Browser"
+
+    @NonNls
     override val suggestedModuleName = "browser"
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.browser")
+
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
+
+    override fun Reader.createTargetIrs(
+        module: Module
+    ): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
-            buildList {
+            buildPersistenceList {
                 +RawGradleIR {
                     sectionCall("browser") {}
                 }
@@ -71,14 +93,21 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator {
 }
 
 object JsNodeTargetConfigurator : JsTargetConfigurator {
+    @NonNls
     override val id = "jsNode"
-    override val text = "Node.js"
+
+    @NonNls
     override val suggestedModuleName = "nodeJs"
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.node")
+
+
+    override fun Reader.createTargetIrs(
+        module: Module
+    ): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
-            buildList {
+            buildPersistenceList {
                 +RawGradleIR {
                     sectionCall("nodejs") {}
                 }
@@ -87,20 +116,54 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     }
 }
 
-object CommonTargetConfigurator : SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
+object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.common
+    override val text: String = KotlinNewProjectWizardBundle.message("module.configurator.common")
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.COMMON
 }
 
-object JvmTargetConfigurator : TargetConfigurator,
-    SimpleTargetConfigurator,
-    JvmModuleConfigurator,
-    SingleCoexistenceTargetConfigurator {
+object JvmTargetConfigurator : JvmModuleConfigurator,
+    TargetConfigurator,
+    SimpleTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
-}
 
-object AndroidTargetConfigurator : TargetConfigurator,
-    SimpleTargetConfigurator,
-    AndroidModuleConfigurator,
-    SingleCoexistenceTargetConfigurator {
-    override val moduleSubType = ModuleSubType.android
+    override val text: String = KotlinNewProjectWizardBundle.message("module.configurator.jvm")
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
+
+    override fun createInnerTargetIrs(
+        reader: Reader,
+        module: Module
+    ): List<BuildSystemIR> = buildList {
+        reader {
+            withSettingsOf(module) {
+                val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
+                if (buildSystemType.isGradle) {
+                    +GradleSectionIR(
+                        "compilations.all",
+                        BodyIR(
+                            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersionValue))
+                        )
+                    )
+                }
+                if (Settings.javaSupport.reference.settingValue) {
+                    +GradleCallIr("withJava")
+                }
+            }
+        }
+    }
+
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
+        super.getConfiguratorSettings() +
+                Settings.javaSupport
+
+    object Settings : ModuleConfiguratorSettings() {
+        val javaSupport by booleanSetting(
+            KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.java.support"),
+            GenerationPhase.PROJECT_GENERATION
+        ) {
+            defaultValue = value(false)
+        }
+    }
 }

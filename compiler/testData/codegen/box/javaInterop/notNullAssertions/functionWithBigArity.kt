@@ -20,18 +20,18 @@ public class Test {
             args[i] = null;
             try {
                 f.invoke(args);
-            } catch (IllegalArgumentException e) {
+            } catch (NullPointerException e) {
                 // OK
                 continue;
             } catch (Throwable e) {
                 throw new AssertionError(
-                        "Incorrect exception (IllegalArgumentException expected): " + e.getClass().getName() + ", parameter index = " + i,
+                        "Incorrect exception (NullPointerException expected): " + e.getClass().getName() + ", parameter index = " + i,
                         e
                 );
             } finally {
                 args[i] = o;
             }
-            throw new AssertionError("IllegalArgumentException expected, but nothing was thrown, parameter index = " + i);
+            throw new AssertionError("NullPointerException expected, but nothing was thrown, parameter index = " + i);
         }
     }
 }

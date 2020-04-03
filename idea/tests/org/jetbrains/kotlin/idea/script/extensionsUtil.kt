@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.PlatformTestUtil
 
 fun <T> addExtensionPointInTest(
     pointName: ExtensionPointName<T>,
@@ -17,10 +15,5 @@ fun <T> addExtensionPointInTest(
     provider: T,
     testRootDisposable: Disposable
 ) {
-    PlatformTestUtil.registerExtension(
-        Extensions.getArea(project),
-        pointName,
-        provider,
-        testRootDisposable
-    )
+    pointName.getPoint(project).registerExtension(provider, testRootDisposable)
 }

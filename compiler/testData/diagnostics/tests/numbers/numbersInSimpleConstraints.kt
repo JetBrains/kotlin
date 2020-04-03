@@ -32,7 +32,7 @@ fun test() {
     <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>otherGeneric<!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
-    r checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }
+    r checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }
 
     use(a, b, c, d, e, f, g, r)
 }
@@ -44,7 +44,7 @@ interface Inv<T>
 fun <T> exactBound(t: T, l: Inv<T>): T = throw Exception("$t $l")
 
 fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(1, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>invS<!>)
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(1, <!NI;TYPE_MISMATCH!>invS<!>)
     exactBound(1, invI)
 
     val b = exactBound(1, invB)
@@ -57,7 +57,7 @@ fun <T> lowerBound(t: T, l : Cov<T>): T = throw Exception("$t $l")
 
 fun testLowerBound(cov: Cov<String>, covN: Cov<Number>) {
     val r = lowerBound(1, cov)
-    r checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }
+    r checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }
 
     val n = lowerBound(1, covN)
     n checkType { _<Number>() }

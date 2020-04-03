@@ -20,5 +20,5 @@ fun test() {
 
 // @KKt.class:
 // 0 IFNULL
-// 1 IFNONNULL
+// 1 checkNotNull \(Ljava/lang/Object;\)V
 // 0 NULL-1

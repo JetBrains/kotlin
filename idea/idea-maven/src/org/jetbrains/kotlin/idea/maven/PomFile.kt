@@ -267,10 +267,8 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
             return false
         }
 
-        // TODO: getPhase has been added as per https://youtrack.jetbrains.com/issue/IDEA-153582 and available only in latest IDEAs
         return plugin.executions.filter { it.executionId == executionId }.all { execution ->
-            execution::class.java.methods.filter { it.name == "getPhase" && it.parameterTypes.isEmpty() }
-                .all { it.invoke(execution) == DefaultPhases.None }
+            execution.phase == DefaultPhases.None
         }
     }
 

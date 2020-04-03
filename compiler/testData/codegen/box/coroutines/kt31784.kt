@@ -1,8 +1,7 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
-@file:UseExperimental(ExperimentalTypeInference::class)
+@file:OptIn(ExperimentalTypeInference::class)
 
 package test
 

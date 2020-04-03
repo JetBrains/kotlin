@@ -18,8 +18,8 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
     override fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
-        symbols: ByteArray,
         types: ByteArray,
+        signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
         bodies: ByteArray,
@@ -29,8 +29,7 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
     }
 
     init {
-        eventManager.
-            onCompilationFinished(this::flush)
+        eventManager.onCompilationFinished(this::flush)
     }
 
     override fun processHeader(headerMetadata: ByteArray) {

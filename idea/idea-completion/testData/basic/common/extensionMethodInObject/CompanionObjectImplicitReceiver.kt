@@ -11,6 +11,5 @@ fun T.usage() {
     foo<caret>
 }
 
-// INVOCATION_COUNT: 2
 // EXIST: { lookupString: "fooExtension", itemText: "fooExtension" }
 // EXIST: { lookupString: "fooProperty", itemText: "fooProperty" }

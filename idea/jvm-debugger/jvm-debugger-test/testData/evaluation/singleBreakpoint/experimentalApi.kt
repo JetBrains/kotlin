@@ -1,6 +1,6 @@
 package experimentalApi
 
-@Experimental(Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class UnstableApi
 
 @UnstableApi

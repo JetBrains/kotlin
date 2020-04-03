@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: MyAnnotation.java
 public @interface MyAnnotation {
 }

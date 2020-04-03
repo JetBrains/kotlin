@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: ELSE_MISPLACED_IN_WHEN: 'else' entry must be the last one in a when-expression (6,9) in /KotlinClass.kt

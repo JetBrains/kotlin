@@ -45,7 +45,7 @@ class SimpleTypeWithEnhancement(
     override fun replaceDelegate(delegate: SimpleType) = SimpleTypeWithEnhancement(delegate, enhancement)
 
     @TypeRefinement
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleTypeWithEnhancement =
             SimpleTypeWithEnhancement(
                 kotlinTypeRefiner.refineType(delegate) as SimpleType,
@@ -75,7 +75,7 @@ class FlexibleTypeWithEnhancement(
     override val delegate: SimpleType get() = origin.delegate
 
     @TypeRefinement
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
         FlexibleTypeWithEnhancement(
             kotlinTypeRefiner.refineType(origin) as FlexibleType,

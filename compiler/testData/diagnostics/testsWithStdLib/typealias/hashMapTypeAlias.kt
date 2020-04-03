@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.test.*
 import java.util.*
 

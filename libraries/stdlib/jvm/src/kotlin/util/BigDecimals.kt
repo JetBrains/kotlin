@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,13 +38,6 @@ public inline operator fun BigDecimal.times(other: BigDecimal): BigDecimal = thi
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BigDecimal.div(other: BigDecimal): BigDecimal = this.divide(other, RoundingMode.HALF_EVEN)
-
-/**
- * Enables the use of the `%` operator for [BigDecimal] instances.
- */
-@kotlin.internal.InlineOnly
-@Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-public inline operator fun BigDecimal.mod(other: BigDecimal): BigDecimal = this.remainder(other)
 
 /**
  * Enables the use of the `%` operator for [BigDecimal] instances.

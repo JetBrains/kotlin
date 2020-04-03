@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,8 @@ interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypedDeclaration(this, data)
 
     fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 
     fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 }

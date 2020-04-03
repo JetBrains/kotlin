@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 import kotlin.random.Random
 
 fun test(): Char {
@@ -13,4 +11,4 @@ fun test(): Char {
 }
 
 // 3 ISTORE 0
-// 1 LOCALVARIABLE c C L1 L7 0
+// 1 LOCALVARIABLE c C

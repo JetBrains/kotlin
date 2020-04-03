@@ -1,0 +1,119 @@
+FILE: test.kt
+    public final class AnotherClass : R|kotlin/Any| {
+        public constructor(bar: R|kotlin/CharSequence?|, foo: R|kotlin/Int|): R|AnotherClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val bar: R|kotlin/CharSequence?| = R|<local>/bar|
+            public get(): R|kotlin/CharSequence?|
+
+        public final val foo: R|kotlin/Int| = R|<local>/foo|
+            public get(): R|kotlin/Int|
+
+        public final fun baz(): R|kotlin/Any| {
+            ^baz Boolean(true)
+        }
+
+    }
+    public final fun test1(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence| = when (lval <elvis>: R|kotlin/CharSequence?| = R|<local>/x|?.R|/AnotherClass.bar|) {
+            ==($subj$, Null(null)) ->  {
+                ^test1 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/AnotherClass.bar|
+    }
+    public final fun test2(x: R|SomeClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence| = when (lval <elvis>: R|kotlin/CharSequence?| = R|<local>/x|?.R|/SomeClass.bar|) {
+            ==($subj$, Null(null)) ->  {
+                ^test2 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/SomeClass.bar|
+    }
+    public final fun test3(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence?| = R|<local>/x|?.R|/AnotherClass.bar|
+        when () {
+            !=(R|<local>/bar|, Null(null)) ->  {
+                R|<local>/x|.R|/AnotherClass.bar|.R|kotlin/CharSequence.length|
+            }
+        }
+
+    }
+    public final fun test4(x: R|SomeClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence?| = R|<local>/x|?.R|/SomeClass.bar|
+        when () {
+            !=(R|<local>/bar|, Null(null)) ->  {
+                R|<local>/x|.R|/SomeClass.bar|.<Inapplicable(WRONG_RECEIVER): [kotlin/CharSequence.length]>#
+            }
+        }
+
+    }
+    public final fun test5(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = (R|<local>/x|?.R|/AnotherClass.bar| as? R|kotlin/String|)) {
+            ==($subj$, Null(null)) ->  {
+                ^test5 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/AnotherClass.foo|
+    }
+    public final fun test6(x: R|SomeClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = (R|<local>/x|?.R|/SomeClass.bar| as? R|kotlin/String|)) {
+            ==($subj$, Null(null)) ->  {
+                ^test6 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/SomeClass.foo|
+    }
+    public final fun test7(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval baz: R|kotlin/Boolean| = when (lval <elvis>: R|kotlin/Boolean?| = (R|<local>/x|?.R|/AnotherClass.baz|() as? R|kotlin/Boolean|)) {
+            ==($subj$, Null(null)) ->  {
+                ^test7 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/AnotherClass.foo|
+    }
+    public final fun test8(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence| = when (lval <elvis>: R|kotlin/CharSequence?| = R|<local>/x|?.R|/AnotherClass.bar|) {
+            ==($subj$, Null(null)) ->  {
+                ^test8 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/AnotherClass.foo|
+    }
+    public final fun test9(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval baz: R|kotlin/Any| = when (lval <elvis>: R|kotlin/Any?| = R|<local>/x|?.R|/AnotherClass.baz|()) {
+            ==($subj$, Null(null)) ->  {
+                ^test9 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/x|.R|/AnotherClass.foo|
+    }

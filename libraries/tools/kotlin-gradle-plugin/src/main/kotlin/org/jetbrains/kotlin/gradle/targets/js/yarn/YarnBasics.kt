@@ -10,9 +10,14 @@ import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
+
+    private val nonTransitiveResolvedDependencies = mutableMapOf<NpmDependency, Set<File>>()
+    private val transitiveResolvedDependencies = mutableMapOf<NpmDependency, Set<File>>()
+
     override fun setup(project: Project) {
         YarnPlugin.apply(project).executeSetup()
     }
@@ -21,73 +26,119 @@ abstract class YarnBasics : NpmApi {
         project: Project,
         dir: File,
         description: String,
-        vararg args: String
+        args: List<String>
     ) {
         val nodeJs = NodeJsRootPlugin.apply(project)
-        val nodeJsEnv = nodeJs.environment
-        val yarnEnv = YarnPlugin.apply(project).environment
+        val yarnPlugin = YarnPlugin.apply(project)
 
         project.execWithProgress(description) { exec ->
-            exec.executable = nodeJsEnv.nodeExecutable
-            exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) +
+            exec.executable = nodeJs.requireConfigured().nodeExecutable
+            exec.args = listOf(yarnPlugin.requireConfigured().home.resolve("bin/yarn.js").absolutePath) +
                     args +
                     if (project.logger.isDebugEnabled) "--verbose" else ""
             exec.workingDir = dir
         }
+
+    }
+
+    override fun resolveDependency(
+        npmResolution: KotlinCompilationNpmResolution,
+        dependency: NpmDependency,
+        transitive: Boolean
+    ): Set<File> {
+        val files = (if (transitive) {
+            transitiveResolvedDependencies
+        } else {
+            nonTransitiveResolvedDependencies
+        })[dependency]
+
+        if (files != null) {
+            return files
+        }
+
+        val npmProject = npmResolution.npmProject
+
+        val all = mutableSetOf<File>()
+
+        npmProject.resolve(dependency.key)?.let {
+            if (it.isFile) all.add(it)
+            if (it.path.endsWith(".js")) {
+                val baseName = it.path.removeSuffix(".js")
+                val metaJs = File(baseName + ".meta.js")
+                if (metaJs.isFile) all.add(metaJs)
+                val kjsmDir = File(baseName)
+                if (kjsmDir.isDirectory) {
+                    kjsmDir.walkTopDown()
+                        .filter { it.extension == "kjsm" }
+                        .forEach { all.add(it) }
+                }
+            }
+        }
+
+        nonTransitiveResolvedDependencies[dependency] = all
+
+        if (transitive) {
+            dependency.dependencies.forEach {
+                resolveDependency(
+                    npmResolution,
+                    it,
+                    transitive
+                ).also { files ->
+                    all.addAll(files)
+                }
+            }
+            transitiveResolvedDependencies[dependency] = all
+        }
+
+        return all
     }
 
     protected fun yarnLockReadTransitiveDependencies(
         nodeWorkDir: File,
         srcDependenciesList: Collection<NpmDependency>
     ) {
-        val yarnLock = nodeWorkDir.resolve("yarn.lock")
-        if (yarnLock.isFile) {
-            val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.key }
-            val visited = mutableMapOf<NpmDependency, NpmDependency>()
+        val yarnLock = nodeWorkDir
+            .resolve("yarn.lock")
+            .takeIf { it.isFile }
+            ?: return
 
-            fun resolveRecursively(src: NpmDependency): NpmDependency {
-                val copy = visited[src]
-                if (copy != null) {
-                    src.resolvedVersion = copy.resolvedVersion
-                    src.integrity = copy.integrity
-                    src.dependencies.addAll(copy.dependencies)
-                    return src
-                }
-                visited[src] = src
+        val entryRegistry = YarnEntryRegistry(yarnLock)
+        val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
-                val key = YarnLock.key(src.key, src.version)
-                val deps = byKey[key]
-                    ?: if (src.version == "*") byKey.entries
-                        .firstOrNull { it.key.startsWith(YarnLock.key(src.key, "")) }
-                        ?.value
-                    else null
-
-                if (deps != null) {
-                    src.resolvedVersion = deps.version
-                    src.integrity = deps.integrity
-                    src.dependencies.addAll(deps.dependencies.map { dep ->
-                        val scopedName = dep.scopedName
-                        val child = NpmDependency(
-                            src.project,
-                            scopedName.toString(),
-                            dep.version ?: "*"
-                        )
-                        child.parent = src
-
-                        resolveRecursively(child)
-
-                        child
-                    })
-                } else {
-                    error("Cannot find $key in yarn.lock")
-                }
-
+        fun resolveRecursively(src: NpmDependency): NpmDependency {
+            val copy = visited[src]
+            if (copy != null) {
+                src.resolvedVersion = copy.resolvedVersion
+                src.integrity = copy.integrity
+                src.dependencies.addAll(copy.dependencies)
                 return src
             }
+            visited[src] = src
 
-            srcDependenciesList.forEach { src ->
-                resolveRecursively(src)
+            val deps = entryRegistry.find(src.key, src.version)
+
+            src.resolvedVersion = deps.version
+            src.integrity = deps.integrity
+
+            deps.dependencies.mapTo(src.dependencies) { dep ->
+                val scopedName = dep.scopedName
+                val child = NpmDependency(
+                    project = src.project,
+                    name = scopedName.toString(),
+                    version = dep.version ?: "*"
+                )
+                child.parent = src
+
+                resolveRecursively(child)
+
+                child
             }
+
+            return src
+        }
+
+        srcDependenciesList.forEach { src ->
+            resolveRecursively(src)
         }
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: CollectionStringImpl.java
 
 import java.util.Collection;

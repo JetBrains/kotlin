@@ -78,6 +78,13 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
                     JKClassType(JKUnresolvedClassSymbol(type.rawType().canonicalText, this), parameters)
                 is PsiTypeParameter ->
                     JKTypeParameterType(symbolProvider.provideDirectSymbol(target) as JKTypeParameterSymbol)
+                is PsiAnonymousClass -> {
+                    /*
+                     If anonymous class is declared inside the converting code, we will not be able to access JKUniverseClassSymbol's target
+                     And get UninitializedPropertyAccessException exception, so it is ok to use base class for now
+                    */
+                    createPsiType(target.baseClassType)
+                }
                 else -> {
                     JKClassType(
                         target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
@@ -87,8 +94,7 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
             }
         }
         is PsiArrayType -> JKJavaArrayType(fromPsiType(type.componentType))
-        is PsiPrimitiveType -> JKJavaPrimitiveType.KEYWORD_TO_INSTANCE[type.presentableText]
-            ?: error("Invalid primitive type ${type.presentableText}")
+        is PsiPrimitiveType -> JKJavaPrimitiveType.fromPsi(type)
         is PsiDisjunctionType ->
             JKJavaDisjunctionType(type.disjunctions.map { fromPsiType(it) })
         is PsiWildcardType ->
@@ -109,6 +115,8 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
             JKCapturedType(fromPsiType(type.wildcard) as JKWildCardType)
         is PsiIntersectionType -> // TODO what to do with intersection types? old j2k just took the first conjunct
             fromPsiType(type.representative)
+        is PsiLambdaParameterType -> // Probably, means that we have erroneous Java code
+            JKNoType
         else -> throw Exception("Invalid PSI ${type::class.java}")
     }
 
@@ -123,7 +131,10 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
 
             else -> JKClassType(
                 symbolProvider.provideClassSymbol(type.getJetTypeFqName(false)),//TODO constructor fqName
-                type.arguments.map { fromKotlinType(it.type) },
+                type.arguments.map { typeArgument ->
+                    if (typeArgument.isStarProjection) JKStarProjectionTypeImpl
+                    else fromKotlinType(typeArgument.type)
+                },
                 if (type.isNullable()) Nullability.Nullable else Nullability.NotNull
             )
         }

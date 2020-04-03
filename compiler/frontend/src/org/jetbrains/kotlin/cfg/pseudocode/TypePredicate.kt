@@ -80,5 +80,5 @@ fun KotlinType.getSubtypesPredicate(): TypePredicate = when {
 
 private fun KotlinType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
-fun <T> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
+fun <T : Any> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
     keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key -> map.plus(key, this) }

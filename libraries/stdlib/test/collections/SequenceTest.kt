@@ -13,6 +13,8 @@ fun fibonacci(): Sequence<Int> {
     return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first * 1 }
 }
 
+fun indexSequence(): Sequence<Int> = generateSequence(0) { it + 1 }
+
 public class SequenceTest {
 
     private class TriggerSequence<out T>(val source: Sequence<T>) : Sequence<T> {
@@ -143,6 +145,47 @@ public class SequenceTest {
 
     @Test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.joinToString(separator = ", ", limit = 5))
+    }
+
+    @Test
+    fun scan() {
+        for (size in 0 until 4) {
+            assertEquals(
+                sequenceOf("", "0", "01", "012").take(size).toList(),
+                indexSequence().scan("") { acc, e -> acc + e }.take(size).toList()
+            )
+        }
+    }
+
+    @Test
+    fun scanIndexed() {
+        for (size in 0 until 4) {
+            assertEquals(
+                sequenceOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]").take(size).toList(),
+                indexSequence().map { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList()
+            )
+        }
+    }
+
+    @Test
+    fun scanReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).subList(0, size)
+            assertEquals(
+                sequenceOf(0, 1, 3, 6).take(size).toList(),
+                indexSequence().scanReduce { acc, e -> acc + e }.take(size).toList()
+            )
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        for (size in 0 until 4) {
+            assertEquals(
+                sequenceOf(0, 1, 6, 27).take(size).toList(),
+                indexSequence().scanReduceIndexed { index, acc, e -> index * (acc + e) }.take(size).toList()
+            )
+        }
     }
 
     @Test fun drop() {
@@ -377,6 +420,14 @@ public class SequenceTest {
         val b: Sequence<String> = doMinus(a)
         val expected_ = expected ?: listOf("foo")
         assertEquals(expected_, b.toList())
+    }
+
+    @Test fun reduceOrNullOnEmpty() {
+        expect(null, { sequenceOf<Int>().reduceOrNull { acc, i -> acc + i } })
+    }
+
+    @Test fun reduceIndexedOrNullOnEmpty() {
+        expect(null, { sequenceOf<Int>().reduceIndexedOrNull { index, acc, i -> acc + i + index } })
     }
 
     @Test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }

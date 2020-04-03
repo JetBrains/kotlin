@@ -8,13 +8,13 @@ public interface IrReturnOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 return_target = 1;</code>
+   * <code>required int64 return_target = 1;</code>
    */
   boolean hasReturnTarget();
   /**
-   * <code>required int32 return_target = 1;</code>
+   * <code>required int64 return_target = 1;</code>
    */
-  int getReturnTarget();
+  long getReturnTarget();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2;</code>

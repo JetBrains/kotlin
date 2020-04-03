@@ -1,0 +1,19 @@
+FILE: fakeRecursiveSupertype.kt
+    public final class My : R|ERROR CLASS: Loop in supertype: /My -> /My| {
+        public constructor(): R|My| {
+            super<R|My|>()
+        }
+
+    }
+    public final class Your : R|His| {
+        public constructor(): R|Your| {
+            super<R|His|>()
+        }
+
+    }
+    public final class His : R|ERROR CLASS: Loop in supertype: /His -> /Your| {
+        public constructor(): R|His| {
+            super<R|Your|>()
+        }
+
+    }

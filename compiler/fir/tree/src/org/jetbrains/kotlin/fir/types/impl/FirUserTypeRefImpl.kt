@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 open class FirUserTypeRefImpl(
     override val source: FirSourceElement?,
-    override val isMarkedNullable: Boolean
-) : FirUserTypeRef(), FirAbstractAnnotatedElement {
-    override val qualifier: MutableList<FirQualifierPart> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val isMarkedNullable: Boolean,
+    override val qualifier: MutableList<FirQualifierPart>,
+    override val annotations: MutableList<FirAnnotationCall>
+) : FirUserTypeRef(), FirAnnotationContainer {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (part in qualifier) {
@@ -33,6 +33,11 @@ open class FirUserTypeRefImpl(
         for (part in qualifier) {
             (part.typeArguments as MutableList<FirTypeProjection>).transformInplace(transformer, data)
         }
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
         annotations.transformInplace(transformer, data)
         return this
     }

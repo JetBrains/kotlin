@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
-import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
+import org.jetbrains.kotlin.fir.resolve.impl.*
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
@@ -41,7 +40,10 @@ class FirJavaModuleBasedSession(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-        val firProvider = FirProviderImpl(this)
+
+        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+        val firProvider = FirProviderImpl(this, kotlinScopeProvider)
         registerComponent(FirProvider::class, firProvider)
 
         registerComponent(
@@ -84,24 +86,28 @@ class FirLibrarySession private constructor(
     init {
         val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
 
+        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
         registerComponent(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
-                    FirLibrarySymbolProviderImpl(this),
                     KotlinDeserializedJvmSymbolsProvider(
                         this, sessionProvider.project,
                         packagePartProvider,
                         javaSymbolProvider,
                         kotlinClassFinder,
-                        javaClassFinder
+                        javaClassFinder,
+                        kotlinScopeProvider
                     ),
+                    FirBuiltinSymbolProvider(this, kotlinScopeProvider),
+                    FirClonableSymbolProvider(this, kotlinScopeProvider),
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
                 )
             ) as FirSymbolProvider
         )
-        registerComponent(FirMemberScopeProvider::class, FirMemberScopeProvider())
+        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
 
         registerComponent(
             FirCorrespondingSupertypesCache::class,

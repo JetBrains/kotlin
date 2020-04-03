@@ -1,7 +1,7 @@
-public open enum class EnumWithSpecializedEntry : R|kotlin/Enum<test/EnumWithSpecializedEntry>| {
-    public final static field E1: R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>!|
+public open enum class EnumWithSpecializedEntry : R|kotlin/Enum<ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>!>| {
+    public final static field E1: R|test/EnumWithSpecializedEntry|
 
-    public final static field E2: R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>!|
+    public final static field E2: R|test/EnumWithSpecializedEntry|
 
     public final static fun values(): R|kotlin/Array<test/EnumWithSpecializedEntry>| {
     }

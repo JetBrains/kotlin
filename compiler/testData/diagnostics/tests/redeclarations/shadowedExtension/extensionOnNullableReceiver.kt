@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Test {
     fun foo()
     val bar: Int

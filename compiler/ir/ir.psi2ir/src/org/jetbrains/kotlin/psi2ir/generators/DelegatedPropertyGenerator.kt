@@ -65,7 +65,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val irDelegate = irProperty.backingField!!
 
         val thisClass = propertyDescriptor.containingDeclaration as? ClassDescriptor
-        val delegateReceiverValue = createBackingFieldValueForDelegate(irDelegate.symbol, thisClass, ktDelegate)
+        val delegateReceiverValue = createBackingFieldValueForDelegate(irDelegate.symbol, thisClass, ktDelegate, propertyDescriptor)
         val getterDescriptor = propertyDescriptor.getter!!
         irProperty.getter = generateDelegatedPropertyAccessor(ktProperty, ktDelegate, getterDescriptor) { irGetter ->
             generateDelegatedPropertyGetterBody(
@@ -120,24 +120,26 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         kPropertyType: KotlinType,
         ktDelegate: KtPropertyDelegate
     ): IrField {
-        val delegateType = getDelegatedPropertyDelegateType(propertyDescriptor, ktDelegate)
-        val delegateDescriptor = createPropertyDelegateDescriptor(propertyDescriptor, delegateType, kPropertyType)
+        return context.typeTranslator.withTypeErasure(propertyDescriptor) {
+            val delegateType = getDelegatedPropertyDelegateType(propertyDescriptor, ktDelegate)
+            val delegateDescriptor = createPropertyDelegateDescriptor(propertyDescriptor, delegateType, kPropertyType)
 
-        val startOffset = ktDelegate.startOffsetSkippingComments
-        val endOffset = ktDelegate.endOffset
-        val origin = IrDeclarationOrigin.DELEGATE
-        val type = delegateDescriptor.type.toIrType()
-        return context.symbolTable.declareField(
-            startOffset, endOffset, origin, delegateDescriptor, type
-        ) {
-            IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
-                metadata = MetadataSource.Property(propertyDescriptor)
+            val startOffset = ktDelegate.startOffsetSkippingComments
+            val endOffset = ktDelegate.endOffset
+            val origin = IrDeclarationOrigin.PROPERTY_DELEGATE
+            val type = delegateDescriptor.type.toIrType()
+            context.symbolTable.declareField(
+                startOffset, endOffset, origin, delegateDescriptor, type
+            ) {
+                IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
+                    metadata = MetadataSource.Property(propertyDescriptor)
+                }
+            }.also { irDelegate ->
+                irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
+                    propertyDescriptor, kPropertyType, ktDelegate,
+                    irDelegate.symbol
+                )
             }
-        }.also { irDelegate ->
-            irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
-                propertyDescriptor, kPropertyType, ktDelegate,
-                irDelegate.symbol
-            )
         }
     }
 
@@ -166,17 +168,21 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     private fun createBackingFieldValueForDelegate(
         irDelegateField: IrFieldSymbol,
         thisClass: ClassDescriptor?,
-        ktDelegate: KtPropertyDelegate
+        ktDelegate: KtPropertyDelegate,
+        propertyDescriptor: PropertyDescriptor
     ): IntermediateValue {
-        val thisValue = createThisValueForDelegate(thisClass, ktDelegate)
-        return BackingFieldLValue(
-            context,
-            ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset,
-            irDelegateField.descriptor.type.toIrType(),
-            irDelegateField,
-            thisValue,
-            null
-        )
+        return context.typeTranslator.withTypeErasure(propertyDescriptor) {
+            // TODO: do not erase type here
+            val thisValue = createThisValueForDelegate(thisClass, ktDelegate)
+            BackingFieldLValue(
+                context,
+                ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset,
+                irDelegateField.descriptor.type.toIrType(),
+                irDelegateField,
+                thisValue,
+                null
+            )
+        }
     }
 
     private fun createThisValueForDelegate(thisClass: ClassDescriptor?, ktDelegate: KtPropertyDelegate): IntermediateValue? =
@@ -287,7 +293,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val delegateDescriptor = createLocalPropertyDelegatedDescriptor(variableDescriptor, delegateType, kPropertyType)
 
         return context.symbolTable.declareVariable(
-            ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
+            ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
             delegateDescriptor, delegateDescriptor.type.toIrType()
         ).also { irVariable ->
             irVariable.initializer = generateInitializerForLocalDelegatedPropertyDelegate(

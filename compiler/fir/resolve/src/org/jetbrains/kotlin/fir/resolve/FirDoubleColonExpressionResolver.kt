@@ -10,12 +10,13 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.types.Variance
 
 sealed class DoubleColonLHS(val type: ConeKotlinType) {
     /**
@@ -68,7 +69,7 @@ class FirDoubleColonExpressionResolver(
 
     private fun shouldTryResolveLHSAsExpression(expression: FirCallableReferenceAccess): Boolean {
         val lhs = expression.explicitReceiver ?: return false
-        return lhs.canBeConsideredProperExpression() /* && !expression.hasQuestionMarks */
+        return lhs.canBeConsideredProperExpression() && !expression.safe
     }
 
     private fun shouldTryResolveLHSAsType(expression: FirCallableReferenceAccess): Boolean {
@@ -117,16 +118,22 @@ class FirDoubleColonExpressionResolver(
         return resolve(expression)
     }
 
+    private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
+        var fir = symbol?.fir ?: return null
+        while (fir is FirTypeAlias) {
+            fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
+        }
+        return fir as? FirRegularClass
+    }
+
     private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
         val type = (expression.typeRef as? FirResolvedTypeRef)?.type ?: return null
 
         if (expression is FirResolvedQualifier) {
-            val firClass = session.firSymbolProvider
-                .getClassLikeSymbolByFqName(expression.classId ?: return null)
-                ?.fir as? FirRegularClass
-                ?: return null
-
-            if (firClass.classKind == ClassKind.OBJECT) return DoubleColonLHS.Expression(type, isObjectQualifier = true)
+            val firClass = expression.expandedRegularClassIfAny() ?: return null
+            if (firClass.classKind == ClassKind.OBJECT) {
+                return DoubleColonLHS.Expression(type, isObjectQualifier = true)
+            }
             return null
         }
 
@@ -136,20 +143,31 @@ class FirDoubleColonExpressionResolver(
     private fun resolveTypeOnLHS(
         expression: FirExpression
     ): DoubleColonLHS.Type? {
-        val resolvedExpression =
-            expression as? FirResolvedQualifier
-                ?: return null
+        val resolvedExpression = expression as? FirResolvedQualifier
+            ?: return null
 
-        val firClass = session.firSymbolProvider
-            .getClassLikeSymbolByFqName(resolvedExpression.classId ?: return null)
-            // TODO: support type aliases
-            ?.fir as? FirRegularClass
+        val firClass = resolvedExpression.expandedRegularClassIfAny()
             ?: return null
 
         val type = ConeClassLikeTypeImpl(
             firClass.symbol.toLookupTag(),
-            Array(firClass.typeParameters.size) { ConeStarProjection },
-            isNullable = false // TODO: Use org.jetbrains.kotlin.psi.KtDoubleColonExpression.getHasQuestionMarks
+            Array(firClass.typeParameters.size) { index ->
+                val typeArgument = expression.typeArguments.getOrNull(index)
+                if (typeArgument == null) ConeStarProjection
+                else when (typeArgument) {
+                    is FirTypeProjectionWithVariance -> {
+                        val coneType = typeArgument.typeRef.coneTypeSafe<ConeKotlinType>()
+                        if (coneType == null) ConeStarProjection
+                        else when (typeArgument.variance) {
+                            Variance.INVARIANT -> coneType
+                            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
+                            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
+                        }
+                    }
+                    else -> ConeStarProjection
+                }
+            },
+            isNullable = expression.safe
         )
 
         return DoubleColonLHS.Type(type)

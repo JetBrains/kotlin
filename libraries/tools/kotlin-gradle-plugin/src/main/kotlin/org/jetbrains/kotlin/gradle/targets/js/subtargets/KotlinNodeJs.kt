@@ -24,6 +24,10 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
     }
 
+    override fun testTask(body: KotlinJsTest.() -> Unit) {
+        super<KotlinJsSubTarget>.testTask(body)
+    }
+
     override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
         testTask.useMocha { }
     }
@@ -35,10 +39,9 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     private fun configureRun(
         compilation: KotlinJsCompilation
     ) {
-        val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME))
+        val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
+            inputFileProperty.set(compilation.compileKotlinTask.outputFile)
+        }
         target.runTask.dependsOn(runTaskHolder)
-    }
-
-    override fun configureBuildVariants() {
     }
 }

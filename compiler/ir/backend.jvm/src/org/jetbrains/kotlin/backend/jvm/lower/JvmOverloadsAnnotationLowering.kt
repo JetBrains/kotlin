@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -48,7 +50,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
 
     private fun generateWrappers(target: IrFunction, irClass: IrClass) {
         val numDefaultParameters = target.valueParameters.count { it.defaultValue != null }
-        for (i in 0 until numDefaultParameters) {
+        for (i in numDefaultParameters - 1 downTo 0) {
             val wrapper = generateWrapper(target, i)
             irClass.addMember(wrapper)
         }
@@ -137,13 +139,16 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             }
             is IrSimpleFunction -> {
                 val descriptor = WrappedSimpleFunctionDescriptor(oldFunction.descriptor.annotations)
+                val modality =
+                    if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
+                    else oldFunction.modality
                 IrFunctionImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
                     IrSimpleFunctionSymbolImpl(descriptor),
                     oldFunction.name,
                     oldFunction.visibility,
-                    oldFunction.modality,
+                    modality,
                     returnType = oldFunction.returnType,
                     isInline = oldFunction.isInline,
                     isExternal = false,
@@ -151,7 +156,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     isSuspend = oldFunction.isSuspend,
                     isExpect = false,
                     isFakeOverride = false,
-                    isOperator = false
+                    isOperator = false,
                 ).apply {
                     descriptor.bind(this)
                 }
@@ -160,11 +165,11 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         }
 
         res.parent = oldFunction.parent
-        res.annotations.addAll(oldFunction.annotations.map { it.deepCopyWithSymbols(res) })
+        res.annotations += oldFunction.annotations.map { it.deepCopyWithSymbols(res) }
         res.copyTypeParametersFrom(oldFunction)
         res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
         res.extensionReceiverParameter = oldFunction.extensionReceiverParameter?.copyTo(res)
-        res.valueParameters.addAll(res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect))
+        res.valueParameters += res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect)
         return res
     }
 

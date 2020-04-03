@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower
@@ -26,14 +28,18 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -58,6 +64,7 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             )
 
             UpdateFunctionCallSites(functionDelegates).lower(input)
+            UpdateConstantFacadePropertyReferences(context, shouldGeneratePartHierarchy).lower(input)
 
             context.multifileFacadesToAdd.clear()
 
@@ -123,7 +130,7 @@ private fun generateMultifileFacades(
             }
             if (shouldGeneratePartHierarchy) {
                 val superClass = modifyMultifilePartsForHierarchy(context, partClasses)
-                superTypes.add(superClass.typeWith())
+                superTypes += superClass.typeWith()
 
                 addConstructor {
                     visibility = Visibilities.PRIVATE
@@ -139,6 +146,7 @@ private fun generateMultifileFacades(
 
         for (partClass in partClasses) {
             context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
+            context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
 
             moveFieldsOfConstProperties(partClass, facadeClass)
 
@@ -165,8 +173,7 @@ private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, unsorte
         klass.modality = Modality.OPEN
         klass.visibility = JavaVisibilities.PACKAGE_VISIBILITY
 
-        klass.superTypes.clear()
-        klass.superTypes.add(superClass.typeWith())
+        klass.superTypes = listOf(superClass.typeWith())
 
         klass.addConstructor {
             isPrimary = true
@@ -200,22 +207,33 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     facadeClass: IrClass,
     shouldGeneratePartHierarchy: Boolean
 ): IrSimpleFunction? {
+    val target = this
+
     if (Visibilities.isPrivate(visibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
     ) return null
 
-    // TODO: perform copy of the signature only, without body
-    val function = deepCopyWithSymbols(facadeClass)
+    val function = buildFun {
+        updateFrom(target)
+        isFakeOverride = shouldGeneratePartHierarchy
+        name = target.name
+    }
+
+    function.copyParameterDeclarationsFrom(target)
+    function.returnType = target.returnType.substitute(target.typeParameters, function.typeParameters.map { it.defaultType })
+    function.parent = facadeClass
+    function.annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
     if (shouldGeneratePartHierarchy) {
-        function.body = null
         function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
-        function.overriddenSymbols.clear()
-        function.overriddenSymbols.add(symbol)
+        function.body = null
+        function.overriddenSymbols = listOf(symbol)
     } else {
+        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
+        function.overriddenSymbols = overriddenSymbols.toList()
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
-            +irReturn(irCall(this@createMultifileDelegateIfNeeded).also { call ->
+            +irReturn(irCall(target).also { call ->
                 call.passTypeArgumentsFrom(function)
                 function.extensionReceiverParameter?.let { parameter ->
                     call.extensionReceiver = irGet(parameter)
@@ -225,7 +243,6 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
                 }
             })
         }
-        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
     }
 
     facadeClass.declarations.add(function)
@@ -260,5 +277,44 @@ private class UpdateFunctionCallSites(
                 }
             }
         }
+    }
+}
+
+private class UpdateConstantFacadePropertyReferences(
+    private val context: JvmBackendContext,
+    private val shouldGeneratePartHierarchy: Boolean
+) : ClassLoweringPass {
+    override fun lower(irClass: IrClass) {
+        val facadeClass = getReplacementFacadeClassOrNull(irClass) ?: return
+
+        // Replace the class reference in the body of the property reference class (in getOwner) to refer to the facade class instead.
+        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement = declaration
+
+            override fun visitClassReference(expression: IrClassReference): IrExpression = IrClassReferenceImpl(
+                expression.startOffset, expression.endOffset, facadeClass.defaultType, facadeClass.symbol, facadeClass.defaultType
+            )
+        })
+    }
+
+    // We should replace references to facade classes in the following cases:
+    // - if -Xmultifile-parts-inherit is enabled, always replace all references;
+    // - otherwise, replace references in classes for properties whose fields were moved to the facade class.
+    private fun getReplacementFacadeClassOrNull(irClass: IrClass): IrClass? {
+        if (irClass.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE &&
+            irClass.origin != JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+        ) return null
+
+        val declaration = when (val callableReference = irClass.attributeOwnerId) {
+            is IrPropertyReference -> callableReference.getter?.owner?.correspondingPropertySymbol?.owner
+            is IrFunctionReference -> callableReference.symbol.owner
+            else -> null
+        } ?: return null
+        val parent = declaration.parent as? IrClass ?: return null
+        val facadeClass = context.multifileFacadeClassForPart[parent.attributeOwnerId]
+
+        return if (shouldGeneratePartHierarchy ||
+            (declaration is IrProperty && declaration.backingField?.shouldMoveToFacade() == true)
+        ) facadeClass else null
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JavaScriptParser.java
 public class JavaScriptParser<F extends JSPsiTypeParser> {}
 // FILE: JSPsiTypeParser.java

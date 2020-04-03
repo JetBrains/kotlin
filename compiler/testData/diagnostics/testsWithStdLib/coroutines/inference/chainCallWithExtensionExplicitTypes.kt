@@ -1,6 +1,6 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -12,7 +12,7 @@ interface ProducerScope<E> {
 class CoroutineScope
 class ReceiveChannel<E>
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 public fun <E> produce(@BuilderInference block: suspend ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
 
 fun test(ls: List<Int>) =

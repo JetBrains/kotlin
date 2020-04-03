@@ -15,6 +15,6 @@ class A {
 fun eat(value: Any) {}
 
 fun main() {
-    A::extInt
-    A::extA
+    <!UNRESOLVED_REFERENCE!>A::extInt<!>
+    <!UNRESOLVED_REFERENCE!>A::extA<!>
 }

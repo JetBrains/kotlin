@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -29,13 +30,17 @@ import org.jetbrains.kotlin.psi.KtFile
 class FirIdeProvider(
     val project: Project,
     val scope: GlobalSearchScope,
-    val session: FirSession
+    val session: FirSession,
+    kotlinScopeProvider: KotlinScopeProvider
 ) : FirProvider() {
-    private val cacheProvider = FirProviderImpl(session)
+    private val cacheProvider = FirProviderImpl(session, kotlinScopeProvider)
 
     data class FirFileWithStamp(val file: FirFile, val stamp: Long)
 
     private val files = mutableMapOf<KtFile, FirFileWithStamp>()
+
+    override val isPhasedFirAllowed: Boolean
+        get() = true
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         return cacheProvider.getFirClassifierByFqName(classId) ?: run {
@@ -67,7 +72,7 @@ class FirIdeProvider(
             if (fileWithStamp != null && fileWithStamp.stamp == modificationStamp) {
                 fileWithStamp.file
             } else {
-                val file = RawFirBuilder(session, stubMode = false).buildFirFile(ktFile)
+                val file = RawFirBuilder(session, cacheProvider.kotlinScopeProvider, stubMode = false).buildFirFile(ktFile)
                 cacheProvider.recordFile(file)
                 fileWithStamp = FirFileWithStamp(file, modificationStamp)
                 files[ktFile] = fileWithStamp
@@ -144,10 +149,5 @@ class FirIdeProvider(
     override fun getNestedClassifierScope(classId: ClassId): FirScope? {
         getFirClassifierByFqName(classId)
         return cacheProvider.getNestedClassifierScope(classId)
-    }
-
-    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
-        getFirClassifierByFqName(classId)
-        return cacheProvider.getClassUseSiteMemberScope(classId, useSiteSession, scopeSession)
     }
 }

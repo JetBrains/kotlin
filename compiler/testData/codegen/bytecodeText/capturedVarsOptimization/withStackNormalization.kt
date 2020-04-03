@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun add(x: Int, y: Int) = x + y
 
 fun test() {

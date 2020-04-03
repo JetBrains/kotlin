@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true, false) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
 
@@ -54,7 +54,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
 val BIND_CALL = object : IrStatementOriginImpl("BIND_CALL") {}
 
 class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringPass {
-    override fun lower(irBody: IrBody) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
@@ -71,7 +71,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
 
     private fun buildBoundSuperCall(irCall: IrCall): IrExpression {
 
-        val originalFunction = context.ir.defaultParameterDeclarationsCache.entries.first { it.value == irCall.symbol.owner }.key
+        val originalFunction = context.mapping.defaultArgumentsOriginalFunction[irCall.symbol.owner]!!
 
         val reference = irCall.run {
             IrFunctionReferenceImpl(
@@ -79,8 +79,9 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
-                0,
-                BIND_CALL
+                typeArgumentsCount = 0,
+                reflectionTarget = originalFunction.symbol,
+                origin = BIND_CALL
             )
         }
 

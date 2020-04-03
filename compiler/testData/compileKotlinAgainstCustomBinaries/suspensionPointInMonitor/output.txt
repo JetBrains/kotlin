@@ -4,9 +4,9 @@ compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/so
 compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:14:13: error: a suspension point at SourceKt$test$2.invokeSuspend(source.kt:17) is inside a critical section
     builder {
             ^
-compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:24:25: error: a suspension point at SourceKt$test$3$invokeSuspend$$inlined$withCrossinline$2.invokeSuspend(source.kt:62) is inside a critical section
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:24:9: error: a suspension point at SourceKt$test$3$invokeSuspend$$inlined$withCrossinline$2.invokeSuspend(source.kt:62) is inside a critical section
         withCrossinline {
-                        ^
+        ^
 compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:50:34: error: a suspension point at SourceKt$withCrossinline$c$1.invokeSuspend(source.kt:52) is inside a critical section
     val c : suspend () -> Unit = {
                                  ^

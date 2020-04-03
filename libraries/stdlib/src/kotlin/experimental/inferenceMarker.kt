@@ -9,9 +9,10 @@ package kotlin.experimental
  * The experimental marker for type inference augmenting annotations.
  *
  * Any usage of a declaration annotated with `@ExperimentalTypeInference` must be accepted either by
- * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalTypeInference::class)`,
- * or by using the compiler argument `-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference`.
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalTypeInference::class)`,
+ * or by using the compiler argument `-Xopt-in=kotlin.experimental.ExperimentalTypeInference`.
  */
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @MustBeDocumented

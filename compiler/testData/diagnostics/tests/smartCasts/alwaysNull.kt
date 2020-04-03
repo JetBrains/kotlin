@@ -4,7 +4,7 @@ fun foo(): String {
     s = null
     <!DEBUG_INFO_CONSTANT!>s<!>?.length
     <!OI;DEBUG_INFO_CONSTANT!>s<!><!UNSAFE_CALL!>.<!>length
-    if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>s<!> == null<!>) return <!ALWAYS_NULL!>s<!>!!
+    if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>s<!> == null<!>) <!NI;UNREACHABLE_CODE!>return<!> <!ALWAYS_NULL!>s<!>!!
     var t: String? = "y"
     if (t == null) t = "x"
     var x: Int? = null

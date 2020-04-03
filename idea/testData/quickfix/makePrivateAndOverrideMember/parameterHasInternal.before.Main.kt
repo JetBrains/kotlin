@@ -2,6 +2,7 @@
 // DISABLE-ERRORS
 // ACTION: Convert to secondary constructor
 // ACTION: Create test
+// ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Make private
 // ACTION: Make protected
 // ACTION: Make public

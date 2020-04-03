@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtClassInitializer
 import org.jetbrains.kotlin.psi.classInitializerVisitor
@@ -20,14 +21,14 @@ class RedundantEmptyInitializerBlockInspection : AbstractKotlinInspection() {
         if (body.statements.isNotEmpty()) return
         holder.registerProblem(
             initializer,
-            "Redundant empty initializer block",
+            KotlinBundle.message("redundant.empty.initializer.block"),
             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
             RemoveInitializerBlockFix()
         )
     })
 
     private class RemoveInitializerBlockFix : LocalQuickFix {
-        override fun getName() = "Remove initializer block"
+        override fun getName() = KotlinBundle.message("remove.initializer.block.fix.text")
 
         override fun getFamilyName() = name
 

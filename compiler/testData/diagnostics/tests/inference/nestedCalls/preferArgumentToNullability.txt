@@ -1,0 +1,26 @@
+package
+
+public inline fun </*0*/ reified T : Cls> materialize(): T?
+public fun test(/*0*/ subIn: SubIn): kotlin.Unit
+public fun </*0*/ D> transform(/*0*/ transformer: In<D>, /*1*/ data: D): kotlin.Unit
+
+public open class Cls {
+    public constructor Cls()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class In</*0*/ in I> {
+    public constructor In</*0*/ in I>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class SubIn : In<Cls?> {
+    public constructor SubIn()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

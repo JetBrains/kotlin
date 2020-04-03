@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -51,7 +52,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class ExperimentalUsageChecker(project: Project) : CallChecker {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
-    data class Experimentality(val annotationFqName: FqName, val severity: Severity) {
+    data class Experimentality(val annotationFqName: FqName, val severity: Severity, val message: String?) {
         enum class Severity { WARNING, ERROR }
 
         companion object {
@@ -59,9 +60,22 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
     }
 
+    interface ExperimentalityDiagnostic {
+        fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?)
+    }
+
+    class ExperimentalityDiagnostic2(
+        val factory: DiagnosticFactory2<PsiElement, FqName, String>,
+        val defaultMessage: (FqName) -> String
+    ) : ExperimentalityDiagnostic {
+        override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
+            trace.reportDiagnosticOnce(factory.on(element, fqName, message ?: defaultMessage(fqName)))
+        }
+    }
+
     data class ExperimentalityDiagnostics(
-        val warning: DiagnosticFactory1<PsiElement, FqName>,
-        val error: DiagnosticFactory1<PsiElement, FqName>
+        val warning: ExperimentalityDiagnostic,
+        val error: ExperimentalityDiagnostic
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -84,18 +98,30 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         internal val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
         private val LEVEL = Name.identifier("level")
+        private val MESSAGE = Name.identifier("message")
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
 
-        private val EXPERIMENTAL_API_DIAGNOSTICS = ExperimentalityDiagnostics(
-            Errors.EXPERIMENTAL_API_USAGE, Errors.EXPERIMENTAL_API_USAGE_ERROR
+        internal fun getDefaultDiagnosticMessage(prefix: String) = fun(fqName: FqName): String {
+            return "$prefix with '@${fqName.asString()}' or '@OptIn(${fqName.asString()}::class)'"
+        }
+
+        private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
+            warning = ExperimentalityDiagnostic2(
+                Errors.EXPERIMENTAL_API_USAGE,
+                getDefaultDiagnosticMessage("This declaration is experimental and its usage should be marked")
+            ),
+            error = ExperimentalityDiagnostic2(
+                Errors.EXPERIMENTAL_API_USAGE_ERROR,
+                getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked")
+            )
         )
 
         fun reportNotAcceptedExperimentalities(
             experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext
         ) {
             reportNotAcceptedExperimentalities(
-                experimentalities, element, context.languageVersionSettings, context.trace, EXPERIMENTAL_API_DIAGNOSTICS
+                experimentalities, element, context.languageVersionSettings, context.trace, USAGE_DIAGNOSTICS
             )
         }
 
@@ -106,13 +132,13 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             trace: BindingTrace,
             diagnostics: ExperimentalityDiagnostics
         ) {
-            for ((annotationFqName, severity) in experimentalities) {
+            for ((annotationFqName, severity, message) in experimentalities) {
                 if (!element.isExperimentalityAccepted(annotationFqName, languageVersionSettings, trace.bindingContext)) {
                     val diagnostic = when (severity) {
                         Experimentality.Severity.WARNING -> diagnostics.warning
                         Experimentality.Severity.ERROR -> diagnostics.error
                     }
-                    trace.reportDiagnosticOnce(diagnostic.on(element, annotationFqName))
+                    diagnostic.report(trace, element, annotationFqName, message)
                 }
             }
         }
@@ -130,7 +156,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             if (annotations.any { it.fqName == WAS_EXPERIMENTAL_FQ_NAME }) {
                 val accessibility = checkSinceKotlinVersionAccessibility(languageVersionSettings)
                 if (accessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
-                    result.addAll(accessibility.markerClasses.map { it.loadExperimentalityForMarkerAnnotation() })
+                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadExperimentalityForMarkerAnnotation() })
                 }
             }
 
@@ -153,13 +179,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     ?: annotations.findAnnotation(OLD_EXPERIMENTAL_FQ_NAME)
                     ?: return null
 
-            val severity = when ((experimental.allValueArguments[LEVEL] as? EnumValue)?.enumEntryName) {
+            val arguments = experimental.allValueArguments
+            val severity = when ((arguments[LEVEL] as? EnumValue)?.enumEntryName) {
                 WARNING_LEVEL -> Experimentality.Severity.WARNING
                 ERROR_LEVEL -> Experimentality.Severity.ERROR
                 else -> Experimentality.DEFAULT_SEVERITY
             }
 
-            return Experimentality(fqNameSafe, severity)
+            val message = (arguments[MESSAGE] as? StringValue)?.value
+
+            return Experimentality(fqNameSafe, severity, message)
         }
 
         private fun PsiElement.isExperimentalityAccepted(annotationFqName: FqName, context: CheckerContext): Boolean =
@@ -224,16 +253,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val deprecationResolver =
                 DeprecationResolver(LockBasedStorageManager("ExperimentalUsageChecker"), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED, DeprecationSettings.Default)
 
-            // Returns true if fqName refers to a valid experimental API marker.
+            // Returns true if fqName resolves to a valid opt-in requirement marker.
             fun checkAnnotation(fqName: String): Boolean {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
                 if (descriptor == null) {
-                    reportWarning("Experimental API marker $fqName is unresolved. Please make sure it's present in the module dependencies")
+                    reportWarning("Opt-in requirement marker $fqName is unresolved. Please make sure it's present in the module dependencies")
                     return false
                 }
 
                 if (descriptor.loadExperimentalityForMarkerAnnotation() == null) {
-                    reportWarning("Class $fqName is not an experimental API marker annotation")
+                    reportWarning("Class $fqName is not an opt-in requirement marker")
                     return false
                 }
 
@@ -242,7 +271,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         DeprecationLevelValue.WARNING -> reportWarning
                         DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> reportError
                     }
-                    report("Experimental API marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
+                    report("Opt-in requirement marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
                 }
                 return true
             }
@@ -253,7 +282,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
 
             for (fqName in validExperimental.intersect(validUseExperimental)) {
-                reportError("'-Xuse-experimental=$fqName' has no effect because '-Xexperimental=$fqName' is used")
+                reportError("'-Xopt-in=$fqName' has no effect because '-Xexperimental=$fqName' is used")
             }
         }
     }
@@ -344,12 +373,17 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
             for ((experimentality, member) in experimentalOverridden) {
                 if (!declaration.isExperimentalityAccepted(experimentality.annotationFqName, context)) {
-                    val diagnostic = when (experimentality.severity) {
-                        Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_OVERRIDE
-                        Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR
-                    }
                     val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
-                    context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, member.containingDeclaration))
+
+                    val (diagnostic, defaultMessageVerb) = when (experimentality.severity) {
+                        Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_OVERRIDE to "should"
+                        Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR to "must"
+                    }
+                    val message = experimentality.message
+                        ?: "This declaration overrides experimental member of supertype " +
+                        "'${member.containingDeclaration.name.asString()}' and $defaultMessageVerb be annotated " +
+                        "with '@${experimentality.annotationFqName.asString()}'"
+                    context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, message))
                 }
             }
         }

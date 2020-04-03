@@ -70,7 +70,7 @@ fun checkParametersInMethodHierarchy(parameter: PsiParameter): Collection<PsiEle
     val parametersToDelete = collectParametersHierarchy(method, parameter)
     if (parametersToDelete.size <= 1 || ApplicationManager.getApplication().isUnitTestMode) return parametersToDelete
 
-    val message = KotlinBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method))
+    val message = KotlinBundle.message("override.declaration.delete.multiple.parameters", formatJavaOrLightMethod(method))
     val exitCode = Messages.showOkCancelDialog(parameter.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
     return if (exitCode == Messages.OK) parametersToDelete else null
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: B.kt
 
 import aa.B

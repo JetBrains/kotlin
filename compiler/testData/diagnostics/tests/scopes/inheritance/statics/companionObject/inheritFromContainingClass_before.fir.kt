@@ -29,8 +29,8 @@ open class A<T> : J() {
         fun test() {
             foo()
             bar()
-            val a: Int = <!UNRESOLVED_REFERENCE!>baz<!>()
-            val b: T = <!UNRESOLVED_REFERENCE!>baz<!>()
+            val a: Int = baz()
+            val b: T = baz()
         }
     }
 

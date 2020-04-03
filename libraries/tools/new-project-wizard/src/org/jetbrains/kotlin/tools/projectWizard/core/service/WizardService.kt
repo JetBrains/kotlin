@@ -9,7 +9,11 @@ object Services {
         ProjectImportingWizardServiceImpl(),
         OsFileSystemWizardService(),
         BuildSystemAvailabilityWizardServiceImpl(),
-        DummyFileFormattingService()
+        DummyFileFormattingService(),
+        KotlinVersionProviderServiceImpl(),
+        RunConfigurationsServiceImpl(),
+        SettingSavingWizardServiceImpl(),
+        VelocityTemplateEngineServiceImpl()
     )
 }
 

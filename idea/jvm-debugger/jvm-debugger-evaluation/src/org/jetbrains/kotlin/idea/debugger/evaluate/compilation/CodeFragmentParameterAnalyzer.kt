@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.getCallLabelForLambdaArgument
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldPropertyDescriptor
-import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationError
-import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationStatus
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory.Companion.FAKE_JAVA_CONTEXT_FUNCTION_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
 import org.jetbrains.kotlin.idea.debugger.safeLocation
@@ -39,7 +36,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor
 import org.jetbrains.kotlin.types.expressions.createFunctionType
 
 class CodeFragmentParameterInfo(
@@ -197,10 +193,14 @@ class CodeFragmentParameterAnalyzer(
                     val descriptor = resolvedCall.resultingDescriptor
                     if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
                         evaluationStatus.error(EvaluationError.SuspendCall)
-                        throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'suspend' calls is not supported")
+                        throw EvaluateExceptionUtil.createEvaluateException(
+                            KotlinDebuggerEvaluationBundle.message("error.suspend.calls.not.supported")
+                        )
                     }
                     if (descriptor is ConstructorDescriptor && KotlinBuiltIns.isNothing(descriptor.returnType)) {
-                        throw EvaluateExceptionUtil.createEvaluateException("'Nothing' can't be instantiated")
+                        throw EvaluateExceptionUtil.createEvaluateException(
+                            KotlinDebuggerEvaluationBundle.message("error.nothing.initialization")
+                        )
                     }
                 }
 
@@ -286,7 +286,9 @@ class CodeFragmentParameterAnalyzer(
     private fun processSimpleNameExpression(target: DeclarationDescriptor, expression: KtSimpleNameExpression): Smart? {
         if (target is ValueParameterDescriptor && target.isCrossinline) {
             evaluationStatus.error(EvaluationError.CrossInlineLambda)
-            throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'crossinline' lambdas is not supported")
+            throw EvaluateExceptionUtil.createEvaluateException(
+                KotlinDebuggerEvaluationBundle.message("error.crossinline.lambda.evaluation")
+            )
         }
 
         val isLocalTarget = (target as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL
@@ -307,8 +309,8 @@ class CodeFragmentParameterAnalyzer(
                 }
             }
             is ValueDescriptor -> {
-                val parent = PsiTreeUtil.skipParentsOfType(expression, KtParenthesizedExpression::class.java)
-                val isLValue = BasicExpressionTypingVisitor.isLValue(expression, parent)
+                val unwrappedExpression = KtPsiUtil.deparenthesize(expression)
+                val isLValue = unwrappedExpression?.let { isAssignmentLValue(it) } ?: false
 
                 parameters.getOrPut(target) {
                     val type = target.type
@@ -320,6 +322,11 @@ class CodeFragmentParameterAnalyzer(
             }
             else -> null
         }
+    }
+
+    private fun isAssignmentLValue(expression: PsiElement): Boolean {
+        val assignmentExpression = (expression.parent as? KtBinaryExpression)?.takeIf { KtPsiUtil.isAssignment(it) } ?: return false
+        return assignmentExpression.left == expression
     }
 
     private fun isContainingPrimaryConstructorParameter(target: PropertyDescriptor): Boolean {

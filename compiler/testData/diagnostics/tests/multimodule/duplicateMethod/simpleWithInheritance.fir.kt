@@ -33,6 +33,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C && b is D) {
-        b?.<!AMBIGUITY!>getParent<!>()
+        b?.getParent()
     }
 }

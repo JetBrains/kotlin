@@ -31,36 +31,38 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
     object ListEmptyDefault : DefaultValues("<empty list>")
 
     object LanguageVersions : DefaultValues(
-            "null",
-            LanguageVersion.values().map { "\"${it.description}\"" }
+        "null",
+        LanguageVersion.values()
+            .filterNot { it.isUnsupported }
+            .map { "\"${it.description}\"" }
     )
 
     object JvmTargetVersions : DefaultValues(
-            "\"" + JvmTarget.DEFAULT.description + "\"",
-            JvmTarget.values().map { "\"${it.description}\"" }
+        "\"" + JvmTarget.DEFAULT.description + "\"",
+        JvmTarget.values().map { "\"${it.description}\"" }
     )
 
     object JsEcmaVersions : DefaultValues(
-            "\"v5\"",
-            listOf("\"v5\"")
+        "\"v5\"",
+        listOf("\"v5\"")
     )
 
     object JsModuleKinds : DefaultValues(
-            "\"plain\"",
-            listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\"")
+        "\"plain\"",
+        listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\"")
     )
 
     object JsSourceMapContentModes : DefaultValues(
-            "null",
-            listOf(
-                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
-                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
-                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
-            ).map { "\"$it\""}
+        "null",
+        listOf(
+            K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
+            K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
+            K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
+        ).map { "\"$it\"" }
     )
 
     object JsMain : DefaultValues(
-            "\"" + CALL + "\"",
-            listOf("\"" + CALL + "\"", "\"" + NO_CALL + "\"")
+        "\"" + CALL + "\"",
+        listOf("\"" + CALL + "\"", "\"" + NO_CALL + "\"")
     )
 }

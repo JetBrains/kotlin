@@ -6,10 +6,12 @@ UFile (package = )
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = varWithType)
-                        ULiteralExpression (value = "Not Null")
+                        UPolyadicExpression (operator = +)
+                            ULiteralExpression (value = "Not Null")
                 UDeclarationsExpression
                     ULocalVariable (name = varWithoutType)
-                        ULiteralExpression (value = "lorem ipsum")
+                        UPolyadicExpression (operator = +)
+                            ULiteralExpression (value = "lorem ipsum")
                 UDeclarationsExpression
                     ULocalVariable (name = result)
                         UBinaryExpression (operator = +)
@@ -29,7 +31,6 @@ UFile (package = )
                         UExpressionList (elvis)
                             UDeclarationsExpression
                                 ULocalVariable (name = var708e23eb)
-                                    UAnnotation (fqName = org.jetbrains.annotations.Nullable)
                                     USimpleNameReferenceExpression (identifier = arg)
                             UIfExpression
                                 UBinaryExpression (operator = !=)

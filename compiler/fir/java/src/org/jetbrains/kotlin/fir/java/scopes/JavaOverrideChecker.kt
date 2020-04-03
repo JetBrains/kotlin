@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
+import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.typeContext
@@ -28,22 +28,29 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
-        return if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
-        } else {
-            with(context) {
-                isEqualTypeConstructors(
-                    substitutor.substituteOrSelf(candidateType).typeConstructor(),
-                    substitutor.substituteOrSelf(baseType).typeConstructor()
-                )
+        if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
+            return candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+        }
+        if (candidateType is ConeClassLikeType && baseType is ConeTypeParameterType) {
+            val boundType = baseType.lookupTag.typeParameterSymbol.fir.bounds.singleOrNull()?.toConeKotlinTypeProbablyFlexible(
+                session, javaTypeParameterStack
+            )
+            if (boundType != null) {
+                return isEqualTypes(candidateType, boundType, substitutor)
             }
+        }
+        return with(context) {
+            isEqualTypeConstructors(
+                substitutor.substituteOrSelf(candidateType).typeConstructor(),
+                substitutor.substituteOrSelf(baseType).typeConstructor()
+            )
         }
     }
 
     override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes(
-            candidateTypeRef.toNotNullConeKotlinType(session, javaTypeParameterStack),
-            baseTypeRef.toNotNullConeKotlinType(session, javaTypeParameterStack),
+            candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
+            baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
             substitutor
         )
 

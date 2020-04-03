@@ -1,8 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import kotlin.reflect.KClass
+import org.jetbrains.annotations.NonNls
 
 interface EntitiesOwnerDescriptor {
+    @get:NonNls
     val id: String
 }
 

@@ -3,10 +3,10 @@ package
 package test {
 
     package test.abc {
-        @kotlin.UseExperimental(markerClass = {test.abc.E::class}) public fun f(): kotlin.Unit
+        @kotlin.OptIn(markerClass = {test.abc.E::class}) public fun f(): kotlin.Unit
         @test.abc.E public fun g(): kotlin.Unit
 
-        @kotlin.Experimental public final annotation class E : kotlin.Annotation {
+        @kotlin.RequiresOptIn public final annotation class E : kotlin.Annotation {
             public constructor E()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -35,9 +37,9 @@ import java.io.File
 import java.util.*
 
 abstract class IncrementalCompilerRunner<
-    Args : CommonCompilerArguments,
-    CacheManager : IncrementalCachesManager<*>
->(
+        Args : CommonCompilerArguments,
+        CacheManager : IncrementalCachesManager<*>
+        >(
     private val workingDir: File,
     cacheDirName: String,
     protected val reporter: ICReporter,
@@ -48,7 +50,7 @@ abstract class IncrementalCompilerRunner<
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
-    protected val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
+    private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
     protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
@@ -57,12 +59,12 @@ abstract class IncrementalCompilerRunner<
     protected abstract fun destinationDir(args: Args): File
 
     fun compile(
-            allSourceFiles: List<File>,
-            args: Args,
-            messageCollector: MessageCollector,
-            // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
-            // otherwise we track source files changes ourselves.
-            providedChangedFiles: ChangedFiles?
+        allSourceFiles: List<File>,
+        args: Args,
+        messageCollector: MessageCollector,
+        // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
+        // otherwise we track source files changes ourselves.
+        providedChangedFiles: ChangedFiles?
     ): ExitCode {
         assert(isICEnabled()) { "Incremental compilation is not enabled" }
         var caches = createCacheManager(args)
@@ -95,8 +97,7 @@ abstract class IncrementalCompilerRunner<
             if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
 
             return exitCode
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             // todo: warn?
             rebuild { "Possible cache corruption. Rebuilding. $e" }
         }
@@ -131,10 +132,10 @@ abstract class IncrementalCompilerRunner<
     }
 
     private fun sourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles, args: Args): CompilationMode =
-            when (changedFiles) {
-                is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
-                is ChangedFiles.Unknown -> CompilationMode.Rebuild { "inputs' changes are unknown (first or clean build)" }
-            }
+        when (changedFiles) {
+            is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
+            is ChangedFiles.Unknown -> CompilationMode.Rebuild { "inputs' changes are unknown (first or clean build)" }
+        }
 
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
@@ -156,26 +157,26 @@ abstract class IncrementalCompilerRunner<
     }
 
     protected abstract fun updateCaches(
-            services: Services,
-            caches: CacheManager,
-            generatedFiles: List<GeneratedFile>,
-            changesCollector: ChangesCollector
+        services: Services,
+        caches: CacheManager,
+        generatedFiles: List<GeneratedFile>,
+        changesCollector: ChangesCollector
     )
 
     protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
-    protected open fun postCompilationHook(exitCode: ExitCode) {}
-    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>): Iterable<File> =
-            emptyList()
+    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
+        emptyList()
 
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-            emptyList()
+        emptyList()
 
     protected open fun makeServices(
-            args: Args,
-            lookupTracker: LookupTracker,
-            expectActualTracker: ExpectActualTracker,
-            caches: CacheManager,
-            compilationMode: CompilationMode
+        args: Args,
+        lookupTracker: LookupTracker,
+        expectActualTracker: ExpectActualTracker,
+        caches: CacheManager,
+        dirtySources: Set<File>,
+        isIncremental: Boolean
     ): Services.Builder =
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
@@ -184,19 +185,19 @@ abstract class IncrementalCompilerRunner<
         }
 
     protected abstract fun runCompiler(
-            sourcesToCompile: Set<File>,
-            args: Args,
-            caches: CacheManager,
-            services: Services,
-            messageCollector: MessageCollector
+        sourcesToCompile: Set<File>,
+        args: Args,
+        caches: CacheManager,
+        services: Services,
+        messageCollector: MessageCollector
     ): ExitCode
 
     private fun compileIncrementally(
-            args: Args,
-            caches: CacheManager,
-            allKotlinSources: List<File>,
-            compilationMode: CompilationMode,
-            messageCollector: MessageCollector
+        args: Args,
+        caches: CacheManager,
+        allKotlinSources: List<File>,
+        compilationMode: CompilationMode,
+        messageCollector: MessageCollector
     ): ExitCode {
         preBuildHook(args, compilationMode)
 
@@ -208,7 +209,7 @@ abstract class IncrementalCompilerRunner<
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
-        val allSourcesToCompile = HashSet<File>()
+        val allDirtySources = HashSet<File>()
 
         var exitCode = ExitCode.OK
 
@@ -222,36 +223,39 @@ abstract class IncrementalCompilerRunner<
             val expectActualTracker = ExpectActualTrackerImpl()
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
-            // todo: more optimal to save only last iteration, but it will require adding standalone-ic specific logs
-            // (because jps rebuilds all files from last build if it failed and gradle rebuilds everything)
-            allSourcesToCompile.addAll(sourcesToCompile)
-            val text = dirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
+            allDirtySources.addAll(dirtySources)
+            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val services = makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).build()
+            val services = makeServices(
+                args, lookupTracker, expectActualTracker, caches,
+                dirtySources.toSet(), compilationMode is CompilationMode.Incremental
+            ).build()
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
-            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
+            val temporaryMessageCollector = TemporaryMessageCollector(messageCollector)
+            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(temporaryMessageCollector, outputItemsCollector)
 
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
-            postCompilationHook(exitCode)
 
-            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
-            if (exitCode != ExitCode.OK) break
-
-            dirtySourcesSinceLastTimeFile.delete()
             val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
-
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
                 val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
                     continue
                 }
             }
+
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
+            temporaryMessageCollector.flush()
+
+            if (exitCode != ExitCode.OK) break
+
+            dirtySourcesSinceLastTimeFile.delete()
 
             caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
@@ -264,10 +268,17 @@ abstract class IncrementalCompilerRunner<
             val (dirtyLookupSymbols, dirtyClassFqNames) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
-            with (dirtySources) {
+            with(dirtySources) {
                 clear()
                 addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
-                addAll(mapClassesFqNamesToFiles(listOf(caches.platformCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
+                addAll(
+                    mapClassesFqNamesToFiles(
+                        listOf(caches.platformCache),
+                        dirtyClassFqNames,
+                        reporter,
+                        excludes = compiledInThisIterationSet
+                    )
+                )
             }
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
@@ -337,5 +348,26 @@ abstract class IncrementalCompilerRunner<
     private object EmptyCompilationCanceledStatus : CompilationCanceledStatus {
         override fun checkCanceled() {
         }
+    }
+}
+
+private class TemporaryMessageCollector(private val delegate: MessageCollector) : MessageCollector {
+    private class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation?)
+
+    private val messages = ArrayList<Message>()
+
+    override fun clear() {
+        messages.clear()
+    }
+
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        messages.add(Message(severity, message, location))
+    }
+
+    override fun hasErrors(): Boolean =
+        messages.any { it.severity.isError }
+
+    fun flush() {
+        messages.forEach { delegate.report(it.severity, it.message, it.location) }
     }
 }

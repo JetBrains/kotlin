@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.jetbrains.kotlin"
-version = "0.0.8"
+version = "0.0.17"
 
 repositories {
     mavenCentral()
@@ -21,6 +21,10 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+}
+
+java {
+    withSourcesJar()
 }
 
 sourceSets {

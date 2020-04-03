@@ -1,8 +1,8 @@
 // !WITH_NEW_INFERENCE
 // FILE: KotlinFile.kt
 fun foo(javaInterface: JavaInterface) {
-    javaInterface.doIt(null) { }
-    javaInterface.doIt("", null)
+    javaInterface.<!INAPPLICABLE_CANDIDATE!>doIt<!>(null) { }
+    javaInterface.<!INAPPLICABLE_CANDIDATE!>doIt<!>("", null)
 }
 
 // FILE: JavaInterface.java

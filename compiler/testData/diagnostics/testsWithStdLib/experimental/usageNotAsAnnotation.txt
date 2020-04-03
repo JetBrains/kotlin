@@ -1,25 +1,25 @@
 package
 
 package test {
-    public fun f1(/*0*/ e: kotlin.Experimental): kotlin.Unit
+    public fun f1(/*0*/ e: kotlin.RequiresOptIn): kotlin.Unit
     public fun f10(/*0*/ m: test.Marker.NestedClass): kotlin.Unit
-    public fun f2(/*0*/ u: kotlin.UseExperimental?): kotlin.Unit
-    public fun f3(/*0*/ e: test.Experimental0 /* = kotlin.Experimental */): kotlin.Unit
-    public fun f4(/*0*/ u: test.UseExperimental0 /* = kotlin.UseExperimental */): kotlin.Unit
-    @test.VarargKClasses(k = {kotlin.Experimental::class, kotlin.UseExperimental::class, kotlin.Experimental::class, kotlin.UseExperimental::class}) public fun f5(): kotlin.Unit
+    public fun f2(/*0*/ u: kotlin.OptIn?): kotlin.Unit
+    public fun f3(/*0*/ e: test.Experimental0 /* = kotlin.RequiresOptIn */): kotlin.Unit
+    public fun f4(/*0*/ u: test.OptIn0 /* = kotlin.OptIn */): kotlin.Unit
+    @test.VarargKClasses(k = {kotlin.RequiresOptIn::class, kotlin.OptIn::class, kotlin.RequiresOptIn::class, kotlin.OptIn::class}) public fun f5(): kotlin.Unit
     public fun f6(/*0*/ m: test.Marker): kotlin.Unit
     public fun f7(): kotlin.collections.List<test.Marker>?
     public fun f8(): test.Marker?
     public fun f9(/*0*/ m: test.Marker0 /* = test.Marker */): kotlin.Unit
 
-    @kotlin.Experimental(level = Level.ERROR) public final annotation class M : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.ERROR) public final annotation class M : kotlin.Annotation {
         public constructor M()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental public final annotation class Marker : kotlin.Annotation {
+    @kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {
         public constructor Marker()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -48,7 +48,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-    public typealias Experimental0 = kotlin.Experimental
+    public typealias Experimental0 = kotlin.RequiresOptIn
     public typealias Marker0 = test.Marker
-    public typealias UseExperimental0 = kotlin.UseExperimental
+    public typealias OptIn0 = kotlin.OptIn
 }

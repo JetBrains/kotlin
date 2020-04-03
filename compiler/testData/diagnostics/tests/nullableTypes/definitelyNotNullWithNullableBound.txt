@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ D> makeDefinitelyNotNull(/*0*/ arg: D?): D
+public fun </*0*/ N : kotlin.Number?> test(/*0*/ arg: N): kotlin.Unit

@@ -433,19 +433,6 @@ inline fun FrameMap.evaluateOnce(
     }
 }
 
-// Handy debugging routine. Print all instructions from methodNode.
-@TestOnly
-@Suppress("unused")
-fun MethodNode.textifyMethodNode(): String {
-    val text = Textifier()
-    val tmv = TraceMethodVisitor(text)
-    this.instructions.asSequence().forEach { it.accept(tmv) }
-    localVariables.forEach { text.visitLocalVariable(it.name, it.desc, it.signature, it.start.label, it.end.label, it.index) }
-    val sw = StringWriter()
-    text.print(PrintWriter(sw))
-    return "$sw"
-}
-
 fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
     if (!isInlineClassType()) return false
 
@@ -474,10 +461,18 @@ fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext
         lambdaExpressionParent.name?.let { return it }
     }
 
-    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return null
-    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return null
-    val call = callExpression.getResolvedCall(bindingContext) ?: return null
+    val callExpression = when (val argument = lambdaExpression.parent) {
+        is KtLambdaArgument -> {
+            argument.parent as? KtCallExpression ?: return null
+        }
+        is KtValueArgument -> {
+            val valueArgumentList = argument.parent as? KtValueArgumentList ?: return null
+            valueArgumentList.parent as? KtCallExpression ?: return null
+        }
+        else -> return null
+    }
 
+    val call = callExpression.getResolvedCall(bindingContext) ?: return null
     return call.resultingDescriptor.name.asString()
 }
 

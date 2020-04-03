@@ -1,0 +1,2 @@
+java.lang.Exception
+_2_1Kt.throwException(2.1.kt:14)

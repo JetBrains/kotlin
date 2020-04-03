@@ -14,9 +14,9 @@ fun asNullablePrimitive(c: AsNonNullPrimitive?) {}
 fun asNullableReference(c: AsNonNullReference?) {}
 
 // JVM_TEMPLATES
-// 6 checkParameterIsNotNull
-// 0 checkNotNullParameter
+// 0 checkParameterIsNotNull
+// 6 checkNotNullParameter
 
 // JVM_IR_TEMPLATES
-// 4 checkParameterIsNotNull
-// 0 checkNotNullParameter
+// 0 checkParameterIsNotNull
+// 4 checkNotNullParameter

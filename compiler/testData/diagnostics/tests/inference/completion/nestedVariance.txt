@@ -1,0 +1,67 @@
+package
+
+public fun </*0*/ F, /*1*/ S> biparamEarly(/*0*/ first: F, /*1*/ second: S): BiParam<In<In<F>>, Out<S>>
+public fun </*0*/ F, /*1*/ S> biparamEarlyIrrelevantInv(/*0*/ first: F, /*1*/ second: S): BiParam<In<In<F>>, Inv<kotlin.String>>
+public fun </*0*/ F, /*1*/ S> biparamEarlyStarProjection(/*0*/ first: F, /*1*/ second: S): BiParam<*, In<In<S>>>
+public fun </*0*/ F, /*1*/ S> biparamLateIn(/*0*/ first: F, /*1*/ second: S): BiParam<In<Out<F>>, S>
+public fun </*0*/ F, /*1*/ S> biparamLateInv(/*0*/ first: F, /*1*/ second: S): BiParam<Inv<Out<F>>, S>
+public fun </*0*/ D> createDoubleIn(/*0*/ arg: D): In<In<D>>
+public fun </*0*/ D> createDoubleInOut1(/*0*/ arg: D): In<In<Out<D>>>
+public fun </*0*/ D> createDoubleInOut2(/*0*/ arg: D): In<Out<In<D>>>
+public fun </*0*/ D> createDoubleInOut3(/*0*/ arg: D): Out<In<In<D>>>
+public fun </*0*/ D> createInOut(/*0*/ arg: D): In<Out<D>>
+public fun </*0*/ D> createInvOut(/*0*/ arg: D): Inv<Out<D>>
+public fun </*0*/ D> createOutIn(/*0*/ arg: D): Out<In<D>>
+public fun </*0*/ D> createOutInvDoubleIn(/*0*/ arg: D): Out<Inv<In<In<D>>>>
+public fun </*0*/ K> id(/*0*/ arg: K): K
+public fun </*0*/ T> take(/*0*/ biParam: BiParam<*, In<In<T>>>): kotlin.Unit
+public fun testEarlyCompletion(/*0*/ derived: Derived, /*1*/ otherDerived: OtherDerived): kotlin.Unit
+public fun testLateCompletion(/*0*/ derived: Derived, /*1*/ otherDerived: OtherDerived): kotlin.Unit
+
+public interface Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class BiParam</*0*/ out F, /*1*/ out S> {
+    public constructor BiParam</*0*/ out F, /*1*/ out S>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Derived : Base {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class In</*0*/ in I> {
+    public constructor In</*0*/ in I>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OtherDerived : Base {
+    public constructor OtherDerived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out O> {
+    public constructor Out</*0*/ out O>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

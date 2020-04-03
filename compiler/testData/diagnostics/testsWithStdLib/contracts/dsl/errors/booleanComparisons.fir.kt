@@ -18,6 +18,6 @@ fun bar(b: Boolean?): Boolean {
         // not pointless, but not supported yet
         returns(true) implies (b == true)
     }
-    if (b == null) throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>("")
+    if (b == null) throw java.lang.IllegalArgumentException("")
     return b
 }

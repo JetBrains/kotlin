@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 public var inc: Int = 0;
 
 public var propInc: Int = 0

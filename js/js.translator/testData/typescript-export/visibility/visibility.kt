@@ -2,6 +2,9 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 
+// TODO fix statics export in DCE-driven mode
+// SKIP_DCE_DRIVEN
+
 @file:JsExport
 
 internal val internalVal = 10

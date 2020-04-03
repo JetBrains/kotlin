@@ -47,18 +47,18 @@ fun test() {
     val ic: I.NC = I.NC()
     val ii: I.NI? = null
 
-    val bc: B.NC = B.NC()
+    val bc: B.NC = B.<!UNRESOLVED_REFERENCE!>NC<!>()
     val bic: B.IC = B().IC()
     val bi: B.NI? = null
 
-    val cc: C.NC = C.NC()
+    val cc: C.NC = C.<!UNRESOLVED_REFERENCE!>NC<!>()
     val ci: C.NI? = null
 
-    val dc: D.NC = D.NC()
+    val dc: D.NC = D.<!UNRESOLVED_REFERENCE!>NC<!>()
     val dic: D.IC = D().IC()
     val di: D.NI? = null
 
-    val kc: K.NC = K.NC()
+    val kc: K.NC = K.<!UNRESOLVED_REFERENCE!>NC<!>()
     val kic: K.IC = K().IC()
     val ki: K.NI? = null
 }

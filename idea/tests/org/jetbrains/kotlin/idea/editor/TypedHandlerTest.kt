@@ -8,8 +8,10 @@
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.EditorTestUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
@@ -854,6 +856,98 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |) {}
                 """,
             enableSmartEnterWithTabs()
+        )
+    }
+
+    private val settingsWithInvertedAlignWhenMultiline = {
+        val settings = CodeStyleSettings().getCommonSettings(KotlinLanguage.INSTANCE)
+        settings.ALIGN_MULTILINE_PARAMETERS = !settings.ALIGN_MULTILINE_PARAMETERS
+        settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = !settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS
+        enableSmartEnterWithTabs()()
+    }
+
+    fun testSmartEnterWithTabsOnConstructorParametersWithInvertedAlignWhenMultiline() {
+        doTypeTest(
+            '\n',
+            """
+                |class A(
+                |		a: Int,<caret>
+                |)
+                """,
+            """
+                |class A(
+                |		a: Int,
+                |		<caret>
+                |)
+                """,
+            settingsWithInvertedAlignWhenMultiline
+        )
+    }
+
+    fun testSmartEnterWithTabsInMethodParametersWithInvertedAlignWhenMultiline() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(
+                |         arg1: String,<caret>
+                |) {}
+                """,
+            """
+                |fun method(
+                |         arg1: String,
+                |         <caret>
+                |) {}
+                """,
+            settingsWithInvertedAlignWhenMultiline
+        )
+    }
+
+    fun testEnterWithoutLineBreakBeforeClosingBracketInMethodParametersWithInvertedAlignWhenMultiline() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(
+                |         arg1: String,<caret>) {}
+                """,
+            """
+                |fun method(
+                |         arg1: String,
+                |<caret>) {}
+                """,
+            settingsWithInvertedAlignWhenMultiline
+        )
+    }
+
+    fun testEnterWithTrailingCommaAndWhitespaceBeforeLineBreakWithInvertedAlignWhenMultiline() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(
+                |         arg1: String, <caret>
+                |) {}
+                """,
+            """
+                |fun method(
+                |         arg1: String, 
+                |         <caret>
+                |) {}
+                """,
+            settingsWithInvertedAlignWhenMultiline
+        )
+    }
+
+    fun testSmartEnterBetweenOpeningAndClosingBracketsWithInvertedAlignWhenMultiline() {
+        doTypeTest(
+            '\n',
+            """
+                       |fun method(<caret>) {}
+                       """,
+            """
+                       |fun method(
+                       |		<caret>
+                       |) {}
+                       """,
+            settingsWithInvertedAlignWhenMultiline
         )
     }
 

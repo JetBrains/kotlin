@@ -1,5 +1,5 @@
-public abstract interface Comparator<T> : R|kotlin/Any| {
-    public abstract operator fun compare(o1: R|ft<T, T?>!|, o2: R|ft<T, T?>!|): R|kotlin/Int|
+public abstract interface Comparator<T : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public abstract fun compare(o1: R|ft<T, T?>!|, o2: R|ft<T, T?>!|): R|kotlin/Int|
 
     public abstract operator fun equals(obj: R|kotlin/Any?|): R|kotlin/Boolean|
 

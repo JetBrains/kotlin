@@ -1,0 +1,8 @@
+package
+
+public inline fun </*0*/ reified T : kotlin.Number> T?.case_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 is T
+
+public inline fun </*0*/ reified T : kotlin.Number, /*1*/ K> K?.case_2(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> <this> !is T || value_1 is T
+

@@ -1,9 +1,9 @@
 // "Add '@OptIn(AliasMarker::class)' annotation to 'AliasMarkerUsage'" "true"
-// COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental
+// COMPILER_ARGUMENTS: -Xopt-in=kotlin.RequiresOptIn
 // WITH_RUNTIME
-// ACTION: Add '-Xuse-experimental=AliasMarker' to module light_idea_test_case compiler arguments
+// ACTION: Add '-Xopt-in=AliasMarker' to module light_idea_test_case compiler arguments
 
-@Experimental
+@RequiresOptIn
 annotation class AliasMarker
 
 @AliasMarker

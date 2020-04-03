@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo() {
     var v: Any = "xyz"
     // It is possible in principle to provide smart cast here

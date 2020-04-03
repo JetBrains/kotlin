@@ -62,18 +62,23 @@ public final class InTextDirectivesUtils {
         List<String> result = new ArrayList<>();
 
         for (String line : findLinesWithPrefixesRemoved(fileText, prefixes)) {
-            String unquoted = StringUtil.unquoteString(line);
-            if (!unquoted.equals(line)) {
-                result.add(unquoted);
-            }
-            else{
-                String[] variants = line.split(",");
-                for (String variant : variants) {
-                    result.add(variant.trim());
-                }
-            }
+            splitValues(result, line);
         }
 
+        return result;
+    }
+
+    public static List<String> splitValues(List<String> result, String line) {
+        String unquoted = StringUtil.unquoteString(line);
+        if (!unquoted.equals(line)) {
+            result.add(unquoted);
+        }
+        else{
+            String[] variants = line.split(",");
+            for (String variant : variants) {
+                result.add(variant.trim());
+            }
+        }
         return result;
     }
 
@@ -230,8 +235,6 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isIgnoredTarget(TargetBackend targetBackend, File file, String ignoreBackendDirectivePrefix) {
-        if (targetBackend == TargetBackend.ANY) return false;
-
         List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), ignoreBackendDirectivePrefix);
         return ignoredBackends.contains(targetBackend.name());
     }

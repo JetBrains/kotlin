@@ -1,16 +1,11 @@
 description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
 
-pill {
-    importAsLibrary = true
-}
-
-def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
+def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
 sourceSets {
     if (includeJava9) {
@@ -54,7 +49,7 @@ javadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
-                                      "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                                      "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                                       "-module-name", project.archivesBaseName, ]
 }
 

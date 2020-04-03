@@ -34,11 +34,14 @@ import com.intellij.util.containers.MultiMap;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
 import org.jetbrains.kotlin.platform.TargetPlatform;
-import org.jetbrains.kotlin.platform.konan.KonanPlatformKt;
+import org.jetbrains.kotlin.platform.konan.NativePlatformKt;
 import org.jetbrains.plugins.gradle.execution.build.CachedModuleDataFinder;
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
@@ -76,15 +79,15 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
                                                                            "}\n";
 
     @Override
-    public void run(@NotNull Project project,
+    public Promise<Result> run(@NotNull Project project,
             @NotNull ProjectTaskContext context,
-            @Nullable ProjectTaskNotification callback,
-            @NotNull Collection<? extends ProjectTask> tasks) {
+            @NotNull ProjectTask ... tasks) {
+        AsyncPromise<Result> resultPromise = new AsyncPromise<>();
         MultiMap<String, String> buildTasksMap = MultiMap.createLinkedSet();
         MultiMap<String, String> cleanTasksMap = MultiMap.createLinkedSet();
         MultiMap<String, String> initScripts = MultiMap.createLinkedSet();
 
-        Map<Class<? extends ProjectTask>, List<ProjectTask>> taskMap = JpsProjectTaskRunner.groupBy(tasks);
+        Map<Class<? extends ProjectTask>, List<ProjectTask>> taskMap = JpsProjectTaskRunner.groupBy(Arrays.asList(tasks));
 
         List<Module> modules = addModulesBuildTasks(taskMap.get(ModuleBuildTask.class), buildTasksMap, initScripts);
         // TODO there should be 'gradle' way to build files instead of related modules entirely
@@ -95,7 +98,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         AtomicInteger successCounter = new AtomicInteger();
         AtomicInteger errorCounter = new AtomicInteger();
 
-        TaskCallback taskCallback = callback == null ? null : new TaskCallback() {
+        TaskCallback taskCallback = new TaskCallback() {
             @Override
             public void onSuccess() {
                 handle(true);
@@ -120,7 +123,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
                             CompilerUtil.refreshOutputRoots(affectedRoots);
                         }
                     }
-                    callback.finished(new ProjectTaskResult(false, errors, 0));
+                    resultPromise.setResult(errors > 0 ? TaskRunnerResults.FAILURE : TaskRunnerResults.SUCCESS);
                 }
             }
         };
@@ -149,7 +152,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             else {
                 projectName = projectFile.getName();
             }
-            String executionName = "Build " + projectName;
+            String executionName = KotlinIdeaGradleBundle.message("build.0.project", projectName);
             settings.setExecutionName(executionName);
             settings.setExternalProjectPath(rootProjectPath);
             settings.setTaskNames(ContainerUtil.collect(ContainerUtil.concat(cleanTasks, buildTasks).iterator()));
@@ -168,6 +171,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, project, GradleConstants.SYSTEM_ID,
                                        taskCallback, ProgressExecutionMode.IN_BACKGROUND_ASYNC, false, userData);
         }
+        return resultPromise;
     }
 
     @Override
@@ -298,7 +302,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getTargetPlatform();
         if (platform == null) return false;
 
-        return KonanPlatformKt.isNative(platform);
+        return NativePlatformKt.isNative(platform);
     }
 
     private static boolean isCommonProductionSourceModule(Module module) {

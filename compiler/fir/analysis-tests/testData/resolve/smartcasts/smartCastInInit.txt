@@ -1,0 +1,24 @@
+FILE: smartCastInInit.kt
+    public abstract interface I : R|kotlin/Any| {
+    }
+    public abstract interface S : R|I| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun s(): R|S| {
+        ^s R|kotlin/TODO|()
+    }
+    public final class Main : R|kotlin/Any| {
+        public constructor(): R|Main| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val x: R|I|
+            private get(): R|I|
+
+        init {
+            this@R|/Main|.R|/Main.x| = R|/s|()
+            this@R|/Main|.R|/Main.x|.R|/S.foo|()
+        }
+
+    }

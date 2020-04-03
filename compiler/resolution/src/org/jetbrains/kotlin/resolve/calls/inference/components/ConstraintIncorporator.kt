@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
@@ -26,7 +28,11 @@ class ConstraintIncorporator(
 
         fun getConstraintsForVariable(typeVariable: TypeVariableMarker): Collection<Constraint>
 
-        fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker)
+        fun addNewIncorporatedConstraint(
+            lowerType: KotlinTypeMarker,
+            upperType: KotlinTypeMarker,
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+        )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
@@ -35,7 +41,8 @@ class ConstraintIncorporator(
     fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         with(c) {
-            if (constraint.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }) return
+            val freshTypeConstructor = typeVariable.freshTypeConstructor()
+            if (constraint.type.contains { it.typeConstructor() == freshTypeConstructor }) return
         }
 
         c.directWithVariable(typeVariable, constraint)
@@ -48,11 +55,14 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
+        val shouldBeTypeVariableFlexible =
+            typeVariable is TypeVariableFromCallableDescriptor && typeVariable.originalTypeParameter.shouldBeFlexible()
+
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type)
+                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible)
                 }
             }
         }
@@ -61,7 +71,7 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.UPPER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
-                    addNewIncorporatedConstraint(constraint.type, it.type)
+                    addNewIncorporatedConstraint(constraint.type, it.type, shouldBeTypeVariableFlexible)
                 }
             }
         }
@@ -92,13 +102,35 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
+        val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (typeVariableWithConstraint in this@insideOtherConstraint.allTypeVariablesWithConstraints) {
             val constraintsWhichConstraintMyVariable = typeVariableWithConstraint.constraints.filter {
-                it.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }
+                it.type.contains { it.typeConstructor() == freshTypeConstructor }
             }
             constraintsWhichConstraintMyVariable.forEach {
                 generateNewConstraint(typeVariableWithConstraint.typeVariable, it, typeVariable, constraint)
             }
+        }
+    }
+
+    private fun Context.approximateIfNeededAndAddNewConstraint(
+        baseConstraint: Constraint,
+        type: KotlinTypeMarker,
+        targetVariable: TypeVariableMarker,
+        otherVariable: TypeVariableMarker,
+        otherConstraint: Constraint,
+        needApproximation: Boolean = true
+    ) {
+        val typeWithSubstitution = baseConstraint.type.substitute(this, otherVariable, type)
+        val prepareType = { toSuper: Boolean ->
+            if (needApproximation) approximateCapturedTypes(typeWithSubstitution, toSuper) else typeWithSubstitution
+        }
+
+        if (baseConstraint.kind != ConstraintKind.LOWER) {
+            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(true), isSubtype = false)
+        }
+        if (baseConstraint.kind != ConstraintKind.UPPER) {
+            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(false), isSubtype = true)
         }
     }
 
@@ -108,42 +140,61 @@ class ConstraintIncorporator(
         otherVariable: TypeVariableMarker,
         otherConstraint: Constraint
     ) {
-
-        val baseConstraintType = baseConstraint.type
-
-        val typeForApproximation = when (otherConstraint.kind) {
+        val isBaseGenericType = baseConstraint.type.argumentsCount() != 0
+        val isOtherCapturedType = otherConstraint.type.isCapturedType()
+        val (type, needApproximation) = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
-                baseConstraintType.substitute(this, otherVariable, otherConstraint.type)
+                otherConstraint.type to false
             }
             ConstraintKind.UPPER -> {
-                val temporaryCapturedType = createCapturedType(
-                    createTypeArgument(otherConstraint.type, TypeVariance.OUT),
-                    listOf(otherConstraint.type),
-                    null,
-                    CaptureStatus.FOR_INCORPORATION
-                )
-                baseConstraintType.substitute(this, otherVariable, temporaryCapturedType)
+                /*
+                 * Creating a captured type isn't needed due to its future approximation to `Nothing` or itself
+                 * Example:
+                 *      targetVariable = TypeVariable(A)
+                 *      baseConstraint = LOWER(TypeVariable(B))
+                 *      otherConstraint = UPPER(Number)
+                 *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
+                 * TODO: implement this for generics and captured types
+                 */
+                if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isOtherCapturedType) {
+                    nothingType() to false
+                } else if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isOtherCapturedType) {
+                    otherConstraint.type to false
+                } else {
+                    createCapturedType(
+                        createTypeArgument(otherConstraint.type, TypeVariance.OUT),
+                        listOf(otherConstraint.type),
+                        null,
+                        CaptureStatus.FOR_INCORPORATION
+                    ) to true
+                }
             }
             ConstraintKind.LOWER -> {
-                val temporaryCapturedType = createCapturedType(
-                    createTypeArgument(otherConstraint.type, TypeVariance.IN),
-                    emptyList(),
-                    otherConstraint.type,
-                    CaptureStatus.FOR_INCORPORATION
-                )
-
-                baseConstraintType.substitute(this, otherVariable, temporaryCapturedType)
+                /*
+                 * Creating a captured type isn't needed due to its future approximation to `Any?` or itself
+                 * Example:
+                 *      targetVariable = TypeVariable(A)
+                 *      baseConstraint = UPPER(TypeVariable(B))
+                 *      otherConstraint = LOWER(Number)
+                 *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
+                 * TODO: implement this for generics and captured types
+                 */
+                if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isOtherCapturedType) {
+                    nullableAnyType() to false
+                } else if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isOtherCapturedType) {
+                    otherConstraint.type to false
+                } else {
+                    createCapturedType(
+                        createTypeArgument(otherConstraint.type, TypeVariance.IN),
+                        emptyList(),
+                        otherConstraint.type,
+                        CaptureStatus.FOR_INCORPORATION
+                    ) to true
+                }
             }
         }
 
-        if (baseConstraint.kind != ConstraintKind.UPPER) {
-            val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = false)
-            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = true)
-        }
-        if (baseConstraint.kind != ConstraintKind.LOWER) {
-            val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = true)
-            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = false)
-        }
+        approximateIfNeededAndAddNewConstraint(baseConstraint, type, targetVariable, otherVariable, otherConstraint, needApproximation)
     }
 
     private fun Context.addNewConstraint(
@@ -158,8 +209,14 @@ class ConstraintIncorporator(
 
         val isUsefulForNullabilityConstraint =
             isPotentialUsefulNullabilityConstraint(newConstraint, otherConstraint.type, otherConstraint.kind)
+        val isFromVariableFixation = baseConstraint.position.from is FixVariableConstraintPosition
+                || otherConstraint.position.from is FixVariableConstraintPosition
 
-        if (!isUsefulForNullabilityConstraint && !containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)) return
+        if (!containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)
+            && !isUsefulForNullabilityConstraint
+            && !isFromVariableFixation
+        ) return
+
         if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
                 baseConstraint, otherConstraint, newConstraint, isSubtype
             )
@@ -172,10 +229,12 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        val inputTypePosition = if (baseConstraint.position.from is OnlyInputTypeConstraintPosition)
-            baseConstraint.position else null
+        val inputTypePosition = baseConstraint.position.from.safeAs<OnlyInputTypeConstraintPosition>()
 
-        addNewIncorporatedConstraint(targetVariable, newConstraint, ConstraintContext(kind, derivedFrom, inputTypePosition))
+        val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
+
+        addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
     }
 
     fun Context.containsConstrainingTypeWithoutProjection(
@@ -192,6 +251,8 @@ class ConstraintIncorporator(
         otherConstraint: KotlinTypeMarker,
         kind: ConstraintKind
     ): Boolean {
+        if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(newConstraint)) return false
+
         val otherConstraintCanAddNullabilityToNewOne =
             !newConstraint.isNullableType() && otherConstraint.isNullableType() && kind == ConstraintKind.LOWER
         val newConstraintCanAddNullabilityToOtherOne =
@@ -220,9 +281,9 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
     val stack = ArrayDeque<TypeArgumentMarker>()
 
     when (type) {
-        is FlexibleType -> {
-            stack.push(createTypeArgument(type.lowerBound, TypeVariance.INV))
-            stack.push(createTypeArgument(type.upperBound, TypeVariance.INV))
+        is FlexibleTypeMarker -> {
+            stack.push(createTypeArgument(type.lowerBound(), TypeVariance.INV))
+            stack.push(createTypeArgument(type.upperBound(), TypeVariance.INV))
         }
         else -> stack.push(createTypeArgument(type, TypeVariance.INV))
     }
@@ -242,9 +303,9 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
         result.add(typeProjection)
 
         when (val projectedType = typeProjection.getType()) {
-            is FlexibleType -> {
-                addArgumentsToStack(projectedType.lowerBound)
-                addArgumentsToStack(projectedType.upperBound)
+            is FlexibleTypeMarker -> {
+                addArgumentsToStack(projectedType.lowerBound())
+                addArgumentsToStack(projectedType.upperBound())
             }
             else -> addArgumentsToStack(projectedType)
         }

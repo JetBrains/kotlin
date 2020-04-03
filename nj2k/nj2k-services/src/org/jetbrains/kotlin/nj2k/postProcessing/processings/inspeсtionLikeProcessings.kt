@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessingForElement
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RemoveExplicitPropertyTypeProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
     override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean {
+        if (element.typeReference == null) return false
         val needFieldTypes = settings?.specifyFieldTypeByDefault == true
         val needLocalVariablesTypes = settings?.specifyLocalVariableTypeByDefault == true
 
@@ -55,7 +58,15 @@ class RemoveExplicitPropertyTypeProcessing : InspectionLikeProcessingForElement<
     }
 
     override fun apply(element: KtProperty) {
-        element.typeReference = null
+        val typeReference = element.typeReference ?: return
+        element.colon?.let { colon ->
+            val followingWhiteSpace = colon.nextSibling?.takeIf { following ->
+                following is PsiWhiteSpace && following.isInSingleLine()
+            }
+            followingWhiteSpace?.delete()
+            colon.delete()
+        }
+        typeReference.delete()
     }
 }
 
@@ -297,7 +308,11 @@ class RemoveRedundantConstructorKeywordProcessing :
 
 
     override fun apply(element: KtPrimaryConstructor) {
-        element.removeRedundantConstructorKeywordAndSpace()
+        element.getConstructorKeyword()?.delete()
+        element.prevSibling
+            ?.safeAs<PsiWhiteSpace>()
+            ?.takeUnless { it.textContains('\n') }
+            ?.delete()
     }
 }
 
@@ -476,7 +491,7 @@ class LiftAssignmentInspectionBasedProcessing :
         } ?: false
 
     override fun apply(element: KtExpression) {
-        BranchedFoldingUtils.foldToAssignment(element)
+        BranchedFoldingUtils.tryFoldToAssignment(element)
     }
 }
 
@@ -487,5 +502,17 @@ class MoveLambdaOutsideParenthesesProcessing :
 
     override fun apply(element: KtCallExpression) {
         element.moveFunctionLiteralOutsideParentheses()
+    }
+}
+
+class RemoveOpenModifierOnTopLevelDeclarationsProcessing :
+    InspectionLikeProcessingForElement<KtDeclaration>(KtDeclaration::class.java) {
+    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean =
+        element.hasModifier(KtTokens.OPEN_KEYWORD)
+                && (element is KtFunction || element is KtProperty)
+                && element.parent is KtFile
+
+    override fun apply(element: KtDeclaration) {
+        element.removeModifier(KtTokens.OPEN_KEYWORD)
     }
 }

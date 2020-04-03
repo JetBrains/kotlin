@@ -138,7 +138,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
             = KotlinTypeFactory.flexibleType(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
 
     @TypeRefinement
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType {
         return FlexibleTypeImpl(
             kotlinTypeRefiner.refineType(lowerBound) as SimpleType,

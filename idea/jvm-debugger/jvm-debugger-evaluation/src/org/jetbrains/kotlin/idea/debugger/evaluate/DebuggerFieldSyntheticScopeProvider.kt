@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -22,12 +24,12 @@ import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -122,7 +124,15 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             val type = propertyDescriptor.type
             val sourceElement = propertyDescriptor.source
 
-            consumer[name] = createSyntheticPropertyDescriptor(clazz, type, name.asString(), "Backing field", sourceElement) { state ->
+            val isVar = propertyDescriptor.isVar
+            consumer[name] = createSyntheticPropertyDescriptor(
+                clazz,
+                type,
+                name,
+                isVar,
+                KotlinDebuggerEvaluationBundle.message("backing.field"),
+                sourceElement
+            ) { state ->
                 state.typeMapper.mapType(clazz.defaultType)
             }
         }
@@ -145,7 +155,15 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             val type = typeResolver.transformJavaType(field.type, TypeUsage.COMMON.toAttributes()).replaceArgumentsWithStarProjections()
             val sourceElement = javaSourceElementFactory.source(field)
 
-            consumer[fieldName] = createSyntheticPropertyDescriptor(clazz, type, fieldName.asString(), "Java field", sourceElement) {
+            val isVar = !field.isFinal
+            consumer[fieldName] = createSyntheticPropertyDescriptor(
+                clazz,
+                type,
+                fieldName,
+                isVar,
+                KotlinDebuggerEvaluationBundle.message("java.field"),
+                sourceElement
+            ) {
                 Type.getObjectType(ownerClassName)
             }
         }
@@ -154,12 +172,13 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
     private fun createSyntheticPropertyDescriptor(
         clazz: ClassDescriptor,
         type: KotlinType,
-        fieldName: String,
+        fieldName: Name,
+        isVar: Boolean,
         description: String,
-        getterSource: SourceElement,
+        sourceElement: SourceElement,
         ownerType: (GenerationState) -> Type
     ): PropertyDescriptor {
-        val propertyDescriptor = DebuggerFieldPropertyDescriptor(clazz, fieldName, description, ownerType)
+        val propertyDescriptor = DebuggerFieldPropertyDescriptor(clazz, fieldName.asString(), description, ownerType, isVar)
 
         val extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(
             propertyDescriptor,
@@ -173,10 +192,24 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             propertyDescriptor, Annotations.EMPTY, Modality.FINAL,
             Visibilities.PUBLIC, false, false, false,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            null, getterSource
-        )
+            null, sourceElement
+        ).apply { initialize(type) }
 
-        propertyDescriptor.initialize(getter, null)
+        val setter = if (isVar) PropertySetterDescriptorImpl(
+            propertyDescriptor, Annotations.EMPTY, Modality.FINAL,
+            Visibilities.PUBLIC, false, false, false,
+            CallableMemberDescriptor.Kind.SYNTHESIZED,
+            null, sourceElement
+        ).apply {
+            val setterValueParameter = ValueParameterDescriptorImpl(
+                this, null, 0, Annotations.EMPTY, Name.identifier("value"), type,
+                declaresDefaultValue = false, isCrossinline = false, isNoinline = false,
+                varargElementType = null, source = sourceElement
+            )
+            initialize(setterValueParameter)
+        } else null
+
+        propertyDescriptor.initialize(getter, setter)
 
         return propertyDescriptor
     }
@@ -186,14 +219,15 @@ internal class DebuggerFieldPropertyDescriptor(
     containingDeclaration: DeclarationDescriptor,
     val fieldName: String,
     val description: String,
-    val ownerType: (GenerationState) -> Type
+    val ownerType: (GenerationState) -> Type,
+    isVar: Boolean
 ) : PropertyDescriptorImpl(
     containingDeclaration,
     null,
     Annotations.EMPTY,
     Modality.FINAL,
     Visibilities.PUBLIC,
-    /*isVar = */true,
+    /*isVar = */isVar,
     Name.identifier(fieldName + "_field"),
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     SourceElement.NO_SOURCE,

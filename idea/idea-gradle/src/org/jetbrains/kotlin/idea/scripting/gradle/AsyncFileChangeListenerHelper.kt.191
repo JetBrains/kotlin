@@ -1,0 +1,33 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.idea.scripting.gradle
+
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.util.concurrency.SequentialTaskExecutor
+
+fun addVfsListener(watcher: GradleScriptInputsWatcher) {
+    watcher.project.messageBus.connect().subscribe(
+        VirtualFileManager.VFS_CHANGES,
+        object : BulkFileListener {
+            private val executor =
+                SequentialTaskExecutor.createSequentialApplicationPoolExecutor("GradleScriptInputsWatcherVfsChangesExecutor")
+
+            override fun after(events: List<VFileEvent>) {
+                executor.submit(Runnable {
+                    if (watcher.project.isDisposed) return@Runnable
+                    for (event in events) {
+                        val file = event.file ?: continue
+                        if (isInAffectedGradleProjectFiles(watcher.project, event.path)) {
+                            watcher.fileChanged(event.path, file.timeStamp)
+                        }
+                    }
+                })
+            }
+        }
+    )
+}

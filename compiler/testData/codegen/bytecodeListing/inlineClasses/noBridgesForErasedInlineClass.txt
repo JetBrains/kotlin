@@ -12,7 +12,7 @@ public final class Foo {
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: long, p1: long): boolean
-    public synthetic method foo(p0: java.lang.Object): void
+    public synthetic bridge method foo(p0: java.lang.Object): void
     public method foo-GWb7d6U(p0: long): void
     public static method foo-GWb7d6U(p0: long, p1: long): void
     public final method getX(): long

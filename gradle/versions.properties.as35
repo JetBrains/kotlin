@@ -17,3 +17,4 @@ ignore.jar.common=true
 ignore.jar.lombok-ast=true
 versions.jar.asm-all=7.0
 versions.gradle-api=4.5.1
+versions.shadow=5.2.0

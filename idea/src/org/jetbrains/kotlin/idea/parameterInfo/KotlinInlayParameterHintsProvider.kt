@@ -15,6 +15,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.name.Name
@@ -24,9 +25,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-enum class HintType(val desc: String, defaultEnabled: Boolean) {
+enum class HintType(val showDesc: String, val doNotShowDesc: String, defaultEnabled: Boolean) {
 
-    PROPERTY_HINT("Show property type hints", false) {
+    PROPERTY_HINT(
+        KotlinBundle.message("hints.title.property.type.enabled"),
+        KotlinBundle.message("hints.title.property.type.disabled"),
+        false
+    ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             return providePropertyTypeHint(elem)
         }
@@ -34,7 +39,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtProperty && elem.getReturnTypeReference() == null && !elem.isLocal
     },
 
-    LOCAL_VARIABLE_HINT("Show local variable type hints", false) {
+    LOCAL_VARIABLE_HINT(
+        KotlinBundle.message("hints.title.locals.type.enabled"),
+        KotlinBundle.message("hints.title.locals.type.disabled"),
+        false
+    ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             return providePropertyTypeHint(elem)
         }
@@ -45,7 +54,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
                     (elem is KtDestructuringDeclarationEntry && elem.getReturnTypeReference() == null)
     },
 
-    FUNCTION_HINT("Show function return type hints", false) {
+    FUNCTION_HINT(
+        KotlinBundle.message("hints.title.function.type.enabled"),
+        KotlinBundle.message("hints.title.function.type.disabled"),
+        false
+    ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             (elem as? KtNamedFunction)?.let { namedFunc ->
                 namedFunc.valueParameterList?.let { paramList ->
@@ -59,7 +72,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
             elem is KtNamedFunction && !(elem.hasBlockBody() || elem.hasDeclaredReturnType())
     },
 
-    PARAMETER_TYPE_HINT("Show parameter type hints ", false) {
+    PARAMETER_TYPE_HINT(
+        KotlinBundle.message("hints.title.parameter.type.enabled"),
+        KotlinBundle.message("hints.title.parameter.type.disabled"),
+        false
+    ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             (elem as? KtParameter)?.let { param ->
                 param.nameIdentifier?.let { ident ->
@@ -72,7 +89,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtParameter && elem.typeReference == null && !elem.isLoopParameter
     },
 
-    PARAMETER_HINT("Show argument name hints", true) {
+    PARAMETER_HINT(
+        KotlinBundle.message("hints.title.argument.name.enabled"),
+        KotlinBundle.message("hints.title.argument.name.disabled"),
+        true
+    ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             val callElement = elem.getStrictParentOfType<KtCallElement>() ?: return emptyList()
             return provideArgumentNameHints(callElement)
@@ -81,7 +102,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtValueArgumentList
     },
 
-    LAMBDA_RETURN_EXPRESSION("Show lambda return expression hints", true) {
+    LAMBDA_RETURN_EXPRESSION(
+        KotlinBundle.message("hints.title.return.expression.enabled"),
+        KotlinBundle.message("hints.title.return.expression.disabled"),
+        true
+    ) {
         override fun isApplicable(elem: PsiElement) =
             elem is KtExpression && elem !is KtFunctionLiteral && !elem.isNameReferenceInCall()
 
@@ -96,7 +121,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         }
     },
 
-    LAMBDA_IMPLICIT_PARAMETER_RECEIVER("Show hints for implicit receivers and parameters of lambdas", true) {
+    LAMBDA_IMPLICIT_PARAMETER_RECEIVER(
+        KotlinBundle.message("hints.title.implicit.parameters.enabled"),
+        KotlinBundle.message("hints.title.implicit.parameters.disabled"),
+        true
+    ) {
         override fun isApplicable(elem: PsiElement) = elem is KtFunctionLiteral
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -107,7 +136,11 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         }
     },
 
-    SUSPENDING_CALL("Show hints for suspending calls", false) {
+    SUSPENDING_CALL(
+        KotlinBundle.message("hints.title.suspend.calls.enabled"),
+        KotlinBundle.message("hints.title.suspend.calls.disabled"),
+        false
+    ) {
         override fun isApplicable(elem: PsiElement) = elem.isNameReferenceInCall() && ApplicationManager.getApplication().isInternal
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -135,7 +168,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
 
     abstract fun isApplicable(elem: PsiElement): Boolean
     abstract fun provideHints(elem: PsiElement): List<InlayInfo>
-    val option = Option("SHOW_${this.name}", desc, defaultEnabled)
+    val option = Option("SHOW_${this.name}", this.showDesc, defaultEnabled)
     val enabled
         get() = option.get()
 }
@@ -162,9 +195,9 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         }
     }
 
-    override fun getParameterHints(element: PsiElement?): List<InlayInfo> {
+    override fun getParameterHints(element: PsiElement): List<InlayInfo> {
         val resolveToEnabled = HintType.resolveToEnabled(element) ?: return emptyList()
-        return resolveToEnabled.provideHints(element!!)
+        return resolveToEnabled.provideHints(element)
     }
 
     override fun getBlackListDependencyLanguage(): Language = JavaLanguage.INSTANCE

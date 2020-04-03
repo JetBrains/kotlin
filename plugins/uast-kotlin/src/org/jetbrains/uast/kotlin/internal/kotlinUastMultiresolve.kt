@@ -6,7 +6,6 @@
 package org.jetbrains.uast.kotlin.internal
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiSubstitutor
@@ -28,8 +27,6 @@ internal fun getReferenceVariants(ktElement: KtElement, nameHint: String): Seque
 
 internal fun UElement.getResolveResultVariants(ktExpression: KtExpression?): Iterable<ResolveResult> {
     ktExpression ?: return emptyList()
-
-    if (!Registry.`is`("kotlin.uast.multiresolve.enabled", true)) return ktExpression.multiResolveResults().asIterable()
 
     val referenceVariants = getReferenceVariants(ktExpression, ktExpression.name ?: ktExpression.text)
 

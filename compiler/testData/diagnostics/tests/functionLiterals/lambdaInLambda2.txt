@@ -1,0 +1,30 @@
+package
+
+public fun test(): kotlin.Unit
+
+public open class AdapterProcessor</*0*/ T : kotlin.Any!, /*1*/ S : kotlin.Any!> {
+    public constructor AdapterProcessor</*0*/ T : kotlin.Any!, /*1*/ S : kotlin.Any!>(/*0*/ conversion: Function<in T!, out S!>!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Function</*0*/ Param : kotlin.Any!, /*1*/ Result : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun `fun`(/*0*/ param: Param!): Result!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface PsiClass {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface PsiMethod {
+    public abstract val containingClass: PsiClass?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

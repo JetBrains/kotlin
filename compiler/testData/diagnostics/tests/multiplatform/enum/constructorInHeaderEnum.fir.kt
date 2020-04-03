@@ -3,7 +3,7 @@
 // FILE: common.kt
 
 expect enum class En(x: Int) {
-    E1,
+    <!INAPPLICABLE_CANDIDATE!>E1,<!>
     E2(42),
     ;
 

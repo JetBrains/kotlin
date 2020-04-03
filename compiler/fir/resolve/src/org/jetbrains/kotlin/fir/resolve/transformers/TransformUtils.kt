@@ -7,37 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
-
-internal object MapArguments : FirDefaultTransformer<Map<FirElement, FirElement>>() {
-    override fun <E : FirElement> transformElement(element: E, data: Map<FirElement, FirElement>): CompositeTransformResult<E> {
-        return ((data[element] ?: element) as E).compose()
-    }
-
-    override fun transformFunctionCall(
-        functionCall: FirFunctionCall,
-        data: Map<FirElement, FirElement>
-    ): CompositeTransformResult<FirStatement> {
-        return (functionCall.transformArguments(this, data) as FirStatement).compose()
-    }
-
-    override fun transformWrappedArgumentExpression(
-        wrappedArgumentExpression: FirWrappedArgumentExpression,
-        data: Map<FirElement, FirElement>
-    ): CompositeTransformResult<FirStatement> {
-        return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
-    }
-}
+import org.jetbrains.kotlin.fir.visitors.*
 
 internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
     override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
@@ -87,21 +62,21 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
     }
 }
 
-internal object StoreCalleeReference : FirTransformer<FirResolvedNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirResolvedNamedReference): CompositeTransformResult<E> {
+internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformNamedReference(
         namedReference: FirNamedReference,
-        data: FirResolvedNamedReference
+        data: FirNamedReference
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }
 
     override fun transformResolvedNamedReference(
         resolvedNamedReference: FirResolvedNamedReference,
-        data: FirResolvedNamedReference
+        data: FirNamedReference
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }
@@ -119,7 +94,7 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
         val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
         transformReturnTypeRef(
             StoreType,
-            returnTypeRef.withReplacedConeType(returnType.createArrayOf(session))
+            returnTypeRef.withReplacedConeType(ConeKotlinTypeProjectionOut(returnType).createArrayOf(session))
         )
     }
 }

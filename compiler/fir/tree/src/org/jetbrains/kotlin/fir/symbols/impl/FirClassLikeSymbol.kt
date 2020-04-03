@@ -15,11 +15,6 @@ sealed class FirClassLikeSymbol<D>(
     val classId: ClassId
 ) : FirClassifierSymbol<D>() where D : FirClassLikeDeclaration<D>, D : FirSymbolOwner<D> {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
-
-    override fun equals(other: Any?): Boolean =
-        other is FirClassLikeSymbol<*> && fir == other.fir
-
-    override fun hashCode(): Int = fir.hashCode()
 }
 
 sealed class FirClassSymbol<C : FirClass<C>>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
@@ -32,7 +27,9 @@ sealed class FirClassSymbol<C : FirClass<C>>(classId: ClassId) : FirClassLikeSym
 
 class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId)
 
-class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ClassId(FqName.ROOT, FqName("anonymous"), true))
+val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName("anonymous"), true)
+
+class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CLASS_ID)
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId) {
     override fun toLookupTag() = ConeClassLikeLookupTagImpl(classId)

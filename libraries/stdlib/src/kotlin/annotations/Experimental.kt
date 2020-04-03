@@ -19,13 +19,13 @@ import kotlin.reflect.KClass
  * and its call sites should accept the experimental aspect of it either by using [UseExperimental],
  * or by being annotated with that marker themselves, effectively causing further propagation of that experimental aspect.
  *
- * This class is experimental itself and can only be used with the compiler argument `-Xuse-experimental=kotlin.Experimental`.
+ * This class is deprecated in favor of a more general approach provided by [RequiresOptIn]/[OptIn].
  */
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
-@Suppress("ANNOTATION_CLASS_MEMBER")
+@Deprecated("Please use RequiresOptIn instead.")
 public annotation class Experimental(val level: Level = Level.ERROR) {
     /**
      * Severity of the diagnostic that should be reported on usages of experimental API which did not explicitly accept the experimental aspect
@@ -43,7 +43,7 @@ public annotation class Experimental(val level: Level = Level.ERROR) {
  * Allows to use experimental API denoted by the given markers in the annotated file, declaration, or expression.
  * If a declaration is annotated with [UseExperimental], its usages are **not** required to opt-in to that experimental API.
  *
- * This class is experimental itself and can only be used with the compiler argument `-Xuse-experimental=kotlin.Experimental`.
+ * This class is deprecated in favor of a more general approach provided by [RequiresOptIn]/[OptIn].
  */
 @Target(
     CLASS, PROPERTY, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, EXPRESSION, FILE, TYPEALIAS
@@ -51,6 +51,7 @@ public annotation class Experimental(val level: Level = Level.ERROR) {
 @Retention(SOURCE)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@Deprecated("Please use OptIn instead.", ReplaceWith("OptIn(*markerClass)", "kotlin.OptIn"))
 public annotation class UseExperimental(
     vararg val markerClass: KClass<out Annotation>
 )

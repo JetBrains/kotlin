@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 enum class ClassTemplate(
         // var bug: Int = 1,
         var code: Int,

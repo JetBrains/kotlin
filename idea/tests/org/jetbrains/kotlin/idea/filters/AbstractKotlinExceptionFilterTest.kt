@@ -90,7 +90,8 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         val filter = KotlinExceptionFilterFactory().create(GlobalSearchScope.allScope(project))
         val prefix = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PREFIX: ") ?: "at"
         val stackTraceString = stackTraceElement.toString()
-        var result = filter.applyFilter("$prefix $stackTraceString", 0)
+        val text = "$prefix $stackTraceString"
+        var result = filter.applyFilter(text, text.length)
             ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
 
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "SMAP_APPLIED")) {
@@ -104,11 +105,16 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
                 .replace(mainFile.name, file.name)
                 .replace(Regex(":\\d+\\)"), ":$line)")
 
-            result = filter.applyFilter("$prefix $newStackString", 0) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+            val newLine = "$prefix $newStackString"
+            result = filter.applyFilter(newLine, newLine.length) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
         }
 
         val info = result.firstHyperlinkInfo as FileHyperlinkInfo
-        val descriptor = info.descriptor!!
+        val descriptor = if (InTextDirectivesUtils.isDirectiveDefined(fileText, "NAVIGATE_TO_CALL_SITE"))
+            (info as? InlineFunctionHyperLinkInfo)?.callSiteDescriptor
+                ?: throw AssertionError("`$stackTraceString` did not resolve to an inline function call")
+        else
+            info.descriptor!!
 
         val expectedFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE: ")!!
         val expectedVirtualFile = File(rootDir, expectedFileName).toVirtualFile()

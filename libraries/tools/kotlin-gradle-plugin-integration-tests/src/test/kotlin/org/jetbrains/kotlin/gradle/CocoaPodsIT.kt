@@ -22,7 +22,12 @@ class CocoaPodsIT : BaseGradleIT() {
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
 
     @Test
-    fun testPodspec() {
+    fun testPodspec() = doTestPodspec()
+
+    @Test
+    fun testPodspecCustomFrameworkName() = doTestPodspec("MultiPlatformLibrary")
+
+    private fun doTestPodspec(frameworkName: String? = null) {
         assumeTrue(HostManager.hostIsMac)
         val gradleProject = transformProjectWithPluginsDsl("new-mpp-cocoapods", gradleVersion)
 
@@ -30,8 +35,10 @@ class CocoaPodsIT : BaseGradleIT() {
         gradleProject.build(":kotlin-library:podspec") {
             assertFailed()
             assertContains("The Gradle wrapper is required to run the build from Xcode.")
-            assertContains("Please run the same command with `-Pkotlin.native.cocoapods.generate.wrapper=true` " +
-                                   "or run the `:wrapper` task to generate the wrapper manually.")
+            assertContains(
+                "Please run the same command with `-Pkotlin.native.cocoapods.generate.wrapper=true` " +
+                        "or run the `:wrapper` task to generate the wrapper manually."
+            )
         }
 
         // Check that we can generate the wrapper along with the podspec if the corresponding property specified
@@ -42,6 +49,14 @@ class CocoaPodsIT : BaseGradleIT() {
 
             // Check that the podspec file is correctly generated.
             val podspecFileName = "kotlin-library/kotlin_library.podspec"
+
+
+            frameworkName?.let {
+                fileInWorkingDir(podspecFileName).modify {
+                    it.replace("build/cocoapods/framework/kotlin_library.framework", "build/cocoapods/framework/$frameworkName.framework")
+                }
+            }
+
             val expectedPodspecContent = """
                 Pod::Spec.new do |spec|
                     spec.name                     = 'kotlin_library'
@@ -53,11 +68,12 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.summary                  = 'CocoaPods test library'
 
                     spec.static_framework         = true
-                    spec.vendored_frameworks      = "build/cocoapods/framework/#{spec.name}.framework"
+                    spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "kotlin_library"}.framework"
                     spec.libraries                = "c++"
                     spec.module_name              = "#{spec.name}_umbrella"
 
                     spec.dependency 'pod_dependency', '1.0'
+                    spec.dependency 'subspec_dependency/Core', '1.0'
 
                     spec.pod_target_xcconfig = {
                         'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
@@ -102,15 +118,16 @@ class CocoaPodsIT : BaseGradleIT() {
             // Check that a project with CocoaPods interop fails to be built from command line.
             build(":kotlin-library:build") {
                 assertFailed()
-                assertContains("Cannot perform cinterop processing for pod_dependency: cannot determine headers location.")
+                assertContains("Cannot perform cinterop processing for module pod_dependency: cannot determine headers location.")
             }
 
             // Check that a project without CocoaPods interop can be built from command line.
             gradleBuildScript("kotlin-library").modify {
-                it.replace("""pod("pod_dependency", "1.0")""", "")
+                it.replace("""pod("pod_dependency", "1.0")""", "").replace("""pod("subspec_dependency/Core", "1.0")""", "")
             }
             projectDir.resolve("kotlin-library/src/iosMain/kotlin/A.kt").modify {
                 it.replace("import cocoapods.pod_dependency.*", "").replace("println(foo())", "")
+                    .replace("import cocoapods.subspec_dependency.*", "").replace("println(baz())", "")
             }
             build(":kotlin-library:linkReleaseFrameworkIOS") {
                 assertSuccessful()
@@ -157,11 +174,34 @@ class CocoaPodsIT : BaseGradleIT() {
         CommandResult(process.exitValue(), stdOut, stdErr).block()
     }
 
-    private fun doTestXcode(mode: ImportMode) {
+    private fun doTestXcode(mode: ImportMode, isCustomFrameworkName: Boolean) {
         assumeTrue(HostManager.hostIsMac)
         val gradleProject = transformProjectWithPluginsDsl("new-mpp-cocoapods", gradleVersion)
 
         with(gradleProject) {
+            setupWorkingDir()
+
+            // Add property with custom framework name
+            if (isCustomFrameworkName) {
+                gradleBuildScript("kotlin-library").appendText(
+                    """
+                kotlin {
+                    cocoapods {
+                        frameworkName = "MultiPlatformLibrary"
+                    }
+                }
+            """.trimIndent()
+                )
+
+                // Change swift sources import
+                val iosAppDir = projectDir.resolve("ios-app")
+                iosAppDir.resolve("ios-app/ViewController.swift").modify {
+                    it.replace("import kotlin_library", "import MultiPlatformLibrary")
+                }
+
+            }
+
+
             // Generate podspec.
             gradleProject.build(":kotlin-library:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
                 assertSuccessful()
@@ -176,7 +216,8 @@ class CocoaPodsIT : BaseGradleIT() {
 
             // Install pods.
             runCommand(iosAppDir, "pod", "install") {
-                assertEquals(0, exitCode,  """
+                assertEquals(
+                    0, exitCode, """
                         |Exit code mismatch for `pod install`.
                         |stdout:
                         |$stdOut
@@ -188,15 +229,17 @@ class CocoaPodsIT : BaseGradleIT() {
             }
 
             // Run Xcode build.
-            runCommand(iosAppDir, "xcodebuild",
-                       "-sdk", "iphonesimulator",
-                       "-arch", "arm64",
-                       "-configuration", "Release",
-                       "-workspace", "ios-app.xcworkspace",
-                       "-scheme", "ios-app",
-                       inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
+            runCommand(
+                iosAppDir, "xcodebuild",
+                "-sdk", "iphonesimulator",
+                "-arch", "arm64",
+                "-configuration", "Release",
+                "-workspace", "ios-app.xcworkspace",
+                "-scheme", "ios-app",
+                inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
             ) {
-                assertEquals(0, exitCode, """
+                assertEquals(
+                    0, exitCode, """
                         |Exit code mismatch for `xcodebuild`.
                         |stdout:
                         |$stdOut
@@ -210,8 +253,12 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testXcodeUseFrameworks() = doTestXcode(ImportMode.FRAMEWORKS)
+    fun testXcodeUseFrameworks() = doTestXcode(ImportMode.FRAMEWORKS, false)
 
     @Test
-    fun testXcodeUseModularHeaders() = doTestXcode(ImportMode.MODULAR_HEADERS)
+    fun testXcodeUseModularHeaders() = doTestXcode(ImportMode.MODULAR_HEADERS, false)
+
+    @Test
+    fun testXcodeWithCustomFrameworkName() = doTestXcode(ImportMode.FRAMEWORKS, true)
+
 }

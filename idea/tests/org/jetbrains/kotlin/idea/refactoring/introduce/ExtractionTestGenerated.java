@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2787,6 +2787,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/introduceProperty"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("conflictWithParentClass.kt")
+        public void testConflictWithParentClass() throws Exception {
+            runTest("idea/testData/refactoring/introduceProperty/conflictWithParentClass.kt");
+        }
+
         @TestMetadata("extractExtensionWithInitializer.kt")
         public void testExtractExtensionWithInitializer() throws Exception {
             runTest("idea/testData/refactoring/introduceProperty/extractExtensionWithInitializer.kt");
@@ -2925,6 +2930,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("kt21530.kt")
         public void testKt21530() throws Exception {
             runTest("idea/testData/refactoring/introduceProperty/kt21530.kt");
+        }
+
+        @TestMetadata("kt24615.kt")
+        public void testKt24615() throws Exception {
+            runTest("idea/testData/refactoring/introduceProperty/kt24615.kt");
         }
 
         @TestMetadata("primaryConstructorParameterReference.kt")

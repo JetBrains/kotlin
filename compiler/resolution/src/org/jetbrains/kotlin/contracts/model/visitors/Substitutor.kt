@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.contracts.model.visitors
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
+import org.jetbrains.kotlin.contracts.model.ESTypeSubstitution
 import org.jetbrains.kotlin.contracts.model.structure.*
 
 /**
@@ -28,11 +29,12 @@ import org.jetbrains.kotlin.contracts.model.structure.*
  */
 class Substitutor(
     private val substitutions: Map<ESVariable, Computation>,
+    private val typeSubstitution: ESTypeSubstitution,
     private val reducer: Reducer
 ) : ESExpressionVisitor<Computation?> {
     override fun visitIs(isOperator: ESIs): Computation? {
         val arg = isOperator.left.accept(this) ?: return null
-        return CallComputation(ESBooleanType, isOperator.functor.invokeWithArguments(arg))
+        return CallComputation(ESBooleanType, isOperator.functor.invokeWithArguments(arg, typeSubstitution))
     }
 
     override fun visitNot(not: ESNot): Computation? {
@@ -43,7 +45,7 @@ class Substitutor(
     override fun visitEqual(equal: ESEqual): Computation? {
         val left = equal.left.accept(this) ?: return null
         val right = equal.right.accept(this) ?: return null
-        return CallComputation(ESBooleanType, equal.functor.invokeWithArguments(listOf(left, right), reducer))
+        return CallComputation(ESBooleanType, equal.functor.invokeWithArguments(listOf(left, right), typeSubstitution, reducer))
     }
 
     override fun visitAnd(and: ESAnd): Computation? {

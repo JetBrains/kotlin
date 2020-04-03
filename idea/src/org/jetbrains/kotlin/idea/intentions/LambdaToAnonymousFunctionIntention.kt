@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
@@ -30,8 +31,8 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpression>(
     KtLambdaExpression::class.java,
-    "Convert to anonymous function",
-    "Convert lambda expression to anonymous function"
+    KotlinBundle.lazyMessage("convert.to.anonymous.function"),
+    KotlinBundle.lazyMessage("convert.lambda.expression.to.anonymous.function")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.getStrictParentOfType<KtValueArgument>() == null) return false
@@ -74,6 +75,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                     functionDescriptor.extensionReceiverParameter?.type?.let {
                         receiver(typeSourceCode.renderType(it))
                     }
+
                     name(functionName)
                     for (parameter in functionDescriptor.valueParameters) {
                         val type = parameter.type.let { if (it.isFlexible()) it.makeNotNullable() else it }
@@ -84,6 +86,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                             param(parameter.name.asString(), renderType)
                         }
                     }
+
                     functionDescriptor.returnType?.takeIf { !it.isUnit() }?.let {
                         val lastStatement = bodyExpression.statements.lastOrNull()
                         if (lastStatement != null && lastStatement !is KtReturnExpression) {
@@ -102,6 +105,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                     blockBody(" " + bodyExpression.text)
                 }.asString()
             )
+
             return replaceElement(function).also { ShortenReferences.DEFAULT.process(it) }
         }
     }

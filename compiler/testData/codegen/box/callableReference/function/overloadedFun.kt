@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(): String = "foo1"
 fun foo(i: Int): String = "foo2"
 

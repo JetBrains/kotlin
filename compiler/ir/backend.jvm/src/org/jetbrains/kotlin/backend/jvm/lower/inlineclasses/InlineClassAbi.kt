@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,6 +54,14 @@ object InlineClassAbi {
      * to avoid clashes between overloaded methods.
      */
     fun mangledNameFor(irFunction: IrFunction): Name {
+        if (irFunction is IrConstructor) {
+            // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
+            assert(irFunction.constructedClass.isInline) {
+                "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
+            }
+            return Name.identifier("constructor-impl")
+        }
+
         val suffix = when {
             irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
                 hashSuffix(irFunction)
@@ -62,8 +70,6 @@ object InlineClassAbi {
         }
 
         val base = when {
-            irFunction is IrConstructor ->
-                "constructor"
             irFunction.isGetter ->
                 JvmAbi.getterName(irFunction.propertyName.asString())
             irFunction.isSetter ->
@@ -91,17 +97,17 @@ object InlineClassAbi {
     }
 }
 
-private val IrType.requiresMangling: Boolean
+internal val IrType.requiresMangling: Boolean
     get() {
         val irClass = erasedUpperBound
         return irClass.isInline && irClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME
     }
 
-private val IrFunction.fullValueParameterList: List<IrValueParameter>
+internal val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
 internal val IrFunction.hasMangledParameters: Boolean
-    get() = dispatchReceiverParameter?.type?.getClass()?.isInline == true ||
+    get() = dispatchReceiverParameter != null && parentAsClass.isInline ||
             fullValueParameterList.any { it.type.requiresMangling } ||
             (this is IrConstructor && constructedClass.isInline)
 

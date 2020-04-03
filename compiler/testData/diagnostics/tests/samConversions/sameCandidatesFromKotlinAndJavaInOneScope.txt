@@ -1,0 +1,32 @@
+package
+
+public fun test(/*0*/ c: C): kotlin.Unit
+
+public interface Action</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun execute(/*0*/ t: T!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun pluginManagement(/*0*/ block: kotlin.Number.() -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C : B, Other {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun pluginManagement(/*0*/ pluginManagementSpec: Action<in kotlin.Number!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun pluginManagement(/*0*/ block: kotlin.Number.() -> kotlin.Unit): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Other {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun pluginManagement(/*0*/ pluginManagementSpec: Action<in kotlin.Number!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

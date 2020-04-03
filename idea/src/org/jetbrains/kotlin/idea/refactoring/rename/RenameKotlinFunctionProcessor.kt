@@ -10,11 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pass
 import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.listeners.RefactoringElementListener
-import com.intellij.refactoring.rename.RenameDialog
-import com.intellij.refactoring.rename.RenameJavaMethodProcessor
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.refactoring.rename.RenameUtil
+import com.intellij.refactoring.rename.*
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.SmartList
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.de
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.mangleInternalName
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -113,7 +113,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                 javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
             }
             else -> {
-                val chosenElements = checkSuperMethods(element, null, "rename")
+                val chosenElements = checkSuperMethods(element, null, KotlinBundle.message("text.rename.as.part.of.phrase"))
                 if (chosenElements.size > 1) FunctionWithSupersWrapper(element, chosenElements) else wrappedMethod
             }
         }
@@ -122,7 +122,13 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             return substitutedJavaElement.kotlinOrigin as? KtNamedFunction
         }
 
-        return substitutedJavaElement
+        val canRename = try {
+            PsiElementRenameHandler.canRename(element.project, editor, substitutedJavaElement)
+        } catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            false
+        }
+
+        return if (canRename) substitutedJavaElement else element
     }
 
     override fun substituteElementToRename(element: PsiElement, editor: Editor, renameCallback: Pass<PsiElement>) {
@@ -150,7 +156,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             }
             else -> {
                 val declaration = element.unwrapped as? KtNamedFunction ?: return
-                checkSuperMethodsWithPopup(declaration, deepestSuperMethods.toList(), "Rename", editor) {
+                checkSuperMethodsWithPopup(declaration, deepestSuperMethods.toList(), RefactoringBundle.message("rename.title"), editor) {
                     preprocessAndPass(if (it.size > 1) FunctionWithSupersWrapper(declaration, it) else wrappedMethod ?: element)
                 }
             }

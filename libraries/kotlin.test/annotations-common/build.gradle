@@ -1,17 +1,12 @@
 description = 'Kotlin Test Annotations Common'
 
 apply plugin: 'kotlin-platform-common'
-apply plugin: 'pill-configurable'
 
 configurePublishing(project)
 
 dependencies {
     compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-common")
-}
-
-pill {
-    importAsLibrary = true
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {

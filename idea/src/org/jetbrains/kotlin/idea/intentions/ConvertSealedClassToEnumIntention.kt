@@ -14,6 +14,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -29,7 +30,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
-class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Convert to enum class") {
+class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
+    KtClass::class.java,
+    KotlinBundle.message("convert.to.enum.class")
+) {
     override fun applicabilityRange(element: KtClass): TextRange? {
         val nameIdentifier = element.nameIdentifier ?: return null
         val sealedKeyword = element.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return null
@@ -45,7 +49,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
         val klass = element.liftToExpected() as? KtClass ?: element
 
-        val subclasses = project.runSynchronouslyWithProgress("Searching inheritors...", true) {
+        val subclasses = project.runSynchronouslyWithProgress(KotlinBundle.message("searching.inheritors"), true) {
             HierarchySearchRequest(klass, klass.useScope, false).searchInheritors().mapNotNull { it.unwrapped }
         } ?: return
 
@@ -60,7 +64,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         val inconvertibleSubclasses = subclassesByContainer[null] ?: emptyList()
         if (inconvertibleSubclasses.isNotEmpty()) {
             return showError(
-                "All inheritors must be nested objects of the class itself and may not inherit from other classes or interfaces.\n",
+                KotlinBundle.message("all.inheritors.must.be.nested.objects.of.the.class.itself.and.may.not.inherit.from.other.classes.or.interfaces"),
                 inconvertibleSubclasses,
                 project,
                 editor
@@ -70,7 +74,12 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         @Suppress("UNCHECKED_CAST")
         val nonSealedClasses = (subclassesByContainer.keys as Set<KtClass>).filter { !it.isSealed() }
         if (nonSealedClasses.isNotEmpty()) {
-            return showError("All expected and actual classes must be sealed classes.\n", nonSealedClasses, project, editor)
+            return showError(
+                KotlinBundle.message("all.expected.and.actual.classes.must.be.sealed.classes"),
+                nonSealedClasses,
+                project,
+                editor
+            )
         }
 
         if (subclassesByContainer.isNotEmpty()) {
@@ -83,7 +92,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
     private fun showError(message: String, elements: List<PsiElement>, project: Project, editor: Editor?) {
         val errorText = buildString {
             append(message)
-            append("Following problems are found:\n")
+            append(KotlinBundle.message("following.problems.are.found"))
             elements.joinTo(this) { ElementDescriptionUtil.getElementDescription(it, RefactoringDescriptionLocation.WITHOUT_PARENT) }
         }
         return CommonRefactoringUtil.showErrorHint(project, editor, errorText, text, null)
@@ -109,7 +118,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
             }
             val entry = psiFactory.createEnumEntry(entryText)
 
-            subclass.getBody()?.let { body -> entry.add(body) }
+            subclass.body?.let { body -> entry.add(body) }
 
             if (i < subclasses.lastIndex) {
                 entry.add(comma)

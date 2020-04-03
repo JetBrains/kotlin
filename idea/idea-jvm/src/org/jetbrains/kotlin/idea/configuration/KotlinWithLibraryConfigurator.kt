@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,12 +23,15 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
 import org.jetbrains.kotlin.idea.quickfix.askUpdateRuntime
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.underModalProgress
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
@@ -67,10 +70,13 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val defaultPathToJar = getDefaultPathToJarFile(project)
         val showPathToJarPanel = needToChooseJarPath(project)
 
-        var nonConfiguredModules = if (!ApplicationManager.getApplication().isUnitTestMode)
-            getCanBeConfiguredModules(project, this)
-        else
+        var nonConfiguredModules = if (!isUnitTestMode()) {
+            underModalProgress(project, KotlinJvmBundle.message("lookup.modules.configurations.progress.text")) {
+                getCanBeConfiguredModules(project, this)
+            }
+        } else {
             listOf(*ModuleManager.getInstance(project).modules)
+        }
         nonConfiguredModules -= excludeModules
 
         var modulesToConfigure = nonConfiguredModules
@@ -84,7 +90,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
                 excludeModules
             )
 
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
+            if (!isUnitTestMode()) {
                 dialog.show()
                 if (!dialog.isOK) return
             } else {
@@ -192,19 +198,19 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
 
         val jarVFile = LocalFileSystem.getInstance().findFileByIoFile(jarFile)
         if (jarVFile == null) {
-            collector.addMessage("Can't find library JAR file " + jarFile)
+            collector.addMessage(KotlinJvmBundle.message("can.t.find.library.jar.file.0", jarFile))
             return
         }
         val jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(jarVFile)
         if (jarRoot == null) {
-            collector.addMessage("Couldn't configure library; JAR file $jarVFile may be corrupted")
+            collector.addMessage(KotlinJvmBundle.message("couldn.t.configure.library.jar.file.0.may.be.corrupted", jarVFile))
             return
         }
 
         if (jarRoot !in library.getFiles(libraryJarDescriptor.orderRootType)) {
             library.addRoot(jarRoot, libraryJarDescriptor.orderRootType)
 
-            collector.addMessage("Added $jarFile to library configuration")
+            collector.addMessage(KotlinJvmBundle.message("added.0.to.library.configuration", jarFile))
         }
     }
 
@@ -219,7 +225,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
 
         val copy = FileUIUtils.copyWithOverwriteDialog(messageForOverrideDialog, toDir, file)
         if (copy != null) {
-            collector.addMessage(file.name + " was copied to " + toDir)
+            collector.addMessage(KotlinJvmBundle.message("0.was.copied.to.1", file.name, toDir))
         }
         return copy
     }
@@ -233,7 +239,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val kotlinLibrary = getKotlinLibrary(module)
         if (kotlinLibrary == null) {
             ModuleRootModificationUtil.addDependency(module, library, expectedDependencyScope, false)
-            collector.addMessage(library.name + " library was added to module " + module.name)
+            collector.addMessage(KotlinJvmBundle.message("0.library.was.added.to.module.1", library.name.toString(), module.name))
         } else {
             val libraryEntry = findLibraryOrderEntry(ModuleRootManager.getInstance(module).orderEntries, kotlinLibrary)
             if (libraryEntry != null) {
@@ -242,8 +248,13 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
                     libraryEntry.scope = expectedDependencyScope
 
                     collector.addMessage(
-                        kotlinLibrary.name + " library scope has changed from " + libraryDependencyScope +
-                                " to " + expectedDependencyScope + " for module " + module.name
+                        KotlinJvmBundle.message(
+                            "0.library.scope.has.changed.from.1.to.2.for.module.3",
+                            kotlinLibrary.name.toString(),
+                            libraryDependencyScope,
+                            expectedDependencyScope,
+                            module.name
+                        )
                     )
                 }
             }
@@ -263,13 +274,13 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             }
         }
 
-        collector.addMessage(library.name!! + " library was created")
+        collector.addMessage(KotlinJvmBundle.message("0.library.was.created", library.name.toString()))
         return library
     }
 
     private fun isProjectLibraryPresent(project: Project): Boolean {
         val library = getKotlinLibrary(project)
-        return library != null && library.getUrls(OrderRootType.CLASSES).size > 0
+        return library != null && library.getUrls(OrderRootType.CLASSES).isNotEmpty()
     }
 
     protected abstract val libraryMatcher: (Library, Project) -> Boolean
@@ -453,7 +464,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
     }
 
     companion object {
-        val DEFAULT_LIBRARY_DIR = "lib"
+        const val DEFAULT_LIBRARY_DIR = "lib"
 
         fun getPathFromLibrary(library: Library?, type: OrderRootType): String? {
             if (library == null) return null

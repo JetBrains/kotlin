@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36829 Optimize 'in' expressions in JVM_IR
 fun testPrimitiveArray(i: Int, ints: IntArray) = i in ints.indices
 
 fun testObjectArray(i: Int, xs: Array<Any>) = i in xs.indices

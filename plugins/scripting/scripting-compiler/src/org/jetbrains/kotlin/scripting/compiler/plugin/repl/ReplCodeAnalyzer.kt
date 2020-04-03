@@ -164,7 +164,11 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             private var delegateProvider: PackageMemberDeclarationProvider
         ) : DelegatePackageMemberDeclarationProvider(delegateProvider) {
             fun addDelegateProvider(provider: PackageMemberDeclarationProvider) {
-                delegateProvider = CombinedPackageMemberDeclarationProvider(listOf(provider, delegateProvider))
+                val combinedDelegateProvider = delegateProvider as? CombinedPackageMemberDeclarationProvider
+                val providers =
+                    if (combinedDelegateProvider != null) listOf(provider) + combinedDelegateProvider.providers
+                    else listOf(provider, delegateProvider)
+                delegateProvider = CombinedPackageMemberDeclarationProvider(providers)
 
                 delegate = delegateProvider
             }

@@ -1,0 +1,102 @@
+FILE: O.kt
+    public open class Wrapper : R|kotlin/Any| {
+        public constructor(b: R|kotlin/Boolean|): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val b: R|kotlin/Boolean| = R|<local>/b|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final object O : R|kotlin/Any| {
+        private constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final class Derived : R|Base| {
+            public[private] constructor(bar: R|kotlin/Int|): R|O.Derived| {
+                super<R|Base|>()
+            }
+
+            private final val bar: R|kotlin/Int| = R|<local>/bar|
+                private get(): R|kotlin/Int|
+
+            private final inner class Some : R|kotlin/Any| {
+                public[private] constructor(z: R|kotlin/Boolean|): R|O.Derived.Some| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public[private] final val z: R|kotlin/Boolean| = R|<local>/z|
+                    public get(): R|kotlin/Boolean|
+
+                public[private] final fun test(): R|kotlin/Unit| {
+                    lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
+                    lval o: R|anonymous| = object : R|Wrapper| {
+                        private constructor(): R|anonymous| {
+                            super<R|Wrapper|>(this@R|/O.Derived.Some|.R|/O.Derived.Some.z|)
+                        }
+
+                        public final fun local(): R|kotlin/Unit| {
+                            lval y: R|ft<kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
+                        }
+
+                        public final val oo: R|anonymous| = object : R|kotlin/Any| {
+                            private constructor(): R|anonymous| {
+                                super<R|kotlin/Any|>()
+                            }
+
+                            public final val zz: R|kotlin/Boolean| = this@R|/O.Derived.Some|.R|/O.Derived.Some.z|
+                                public get(): R|kotlin/Boolean|
+
+                        }
+
+                            public get(): R|anonymous|
+
+                    }
+
+                }
+
+            }
+
+            public[private] final fun test(): R|kotlin/Unit| {
+                lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
+                lval o: R|anonymous| = object : R|kotlin/Any| {
+                    private constructor(): R|anonymous| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final fun local(): R|kotlin/Unit| {
+                        lval y: R|ft<kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public final class Generator : R|kotlin/Any| {
+        public constructor(codegen: R|kotlin/Any|): R|Generator| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val codegen: R|kotlin/Any| = R|<local>/codegen|
+            public get(): R|kotlin/Any|
+
+        private final fun gen(): R|kotlin/Any| {
+            ^gen object : R|Wrapper| {
+                private constructor(): R|anonymous| {
+                    super<R|Wrapper|>(Boolean(true))
+                }
+
+                private final fun invokeFunction(): R|kotlin/Unit| {
+                    lval c: R|kotlin/Any| = this@R|/Generator|.R|/Generator.codegen|
+                    lval cc: R|kotlin/Int| = this@R|/Generator|.R|/Generator.codegen|.R|kotlin/Any.hashCode|()
+                }
+
+            }
+
+        }
+
+    }

@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -28,41 +28,39 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     name: Name,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    processor: (FirCallableSymbol<*>) -> ProcessorAction
-): ProcessorAction {
+    noInnerConstructors: Boolean = false,
+    processor: (FirCallableSymbol<*>) -> Unit
+) {
+    // TODO: Handle case with two or more accessible classifiers
     val matchedClassSymbol = getFirstClassifierOrNull(name) as? FirClassLikeSymbol<*>
 
-    if (processConstructors(
-            matchedClassSymbol,
-            processor,
-            session,
-            bodyResolveComponents.scopeSession,
-            name
-        ).stop()
-    ) {
-        return ProcessorAction.STOP
-    }
+    processConstructors(
+        matchedClassSymbol,
+        processor,
+        session,
+        bodyResolveComponents.scopeSession,
+        noInnerConstructors
+    )
 
-    if (processSyntheticConstructors(
-            matchedClassSymbol,
-            processor,
-            bodyResolveComponents
-        ).stop()
-    ) {
-        return ProcessorAction.STOP
-    }
+    processSyntheticConstructors(
+        matchedClassSymbol,
+        processor,
+        bodyResolveComponents
+    )
 
-    return processFunctionsByName(name) {
-        if (it is FirConstructorSymbol) ProcessorAction.NEXT
-        else processor(it)
+    processFunctionsByName(name) {
+        if (it !is FirConstructorSymbol) {
+            processor(it)
+        }
     }
 }
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): FirClassifierSymbol<*>? {
     var result: FirClassifierSymbol<*>? = null
     processClassifiersByName(name) {
-        result = it
-        ProcessorAction.STOP
+        if (result == null) {
+            result = it
+        }
     }
 
     return result
@@ -80,13 +78,13 @@ private fun finalExpansionName(symbol: FirTypeAliasSymbol, session: FirSession):
 
 private fun processSyntheticConstructors(
     matchedSymbol: FirClassLikeSymbol<*>?,
-    processor: (FirFunctionSymbol<*>) -> ProcessorAction,
+    processor: (FirFunctionSymbol<*>) -> Unit,
     bodyResolveComponents: BodyResolveComponents
-): ProcessorAction {
+) {
     val samConstructor = matchedSymbol.findSAMConstructor(bodyResolveComponents)
-    if (samConstructor != null) return processor(samConstructor.symbol)
-
-    return ProcessorAction.NEXT
+    if (samConstructor != null) {
+        processor(samConstructor.symbol)
+    }
 }
 
 private fun FirClassLikeSymbol<*>?.findSAMConstructor(
@@ -129,11 +127,11 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
 
 private fun processConstructors(
     matchedSymbol: FirClassLikeSymbol<*>?,
-    processor: (FirFunctionSymbol<*>) -> ProcessorAction,
+    processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     scopeSession: ScopeSession,
-    name: Name
-): ProcessorAction {
+    noInner: Boolean
+) {
     try {
         if (matchedSymbol != null) {
             val scope = when (matchedSymbol) {
@@ -144,27 +142,25 @@ private fun processConstructors(
                     if (basicScope != null && type.typeArguments.isNotEmpty()) {
                         prepareSubstitutingScopeForTypeAliasConstructors(
                             matchedSymbol, type, session, basicScope
-                        ) ?: return ProcessorAction.STOP
+                        ) ?: return
                     } else basicScope
                 }
-                is FirClassSymbol -> matchedSymbol.buildUseSiteMemberScope(session, scopeSession)
+                is FirClassSymbol -> (matchedSymbol.fir as FirClass<*>).unsubstitutedScope(session, scopeSession)
             }
 
             val constructorName = when (matchedSymbol) {
-                is FirTypeAliasSymbol -> finalExpansionName(matchedSymbol, session) ?: return ProcessorAction.NEXT
-                is FirClassSymbol -> name
+                is FirTypeAliasSymbol -> finalExpansionName(matchedSymbol, session) ?: return
+                is FirRegularClassSymbol -> matchedSymbol.fir.name
+                else -> return
             }
 
             //TODO: why don't we use declared member scope at this point?
-            if (scope != null && scope.processFunctionsByName(
-                    constructorName,
-                    processor
-                ) == ProcessorAction.STOP
-            ) {
-                return ProcessorAction.STOP
+            scope?.processFunctionsByName(constructorName) {
+                if (!noInner || (it as? FirConstructorSymbol)?.fir?.isInner != true) {
+                    processor(it)
+                }
             }
         }
-        return ProcessorAction.NEXT
     } catch (e: ProcessCanceledException) {
         throw e
     } catch (e: Throwable) {
@@ -176,8 +172,8 @@ private class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasConstructorsSubstitutor: TypeAliasConstructorsSubstitutor<FirConstructor>,
     private val delegatingScope: FirScope
 ) : FirScope() {
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return delegatingScope.processFunctionsByName(name) {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+        delegatingScope.processFunctionsByName(name) {
             val toProcess = if (it is FirConstructorSymbol) {
                 typeAliasConstructorsSubstitutor.substitute(it.fir).symbol
             } else {
@@ -192,7 +188,7 @@ private class TypeAliasConstructorsSubstitutingScope(
 private typealias ConstructorCopyFactory<F> =
         F.(newReturnType: ConeKotlinType?, newValueParameterTypes: List<ConeKotlinType?>, newTypeParameters: List<FirTypeParameter>) -> F
 
-private class TypeAliasConstructorsSubstitutor<F : FirMemberFunction<F>>(
+private class TypeAliasConstructorsSubstitutor<F : FirFunction<F>>(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val substitutor: ConeSubstitutor,
     private val copyFactory: ConstructorCopyFactory<F>
@@ -227,29 +223,28 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
             expandedType,
             session
         ) factory@{ newReturnType, newParameterTypes, newTypeParameters ->
-            FirConstructorImpl(
-                source, session,
-                returnTypeRef.withReplacedConeType(newReturnType),
-                receiverTypeRef, status,
-                FirConstructorSymbol(symbol.callableId, overriddenSymbol = symbol)
-            ).apply {
+            buildConstructor {
+                source = this@factory.source
+                this.session = session
+                returnTypeRef = this@factory.returnTypeRef.withReplacedConeType(newReturnType)
+                receiverTypeRef = this@factory.receiverTypeRef
+                status = this@factory.status
+                symbol = FirConstructorSymbol(this@factory.symbol.callableId, overriddenSymbol = this@factory.symbol)
                 resolvePhase = this@factory.resolvePhase
                 valueParameters +=
                     this@factory.valueParameters.zip(
                         newParameterTypes
                     ) { valueParameter, newParameterType ->
-                        with(valueParameter) {
-                            FirValueParameterImpl(
-                                source,
-                                session,
-                                returnTypeRef.withReplacedConeType(newParameterType),
-                                name,
-                                FirVariableSymbol(valueParameter.symbol.callableId),
-                                defaultValue,
-                                isCrossinline,
-                                isNoinline,
-                                isVararg
-                            )
+                        buildValueParameter {
+                            source = valueParameter.source
+                            this.session = session
+                            returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newParameterType)
+                            name = valueParameter.name
+                            symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                            defaultValue = valueParameter.defaultValue
+                            isCrossinline = valueParameter.isCrossinline
+                            isNoinline = valueParameter.isNoinline
+                            isVararg = valueParameter.isVararg
                         }
                     }
                 this.typeParameters += newTypeParameters
@@ -262,7 +257,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
     )
 }
 
-private fun <F : FirMemberFunction<F>> prepareSubstitutorForTypeAliasConstructors(
+private fun <F : FirFunction<F>> prepareSubstitutorForTypeAliasConstructors(
     typeAliasSymbol: FirTypeAliasSymbol,
     expandedType: ConeClassLikeType,
     session: FirSession,
@@ -278,7 +273,7 @@ private fun <F : FirMemberFunction<F>> prepareSubstitutorForTypeAliasConstructor
 
     val substitutor = substitutorByMap(
         expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap()
-    );
+    )
 
     return TypeAliasConstructorsSubstitutor(typeAliasSymbol, substitutor, copyFactory)
 }

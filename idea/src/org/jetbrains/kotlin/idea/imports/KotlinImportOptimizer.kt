@@ -9,11 +9,11 @@ import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicatorProvider
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -43,9 +43,16 @@ class KotlinImportOptimizer : ImportOptimizer {
         val (add, remove, imports) = prepareImports(ktFile) ?: return DO_NOTHING
 
         return object : ImportOptimizer.CollectingInfoRunnable {
-            override fun getUserNotificationInfo(): String = if (remove == 0) "Rearranged imports"
-            else "Removed $remove ${StringUtil.pluralize("import", remove)}" +
-                    if (add > 0) ", added $add ${StringUtil.pluralize("import", add)}" else ""
+            override fun getUserNotificationInfo(): String = if (remove == 0)
+                KotlinBundle.message("import.optimizer.text.zero")
+            else
+                KotlinBundle.message(
+                    "import.optimizer.text.non.zero",
+                    remove,
+                    KotlinBundle.message("import.optimizer.text.import", remove),
+                    add,
+                    KotlinBundle.message("import.optimizer.text.import", add)
+                )
 
             override fun run() = replaceImports(ktFile, imports)
         }
@@ -219,7 +226,7 @@ class KotlinImportOptimizer : ImportOptimizer {
     companion object {
         fun collectDescriptorsToImport(file: KtFile, inProgressBar: Boolean = false): OptimizedImportsBuilder.InputData {
             val progressIndicator = if (inProgressBar) ProgressIndicatorProvider.getInstance().progressIndicator else null
-            progressIndicator?.text = "Collect imports for ${file.name}"
+            progressIndicator?.text = KotlinBundle.message("import.optimizer.progress.indicator.text.collect.imports.for", file.name)
             progressIndicator?.isIndeterminate = false
 
             val visitor = CollectUsedDescriptorsVisitor(file, progressIndicator)
@@ -237,6 +244,8 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
 
         fun replaceImports(file: KtFile, imports: List<ImportPath>) {
+            val manager = PsiDocumentManager.getInstance(file.project)
+            manager.getDocument(file)?.let { manager.commitDocument(it) }
             val importList = file.importList ?: return
             val oldImports = importList.imports
             val psiFactory = KtPsiFactory(file.project)
@@ -262,7 +271,7 @@ class KotlinImportOptimizer : ImportOptimizer {
         private val DO_NOTHING = object : ImportOptimizer.CollectingInfoRunnable {
             override fun run() = Unit
 
-            override fun getUserNotificationInfo() = "Unused imports not found"
+            override fun getUserNotificationInfo() = KotlinBundle.message("import.optimizer.notification.text.unused.imports.not.found")
         }
     }
 }

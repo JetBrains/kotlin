@@ -322,7 +322,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         if (mainFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
             val virtualFile = VfsUtil.findFileByIoFile(mainFile, true)!!
             val ktFile = PsiManager.getInstance(project).findFile(virtualFile)!!
-            ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile, project)
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile)
         }
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
@@ -336,24 +336,22 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
         val fileText = FileUtil.loadFile(File(path), true)
 
-        val configured = configureCompilerOptions(fileText, project, module)
-        ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+        withCustomCompilerOptions(fileText, project, module) {
+            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
-        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
-        if (addKotlinRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
-        }
-
-        try {
-            checkExtract(ExtractTestFiles(path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
-        } finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
-
+            val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
             if (addKotlinRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
             }
-            if (configured) {
-                rollbackCompilerOptions(project, module)
+
+            try {
+                checkExtract(ExtractTestFiles(path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
+            } finally {
+                ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
+
+                if (addKotlinRuntime) {
+                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
+                }
             }
         }
     }

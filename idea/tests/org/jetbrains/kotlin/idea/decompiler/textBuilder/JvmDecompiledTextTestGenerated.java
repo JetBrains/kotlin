@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,6 +28,11 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
+    @TestMetadata("EnumWithQuotes")
+    public void testEnumWithQuotes() throws Exception {
+        runTest("idea/testData/decompiler/decompiledTextJvm/EnumWithQuotes/");
+    }
+
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
         runTest("idea/testData/decompiler/decompiledTextJvm/Modifiers/");
@@ -46,6 +51,19 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
     @TestMetadata("TypeAliases")
     public void testTypeAliases() throws Exception {
         runTest("idea/testData/decompiler/decompiledTextJvm/TypeAliases/");
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJvm/EnumWithQuotes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EnumWithQuotes extends AbstractJvmDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEnumWithQuotes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/EnumWithQuotes"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
     }
 
     @TestMetadata("idea/testData/decompiler/decompiledTextJvm/Modifiers")

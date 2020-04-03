@@ -19,7 +19,7 @@ fun useTwoStringArrays(fn: (Array<String>, Array<String>) -> Unit) = fn(arrayOf(
 fun test() {
     <!INAPPLICABLE_CANDIDATE!>useStrings<!>(::stringVararg)
     useStringArray(::stringVararg)
-    <!INAPPLICABLE_CANDIDATE!>useIntArray<!>(::numberVararg)
+    useIntArray(::numberVararg)
     usePrimitiveIntArray(::intVararg)
     <!INAPPLICABLE_CANDIDATE!>useIntArray<!>(::intVararg)
     <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs1<!>(::stringVararg)

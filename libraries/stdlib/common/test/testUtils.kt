@@ -13,3 +13,5 @@ internal expect inline fun testOnNonJvm6And7(f: () -> Unit)
 
 public expect fun testOnJvm(action: () -> Unit)
 public expect fun testOnJs(action: () -> Unit)
+
+public expect val isFloat32RangeEnforced: Boolean

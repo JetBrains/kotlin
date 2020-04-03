@@ -37,7 +37,7 @@ interface IrFunction :
 
     var dispatchReceiverParameter: IrValueParameter?
     var extensionReceiverParameter: IrValueParameter?
-    val valueParameters: MutableList<IrValueParameter>
+    var valueParameters: List<IrValueParameter>
 
     var body: IrBody?
 

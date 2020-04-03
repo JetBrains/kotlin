@@ -21,7 +21,7 @@ fun <T> generic_invoker(gen :  (String) -> T) : T {
 }
 
 infix fun <T> T.with(f :  T.() -> Unit) {
-    <!INAPPLICABLE_CANDIDATE!>f<!>()
+    f()
 }
 
 fun main() {

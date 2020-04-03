@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-12982 Incorrect type inference when accessing mutable protected property via reflection
 
 import kotlin.reflect.KMutableProperty1

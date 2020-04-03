@@ -21,18 +21,36 @@ object DirectiveBasedActionUtils {
             return
         }
 
-        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// ERROR:").sorted()
+        checkForUnexpected(file, diagnosticsProvider, "// ERROR:", "errors", Severity.ERROR)
+    }
+
+    fun checkForUnexpectedWarnings(file: KtFile, diagnosticsProvider: (KtFile) -> Diagnostics = { it.analyzeWithContent().diagnostics }) {
+        if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// ENABLE-WARNINGS").isEmpty()) {
+            return
+        }
+
+        checkForUnexpected(file, diagnosticsProvider, "// WARNING:", "warnings", Severity.WARNING)
+    }
+
+    private fun checkForUnexpected(
+        file: KtFile,
+        diagnosticsProvider: (KtFile) -> Diagnostics,
+        directive: String,
+        name: String,
+        severity: Severity
+    ) {
+        val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, directive).sorted()
 
         val diagnostics = diagnosticsProvider(file)
-        val actualErrors = diagnostics
-            .filter { it.severity == Severity.ERROR }
+        val actual = diagnostics
+            .filter { it.severity == severity }
             .map { DefaultErrorMessages.render(it).replace("\n", "<br>") }
             .sorted()
 
         UsefulTestCase.assertOrderedEquals(
-            "All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned",
-            actualErrors,
-            expectedErrors
+            "All actual $name should be mentioned in test data with '$directive' directive. But no unnecessary $name should be me mentioned",
+            actual,
+            expected
         )
     }
 

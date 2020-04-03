@@ -17,15 +17,18 @@
 package org.jetbrains.kotlin.samWithReceiver
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import java.io.File
 
 abstract class AbstractSamWithReceiverTest : AbstractDiagnosticsTest() {
     private companion object {
         private val TEST_ANNOTATIONS = listOf("SamWithReceiver")
     }
 
-    override fun createEnvironment(file: File) = super.createEnvironment(file).apply {
-        StorageComponentContainerContributor.registerExtension(project, CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS))
+    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
+        StorageComponentContainerContributor.registerExtension(
+            environment.project,
+            CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS)
+        )
     }
 }

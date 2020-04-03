@@ -1,0 +1,3 @@
+rootProject.name = 'mppLibrary'
+
+enableFeaturePreview('GRADLE_METADATA')

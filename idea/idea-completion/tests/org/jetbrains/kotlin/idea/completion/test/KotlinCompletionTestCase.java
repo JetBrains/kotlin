@@ -25,4 +25,10 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.tearDown();
     }
+
+    @Override
+    protected void runTest() throws Throwable {
+        //noinspection Convert2MethodRef
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
+    }
 }

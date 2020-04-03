@@ -43,6 +43,8 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 val IrType.classOrNull: IrClassSymbol?
     get() = classifierOrNull as? IrClassSymbol
 
+val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
+
 fun IrType.makeNotNull() =
     if (this is IrSimpleType && this.hasQuestionMark) {
         buildSimpleType {

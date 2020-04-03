@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // LOCAL_VARIABLE_TABLE
 
 fun String.foo(count: Int) {

@@ -45,10 +45,10 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:psi2fir"))
+    testCompile(projectTests(":compiler:fir:raw-fir:psi2fir"))
+    testCompile(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testCompile(projectTests(":compiler:fir:fir2ir"))
-    testCompile(projectTests(":compiler:fir:resolve"))
-    testCompile(projectTests(":compiler:fir:lightTree"))
+    testCompile(projectTests(":compiler:fir:analysis-tests"))
     testCompile(projectTests(":compiler:visualizer"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
@@ -67,7 +67,10 @@ dependencies {
         testCompileOnly(project(it))
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
+    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
 
     Platform[192].orHigher {
         testRuntimeOnly(intellijPluginDep("java"))
@@ -102,6 +105,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     dependsOn(":dist")
+
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     doFirst {

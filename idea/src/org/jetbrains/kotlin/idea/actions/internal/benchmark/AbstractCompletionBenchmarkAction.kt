@@ -37,6 +37,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridConstraints
 import kotlinx.coroutines.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -83,9 +84,7 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
             generateSequence { this.randomElement(random) }.distinct()
 
         internal fun collectSuitableKotlinFiles(project: Project, filePredicate: (KtFile) -> Boolean): MutableList<KtFile> {
-            val scope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
-                override fun isSearchOutsideRootModel(): Boolean = false
-            }
+            val scope = GlobalSearchScope.allScope(project)
 
             fun KtFile.isUsableForBenchmark(): Boolean {
                 val moduleInfo = this.getNullableModuleInfo() ?: return false
@@ -213,7 +212,7 @@ internal abstract class AbstractCompletionBenchmarkScenario(
                 }
             })
         }
-        AbstractCompletionBenchmarkAction.showPopup(project, "Done")
+        AbstractCompletionBenchmarkAction.showPopup(project, KotlinBundle.message("title.done"))
     }
 
     abstract suspend fun doBenchmark()

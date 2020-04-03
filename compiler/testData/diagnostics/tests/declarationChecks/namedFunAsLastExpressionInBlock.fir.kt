@@ -4,7 +4,7 @@
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
-    val x = <!INFERENCE_ERROR, INFERENCE_ERROR, INFERENCE_ERROR!>fun named1(x: Int): Int { return 1 }<!>
+    val x = <!EXPRESSION_REQUIRED!>fun named1(x: Int): Int { return 1 }<!>
     x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Int>>() }
 
     foo { fun named2(): Int {return 1} }
@@ -45,12 +45,12 @@ fun test() {
     x4 checkType { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = <!UNRESOLVED_REFERENCE!><!INFERENCE_ERROR!>(fun named15(): Boolean { return true })<!>()<!>
+    val b = <!UNRESOLVED_REFERENCE!>(<!EXPRESSION_REQUIRED!>fun named15(): Boolean { return true }<!>)()<!>
 
-    baz(<!INFERENCE_ERROR!>fun named16(){}<!>)
+    baz(<!EXPRESSION_REQUIRED!>fun named16(){}<!>)
 }
 
-fun bar() = <!INFERENCE_ERROR, INFERENCE_ERROR, INFERENCE_ERROR!>fun named() {}<!>
+fun bar() = <!EXPRESSION_REQUIRED!>fun named() {}<!>
 
 fun <T> run(block: () -> T): T = null!!
 fun run2(block: () -> Unit): Unit = null!!

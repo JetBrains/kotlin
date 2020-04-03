@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -47,10 +48,11 @@ abstract class FirAbstractPhaseTransformer<D>(
 }
 
 fun FirFile.runResolve(toPhase: FirResolvePhase, fromPhase: FirResolvePhase = FirResolvePhase.RAW_FIR) {
+    val scopeSession = ScopeSession()
     var currentPhase = fromPhase
     while (currentPhase < toPhase) {
         currentPhase = currentPhase.next
-        val phaseTransformer = currentPhase.createTransformerByPhase()
+        val phaseTransformer = currentPhase.createTransformerByPhase(scopeSession)
         transform<FirFile, Nothing?>(phaseTransformer, null)
     }
 }

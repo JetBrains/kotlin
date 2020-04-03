@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -26,7 +25,8 @@ fun IrClassBuilder.buildClass(): IrClass {
         startOffset, endOffset, origin,
         IrClassSymbolImpl(wrappedDescriptor),
         name, kind, visibility, modality,
-        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal, isInline = isInline, isExpect = isExpect
+        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal,
+        isInline = isInline, isExpect = isExpect, isFun = isFun
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -44,9 +44,9 @@ fun IrFieldBuilder.buildField(): IrField {
     return IrFieldImpl(
         startOffset, endOffset, origin,
         IrFieldSymbolImpl(wrappedDescriptor),
-        name, type, visibility, isFinal, isExternal, isStatic,
-        origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        name, type, visibility, isFinal, isExternal, isStatic, isFakeOverride
     ).also {
+        it.metadata = metadata
         wrappedDescriptor.bind(it)
     }
 }
@@ -63,12 +63,15 @@ inline fun IrDeclarationContainer.addField(builder: IrFieldBuilder.() -> Unit) =
         declarations.add(field)
     }
 
-fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
     addField {
-        name = Name.identifier(fieldName)
+        name = fieldName
         type = fieldType
         visibility = fieldVisibility
     }
+
+fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+    addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
 fun IrPropertyBuilder.buildProperty(): IrProperty {
     val wrappedDescriptor = WrappedPropertyDescriptor()
@@ -77,7 +80,7 @@ fun IrPropertyBuilder.buildProperty(): IrProperty {
         IrPropertySymbolImpl(wrappedDescriptor),
         name, visibility, modality,
         isVar = isVar, isConst = isConst, isLateinit = isLateinit, isDelegated = isDelegated, isExpect = isExpect, isExternal = isExternal,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        isFakeOverride = isFakeOverride
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -101,6 +104,7 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         builder()
         buildFun().also { getter ->
             this@addGetter.getter = getter
+            getter.correspondingPropertySymbol = this@addGetter.symbol
             getter.parent = this@addGetter.parent
         }
     }
@@ -128,8 +132,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
         isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        isOperator = isOperator
+        isFakeOverride = isFakeOverride, isOperator = isOperator
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -175,14 +178,20 @@ fun IrDeclarationContainer.addFunction(
     name: String,
     returnType: IrType,
     modality: Modality = Modality.FINAL,
+    visibility: Visibility = Visibilities.PUBLIC,
     isStatic: Boolean = false,
-    isSuspend: Boolean = false
+    isSuspend: Boolean = false,
+    isFakeOverride: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 ): IrSimpleFunction =
     addFunction {
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.modality = modality
+        this.visibility = visibility
         this.isSuspend = isSuspend
+        this.isFakeOverride = isFakeOverride
+        this.origin = origin
     }.apply {
         if (!isStatic) {
             dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
@@ -228,7 +237,7 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
             index = valueParameters.size
         }
         build().also { valueParameter ->
-            valueParameters.add(valueParameter)
+            valueParameters += valueParameter
             valueParameter.parent = this@addValueParameter
         }
     }
@@ -287,7 +296,7 @@ inline fun IrTypeParametersContainer.addTypeParameter(builder: IrTypeParameterBu
             index = typeParameters.size
         }
         build().also { typeParameter ->
-            typeParameters.add(typeParameter)
+            typeParameters += typeParameter
             typeParameter.parent = this@addTypeParameter
         }
     }

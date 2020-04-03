@@ -9,10 +9,8 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -24,15 +22,28 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
+fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
+    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
+
+class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
+
+    private var containerScope: ScopeWithIr? = null
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        // TODO container: IrSymbolDeclaration
+        containerScope = createScope(container as IrSymbolOwner)
+        irBody.accept(this, null)
+        containerScope = null
+
+        irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
+    }
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
@@ -53,8 +64,11 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
         val actualCallee = getFunctionDeclaration(callee.symbol)
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
+            ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent
+            ?: containerScope?.irElement as? IrDeclarationParent
+            ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(expression, actualCallee, currentScope!!, parent, context)
+        val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
         return inliner.inline()
     }
 
@@ -145,7 +159,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                 endOffset = callSite.endOffset,
                 type = callSite.type,
                 symbol = irReturnableBlockSymbol,
-                origin = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
+                origin = null,
                 statements = statements,
                 inlineFunctionSymbol = callee.symbol
             ).apply {
@@ -201,34 +215,65 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                     val unboundArgsSet = unboundFunctionParameters.toSet()
                     val valueParameters = expression.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
 
+                    val superType = functionArgument.type as IrSimpleType
+                    val superTypeArgumentsMap = expression.symbol.owner.parentAsClass.typeParameters.associate { typeParam ->
+                        typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
+                    }
+
                     val immediateCall = with(expression) {
                         if (function is IrConstructor) {
                             val classTypeParametersCount = function.parentAsClass.typeParameters.size
-                            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, function.returnType, function.symbol, classTypeParametersCount)
+                            IrConstructorCallImpl.fromSymbolOwner(
+                                startOffset,
+                                endOffset,
+                                function.returnType,
+                                function.symbol,
+                                classTypeParametersCount
+                            )
                         } else
                             IrCallImpl(startOffset, endOffset, function.returnType, functionArgument.symbol)
                     }.apply {
-                        functionParameters.forEach {
+                        for (parameter in functionParameters) {
                             val argument =
-                                if (unboundArgsSet.contains(it)) {
-                                    assert(unboundIndex < valueParameters.size) {
-                                        "Attempt to use unbound parameter outside of the callee's value parameters"
-                                    }
-                                    valueParameters[unboundIndex++].second
-                                } else {
-                                    val arg = boundFunctionParametersMap[it]!!
+                                if (parameter !in unboundArgsSet) {
+                                    val arg = boundFunctionParametersMap[parameter]!!
                                     if (arg is IrGetValueWithoutLocation)
                                         arg.withLocation(expression.startOffset, expression.endOffset)
                                     else arg
+                                } else {
+                                    if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
+                                        copyIrElement.copy(parameter.defaultValue!!.expression) as IrExpression
+                                    else if (!parameter.isVararg) {
+                                        assert(unboundIndex < valueParameters.size) {
+                                            "Attempt to use unbound parameter outside of the callee's value parameters"
+                                        }
+                                        valueParameters[unboundIndex++].second
+                                    } else {
+                                        val elements = mutableListOf<IrVarargElement>()
+                                        while (unboundIndex < valueParameters.size) {
+                                            val (param, value) = valueParameters[unboundIndex++]
+                                            val substitutedParamType = param.type.substitute(superTypeArgumentsMap)
+                                            if (substitutedParamType == parameter.varargElementType!!)
+                                                elements += value
+                                            else
+                                                elements += IrSpreadElementImpl(expression.startOffset, expression.endOffset, value)
+                                        }
+                                        IrVarargImpl(
+                                            expression.startOffset, expression.endOffset,
+                                            parameter.type,
+                                            parameter.varargElementType!!,
+                                            elements
+                                        )
+                                    }
                                 }
-                            when (it) {
+                            when (parameter) {
                                 function.dispatchReceiverParameter ->
                                     this.dispatchReceiver = argument.implicitCastIfNeededTo(function.dispatchReceiverParameter!!.type)
 
                                 function.extensionReceiverParameter ->
                                     this.extensionReceiver = argument.implicitCastIfNeededTo(function.extensionReceiverParameter!!.type)
 
-                                else -> putValueArgument(it.index, argument.implicitCastIfNeededTo(function.valueParameters[it.index].type))
+                                else -> putValueArgument(parameter.index, argument.implicitCastIfNeededTo(function.valueParameters[parameter.index].type))
                             }
                         }
                         assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
@@ -275,9 +320,6 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
         }
 
         //-------------------------------------------------------------------------//
-
-        private fun IrValueParameter.isInlineParameter() =
-            !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,

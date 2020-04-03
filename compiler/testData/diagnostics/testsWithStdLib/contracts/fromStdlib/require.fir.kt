@@ -17,7 +17,7 @@ fun testRequireWithMessage(x: Any?) {
 }
 
 fun testRequireWithFailingMessage(x: Any?) {
-    require(x is String) { throw kotlin.<!UNRESOLVED_REFERENCE!>IllegalStateException<!>("What a strange idea") }
+    require(x is String) { throw kotlin.IllegalStateException("What a strange idea") }
     x.length
 }
 

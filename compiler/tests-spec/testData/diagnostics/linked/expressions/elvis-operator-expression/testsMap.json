@@ -1,0 +1,14 @@
+{
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "The type of elvis operator expression is the least upper bound of the non-nullable variant of the type of the left-hand side expression and the type of the right-hand side expression.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

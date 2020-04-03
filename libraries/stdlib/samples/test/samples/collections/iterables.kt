@@ -71,5 +71,18 @@ class Iterables {
             val result = listA.zip(listB) { a, b -> "$a$b" }
             assertPrints(result, "[a1, b2, c3]")
         }
+
+        @Sample
+        fun partition() {
+            data class Person(val name: String, val age: Int) {
+                override fun toString(): String {
+                    return "$name - $age"
+                }
+            }
+
+            val list = listOf(Person("Tom", 18), Person("Andy", 32), Person("Sarah", 22))
+            val result = list.partition { it.age < 30 }
+            assertPrints(result, "([Tom - 18, Sarah - 22], [Andy - 32])")
+        }
     }
 }

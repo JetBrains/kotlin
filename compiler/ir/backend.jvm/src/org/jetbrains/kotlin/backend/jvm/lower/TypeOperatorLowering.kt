@@ -14,19 +14,16 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -69,6 +66,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     )
                 }
             }
+            argument.type.isNullable() && !type.isNullable() && argument.type.erasedUpperBound == type.erasedUpperBound ->
+                irNotEquals(argument, irNull())
             else -> irIs(argument, type.makeNotNull())
         }
     }
@@ -140,13 +139,21 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 val (startOffset, endOffset) = expression.extents()
                 val source = sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
 
-                irLetS(expression.argument.transformVoid()) { valueSymbol ->
+                fun checkExpressionValue(valueSymbol: IrValueSymbol): IrExpression =
                     irComposite(resultType = expression.type) {
                         +irCall(checkExpressionValueIsNotNull).apply {
                             putValueArgument(0, irGet(valueSymbol.owner))
                             putValueArgument(1, irString(source))
                         }
                         +irGet(valueSymbol.owner)
+                    }
+
+                val argument = expression.argument.transformVoid()
+                if (argument is IrGetValue) {
+                    checkExpressionValue(argument.symbol)
+                } else {
+                    irLetS(argument) { valueSymbol ->
+                        checkExpressionValue(valueSymbol)
                     }
                 }
             }
@@ -176,18 +183,14 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     private fun sourceViewFor(declaration: IrDeclaration) =
         context.psiSourceManager.getKtFile(declaration.fileParent)!!.viewProvider.contents
 
-    // Since Kotlin 1.4 we throw NullPointerExceptions instead of more specialized exception classes.
-    private val useNullPointerExceptions: Boolean
-        get() = context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
-
     private val typeCastException: IrFunctionSymbol =
-        if (useNullPointerExceptions)
+        if (context.state.unifiedNullChecks)
             context.ir.symbols.ThrowNullPointerException
         else
             context.ir.symbols.ThrowTypeCastException
 
     private val checkExpressionValueIsNotNull: IrFunctionSymbol =
-        if (useNullPointerExceptions)
+        if (context.state.unifiedNullChecks)
             context.ir.symbols.checkNotNullExpressionValue
         else
             context.ir.symbols.checkExpressionValueIsNotNull

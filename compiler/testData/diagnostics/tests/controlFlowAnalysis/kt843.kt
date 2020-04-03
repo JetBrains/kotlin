@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-843 Don't highlight incomplete variables as unused
 
 package kt843

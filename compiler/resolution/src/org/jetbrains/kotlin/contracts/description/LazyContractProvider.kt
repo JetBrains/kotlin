@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.contracts.description
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.ContractProvider
+import org.jetbrains.kotlin.descriptors.ContractProvider
 import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class AbstractContractProvider : ContractProvider {

@@ -1,3 +1,5 @@
+// This test checks, that different variables occupy the same slot
+// In JVM_IR, however, loop variable's lifetime goes beyond the loop itself, thus the test has no sense in JVM_IR
 // IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,9 +32,21 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("callableReference.kt")
+    public void testCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/callableReference.kt");
+    }
+
+    @Test
     @TestMetadata("conjunction.kt")
     public void testConjunction() throws Exception {
         runTest("compiler/testData/debug/stepping/conjunction.kt");
+    }
+
+    @Test
+    @TestMetadata("for.kt")
+    public void testFor() throws Exception {
+        runTest("compiler/testData/debug/stepping/for.kt");
     }
 
     @Test
@@ -53,6 +65,36 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("IfTrueThenFalse.kt")
     public void testIfTrueThenFalse() throws Exception {
         runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("iincStepping.kt")
+    public void testIincStepping() throws Exception {
+        runTest("compiler/testData/debug/stepping/iincStepping.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineCallableReference.kt")
+    public void testInlineCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineNamedCallableReference.kt")
+    public void testInlineNamedCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("namedCallableReference.kt")
+    public void testNamedCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedInline.kt")
+    public void testNestedInline() throws Exception {
+        runTest("compiler/testData/debug/stepping/nestedInline.kt");
     }
 
     @Test

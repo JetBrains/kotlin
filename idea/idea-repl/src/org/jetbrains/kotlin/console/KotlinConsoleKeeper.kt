@@ -10,12 +10,11 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
-
-private const val REPL_TITLE = "Kotlin REPL"
 
 class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
@@ -27,8 +26,15 @@ class KotlinConsoleKeeper(val project: Project) {
     fun run(module: Module, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
         val cmdLine = createReplCommandLine(project, module)
+        val consoleRunner = KotlinConsoleRunner(
+            module,
+            cmdLine,
+            previousCompilationFailed,
+            project,
+            KotlinIdeaReplBundle.message("name.kotlin.repl"),
+            path
+        )
 
-        val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
         return consoleRunner
     }

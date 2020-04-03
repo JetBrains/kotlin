@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class MyRange1() : ClosedRange<Int> {
     override val start: Int
         get() = 0

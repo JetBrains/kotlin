@@ -1,0 +1,8 @@
+FILE: main.kt
+    public final typealias ImmutableMap<K, V> = R|imm/Map<K, V>|
+    public final typealias ImmutableSet<E> = R|imm/Set<E>|
+    public final typealias ImmutableLinkedHashSet<E> = R|imm/LinkedHashSet<E>|
+    private final typealias ImmutableMultimap<K, V> = R|ImmutableMap<K, ImmutableSet<V>>|
+    private final fun <K, V> R|ImmutableMultimap<K, V>|.put(key: R|K|, value: R|V|): R|kotlin/Unit| {
+        this@R|/put|.R|FakeOverride<imm/Map.get: R|ft<imm/Option<ft<ImmutableSet<V>, ImmutableSet<V>?>!>, imm/Option<ft<ImmutableSet<V>, ImmutableSet<V>?>!>?>!|>|(R|<local>/key|).R|FakeOverride<imm/Option.getOrElse: R|ft<ImmutableSet<V>, ImmutableSet<V>?>!|>|(Q|ImmutableLinkedHashSet|.R|imm/LinkedHashSet.empty|<R|ft<V, V?>!|>())
+    }

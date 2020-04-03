@@ -1,0 +1,17 @@
+Failures detected in FirImplicitTypeBodyResolveTransformerAdapter, file: /My.kt
+Cause: java.lang.RuntimeException: While resolving call Q|Properties|.R?C|/Properties.calcVal|(<L> = calcVal@fun <implicit>.<anonymous>(): <implicit> {
+    lval y: <implicit> = x#.plus#(IntegerLiteral(1))
+    when () {
+        CMP(>, y#.compareTo#(IntegerLiteral(0))) ->  {
+            MyBase#.derivedWrapper#()
+        }
+        CMP(<, x#.compareTo#(IntegerLiteral(0))) ->  {
+            MyBase#.exoticWrapper#(x#)
+        }
+        else ->  {
+            throw java#.lang#.NullPointerException#(String())
+        }
+    }
+
+}
+)

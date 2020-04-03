@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
@@ -196,6 +197,8 @@ public class BodyResolver {
         Set<ConstructorDescriptor> visitedInCurrentChain = new HashSet<>();
         ConstructorDescriptor currentConstructorDescriptor = constructorDescriptor;
         while (true) {
+            ProgressManager.checkCanceled();
+
             visitedInCurrentChain.add(currentConstructorDescriptor);
             ConstructorDescriptor delegatedConstructorDescriptor = getDelegatedConstructor(currentConstructorDescriptor);
             if (delegatedConstructorDescriptor == null) break;
@@ -267,6 +270,8 @@ public class BodyResolver {
             @NotNull LexicalScope scopeForConstructorResolution,
             @NotNull LexicalScope scopeForMemberResolution
     ) {
+        ProgressManager.checkCanceled();
+
         LexicalScope scopeForConstructor =
                 primaryConstructor == null
                 ? null
@@ -399,6 +404,8 @@ public class BodyResolver {
         }
 
         for (KtSuperTypeListEntry delegationSpecifier : ktClass.getSuperTypeListEntries()) {
+            ProgressManager.checkCanceled();
+
             delegationSpecifier.accept(visitor);
         }
 
@@ -657,6 +664,8 @@ public class BodyResolver {
             @NotNull KtAnonymousInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
+        ProgressManager.checkCanceled();
+
         LexicalScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
         KtExpression body = anonymousInitializer.getBody();
         if (body != null) {
@@ -935,6 +944,8 @@ public class BodyResolver {
             // Creates wrapper scope for header resolution if necessary (see resolveSecondaryConstructorBody)
             @Nullable Function1<LexicalScope, LexicalScope> headerScopeFactory
     ) {
+        ProgressManager.checkCanceled();
+
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
         LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace, overloadChecker);
         List<KtParameter> valueParameters = function.getValueParameters();

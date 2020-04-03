@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value: kotlin.Int declared in <root>.<set-test4>' type=kotlin.Int origin=null
   PROPERTY name:test5 visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private [static]
@@ -53,35 +53,42 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    FUN name:<set-test5> visibility:private modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test5> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:value index:0 type:kotlin.Int
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test5>' type=kotlin.Int origin=null
   PROPERTY name:test6 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
-    FUN name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
-    FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int
           initializer: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
               BLOCK_BODY
-                CONST Int type=kotlin.Int value=42
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test7$delegate'
+                  CONST Int type=kotlin.Int value=42
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
             <T>: kotlin.Int
-            $receiver: GET_FIELD 'FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
-    FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> [inline] declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
           <K>: kotlin.String
@@ -92,12 +99,12 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): IrErrorType declared in <root>'
           ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
             CONST Null type=kotlin.Nothing? value=null
-            PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
+            PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field=null getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
           CONST Null type=kotlin.Nothing? value=null
-          PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
+          PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field=null getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
           GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test8>' type=IrErrorType origin=null

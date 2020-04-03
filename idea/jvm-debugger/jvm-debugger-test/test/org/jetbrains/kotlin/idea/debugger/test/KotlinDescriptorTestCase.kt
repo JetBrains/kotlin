@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.xdebugger.XDebugSession
-import org.jetbrains.kotlin.codegen.CodegenTestCase.TestFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -31,8 +30,11 @@ import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
 import org.jetbrains.kotlin.idea.debugger.test.util.LogPropagator
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.ComparisonFailure
 import java.io.File
@@ -103,9 +105,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
 
         val rawJvmTarget = preferences[DebuggerPreferenceKeys.JVM_TARGET]
         val jvmTarget = JvmTarget.fromString(rawJvmTarget) ?: error("Invalid JVM target value: $rawJvmTarget")
-        val applyDexPatch = preferences[DebuggerPreferenceKeys.EMULATE_DEX]
 
-        val compilerFacility = DebuggerTestCompilerFacility(testFiles, jvmTarget, applyDexPatch)
+        val compilerFacility = DebuggerTestCompilerFacility(testFiles, jvmTarget)
 
         for (library in preferences[DebuggerPreferenceKeys.ATTACH_LIBRARY]) {
             compilerFacility.compileExternalLibrary(library, librarySrcDirectory, libraryOutputDirectory)
@@ -125,12 +126,12 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     private fun createTestFiles(wholeFile: File, wholeFileContents: String): TestFiles {
-        val testFiles = org.jetbrains.kotlin.test.TestFiles.createTestFiles<Void, TestFile>(
+        val testFiles = org.jetbrains.kotlin.test.TestFiles.createTestFiles(
             wholeFile.name,
             wholeFileContents,
             object : org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
-                    return TestFile(fileName, text)
+                override fun create(fileName: String, text: String, directives: Directives): TestFile {
+                    return TestFile(fileName, text, directives)
                 }
             }
         )
@@ -222,5 +223,10 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         return super.getData(dataId)
     }
 
+    override fun shouldRunTest(): Boolean {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
+    }
+
     private fun getTestDirectoryPath(): String = javaClass.getAnnotation(TestMetadata::class.java).value
 }
+

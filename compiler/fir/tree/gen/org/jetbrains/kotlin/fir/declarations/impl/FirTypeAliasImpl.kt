@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -23,18 +22,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirTypeAliasImpl(
+internal class FirTypeAliasImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
-    override val name: Name,
+    override var resolvePhase: FirResolvePhase,
+    override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
+    override val name: Name,
     override val symbol: FirTypeAliasSymbol,
-    override var expandedTypeRef: FirTypeRef
-) : FirTypeAlias(), FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-
+    override var expandedTypeRef: FirTypeRef,
+    override val annotations: MutableList<FirAnnotationCall>,
+) : FirTypeAlias() {
     init {
         symbol.bind(this)
     }
@@ -50,12 +48,17 @@ class FirTypeAliasImpl(
         typeParameters.transformInplace(transformer, data)
         transformStatus(transformer, data)
         expandedTypeRef = expandedTypeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
         status = status.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

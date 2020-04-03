@@ -9,6 +9,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -45,15 +46,15 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
         holder.registerProblem(
             call,
             callee.textRangeIn(call),
-            "Should be replaced with Kotlin function",
+            KotlinBundle.message("should.be.replaced.with.kotlin.function"),
             *replacements
         )
     })
 
     private class ReplaceWithKotlinAnalogFunction(private val replacement: Replacement) : LocalQuickFix {
-        override fun getName() = "Replace with `${replacement.kotlinFunctionShortName}` function"
+        override fun getName() = KotlinBundle.message("replace.with.kotlin.analog.function.text", replacement.kotlinFunctionShortName)
 
-        override fun getFamilyName() = "Replace with Kotlin analog"
+        override fun getFamilyName() = KotlinBundle.message("replace.with.kotlin.analog.function.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val callExpression = descriptor.psiElement as? KtCallExpression ?: return

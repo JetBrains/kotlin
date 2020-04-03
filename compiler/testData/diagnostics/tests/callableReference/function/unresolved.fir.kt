@@ -4,21 +4,21 @@
 class A
 
 fun test1() {
-    val foo = ::foo
+    val foo = <!UNRESOLVED_REFERENCE!>::foo<!>
 
-    ::bar
+    <!UNRESOLVED_REFERENCE!>::bar<!>
 
-    A::bar
+    <!UNRESOLVED_REFERENCE!>A::bar<!>
 
-    <!UNRESOLVED_REFERENCE!>B<!>::bar
+    <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>B<!>::bar<!>
 }
 
 fun test2() {
     fun foo(x: Any) {}
     fun foo() {}
 
-    <!UNRESOLVED_REFERENCE!>Unresolved<!>::foo
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::foo)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved)
-    ::unresolved
+    <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Unresolved<!>::foo<!>
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Unresolved<!>::foo<!>)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved<!>)
+    <!UNRESOLVED_REFERENCE!>::unresolved<!>
 }

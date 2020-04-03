@@ -21,6 +21,8 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
     fun safeSubstitute(type: UnwrappedType): UnwrappedType =
         substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
+    val isEmpty: Boolean
+
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
         when (type) {
             is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
@@ -81,7 +83,10 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                 if (innerType is StubType || substitutedInnerType is StubType) {
                     return NewCapturedType(
                         capturedType.captureStatus,
-                        NewCapturedTypeConstructor(TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType)),
+                        NewCapturedTypeConstructor(
+                            TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
+                            typeParameter = typeConstructor.typeParameter
+                        ),
                         lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
                     )
                 } else {
@@ -101,12 +106,16 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
         }
 
         if (typeConstructor is IntersectionTypeConstructor) {
-            var thereIsChanges = false
+            fun updateNullability(substituted: UnwrappedType) =
+                if (type.isMarkedNullable) substituted.makeNullableAsSpecified(true) else substituted
+
+            substituteNotNullTypeWithConstructor(typeConstructor)?.let { return updateNullability(it) }
+            var thereAreChanges = false
             val newTypes = typeConstructor.supertypes.map {
-                substitute(it.unwrap(), keepAnnotation, runCapturedChecks)?.apply { thereIsChanges = true } ?: it.unwrap()
+                substitute(it.unwrap(), keepAnnotation, runCapturedChecks)?.apply { thereAreChanges = true } ?: it.unwrap()
             }
-            if (!thereIsChanges) return null
-            return intersectTypes(newTypes).let { if (type.isMarkedNullable) it.makeNullableAsSpecified(true) else it }
+            if (!thereAreChanges) return null
+            return updateNullability(intersectTypes(newTypes))
         }
 
         // simple classifier type
@@ -170,10 +179,14 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
 
 object EmptySubstitutor : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = null
+
+    override val isEmpty: Boolean get() = true
 }
 
 class NewTypeSubstitutorByConstructorMap(val map: Map<TypeConstructor, UnwrappedType>) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = map[constructor]
+
+    override val isEmpty: Boolean get() = map.isEmpty()
 }
 
 class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromCallableDescriptor>) : NewTypeSubstitutor {
@@ -184,6 +197,8 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
 
         return typeVariable.defaultType
     }
+
+    override val isEmpty: Boolean get() = freshVariables.isEmpty()
 
     companion object {
         val Empty = FreshVariableNewTypeSubstitutor(emptyList())
@@ -205,6 +220,8 @@ fun createCompositeSubstitutor(appliedFirst: NewTypeSubstitutor, appliedLast: Ty
                 }
             }
         }
+
+        override val isEmpty: Boolean get() = appliedFirst.isEmpty && appliedLast.isEmpty
     }
 }
 

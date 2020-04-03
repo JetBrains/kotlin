@@ -1,3 +1,5 @@
+// !LANGUAGE: +PreferJavaFieldOverload
+
 // FILE: B.java
 
 public abstract class B implements A {

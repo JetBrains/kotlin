@@ -38,7 +38,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
         We don't want to code here fair analysis for general cases, because it's too complex. Instead, we just
         check some specific cases, which are useful enough in practice
      */
-    override fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect> {
+    override fun doInvocation(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> {
         assert(arguments.size == 2) { "Equals functor expected 2 arguments, got ${arguments.size}" }
 
         // TODO: AnnotationConstructorCaller kills this with implicit receiver. Investigate, how.

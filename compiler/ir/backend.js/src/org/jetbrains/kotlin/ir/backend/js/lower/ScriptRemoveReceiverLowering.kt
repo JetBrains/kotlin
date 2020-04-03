@@ -22,13 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.lang.IllegalArgumentException
 
-val scriptRemoveReceiverLowering = makeIrModulePhase(
-    ::ScriptRemoveReceiverLowering,
-    name = "ScriptRemoveReceiver",
-    description = "Remove receivers for declarations in script"
-)
-
-private class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLoweringPass {
+class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.scriptMode) {
             irFile.declarations.transformFlat {
@@ -77,6 +71,7 @@ private class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : 
                             symbol,
                             typeArgumentsCount,
                             valueArgumentsCount,
+                            reflectionTarget,
                             origin
                         ).also {
                             it.dispatchReceiver = dispatchReceiver

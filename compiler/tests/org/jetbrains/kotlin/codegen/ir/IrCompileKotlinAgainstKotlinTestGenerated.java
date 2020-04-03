@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -113,6 +113,16 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
     }
 
+    @TestMetadata("delegatedDefault.kt")
+    public void testDelegatedDefault() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/delegatedDefault.kt");
+    }
+
+    @TestMetadata("delegationAndAnnotations.kt")
+    public void testDelegationAndAnnotations() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/delegationAndAnnotations.kt");
+    }
+
     @TestMetadata("doublyNestedClass.kt")
     public void testDoublyNestedClass() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/doublyNestedClass.kt");
@@ -146,6 +156,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
     @TestMetadata("innerClassConstructor.kt")
     public void testInnerClassConstructor() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/innerClassConstructor.kt");
+    }
+
+    @TestMetadata("interfaceDelegationAndBridgesProcessing.kt")
+    public void testInterfaceDelegationAndBridgesProcessing() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/interfaceDelegationAndBridgesProcessing.kt");
     }
 
     @TestMetadata("internalSetterOverridden.kt")
@@ -333,6 +348,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
     }
 
+    @TestMetadata("useDeserializedFunInterface.kt")
+    public void testUseDeserializedFunInterface() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
+    }
+
     @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -457,6 +477,24 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond3.kt");
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeAnnotations extends AbstractIrCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("implicitReturn.kt")
+        public void testImplicitReturn() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");
         }
     }
 }

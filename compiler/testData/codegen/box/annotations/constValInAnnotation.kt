@@ -1,5 +1,4 @@
 // !LANGUAGE: +NestedClassesInAnnotations
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 // FILE: Foo.java
@@ -17,4 +16,3 @@ annotation class Anno(val value: Int) {
 
 fun box(): String =
         if ((Foo::class.java.annotations.single() as Anno).value == 42) "OK" else "Fail"
-

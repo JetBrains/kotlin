@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgume
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
-import org.jetbrains.kotlin.idea.debugger.emulateDexDebugInTests
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.DISABLE_KOTLIN_INTERNAL_CLASSES
-import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.EMULATE_DEX
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.IS_FILTER_FOR_STDLIB_ALREADY_ADDED
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.RENDER_DELEGATED_PROPERTIES
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_CLASSLOADERS
@@ -32,19 +30,10 @@ internal val SettingsMutators: List<SettingsMutator<*>> = listOf(
     KotlinSettingsMutator(DISABLE_KOTLIN_INTERNAL_CLASSES, KotlinDebuggerSettings::DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES),
     KotlinSettingsMutator(RENDER_DELEGATED_PROPERTIES, KotlinDebuggerSettings::DEBUG_RENDER_DELEGATED_PROPERTIES),
     KotlinSettingsMutator(IS_FILTER_FOR_STDLIB_ALREADY_ADDED, KotlinDebuggerSettings::DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED),
-    DexSettingsMutator(EMULATE_DEX),
     KotlinVariablesModeSettingsMutator,
     JvmTargetSettingsMutator,
     ForceRankingSettingsMutator
 )
-
-private class DexSettingsMutator(key: DebuggerPreferenceKey<Boolean>) : SettingsMutator<Boolean>(key) {
-    override fun setValue(value: Boolean, project: Project): Boolean {
-        val oldValue = emulateDexDebugInTests
-        emulateDexDebugInTests = value
-        return oldValue
-    }
-}
 
 private class DebuggerSettingsMutator<T : Any>(
     key: DebuggerPreferenceKey<T>,

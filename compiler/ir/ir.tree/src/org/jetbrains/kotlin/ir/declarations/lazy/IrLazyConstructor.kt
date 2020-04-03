@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrLazyConstructor(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrConstructorSymbol,
+    override val descriptor: ClassConstructorDescriptor,
     name: Name,
     visibility: Visibility,
     isInline: Boolean,
@@ -39,26 +39,7 @@ class IrLazyConstructor(
     ),
     IrConstructor {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrConstructorSymbol,
-        stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.visibility,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isEffectivelyExternal(),
-        isPrimary = symbol.descriptor.isPrimary,
-        isExpect = symbol.descriptor.isExpect,
-        stubGenerator = stubGenerator,
-        typeTranslator = TypeTranslator
-    )
-
-    override val typeParameters: MutableList<IrTypeParameter> by lazy {
+    override var typeParameters: List<IrTypeParameter> by lazyVar {
         typeTranslator.buildWithScope(this) {
             stubGenerator.symbolTable.withScope(descriptor) {
                 val classTypeParametersCount = descriptor.constructedClass.original.declaredTypeParameters.size
@@ -73,8 +54,6 @@ class IrLazyConstructor(
     init {
         symbol.bind(this)
     }
-
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)

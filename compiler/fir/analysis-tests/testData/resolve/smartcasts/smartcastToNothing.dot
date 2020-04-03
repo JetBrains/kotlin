@@ -1,0 +1,268 @@
+digraph smartcastToNothing_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function getNothing" style="filled" fillcolor=red];
+        2 [label="Function call: R|java/lang/Exception.Exception|()"];
+        3 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+        4 [label="Stub" style="filled" fillcolor=gray];
+        5 [label="Jump: ^getNothing throw R|java/lang/Exception.Exception|()" style="filled" fillcolor=gray];
+        6 [label="Stub" style="filled" fillcolor=gray];
+        1 [label="Exit function getNothing" style="filled" fillcolor=red];
+    }
+    0 -> {2};
+    2 -> {3};
+    3 -> {1};
+    3 -> {4} [style=dotted];
+    4 -> {5} [style=dotted];
+    5 -> {1 6} [style=dotted];
+    6 -> {1} [style=dotted];
+
+    subgraph cluster_1 {
+        color=red
+        7 [label="Enter function getNullableNothing" style="filled" fillcolor=red];
+        9 [label="Const: Null(null)"];
+        10 [label="Jump: ^getNullableNothing Null(null)"];
+        11 [label="Stub" style="filled" fillcolor=gray];
+        8 [label="Exit function getNullableNothing" style="filled" fillcolor=red];
+    }
+    7 -> {9};
+    9 -> {10};
+    10 -> {8};
+    10 -> {11} [style=dotted];
+    11 -> {8} [style=dotted];
+
+    subgraph cluster_2 {
+        color=red
+        17 [label="Enter property" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            12 [label="Enter function getter" style="filled" fillcolor=red];
+            14 [label="Const: Int(1)"];
+            15 [label="Jump: ^ Int(1)"];
+            16 [label="Stub" style="filled" fillcolor=gray];
+            13 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        18 [label="Exit property" style="filled" fillcolor=red];
+    }
+    17 -> {18};
+    12 -> {14};
+    14 -> {15};
+    15 -> {13};
+    15 -> {16} [style=dotted];
+    16 -> {13} [style=dotted];
+
+    subgraph cluster_4 {
+        color=red
+        24 [label="Enter property" style="filled" fillcolor=red];
+        subgraph cluster_5 {
+            color=blue
+            19 [label="Enter function getter" style="filled" fillcolor=red];
+            21 [label="Const: Int(2)"];
+            22 [label="Jump: ^ Int(2)"];
+            23 [label="Stub" style="filled" fillcolor=gray];
+            20 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        25 [label="Exit property" style="filled" fillcolor=red];
+    }
+    24 -> {25};
+    19 -> {21};
+    21 -> {22};
+    22 -> {20};
+    22 -> {23} [style=dotted];
+    23 -> {20} [style=dotted];
+
+    subgraph cluster_6 {
+        color=red
+        26 [label="Enter function myListOf" style="filled" fillcolor=red];
+        28 [label="Const: Null(null)"];
+        29 [label="Check not null: Null(null)!!"];
+        30 [label="Jump: ^myListOf Null(null)!!"];
+        31 [label="Stub" style="filled" fillcolor=gray];
+        27 [label="Exit function myListOf" style="filled" fillcolor=red];
+    }
+    26 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {27};
+    30 -> {31} [style=dotted];
+    31 -> {27} [style=dotted];
+
+    subgraph cluster_7 {
+        color=red
+        32 [label="Enter function <init>" style="filled" fillcolor=red];
+        34 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        33 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    32 -> {34};
+    34 -> {33};
+
+    subgraph cluster_8 {
+        color=red
+        45 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            40 [label="Enter function getter" style="filled" fillcolor=red];
+            41 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_10 {
+            color=blue
+            35 [label="Enter function getter" style="filled" fillcolor=red];
+            36 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_11 {
+            color=blue
+            37 [label="Enter property" style="filled" fillcolor=red];
+            39 [label="Const: Int(1)"];
+            38 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_12 {
+            color=blue
+            42 [label="Enter property" style="filled" fillcolor=red];
+            44 [label="Const: Boolean(true)"];
+            43 [label="Exit property" style="filled" fillcolor=red];
+        }
+        46 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    45 -> {37} [color=green];
+    37 -> {39};
+    38 -> {42} [color=green];
+    39 -> {38};
+    35 -> {36};
+    42 -> {44};
+    43 -> {46} [color=green];
+    44 -> {43};
+    40 -> {41};
+
+    subgraph cluster_13 {
+        color=red
+        47 [label="Enter function test_0" style="filled" fillcolor=red];
+        49 [label="Const: Null(null)"];
+        50 [label="Variable declaration: lvar s: R|A?|"];
+        51 [label="Access variable R|<local>/results|"];
+        52 [label="Function call: R|<local>/results|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Nothing>|>|()"];
+        53 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Nothing>|"];
+        subgraph cluster_14 {
+            color=blue
+            54 [label="Enter while loop"];
+            subgraph cluster_15 {
+                color=blue
+                56 [label="Enter loop condition"];
+                57 [label="Access variable R|<local>/<iterator>|"];
+                58 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                59 [label="Exit loop condition"];
+            }
+            subgraph cluster_16 {
+                color=blue
+                60 [label="Enter loop block"];
+                subgraph cluster_17 {
+                    color=blue
+                    61 [label="Enter block"];
+                    62 [label="Access variable R|<local>/<iterator>|"];
+                    63 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Nothing|>|()"];
+                    64 [label="Stub" style="filled" fillcolor=gray];
+                    65 [label="Variable declaration: lval result: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+                    66 [label="Access variable R|<local>/result|" style="filled" fillcolor=gray];
+                    67 [label="Stub" style="filled" fillcolor=gray];
+                    68 [label="Assignment: R|<local>/s|" style="filled" fillcolor=gray];
+                    subgraph cluster_18 {
+                        color=blue
+                        69 [label="Enter when" style="filled" fillcolor=gray];
+                        subgraph cluster_19 {
+                            color=blue
+                            71 [label="Enter when branch condition " style="filled" fillcolor=gray];
+                            72 [label="Access variable R|<local>/result|" style="filled" fillcolor=gray];
+                            73 [label="Stub" style="filled" fillcolor=gray];
+                            74 [label="Access variable <Unresolved name: b>#" style="filled" fillcolor=gray];
+                            75 [label="Exit when branch condition" style="filled" fillcolor=gray];
+                        }
+                        82 [label="Synthetic else branch" style="filled" fillcolor=gray];
+                        76 [label="Enter when branch result" style="filled" fillcolor=gray];
+                        subgraph cluster_20 {
+                            color=blue
+                            77 [label="Enter block" style="filled" fillcolor=gray];
+                            78 [label="Jump: break@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()] " style="filled" fillcolor=gray];
+                            79 [label="Stub" style="filled" fillcolor=gray];
+                            80 [label="Exit block" style="filled" fillcolor=gray];
+                        }
+                        81 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        70 [label="Exit when" style="filled" fillcolor=gray];
+                    }
+                    83 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                84 [label="Exit loop block" style="filled" fillcolor=gray];
+            }
+            55 [label="Exit whileloop"];
+        }
+        85 [label="Access variable R|<local>/s|"];
+        86 [label="Enter safe call"];
+        88 [label="Postponed enter to lambda"];
+        subgraph cluster_21 {
+            color=blue
+            92 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            94 [label="Access variable R|<local>/it|"];
+            95 [label="Access variable R|/A.a|"];
+            93 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+        }
+        91 [label="Call arguments union" style="filled" fillcolor=yellow];
+        89 [label="Postponed exit from lambda"];
+        90 [label="Function call: R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)"];
+        87 [label="Exit safe call"];
+        48 [label="Exit function test_0" style="filled" fillcolor=red];
+    }
+    47 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+    52 -> {53};
+    53 -> {54};
+    54 -> {56};
+    55 -> {85};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+    59 -> {55 60};
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {48};
+    63 -> {64} [style=dotted];
+    64 -> {65} [style=dotted];
+    65 -> {66} [style=dotted];
+    66 -> {48 67} [style=dotted];
+    67 -> {68} [style=dotted];
+    68 -> {69} [style=dotted];
+    69 -> {71} [style=dotted];
+    70 -> {83} [style=dotted];
+    71 -> {72} [style=dotted];
+    72 -> {48 73} [style=dotted];
+    73 -> {74} [style=dotted];
+    74 -> {75} [style=dotted];
+    75 -> {76 82} [style=dotted];
+    76 -> {77} [style=dotted];
+    77 -> {78} [style=dotted];
+    78 -> {55 79} [style=dotted];
+    79 -> {80} [style=dotted];
+    80 -> {81} [style=dotted];
+    81 -> {70} [style=dotted];
+    82 -> {70} [style=dotted];
+    83 -> {84} [style=dotted];
+    84 -> {56} [style=dotted];
+    85 -> {86 87};
+    86 -> {88};
+    87 -> {48} [style=dotted];
+    88 -> {92};
+    88 -> {89} [color=red];
+    89 -> {90} [color=green];
+    90 -> {87};
+    91 -> {90} [color=red];
+    92 -> {94};
+    93 -> {89} [color=green];
+    93 -> {91} [color=red];
+    94 -> {95};
+    95 -> {93};
+
+}

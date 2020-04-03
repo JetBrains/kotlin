@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ConvertNullablePropertyToLateinitIntention : SelfTargetingIntention<KtProperty>(
-    KtProperty::class.java, "Convert to lateinit var"
+    KtProperty::class.java, KotlinBundle.lazyMessage("convert.to.lateinit.var")
 ) {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (element.hasModifier(KtTokens.LATEINIT_KEYWORD) || element.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return false

@@ -1,0 +1,96 @@
+digraph dataFlowInfoFromWhileCondition_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class A" style="filled" fillcolor=red];
+        3 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter class B" style="filled" fillcolor=red];
+        5 [label="Exit class B" style="filled" fillcolor=red];
+    }
+    4 -> {5} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        6 [label="Enter class C" style="filled" fillcolor=red];
+        7 [label="Exit class C" style="filled" fillcolor=red];
+    }
+    6 -> {7} [color=green];
+
+    subgraph cluster_4 {
+        color=red
+        8 [label="Enter function test" style="filled" fillcolor=red];
+        10 [label="Const: Null(null)"];
+        11 [label="Variable declaration: lvar a: R|A?|"];
+        subgraph cluster_5 {
+            color=blue
+            12 [label="Enter while loop"];
+            subgraph cluster_6 {
+                color=blue
+                14 [label="Enter loop condition"];
+                subgraph cluster_7 {
+                    color=blue
+                    16 [label="Enter ||"];
+                    17 [label="Access variable R|<local>/a|"];
+                    18 [label="Type operator: (R|<local>/a| is R|B|)"];
+                    19 [label="Exit left part of ||"];
+                    20 [label="Enter right part of ||"];
+                    21 [label="Access variable R|<local>/a|"];
+                    22 [label="Type operator: (R|<local>/a| is R|C|)"];
+                    15 [label="Exit ||"];
+                }
+                23 [label="Exit loop condition"];
+            }
+            subgraph cluster_8 {
+                color=blue
+                24 [label="Enter loop block"];
+                subgraph cluster_9 {
+                    color=blue
+                    25 [label="Enter block"];
+                    26 [label="Access variable R|<local>/a|"];
+                    27 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    28 [label="Exit block"];
+                }
+                29 [label="Exit loop block"];
+            }
+            13 [label="Exit whileloop"];
+        }
+        9 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    8 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {14};
+    13 -> {9};
+    14 -> {16};
+    15 -> {23};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {15 20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {15};
+    23 -> {13 24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {14};
+
+}

@@ -13,6 +13,7 @@ import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.table.JBTable
 import org.jetbrains.kotlin.compiler.plugin.CliOptionValue
 import org.jetbrains.kotlin.compiler.plugin.parsePluginOption
+import org.jetbrains.kotlin.idea.KotlinBundle
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
@@ -62,8 +63,8 @@ class KotlinFacetCompilerPluginsTab(
         override fun getColumnCount() = 2
 
         override fun getColumnName(column: Int) = when (column) {
-            0 -> "Plugin"
-            else -> "Options"
+            0 -> KotlinBundle.message("facet.column.name.plugin")
+            else -> KotlinBundle.message("facet.column.name.options")
         }
 
         override fun getColumnClass(columnIndex: Int) = String::class.java
@@ -118,7 +119,8 @@ class KotlinFacetCompilerPluginsTab(
             val invalidOptions = optionsByTable.filter { parsePluginOption(it) == null }
             if (invalidOptions.isNotEmpty()) {
                 val message = buildString {
-                    append("Following options are not correct: <br/>")
+                    append(KotlinBundle.message("facet.text.following.options.are.not.correct"))
+                    append(" <br/>")
                     invalidOptions.joinTo(this, "<br/>") { "<strong>$it</strong>" }
                 }
                 return ValidationResult(message)
@@ -140,7 +142,7 @@ class KotlinFacetCompilerPluginsTab(
         validatorsManager.registerValidator(OptionValidator())
     }
 
-    override fun getDisplayName() = "Compiler Plugins"
+    override fun getDisplayName() = KotlinBundle.message("facet.name.compiler.plugins")
 
     override fun createComponent(): JComponent {
         val panel = JPanel(BorderLayout())

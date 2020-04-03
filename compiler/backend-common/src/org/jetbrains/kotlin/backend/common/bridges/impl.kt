@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 fun <Signature> generateBridgesForFunctionDescriptor(
     descriptor: FunctionDescriptor,
     signature: (FunctionDescriptor) -> Signature
-): Set<Bridge<Signature>> {
+): Set<Bridge<Signature, DescriptorBasedFunctionHandle>> {
     return generateBridges(DescriptorBasedFunctionHandle(descriptor), { signature(it.descriptor) })
 }
 

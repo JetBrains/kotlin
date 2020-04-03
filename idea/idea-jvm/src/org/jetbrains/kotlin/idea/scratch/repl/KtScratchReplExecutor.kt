@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch.repl
@@ -28,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.repl.replRemoveLineBreaksInTheEnd
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.actions.logError
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
@@ -39,6 +29,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file) {
     private val history: ReplHistory = ReplHistory()
+
+    @Volatile
     private var osProcessHandler: OSProcessHandler? = null
 
     override fun startExecution() {
@@ -68,13 +60,15 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
             }
             sendCommandToProcess(":quit")
         } catch (e: Exception) {
-            errorOccurs("Couldn't stop REPL process", e, false)
+            errorOccurs(KotlinJvmBundle.message("couldn.t.stop.repl.process"), e, false)
 
             processHandler.destroyProcess()
             clearState()
         }
     }
 
+    // There should be some kind of more wise synchronization cause this method is called from non-UI thread (process handler thread)
+    // and actually there could be side effects in handlers
     private fun clearState() {
         history.clear()
         osProcessHandler = null
@@ -90,7 +84,7 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
         try {
             sendCommandToProcess(expression.element.text)
         } catch (e: Throwable) {
-            errorOccurs("Couldn't execute statement: ${expression.element.text}", e, true)
+            errorOccurs(KotlinJvmBundle.message("couldn.t.execute.statement.0", expression.element.text), e, true)
         }
     }
 
@@ -99,7 +93,7 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
     }
 
     private fun sendCommandToProcess(command: String) {
-        LOG.printDebugMessage("Send to REPL: ${command}")
+        LOG.printDebugMessage("Send to REPL: $command")
 
         val processInputOS = osProcessHandler?.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
         val charset = osProcessHandler?.charset ?: Charsets.UTF_8
@@ -155,9 +149,20 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
         }
 
         override fun notifyProcessTerminated(exitCode: Int) {
-            super.notifyProcessTerminated(exitCode)
-
+            // Do state cleaning before notification otherwise KtScratchFileEditorWithPreview.dispose
+            // would try to stop process again (after stop in tests 'stopReplProcess`)
+            // via `stopExecution` (because handler is not null) with next exception:
+            //
+            // Caused by: com.intellij.testFramework.LoggedErrorProcessor$TestLoggerAssertionError: The pipe is being closed
+            // at com.intellij.testFramework.LoggedErrorProcessor.processError(LoggedErrorProcessor.java:66)
+            // at com.intellij.testFramework.TestLogger.error(TestLogger.java:40)
+            // at com.intellij.openapi.diagnostic.Logger.error(Logger.java:170)
+            // at org.jetbrains.kotlin.idea.scratch.ScratchExecutor.errorOccurs(ScratchExecutor.kt:50)
+            // at org.jetbrains.kotlin.idea.scratch.repl.KtScratchReplExecutor.stopExecution(KtScratchReplExecutor.kt:61)
+            // at org.jetbrains.kotlin.idea.scratch.SequentialScratchExecutor.stopExecution$default(ScratchExecutor.kt:90)
             clearState()
+
+            super.notifyProcessTerminated(exitCode)
         }
 
         private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
@@ -198,16 +203,15 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
             }
         }
 
-        private fun parseReplOutput(text: String, outputType: String): ScratchOutput? {
-            return when (outputType) {
-                "USER_OUTPUT" -> ScratchOutput(text, ScratchOutputType.OUTPUT)
-                "REPL_RESULT" -> ScratchOutput(text, ScratchOutputType.RESULT)
-                "REPL_INCOMPLETE",
-                "INTERNAL_ERROR",
-                "COMPILE_ERROR",
-                "RUNTIME_ERROR" -> ScratchOutput(text, ScratchOutputType.ERROR)
-                else -> null
-            }
+        private fun parseReplOutput(text: String, outputType: String): ScratchOutput? = when (outputType) {
+            "USER_OUTPUT" -> ScratchOutput(text, ScratchOutputType.OUTPUT)
+            "REPL_RESULT" -> ScratchOutput(text, ScratchOutputType.RESULT)
+            "REPL_INCOMPLETE",
+            "INTERNAL_ERROR",
+            "COMPILE_ERROR",
+            "RUNTIME_ERROR",
+            -> ScratchOutput(text, ScratchOutputType.ERROR)
+            else -> null
         }
     }
 }

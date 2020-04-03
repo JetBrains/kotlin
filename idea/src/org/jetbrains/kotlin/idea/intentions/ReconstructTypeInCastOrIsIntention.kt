@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 
 class ReconstructTypeInCastOrIsIntention :
-    SelfTargetingOffsetIndependentIntention<KtTypeReference>(KtTypeReference::class.java, "Replace by reconstructed type"),
+    SelfTargetingOffsetIndependentIntention<KtTypeReference>(
+        KtTypeReference::class.java,
+        KotlinBundle.message("replace.by.reconstructed.type")
+    ),
     LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
         // Only user types (like Foo) are interesting
@@ -38,7 +42,7 @@ class ReconstructTypeInCastOrIsIntention :
         if (type.constructor.parameters.isEmpty()) return false
 
         val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
-        text = "Replace by '$typePresentation'"
+        text = KotlinBundle.message("replace.by.0", typePresentation)
 
         return true
     }

@@ -1,5 +1,5 @@
 //method
-// !specifyLocalVariableTypeByDefault: true
+// !SPECIFY_LOCAL_VARIABLE_TYPE_BY_DEFAULT: true
 void foo() {
   String s = bar();
   if (s != null) {

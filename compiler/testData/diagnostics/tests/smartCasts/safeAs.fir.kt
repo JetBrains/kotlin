@@ -2,16 +2,16 @@
 
 fun foo(arg: Any?) {
     val x = arg as? Any ?: return
-    arg.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    arg.hashCode()
     x.hashCode()
 }
 
 fun bar(arg: Any?) {
     arg as? Any ?: return
-    arg.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    arg.hashCode()
 }
 
 fun gav(arg: Any?) {
     arg as? String ?: return
-    arg.<!UNRESOLVED_REFERENCE!>length<!>
+    arg.length
 }

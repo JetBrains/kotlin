@@ -62,7 +62,8 @@ class CodeConformanceTest : TestCase() {
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
             "dependencies/protobuf/protobuf-relocated/build",
-            "compiler/fir/lightTree/testData"
+            "compiler/fir/lightTree/testData",
+            "idea/testData/codeInsight/renderingKDoc"
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
@@ -93,7 +94,7 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlin-source-map-loader/.gradle",
             "libraries/tools/kotlin-source-map-loader/lib",
             "buildSrc/prepare-deps/build",
-            "compiler/ir/serialization.js/build"
+            "libraries/stdlib/js-ir/build/"
         )
     }
 

@@ -36,6 +36,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ConcurrentWeakKeySoftValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NonNls;
@@ -148,6 +149,14 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
                                 Object o = Array.get(fieldValue, i);
                                 saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, o,
                                                         field.getName());
+                            }
+                        }
+                        else if (fieldValue instanceof Map && ! (fieldValue instanceof ConcurrentWeakKeySoftValueHashMap)) {
+                            for (Map.Entry e : ((Map<Object, Object>) fieldValue).entrySet()) {
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, e.getKey(),
+                                                        field.getName());
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, e.getValue(),
+                                                        "value" + field.getName());
                             }
                         }
                         else {

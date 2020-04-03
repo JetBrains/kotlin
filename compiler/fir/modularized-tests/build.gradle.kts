@@ -9,8 +9,12 @@ plugins {
 }
 
 dependencies {
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
+
     testCompileOnly(intellijDep()) {
-        includeJars("openapi", "extensions", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "asm-all", rootProject = rootProject)
     }
 
     Platform[191].orLower {
@@ -31,7 +35,7 @@ dependencies {
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
-    testCompile(projectTests(":compiler:fir:resolve"))
+    testCompile(projectTests(":compiler:fir:analysis-tests"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:dump"))
 }

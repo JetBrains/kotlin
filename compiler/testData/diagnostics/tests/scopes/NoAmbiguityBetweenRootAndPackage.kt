@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: root.kt
 fun testFun() = 12
 

@@ -7,7 +7,7 @@ object Outer {
                 get() = 0
 
             override fun get(index: Int): Char {
-                <!UNRESOLVED_REFERENCE!>checkSubtype<!><CharSequence>(x)
+                <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><CharSequence>(x)
                 return ' '
             }
 
@@ -17,7 +17,7 @@ object Outer {
             }
         }
         set(q) {
-            <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><CharSequence>(x)
+            checkSubtype<CharSequence>(x)
             y = q
             x = q
         }
@@ -27,10 +27,10 @@ object Outer {
     fun foo() {
         x = y
 
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><CharSequence>(x)
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><CharSequence>(y)
+        checkSubtype<CharSequence>(x)
+        checkSubtype<CharSequence>(y)
 
-        x.<!UNRESOLVED_REFERENCE!>bar<!>()
-        y.<!UNRESOLVED_REFERENCE!>bar<!>()
+        x.bar()
+        y.bar()
     }
 }

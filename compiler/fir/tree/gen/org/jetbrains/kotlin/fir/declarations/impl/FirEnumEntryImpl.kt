@@ -1,27 +1,24 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -29,45 +26,76 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirEnumEntryImpl(
+internal class FirEnumEntryImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override var returnTypeRef: FirTypeRef,
     override val name: Name,
-    override val symbol: FirRegularClassSymbol
-) : FirEnumEntry(), FirModifiableClass<FirRegularClass>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override var status: FirDeclarationStatus = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
-    override val classKind: ClassKind get() = ClassKind.ENUM_ENTRY
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val companionObject: FirRegularClass? get() = null
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    override val arguments: MutableList<FirExpression> = mutableListOf()
-    override var typeRef: FirTypeRef = session.builtinTypes.enumType
+    override val symbol: FirVariableSymbol<FirEnumEntry>,
+    override var initializer: FirExpression?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override var status: FirDeclarationStatus,
+    override val containerSource: DeserializedContainerSource?,
+) : FirEnumEntry() {
+    override val receiverTypeRef: FirTypeRef? get() = null
+    override val delegate: FirExpression? get() = null
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirEnumEntry>? get() = null
+    override val isVar: Boolean get() = false
+    override val isVal: Boolean get() = true
+    override val getter: FirPropertyAccessor? get() = null
+    override val setter: FirPropertyAccessor? get() = null
 
     init {
         symbol.bind(this)
+        delegateFieldSymbol?.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        returnTypeRef.accept(visitor, data)
+        initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
-        declarations.forEach { it.accept(visitor, data) }
-        superTypeRefs.forEach { it.accept(visitor, data) }
-        arguments.forEach { it.accept(visitor, data) }
-        typeRef.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        annotations.transformInplace(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformReturnTypeRef(transformer, data)
+        transformInitializer(transformer, data)
         transformStatus(transformer, data)
-        declarations.transformInplace(transformer, data)
-        superTypeRefs.transformInplace(transformer, data)
-        transformArguments(transformer, data)
-        typeRef = typeRef.transformSingle(transformer, data)
+        transformOtherChildren(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        initializer = initializer?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -76,8 +104,9 @@ class FirEnumEntryImpl(
         return this
     }
 
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        arguments.transformInplace(transformer, data)
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        transformAnnotations(transformer, data)
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -85,8 +114,9 @@ class FirEnumEntryImpl(
         resolvePhase = newResolvePhase
     }
 
-    override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        superTypeRefs.clear()
-        superTypeRefs.addAll(newSuperTypeRefs)
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
     }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 }

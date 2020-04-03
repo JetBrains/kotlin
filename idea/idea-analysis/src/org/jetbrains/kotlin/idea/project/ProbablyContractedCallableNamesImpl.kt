@@ -10,13 +10,16 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyContractedFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.resolve.lazy.ProbablyContractedCallableNames
 
 class ProbablyContractedCallableNamesImpl(project: Project) : ProbablyContractedCallableNames {
     private val functionNames = CachedValuesManager.getManager(project).createCachedValue(
         {
             CachedValueProvider.Result.create(
-                KotlinProbablyContractedFunctionShortNameIndex.getInstance().getAllKeys(project),
+                project.runReadActionInSmartMode {
+                    KotlinProbablyContractedFunctionShortNameIndex.getInstance().getAllKeys(project)
+                },
                 KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
             )
         },

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class X {
     var result: String = "fail"
 

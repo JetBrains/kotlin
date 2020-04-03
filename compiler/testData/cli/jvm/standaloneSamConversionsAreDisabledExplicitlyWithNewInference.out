@@ -1,4 +1,12 @@
-warning: flag is not supported by this version of the compiler: -Xnew-inference -XXLanguage:-SamConversionPerArgument
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-SamConversionPerArgument
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
 compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInference.kt:9:25: error: type mismatch: inferred type is () -> Unit but Runnable was expected
     ForceSam.compare(r, {})
                         ^

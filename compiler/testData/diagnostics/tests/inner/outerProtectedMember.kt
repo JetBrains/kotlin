@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-2100
 
 interface I {

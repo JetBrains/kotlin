@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
@@ -69,9 +68,6 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
         return visitJump(breakExpression, data)
     }
 
-    override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R {
-        return visitRegularClass(enumEntry, data)
-    }
 
     override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): R {
         return visitWrappedArgumentExpression(lambdaArgumentExpression, data)

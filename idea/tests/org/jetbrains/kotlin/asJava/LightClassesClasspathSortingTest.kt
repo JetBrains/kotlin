@@ -46,7 +46,6 @@ class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase()
         val psiClass = JavaPsiFacade.getInstance(project).findClass(fqName, ResolveScopeManager.getElementResolveScope(file))
 
         assertNotNull(psiClass, "Can't find class for $fqName")
-        psiClass!!
         assert(psiClass is KtLightClassForSourceDeclaration || psiClass is KtLightClassForFacade) { "Should be an explicit light class, but was $fqName ${psiClass::class.java}" }
         assert(psiClass !is KtLightClassForDecompiledDeclaration) { "Should not be decompiled light class: $fqName ${psiClass::class.java}" }
     }

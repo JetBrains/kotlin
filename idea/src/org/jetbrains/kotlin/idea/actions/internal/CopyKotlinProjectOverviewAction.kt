@@ -17,6 +17,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.EmptyClipboardOwner
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.util.buildNumber
@@ -39,7 +40,7 @@ class CopyKotlinProjectOverviewAction : AnAction() {
             val clipboard = Toolkit.getDefaultToolkit().systemClipboard
             clipboard.setContents(StringSelection(result), EmptyClipboardOwner.INSTANCE)
         } catch (_: IndexNotReadyException) {
-            DumbService.getInstance(project).showDumbModeNotification("Can't finish while indexing is in progress")
+            DumbService.getInstance(project).showDumbModeNotification(KotlinBundle.message("can.t.finish.while.indexing.is.in.progress"))
         }
     }
 

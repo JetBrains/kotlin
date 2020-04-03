@@ -1,3 +1,5 @@
+// NO_CHECK_SOURCE_VS_BINARY
+
 package test
 
 interface I {

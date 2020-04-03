@@ -5,5 +5,5 @@ fun foo() {
 
     bar(x ?: 0)
     if (x != null) bar(x ?: x)
-    bar(x)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
 }

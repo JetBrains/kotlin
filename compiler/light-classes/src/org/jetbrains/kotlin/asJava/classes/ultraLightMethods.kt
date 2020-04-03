@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.codegen.FunctionCodegen
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
@@ -56,7 +57,7 @@ internal abstract class KtUltraLightMethod(
         val builder = KtUltraLightThrowsReferenceListBuilder(parentMethod = this)
 
         if (methodDescriptor !== null) {
-            for (ex in FunctionCodegen.getThrownExceptions(methodDescriptor)) {
+            for (ex in FunctionCodegen.getThrownExceptions(methodDescriptor, LanguageVersionSettingsImpl.DEFAULT)) {
                 val psiClassType = ex.defaultType.asPsiType(support, TypeMappingMode.DEFAULT, builder) as? PsiClassType
                 psiClassType ?: continue
                 builder.addReference(psiClassType)

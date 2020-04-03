@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Cell<T>(val x : T)
 class Pair<T1, T2>(val x1: T1, val x2: T2)
 

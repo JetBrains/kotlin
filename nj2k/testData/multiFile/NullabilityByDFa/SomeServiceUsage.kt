@@ -1,7 +1,6 @@
 class SomeServiceUsage {
     val service: SomeService
         get() = SomeService.getInstanceNotNull()
-
     val serviceNullable: SomeService
         get() = SomeService.getInstanceNullable()
 

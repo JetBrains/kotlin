@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <experimentalFeature implementation="org.jetbrains.kotlin.idea.configuration.MLCompletionForKotlinFeature"/>
+  </extensions>
+</idea-plugin>

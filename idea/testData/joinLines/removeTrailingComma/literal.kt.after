@@ -1,0 +1,2 @@
+@Anno([1, 2, 3,<caret> ])
+class A

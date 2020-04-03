@@ -1,0 +1,14 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 3,
+          "description": "check he type of jump expressions is the kotlin.Nothing",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

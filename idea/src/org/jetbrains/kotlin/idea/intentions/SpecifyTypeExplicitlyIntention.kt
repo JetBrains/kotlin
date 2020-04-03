@@ -27,6 +27,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -47,13 +48,16 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
     KtCallableDeclaration::class.java,
-    "Specify type explicitly"
+    KotlinBundle.message("specify.type.explicitly")
 ), HighPriorityAction {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         if (!ExplicitApiDeclarationChecker.returnTypeCheckIsApplicable(element)) return null
 
-        text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
+        text = if (element is KtFunction)
+            KotlinBundle.message("specify.return.type.explicitly")
+        else
+            KotlinBundle.message("specify.type.explicitly")
 
         val initializer = (element as? KtDeclarationWithInitializer)?.initializer
         return if (initializer != null) {
@@ -67,7 +71,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
         val type = getTypeForDeclaration(element)
         if (type.isError) {
             if (editor != null) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot infer type for this declaration")
+                HintManager.getInstance().showErrorHint(editor, KotlinBundle.message("cannot.infer.type.for.this.declaration"))
             }
             return
         }

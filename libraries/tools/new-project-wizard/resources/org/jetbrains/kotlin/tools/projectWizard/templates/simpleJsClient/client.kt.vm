@@ -1,14 +1,17 @@
 import kotlinx.html.div
 import kotlinx.html.dom.append
+import org.w3c.dom.Node
 import kotlin.browser.document
 import kotlin.browser.window
 
 fun main() {
-    window.onload = {
-        document.body?.append {
-            div {
-                +"Hello from JS"
-            }
+    window.onload = { document.body?.sayHello() }
+}
+
+fun Node.sayHello() {
+   append {
+        div {
+            +"Hello from JS"
         }
     }
 }

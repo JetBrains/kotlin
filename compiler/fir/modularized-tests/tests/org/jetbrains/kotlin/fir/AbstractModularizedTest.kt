@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.w3c.dom.Node
@@ -47,27 +53,43 @@ private val ROOT_PATH_PREFIX = System.getProperty("fir.bench.prefix", "/")
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
-    private lateinit var startDate: Date
+    private lateinit var reportDate: Date
 
-    protected fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
+    protected fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(reportDate))
         .also {
             it.mkdirs()
         }
 
-    protected val reportDateStr by lazy {
+    protected val reportDateStr: String by lazy {
         val reportDateFormat = SimpleDateFormat("yyyy-MM-dd__HH-mm")
-        reportDateFormat.format(startDate)
+        reportDateFormat.format(reportDate)
+    }
+
+    private fun detectReportDate(): Date {
+        val provided = System.getProperty("fir.bench.report.timestamp") ?: return Date()
+        return Date(provided.toLong())
     }
 
     override fun setUp() {
         super.setUp()
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
-        startDate = Date()
+        reportDate = detectReportDate()
     }
 
     override fun tearDown() {
         super.tearDown()
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+    }
+
+    fun createDefaultConfiguration(moduleData: ModuleData): CompilerConfiguration {
+        val configuration = KotlinTestUtils.newConfiguration()
+        configuration.addJavaSourceRoots(moduleData.javaSourceRoots)
+        configuration.addJvmClasspathRoots(moduleData.classpath)
+
+        configuration.addAll(
+            CLIConfigurationKeys.CONTENT_ROOTS,
+            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+        return configuration
     }
 
     private fun loadModule(file: File): ModuleData {

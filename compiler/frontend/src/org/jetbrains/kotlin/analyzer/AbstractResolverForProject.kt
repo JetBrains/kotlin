@@ -8,26 +8,23 @@ package org.jetbrains.kotlin.analyzer
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
     protected val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val fallbackModificationTracker: ModificationTracker? = null,
+    protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
 ) : ResolverForProject<M>() {
 
-    private class ModuleData(
+    protected class ModuleData(
         val moduleDescriptor: ModuleDescriptorImpl,
         val modificationTracker: ModificationTracker?
     ) {
@@ -40,7 +37,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     // Protected by ("projectContext.storageManager.lock")
-    private val descriptorByModule = mutableMapOf<M, ModuleData>()
+    protected val descriptorByModule = mutableMapOf<M, ModuleData>()
 
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
@@ -126,7 +123,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing {
-        DiagnoseUnknownModuleInfoReporter.report(name, infos)
+        DiagnoseUnknownModuleInfoReporter.report(name, infos, allModules)
     }
 
     private fun checkModuleIsCorrect(moduleInfo: M) {
@@ -207,8 +204,8 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 }
 
 private object DiagnoseUnknownModuleInfoReporter {
-    fun report(name: String, infos: List<ModuleInfo>): Nothing {
-        val message = "$name does not know how to resolve $infos"
+    fun report(name: String, infos: List<ModuleInfo>, allModules: Collection<ModuleInfo>): Nothing {
+        val message = "$name does not know how to resolve $infos, allModules: $allModules"
         when {
             name.contains(ResolverForProject.resolverForSdkName) -> errorInSdkResolver(message)
             name.contains(ResolverForProject.resolverForLibrariesName) -> errorInLibrariesResolver(message)

@@ -2,6 +2,8 @@
   <dictionary name="4u7">
     <words>
       <w>bintray</w>
+      <w>cacheability</w>
+      <w>cacheable</w>
       <w>cidr</w>
       <w>foldable</w>
       <w>instrumentator</w>

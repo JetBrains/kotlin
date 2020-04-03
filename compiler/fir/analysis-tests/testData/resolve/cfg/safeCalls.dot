@@ -1,0 +1,102 @@
+digraph safeCalls_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function bar" style="filled" fillcolor=red];
+        3 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+    2 -> {3};
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter class A" style="filled" fillcolor=red];
+        5 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    4 -> {5} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        14 [label="Enter class B" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            10 [label="Enter function getter" style="filled" fillcolor=red];
+            11 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_5 {
+            color=blue
+            6 [label="Enter function getter" style="filled" fillcolor=red];
+            7 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_6 {
+            color=blue
+            8 [label="Enter property" style="filled" fillcolor=red];
+            9 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_7 {
+            color=blue
+            12 [label="Enter property" style="filled" fillcolor=red];
+            13 [label="Exit property" style="filled" fillcolor=red];
+        }
+        15 [label="Exit class B" style="filled" fillcolor=red];
+    }
+    14 -> {8} [color=green];
+    8 -> {9};
+    9 -> {12} [color=green];
+    6 -> {7};
+    12 -> {13};
+    13 -> {15} [color=green];
+    10 -> {11};
+
+    subgraph cluster_8 {
+        color=red
+        16 [label="Enter function test_1" style="filled" fillcolor=red];
+        18 [label="Access variable R|<local>/x|"];
+        19 [label="Enter safe call"];
+        21 [label="Function call: R|<local>/x|?.R|/A.foo|()"];
+        20 [label="Exit safe call"];
+        22 [label="Enter safe call"];
+        24 [label="Function call: R|<local>/x|?.R|/A.foo|()?.R|/A.bar|()"];
+        23 [label="Exit safe call"];
+        17 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
+    16 -> {18};
+    18 -> {19 20};
+    19 -> {21};
+    20 -> {22 23};
+    21 -> {20};
+    22 -> {24};
+    23 -> {17};
+    24 -> {23};
+
+    subgraph cluster_9 {
+        color=red
+        25 [label="Enter function test_2" style="filled" fillcolor=red];
+        27 [label="Access variable R|<local>/x|"];
+        28 [label="Enter safe call"];
+        30 [label="Access variable R|/B.foo|"];
+        29 [label="Exit safe call"];
+        31 [label="Enter safe call"];
+        33 [label="Access variable R|/B.bar|"];
+        32 [label="Exit safe call"];
+        26 [label="Exit function test_2" style="filled" fillcolor=red];
+    }
+    25 -> {27};
+    27 -> {28 29};
+    28 -> {30};
+    29 -> {31 32};
+    30 -> {29};
+    31 -> {33};
+    32 -> {26};
+    33 -> {32};
+
+}

@@ -80,7 +80,10 @@ internal fun BaseGradleIT.transformProjectWithPluginsDsl(
     }
 
     result.projectDir.walkTopDown()
-        .filter { it.isFile && (it.name == "build.gradle" || it.name == "build.gradle.kts") }
+        .filter {
+            it.isFile && (it.name == "build.gradle" || it.name == "build.gradle.kts" ||
+                    it.name == "settings.gradle" || it.name == "settings.gradle.kts")
+        }
         .forEach { buildGradle ->
             buildGradle.modify(::transformBuildScriptWithPluginsDsl)
         }

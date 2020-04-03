@@ -1,0 +1,47 @@
+FILE: invokeAmbiguity.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun invoke(f: R|() -> kotlin/Unit|): R|kotlin/Int| {
+            ^invoke Int(1)
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun invoke(f: R|() -> kotlin/Unit|): R|kotlin/CharSequence| {
+            ^invoke String()
+        }
+
+    }
+    public open class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val R|C|.attr: R|A|
+        public get(): R|A| {
+            ^ R|kotlin/TODO|()
+        }
+    public open class D : R|C| {
+        public constructor(): R|D| {
+            super<R|C|>()
+        }
+
+    }
+    public final val R|D|.attr: R|B|
+        public get(): R|B| {
+            ^ R|kotlin/TODO|()
+        }
+    public final fun box(d: R|D|): R|kotlin/Unit| {
+        R|<local>/d|.R|/attr|.R|/B.invoke|(<L> = attr@fun <anonymous>(): R|kotlin/Unit| {
+            Unit
+        }
+        ).R|kotlin/CharSequence.length|
+    }

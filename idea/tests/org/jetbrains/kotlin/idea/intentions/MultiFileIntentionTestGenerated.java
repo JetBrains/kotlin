@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -106,6 +106,11 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
     @TestMetadata("moveDeclarationToSeparateFile/optimizeImports/optimizeImports.test")
     public void testMoveDeclarationToSeparateFile_optimizeImports_OptimizeImports() throws Exception {
         runTest("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/optimizeImports/optimizeImports.test");
+    }
+
+    @TestMetadata("moveMemberToTopLevel/function/function.test")
+    public void testMoveMemberToTopLevel_function_Function() throws Exception {
+        runTest("idea/testData/multiFileIntentions/moveMemberToTopLevel/function/function.test");
     }
 
     @TestMetadata("moveOutOfCompanion/moveClass/moveClass.test")

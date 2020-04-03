@@ -82,7 +82,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         return new KotlinClassHeader(
                 headerKind,
                 metadataVersion,
-                bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
+                bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INSTANCE,
                 data,
                 incompatibleData,
                 strings,

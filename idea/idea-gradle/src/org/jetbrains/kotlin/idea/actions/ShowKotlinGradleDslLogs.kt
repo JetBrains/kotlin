@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
@@ -18,6 +18,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiFile
 import com.intellij.ui.BrowserHyperlinkListener
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import java.io.File
 
 class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
@@ -26,27 +27,31 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        openLogsDirIfPresent(e.project)
+        val project = e.project ?: return
+        openLogsDirIfPresent(project)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = ShowFilePathAction.isSupported()
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = RevealFileAction.isSupported()
 
     override fun update(e: AnActionEvent) {
         val presentation = e.presentation
-        presentation.isVisible = ShowFilePathAction.isSupported()
+        presentation.isEnabledAndVisible = e.project != null && RevealFileAction.isSupported()
         presentation.text = NAME
     }
 
-    private fun openLogsDirIfPresent(project: Project?) {
+    private fun openLogsDirIfPresent(project: Project) {
         val logsDir = findLogsDir()
         if (logsDir != null) {
-            ShowFilePathAction.openDirectory(logsDir)
+            RevealFileAction.openDirectory(logsDir)
         } else {
             val parent = WindowManager.getInstance().getStatusBar(project)?.component
                 ?: WindowManager.getInstance().findVisibleFrame().rootPane
             JBPopupFactory.getInstance()
                 .createHtmlTextBalloonBuilder(
-                    "Gradle DSL Logs cannot be found automatically.<br/>See how to find logs <a href=\"$gradleTroubleshootingLink\">here</a>.",
+                    KotlinIdeaGradleBundle.message(
+                        "text.gradle.dsl.logs.cannot.be.found.automatically.see.how.to.find.logs",
+                        gradleTroubleshootingLink
+                    ),
                     MessageType.ERROR,
                     BrowserHyperlinkListener.INSTANCE
                 )
@@ -78,6 +83,6 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
     companion object {
         private const val gradleTroubleshootingLink = "https://docs.gradle.org/current/userguide/kotlin_dsl.html#troubleshooting"
 
-        val NAME = "Show Kotlin Gradle DSL Logs in ${ShowFilePathAction.getFileManagerName()}"
+        val NAME = KotlinIdeaGradleBundle.message("action.text.show.kotlin.gradle.dsl.logs.in", RevealFileAction.getFileManagerName())
     }
 }

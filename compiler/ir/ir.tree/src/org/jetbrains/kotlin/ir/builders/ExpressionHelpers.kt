@@ -268,12 +268,12 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDesc
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
 
-fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin): IrCall =
+fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin, superQualifierSymbol: IrClassSymbol? = null): IrCall =
     IrCallImpl(
         startOffset, endOffset, callee.returnType,
         callee.symbol as IrSimpleFunctionSymbol,
         callee.typeParameters.size, callee.valueParameters.size,
-        origin
+        origin, superQualifierSymbol
     )
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
@@ -349,7 +349,7 @@ inline fun IrBuilderWithScope.irBlock(
     origin: IrStatementOrigin? = null,
     resultType: IrType? = null,
     body: IrBlockBuilder.() -> Unit
-): IrExpression =
+): IrContainerExpression =
     IrBlockBuilder(
         context, scope,
         startOffset,

@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -11,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 class TooLongCharLiteralToStringFix(
     element: KtConstantExpression
 ) : KotlinQuickFixAction<KtConstantExpression>(element) {
-    override fun getText(): String = "Convert too long character literal to string"
+    override fun getText(): String = KotlinBundle.message("convert.too.long.character.literal.to.string")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

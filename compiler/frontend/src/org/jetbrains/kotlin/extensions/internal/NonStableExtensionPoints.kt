@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
+import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
@@ -21,12 +23,13 @@ import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-
 /**
  * This is marker for non-stable experimental extension points.
  * Extension points marked with this meta-annotation will be broken in the future version.
  * Please do not use them in general code.
  */
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InternalNonStableExtensionPoints
@@ -57,6 +60,16 @@ interface CallResolutionInterceptorExtension {
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
     ): Collection<NewResolutionOldInference.MyCandidate> = candidates
+
+    @JvmDefault
+    fun interceptCandidates(
+        callResolutionResult: CallResolutionResult,
+        context: BasicCallResolutionContext,
+        callResolver: KotlinCallResolver,
+        name: Name,
+        kind: NewResolutionOldInference.ResolutionKind,
+        tracing: TracingStrategy
+    ): CallResolutionResult = callResolutionResult
 
     fun interceptCandidates(
         candidates: Collection<FunctionDescriptor>,

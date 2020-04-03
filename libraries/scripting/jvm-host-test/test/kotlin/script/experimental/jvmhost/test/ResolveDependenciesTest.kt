@@ -60,15 +60,15 @@ class ResolveDependenciesTest : TestCase() {
 
     @Test
     fun testReplResolveFunAndValFromClassloader() {
-        chechEvaluateInRepl(
-            configurationWithDependenciesFromClassloader, null,
-            sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText),
-            sequenceOf(42, 42)
+        checkEvaluateInRepl(
+            sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText), sequenceOf(42, 42),
+            configurationWithDependenciesFromClassloader,
+            null
         )
-        chechEvaluateInRepl(
-            configurationWithDependenciesFromClassloader, null,
-            funAndValImportScriptText.split('\n').asSequence(),
-            sequenceOf(null, null, 42)
+        checkEvaluateInRepl(
+            funAndValImportScriptText.split('\n').asSequence(), sequenceOf(null, null, 42),
+            configurationWithDependenciesFromClassloader,
+            null
         )
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }

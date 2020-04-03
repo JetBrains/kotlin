@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
@@ -21,7 +22,10 @@ class RemoveEmptySecondaryConstructorBodyInspection : IntentionBasedInspection<K
 }
 
 class RemoveEmptySecondaryConstructorBodyIntention :
-    SelfTargetingOffsetIndependentIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove empty constructor body") {
+    SelfTargetingOffsetIndependentIntention<KtBlockExpression>(
+        KtBlockExpression::class.java,
+        KotlinBundle.message("remove.empty.constructor.body")
+    ) {
 
     override fun applyTo(element: KtBlockExpression, editor: Editor?) = element.delete()
 

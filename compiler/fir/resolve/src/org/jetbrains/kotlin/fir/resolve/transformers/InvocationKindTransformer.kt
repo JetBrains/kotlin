@@ -88,6 +88,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
         if (invocationKindMapping.isEmpty()) {
             return functionCall.compose()
         }
-        return functionCall.transformArguments(ArgumentsTransformer, invocationKindMapping to null).compose()
+        functionCall.argumentList.transformArguments(ArgumentsTransformer, invocationKindMapping to null)
+        return functionCall.compose()
     }
 }

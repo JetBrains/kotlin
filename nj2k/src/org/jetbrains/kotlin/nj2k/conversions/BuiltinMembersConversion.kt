@@ -68,6 +68,14 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                 true
             }
 
+        is JKMethodAccessExpression ->
+            conversions[identifier.deepestFqName()]?.firstOrNull { conversion ->
+                if (conversion.from !is Method) return@firstOrNull false
+                if (conversion.to !is Method) return@firstOrNull false
+                if (conversion.filter?.invoke(this) == false) return@firstOrNull false
+                true
+            }
+
         is JKNewExpression ->
             conversions[classSymbol.deepestFqName()]?.firstOrNull { conversion ->
                 if (conversion.from !is NewExpression) return@firstOrNull false
@@ -93,21 +101,23 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                         symbolProvider.provideMethodSymbol(fqName),
                         argumentsProvider(from::arguments.detached()),
                         from::typeArgumentList.detached()
-                    ).withFormattingFrom(from)
+                    )
                 is JKFieldAccessExpression ->
                     JKCallExpressionImpl(
                         symbolProvider.provideMethodSymbol(fqName),
                         JKArgumentList(),
                         JKTypeArgumentList()
-                    ).withFormattingFrom(from)
+                    )
+                is JKMethodAccessExpression ->
+                    JKMethodAccessExpression(symbolProvider.provideMethodSymbol(fqName))
                 is JKNewExpression ->
                     JKCallExpressionImpl(
                         symbolProvider.provideMethodSymbol(fqName),
                         argumentsProvider(from::arguments.detached()),
                         JKTypeArgumentList()
-                    ).withFormattingFrom(from)
+                    )
                 else -> error("Bad conversion")
-            }
+            }.withFormattingFrom(from)
     }
 
     private inner class FieldBuilder(

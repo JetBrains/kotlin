@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class PrimitiveNumericComparisonInfo(
     val comparisonType: KotlinType,
+    val leftPrimitiveType: KotlinType,
+    val rightPrimitiveType: KotlinType,
     val leftType: KotlinType,
     val rightType: KotlinType
 )
@@ -49,14 +51,20 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
         rightTypes: List<KotlinType>,
         comparison: KtExpression
     ) {
-        val leftPrimitiveType = leftTypes.findPrimitiveType() ?: return
-        val rightPrimitiveType = rightTypes.findPrimitiveType() ?: return
+        val leftPrimitiveOrNullableType = leftTypes.findPrimitiveOrNullablePrimitiveType() ?: return
+        val rightPrimitiveOrNullableType = rightTypes.findPrimitiveOrNullablePrimitiveType() ?: return
+        val leftPrimitiveType = leftPrimitiveOrNullableType.makeNotNullable()
+        val rightPrimitiveType = rightPrimitiveOrNullableType.makeNotNullable()
         val leastCommonType = leastCommonPrimitiveNumericType(leftPrimitiveType, rightPrimitiveType)
 
         trace.record(
             BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO,
             comparison,
-            PrimitiveNumericComparisonInfo(leastCommonType, leftPrimitiveType, rightPrimitiveType)
+            PrimitiveNumericComparisonInfo(
+                leastCommonType,
+                leftPrimitiveType, rightPrimitiveType,
+                leftPrimitiveOrNullableType, rightPrimitiveOrNullableType
+            )
         )
     }
 
@@ -90,15 +98,17 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
         return listOf(type) + stableTypes
     }
 
-    private fun List<KotlinType>.findPrimitiveType() =
+    private fun List<KotlinType>.findPrimitiveOrNullablePrimitiveType() =
         firstNotNullResult { it.getPrimitiveTypeOrSupertype() }
 
     private fun KotlinType.getPrimitiveTypeOrSupertype(): KotlinType? =
         when {
             constructor.declarationDescriptor is TypeParameterDescriptor ->
-                immediateSupertypes().firstNotNullResult { it.getPrimitiveTypeOrSupertype() }
+                immediateSupertypes().firstNotNullResult {
+                    it.getPrimitiveTypeOrSupertype()
+                }
             isPrimitiveNumberOrNullableType() ->
-                makeNotNullable()
+                this
             else ->
                 null
         }

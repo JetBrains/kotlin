@@ -1,0 +1,16 @@
+// !WITH_NEW_INFERENCE
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
+fun <M> make(): M? = null
+fun <I> id(arg: I): I = arg
+fun <S> select(vararg args: S): S = TODO()
+
+fun test() {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(
+        <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>make<!>()
+    )
+
+    select(make(), null)
+
+    <!OI;TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>if<!> (true) <!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>make()<!> else TODO()
+}

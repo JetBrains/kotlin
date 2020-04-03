@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: kotlin.kt
 fun foo() {
   JavaClass()

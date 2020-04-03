@@ -165,7 +165,10 @@ open class KotlinUClass private constructor(
             if (isDelegatedMethod(lightMethod)) continue
             val uMethod = createUMethod(lightMethod)
             result.add(uMethod)
-            handledKtDeclarations.addIfNotNull(uMethod.sourcePsi)
+
+            // Ensure we pick the main Kotlin origin, not the auxiliary one
+            val kotlinOrigin = (lightMethod as? KtLightMethod)?.kotlinOrigin ?: uMethod.sourcePsi
+            handledKtDeclarations.addIfNotNull(kotlinOrigin)
         }
 
         val ktDeclarations: List<KtDeclaration> = run ktDeclarations@{

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun <T> builder(c: suspend () -> T): T = TODO()
 
 class Test {

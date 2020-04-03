@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -132,25 +132,6 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Short): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Int): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Long): Long
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Double): Double
-
-    /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
@@ -187,13 +168,60 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
+    /** Returns this value. */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Byte] value to [Char].
+     *
+     * If this value is non-negative, the resulting `Char` code is equal to this value.
+     *
+     * The least significant 8 bits of the resulting `Char` code are the same as the bits of this `Byte` value,
+     * whereas the most significant 8 bits are filled with the sign bit of this value.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Byte] value to [Short].
+     *
+     * The resulting `Short` value represents the same numerical value as this `Byte`.
+     *
+     * The least significant 8 bits of the resulting `Short` value are the same as the bits of this `Byte` value,
+     * whereas the most significant 8 bits are filled with the sign bit of this value.
+     */
     public override fun toShort(): Short
+    /**
+     * Converts this [Byte] value to [Int].
+     *
+     * The resulting `Int` value represents the same numerical value as this `Byte`.
+     *
+     * The least significant 8 bits of the resulting `Int` value are the same as the bits of this `Byte` value,
+     * whereas the most significant 24 bits are filled with the sign bit of this value.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Byte] value to [Long].
+     *
+     * The resulting `Long` value represents the same numerical value as this `Byte`.
+     *
+     * The least significant 8 bits of the resulting `Long` value are the same as the bits of this `Byte` value,
+     * whereas the most significant 56 bits are filled with the sign bit of this value.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Byte] value to [Float].
+     *
+     * The resulting `Float` value represents the same numerical value as this `Byte`.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Byte] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Byte`.
+     */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -320,25 +348,6 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Short): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Int): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Long): Long
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Double): Double
-
-    /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
@@ -375,13 +384,58 @@ public class Short private constructor() : Number(), Comparable<Short> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
+    /**
+     * Converts this [Short] value to [Byte].
+     *
+     * If this value is in [Byte.MIN_VALUE]..[Byte.MAX_VALUE], the resulting `Byte` value represents
+     * the same numerical value as this `Short`.
+     *
+     * The resulting `Byte` value is represented by the least significant 8 bits of this `Short` value.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Short] value to [Char].
+     *
+     * The resulting `Char` code is equal to this value reinterpreted as an unsigned number,
+     * i.e. it has the same binary representation as this `Short`.
+     */
     public override fun toChar(): Char
+    /** Returns this value. */
     public override fun toShort(): Short
+    /**
+     * Converts this [Short] value to [Int].
+     *
+     * The resulting `Int` value represents the same numerical value as this `Short`.
+     *
+     * The least significant 16 bits of the resulting `Int` value are the same as the bits of this `Short` value,
+     * whereas the most significant 16 bits are filled with the sign bit of this value.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Short] value to [Long].
+     *
+     * The resulting `Long` value represents the same numerical value as this `Short`.
+     *
+     * The least significant 16 bits of the resulting `Long` value are the same as the bits of this `Short` value,
+     * whereas the most significant 48 bits are filled with the sign bit of this value.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Short] value to [Float].
+     *
+     * The resulting `Float` value represents the same numerical value as this `Short`.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Short] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Short`.
+     */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -508,25 +562,6 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Short): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Int): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Long): Long
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Double): Double
-
-    /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
@@ -578,13 +613,62 @@ public class Int private constructor() : Number(), Comparable<Int> {
     /** Inverts the bits in this value. */
     public fun inv(): Int
 
+    /**
+     * Converts this [Int] value to [Byte].
+     *
+     * If this value is in [Byte.MIN_VALUE]..[Byte.MAX_VALUE], the resulting `Byte` value represents
+     * the same numerical value as this `Int`.
+     *
+     * The resulting `Byte` value is represented by the least significant 8 bits of this `Int` value.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Int] value to [Char].
+     *
+     * If this value is in the range of `Char` codes `Char.MIN_VALUE..Char.MAX_VALUE`,
+     * the resulting `Char` code is equal to this value.
+     *
+     * The resulting `Char` code is represented by the least significant 16 bits of this `Int` value.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Int] value to [Short].
+     *
+     * If this value is in [Short.MIN_VALUE]..[Short.MAX_VALUE], the resulting `Short` value represents
+     * the same numerical value as this `Int`.
+     *
+     * The resulting `Short` value is represented by the least significant 16 bits of this `Int` value.
+     */
     public override fun toShort(): Short
+    /** Returns this value. */
     public override fun toInt(): Int
+    /**
+     * Converts this [Int] value to [Long].
+     *
+     * The resulting `Long` value represents the same numerical value as this `Int`.
+     *
+     * The least significant 32 bits of the resulting `Long` value are the same as the bits of this `Int` value,
+     * whereas the most significant 32 bits are filled with the sign bit of this value.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Int] value to [Float].
+     *
+     * The resulting value is the closest `Float` to this `Int` value.
+     * In case when this `Int` value is exactly between two `Float`s,
+     * the one with zero at least significant bit of mantissa is selected.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Int] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Int`.
+     */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -596,32 +680,39 @@ public class Float private constructor() : Number(), Comparable<Float> {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MIN_VALUE: Float
+        public const val MIN_VALUE: Float = 1.4E-45F
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MAX_VALUE: Float
+        public const val MAX_VALUE: Float = 3.4028235E38F
 
         /**
          * A constant holding the positive infinity value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val POSITIVE_INFINITY: Float
+        public const val POSITIVE_INFINITY: Float = 1.0F/0.0F
 
         /**
          * A constant holding the negative infinity value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NEGATIVE_INFINITY: Float
+        public const val NEGATIVE_INFINITY: Float = -1.0F/0.0F
 
         /**
          * A constant holding the "not a number" value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NaN: Float
+        public const val NaN: Float = -(0.0F/0.0F)
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -719,25 +810,6 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Byte): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Short): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Int): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Long): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Double): Double
-
-    /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Float
     /** Calculates the remainder of dividing this value by the other value. */
@@ -766,13 +838,54 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun unaryMinus(): Float
 
 
+    /**
+     * Converts this [Float] value to [Byte].
+     *
+     * The resulting `Byte` value is equal to `this.toInt().toByte()`.
+     */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     public override fun toByte(): Byte
+    /**
+     * Converts this [Float] value to [Char].
+     *
+     * The resulting `Char` value is equal to `this.toInt().toChar()`.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Float] value to [Short].
+     *
+     * The resulting `Short` value is equal to `this.toInt().toShort()`.
+     */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     public override fun toShort(): Short
+    /**
+     * Converts this [Float] value to [Int].
+     *
+     * The fractional part, if any, is rounded down towards zero.
+     * Returns zero if this `Float` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
+     * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Float] value to [Long].
+     *
+     * The fractional part, if any, is rounded down towards zero.
+     * Returns zero if this `Float` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
+     * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
+     */
     public override fun toLong(): Long
+    /** Returns this value. */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Float] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Float`.
+     */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -784,32 +897,39 @@ public class Double private constructor() : Number(), Comparable<Double> {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MIN_VALUE: Double
+        public const val MIN_VALUE: Double = 4.9E-324
 
         /**
          * A constant holding the largest positive finite value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MAX_VALUE: Double
+        public const val MAX_VALUE: Double = 1.7976931348623157E308
 
         /**
          * A constant holding the positive infinity value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val POSITIVE_INFINITY: Double
+        public const val POSITIVE_INFINITY: Double = 1.0/0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NEGATIVE_INFINITY: Double
+        public const val NEGATIVE_INFINITY: Double = -1.0/0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NaN: Double
+        public const val NaN: Double = -(0.0/0.0)
+
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**
@@ -907,25 +1027,6 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Byte): Double
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Short): Double
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Int): Double
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Long): Double
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Float): Double
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Double): Double
-
-    /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Double
     /** Calculates the remainder of dividing this value by the other value. */
@@ -954,12 +1055,55 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun unaryMinus(): Double
 
 
+    /**
+     * Converts this [Double] value to [Byte].
+     *
+     * The resulting `Byte` value is equal to `this.toInt().toByte()`.
+     */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     public override fun toByte(): Byte
+    /**
+     * Converts this [Double] value to [Char].
+     *
+     * The resulting `Char` value is equal to `this.toInt().toChar()`.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Double] value to [Short].
+     *
+     * The resulting `Short` value is equal to `this.toInt().toShort()`.
+     */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     public override fun toShort(): Short
+    /**
+     * Converts this [Double] value to [Int].
+     *
+     * The fractional part, if any, is rounded down towards zero.
+     * Returns zero if this `Double` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
+     * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Double] value to [Long].
+     *
+     * The fractional part, if any, is rounded down towards zero.
+     * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
+     * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Double] value to [Float].
+     *
+     * The resulting value is the closest `Float` to this `Double` value.
+     * In case when this `Double` value is exactly between two `Float`s,
+     * the one with zero at least significant bit of mantissa is selected.
+     */
     public override fun toFloat(): Float
+    /** Returns this value. */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 

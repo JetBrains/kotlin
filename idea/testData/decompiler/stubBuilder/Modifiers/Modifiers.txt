@@ -139,10 +139,8 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE
                 USER_TYPE
                   USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=coroutines]
-                  REFERENCE_EXPRESSION[referencedName=experimental]
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=coroutines]
                 REFERENCE_EXPRESSION[referencedName=Continuation]
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]

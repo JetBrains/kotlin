@@ -4,5 +4,6 @@ platform :ios, '9.0'
 
 target 'ios-app' do
     pod 'pod_dependency', :path => '../pod_dependency'
+    pod 'subspec_dependency', :path => '../subspec_dependency'
     pod 'kotlin_library', :path => '../kotlin-library'
 end

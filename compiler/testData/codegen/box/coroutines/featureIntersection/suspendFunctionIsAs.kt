@@ -1,11 +1,17 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JS_IR, JS
+// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 // WITH_COROUTINES
 
 import helpers.*
 import kotlin.coroutines.*
+
+fun check(condition: Boolean, msg: () -> Unit) {
+    if (!condition) {
+        throw AssertionError(msg())
+    }
+}
 
 fun fn1(x: Any) {}
 suspend fun suspendFn0() {}
@@ -41,25 +47,25 @@ fun box(): String {
     val localFun1 = ::local1 as Any
     val suspendLocalFun0 = ::suspendLocal0 as Any
 
-    assert(f1 !is SuspendFunction0<*>) { "Failed: f1 !is SuspendFunction0<*>" }
-    assert(sf0 is SuspendFunction0<*>) { "Failed: f1 is SuspendFunction0<*>" }
-    assert(sf0 is Function1<*, *>) { "Failed: suspendF0 is Function1<*, *>" }
+    check(f1 !is SuspendFunction0<*>) { "Failed: f1 !is SuspendFunction0<*>" }
+    check(sf0 is SuspendFunction0<*>) { "Failed: f1 is SuspendFunction0<*>" }
+    check(sf0 is Function1<*, *>) { "Failed: suspendF0 is Function1<*, *>" }
 
-    assert(lambda1 !is SuspendFunction0<*>) { "Failed: lambda1 !is SuspendFunction0<*>" }
-    assert(suspendLambda0 is Function1<*, *>) { "Failed: suspendLambda0 is Function1<*, *>" }
-    assert(suspendLambda0 is SuspendFunction0<*>) { "Failed: suspendLambda0 is SuspendFunction0<*>" }
+    check(lambda1 !is SuspendFunction0<*>) { "Failed: lambda1 !is SuspendFunction0<*>" }
+    check(suspendLambda0 is Function1<*, *>) { "Failed: suspendLambda0 is Function1<*, *>" }
+    check(suspendLambda0 is SuspendFunction0<*>) { "Failed: suspendLambda0 is SuspendFunction0<*>" }
 
-    assert(localFun1 !is SuspendFunction0<*>) { "Failed: localFun1 !is SuspendFunction0<*, *>" }
-    assert(suspendLocalFun0 is Function1<*, *>) { "Failed: suspendLocalFun0 is Function1<*, *>" }
-    assert(suspendLocalFun0 is SuspendFunction0<*>) { "Failed: suspendLocalFun0 is SuspendFunction0<*>" }
+    check(localFun1 !is SuspendFunction0<*>) { "Failed: localFun1 !is SuspendFunction0<*, *>" }
+    check(suspendLocalFun0 is Function1<*, *>) { "Failed: suspendLocalFun0 is Function1<*, *>" }
+    check(suspendLocalFun0 is SuspendFunction0<*>) { "Failed: suspendLocalFun0 is SuspendFunction0<*>" }
 
-    assert(ef !is SuspendFunction1<*, *>) { "Failed: ef !is SuspendFunction1<*, *>" }
-    assert(sef is SuspendFunction1<*, *>) { "Failed: sef is SuspendFunction1<*, *>" }
-    assert(sef is Function2<*, *, *>) { "Failed: sef is Function2<*, *, *>" }
+    check(ef !is SuspendFunction1<*, *>) { "Failed: ef !is SuspendFunction1<*, *>" }
+    check(sef is SuspendFunction1<*, *>) { "Failed: sef is SuspendFunction1<*, *>" }
+    check(sef is Function2<*, *, *>) { "Failed: sef is Function2<*, *, *>" }
 
-    assert(afoo !is SuspendFunction1<*, *>) { "afoo !is SuspendFunction1<*, *>" }
-    assert(safoo is Function2<*, *, *>) { "safoo is Function2<*, *, *>" }
-    assert(safoo is SuspendFunction1<*, *>) { "asfoo is SuspendFunction1<*, *>" }
+    check(afoo !is SuspendFunction1<*, *>) { "afoo !is SuspendFunction1<*, *>" }
+    check(safoo is Function2<*, *, *>) { "safoo is Function2<*, *, *>" }
+    check(safoo is SuspendFunction1<*, *>) { "asfoo is SuspendFunction1<*, *>" }
 
     checkReified<suspend () -> Unit> {}
 

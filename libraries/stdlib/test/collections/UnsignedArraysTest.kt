@@ -86,6 +86,8 @@ class UnsignedArraysTest {
         uintArrayOf(1u, UInt.MAX_VALUE, UInt.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         ushortArrayOf(1u, UShort.MAX_VALUE, UShort.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         ubyteArrayOf(1u, UByte.MAX_VALUE, UByte.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+
+        (null as ULongArray?).let { assertEquals(it?.toList().hashCode(), it.contentHashCode()) }
     }
 
     @Test
@@ -94,6 +96,8 @@ class UnsignedArraysTest {
         uintArrayOf(1u, UInt.MAX_VALUE, UInt.MIN_VALUE).let { assertEquals(it.toList().toString(), it.contentToString()) }
         ushortArrayOf(1u, UShort.MAX_VALUE, UShort.MIN_VALUE).let { assertEquals(it.toList().toString(), it.contentToString()) }
         ubyteArrayOf(1u, UByte.MAX_VALUE, UByte.MIN_VALUE).let { assertEquals(it.toList().toString(), it.contentToString()) }
+
+        (null as UIntArray?).let { assertEquals(it?.toList().toString(), it.contentToString()) }
     }
 
     @Test
@@ -114,6 +118,10 @@ class UnsignedArraysTest {
             assertTrue(arr contentEquals UByteArray(arr.size, arr::get))
             assertFalse(arr contentEquals UByteArray(arr.size - 1, arr::get))
         }
+
+        assertTrue((null as UShortArray?) contentEquals null)
+        assertFalse(null contentEquals ubyteArrayOf(1u))
+        assertFalse(ulongArrayOf() contentEquals null)
     }
 
     @Test
@@ -519,6 +527,16 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun reduceOrNull() {
+        expect(0u) { ubyteArrayOf(3, 2, 1).reduceOrNull { acc, e -> (acc - e).toUByte() } }
+        expect(0u) { ushortArrayOf(3, 2, 1).reduceOrNull { acc, e -> (acc - e).toUShort() } }
+        expect((-4).toUInt()) { uintArrayOf(1, 2, 3).reduceOrNull { acc, e -> acc - e } }
+        expect((-4).toULong()) { ulongArrayOf(1, 2, 3).reduceOrNull { acc, e -> acc - e } }
+
+        assertNull(uintArrayOf().reduceOrNull { acc, e -> acc + e })
+    }
+
+    @Test
     fun reduceIndexed() {
         expect(1u) { ubyteArrayOf(3, 2, 1).reduceIndexed { index, acc, e -> if (index != 2) (e - acc).toUByte() else e } }
         expect(1u) { ushortArrayOf(3, 2, 1).reduceIndexed { index, acc, e -> if (index != 2) (e - acc).toUShort() else e } }
@@ -531,7 +549,27 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun reduceIndexedOrNull() {
+        expect(1u) { ubyteArrayOf(3, 2, 1).reduceIndexedOrNull { index, acc, e -> if (index != 2) (e - acc).toUByte() else e } }
+        expect(1u) { ushortArrayOf(3, 2, 1).reduceIndexedOrNull { index, acc, e -> if (index != 2) (e - acc).toUShort() else e } }
+        expect(UInt.MAX_VALUE) { uintArrayOf(1, 2, 3).reduceIndexedOrNull { index, acc, e -> index.toUInt() + acc - e } }
+        expect(ULong.MAX_VALUE) { ulongArrayOf(1, 2, 3).reduceIndexedOrNull { index, acc, e -> index.toULong() + acc - e } }
+
+        expect(null, { uintArrayOf().reduceIndexedOrNull { index, acc, e -> index.toUInt() + e + acc } })
+    }
+
+    @Test
     fun reduceRight() {
+        expect(2u) { ubyteArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> (e - acc).toUByte() } }
+        expect(2u) { ushortArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> (e - acc).toUShort() } }
+        expect(2u) { uintArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> e - acc } }
+        expect(2uL) { ulongArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> e - acc } }
+
+        assertNull(uintArrayOf().reduceRightOrNull { e, acc -> e + acc })
+    }
+
+    @Test
+    fun reduceRightOrNull() {
         expect(2u) { ubyteArrayOf(1, 2, 3).reduceRight { e, acc -> (e - acc).toUByte() } }
         expect(2u) { ushortArrayOf(1, 2, 3).reduceRight { e, acc -> (e - acc).toUShort() } }
         expect(2u) { uintArrayOf(1, 2, 3).reduceRight { e, acc -> e - acc } }
@@ -552,6 +590,16 @@ class UnsignedArraysTest {
         assertFailsWith<UnsupportedOperationException> {
             uintArrayOf().reduceRightIndexed { index, e, acc -> index.toUInt() + e + acc }
         }
+    }
+
+    @Test
+    fun reduceRightIndexedOrNull() {
+        expect(1u) { ubyteArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, e, acc -> if (index != 1) (e - acc).toUByte() else e } }
+        expect(1u) { ushortArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, e, acc -> if (index != 1) (e - acc).toUShort() else e } }
+        expect(1u) { uintArrayOf(1, 2, 3).reduceRightIndexedOrNull { index, e, acc -> index.toUInt() + e - acc } }
+        expect(1uL) { ulongArrayOf(1, 2, 3).reduceRightIndexedOrNull { index, e, acc -> index.toULong() + e - acc } }
+
+        expect(null, { uintArrayOf().reduceRightIndexedOrNull { index, e, acc -> index.toUInt() + e + acc } })
     }
 
     @Test
@@ -613,6 +661,127 @@ class UnsignedArraysTest {
         expect(10) { ushortArrayOf(1, 2, 3).foldRightIndexed(1) { i, e, acc -> acc + i + e.toInt() } }
         expect(15u) { uintArrayOf(1, 2, 3).foldRightIndexed(1u) { i, e, acc -> acc * (i.toUInt() + e) } }
         expect(" 2-3 1-2 0-1") { ulongArrayOf(1, 2, 3).foldRightIndexed("") { i, e, acc -> "$acc $i-$e" } }
+    }
+
+    @Test
+    fun scan() {
+        for (size in 0 until 4) {
+            val expected = listOf("", "0", "01", "012", "0123").subList(0, size + 1)
+            assertEquals(expected, UByteArray(size) { it.toUByte() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, UShortArray(size) { it.toUShort() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, UIntArray(size) { it.toUInt() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, ULongArray(size) { it.toULong() }.scan("") { acc, e -> acc + e })
+        }
+    }
+
+    @Test
+    fun scanIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").subList(0, size + 1)
+            assertEquals(
+                expected,
+                UByteArray(size) { it.toUByte() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                UShortArray(size) { it.toUShort() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                UIntArray(size) { it.toUInt() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                ULongArray(size) { it.toULong() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).subList(0, size)
+            assertEquals(
+                expected.map { it.toUByte() },
+                UByteArray(size) { it.toUByte() }.scanReduce { acc, e -> (acc + e).toUByte() }
+            )
+            assertEquals(
+                expected.map { it.toUShort() },
+                UShortArray(size) { it.toUShort() }.scanReduce { acc, e -> (acc + e).toUShort() }
+            )
+            assertEquals(
+                expected.map { it.toUInt() },
+                UIntArray(size) { it.toUInt() }.scanReduce { acc, e -> acc + e }
+            )
+            assertEquals(
+                expected.map { it.toULong() },
+                ULongArray(size) { it.toULong() }.scanReduce { acc, e -> acc + e }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 6, 27).subList(0, size)
+            assertEquals(
+                expected.map { it.toUByte() },
+                UByteArray(size) { it.toUByte() }.scanReduceIndexed { index, acc, e -> (index.toUInt() * (acc + e)).toUByte() }
+            )
+            assertEquals(
+                expected.map { it.toUShort() },
+                UShortArray(size) { it.toUShort() }.scanReduceIndexed { index, acc, e -> (index.toUInt() * (acc + e)).toUShort() }
+            )
+            assertEquals(
+                expected.map { it.toUInt() },
+                UIntArray(size) { it.toUInt() }.scanReduceIndexed { index, acc, e -> index.toUInt() * (acc + e) }
+            )
+            assertEquals(
+                expected.map { it.toULong() },
+                ULongArray(size) { it.toULong() }.scanReduceIndexed { index, acc, e -> index.toULong() * (acc + e) }
+            )
+        }
+    }
+
+    @Test
+    fun associateWithPrimitives() {
+        assertEquals(
+            mapOf(1u to "1", 2u to "2", 3u to "3"),
+            uintArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUByte() to "1", 2.toUByte() to "2", 3.toUByte() to "3"),
+            ubyteArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUShort() to "1", 2.toUShort() to "2", 3.toUShort() to "3"),
+            ushortArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1UL to "1", 2UL to "2", 3UL to "3"),
+            ulongArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+    }
+
+    @Test
+    fun associateWithToPrimitives() {
+        val expected = mapOf(1u to "one", 2u to "two", 3u to "three")
+        assertEquals(
+            mapOf(1u to "one", 2u to "2", 3u to "3"),
+            uintArrayOf(2, 3).associateWithTo(expected.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUByte() to "one", 2.toUByte() to "2", 3.toUByte() to "3"),
+            ubyteArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toUByte() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUShort() to "one", 2.toUShort() to "2", 3.toUShort() to "3"),
+            ushortArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toUShort() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1UL to "one", 2UL to "2", 3UL to "3"),
+            ulongArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toULong() }.toMutableMap()) { it.toString() }
+        )
     }
 
     @Test

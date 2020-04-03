@@ -1,14 +1,14 @@
 package org.jetbrains.kotlin.tools.projectWizard
 
-import org.jetbrains.kotlin.tools.projectWizard.core.EntitiesOwnerDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.core.Parser
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
+import org.jetbrains.kotlin.tools.projectWizard.core.enumParser
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import kotlin.properties.ReadOnlyProperty
 
 
-interface SettingsOwner : EntitiesOwnerDescriptor {
+interface SettingsOwner {
     fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any, Setting<V, T>>
@@ -77,3 +77,13 @@ interface SettingsOwner : EntitiesOwnerDescriptor {
     }
 }
 
+
+inline fun <reified E> SettingsOwner.enumSettingImpl(
+    title: String,
+    neededAtPhase: GenerationPhase,
+    crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
+) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
+    values = enumValues<E>().asList()
+    //
+    init()
+}

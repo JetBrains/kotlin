@@ -304,23 +304,31 @@ class CallExpressionResolver(
 
     private fun KtQualifiedExpression.elementChain(context: ExpressionTypingContext) =
         qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(this, context) { nameExpression ->
-            val resolutionResult = resolveSimpleName(context, nameExpression)
+            val temporaryTraceAndCache =
+                TemporaryTraceAndCache.create(context, "trace to resolve as local variable or property", nameExpression)
+            val resolutionResult = resolveSimpleName(context, nameExpression, temporaryTraceAndCache)
 
             if (resolutionResult.isSingleResult && resolutionResult.resultingDescriptor is FakeCallableDescriptorForObject) {
                 false
             } else when (resolutionResult.resultCode) {
                 NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
-                else -> !context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) || resolutionResult.isSuccess
+                else -> {
+                    val newInferenceEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+                    val success = !newInferenceEnabled || resolutionResult.isSuccess
+                    if (newInferenceEnabled && success) {
+                        temporaryTraceAndCache.commit()
+                    }
+                    success
+                }
             }
         }
 
     private fun resolveSimpleName(
-        context: ExpressionTypingContext, expression: KtSimpleNameExpression
+        context: ExpressionTypingContext, expression: KtSimpleNameExpression, traceAndCache: TemporaryTraceAndCache
     ): OverloadResolutionResults<VariableDescriptor> {
-        val temporaryForVariable = TemporaryTraceAndCache.create(context, "trace to resolve as local variable or property", expression)
         val call = CallMaker.makePropertyCall(null, null, expression)
         val contextForVariable = BasicCallResolutionContext.create(
-            context.replaceTraceAndCache(temporaryForVariable), call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
+            context.replaceTraceAndCache(traceAndCache), call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
         )
         return callResolver.resolveSimpleProperty(contextForVariable)
     }
@@ -370,7 +378,7 @@ class CallExpressionResolver(
 
         val selector = element.selector
 
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         var selectorTypeInfo =
             getUnsafeSelectorTypeInfo(receiver, callOperationNode, selector, context, initialDataFlowInfoForArguments)
                 .run {

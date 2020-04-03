@@ -1,0 +1,11 @@
+import org.jetbrains.annotations.NotNull;
+
+import kotlin.properties.ReadOnlyProperty;
+
+class J {
+
+    public static class Foo<T> implements ReadOnlyProperty<A<T>, B> {
+        public Foo(T t, @NotNull String s) {
+        }
+    }
+}

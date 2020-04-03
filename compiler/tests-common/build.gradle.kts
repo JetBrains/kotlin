@@ -12,11 +12,14 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:fir:tree"))
-    testCompile(project(":compiler:fir:psi2fir"))
-    testCompile(project(":compiler:fir:lightTree"))
+    testCompile(project(":compiler:fir:raw-fir:psi2fir"))
+    testCompile(project(":compiler:fir:raw-fir:light-tree2fir"))
     testCompile(project(":compiler:fir:fir2ir"))
+    testCompile(project(":compiler:fir:jvm"))
+    testCompile(project(":compiler:fir:fir2ir:jvm-backend"))
     testCompile(project(":compiler:fir:cones"))
     testCompile(project(":compiler:fir:resolve"))
+    testCompile(project(":compiler:fir:checkers"))
     testCompile(project(":compiler:fir:java"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:frontend"))
@@ -34,17 +37,31 @@ dependencies {
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.frontend"))
     testCompile(project(":js:js.translator"))
+    testCompile(project(":native:frontend.native"))
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
-    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
+    testCompile(commonDep("com.android.tools:r8"))
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testCompileOnly(toolsJar())
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    Platform[193].orLower {
+        testCompile(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }
+    }
+    Platform[201].orHigher {
+        testCompile(intellijDep()) {
+            includeJars(
+                "testFramework",
+                "testFramework.core",
+                rootProject = rootProject
+            )
+        }
+    }
     testCompile(intellijDep()) {
         includeJars(
-            "openapi",
             "jps-model",
             "extensions",
             "util",
@@ -54,7 +71,6 @@ dependencies {
             "idea_rt",
             "guava",
             "trove4j",
-            "picocontainer",
             "asm-all",
             "log4j",
             "jdom",

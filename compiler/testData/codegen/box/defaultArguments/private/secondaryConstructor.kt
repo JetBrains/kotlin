@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var state: String = "Fail"
 
 class A {

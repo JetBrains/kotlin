@@ -20,7 +20,7 @@ object Mapping : TemplateGroupBase() {
                     sequenceClassification(intermediate, stateless)
             }
             specialFor(ArraysOfUnsigned) {
-                since("1.3")
+                sinceAtLeast("1.3")
                 annotation("@ExperimentalUnsignedTypes")
             }
         }

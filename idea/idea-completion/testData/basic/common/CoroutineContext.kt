@@ -2,5 +2,7 @@ suspend fun foo() {
     corou<caret>
 }
 
-// EXIST: {"lookupString":"coroutineContext","tailText":" (kotlin.coroutines.experimental)","typeText":"CoroutineContext","attributes":"","allLookupStrings":"coroutineContext, getCoroutineContext","itemText":"coroutineContext"}
+// LANGUAGE_VERSION: 1.2
+// EXIST_JAVA_ONLY: {"lookupString":"coroutineContext","tailText":" (kotlin.coroutines.experimental)","typeText":"CoroutineContext","attributes":"","allLookupStrings":"coroutineContext, getCoroutineContext","itemText":"coroutineContext"}
+// ABSENT: {"lookupString":"coroutineContext","tailText":" (kotlin.coroutines)","typeText":"CoroutineContext","attributes":"","allLookupStrings":"coroutineContext, getCoroutineContext","itemText":"coroutineContext"}
 // ABSENT: {"lookupString":"coroutineContext","tailText":" (kotlin.coroutines.experimental.intrinsics)","typeText":"CoroutineContext","attributes":"","allLookupStrings":"coroutineContext, getCoroutineContext","itemText":"coroutineContext"}

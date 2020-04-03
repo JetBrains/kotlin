@@ -17,23 +17,23 @@ inline fun inlineFunWrongUsageExt(ext: Int.(p: Int) -> Unit) {
 }
 
 inline fun inlineFunWrongUsageInClosure(s: (p: Int) -> Unit) {
-    <!UNRESOLVED_REFERENCE!>{
+    {
         s
 
         if (true) s else 0
 
         s ?: s
-    }()<!>
+    }()
 }
 
 inline fun inlineFunWrongUsageInClosureExt(ext: Int.(p: Int) -> Unit) {
-    <!UNRESOLVED_REFERENCE!>{
+    {
         ext
 
         if (true) ext else 0
 
         ext ?: ext
-    }()<!>
+    }()
 }
 
 inline fun inlineFunNoInline(noinline s: (p: Int) -> Unit) {

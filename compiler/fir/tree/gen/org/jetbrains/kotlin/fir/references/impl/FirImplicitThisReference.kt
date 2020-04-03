@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirImplicitThisReference(
-    override val boundSymbol: AbstractFirBasedSymbol<*>?
+internal class FirImplicitThisReference(
+    override val boundSymbol: AbstractFirBasedSymbol<*>?,
 ) : FirThisReference() {
-    override val source: FirSourceElement? = null
+    override val source: FirSourceElement? get() = null
     override val labelName: String? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
@@ -27,5 +27,5 @@ class FirImplicitThisReference(
         return this
     }
 
-    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>) {}
+    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?) {}
 }

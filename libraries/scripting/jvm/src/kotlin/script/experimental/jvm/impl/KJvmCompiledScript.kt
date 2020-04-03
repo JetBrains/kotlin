@@ -86,6 +86,7 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
     } catch (e: Throwable) {
         ResultWithDiagnostics.Failure(
             ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
                 "Unable to instantiate class ${data.scriptClassFQName}",
                 sourcePath = sourceLocationId,
                 exception = e

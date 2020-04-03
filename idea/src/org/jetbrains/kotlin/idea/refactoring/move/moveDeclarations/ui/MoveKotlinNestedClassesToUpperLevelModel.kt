@@ -17,18 +17,19 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
 import com.intellij.refactoring.util.RefactoringMessageUtil
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -49,7 +50,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     val isSearchInNonJavaFiles: Boolean,
     val packageName: String,
     val isOpenInEditor: Boolean
-) : Model<MoveKotlinDeclarationsProcessor> {
+) : Model {
 
     protected abstract fun chooseSourceRoot(
         newPackage: PackageWrapper,
@@ -57,13 +58,13 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
         initialDir: PsiDirectory?
     ): VirtualFile?
 
-    private val innerClassDescriptor = innerClass.unsafeResolveToDescriptor(BodyResolveMode.FULL) as ClassDescriptor
+    private val innerClassDescriptor = innerClass.resolveToDescriptorIfAny(BodyResolveMode.FULL)
 
     private fun getTargetContainer(): PsiElement? {
         if (target is PsiDirectory) {
             val oldPackageFqName = getTargetPackageFqName(target)
             val targetName = packageName
-            if (!Comparing.equal(oldPackageFqName?.asString(), targetName)) {
+            if (oldPackageFqName?.asString() != targetName) {
                 val projectRootManager = ProjectRootManager.getInstance(project)
 
                 val contentSourceRoots = getSuitableDestinationSourceRoots(project)
@@ -88,24 +89,21 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
                     targetSourceRoot = contentSourceRoots[0]
                 }
 
-                var directory = RefactoringUtil.findPackageDirectoryInSourceRoot(newPackage, targetSourceRoot);
-                if (directory === null) {
-                    runWriteAction {
-                        try {
-                            directory = RefactoringUtil.createPackageDirectoryInSourceRoot(newPackage, targetSourceRoot)
-                        } catch (e: IncorrectOperationException) {
-                            directory = null;
-                        }
+                RefactoringUtil.findPackageDirectoryInSourceRoot(newPackage, targetSourceRoot)?.let { return it }
+
+                return runWriteAction {
+                    try {
+                        RefactoringUtil.createPackageDirectoryInSourceRoot(newPackage, targetSourceRoot)
+                    } catch (e: IncorrectOperationException) {
+                        null
                     }
                 }
-                return directory;
             }
 
             return target
         }
 
-        return if (target is KtFile || target is KtClassOrObject) target else null
-
+        return target as? KtFile ?: target as? KtClassOrObject
     }
 
     @Throws(ConfigurationException::class)
@@ -131,24 +129,27 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
 
         if (targetContainer is KtClassOrObject) {
             val targetClass = targetContainer as KtClassOrObject?
-            for (member in targetClass!!.declarations) {
-                if (member is KtClassOrObject && className == member.getName()) {
-                    throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+            if (targetClass != null) {
+                for (member in targetClass.declarations) {
+                    if (member is KtClassOrObject && className == member.getName()) {
+                        throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+                    }
                 }
             }
         }
 
         if (targetContainer is PsiDirectory || targetContainer is KtFile) {
             val targetPackageFqName = getTargetPackageFqName(target)
-                ?: throw ConfigurationException("No package corresponds to this directory")
+                ?: throw ConfigurationException(KotlinBundle.message("text.no.package.corresponds.to.directory"))
 
-            val existingClass = DescriptorUtils
-                .getContainingModule(innerClassDescriptor)
-                .getPackage(targetPackageFqName)
-                .memberScope
-                .getContributedClassifier(Name.identifier(className), NoLookupLocation.FROM_IDE)
+            val existingClass = innerClassDescriptor?.let { DescriptorUtils.getContainingModule(it) }
+                ?.getPackage(targetPackageFqName)
+                ?.memberScope
+                ?.getContributedClassifier(Name.identifier(className), NoLookupLocation.FROM_IDE)
             if (existingClass != null) {
-                throw ConfigurationException("Class $className already exists in package $targetPackageFqName")
+                throw ConfigurationException(
+                    KotlinBundle.message("text.class.0.already.exists.in.package.1", className, targetPackageFqName)
+                )
             }
 
             val targetDir = targetContainer as? PsiDirectory ?: targetContainer.containingFile.containingDirectory
@@ -156,30 +157,31 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             if (message != null) throw ConfigurationException(message)
         }
 
-        return targetContainer ?: throw ConfigurationException("Invalid target specified")
+        return targetContainer ?: throw ConfigurationException(KotlinBundle.message("text.invalid.target.specified"))
     }
 
     @Throws(ConfigurationException::class)
-    private fun getMoveTarget(): KotlinMoveTarget {
+    private fun getMoveTarget(): Pair<KotlinMoveTarget, MoveRefactoringDestination> {
         val target = getTargetContainerWithValidation()
-        if (target is PsiDirectory) {
-            val targetDir = target
-
+        return if (target is PsiDirectory) {
             val targetPackageFqName = getTargetPackageFqName(target)
-                ?: throw ConfigurationException("Cannot find target package name")
+                ?: throw ConfigurationException(KotlinBundle.message("text.cannot.find.target.package.name"))
 
             val suggestedName = KotlinNameSuggester.suggestNameByName(className) {
-                targetDir.findFile(it + "." + KotlinFileType.EXTENSION) == null
+                target.findFile(it + "." + KotlinFileType.EXTENSION) == null
             }
 
             val targetFileName = suggestedName + "." + KotlinFileType.EXTENSION
 
-            return KotlinMoveTargetForDeferredFile(
+            val target = KotlinMoveTargetForDeferredFile(
                 targetPackageFqName,
-                targetDir, null
-            ) { createKotlinFile(targetFileName, targetDir, targetPackageFqName.asString()) }
+                target,
+                targetFile = null
+            ) { createKotlinFile(targetFileName, target, targetPackageFqName.asString()) }
+
+            target to MoveRefactoringDestination.FILE
         } else {
-            return KotlinMoveTargetForExistingElement(target as KtElement)
+            KotlinMoveTargetForExistingElement(target as KtElement) to MoveRefactoringDestination.DECLARATION
         }
     }
 
@@ -187,7 +189,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     override fun computeModelResult() = computeModelResult(throwOnConflicts = false)
 
     @Throws(ConfigurationException::class)
-    override fun computeModelResult(throwOnConflicts: Boolean): MoveKotlinDeclarationsProcessor {
+    override fun computeModelResult(throwOnConflicts: Boolean): ModelResultWithFUSData {
 
         val moveTarget = getMoveTarget()
 
@@ -196,7 +198,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
         val moveDescriptor = MoveDeclarationsDescriptor(
             project,
             MoveSource(innerClass),
-            moveTarget,
+            moveTarget.first,
             delegate,
             searchInComments,
             isSearchInNonJavaFiles,
@@ -205,6 +207,13 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             openInEditor = isOpenInEditor
         )
 
-        return MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default, throwOnConflicts)
+        val processor = MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default, throwOnConflicts)
+
+        return ModelResultWithFUSData(
+            processor = processor,
+            elementsCount = 1,
+            entityToMove = MovedEntity.CLASSES,
+            destination = moveTarget.second
+        )
     }
 }

@@ -51,7 +51,10 @@ fun case_4() {
     }
 }
 
-// TESTCASE NUMBER: 5
+/*
+ * TESTCASE NUMBER: 5
+ * ISSUES: KT-35668
+ */
 fun case_5() {
     var x: Int? = null
     if (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!> == try { x = 10; null } finally {} && <!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>x<!> != null<!>) {

@@ -1,11 +1,11 @@
-public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers>| {
-    public final static field FIRST: R|ft<test/EnumMembers, test/EnumMembers?>!|
+public final enum class EnumMembers : R|kotlin/Enum<ft<test/EnumMembers, test/EnumMembers?>!>| {
+    public final static field FIRST: R|test/EnumMembers|
 
-    public final static field SECOND: R|ft<test/EnumMembers, test/EnumMembers?>!|
+    public final static field SECOND: R|test/EnumMembers|
 
     public final field isFirst: R|kotlin/Boolean|
 
-    public open operator fun first(): R|kotlin/Boolean|
+    public open fun first(): R|kotlin/Boolean|
 
     private constructor(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
 

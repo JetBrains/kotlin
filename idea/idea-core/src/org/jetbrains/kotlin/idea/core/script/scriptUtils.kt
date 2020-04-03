@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 @set: org.jetbrains.annotations.TestOnly
 var Application.isScriptChangesNotifierDisabled by NotNullableUserDataProperty(
     Key.create("SCRIPT_CHANGES_NOTIFIER_DISABLED"),
-    false
+    true
 )
 
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.script")

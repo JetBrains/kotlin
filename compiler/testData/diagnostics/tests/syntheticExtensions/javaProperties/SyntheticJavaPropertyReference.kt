@@ -1,6 +1,14 @@
+// !LANGUAGE: -ReferencesToSyntheticJavaProperties
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+
 // FILE: KotlinFile.kt
 
-fun bar() = JavaClass::<!UNSUPPORTED!>foo<!>
+fun call(c: Any) {}
+
+fun test() {
+    JavaClass::<!UNSUPPORTED!>foo<!>
+    call(JavaClass::<!UNSUPPORTED!>foo<!>)
+}
 
 // FILE: JavaClass.java
 

@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper;
 import org.jetbrains.kotlin.codegen.inline.NameGenerator;
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
-import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -52,10 +53,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
@@ -185,7 +183,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         writeInnerClasses();
 
         if (sourceMapper != null) {
-            SourceMapper.Companion.flushToClassBuilder(sourceMapper, v);
+            v.visitSMAP(sourceMapper, !state.getLanguageVersionSettings().supportsFeature(LanguageFeature.CorrectSourceMappingSyntax));
         }
 
         v.done();
@@ -261,7 +259,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, this, state).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
+        AnnotationCodegen.forMethod(mv, this, state).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE, null);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitEnd();
@@ -644,6 +642,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         if (!state.getClassBuilderMode().generateBodies) return;
 
+        boolean generateClassIntCtorCall = state.getGenerateOptimizedCallableReferenceSuperClasses();
+
         InstructionAdapter iv = createOrGetClInitCodegen().v;
         iv.iconst(delegatedProperties.size());
         iv.newarray(K_PROPERTY_TYPE);
@@ -660,14 +660,29 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             iv.anew(implType);
             iv.dup();
 
-            // TODO: generate the container once and save to a local field instead (KT-10495)
-            ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
+            List<Type> superCtorArgTypes = new ArrayList<>();
+            if (generateClassIntCtorCall) {
+                ClosureCodegen.generateCallableReferenceDeclarationContainerClass(iv, property, state);
+                superCtorArgTypes.add(JAVA_CLASS_TYPE);
+            } else {
+                // TODO: generate the container once and save to a local field instead (KT-10495)
+                ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
+                superCtorArgTypes.add(K_DECLARATION_CONTAINER_TYPE);
+            }
+
             iv.aconst(property.getName().asString());
             PropertyReferenceCodegen.generateCallableReferenceSignature(iv, property, state);
+            superCtorArgTypes.add(JAVA_STRING_TYPE);
+            superCtorArgTypes.add(JAVA_STRING_TYPE);
+
+            if (generateClassIntCtorCall) {
+                iv.aconst(ClosureCodegen.isTopLevelCallableReference(property) ? 1 : 0);
+                superCtorArgTypes.add(Type.INT_TYPE);
+            }
 
             iv.invokespecial(
                     implType.getInternalName(), "<init>",
-                    Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false
+                    Type.getMethodDescriptor(Type.VOID_TYPE, superCtorArgTypes.toArray(new Type[0])), false
             );
             Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
             iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
@@ -739,12 +754,25 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             }
         }
 
-        AccessorForCompanionObjectInstanceFieldDescriptor accessorForCompanionObjectInstanceFieldDescriptor =
-                context.getAccessorForCompanionObjectDescriptorIfRequired();
-        if (accessorForCompanionObjectInstanceFieldDescriptor != null) {
-            generateSyntheticAccessorForCompanionObject(accessorForCompanionObjectInstanceFieldDescriptor);
+        Collection<AccessorForCompanionObjectInstanceFieldDescriptor> accessorsForCompanionObjects =
+                context.getRequiredAccessorsForCompanionObjects();
+        if (!accessorsForCompanionObjects.isEmpty()) {
+            List<AccessorForCompanionObjectInstanceFieldDescriptor> sortedAccessorsForCompanionObjects =
+                    new ArrayList<>(accessorsForCompanionObjects);
+            sortedAccessorsForCompanionObjects.sort(BY_COMPANION_FQN);
+
+            for (AccessorForCompanionObjectInstanceFieldDescriptor accessor : sortedAccessorsForCompanionObjects) {
+                generateSyntheticAccessorForCompanionObject(accessor);
+            }
         }
     }
+
+    private final Comparator<AccessorForCompanionObjectInstanceFieldDescriptor> BY_COMPANION_FQN =
+            (o1, o2) -> {
+                String companionFQN1 = DescriptorUtils.getFqName(o1.getCompanionObjectDescriptor()).asString();
+                String companionFQN2 = DescriptorUtils.getFqName(o2.getCompanionObjectDescriptor()).asString();
+                return companionFQN1.compareTo(companionFQN2);
+            };
 
     private void generateSyntheticAccessorForCompanionObject(@NotNull AccessorForCompanionObjectInstanceFieldDescriptor accessor) {
         ClassDescriptor companionObjectDescriptor = accessor.getCompanionObjectDescriptor();
@@ -954,7 +982,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     public void generateAssertField() {
         if (jvmAssertFieldGenerated) return;
-        AssertCodegenUtilKt.generateAssertionsDisabledFieldInitialization(v, createOrGetClInitCodegen().v);
+        AssertCodegenUtilKt.generateAssertionsDisabledFieldInitialization(v, createOrGetClInitCodegen().v, v.getThisName());
         jvmAssertFieldGenerated = true;
     }
 

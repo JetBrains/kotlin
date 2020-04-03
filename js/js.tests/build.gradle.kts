@@ -6,7 +6,7 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("com.github.node-gradle.node")
+    id("com.github.node-gradle.node") version "2.2.0"
     id("de.undercouch.download")
 }
 
@@ -30,12 +30,16 @@ dependencies {
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
+    testCompileOnly(project(":compiler:cli-js-klib"))
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
+    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util") }
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":compiler:backend.wasm"))
-    testCompile(projectTests(":compiler:ir.serialization.js"))
+    testCompile(project(":kotlin-stdlib-js-ir"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
@@ -43,6 +47,19 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
+
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(project(":compiler:frontend"))
+    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:util"))
+
+    testRuntime(project(":kotlin-reflect"))
+
+    if (Platform[193].orLower()) {
+        testRuntime(intellijDep()) { includeJars("picocontainer", rootProject = rootProject) }
+    }
+    testRuntime(intellijDep()) { includeJars("trove4j", "guava", "jdom", rootProject = rootProject) }
+
 
     val currentOs = OperatingSystem.current()
 
@@ -59,7 +76,8 @@ dependencies {
         }
     }
 
-    testCompile(j2v8idString)
+    testCompileOnly("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
+    testRuntimeOnly(j2v8idString)
 
     testRuntime(kotlinStdlib())
     testJsRuntime(kotlinStdlib("js"))
@@ -85,9 +103,9 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
     if (jsIrEnabled) {
-        dependsOn(":compiler:ir.serialization.js:generateFullRuntimeKLib")
-        dependsOn(":compiler:ir.serialization.js:generateReducedRuntimeKLib")
-        dependsOn(":compiler:ir.serialization.js:generateKotlinTestKLib")
+        dependsOn(":kotlin-stdlib-js-ir:generateFullRuntimeKLib")
+        dependsOn(":kotlin-stdlib-js-ir:generateReducedRuntimeKLib")
+        dependsOn(":kotlin-stdlib-js-ir:generateKotlinTestKLib")
     }
 
     exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
@@ -96,9 +114,6 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
-    if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
-        exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    }
     setUpBoxTests()
 }
 
@@ -126,6 +141,12 @@ projectTest("jsTest", true) {
 }
 
 projectTest("jsIrTest", true) {
+    systemProperty("kotlin.js.ir.pir", "false")
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+}
+
+projectTest("jsPirTest", true) {
+    systemProperty("kotlin.js.ir.skipRegularMode", "true")
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
 }
 
@@ -207,7 +228,7 @@ val unzipJsShell by task<Copy> {
 
 projectTest("wasmTest", true) {
     dependsOn(unzipJsShell)
-    dependsOn(":compiler:ir.serialization.js:generateWasmRuntimeKLib")
+    dependsOn(":kotlin-stdlib-js-ir:generateWasmRuntimeKLib")
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)

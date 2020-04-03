@@ -75,6 +75,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker =
         error("Captured types should be used for IrTypes")
 
+    override fun CapturedTypeMarker.isProjectionNotNull(): Boolean =
+        error("Captured types should be used for IrTypes")
+
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
         error("Captured types should be used for IrTypes")
 
@@ -219,10 +222,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     }
 
+    // TODO: implement taking into account `isExtensionFunction`
     override fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
-        nullable: Boolean
+        nullable: Boolean,
+        isExtensionFunction: Boolean
     ): SimpleTypeMarker = IrSimpleTypeImpl(constructor as IrClassifierSymbol, nullable, arguments.map { it as IrTypeArgument }, emptyList())
 
     private fun TypeVariance.convertVariance(): Variance {
@@ -239,6 +244,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createStarProjection(typeParameter: TypeParameterMarker) = IrStarProjectionImpl
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability() = this is IrSimpleType && classifier is IrTypeParameterSymbol
+
+    override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
+        require(this is IrSimpleType)
+        return this.hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+    }
 
     override fun SimpleTypeMarker.typeDepth(): Int {
         val maxInArguments = (this as IrSimpleType).arguments.asSequence().map {
@@ -309,6 +319,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInline == true
+
+    override fun TypeConstructorMarker.isInnerClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isInner == true
 
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker =
         (this as IrTypeParameterSymbol).owner.superTypes.firstOrNull {

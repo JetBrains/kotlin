@@ -20,6 +20,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.asJava.classes.KtLightClassImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getModalityFromDescriptor
 import org.jetbrains.kotlin.idea.quickfix.sealedSubClassToObject.ConvertSealedSubClassToObjectFix
@@ -59,7 +60,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
                 val keyword = klass.getClassOrInterfaceKeyword() ?: return
                 holder.registerProblem(
                     keyword,
-                    "Sealed sub-class has no state and no overridden equals",
+                    KotlinBundle.message("sealed.sub.class.has.no.state.and.no.overridden.equals"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ConvertSealedSubClassToObjectFix(),
                     GenerateIdentityEqualsFix()

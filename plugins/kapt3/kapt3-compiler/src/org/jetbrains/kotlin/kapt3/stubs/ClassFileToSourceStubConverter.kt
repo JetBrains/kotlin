@@ -25,6 +25,7 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.needsExperimentalCoroutinesWrapper
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -69,6 +70,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.io.File
 import javax.lang.model.element.ElementKind
+import kotlin.math.sign
 import com.sun.tools.javac.util.List as JavacList
 
 class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGeneration, val generateNonExistentClass: Boolean) {
@@ -665,7 +667,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
             val const = evaluator.evaluateExpression(propertyInitializer, trace, propertyType)
             if (const != null && !const.isError && const.canBeUsedInAnnotations && !const.usesNonConstValAsConstant) {
-                return convertConstantValueArguments(const.getValue(propertyType), listOf(propertyInitializer))
+                val asmValue = mapConstantValueToAsmRepresentation(const.toConstantValue(propertyType))
+                if (asmValue !== UnknownConstantValue) {
+                    return convertConstantValueArguments(asmValue, listOf(propertyInitializer))
+                }
             }
         }
 
@@ -675,6 +680,64 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         return null
+    }
+
+    private object UnknownConstantValue
+
+    private fun mapConstantValueToAsmRepresentation(value: ConstantValue<*>): Any? {
+        return when (value) {
+            is ByteValue -> value.value
+            is CharValue -> value.value
+            is IntValue -> value.value
+            is LongValue -> value.value
+            is ShortValue -> value.value
+            is UByteValue -> value.value
+            is UShortValue -> value.value
+            is UIntValue -> value.value
+            is ULongValue -> value.value
+            is AnnotationValue -> {
+                val annotationDescriptor = value.value
+                val annotationNode = AnnotationNode(typeMapper.mapType(annotationDescriptor.type).descriptor)
+                val values = ArrayList<Any?>(annotationDescriptor.allValueArguments.size * 2)
+                for ((name, arg) in annotationDescriptor.allValueArguments) {
+                    val mapped = mapConstantValueToAsmRepresentation(arg)
+                    if (mapped === UnknownConstantValue) {
+                        return UnknownConstantValue
+                    }
+
+                    values += name.asString()
+                    values += mapped
+                }
+                annotationNode.values = values
+                return annotationNode
+            }
+            is ArrayValue -> {
+                val children = value.value
+                val result = ArrayList<Any?>(children.size)
+                for (child in children) {
+                    val mapped = mapConstantValueToAsmRepresentation(child)
+                    if (mapped === UnknownConstantValue) {
+                        return UnknownConstantValue
+                    }
+                    result += mapped
+                }
+                return result
+            }
+            is BooleanValue -> value.value
+            is DoubleValue -> value.value
+            is EnumValue -> {
+                val (classId, name) = value.value
+                val enumType = AsmUtil.asmTypeByClassId(classId)
+                return arrayOf(enumType.descriptor, name.asString())
+            }
+            is FloatValue -> value.value
+            is StringValue -> value.value
+            is NullValue -> null
+            else -> {
+                // KClassValue is intentionally omitted as incompatible with Java
+                UnknownConstantValue
+            }
+        }
     }
 
     private fun convertMethod(
@@ -946,7 +1009,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         invisibleAnnotations: List<AnnotationNode>?,
         descriptorAnnotations: Annotations
     ): JCModifiers {
+        var seenOverride = false
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: AnnotationNode): JavacList<JCAnnotation> {
+            if (annotation.desc == "Ljava/lang/Override;") {
+                if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
+                seenOverride = true
+            }
             val annotationDescriptor = descriptorAnnotations.singleOrNull { checkIfAnnotationValueMatches(annotation, AnnotationValue(it)) }
             val annotationTree = convertAnnotation(annotation, packageFqName, annotationDescriptor) ?: return list
             return list.prepend(annotationTree)
@@ -1111,11 +1179,22 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     private fun convertValueOfPrimitiveTypeOrString(value: Any?): JCExpression? {
+        fun specialFpValueNumerator(value: Double): Double = if (value.isNaN()) 0.0 else 1.0 * value.sign
         return when (value) {
             is Char -> treeMaker.Literal(TypeTag.CHAR, value.toInt())
             is Byte -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
             is Short -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
-            is Boolean, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
+            is Boolean, is Int, is Long, is String -> treeMaker.Literal(value)
+            is Float ->
+                when {
+                    value.isFinite() -> treeMaker.Literal(value)
+                    else -> treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value.toDouble()).toFloat()), treeMaker.Literal(0.0F))
+                }
+            is Double ->
+                when {
+                    value.isFinite() -> treeMaker.Literal(value)
+                    else -> treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value)), treeMaker.Literal(0.0))
+                }
             else -> null
         }
     }

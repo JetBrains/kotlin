@@ -60,13 +60,13 @@ class CoroutineTransformerMethodVisitor(
     private val isForNamedFunction: Boolean,
     private val shouldPreserveClassInitialization: Boolean,
     private val languageVersionSettings: LanguageVersionSettings,
-    // These two are needed to report diagnostics about suspension points inside critical section
-    private val element: KtElement,
-    private val diagnostics: DiagnosticSink,
     // Since tail-call optimization of functions with Unit return type relies on ability of call-site to recognize them,
     // in order to ignore return value and push Unit, when we cannot ensure this ability, for example, when the function overrides function,
     // returning Any, we need to disable tail-call optimization for these functions.
     private val disableTailCallOptimizationForFunctionReturningUnit: Boolean,
+    private val reportSuspensionPointInsideMonitor: (String) -> Unit,
+    private val lineNumber: Int,
+    private val sourceFile: String,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -76,8 +76,6 @@ class CoroutineTransformerMethodVisitor(
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
-    private val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
-    private val sourceFile = element.containingKtFile.name
 
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
@@ -315,7 +313,7 @@ class CoroutineTransformerMethodVisitor(
                     sourceFile,
                     findSuspensionPointLineNumber(suspensionPoint)?.line ?: -1
                 )
-                diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, "$stackTraceElement"))
+                reportSuspensionPointInsideMonitor("$stackTraceElement")
                 return
             }
         }

@@ -40,4 +40,18 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         description = "Enable in JPS"
     )
     var enabledInJps: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xfriend-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for friend modules (whose internals should be visible)"
+    )
+    var friendPaths: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xrefines-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for refined modules (whose expects this module can actualize)"
+    )
+    var refinesPaths: Array<String>? by FreezableVar(null)
 }

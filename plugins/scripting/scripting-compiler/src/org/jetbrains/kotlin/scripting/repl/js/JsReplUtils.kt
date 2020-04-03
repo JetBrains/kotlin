@@ -57,12 +57,14 @@ fun getScriptKtFile(
     return when {
         ktFile == null -> ResultWithDiagnostics.Failure(
             ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
                 message = "Cannot create PSI",
                 severity = ScriptDiagnostic.Severity.ERROR
             )
         )
         ktFile.declarations.firstIsInstanceOrNull<KtScript>() == null -> ResultWithDiagnostics.Failure(
             ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
                 message = "There is not Script",
                 severity = ScriptDiagnostic.Severity.ERROR
             )
@@ -147,7 +149,7 @@ fun createCompileResult(lineId: LineId, code: String): ReplCompileResult.Compile
 
 class DependencyLoader {
     // TODO: this should be taken from CompilerConfiguration
-    private val commonPath = "compiler/ir/serialization.js/build/fullRuntime/klib"
+    private val commonPath = "libraries/stdlib/js-ir/build/fullRuntime/klib"
     private val mappedNamesPath = "$commonPath/mappedNames.txt"
     private val scriptDependencyBinaryPath = "$commonPath/scriptDependencyBinary.js"
 

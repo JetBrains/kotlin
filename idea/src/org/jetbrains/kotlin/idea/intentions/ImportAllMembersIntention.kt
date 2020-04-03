@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.util.range
@@ -23,7 +24,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 
-class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Import members with '*'"), HighPriorityAction {
+class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(
+    KtElement::class.java,
+    KotlinBundle.lazyMessage("import.members.with")
+), HighPriorityAction {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val receiverExpression = element.receiverExpression() ?: return false
         if (!receiverExpression.range.containsOffset(caretOffset)) return false
@@ -40,13 +44,11 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::c
         val helper = ImportInsertHelper.getInstance(project)
         if (helper.importDescriptor(dummyFile, target, forceAllUnderImport = true) == ImportDescriptorResult.FAIL) return false
 
-        text = "Import members from '${targetFqName.parent().asString()}'"
+        setTextGetter(KotlinBundle.lazyMessage("import.members.from.0", targetFqName.parent().asString()))
         return true
     }
 
-    override fun applyTo(element: KtElement, editor: Editor?) {
-        element.importReceiverMembers()
-    }
+    override fun applyTo(element: KtElement, editor: Editor?) = element.importReceiverMembers()
 
     companion object {
         fun KtElement.importReceiverMembers() {
@@ -54,12 +56,12 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::c
             val classFqName = target.importableFqName!!.parent()
 
             ImportInsertHelper.getInstance(project).importDescriptor(containingKtFile, target, forceAllUnderImport = true)
-
             val qualifiedExpressions = containingKtFile.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
                 val qualifierName = qualifiedExpression.receiverExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
                 qualifierName?.getReferencedNameAsName() == classFqName.shortName() && target(qualifiedExpression)?.importableFqName
                     ?.parent() == classFqName
             }
+
             val userTypes = containingKtFile.collectDescendantsOfType<KtUserType> { userType ->
                 val receiver = userType.receiverExpression()?.getQualifiedElementSelector() as? KtNameReferenceExpression
                 receiver?.getReferencedNameAsName() == classFqName.shortName() && target(userType)?.importableFqName
@@ -75,6 +77,7 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::c
             if (bindingContext[BindingContext.QUALIFIER, receiverExpression] !is ClassQualifier) {
                 return null
             }
+
             val selector = qualifiedElement.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
             return selector.mainReference.resolveToDescriptors(bindingContext).firstOrNull()
         }

@@ -13,6 +13,6 @@ fun bar2(body: (String, Int) -> String): String {
 }
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>bar1<!>(::foo)
+    bar1(::foo)
     bar2(::foo)
 }

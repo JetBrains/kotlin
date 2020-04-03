@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
 open class GeneratorExtensions : StubGeneratorExtensions() {
@@ -16,15 +18,10 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
         get() = SamConversion
 
     open class SamConversion {
-        // Returns null if descriptor is not a SAM adapter
-        open fun getOriginalForSamAdapter(descriptor: CallableDescriptor): CallableDescriptor? = null
 
-        open fun isSamConstructor(descriptor: CallableDescriptor): Boolean = false
+        open fun isPlatformSamType(type: KotlinType): Boolean = false
 
-        open fun isSamType(type: KotlinType): Boolean = false
-
-        open fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType =
-            throw UnsupportedOperationException("SAM conversion is not supported in this configuration (samType=$samType)")
+        open fun getSamTypeForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? = null
 
         companion object Instance : SamConversion()
     }
@@ -42,4 +39,5 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
         companion object Instance : EnhancedNullability()
     }
 
+    open fun getParentClassStaticScope(descriptor: ClassDescriptor): MemberScope? = null
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // CHECK_CASES_COUNT: function=bar1 count=3
 // CHECK_IF_COUNT: function=bar1 count=0

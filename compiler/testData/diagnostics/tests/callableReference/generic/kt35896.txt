@@ -1,0 +1,24 @@
+package
+
+public fun </*0*/ T1, /*1*/ T2, /*2*/ S> bar(/*0*/ list: T2, /*1*/ fn: (S) -> B<T1, T2>): kotlin.Unit
+public fun </*0*/ K> foo(/*0*/ list: Inv<K>): kotlin.Unit
+
+public interface B</*0*/ E, /*1*/ SC> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ T> : B<T, Inv<T>> {
+    public constructor Foo</*0*/ T>(/*0*/ x: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

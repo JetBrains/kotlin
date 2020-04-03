@@ -21,7 +21,7 @@ val a5 = A.Companion::class.java
 val o0 = O.javaClass
 val o1 = O::class.java
 
-val e0 = E.javaClass
+val e0 = E.<!UNRESOLVED_REFERENCE!>javaClass<!>
 val e1 = E::class.java
 val e2 = E.ENTRY.javaClass
 

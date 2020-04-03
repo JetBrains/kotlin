@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
-// NI_EXPECTED_FILE
 
 // FILE: annotation.kt
 
@@ -25,8 +24,8 @@ val normal = generate {
     yield(42)
 }
 
-val extension = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>extensionYield("foo")<!>
+val extension = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    extensionYield("foo")
 }
 
 val safeExtension = generate {

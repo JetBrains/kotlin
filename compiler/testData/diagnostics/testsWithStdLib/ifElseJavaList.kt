@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Java.java
 
 import java.util.List;

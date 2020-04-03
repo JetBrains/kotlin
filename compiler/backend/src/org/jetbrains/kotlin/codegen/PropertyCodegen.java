@@ -270,7 +270,7 @@ public class PropertyCodegen {
         PropertyGetterDescriptor getter = descriptor.getGetter();
         assert getter != null : "Annotation property should have a getter: " + descriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, getter, asmMethod);
-        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(getter, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(getter, asmMethod.getReturnType(), null);
 
         KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {
@@ -417,7 +417,8 @@ public class PropertyCodegen {
             );
 
             if (annotatedField != null) {
-                AnnotationCodegen.forField(fv, memberCodegen, state).genAnnotations(annotatedField, type);
+                AnnotationCodegen.forField(fv, memberCodegen, state)
+                        .genAnnotations(annotatedField, type, propertyDescriptor.getType());
             }
         }
     }
@@ -563,13 +564,24 @@ public class PropertyCodegen {
         return codegen.invokeFunction(resolvedCall, receiver);
     }
 
+    public static boolean isDelegatedPropertyWithOptimizedMetadata(
+            @NotNull VariableDescriptorWithAccessors descriptor,
+            @NotNull BindingContext bindingContext
+    ) {
+        return Boolean.TRUE == bindingContext.get(DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA, descriptor);
+    }
+
+    public static @NotNull StackValue getOptimizedDelegatedPropertyMetadataValue() {
+        return StackValue.constant(null, K_PROPERTY_TYPE);
+    }
+
     @NotNull
     public static StackValue getDelegatedPropertyMetadata(
             @NotNull VariableDescriptorWithAccessors descriptor,
             @NotNull BindingContext bindingContext
     ) {
-        if (Boolean.TRUE == bindingContext.get(DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA, descriptor)) {
-            return StackValue.constant(null, K_PROPERTY_TYPE);
+        if (isDelegatedPropertyWithOptimizedMetadata(descriptor, bindingContext)) {
+            return getOptimizedDelegatedPropertyMetadataValue();
         }
 
         Type owner = bindingContext.get(DELEGATED_PROPERTY_METADATA_OWNER, descriptor);

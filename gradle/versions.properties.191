@@ -14,3 +14,4 @@ versions.jar.oro=2.0.8
 versions.jar.picocontainer=1.2
 ignore.jar.snappy-in-java=true
 versions.gradle-api=4.5.1
+versions.shadow=5.2.0

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -26,11 +24,11 @@ abstract class IntrinsicMethod {
     open fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
         with(codegen) {
             val descriptor = methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
-            val stackValue = toCallable(expression, descriptor, context).invoke(mv, codegen, data)
-            return object : PromisedValue(this, stackValue.type, expression.type) {
-                override fun materialize() = stackValue.put(mv)
-            }
+            val stackValue = toCallable(expression, descriptor, context).invoke(mv, codegen, data, expression)
+            stackValue.put(mv)
+            return MaterialValue(this, stackValue.type, expression.type)
         }
+
 
     companion object {
         fun calcReceiverType(call: IrMemberAccessExpression, context: JvmBackendContext): Type {

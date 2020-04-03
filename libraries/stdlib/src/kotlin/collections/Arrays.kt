@@ -67,14 +67,14 @@ public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Array<*>,
     if (isEmpty()) defaultValue() else this
 
 
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 @SinceKotlin("1.3")
 @PublishedApi
 @kotlin.jvm.JvmName("contentDeepEquals")
 @kotlin.js.JsName("contentDeepEqualsImpl")
-internal fun <T> Array<out T>.contentDeepEqualsImpl(other: Array<out T>): Boolean {
+internal fun <T> Array<out T>?.contentDeepEqualsImpl(other: Array<out T>?): Boolean {
     if (this === other) return true
-    if (this.size != other.size) return false
+    if (this == null || other == null || this.size != other.size) return false
 
     for (i in indices) {
         val v1 = this[i]
@@ -113,14 +113,15 @@ internal fun <T> Array<out T>.contentDeepEqualsImpl(other: Array<out T>): Boolea
 @PublishedApi
 @kotlin.jvm.JvmName("contentDeepToString")
 @kotlin.js.JsName("contentDeepToStringImpl")
-internal fun <T> Array<out T>.contentDeepToStringImpl(): String {
+internal fun <T> Array<out T>?.contentDeepToStringImpl(): String {
+    if (this == null) return "null"
     val length = size.coerceAtMost((Int.MAX_VALUE - 2) / 5) * 5 + 2 // in order not to overflow Int.MAX_VALUE
     return buildString(length) {
         contentDeepToStringInternal(this, mutableListOf())
     }
 }
 
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 private fun <T> Array<out T>.contentDeepToStringInternal(result: StringBuilder, processed: MutableList<Array<*>>) {
     if (this in processed) {
         result.append("[...]")

@@ -29,7 +29,7 @@ class Properties {
 
 fun param(param: Obsolete) { param.use() }
 
-fun funcParamReceiver(param: Obsolete.()->Unit) { Obsolete().<!UNRESOLVED_REFERENCE!>param<!>() }
+fun funcParamReceiver(param: Obsolete.()->Unit) { Obsolete().param() }
 fun funcParamParam(param: (Obsolete)->Unit) { param(Obsolete()) }
 fun funcParamRetVal(param: ()->Obsolete) { param() }
 

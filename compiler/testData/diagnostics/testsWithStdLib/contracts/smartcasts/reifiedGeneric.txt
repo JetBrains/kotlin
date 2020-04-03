@@ -1,0 +1,10 @@
+package
+
+public inline fun </*0*/ reified T> cast(/*0*/ value: kotlin.Any?): T
+    Returns(WILDCARD) -> value is T
+
+public inline fun </*0*/ reified T> requireIsInstance(/*0*/ value: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value is T
+
+public fun test_1(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun test_2(/*0*/ x: kotlin.Any): kotlin.Unit

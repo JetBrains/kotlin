@@ -216,7 +216,7 @@ class KotlinCoreEnvironment private constructor(
         )
 
         val (initialRoots, javaModules) =
-                classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+            classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         this.initialRoots.addAll(initialRoots)
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
@@ -228,7 +228,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         val (roots, singleJavaFileRoots) =
-                initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         // REPL and kapt2 update classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
@@ -421,6 +421,7 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
+            setupIdeaStandaloneExecution()
             val appEnv = getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
@@ -516,8 +517,6 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            workaroundIbmJdkStaxReportCdataEventIssue()
-
             fun File.hasConfigFile(configFile: String): Boolean =
                 if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
                 else try {
@@ -528,7 +527,7 @@ class KotlinCoreEnvironment private constructor(
                     false
                 }
 
-            val pluginRoot =
+            val pluginRoot: File =
                 configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
                     // hack for load extensions when compiler run directly from project directory (e.g. in tests)
@@ -538,39 +537,7 @@ class KotlinCoreEnvironment private constructor(
                                 "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
                     )
 
-            CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
-        }
-
-        private fun workaroundIbmJdkStaxReportCdataEventIssue() {
-            if (!SystemInfo.isIbmJvm) return
-
-            // On IBM JDK, XMLInputFactory does not support "report-cdata-event" property, but JDOMUtil sets it unconditionally in the
-            // static XML_INPUT_FACTORY field and fails with an exception (Logger.error throws exception in the compiler) if unsuccessful.
-            // Until this is fixed in the platform, we workaround the issue by setting that field to a value that does not attempt
-            // to set the unsupported property.
-            // See IDEA-206446 for more information
-            val field = JDOMUtil::class.java.getDeclaredField("XML_INPUT_FACTORY")
-            field.isAccessible = true
-            Field::class.java.getDeclaredField("modifiers")
-                .apply { isAccessible = true }
-                .setInt(field, field.modifiers and Modifier.FINAL.inv())
-            field.set(null, object : NotNullLazyValue<XMLInputFactory>() {
-                override fun compute(): XMLInputFactory {
-                    val factory: XMLInputFactory = try {
-                        // otherwise wst can be used (in tests/dev run)
-                        val clazz = Class.forName("com.sun.xml.internal.stream.XMLInputFactoryImpl")
-                        clazz.newInstance() as XMLInputFactory
-                    } catch (e: Exception) {
-                        // ok, use random
-                        XMLInputFactory.newFactory()
-                    }
-
-                    factory.setProperty(XMLInputFactory.IS_COALESCING, true)
-                    factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
-                    factory.setProperty(XMLInputFactory.SUPPORT_DTD, false)
-                    return factory
-                }
-            })
+            registerExtensionPointAndExtensionsEx(pluginRoot, configFilePath, Extensions.getRootArea())
         }
 
         @JvmStatic
@@ -715,4 +682,3 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 }
-

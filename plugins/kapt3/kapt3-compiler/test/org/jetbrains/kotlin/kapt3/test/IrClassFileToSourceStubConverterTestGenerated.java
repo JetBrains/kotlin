@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -287,6 +287,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("kt28306.kt")
     public void testKt28306() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt28306.kt");
+    }
+
+    @TestMetadata("kt34569.kt")
+    public void testKt34569() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt34569.kt");
     }
 
     @TestMetadata("lazyProperty.kt")

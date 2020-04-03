@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 public inline fun fails(block: () -> Unit): Throwable? {
     var thrown: Throwable? = null
     try {

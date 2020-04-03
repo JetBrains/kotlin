@@ -75,7 +75,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
 
     override fun getNameIdentifier(): PsiIdentifier {
         val kotlinOrigin = (psi as? KtLightElement<*, *>)?.kotlinOrigin
-        return UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
+        return UastLightIdentifier(psi, kotlinOrigin as? KtDeclaration)
     }
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
@@ -199,6 +199,7 @@ open class KotlinUParameter(
     override fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean {
         if (sourcePsi !is KtParameter) return false
         if (isKtConstructorParam == isLightConstructorParam && target == null) return true
+        if (sourcePsi.parent.parent is KtCatchClause && target == null) return true
         when (target) {
             AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> return isLightConstructorParam == true
             AnnotationUseSiteTarget.SETTER_PARAMETER -> return isLightConstructorParam != true
@@ -336,7 +337,7 @@ open class KotlinUField(
 
 open class KotlinULocalVariable(
         psi: PsiLocalVariable,
-        override val sourcePsi: KtElement,
+        override val sourcePsi: KtElement?,
         givenParent: UElement?
 ) : AbstractKotlinUVariable(givenParent), ULocalVariableExPlaceHolder, PsiLocalVariable by psi {
 

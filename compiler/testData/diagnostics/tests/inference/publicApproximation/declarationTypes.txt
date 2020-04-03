@@ -1,0 +1,57 @@
+package
+
+public val kotlin.Any.extensionProperty: Bound1
+public fun </*0*/ S : Bound1> intersect(/*0*/ vararg elements: S /*kotlin.Array<out S>*/): S
+public fun test(/*0*/ cls: Cls, /*1*/ obj: Obj): kotlin.Unit
+public fun topLevelFunction(): Bound1
+public fun kotlin.Any.extensionFunction(): Bound1
+
+public interface Bound1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Bound2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Cls {
+    public constructor Cls()
+    private final val privateProperty: Bound1
+    public final val publicProperty: Bound1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    private final fun privateMemberFunction(): Bound1
+    public final fun publicMemberFunction(): Bound1
+    public final fun testLocalDeclarations(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object First : Bound1, Bound2 {
+    private constructor First()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Obj {
+    private constructor Obj()
+    private final val privateProperty: Bound1
+    public final val publicProperty: Bound1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    private final fun privateMemberFunction(): Bound1
+    public final fun publicMemberFunction(): Bound1
+    public final fun testLocalDeclarations(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Second : Bound1, Bound2 {
+    private constructor Second()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

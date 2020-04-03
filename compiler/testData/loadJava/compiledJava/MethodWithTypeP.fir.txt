@@ -1,5 +1,5 @@
 public final class MethodWithTypeP : R|kotlin/Any| {
-    public final operator fun <P> f(): R|kotlin/Unit|
+    public final fun <P : R|ft<kotlin/Any, kotlin/Any?>!|> f(): R|kotlin/Unit|
 
     public constructor(): R|test/MethodWithTypeP|
 

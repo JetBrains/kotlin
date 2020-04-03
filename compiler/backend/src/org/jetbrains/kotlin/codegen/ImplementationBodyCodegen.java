@@ -83,7 +83,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.org.objectweb.asm.Type.getObjectType;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
-    private static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
+    public static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
     private Type superClassAsmType;
     @NotNull
     private SuperClassInfo superClassInfo;
@@ -232,7 +232,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         writeEnclosingMethod();
 
-        AnnotationCodegen.forClass(v.getVisitor(), this, state).genAnnotations(descriptor, null);
+        AnnotationCodegen.forClass(v.getVisitor(), this, state).genAnnotations(descriptor, null, null);
 
         generateEnumEntries();
     }
@@ -905,7 +905,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType(), property),
                                          info.defaultValue);
 
-            AnnotationCodegen.forField(fv, this, state).genAnnotations(property, type);
+            AnnotationCodegen.forField(fv, this, state).genAnnotations(property, type, null);
 
             //This field are always static and final so if it has constant initializer don't do anything in clinit,
             //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
@@ -1087,7 +1087,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int isDeprecated = KotlinBuiltIns.isDeprecated(descriptor) ? ACC_DEPRECATED : 0;
             FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(enumEntry, descriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL | isDeprecated,
                                          descriptor.getName().asString(), classAsmType.getDescriptor(), null, null);
-            AnnotationCodegen.forField(fv, this, state).genAnnotations(descriptor, null);
+            AnnotationCodegen.forField(fv, this, state).genAnnotations(descriptor, null, null);
         }
 
         initializeEnumConstants(enumEntries);
@@ -1176,7 +1176,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!fieldInfo.generateField) return;
 
         v.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC,
-                   fieldInfo.name, fieldInfo.type.getDescriptor(), /*TODO*/null, null);
+                   fieldInfo.name, fieldInfo.type.getDescriptor(), fieldInfo.genericSignature, null);
     }
 
     private void generateDelegates(

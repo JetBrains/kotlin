@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -4648,6 +4648,16 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
             @TestMetadata("callsEffect.kt")
             public void testCallsEffect() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/callsEffect.kt");
+            }
+
+            @TestMetadata("contractWithRefiedGeneric.kt")
+            public void testContractWithRefiedGeneric() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/contractWithRefiedGeneric.kt");
+            }
+
+            @TestMetadata("contractsOnMembers.kt")
+            public void testContractsOnMembers() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/contractsOnMembers.kt");
             }
 
             @TestMetadata("deeplyNestedExpression.kt")

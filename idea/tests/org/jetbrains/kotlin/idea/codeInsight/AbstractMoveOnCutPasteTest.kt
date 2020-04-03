@@ -9,6 +9,7 @@ import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.core.moveCaret
@@ -48,6 +49,7 @@ abstract class AbstractMoveOnCutPasteTest : AbstractCopyPasteTest() {
         val targetFileExists = testDataFile(targetFileName).exists()
         val targetPsiFile = if (targetFileExists) configureTargetFile(targetFileName) else null
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
+        UIUtil.dispatchAllInvocationEvents()
 
         val shouldBeAvailable = InTextDirectivesUtils.getPrefixedBoolean(testFileText, IS_AVAILABLE_DIRECTIVE) ?: true
         val cookie = editor.getUserData(MoveDeclarationsEditorCookie.KEY)

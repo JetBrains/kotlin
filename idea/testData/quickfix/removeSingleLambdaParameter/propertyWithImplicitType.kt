@@ -3,6 +3,8 @@
 // ACTION: Rename to _
 // ACTION: Convert to also
 // ACTION: Convert to apply
+// ACTION: Convert to multi-line lambda
+// ACTION: Enable a trailing comma by default in the formatter
 fun test() {
     val f = { <caret>i: Int -> foo() }
     bar(f)

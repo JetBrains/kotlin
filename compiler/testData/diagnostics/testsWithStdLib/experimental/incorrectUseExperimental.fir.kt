@@ -1,9 +1,9 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 
 annotation class NotAMarker
 
-@UseExperimental
+@OptIn
 fun f1() {}
 
-@UseExperimental(NotAMarker::class)
+@OptIn(NotAMarker::class)
 fun f2() {}

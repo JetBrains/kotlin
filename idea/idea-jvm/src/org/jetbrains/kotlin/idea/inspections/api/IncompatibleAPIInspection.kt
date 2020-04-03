@@ -1,12 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections.api
 
-import com.intellij.codeInsight.daemon.HighlightDisplayKey
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.extensions.Extensions
@@ -16,13 +17,11 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.util.xmlb.annotations.Attribute
 import org.jdom.Element
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
 import org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection.Companion.DEFAULT_REASON
-import org.jetbrains.kotlin.idea.inspections.toSeverity
 
-class IncompatibleAPIInspection : LocalInspectionTool(), CustomSuppressableInspectionTool {
+class IncompatibleAPIInspection : LocalInspectionTool() {
     class Problem(
         @Attribute var reference: String? = "",
         @Attribute var reason: String? = ""
@@ -61,43 +60,11 @@ class IncompatibleAPIInspection : LocalInspectionTool(), CustomSuppressableInspe
         }
     }
 
-    override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
-        return when {
-            element == null -> emptyArray()
-
-            element.language == JavaLanguage.INSTANCE -> {
-                val key = HighlightDisplayKey.find(shortName)
-                    ?: throw AssertionError("HighlightDisplayKey.find($shortName) is null. Inspection: $javaClass")
-                return SuppressManager.getInstance().createSuppressActions(key)
-            }
-
-            element.language == KotlinLanguage.INSTANCE -> {
-                createSuppressWarningActions(element, toSeverity(defaultLevel), suppressionKey).toTypedArray()
-            }
-
-            else -> emptyArray()
-        }
-    }
-
-    override fun isSuppressedFor(element: PsiElement): Boolean {
-        if (SuppressManager.getInstance()!!.isSuppressedFor(element, id)) {
-            return true
-        }
-
-        val project = element.project
-        if (KotlinCacheService.getInstance(project).getSuppressionCache().isSuppressed(element, suppressionKey, toSeverity(defaultLevel))) {
-            return true
-        }
-
-        return false
-    }
-
-    private val suppressionKey: String get() = this.shortName
     private val problemsCache = ProblemsCache()
 
     companion object {
         const val SHORT_NAME = "IncompatibleAPI"
-        const val DEFAULT_REASON = "Incompatible API"
+        val DEFAULT_REASON get() = KotlinJvmBundle.message("reason.incompatible.api")
     }
 }
 

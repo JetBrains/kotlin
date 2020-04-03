@@ -10,6 +10,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(kotlinStdlib())
     testCompile(commonDep("junit:junit"))
+    testCompile(project(":generators"))
 }
 
 sourceSets {

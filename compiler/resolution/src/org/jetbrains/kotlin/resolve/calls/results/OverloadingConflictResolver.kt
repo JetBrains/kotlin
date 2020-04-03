@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
 open class OverloadingConflictResolver<C : Any>(
@@ -38,6 +39,7 @@ open class OverloadingConflictResolver<C : Any>(
     private val module: ModuleDescriptor,
     private val specificityComparator: TypeSpecificityComparator,
     private val platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
+    private val cancellationChecker: CancellationChecker,
     private val getResultingDescriptor: (C) -> CallableDescriptor,
     private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
     private val createFlatSignature: (C) -> FlatSignature<C>,
@@ -78,7 +80,8 @@ open class OverloadingConflictResolver<C : Any>(
         val noEquivalentCalls = filterOutEquivalentCalls(fixedCandidates)
         val noOverrides = OverridingUtil.filterOverrides(
             noEquivalentCalls,
-            isTypeRefinementEnabled
+            isTypeRefinementEnabled,
+            cancellationChecker::check
         ) { a, b ->
             val aDescriptor = a.resultingDescriptor
             val bDescriptor = b.resultingDescriptor
@@ -124,6 +127,7 @@ open class OverloadingConflictResolver<C : Any>(
 
         val result = LinkedHashSet<C>()
         outerLoop@ for (meD in fromSourcesGoesFirst) {
+            cancellationChecker.check()
             for (otherD in result) {
                 val me = meD.resultingDescriptor.originalIfTypeRefinementEnabled
                 val other = otherD.resultingDescriptor.originalIfTypeRefinementEnabled
@@ -209,6 +213,7 @@ open class OverloadingConflictResolver<C : Any>(
         }
 
         val bestCandidatesByParameterTypes = conflictingCandidates.filter { candidate ->
+            cancellationChecker.check()
             isMostSpecific(candidate, conflictingCandidates) { call1, call2 ->
                 isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics)
             }

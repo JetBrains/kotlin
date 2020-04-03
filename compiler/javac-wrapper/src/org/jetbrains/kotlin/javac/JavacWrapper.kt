@@ -34,16 +34,19 @@ import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.javac.resolve.ClassifierResolver
 import org.jetbrains.kotlin.javac.resolve.IdentifierResolver
 import org.jetbrains.kotlin.javac.resolve.KotlinClassifiersCache
 import org.jetbrains.kotlin.javac.resolve.classId
 import org.jetbrains.kotlin.javac.wrappers.symbols.*
-import org.jetbrains.kotlin.javac.wrappers.trees.*
+import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
+import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedPackage
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
 import java.io.File
@@ -62,7 +65,7 @@ class JavacWrapper(
     bootClasspath: List<File>?,
     sourcePath: List<File>?,
     val kotlinResolver: JavacWrapperKotlinResolver,
-    private val packagePartsProviders: List<JvmPackagePartProvider>,
+    private val packagePartsProviders: List<PackagePartProvider>,
     private val compileJava: Boolean,
     private val outputDirectory: File?,
     private val context: Context

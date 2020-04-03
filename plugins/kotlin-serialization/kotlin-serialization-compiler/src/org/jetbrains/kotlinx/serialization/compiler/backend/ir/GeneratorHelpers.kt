@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,10 +26,17 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationGenerator
+import org.jetbrains.kotlin.psi2ir.generators.FunctionGenerator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.allSealedSerializableSubclassesFor
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
@@ -44,10 +51,28 @@ interface IrBuilderExtension {
     private fun IrClass.declareSimpleFunctionWithExternalOverrides(descriptor: FunctionDescriptor): IrSimpleFunction {
         return compilerContext.symbolTable.declareSimpleFunction(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, descriptor)
             .also { f ->
-                descriptor.overriddenDescriptors.mapTo(f.overriddenSymbols) {
+                f.overriddenSymbols = descriptor.overriddenDescriptors.map {
                     compilerContext.symbolTable.referenceSimpleFunction(it.original)
                 }
             }
+    }
+
+    private fun createFunctionGenerator(): FunctionGenerator = with(compilerContext) {
+        return FunctionGenerator(
+            DeclarationGenerator(
+                GeneratorContext(
+                    Psi2IrConfiguration(),
+                    moduleDescriptor,
+                    bindingContext,
+                    languageVersionSettings,
+                    symbolTable,
+                    GeneratorExtensions(),
+                    typeTranslator,
+                    typeTranslator.constantValueGenerator,
+                    irBuiltIns
+                )
+            )
+        )
     }
 
     fun IrClass.contributeFunction(
@@ -59,9 +84,16 @@ interface IrBuilderExtension {
             descriptor
         ) else compilerContext.symbolTable.referenceSimpleFunction(descriptor).owner
         f.parent = this
-        f.returnType = descriptor.returnType!!.toIrType()
-        if (declareNew) f.createParameterDeclarations(this.thisReceiver!!)
-        f.body = DeclarationIrBuilder(compilerContext, f.symbol, this.startOffset, this.endOffset).irBlockBody(this.startOffset, this.endOffset) { bodyGen(f) }
+        if (declareNew) {
+            f.buildWithScope {
+                createFunctionGenerator().generateFunctionParameterDeclarationsAndReturnType(f, null, null)
+            }
+        }
+
+        f.body = DeclarationIrBuilder(compilerContext, f.symbol, this.startOffset, this.endOffset).irBlockBody(
+            this.startOffset,
+            this.endOffset
+        ) { bodyGen(f) }
         this.addMember(f)
     }
 
@@ -347,7 +379,7 @@ interface IrBuilderExtension {
             SERIALIZABLE_PLUGIN_ORIGIN,
             this,
             type.toIrType(),
-            null
+            (this as? ValueParameterDescriptor)?.varargElementType?.toIrType()
         ).also {
             it.parent = this@createParameterDeclarations
         }
@@ -357,22 +389,22 @@ interface IrBuilderExtension {
 
         if (!overwriteValueParameters)
             assert(valueParameters.isEmpty())
-        else
-            valueParameters.clear()
-        valueParameters.addAll(descriptor.valueParameters.map { it.irValueParameter() })
+
+        valueParameters = descriptor.valueParameters.map { it.irValueParameter() }
 
         assert(typeParameters.isEmpty())
         if (copyTypeParameters) copyTypeParamsFromDescriptor()
     }
 
     fun IrFunction.copyTypeParamsFromDescriptor() {
-        descriptor.typeParameters.mapTo(typeParameters) {
+        typeParameters += descriptor.typeParameters.map {
             IrTypeParameterImpl(
                 startOffset, endOffset,
                 SERIALIZABLE_PLUGIN_ORIGIN,
                 it
             ).also { typeParameter ->
                 typeParameter.parent = this
+                typeParameter.superTypes.addAll(it.upperBounds.map { it.toIrType() })
             }
         }
     }
@@ -463,15 +495,20 @@ interface IrBuilderExtension {
         expression: IrExpression,
         nullableSerializerClass: IrClassSymbol
     ): IrExpression {
-        return if (type.isMarkedNullable)
+        return if (type.isMarkedNullable) {
+            val nullableConstructor =
+                compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first())
+            val resultType = type.makeNotNullable()
             irInvoke(
-                null, compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first()),
-                typeArguments = listOf(type.makeNotNullable().toIrType()),
+                null, nullableConstructor,
+                typeArguments = listOf(resultType.toIrType()),
                 valueArguments = listOf(expression),
-                returnTypeHint = wrapIrTypeIntoKSerializerIrType(module, type.toIrType())
+                // Return type should be correctly substituted
+                returnTypeHint = nullableConstructor.descriptor.returnType.replace(listOf(resultType.asTypeProjection())).toIrType()
             )
-        else
+        } else {
             expression
+        }
     }
 
 
@@ -577,7 +614,7 @@ interface IrBuilderExtension {
                                                 SpecialBuiltins.polymorphicSerializer
                                             ),
                                             module,
-                                            genericType
+                                            (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound
                                         )!!
                                     }!!
                                     wrapWithNullableSerializerIfNeeded(module, type, expr, nullableSerClass)
@@ -588,15 +625,11 @@ interface IrBuilderExtension {
                     typeArgs = listOf(thisIrType)
                 }
                 enumSerializerId -> {
-                    serializerClass = module.getClassFromInternalSerializationPackage("CommonEnumSerializer")
+                    serializerClass = module.getClassFromInternalSerializationPackage(SpecialBuiltins.enumSerializer)
                     args = kType.toClassDescriptor!!.let { enumDesc ->
                         listOf(
                             irString(enumDesc.serialName()),
-                            irCall(findEnumValuesMethod(enumDesc)),
-                            createArrayOfExpression(
-                                compilerContext.irBuiltIns.stringType,
-                                getEnumMembersNames(enumDesc).map { irString(it) }.toList()
-                            )
+                            irCall(findEnumValuesMethod(enumDesc))
                         )
                     }
                     typeArgs = listOf(thisIrType)
@@ -629,8 +662,9 @@ interface IrBuilderExtension {
             } else {
                 compilerContext.symbolTable.referenceConstructor(serializerClass.unsubstitutedPrimaryConstructor!!)
             }
-            val returnType = wrapIrTypeIntoKSerializerIrType(module, thisIrType)
-            return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = returnType)
+            // Return type should be correctly substituted
+            val substitutedReturnType = ctor.descriptor.returnType.replace(typeArgs.map { it.toKotlinType().asTypeProjection() }).toIrType()
+            return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = substitutedReturnType)
         }
     }
 

@@ -7,25 +7,32 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
 class KotlinMetadataTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCommonCompilation>(
+) : KotlinOnlyTargetPreset<KotlinMetadataTarget, AbstractKotlinCompilation<*>>(
     project,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
-        forTarget: KotlinOnlyTarget<KotlinCommonCompilation>
-    ): KotlinCompilationFactory<KotlinCommonCompilation> =
-        KotlinCommonCompilationFactory(forTarget)
+        forTarget: KotlinOnlyTarget<AbstractKotlinCompilation<*>>
+    ): KotlinCompilationFactory<AbstractKotlinCompilation<*>> =
+        object : KotlinCompilationFactory<AbstractKotlinCompilation<*>> {
+            override val itemClass: Class<AbstractKotlinCompilation<*>>
+                get() = AbstractKotlinCompilation::class.java
+
+            override fun create(name: String): AbstractKotlinCompilation<*> = when (name) {
+                KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinCommonCompilationFactory(forTarget).create(name)
+                else -> error("Can't create custom metadata compilations by name")
+            }
+        }
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.common
@@ -34,10 +41,10 @@ class KotlinMetadataTargetPreset(
         const val PRESET_NAME = "metadata"
     }
 
-    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinCommonCompilation, KotlinMetadataTarget> =
+    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<AbstractKotlinCompilation<*>, KotlinMetadataTarget> =
         KotlinMetadataTargetConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(): KotlinMetadataTarget {
+    override fun instantiateTarget(name: String): KotlinMetadataTarget {
         return project.objects.newInstance(KotlinMetadataTarget::class.java, project)
     }
 
@@ -51,7 +58,7 @@ class KotlinMetadataTargetPreset(
             project.whenEvaluated {
                 // Since there's no default source set, apply language settings from commonMain:
                 val compileKotlinMetadata = mainCompilation.compileKotlinTask
-                applyLanguageSettingsToKotlinTask(commonMainSourceSet.languageSettings, compileKotlinMetadata)
+                applyLanguageSettingsToKotlinOptions(commonMainSourceSet.languageSettings, compileKotlinMetadata.kotlinOptions)
             }
         }
 }

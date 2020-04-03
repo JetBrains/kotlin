@@ -16,14 +16,8 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
-import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -37,7 +31,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -56,28 +49,14 @@ open class MetadataSerializer(
     protected var totalFiles = 0
 
     fun serialize(environment: KotlinCoreEnvironment) {
-        val configuration = environment.configuration
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val files = environment.getSourceFiles()
-        val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
+        val analyzer = runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainer = null)
 
-        val destDir = configuration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY) ?: run {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d")
-            return
-        }
-
-        val analyzer = AnalyzerWithCompilerReport(messageCollector, configuration.languageVersionSettings)
-        analyzer.analyzeAndReport(files) {
-            CommonResolverForModuleFactory.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { content ->
-                environment.createPackagePartProvider(content.moduleContentScope)
-            }
-        }
-
-        if (analyzer.hasErrors()) return
+        if (analyzer == null || analyzer.hasErrors()) return
 
         val (bindingContext, moduleDescriptor) = analyzer.analysisResult
 
-        performSerialization(files, bindingContext, moduleDescriptor, destDir)
+        val destDir = checkNotNull(environment.destDir)
+        performSerialization(environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir)
     }
 
     protected open fun performSerialization(

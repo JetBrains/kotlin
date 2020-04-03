@@ -10,6 +10,6 @@ fun foo(s: String) {}
 fun r(): Int? = null
 
 fun test() {
-    foo(F().p())
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(F().p())
     <!INAPPLICABLE_CANDIDATE!>foo<!>(r())
 }

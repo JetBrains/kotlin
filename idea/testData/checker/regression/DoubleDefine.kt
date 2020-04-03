@@ -11,7 +11,7 @@ fun takeFirst(expr: StringBuilder): Char {
 
 fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
   if (expr.length == 0) throw Exception("Syntax error: Character expected");
-  val c = takeFirst(<error>expr</error>)
+  val c = takeFirst(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is CharSequence but kotlin.text.StringBuilder /* = java.lang.StringBuilder */ was expected">expr</error>)
   if (c >= '0' && c <= '9') {
     val n = c - '0'
     if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)
@@ -32,13 +32,13 @@ fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
 fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
   val lhs = evaluateAdd(expr, numbers)
   if (expr.length > 0) {
-    val <warning>c</warning> = expr.get(0)
+    val <warning descr="[UNUSED_VARIABLE] Variable 'c' is never used">c</warning> = expr.get(0)
     expr.deleteCharAt(0)
   }
   return lhs
 }
 
-fun main(args: Array<String>) {
+fun main(<warning descr="[UNUSED_PARAMETER] Parameter 'args' is never used">args</warning>: Array<String>) {
   System.out.println("24 game")
   val numbers = ArrayList<Int>(4)
   val rnd = Random();

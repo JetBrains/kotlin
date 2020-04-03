@@ -60,7 +60,7 @@ val KotlinCallArgument.psiExpression: KtExpression?
         return when (this) {
             is ReceiverExpressionKotlinCallArgument -> receiver.receiverValue.safeAs<ExpressionReceiver>()?.expression
             is QualifierReceiverKotlinCallArgument -> receiver.safeAs<Qualifier>()?.expression
-            is EmptyLabeledReturn -> null // questionable, maybe unit?
+            is EmptyLabeledReturn -> returnExpression
             else -> psiCallArgument.valueArgument.getArgumentExpression()
         }
     }
@@ -181,6 +181,30 @@ class FakeValueArgumentForLeftCallableReference(val ktExpression: KtCallableRefe
     override fun isExternal(): Boolean = false
 }
 
+class FakePositionalValueArgumentForCallableReferenceImpl(
+    private val callElement: KtElement,
+    override val index: Int
+) : FakePositionalValueArgumentForCallableReference {
+    override fun getArgumentExpression(): KtExpression? = null
+    override fun getArgumentName(): ValueArgumentName? = null
+    override fun isNamed(): Boolean = false
+    override fun asElement(): KtElement = callElement
+    override fun getSpreadElement(): LeafPsiElement? = null
+    override fun isExternal(): Boolean = false
+}
+
+class FakeImplicitSpreadValueArgumentForCallableReferenceImpl(
+    private val callElement: KtElement,
+    override val expression: ValueArgument
+) : FakeImplicitSpreadValueArgumentForCallableReference {
+    override fun getArgumentExpression(): KtExpression? = null
+    override fun getArgumentName(): ValueArgumentName? = null
+    override fun isNamed(): Boolean = false
+    override fun asElement(): KtElement = callElement
+    override fun getSpreadElement(): LeafPsiElement? = null // TODO callElement?
+    override fun isExternal(): Boolean = false
+}
+
 class EmptyLabeledReturn(
     val returnExpression: KtReturnExpression,
     builtIns: KotlinBuiltIns
@@ -279,7 +303,8 @@ internal fun createSimplePSICallArgument(
     contextForArgument.scope.ownerDescriptor, valueArgument,
     contextForArgument.dataFlowInfo, typeInfoForArgument,
     contextForArgument.languageVersionSettings,
-    contextForArgument.dataFlowValueFactory
+    contextForArgument.dataFlowValueFactory,
+    contextForArgument.call,
 )
 
 internal fun createSimplePSICallArgument(
@@ -290,7 +315,8 @@ internal fun createSimplePSICallArgument(
     dataFlowInfoBeforeThisArgument: DataFlowInfo,
     typeInfoForArgument: KotlinTypeInfo,
     languageVersionSettings: LanguageVersionSettings,
-    dataFlowValueFactory: DataFlowValueFactory
+    dataFlowValueFactory: DataFlowValueFactory,
+    call: Call
 ): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
@@ -307,10 +333,10 @@ internal fun createSimplePSICallArgument(
             // so we use a fast-path here to avoid calling transformToReceiverWithSmartCastInfo function
             ReceiverValueWithSmartCastInfo(expressionReceiver, emptySet(), isStable = true)
         } else {
+            val useDataFlowInfoBeforeArgument = call.callType == Call.CallType.CONTAINS
             transformToReceiverWithSmartCastInfo(
                 ownerDescriptor, bindingContext,
-                // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
-                typeInfoForArgument.dataFlowInfo,
+                if (useDataFlowInfoBeforeArgument) dataFlowInfoBeforeThisArgument else typeInfoForArgument.dataFlowInfo,
                 expressionReceiver,
                 languageVersionSettings,
                 dataFlowValueFactory

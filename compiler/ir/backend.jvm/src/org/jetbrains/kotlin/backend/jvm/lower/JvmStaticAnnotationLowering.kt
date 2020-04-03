@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -17,25 +20,21 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 internal val jvmStaticAnnotationPhase = makeIrFilePhase(
     ::JvmStaticAnnotationLowering,
@@ -60,109 +59,67 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
     override fun lower(irClass: IrClass) {
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
-        } as IrClass?
+        } as? IrClass ?: return
 
-        companion?.declarations?.filter(::isJvmStaticFunction)?.forEach {
-            val jvmStaticFunction = it as IrSimpleFunction
-            val newName = Name.identifier(context.methodSignatureMapper.mapFunctionName(jvmStaticFunction))
-            if (!jvmStaticFunction.visibility.isPublicAPI) {
-                // TODO: Synthetic accessor creation logic should be supported in SyntheticAccessorLowering in the future.
-                val accessorName = Name.identifier("access\$$newName")
-                val accessor = createProxy(
-                    jvmStaticFunction, companion, companion, accessorName, Visibilities.PUBLIC,
-                    isSynthetic = true
-                )
-                companion.addMember(accessor)
-                val proxy = createProxy(
-                    accessor, irClass, companion, newName, jvmStaticFunction.visibility, isSynthetic = false
-                )
-                irClass.addMember(proxy)
-            } else {
-                val proxy = createProxy(
-                    jvmStaticFunction, irClass, companion, newName, jvmStaticFunction.visibility,
-                    isSynthetic = false
-                )
-                irClass.addMember(proxy)
+        companion.declarations
+            // In case of companion objects, proxy functions for '$default' methods for @JvmStatic functions with default parameters
+            // are not created in the host class.
+            .filter { isJvmStaticFunction(it) && it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
+            .forEach { declaration ->
+                val jvmStaticFunction = declaration as IrSimpleFunction
+                if (jvmStaticFunction.isExternal) {
+                    // We move external functions to the enclosing class and potentially add accessors there.
+                    // The JVM backend also adds accessors in the companion object, but these are superfluous.
+                    val staticExternal = irClass.addFunction {
+                        updateFrom(jvmStaticFunction)
+                        name = jvmStaticFunction.name
+                        returnType = jvmStaticFunction.returnType
+                    }.apply {
+                        copyTypeParametersFrom(jvmStaticFunction)
+                        extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
+                        valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+                        annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
+                    }
+                    companion.declarations.remove(jvmStaticFunction)
+                    companion.addProxy(staticExternal, companion, isStatic = false)
+                } else {
+                    irClass.addProxy(jvmStaticFunction, companion)
+                }
+            }
+    }
+
+    private fun IrClass.addProxy(target: IrSimpleFunction, companion: IrClass, isStatic: Boolean = true) =
+        addFunction {
+            returnType = target.returnType
+            origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+            name = target.name
+            modality = if (isInterface) Modality.OPEN else target.modality
+            visibility = target.visibility
+            isSuspend = target.isSuspend
+        }.apply {
+            copyTypeParametersFrom(target)
+            if (!isStatic) {
+                dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
+            }
+            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
+            valueParameters = target.valueParameters.map { it.copyTo(this) }
+            annotations = target.annotations.map { it.deepCopyWithSymbols() }
+
+            val proxy = this
+            val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(irCall(target).apply {
+                    passTypeArgumentsFrom(proxy)
+                    if (target.dispatchReceiverParameter != null) {
+                        dispatchReceiver = irGetField(null, companionInstanceField)
+                    }
+                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
+                    for ((i, valueParameter) in valueParameters.withIndex()) {
+                        putValueArgument(i, irGet(valueParameter))
+                    }
+                })
             }
         }
-
-    }
-
-    private fun createProxy(
-        target: IrSimpleFunction,
-        irClass: IrClass,
-        companion: IrClass,
-        name: Name,
-        visibility: Visibility,
-        isSynthetic: Boolean
-    ): IrSimpleFunction {
-        val origin =
-            if (isSynthetic) JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER_SYNTHETIC else JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
-        val descriptor = WrappedSimpleFunctionDescriptor(target.descriptor.annotations)
-        return IrFunctionImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            origin,
-            IrSimpleFunctionSymbolImpl(descriptor),
-            name,
-            visibility,
-            // FINAL on static interface members makes JVM unhappy, so remove it.
-            if (irClass.isInterface) Modality.OPEN else target.modality,
-            returnType = target.returnType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = target.isSuspend,
-            isExpect = false,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-            isOperator = false
-        ).apply {
-            descriptor.bind(this)
-            parent = irClass
-            copyTypeParametersFrom(target)
-            target.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
-            target.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
-
-            target.annotations.mapTo(annotations) { it.deepCopyWithSymbols() }
-
-            body = createProxyBody(target, this, companion)
-        }
-    }
-
-    private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
-        val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
-        val companionInstanceFieldSymbol = companionInstanceField.symbol
-        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
-
-        call.passTypeArgumentsFrom(proxy)
-
-        target.dispatchReceiverParameter?.let { _ ->
-            call.dispatchReceiver = IrGetFieldImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                companionInstanceFieldSymbol,
-                companion.defaultType
-            )
-        }
-        proxy.extensionReceiverParameter?.let { extensionReceiver ->
-            call.extensionReceiver = IrGetValueImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                extensionReceiver.symbol
-            )
-        }
-        proxy.valueParameters.mapIndexed { i, valueParameter ->
-            call.putValueArgument(
-                i,
-                IrGetValueImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    valueParameter.symbol
-                )
-            )
-        }
-
-        return IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, call)
-    }
 }
 
 private class SingletonObjectJvmStaticLowering(
@@ -225,31 +182,23 @@ private class MakeCallsStatic(
         return super.visitCall(expression)
     }
 
-    private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction {
-        val newDescriptor = (descriptor as? DescriptorWithContainerSource)?.let {
-            WrappedFunctionDescriptorWithContainerSource(it.containerSource)
-        } ?: WrappedSimpleFunctionDescriptor(descriptor)
-        return IrFunctionImpl(
-            startOffset, endOffset, origin,
-            IrSimpleFunctionSymbolImpl(newDescriptor),
-            name,
-            visibility, modality, returnType,
-            isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-            isOperator = isOperator
-        ).also {
-            newDescriptor.bind(it)
+    private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction =
+        buildFunWithDescriptorForInlining(descriptor) {
+            updateFrom(this@copyRemovingDispatchReceiver)
+            name = this@copyRemovingDispatchReceiver.name
+            returnType = this@copyRemovingDispatchReceiver.returnType
+        }.also {
             it.parent = parent
             it.correspondingPropertySymbol = correspondingPropertySymbol
-            it.annotations.addAll(annotations)
+            it.annotations += annotations
             it.copyParameterDeclarationsFrom(this)
             it.dispatchReceiverParameter = null
         }
-    }
 }
 
 private fun isJvmStaticFunction(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction &&
             (declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
-                    declaration.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true)
+                    declaration.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true) &&
+            declaration.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
 

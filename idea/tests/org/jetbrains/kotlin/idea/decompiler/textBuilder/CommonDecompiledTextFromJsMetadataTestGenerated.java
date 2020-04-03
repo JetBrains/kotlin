@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -77,6 +77,11 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
         runTest("idea/testData/decompiler/decompiledText/Enum/");
+    }
+
+    @TestMetadata("FunInterfaceDeclaration")
+    public void testFunInterfaceDeclaration() throws Exception {
+        runTest("idea/testData/decompiler/decompiledText/FunInterfaceDeclaration/");
     }
 
     @TestMetadata("FunctionTypes")
@@ -274,6 +279,19 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
 
         public void testAllFilesPresentInFlexibleTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledText/FlexibleTypes"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/FunInterfaceDeclaration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunInterfaceDeclaration extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunInterfaceDeclaration() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledText/FunInterfaceDeclaration"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JS, true);
         }
     }
 

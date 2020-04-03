@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.ide.CopyPasteManager
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.awt.datatransfer.StringSelection
 import java.io.File
 
 abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPasteTest() {
@@ -33,11 +35,11 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopy
         val fileName = fileName()
         myFixture.configureByFile(fileName)
 
-        val fileText = myFixture.editor.document.text
+        val fileText = testDataFile().readText()
         val noConversionExpected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// NO_CONVERSION_EXPECTED").isNotEmpty()
 
-        myFixture.editor.selectionModel.setSelection(0, fileText.length)
-        myFixture.performEditorAction(IdeActions.ACTION_COPY)
+        // copy a file content directly to a buffer to keep it as is (keep original line endings etc)
+        CopyPasteManager.getInstance().setContents(StringSelection(fileText))
 
         configureByDependencyIfExists(fileName.replace(".txt", ".dependency.kt"))
         configureByDependencyIfExists(fileName.replace(".txt", ".dependency.java"))

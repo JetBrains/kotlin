@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.type
-import org.jetbrains.kotlin.fir.tree.generator.typeWithArguments
+import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 
 // ----------- Simple field -----------
 
@@ -87,6 +87,9 @@ infix fun FieldSet.with(set: FieldSet): FieldSet {
     return this + set
 }
 
-fun Field.withTransform(): Field = copy().apply { needsSeparateTransform = true }
+fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = copy().apply {
+    needsSeparateTransform = true
+    this.needTransformInOtherChildren = needTransformInOtherChildren
+}
 
 fun FieldSet.withTransform(): FieldSet = this.map { it.withTransform() }

@@ -28,6 +28,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -43,7 +44,9 @@ class SearchNotPropertyCandidatesAction : AnAction() {
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 
         val desc = psiFile.findModuleDescriptor()
-        val result = Messages.showInputDialog("Enter package FqName", "Search for Not Property candidates", Messages.getQuestionIcon())
+        val result = Messages.showInputDialog(
+            KotlinBundle.message("enter.package.fqname"),
+            KotlinBundle.message("search.for.not.property.candidates"), Messages.getQuestionIcon())
         val packageDesc = try {
             val fqName = FqName.fromSegments(result!!.split('.'))
             desc.getPackage(fqName)
@@ -58,7 +61,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
                     processAllDescriptors(packageDesc, project)
                 }
             },
-            "Searching for Not Property candidates",
+            KotlinBundle.message("searching.for.not.property.candidates"),
             true,
             project
         )
@@ -72,7 +75,10 @@ class SearchNotPropertyCandidatesAction : AnAction() {
 
         fun recursive(desc: DeclarationDescriptor) {
             if (desc in processed) return
-            progress("Step 1: Collecting ${processed.size}:$pFunctions:${matchedDescriptors.size}", "$desc")
+            progress(
+                KotlinBundle.message("step.1.collecting.0.1.2", processed.size, pFunctions, matchedDescriptors.size),
+                "$desc"
+            )
             when (desc) {
 
                 is ModuleDescriptor -> recursive(desc.getPackage(FqName("java")))
@@ -118,7 +124,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
 
         var i = 0
         resultDescriptors.forEach { functionDescriptor ->
-            progress("Step 2: ${i++} of ${resultDescriptors.size}", "$functionDescriptor")
+            progress(KotlinBundle.message("step.2.0.of.1", i++, resultDescriptors.size), "$functionDescriptor")
             val source = DescriptorToSourceUtilsIde.getAllDeclarations(project, functionDescriptor)
                 .filterIsInstance<PsiMethod>()
                 .firstOrNull() ?: return@forEach
@@ -133,7 +139,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
         val nonTrivial = mutableSetOf<FunctionDescriptor>()
         i = 0
         descriptorToPsiBinding.forEach { (t, u) ->
-            progress("Step 3: ${i++} of ${descriptorToPsiBinding.size}", "$t")
+            progress(KotlinBundle.message("step.3.0.of.1", i++, descriptorToPsiBinding.size), "$t")
             val descriptors = t.overriddenDescriptors
             var impl = false
             descriptors.forEach {

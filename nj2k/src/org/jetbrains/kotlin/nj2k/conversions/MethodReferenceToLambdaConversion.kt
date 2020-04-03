@@ -134,6 +134,7 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
             is JKMultiverseMethodSymbol -> target.hasModifierProperty(PsiModifier.STATIC)
             is JKUniverseMethodSymbol -> target.parent?.parent?.safeAs<JKClass>()?.classKind == JKClass.ClassKind.COMPANION
             is JKUnresolvedMethod -> false
+            is KtClassImplicitConstructorSymbol -> false
         }
 
     private val JKMethodSymbol.parameterNames: List<String>?
@@ -143,6 +144,7 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
                 is JKMultiverseMethodSymbol -> target.parameters.map { it.name ?: return null }
                 is JKUniverseMethodSymbol -> target.parameters.map { it.name.value }
                 is JKUnresolvedMethod -> null
+                is KtClassImplicitConstructorSymbol -> null
             }
         }
 

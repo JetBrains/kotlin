@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import com.intellij.testFramework.ExpectedHighlightingData;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
@@ -53,6 +54,6 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
             return;
         }
 
-        DuplicateHighlightingKt.expectedDuplicatedHighlighting(runnable);
+        ExpectedHighlightingData.expectedDuplicatedHighlighting(runnable);
     }
 }

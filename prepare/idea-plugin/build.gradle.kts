@@ -19,6 +19,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
         ":compiler:ir.serialization.jvm",
+        ":compiler:ir.serialization.common",
         ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:container",
@@ -33,22 +34,21 @@ val projectsToShadow by extra(listOf(
         ":idea:jvm-debugger:jvm-debugger-util",
         ":idea:jvm-debugger:jvm-debugger-core",
         ":idea:jvm-debugger:jvm-debugger-evaluation",
+        ":idea:jvm-debugger:jvm-debugger-coroutine",
         ":idea:jvm-debugger:jvm-debugger-sequence",
         ":idea:scripting-support",
         ":idea:idea-j2k",
         ":idea:formatter",
-        ":libraries:tools:new-project-wizard",
-        ":idea:idea-new-project-wizard",
-        ":libraries:tools:new-project-wizard:new-project-wizard-cli",
         ":compiler:psi",
         ":compiler:fir:cones",
+        ":compiler:fir:checkers",
         ":compiler:fir:resolve",
         ":compiler:fir:tree",
         ":compiler:fir:java",
         ":compiler:fir:jvm",
-        ":compiler:fir:psi2fir",
+        ":compiler:fir:raw-fir:psi2fir",
         ":compiler:fir:fir2ir",
-        ":idea:fir-view",
+        ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
@@ -62,16 +62,21 @@ val projectsToShadow by extra(listOf(
         ":js:js.ast",
         ":js:js.frontend",
         ":js:js.parser",
+        ":js:js.config",
         ":js:js.serializer",
         ":js:js.translator",
-        ":kotlin-native:kotlin-native-utils",
-        ":kotlin-native:kotlin-native-library-reader",
+        ":native:kotlin-native-utils",
+        ":native:frontend.native",
+        ":kotlin-gradle-statistics",
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
+        ":compiler:config",
+        ":compiler:config.jvm",
+        ":compiler:compiler.version",
         ":core:util.runtime",
         ":plugins:lint",
         ":plugins:uast-kotlin",
@@ -87,7 +92,12 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-git",
         ":idea:idea-jps-common",
         *if (Ide.IJ())
-            arrayOf(":idea:idea-maven")
+            arrayOf(
+                ":idea:idea-maven",
+                ":libraries:tools:new-project-wizard",
+                ":idea:idea-new-project-wizard",
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli"
+            )
         else
             emptyArray<String>()
 ))
@@ -95,6 +105,7 @@ val projectsToShadow by extra(listOf(
 // Projects published to maven copied to the plugin as separate jars
 val libraryProjects = listOf(
     ":kotlin-reflect",
+    ":kotlin-coroutines-experimental-compat",
     ":kotlin-compiler-client-embeddable",
     ":kotlin-daemon-client",
     ":kotlin-daemon-client-new",
@@ -139,6 +150,7 @@ dependencies {
     embedded(protobufFull())
     embedded(kotlinBuiltins())
 
+    libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
     libraries(commonDep("javax.inject"))
     libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     libraries(commonDep("org.jetbrains", "markdown"))
@@ -160,7 +172,10 @@ dependencies {
     gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
-    gradleToolingModel(project(":idea:idea-gradle-tooling-api")) { isTransitive = false }
+
+    Platform[193].orLower {
+        gradleToolingModel(project(":idea:idea-gradle-tooling-api")) { isTransitive = false }
+    }
 
     jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
 

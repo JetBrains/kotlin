@@ -22,6 +22,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
@@ -34,7 +35,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.*
 
-class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with 'when'") {
+class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(
+    KtIfExpression::class.java,
+    KotlinBundle.message("replace.if.with.when")
+) {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         if (element.then == null) return null
         return element.ifKeyword.textRange
@@ -168,7 +172,11 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                 val currentElseBranch = currentIfExpression.`else`
                 if (currentElseBranch == null) {
                     // Try to build synthetic if / else according to KT-10750
-                    val syntheticElseBranch = if (canPassThrough) break else buildNextBranch(baseIfExpressionForSyntheticBranch) ?: break
+                    val syntheticElseBranch = if (canPassThrough) null else buildNextBranch(baseIfExpressionForSyntheticBranch)
+                    if (syntheticElseBranch == null) {
+                        applyFullCommentSaver = false
+                        break
+                    }
                     toDelete.addAll(baseIfExpressionForSyntheticBranch.siblingsUpTo(syntheticElseBranch))
                     if (syntheticElseBranch is KtIfExpression) {
                         baseIfExpressionForSyntheticBranch = syntheticElseBranch

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,8 +27,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.run.JavaRunConfigurationExtensionManagerUtil
 import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isProjectSourceFile
@@ -113,13 +113,13 @@ class KotlinStandaloneScriptRunConfiguration(
             ExecutionBundle.message("run.configuration.configuration.tab.title"),
             KotlinStandaloneScriptRunConfigurationEditor(project)
         )
-        JavaRunConfigurationExtensionManagerUtil.getInstance().appendEditors(this, group)
+        JavaRunConfigurationExtensionManager.instance.appendEditors(this, group)
         return group
     }
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
-        JavaRunConfigurationExtensionManagerUtil.getInstance().writeExternal(this, element)
+        JavaRunConfigurationExtensionManager.instance.writeExternal(this, element)
         DefaultJDOMExternalizer.writeExternal(this, element)
         EnvironmentVariablesComponent.writeExternal(element, getEnvs())
         PathMacroManager.getInstance(project).collapsePathsRecursively(element)
@@ -128,7 +128,7 @@ class KotlinStandaloneScriptRunConfiguration(
     override fun readExternal(element: Element) {
         PathMacroManager.getInstance(project).expandPaths(element)
         super.readExternal(element)
-        JavaRunConfigurationExtensionManagerUtil.getInstance().readExternal(this, element)
+        JavaRunConfigurationExtensionManager.instance.readExternal(this, element)
         DefaultJDOMExternalizer.readExternal(this, element)
         EnvironmentVariablesComponent.readExternal(element, getEnvs())
     }
@@ -144,11 +144,11 @@ class KotlinStandaloneScriptRunConfiguration(
         JavaRunConfigurationExtensionManager.checkConfigurationIsValid(this)
 
         if (filePath.isNullOrEmpty()) {
-            runtimeConfigurationWarning("File was not specified")
+            runtimeConfigurationWarning(KotlinJvmBundle.message("file.was.not.specified"))
         }
         val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(File(filePath))
         if (virtualFile == null || virtualFile.isDirectory) {
-            runtimeConfigurationWarning("Could not find script file: $filePath")
+            runtimeConfigurationWarning(KotlinJvmBundle.message("could.not.find.script.file.0", filePath.toString()))
         }
     }
 

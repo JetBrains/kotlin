@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
+import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
@@ -102,10 +104,21 @@ abstract class ChangeFunctionSignatureFix(
                     val call = originalElement.getCall(bindingContext) ?: return null
                     val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
                     val hasTypeMismatches = argumentToParameter.any { (argument, parameter) ->
-                        val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
-                        argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+                        val argumentTypes = argument.getArgumentExpression()?.let {
+                            getDataFlowAwareTypes(
+                                it,
+                                bindingContext
+                            )
+                        }
+                        argumentTypes?.none { dataFlowAwareType ->
+                            KotlinTypeChecker.DEFAULT.isSubtypeOf(dataFlowAwareType, parameter.type)
+                        } ?: true
                     }
-                    return AddFunctionParametersFix(originalElement, functionDescriptor, hasTypeMismatches)
+                    val kind = when {
+                        hasTypeMismatches -> AddFunctionParametersFix.Kind.ChangeSignature
+                        else -> AddFunctionParametersFix.Kind.AddParameterGeneric
+                    }
+                    return AddFunctionParametersFix(originalElement, functionDescriptor, kind)
                 }
             }
 
@@ -117,15 +130,14 @@ abstract class ChangeFunctionSignatureFix(
             functionDescriptor: FunctionDescriptor,
             private val parameterToRemove: ValueParameterDescriptor
         ) : ChangeFunctionSignatureFix(element, functionDescriptor) {
-
-            override fun getText() = "Remove parameter '${parameterToRemove.name.asString()}'"
+            override fun getText() = KotlinBundle.message("fix.change.signature.remove.parameter", parameterToRemove.name.asString())
 
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 runRemoveParameter(parameterToRemove, element ?: return)
             }
         }
 
-        const val FAMILY_NAME = "Change signature of function/constructor"
+        val FAMILY_NAME = KotlinBundle.message("fix.change.signature.family")
 
         fun runRemoveParameter(parameterDescriptor: ValueParameterDescriptor, context: PsiElement) {
             val functionDescriptor = parameterDescriptor.containingDeclaration as FunctionDescriptor
@@ -144,7 +156,7 @@ abstract class ChangeFunctionSignatureFix(
                     override fun forcePerformForSelectedFunctionOnly() = false
                 },
                 context,
-                "Remove parameter '${parameterDescriptor.name.asString()}'"
+                KotlinBundle.message("fix.change.signature.remove.parameter", parameterDescriptor.name.asString())
             )
         }
 

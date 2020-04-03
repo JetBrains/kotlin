@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataDe
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.KlibMetadataDeserializedPackageFragmentsFactoryImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleDescriptorFactory
 import org.jetbrains.kotlin.descriptors.konan.impl.KlibModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
@@ -20,10 +21,14 @@ import org.jetbrains.kotlin.storage.StorageManager
 /**
  * The default Kotlin/Native factories.
  */
-open class KlibMetadataFactories(
-    createBuiltIns:(StorageManager) -> KotlinBuiltIns,
-    val flexibleTypeDeserializer: FlexibleTypeDeserializer
+class KlibMetadataFactories(
+    createBuiltIns: (StorageManager) -> KotlinBuiltIns,
+    val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    val platformDependentTypeTransformer: PlatformDependentTypeTransformer
 ) {
+
+    constructor(createBuiltIns:(StorageManager) -> KotlinBuiltIns, flexibleTypeDeserializer: FlexibleTypeDeserializer) :
+            this(createBuiltIns, flexibleTypeDeserializer, PlatformDependentTypeTransformer.None)
 
     /**
      * The default [KlibModuleDescriptorFactory] factory instance.
@@ -54,7 +59,12 @@ open class KlibMetadataFactories(
         descriptorFactory: KlibModuleDescriptorFactory,
         packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
     ): KlibMetadataModuleDescriptorFactory =
-        KlibMetadataModuleDescriptorFactoryImpl(descriptorFactory, packageFragmentsFactory, flexibleTypeDeserializer)
+        KlibMetadataModuleDescriptorFactoryImpl(
+            descriptorFactory,
+            packageFragmentsFactory,
+            flexibleTypeDeserializer,
+            platformDependentTypeTransformer
+        )
 
     fun createDefaultKonanResolvedModuleDescriptorsFactory(
         moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory

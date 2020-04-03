@@ -117,6 +117,18 @@ fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
     report(diagnostic)
 }
 
+fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
+    diagnosticToReport: Diagnostic,
+    vararg diagnosticFactories: DiagnosticFactory<*>,
+) {
+    val hasAlreadyReportedDiagnosticFromListOrSameType = bindingContext.diagnostics.forElement(diagnosticToReport.psiElement)
+        .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
+
+    if (hasAlreadyReportedDiagnosticFromListOrSameType) return
+
+    report(diagnosticToReport)
+}
+
 class TypeMismatchDueToTypeProjectionsData(
     val expectedType: KotlinType,
     val expressionType: KotlinType,
@@ -167,10 +179,17 @@ inline fun <reified T : KtDeclaration> reportOnDeclarationAs(
     } ?: throw AssertionError("No declaration for $descriptor")
 }
 
+// this method should not be used in the project, but it is leaved for some time for compatibility with old compiler plugins
+@Deprecated(
+    "Please register DefaultErrorMessages.Extension in moment of DiagnosticFactory initialization by calling " +
+            "initializeFactoryNamesAndDefaultErrorMessages method instead of initializeFactoryNames",
+    ReplaceWith("report(diagnostic)"),
+    level = DeprecationLevel.ERROR
+)
 fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: DefaultErrorMessages.Extension) {
     @Suppress("UNCHECKED_CAST")
     val renderer = ext.map[diagnostic.factory] as? DiagnosticRenderer<D>
-            ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
+        ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
 
     val renderedDiagnostic = RenderedDiagnostic(diagnostic, renderer)
 

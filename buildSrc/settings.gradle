@@ -20,33 +20,55 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
     }
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+def projectVersions = file("../gradle/versions.properties").text
 
 BuildCacheKt.setupBuildCache(settings)
 
 include "prepare-deps"
 
-if (buildProperties.includeCidrPlugins) {
-    logger.info("Including CIDR plugins in buildSrc/settings.gradle")
+def target_AppCode_Clion = buildProperties.includeCidrPlugins && !projectVersions.contains("versions.androidStudioRelease")
+def target_AndroidStudio = buildProperties.includeCidrPlugins && projectVersions.contains("versions.androidStudioRelease")
+def target_IdeaUltimate = buildProperties.includeUltimate
+
+if (target_AppCode_Clion) {
+    logger.info("Including modules for AC and CL in buildSrc/settings.gradle")
+
     include ":prepare-deps:kotlin-native-platform-deps"
+    include ":prepare-deps:native-debug-plugin"
+
     project(":prepare-deps:kotlin-native-platform-deps").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
-} else {
-    logger.info("NOT including CIDR plugins in buildSrc/settings.gradle")
-}
+    project(":prepare-deps:native-debug-plugin").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
+} else if (target_AndroidStudio) {
+    logger.info("Including modules for AS (mobile plugin) in buildSrc/settings.gradle")
 
-if (buildProperties.includeUltimate) {
-    logger.info("Including extension for IJ Ultimate in buildSrc/settings.gradle")
+    include ":prepare-deps:cocoa-common-binaries"
+    include ":prepare-deps:lldb-framework"
+    include ":prepare-deps:lldb-frontend"
+
+    project(":prepare-deps:cocoa-common-binaries").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/cocoa-common-binaries")
+    project(":prepare-deps:lldb-framework").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-framework")
+    project(":prepare-deps:lldb-frontend").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
+} else if (target_IdeaUltimate) {
+    logger.info("Including modules for IU in buildSrc/settings.gradle")
+
     include ":prepare-deps:lldb-frontend"
     include ":prepare-deps:native-debug-plugin"
+
     project(":prepare-deps:lldb-frontend").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
     project(":prepare-deps:native-debug-plugin").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
+
 } else {
-    logger.info("Not including extension for IJ Ultimate in buildSrc/settings.gradle")
+    logger.info("Not including extra modules in buildSrc/settings.gradle")
 }

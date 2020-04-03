@@ -1,11 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.js
-
-import kotlin.js.internal.BitUtils
 
 fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
@@ -49,14 +47,14 @@ fun hashCode(obj: dynamic): Int {
     return when (jsTypeOf(obj)) {
         "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
         "function" -> getObjectHashCode(obj)
-        "number" -> BitUtils.getNumberHashCode(obj)
+        "number" -> getNumberHashCode(obj)
         "boolean" -> if(obj.unsafeCast<Boolean>()) 1 else 0
         else -> getStringHashCode(js("String(obj)"))
     }
 }
 
-private var POW_2_32 = 4294967296.0
-private var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
+private const val POW_2_32 = 4294967296.0
+private const val OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
 fun getObjectHashCode(obj: dynamic): Int {
     if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {

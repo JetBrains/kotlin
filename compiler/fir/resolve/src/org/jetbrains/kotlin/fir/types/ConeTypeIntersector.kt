@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
 import kotlin.collections.LinkedHashSet

@@ -24,6 +24,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -69,7 +70,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
 
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                     nameElement,
-                    "This property conflicts with synthetic extension and should be removed or renamed to avoid breaking code by future changes in the compiler",
+                    KotlinBundle.message("this.property.conflicts.with.synthetic.extension.and.should.be.removed.or.renamed.to.avoid.breaking.code.by.future.changes.in.the.compiler"),
                     true,
                     fixes,
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING
@@ -177,7 +178,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
     private class DeleteRedundantExtensionAction(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
         private val LOG = Logger.getInstance(DeleteRedundantExtensionAction::class.java)
 
-        override fun getFamilyName() = "Delete redundant extension property"
+        override fun getFamilyName() = KotlinBundle.message("delete.redundant.extension.property")
         override fun getText() = familyName
 
         override fun startInWriteAction() = false
@@ -187,7 +188,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
             val fqName = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL).importableFqName
             if (fqName != null) {
                 ProgressManager.getInstance().run(
-                    object : Task.Modal(project, "Searching for imports to delete", true) {
+                    object : Task.Modal(project, KotlinBundle.message("searching.for.imports.to.delete"), true) {
                         override fun run(indicator: ProgressIndicator) {
                             val importsToDelete = runReadAction {
                                 val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
@@ -220,7 +221,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
     }
 
     private class MarkHiddenAndDeprecatedAction(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
-        override fun getFamilyName() = "Mark as @Deprecated(..., level = DeprecationLevel.HIDDEN)"
+        override fun getFamilyName() = KotlinBundle.message("mark.as.deprecated.level.deprecationlevel.hidden")
         override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {

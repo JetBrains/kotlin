@@ -23,7 +23,7 @@ class Test2 : C(), A, Unrelated {
     override fun foo() {
         // This is ok, because there's a non-abstract 'foo' in 'Unrelated',
         // which is not overridden by abstract 'foo' in 'C'.
-        super.foo()
+        super.<!AMBIGUITY!>foo<!>()
         super<Unrelated>.foo()
     }
 }

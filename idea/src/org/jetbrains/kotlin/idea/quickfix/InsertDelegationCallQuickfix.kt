@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.moveCaret
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
+import org.jetbrains.kotlin.idea.util.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) :
     KotlinQuickFixAction<KtSecondaryConstructor>(element) {
-    override fun getText() = KotlinBundle.message("insert.delegation.call", keywordToUse)
-    override fun getFamilyName() = "Insert explicit delegation call"
+    override fun getText() = KotlinBundle.message("fix.insert.delegation.call", keywordToUse)
+    override fun getFamilyName() = KotlinBundle.message("insert.explicit.delegation.call")
 
     private val keywordToUse = if (isThis) "this" else "super"
 

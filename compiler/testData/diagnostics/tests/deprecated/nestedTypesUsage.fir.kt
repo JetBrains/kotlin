@@ -14,5 +14,5 @@ class TopLevel {
 fun useNested() {
     val d = TopLevel.Nested.use()
     TopLevel.Nested.Nested2()
-    TopLevel.Nested.CompanionNested2()
+    TopLevel.Nested.<!UNRESOLVED_REFERENCE!>CompanionNested2<!>()
 }

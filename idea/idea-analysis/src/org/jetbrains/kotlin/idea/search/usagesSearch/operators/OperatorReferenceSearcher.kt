@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.search.usagesSearch.operators
 
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.psi.*
@@ -16,9 +17,11 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.hasJavaResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
@@ -201,9 +204,10 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     }
 
     protected open fun resolveTargetToDescriptor(): FunctionDescriptor? {
-        return when (targetDeclaration) {
-            is KtDeclaration -> targetDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
-            is PsiMember -> targetDeclaration.getJavaOrKotlinMemberDescriptor()
+        return when {
+            targetDeclaration is KtDeclaration -> targetDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+            targetDeclaration is PsiMember && targetDeclaration.hasJavaResolutionFacade() ->
+                targetDeclaration.getJavaOrKotlinMemberDescriptor()
             else -> null
         } as? FunctionDescriptor
     }
@@ -313,7 +317,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 // we must unwrap progress indicator because ProgressWrapper does not do anything on changing text and fraction
                 val progress = ProgressWrapper.unwrap(ProgressIndicatorProvider.getGlobalProgressIndicator())
                 progress?.pushState()
-                progress?.text = "Searching for implicit usages..."
+                progress?.text = KotlinIdeaAnalysisBundle.message("searching.for.implicit.usages")
 
                 try {
                     val files = runReadAction { FileTypeIndex.getFiles(KotlinFileType.INSTANCE, scope) }

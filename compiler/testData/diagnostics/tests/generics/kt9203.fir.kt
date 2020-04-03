@@ -6,6 +6,6 @@ import java.util.stream.IntStream
 
 fun main() {
     val xs = IntStream.range(0, 10).mapToObj { it.toString() }
-            .<!INAPPLICABLE_CANDIDATE!>collect<!>(Collectors.toList())
-    <!UNRESOLVED_REFERENCE!>xs[0]<!>
+            .collect(Collectors.toList())
+    xs[0]
 }

@@ -23,8 +23,8 @@ class IrMonoliticWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLa
         with(ir.files.sortedBy { it.path }) {
             IrArrayWriter(map { it.fileData }).writeIntoFile(irLayout.irFiles.absolutePath)
             IrArrayWriter(map { it.declarations }).writeIntoFile(irLayout.irDeclarations.absolutePath)
-            IrArrayWriter(map { it.symbols }).writeIntoFile(irLayout.irSymbols.absolutePath)
             IrArrayWriter(map { it.types }).writeIntoFile(irLayout.irTypes.absolutePath)
+            IrArrayWriter(map { it.signatures }).writeIntoFile(irLayout.irSignatures.absolutePath)
             IrArrayWriter(map { it.strings }).writeIntoFile(irLayout.irStrings.absolutePath)
             IrArrayWriter(map { it.bodies }).writeIntoFile(irLayout.irBodies.absolutePath)
         }
@@ -50,8 +50,8 @@ class IrPerFileWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLayo
         irLayout.irFile(fileDir).writeBytes(file.fileData)
 
         irLayout.irDeclarations(fileDir).writeBytes(file.declarations)
-        irLayout.irSymbols(fileDir).writeBytes(file.symbols)
         irLayout.irTypes(fileDir).writeBytes(file.types)
+        irLayout.irSignatures(fileDir).writeBytes(file.signatures)
         irLayout.irStrings(fileDir).writeBytes(file.strings)
         irLayout.irBodies(fileDir).writeBytes(file.bodies)
     }

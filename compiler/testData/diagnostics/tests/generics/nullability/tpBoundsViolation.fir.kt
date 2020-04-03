@@ -18,14 +18,14 @@ class A<F> {
         x2.checkType { _<F>() }
 
         <!INAPPLICABLE_CANDIDATE!>foo1<!><F?>(y)
-        foo1(y)
+        <!INAPPLICABLE_CANDIDATE!>foo1<!>(y)
         foo2<F?>(y)
 
         val x3 = foo2(y)
         x3.checkType { _<F?>() }
 
-        foo1<F>(y)
-        foo2<F>(y)
+        <!INAPPLICABLE_CANDIDATE!>foo1<!><F>(y)
+        <!INAPPLICABLE_CANDIDATE!>foo2<!><F>(y)
 
         foo1<Z>(z)
 

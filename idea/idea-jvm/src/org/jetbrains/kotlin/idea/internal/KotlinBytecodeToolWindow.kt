@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
@@ -70,7 +71,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
     private val jvm8Target: JCheckBox
     private val ir: JCheckBox
 
-    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>() {
+    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>(this) {
         override fun prepareRequestInfo(): Location? {
             if (!toolWindow.isVisible) {
                 return null
@@ -180,7 +181,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         val optionPanel = JPanel(FlowLayout())
         add(optionPanel, BorderLayout.NORTH)
 
-        decompile = JButton("Decompile")
+        decompile = JButton(KotlinJvmBundle.message("button.text.decompile"))
         if (KotlinDecompilerService.getInstance() != null) {
             optionPanel.add(decompile)
             decompile.addActionListener {
@@ -191,7 +192,11 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                         showDecompiledCode(file)
                     } catch (ex: DecompileFailedException) {
                         LOG.info(ex)
-                        Messages.showErrorDialog(myProject, "Failed to decompile " + file.name + ": " + ex, "Kotlin Bytecode Decompiler")
+                        Messages.showErrorDialog(
+                            myProject,
+                            KotlinJvmBundle.message("failed.to.decompile.0.1", file.name, ex),
+                            KotlinJvmBundle.message("kotlin.bytecode.decompiler")
+                        )
                     }
 
                 }
@@ -199,11 +204,11 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         }
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = JCheckBox("Inline", true)
-        enableOptimization = JCheckBox("Optimization", true)
-        enableAssertions = JCheckBox("Assertions", true)
-        jvm8Target = JCheckBox("JVM 8 target", false)
-        ir = JCheckBox("IR", false)
+        enableInline = JCheckBox(KotlinJvmBundle.message("checkbox.text.inline"), true)
+        enableOptimization = JCheckBox(KotlinJvmBundle.message("checkbox.text.optimization"), true)
+        enableAssertions = JCheckBox(KotlinJvmBundle.message("checkbox.text.assertions"), true)
+        jvm8Target = JCheckBox(KotlinJvmBundle.message("checkbox.text.jvm.8.target"), false)
+        ir = JCheckBox(KotlinJvmBundle.message("checkbox.text.ir"), false)
         optionPanel.add(enableInline)
         optionPanel.add(enableOptimization)
         optionPanel.add(enableAssertions)
@@ -241,7 +246,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             val state: GenerationState
             try {
                 state = compileSingleFile(ktFile, configuration)
-                    ?: return BytecodeGenerationResult.Error("Cannot compile ${ktFile.name} to bytecode.")
+                    ?: return BytecodeGenerationResult.Error(KotlinJvmBundle.message("cannot.compile.0.to.bytecode", ktFile.name))
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Exception) {

@@ -29,6 +29,7 @@ import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
@@ -117,22 +118,37 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         val targetElement = if (shouldUnwrap) element.unwrapped ?: element else element
 
         fun elementKind() = when (targetElement) {
-            is KtClass -> if (targetElement.isInterface()) "interface" else "class"
-            is KtObjectDeclaration -> if (targetElement.isCompanion()) "companion object" else "object"
-            is KtNamedFunction -> "function"
-            is KtPropertyAccessor -> (if (targetElement.isGetter) "getter" else "setter") + " for property "
-            is KtFunctionLiteral -> "lambda"
-            is KtPrimaryConstructor, is KtSecondaryConstructor -> "constructor"
-            is KtProperty -> if (targetElement.isLocal) "variable" else "property"
-            is KtTypeParameter -> "type parameter"
-            is KtParameter -> "parameter"
-            is KtDestructuringDeclarationEntry -> "variable"
-            is KtTypeAlias -> "type alias"
-            is KtLabeledExpression -> "label"
-            is KtImportAlias -> "import alias"
-            is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> "property"
-            is KtLightClassForFacade -> "facade class"
-            is RenameKotlinPropertyProcessor.PropertyMethodWrapper -> "property accessor"
+            is KtClass -> if (targetElement.isInterface())
+                KotlinBundle.message("find.usages.interface")
+            else
+                KotlinBundle.message("find.usages.class")
+            is KtObjectDeclaration -> if (targetElement.isCompanion())
+                KotlinBundle.message("find.usages.companion.object")
+            else
+                KotlinBundle.message("find.usages.object")
+            is KtNamedFunction -> KotlinBundle.message("find.usages.function")
+            is KtPropertyAccessor -> KotlinBundle.message(
+                "find.usages.for.property",
+                (if (targetElement.isGetter)
+                    KotlinBundle.message("find.usages.getter")
+                else
+                    KotlinBundle.message("find.usages.setter"))
+            ) + " "
+            is KtFunctionLiteral -> KotlinBundle.message("find.usages.lambda")
+            is KtPrimaryConstructor, is KtSecondaryConstructor -> KotlinBundle.message("find.usages.constructor")
+            is KtProperty -> if (targetElement.isLocal)
+                KotlinBundle.message("find.usages.variable")
+            else
+                KotlinBundle.message("find.usages.property")
+            is KtTypeParameter -> KotlinBundle.message("find.usages.type.parameter")
+            is KtParameter -> KotlinBundle.message("find.usages.parameter")
+            is KtDestructuringDeclarationEntry -> KotlinBundle.message("find.usages.variable")
+            is KtTypeAlias -> KotlinBundle.message("find.usages.type.alias")
+            is KtLabeledExpression -> KotlinBundle.message("find.usages.label")
+            is KtImportAlias -> KotlinBundle.message("find.usages.import.alias")
+            is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> KotlinBundle.message("find.usages.property")
+            is KtLightClassForFacade -> KotlinBundle.message("find.usages.facade.class")
+            is RenameKotlinPropertyProcessor.PropertyMethodWrapper -> KotlinBundle.message("find.usages.property.accessor")
             else -> null
         }
 

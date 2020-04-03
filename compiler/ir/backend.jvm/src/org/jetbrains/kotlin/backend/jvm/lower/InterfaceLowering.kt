@@ -1,17 +1,19 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyBodyToStatic
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.copyFromWithPlaceholderTypeArguments
+import org.jetbrains.kotlin.backend.jvm.ir.createDelegatingCallWithPlaceholderTypeArguments
+import org.jetbrains.kotlin.backend.jvm.ir.createPlaceholderAnyNType
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -71,12 +74,13 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     continue@loop
 
                 /**
-                 * 2) They inherit a default implementation from an interface this interface
-                 *    extends: create a bridge from companion to companion, unless
-                 *    - the implementation is private or belongs to java.lang.Object
-                 *    - we're in JVM Compatibility Default mode, in which case we go via
+                 * 2) They inherit a default implementation from an interface this interface extends:
+                 *    create a bridge from DefaultImpls of derived to DefaultImpls of base, unless
+                 *    - the implementation is private, or belongs to java.lang.Object,
+                 *      or is a stub for function with default parameters ($default)
+                 *    - we're in -Xjvm-default=compatibility mode, in which case we go via
                  *      accessors on the parent class rather than the DefaultImpls
-                 *    - we're in JVM Default mode, and we have that default implementation,
+                 *    - we're in -Xjvm-default=enable mode, and we have that default implementation,
                  *      in which case we simply leave it.
                  *
                  *    ```
@@ -91,21 +95,27 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    interface B : A { class DefaultImpls { fun foo() = A.DefaultImpls.foo() } }
                  *    ```
                  */
-                function.origin == IrDeclarationOrigin.FAKE_OVERRIDE -> {
-                    val implementation = function.resolveFakeOverride()!!
+                function.isFakeOverride -> {
+                    // We check to see if this is a default stub function BEFORE finding the implementation because of a front-end bug
+                    // (KT-36188) where there could be multiple implementations. (resolveFakeOverride() only returns the implementation if
+                    // there's only one.)
+                    if (function.name.asString().endsWith("\$default")) {
+                        continue@loop
+                    }
+                    val implementation = function.resolveFakeOverride() ?: error("No single implementation found for: ${function.render()}")
 
                     when {
                         Visibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
                             continue@loop
-                        context.state.jvmDefaultMode.isCompatibility -> {
-                            val defaultImpl = createDefaultImpl(function)
-                            defaultImpl.bridgeViaAccessorTo(function)
-                        }
                         !implementation.hasJvmDefault() -> {
                             val defaultImpl = createDefaultImpl(function)
                             context.declarationFactory.getDefaultImplsFunction(implementation).also {
                                 defaultImpl.bridgeToStatic(it)
                             }
+                        }
+                        context.state.jvmDefaultMode.isCompatibility -> {
+                            val defaultImpl = createDefaultImpl(function)
+                            defaultImpl.bridgeViaAccessorTo(function)
                         }
                         // else -> Do nothing.
                     }
@@ -119,7 +129,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         || (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && !function.hasJvmDefault())
                         || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS -> {
                     val defaultImpl = createDefaultImpl(function)
-                    function.copyImplementationTo(defaultImpl)
+                    defaultImpl.body = function.moveBodyTo(defaultImpl)
                     removedFunctions[function.symbol] = defaultImpl.symbol
                 }
 
@@ -129,7 +139,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  */
                 !function.hasJvmDefault() -> {
                     val defaultImpl = createDefaultImpl(function)
-                    function.copyImplementationTo(defaultImpl)
+                    defaultImpl.body = function.moveBodyTo(defaultImpl)
                     function.body = null
                     //TODO reset modality to abstract
                 }
@@ -155,14 +165,15 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedPropertySymbol>()
         }
 
-        // Move $$delegatedProperties array
-        val delegatedPropertyArray = irClass.declarations.filterIsInstance<IrField>()
-            .singleOrNull { it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE }
-        if (delegatedPropertyArray != null) {
-            irClass.declarations.remove(delegatedPropertyArray)
-            defaultImplsIrClass.declarations.add(0, delegatedPropertyArray)
-            delegatedPropertyArray.parent = defaultImplsIrClass
-            delegatedPropertyArray.initializer?.patchDeclarationParents(defaultImplsIrClass)
+        // Move $$delegatedProperties array and $assertionsDisabled field
+        for (field in irClass.declarations.filterIsInstance<IrField>()) {
+            if (field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE && field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD)
+                continue
+
+            irClass.declarations.remove(field)
+            defaultImplsIrClass.declarations.add(0, field)
+            field.parent = defaultImplsIrClass
+            field.initializer?.patchDeclarationParents(defaultImplsIrClass)
         }
     }
 
@@ -173,25 +184,26 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         if (annotationsMethods.none()) return
 
         for (function in annotationsMethods) {
-            removedFunctions[function.symbol] = createDefaultImpl(function).symbol
+            val defaultImpl = createDefaultImpl(function)
+            defaultImpl.body = function.moveBodyTo(defaultImpl)
+            removedFunctions[function.symbol] = defaultImpl.symbol
         }
     }
 
     private fun createDefaultImpl(function: IrSimpleFunction): IrSimpleFunction =
         context.declarationFactory.getDefaultImplsFunction(function).also { newFunction ->
-            newFunction.body = function.body?.patchDeclarationParents(newFunction)
             newFunction.parentAsClass.declarations.add(newFunction)
         }
 
-    private fun IrSimpleFunction.copyImplementationTo(target: IrSimpleFunction) {
-        copyBodyToStatic(this, target)
-    }
-
-    // Bridge from static to static method - simply fill the arguments to the parameters.
+    // Bridge from static to static method - simply fill the function arguments to the parameters.
     // By nature of the generation of both source and target of bridge, they line up.
     private fun IrFunction.bridgeToStatic(callTarget: IrFunction) {
         body = IrExpressionBodyImpl(IrCallImpl(startOffset, endOffset, returnType, callTarget.symbol).also { call ->
-            call.passTypeArgumentsFrom(this)
+
+            callTarget.typeParameters.forEachIndexed { i, _ ->
+                call.putTypeArgument(i, createPlaceholderAnyNType(context.irBuiltIns))
+            }
+
             valueParameters.forEachIndexed { i, it ->
                 call.putValueArgument(i, IrGetValueImpl(startOffset, endOffset, it.symbol))
             }
@@ -209,7 +221,9 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                 callTarget.symbol,
                 superQualifierSymbol = callTarget.parentAsClass.symbol
             ).also { call ->
-                call.passTypeArgumentsFrom(this)
+                this.typeParameters.drop(callTarget.parentAsClass.typeParameters.size).forEachIndexed { i, typeParameter ->
+                    call.putTypeArgument(i, typeParameter.defaultType)
+                }
 
                 var offset = 0
                 callTarget.dispatchReceiverParameter?.let {
@@ -243,7 +257,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         val newFunction = removedFunctions[expression.symbol]?.owner
         return super.visitCall(
             if (newFunction != null) {
-                irCall(expression, newFunction, receiversAsArguments = true)
+                createDelegatingCallWithPlaceholderTypeArguments(expression, newFunction, context.irBuiltIns)
             } else {
                 expression
             }
@@ -256,14 +270,10 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             if (newFunction != null) {
                 with(expression) {
                     IrFunctionReferenceImpl(
-                        startOffset,
-                        endOffset,
-                        type,
-                        newFunction.symbol,
-                        typeArgumentsCount,
-                        origin
+                        startOffset, endOffset, type, newFunction.symbol, newFunction.typeParameters.size, newFunction.valueParameters.size,
+                        expression.reflectionTarget, origin
                     ).apply {
-                        copyTypeAndValueArgumentsFrom(expression, receiversAsArguments = true)
+                        copyFromWithPlaceholderTypeArguments(expression, context.irBuiltIns)
                         copyAttributes(expression)
                     }
                 }

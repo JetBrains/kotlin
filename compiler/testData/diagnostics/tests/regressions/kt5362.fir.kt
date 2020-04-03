@@ -12,7 +12,7 @@ class Outer {
 fun Activity.toast() = Unit
 class Activity(){
     class Fragment{
-        fun call() = toast()
+        fun call() = <!INAPPLICABLE_CANDIDATE!>toast<!>()
     }
 }
 

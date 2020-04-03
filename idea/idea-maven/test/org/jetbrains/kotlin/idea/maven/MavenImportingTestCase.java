@@ -57,6 +57,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWithLog;
+
 public abstract class MavenImportingTestCase extends MavenTestCase {
     protected MavenProjectsTree myProjectsTree;
     protected MavenProjectsManager myProjectsManager;
@@ -98,6 +100,11 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
         finally {
             super.tearDown();
         }
+    }
+
+    @Override
+    protected boolean shouldRunTest() {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this);
     }
 
     protected void assertModules(String... expectedNames) {

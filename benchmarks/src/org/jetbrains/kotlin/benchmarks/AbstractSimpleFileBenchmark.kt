@@ -74,7 +74,7 @@ private val LANGUAGE_FEATURE_SETTINGS =
 private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
-    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../idea/resources")
+    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-common/resources")
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
@@ -161,10 +161,11 @@ abstract class AbstractSimpleFileBenchmark {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
         val session = createSession(env, scope)
-        val builder = RawFirBuilder(session, stubMode = false)
+        val firProvider = session.firProvider as FirProviderImpl
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()
-        val firFile = builder.buildFirFile(file).also((session.firProvider as FirProviderImpl)::recordFile)
+        val firFile = builder.buildFirFile(file).also(firProvider::recordFile)
 
         for (transformer in totalTransformer.transformers) {
             transformer.transformFile(firFile, null)

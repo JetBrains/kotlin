@@ -95,3 +95,29 @@ internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = 
 internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> =
     with(entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }
 
+/**
+ * Calculate the initial capacity of a map, based on Guava's
+ * [com.google.common.collect.Maps.capacity](https://github.com/google/guava/blob/v28.2/guava/src/com/google/common/collect/Maps.java#L325)
+ * approach.
+ */
+@PublishedApi
+internal actual fun mapCapacity(expectedSize: Int): Int = when {
+    // We are not coercing the value to a valid one and not throwing an exception. It is up to the caller to
+    // properly handle negative values.
+    expectedSize < 0 -> expectedSize
+    expectedSize < 3 -> expectedSize + 1
+    expectedSize < INT_MAX_POWER_OF_TWO -> ((expectedSize / 0.75F) + 1.0F).toInt()
+    // any large value
+    else -> Int.MAX_VALUE
+}
+private const val INT_MAX_POWER_OF_TWO: Int = 1 shl (Int.SIZE_BITS - 2)
+
+/**
+ * Checks a collection builder function capacity argument.
+ * Does nothing, capacity is validated in List/Set/Map constructor
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@PublishedApi
+@kotlin.internal.InlineOnly
+internal actual inline fun checkBuilderCapacity(capacity: Int) {}

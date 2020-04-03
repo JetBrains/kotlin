@@ -181,7 +181,7 @@ class JKNewExpression(
 
 
 class JKFieldAccessExpression(var identifier: JKFieldSymbol) : JKExpression() {
-    override fun calculateType(typeFactory: JKTypeFactory) = identifier.fieldType 
+    override fun calculateType(typeFactory: JKTypeFactory) = identifier.fieldType
     override fun accept(visitor: JKVisitor) = visitor.visitFieldAccessExpression(this)
 }
 
@@ -194,6 +194,11 @@ class JKPackageAccessExpression(var identifier: JKPackageSymbol) : JKExpression(
 class JKClassAccessExpression(var identifier: JKClassSymbol) : JKExpression() {
     override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitClassAccessExpression(this)
+}
+
+class JKMethodAccessExpression(val identifier: JKMethodSymbol) : JKExpression() {
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
+    override fun accept(visitor: JKVisitor) = visitor.visitMethodAccessExpression(this)
 }
 
 class JKMethodReferenceExpression(

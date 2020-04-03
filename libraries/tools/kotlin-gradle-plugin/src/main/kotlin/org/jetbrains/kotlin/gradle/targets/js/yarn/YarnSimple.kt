@@ -10,14 +10,19 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 
-object YarnSimple : YarnBasics() {
+class YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) {
         setup(resolvedNpmProject.project.rootProject)
 
         val project = resolvedNpmProject.project
 
         PackageJsonUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
-            yarnExec(project, resolvedNpmProject.npmProject.dir, NpmApi.resolveOperationDescription("yarn for ${project.path}"))
+            yarnExec(
+                project,
+                resolvedNpmProject.npmProject.dir,
+                NpmApi.resolveOperationDescription("yarn for ${project.path}"),
+                emptyList()
+            )
             yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.externalNpmDependencies)
         }
     }
@@ -25,6 +30,7 @@ object YarnSimple : YarnBasics() {
     override fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        skipExecution: Boolean,
+        cliArgs: List<String>
     ) = Unit
 }

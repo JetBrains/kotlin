@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
 class FoldIfToReturnAsymmetricallyIntention :
-    SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with return") {
+    SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, KotlinBundle.message("replace.if.expression.with.return")) {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         if (BranchedFoldingUtils.getFoldableBranchedReturn(element.then) == null || element.`else` != null) {
             return null

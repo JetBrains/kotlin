@@ -14,9 +14,10 @@ import com.intellij.openapi.util.DefaultJDOMExternalizer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 class KotlinJUnitStaticEntryPoint(@JvmField var wasSelected: Boolean = true) : EntryPoint() {
-    override fun getDisplayName() = "JUnit static methods"
+    override fun getDisplayName() = KotlinBundle.message("junit.static.methods")
 
     override fun isSelected() = wasSelected
 
@@ -29,8 +30,8 @@ class KotlinJUnitStaticEntryPoint(@JvmField var wasSelected: Boolean = true) : E
     )
 
     override fun isEntryPoint(psiElement: PsiElement) = psiElement is PsiMethod &&
-            AnnotationUtil.isAnnotated(psiElement, staticJUnitAnnotations) &&
-            AnnotationUtil.isAnnotated(psiElement, listOf("kotlin.jvm.JvmStatic"))
+            AnnotationUtil.isAnnotated(psiElement, staticJUnitAnnotations, AnnotationUtil.CHECK_TYPE) &&
+            AnnotationUtil.isAnnotated(psiElement, listOf("kotlin.jvm.JvmStatic"), AnnotationUtil.CHECK_TYPE)
 
     override fun readExternal(element: Element) {
         DefaultJDOMExternalizer.readExternal(this, element)

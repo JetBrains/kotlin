@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 annotation class Ann
 
 @Ann open class My

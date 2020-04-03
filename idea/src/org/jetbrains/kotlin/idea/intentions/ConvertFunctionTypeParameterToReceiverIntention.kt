@@ -17,6 +17,7 @@ import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
@@ -45,7 +46,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntention<KtTypeReference>(
     KtTypeReference::class.java,
-    "Convert function type parameter to receiver"
+    KotlinBundle.message("convert.function.type.parameter.to.receiver")
 ) {
     class FunctionDefinitionInfo(element: KtFunction) : AbstractProcessableUsageInfo<KtFunction, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
@@ -174,7 +175,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
 
             val usages = ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>()
 
-            project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
+            project.runSynchronouslyWithProgress(KotlinBundle.message("looking.for.usages.and.conflicts"), true) {
                 runReadAction {
                     val progressStep = 1.0 / callables.size
                     for ((i, callable) in callables.withIndex()) {
@@ -184,7 +185,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
 
                         if (!checkModifiable(callable)) {
                             val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
-                            conflicts.putValue(callable, "Can't modify $renderedCallable")
+                            conflicts.putValue(callable, KotlinBundle.message("can.t.modify.0", renderedCallable))
                         }
 
                         usageLoop@ for (ref in callable.searchReferencesOrMethodReferences()) {
@@ -196,7 +197,10 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                                     if (data.isFirstParameter) continue@usageLoop
                                     conflicts.putValue(
                                         refElement,
-                                        "Can't replace non-Kotlin reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
+                                        KotlinBundle.message(
+                                            "can.t.replace.non.kotlin.reference.with.call.expression.0",
+                                            StringUtil.htmlEmphasize(refElement.text)
+                                        )
                                     )
                                 }
                             }
@@ -237,7 +241,10 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 ) {
                     conflicts.putValue(
                         expressionToProcess,
-                        "Following expression won't be processed since refactoring can't preserve its semantics: ${expressionToProcess.text}"
+                        KotlinBundle.message(
+                            "following.expression.won.t.be.processed.since.refactoring.can.t.preserve.its.semantics.0",
+                            expressionToProcess.text
+                        )
                     )
                     return
                 }
@@ -256,7 +263,10 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             if (callableReference != null) {
                 conflicts.putValue(
                     refElement,
-                    "Callable reference transformation is not supported: " + StringUtil.htmlEmphasize(callableReference.text)
+                    KotlinBundle.message(
+                        "callable.reference.transformation.is.not.supported.0",
+                        StringUtil.htmlEmphasize(callableReference.text)
+                    )
                 )
                 return
             }
@@ -281,7 +291,10 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 if (explicateReceiverOf(descriptor) == "this") {
                     conflicts.putValue(
                         thisExpr,
-                        "Following expression won't be processed since refactoring can't preserve its semantics: ${thisExpr.text}"
+                        KotlinBundle.message(
+                            "following.expression.won.t.be.processed.since.refactoring.can.t.preserve.its.semantics.0",
+                            thisExpr.text
+                        )
                     )
                     return false
                 }
@@ -291,7 +304,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
 
         private fun processInternalUsages(callable: KtFunction, usages: ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>) {
             val body = when (callable) {
-                is KtConstructor<*> -> callable.containingClassOrObject?.getBody()
+                is KtConstructor<*> -> callable.containingClassOrObject?.body
                 else -> callable.bodyExpression
             }
             if (body != null) {
@@ -341,7 +354,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             setReceiverTypeReference(element)
             parameterList!!.removeParameter(data.typeParameterIndex)
         }
-        text = "Convert '${elementBefore.text}' to '${elementAfter.text}'"
+        text = KotlinBundle.message("convert.0.to.1", elementBefore.text, elementAfter.text)
 
         return element.textRange
     }

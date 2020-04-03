@@ -54,7 +54,7 @@ fun createCommonCoroutinesTestMethodModels(
     targetBackend: TargetBackend,
     skipIgnored: Boolean
 ): Collection<MethodModel> {
-    return if (targetBackend.isIR)
+    return if (targetBackend.isIR || targetBackend == TargetBackend.JS)
         listOf(
             CoroutinesTestModel(
                 rootDir,

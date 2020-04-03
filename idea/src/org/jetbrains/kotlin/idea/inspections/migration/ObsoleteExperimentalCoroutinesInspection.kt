@@ -17,6 +17,7 @@ import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
@@ -92,7 +93,7 @@ private interface CoroutineMigrationProblem {
 // Shortcut quick fix for running inspection in the project scope.
 // Should work like RunInspectionAction.runInspection.
 private class ObsoleteCoroutineUsageInWholeFix : LocalQuickFix {
-    override fun getFamilyName(): String = "Fix experimental coroutines usages in the project"
+    override fun getFamilyName(): String = KotlinBundle.message("obsolete.coroutine.usage.in.whole.fix.family.name")
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val toolWrapper = InspectionProjectProfileManager.getInstance(project).currentProfile.getInspectionTool(
@@ -115,7 +116,13 @@ private class ObsoleteCoroutineUsageInWholeFix : LocalQuickFix {
 
             val cleanupToolProfile = runInInspectionProfileInitMode { RunInspectionIntention.createProfile(toolWrapper, managerEx, null) }
             managerEx.createNewGlobalContext(false)
-                .codeCleanup(cleanupScope, cleanupToolProfile, "Apply in the project: " + toolWrapper.displayName, null, false)
+                .codeCleanup(
+                    cleanupScope,
+                    cleanupToolProfile,
+                    KotlinBundle.message("apply.in.the.project.0", toolWrapper.displayName),
+                    null,
+                    false
+                )
         }
 
         // Overcome failure during profile creating because of absent tools in tests
@@ -139,7 +146,7 @@ private class ObsoleteCoroutineUsageInWholeFix : LocalQuickFix {
  * There should be a single fix class with the same family name, this way it can be executed for all found coroutines problems from UI.
  */
 private class ObsoleteCoroutineUsageFix(val delegate: CoroutineFix) : LocalQuickFix {
-    override fun getFamilyName(): String = "Fix experimental coroutines usage"
+    override fun getFamilyName(): String = KotlinBundle.message("obsolete.coroutine.usage.fix.family.name")
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         delegate.applyFix(project, descriptor)
@@ -190,7 +197,7 @@ private class ObsoleteTopLevelFunctionUsage(
 
         holder.registerProblem(
             simpleNameExpression,
-            "`$newFqName` is expected to be used since Kotlin 1.3",
+            KotlinBundle.message("0.is.expected.to.be.used.since.kotlin.1.3", newFqName),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             *fixesWithWholeProject(isOnTheFly, ObsoleteCoroutineUsageFix(fix))
         )
@@ -226,7 +233,7 @@ private class ObsoleteExtensionFunctionUsage(
 
         holder.registerProblem(
             simpleNameExpression,
-            "Methods are absent in coroutines class since 1.3",
+            KotlinBundle.message("methods.are.absent.in.coroutines.class.since.1.3"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             *fixesWithWholeProject(isOnTheFly, ObsoleteCoroutineUsageFix(fix))
         )
@@ -266,7 +273,7 @@ private class ExperimentalImportUsage : CoroutineMigrationProblem {
 
         holder.registerProblem(
             reportExpression,
-            "Experimental coroutines usages are obsolete since 1.3",
+            KotlinBundle.message("experimental.coroutines.usages.are.obsolete.since.1.3"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             *fixesWithWholeProject(isOnTheFly, ObsoleteCoroutineUsageFix(ObsoleteCoroutineImportFix))
         )

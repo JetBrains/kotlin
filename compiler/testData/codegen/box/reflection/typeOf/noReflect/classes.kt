@@ -1,7 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND_FIR: JVM_IR
+// !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 package test
@@ -26,12 +25,12 @@ fun box(): String {
     check("test.C?", typeOf<C?>())
 
     check("java.util.List<java.lang.String>", typeOf<List<String>>())
-    check("java.util.Map<in java.lang.Number, java.lang.Object?>?", typeOf<Map<in Number, *>?>())
-    check("java.lang.Enum<out java.lang.Enum<*>>", typeOf<Enum<*>>())
+    check("java.util.Map<in java.lang.Number, *>?", typeOf<Map<in Number, *>?>())
+    check("java.lang.Enum<*>", typeOf<Enum<*>>())
     check("java.lang.Enum<kotlin.annotation.AnnotationRetention>", typeOf<Enum<AnnotationRetention>>())
 
     check("kotlin.Array<java.lang.Object>", typeOf<Array<Any>>())
-    check("kotlin.Array<out java.lang.Object?>", typeOf<Array<*>>())
+    check("kotlin.Array<*>", typeOf<Array<*>>())
     check("kotlin.Array<kotlin.IntArray>", typeOf<Array<IntArray>>())
     check("kotlin.Array<in kotlin.Array<test.C>?>", typeOf<Array<in Array<C>?>>())
 

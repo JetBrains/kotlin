@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
@@ -40,7 +41,7 @@ class DeserializedClassDescriptor(
 ) : AbstractClassDescriptor(
     outerContext.storageManager,
     nameResolver.getClassId(classProto.fqName).shortClassName
-) {
+), DeserializedDescriptor {
     private val classId = nameResolver.getClassId(classProto.fqName)
 
     private val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(classProto.flags))
@@ -103,6 +104,8 @@ class DeserializedClassDescriptor(
     override fun isActual() = false
 
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
+
+    override fun isFun() = Flags.IS_FUN_INTERFACE.get(classProto.flags)
 
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): MemberScope =
         memberScopeHolder.getScope(kotlinTypeRefiner)
@@ -170,6 +173,12 @@ class DeserializedClassDescriptor(
 
     override fun getDeclaredTypeParameters() = c.typeDeserializer.ownTypeParameters
 
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? {
+        return c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
+    }
+
+    override fun isDefinitelyNotSamInterface() = !isFun
+
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {
         private val parameters = c.storageManager.createLazyValue {
             this@DeserializedClassDescriptor.computeConstructorTypeParameters()
@@ -218,7 +227,7 @@ class DeserializedClassDescriptor(
         }
 
         private val refinedSupertypes = c.storageManager.createLazyValue {
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
             kotlinTypeRefiner.refineSupertypes(classDescriptor)
         }
 

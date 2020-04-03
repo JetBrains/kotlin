@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,14 +48,18 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     // Change calls to big arity invoke functions to vararg calls.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.valueArgumentsCount < FunctionInvokeDescriptor.BIG_ARITY ||
-            !expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
-            expression.symbol.owner.name.asString() != "invoke")
-            return super.visitFunctionAccess(expression)
+            !(expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
+                    expression.symbol.owner.parentAsClass.defaultType.isSuspendFunctionOrKFunction()) ||
+            expression.symbol.owner.name.asString() != "invoke"
+        ) return super.visitFunctionAccess(expression)
 
         return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             at(expression)
             irCall(functionNInvokeFun).apply {
-                dispatchReceiver = expression.dispatchReceiver
+                dispatchReceiver = irImplicitCast(
+                    expression.dispatchReceiver!!,
+                    this@FunctionNVarargBridgeLowering.context.ir.symbols.functionN.defaultType
+                )
                 putValueArgument(0, irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
                     (0 until expression.valueArgumentsCount).forEach { +expression.getValueArgument(it)!! }
                 })
@@ -81,16 +85,16 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
         // Fix super class
         val superType = bigArityFunctionSuperTypes.single()
-        declaration.superTypes.remove(superType)
+        declaration.superTypes -= superType
         declaration.superTypes += context.ir.symbols.functionN.typeWith(
             (superType.arguments.last() as IrTypeProjection).type
         )
 
         // Add vararg invoke bridge
         val invokeFunction = declaration.functions.single {
-            it.name.asString() == "invoke" && it.valueParameters.size == superType.arguments.size - 1
+            it.name.asString() == "invoke" && it.valueParameters.size == superType.arguments.size - if (it.isSuspend) 0 else 1
         }
-        invokeFunction.overriddenSymbols.clear()
+        invokeFunction.overriddenSymbols = emptyList()
         declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
 
         return declaration

@@ -12,17 +12,17 @@ class A<E>() : C(), T {
     fun test() {
         super
         super<T>
-        super.<!UNRESOLVED_REFERENCE!>foo<!>()
+        super.foo()
         super<T>.foo()
         super<C>.bar()
         super<T>@A.foo()
         super<C>@A.bar()
         super<E>.<!UNRESOLVED_REFERENCE!>bar<!>()
         super<E>@A.<!UNRESOLVED_REFERENCE!>bar<!>()
-        super<Int>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!NOT_A_SUPERTYPE!>super<Int><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
         super<<!SYNTAX!><!>>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        super<() -> Unit>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        super<Unit>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!NOT_A_SUPERTYPE!>super<() -> Unit><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!NOT_A_SUPERTYPE!>super<Unit><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
         super<T>@B.foo()
         super<C>@B.bar()
     }
@@ -30,11 +30,11 @@ class A<E>() : C(), T {
     inner class B : T {
         fun test() {
             super<T>.foo();
-            super<C>.bar()
-            super<C>@A.bar()
+            <!NOT_A_SUPERTYPE!>super<C><!>.bar()
+            <!NOT_A_SUPERTYPE!>super<C>@A<!>.bar()
             super<T>@A.foo()
             super<T>@B.foo()
-            super<C>@B.<!UNRESOLVED_REFERENCE!>foo<!>()
+            <!NOT_A_SUPERTYPE!>super<C>@B<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
             super.foo()
             super
             super<T>

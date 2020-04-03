@@ -9,9 +9,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsTargetPreset(
     project: Project,
@@ -20,19 +22,59 @@ open class KotlinJsTargetPreset(
     project,
     kotlinPluginVersion
 ) {
+    var irPreset: KotlinJsIrTargetPreset? = null
+        internal set
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
-    override fun instantiateTarget(): KotlinJsTarget {
-        return project.objects.newInstance(KotlinJsTarget::class.java, project, platformType)
+    override fun instantiateTarget(name: String): KotlinJsTarget {
+        return project.objects.newInstance(
+            KotlinJsTarget::class.java,
+            project,
+            platformType
+        ).apply {
+            this.irTarget = irPreset?.createTarget(
+                lowerCamelCaseName(
+                    name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY),
+                    KotlinJsCompilerType.IR.lowerName
+                )
+            )
+
+            project.whenEvaluated {
+                if (!isBrowserConfigured && !isNodejsConfigured) {
+                    project.logger.warn(
+                        """
+                            Please choose a JavaScript environment to build distributions and run tests.
+                            Not choosing any of them will be an error in the future releases.
+                            kotlin {
+                                js {
+                                    // To build distributions for and run tests on browser or Node.js use one or both of:
+                                    browser()
+                                    nodejs()
+                                }
+                            }
+                        """.trimIndent()
+                    )
+                }
+            }
+        }
     }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
+        kotlinPluginVersion
+    )
 
-    override fun getName(): String = PRESET_NAME
+    override fun getName(): String {
+        return lowerCamelCaseName(
+            PRESET_NAME,
+            irPreset?.let { KotlinJsCompilerType.BOTH.lowerName }
+        )
+    }
 
-    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>) =
-        KotlinJsCompilationFactory(project, forTarget)
+    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
+        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { (forTarget as KotlinJsTarget).irTarget })
+    }
 
     companion object {
         const val PRESET_NAME = "js"
@@ -42,11 +84,19 @@ open class KotlinJsTargetPreset(
 class KotlinJsSingleTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) :
-    KotlinJsTargetPreset(project, kotlinPluginVersion) {
-
+) : KotlinJsTargetPreset(
+    project,
+    kotlinPluginVersion
+) {
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
+    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
+        irPreset?.let {
+            super.provideTargetDisambiguationClassifier(target)
+                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY))
+                ?.decapitalize()
+        }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
+        kotlinPluginVersion
+    )
 }

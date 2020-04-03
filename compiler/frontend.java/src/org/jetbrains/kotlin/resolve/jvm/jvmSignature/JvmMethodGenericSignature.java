@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
+import java.util.Objects;
 
 public class JvmMethodGenericSignature extends JvmMethodSignature {
     private final String genericsSignature;
@@ -47,8 +48,7 @@ public class JvmMethodGenericSignature extends JvmMethodSignature {
 
         JvmMethodGenericSignature that = (JvmMethodGenericSignature) o;
 
-        return super.equals(that) &&
-               (genericsSignature == null ? that.genericsSignature == null : genericsSignature.equals(that.genericsSignature));
+        return super.equals(that) && Objects.equals(genericsSignature, that.genericsSignature);
     }
 
     @Override

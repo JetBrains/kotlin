@@ -7,21 +7,20 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -29,57 +28,58 @@ private val ENUM_VALUES = Name.identifier("values")
 private val ENUM_VALUE_OF = Name.identifier("valueOf")
 private val VALUE = Name.identifier("value")
 
-fun FirModifiableClass<out FirRegularClass>.generateValuesFunction(
-    session: FirSession, packageFqName: FqName, classFqName: FqName
-) {
-    val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
-    val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
-        isStatic = true
-    }
-    declarations +=
-        FirSimpleFunctionImpl(
-            source, session,
-            FirResolvedTypeRefImpl(
-                source, ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(StandardClassIds.Array),
-                    arrayOf(
-                        ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this.symbol.classId), emptyArray(), isNullable = false)
-                    ),
-                    isNullable = false
-                )
-            ),
-            null, ENUM_VALUES, status, symbol
-        ).apply {
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            body = FirEmptyExpressionBlock()
+fun AbstractFirRegularClassBuilder.generateValuesFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
+    declarations += buildSimpleFunction {
+        source = this@generateValuesFunction.source
+        this.session = session
+        returnTypeRef = buildResolvedTypeRef {
+            source = this@generateValuesFunction.source
+            type = ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(StandardClassIds.Array),
+                arrayOf(
+                    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this@generateValuesFunction.symbol.classId), emptyArray(), isNullable = false)
+                ),
+                isNullable = false
+            )
         }
+        name = ENUM_VALUES
+        this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+            isStatic = true
+        }
+        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
+        resolvePhase = FirResolvePhase.BODY_RESOLVE
+        body = buildEmptyExpressionBlock()
+    }
 }
 
-fun FirModifiableClass<out FirRegularClass>.generateValueOfFunction(
-    session: FirSession, packageFqName: FqName, classFqName: FqName
-) {
-    val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
-    val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
-        isStatic = true
-    }
-    declarations +=
-        FirSimpleFunctionImpl(
-            source, session,
-            FirResolvedTypeRefImpl(
-                source, ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(this.symbol.classId),
-                    emptyArray(),
-                    isNullable = false
-                )
-            ),
-            null, ENUM_VALUE_OF, status, symbol
-        ).apply {
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            valueParameters += FirValueParameterImpl(
-                source, session, FirImplicitStringTypeRef(source),
-                VALUE, FirVariableSymbol(VALUE),
-                defaultValue = null, isCrossinline = false, isNoinline = false, isVararg = false
+fun AbstractFirRegularClassBuilder.generateValueOfFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
+    declarations += buildSimpleFunction {
+        source = this@generateValueOfFunction.source
+        this.session = session
+        returnTypeRef = buildResolvedTypeRef {
+            source = this@generateValueOfFunction.source
+            type = ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(this@generateValueOfFunction.symbol.classId),
+                emptyArray(),
+                isNullable = false
             )
-            body = FirEmptyExpressionBlock()
         }
+        name = ENUM_VALUE_OF
+        status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+            isStatic = true
+        }
+        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
+        valueParameters += buildValueParameter vp@{
+            source = this@generateValueOfFunction.source
+            this@vp.session = session
+            returnTypeRef = FirImplicitStringTypeRef(source)
+            name = VALUE
+            this@vp.symbol = FirVariableSymbol(VALUE)
+            isCrossinline = false
+            isNoinline = false
+            isVararg = false
+        }
+        resolvePhase = FirResolvePhase.BODY_RESOLVE
+        body = buildEmptyExpressionBlock()
+    }
 }

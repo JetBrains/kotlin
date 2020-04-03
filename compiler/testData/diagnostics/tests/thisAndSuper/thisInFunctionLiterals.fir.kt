@@ -5,14 +5,14 @@ class A(val a:Int) {
     fun Byte.xx() : Double.() -> Any {
       checkSubtype<Byte>(this)
       val a: Double.() -> Unit = {
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Double>(this)
+        checkSubtype<Double>(this)
         checkSubtype<Byte>(this@xx)
         checkSubtype<B>(this@B)
         checkSubtype<A>(this@A)
       }
-      val b: Double.() -> Unit = a@{ <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Double>(this@a) + checkSubtype<Byte>(this@xx) }
+      val b: Double.() -> Unit = a@{ checkSubtype<Double>(this@a) + checkSubtype<Byte>(this@xx) }
       val c = a@{ -> this@a + checkSubtype<Byte>(this@xx) }
-      return (a@{<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Double>(this@a) + checkSubtype<Byte>(this@xx)})
+      return (a@{checkSubtype<Double>(this@a) + checkSubtype<Byte>(this@xx)})
     }
   }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
@@ -14,4 +15,12 @@ class IrTypeParameterBuilder : IrDeclarationBuilder() {
     var variance: Variance = Variance.INVARIANT
     var isReified: Boolean = false
     val superTypes: MutableList<IrType> = SmartList()
+
+    fun updateFrom(from: IrTypeParameter) {
+        super.updateFrom(from)
+        index = from.index
+        variance = from.variance
+        isReified = from.isReified
+        superTypes.addAll(from.superTypes)
+    }
 }

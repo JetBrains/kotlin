@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.nj2k.types.JKContextType
 import org.jetbrains.kotlin.nj2k.types.isInterface
+import org.jetbrains.kotlin.nj2k.types.isUnit
 import org.jetbrains.kotlin.nj2k.types.updateNullability
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -139,6 +140,10 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
 
         override fun visitClassAccessExpressionRaw(classAccessExpression: JKClassAccessExpression) {
             printer.renderSymbol(classAccessExpression.identifier, classAccessExpression)
+        }
+
+        override fun visitMethodAccessExpression(methodAccessExpression: JKMethodAccessExpression) {
+            printer.renderSymbol(methodAccessExpression.identifier, methodAccessExpression)
         }
 
         override fun visitFileRaw(file: JKFile) {
@@ -346,8 +351,10 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
                 it.accept(this)
             }
             renderTokenElement(method.rightParen)
-            printer.print(": ")
-            method.returnType.accept(this)
+            if (!method.returnType.type.isUnit()) {
+                printer.print(": ")
+                method.returnType.accept(this)
+            }
             renderExtraTypeParametersUpperBounds(method.typeParameterList)
             method.block.accept(this)
         }

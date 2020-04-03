@@ -6,8 +6,11 @@ plugins {
 dependencies {
     compile(kotlinStdlib())
     compile(project(":compiler:backend"))
-    compile(toolsJar())
+
+    compileOnly(toolsJarApi())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+
+    testCompileOnly(toolsJarApi())
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
     testCompile(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }

@@ -16,6 +16,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
@@ -84,12 +85,12 @@ private class NewScriptDependenciesNotificationPanel(
 ) : EditorNotificationPanel() {
 
     init {
-        setText("There is a new script context available.")
-        createComponentActionLabel("Apply context") {
+        setText(KotlinIdeaCoreBundle.message("notification.text.there.is.a.new.script.context.available"))
+        createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.apply.context")) {
             onClick()
         }
 
-        createComponentActionLabel("Enable auto-reload") {
+        createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
             onClick()
             KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
         }

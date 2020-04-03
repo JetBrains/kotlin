@@ -42,8 +42,16 @@ object Main {
         var collectingExpressions = false
         var needsCompiler = false
         val arguments = arrayListOf<String>()
-        val expressions = arrayListOf<String>()
+        var expression: String? = null
         var noReflect = false
+
+        fun setExpression(expr: String) {
+            if (expression == null) {
+                expression = expr
+            } else {
+                throw RunnerException("Only single -e/-expression argument supported")
+            }
+        }
 
         var i = 0
         while (i < args.size) {
@@ -58,7 +66,7 @@ object Main {
 
             if (collectingExpressions) {
                 if ("-expression" == arg || "-e" == arg) {
-                    expressions.add(next())
+                    setExpression(next())
                     i++
                     continue
                 } else {
@@ -89,7 +97,7 @@ object Main {
                 }
             }
             else if ("-expression" == arg || "-e" == arg) {
-                expressions.add(next())
+                setExpression(next())
                 collectingExpressions = true
                 needsCompiler = true
             }
@@ -125,8 +133,8 @@ object Main {
             classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")
         }
 
-        if (expressions.isNotEmpty()) {
-            runner = ExpressionRunner(expressions)
+        if (expression != null) {
+            runner = ExpressionRunner(expression!!)
         } else if (runner == null) {
             runner = ReplRunner()
             needsCompiler = true

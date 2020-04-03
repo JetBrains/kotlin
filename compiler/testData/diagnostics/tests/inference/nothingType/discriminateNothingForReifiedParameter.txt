@@ -1,0 +1,23 @@
+package
+
+public fun </*0*/ M : Bound> materialize(): M
+public inline fun </*0*/ reified M : Bound> materializeReified(): M
+public inline fun </*0*/ reified M> materializeReifiedUnbound(): M
+public fun </*0*/ T> select(/*0*/ a: T, /*1*/ b: T): T
+public fun </*0*/ T : Bound> take(/*0*/ t: T?): T
+public inline fun </*0*/ reified T : Bound> takeReified(/*0*/ t: T?): T
+public inline fun </*0*/ reified T> takeReifiedUnbound(/*0*/ t: T?): T
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun test3(): kotlin.Unit
+public fun test4(): Bound
+public fun test5(): Bound?
+public fun test6(): kotlin.Unit
+public fun test7(): Bound?
+public fun test8(): kotlin.Unit
+
+public interface Bound {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -35,7 +35,6 @@ internal object DebuggerPreferenceKeys {
     val IS_FILTER_FOR_STDLIB_ALREADY_ADDED by debuggerPreferenceKey(false)
 
     val FORCE_RANKING by debuggerPreferenceKey(false)
-    val EMULATE_DEX by debuggerPreferenceKey(false)
 
     val PRINT_FRAME by debuggerPreferenceKey(false)
     val SHOW_KOTLIN_VARIABLES by debuggerPreferenceKey(false)

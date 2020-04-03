@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.inline.coroutines.SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -304,10 +307,29 @@ class CoroutineCodegenForLambda private constructor(
         val createArgumentTypes =
             if (generateErasedCreate || doNotGenerateInvokeBridge) typeMapper.mapAsmMethod(createCoroutineDescriptor).argumentTypes.asList()
             else parameterTypes
-        var index = 0
-        parameterTypes.withVariableIndices().forEach { (varIndex, type) ->
-            load(varIndex + 1, type)
-            StackValue.coerce(type, createArgumentTypes[index++], this)
+        // invoke is not big arity, but create is. Pass an array to create.
+        if (parameterTypes.size == 22 && createArgumentTypes.size == 1) {
+            iconst(22)
+            newarray(AsmTypes.OBJECT_TYPE)
+            // 0 - this
+            // 1..22 - parameters
+            // 23 - first empy slot
+            val arraySlot = 23
+            store(arraySlot, AsmTypes.OBJECT_TYPE)
+            for ((varIndex, type) in parameterTypes.withVariableIndices()) {
+                load(arraySlot, AsmTypes.OBJECT_TYPE)
+                iconst(varIndex)
+                load(varIndex + 1, type)
+                StackValue.coerce(type, AsmTypes.OBJECT_TYPE, this)
+                astore(AsmTypes.OBJECT_TYPE)
+            }
+            load(arraySlot, AsmTypes.OBJECT_TYPE)
+        } else {
+            var index = 0
+            parameterTypes.withVariableIndices().forEach { (varIndex, type) ->
+                load(varIndex + 1, type)
+                StackValue.coerce(type, createArgumentTypes[index++], this)
+            }
         }
 
         // this.create(..)
@@ -470,8 +492,9 @@ class CoroutineCodegenForLambda private constructor(
                     val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                         mv, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
-                        element = element,
-                        diagnostics = state.diagnostics,
+                        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
+                        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                        sourceFile = element.containingKtFile.name,
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
@@ -767,4 +790,8 @@ private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() 
     ) {
         error("This functions must not be called")
     }
+}
+
+fun reportSuspensionPointInsideMonitor(element: KtElement, state: GenerationState, stackTraceElement: String) {
+    state.diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, stackTraceElement))
 }

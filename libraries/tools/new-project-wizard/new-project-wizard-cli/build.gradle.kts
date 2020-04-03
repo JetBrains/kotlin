@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
 
     implementation(project(":libraries:tools:new-project-wizard"))
-    compileOnly(intellijDep()) { includeJars("snakeyaml-1.24") }
+    implementation("org.yaml:snakeyaml:1.24")
 
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))

@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
-import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -61,6 +60,8 @@ open class KotlinVariant(
 ) : KotlinTargetComponentWithPublication, SoftwareComponentInternal {
     var componentName: String? = null
 
+    var artifactTargetName: String = target.targetName
+
     final override val target: KotlinTarget
         get() = producingCompilation.target
 
@@ -77,7 +78,7 @@ open class KotlinVariant(
     internal var defaultArtifactIdSuffix: String? = null
 
     override val defaultArtifactId: String
-        get() = dashSeparatedName(target.project.name, target.targetName.toLowerCase(), defaultArtifactIdSuffix)
+        get() = dashSeparatedName(target.project.name, artifactTargetName.toLowerCase(), defaultArtifactIdSuffix)
 
     override var publicationDelegate: MavenPublication? = null
 }

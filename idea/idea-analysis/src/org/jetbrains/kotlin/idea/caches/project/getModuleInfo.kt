@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
@@ -14,9 +15,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
@@ -43,16 +44,10 @@ fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.collectInfos(Modu
 
 fun PsiElement.getModuleInfos(): Sequence<IdeaModuleInfo> = this.collectInfos(ModuleInfoCollector.ToSequence)
 
-private fun ModuleInfo.doFindSdk(): SdkInfo? = dependencies().lazyClosure { it.dependencies() }.firstIsInstanceOrNull<SdkInfo>()
-
 fun ModuleInfo.findSdkAcrossDependencies(): SdkInfo? {
-    return when (this) {
-        // It is important to check for cases of test/production explicitly, because we're using lambda's class
-        // of 'cacheInvalidatingOnRootModifications' as key for cache, and it should be different for Production/Source
-        is ModuleProductionSourceInfo -> module.cacheInvalidatingOnRootModifications { doFindSdk() }
-        is ModuleTestSourceInfo -> module.cacheInvalidatingOnRootModifications { doFindSdk() }
-        else -> doFindSdk()
-    }
+    val project = (this as? IdeaModuleInfo)?.project ?: return null
+
+    return SdkInfoCache.getInstance(project).findOrGetCachedSdk(this)
 }
 
 fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? =
@@ -80,12 +75,10 @@ fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): Modu
         return moduleRelatedModuleInfo
     }
 
-    if (ScratchFileService.isInScratchRoot(virtualFile)) {
+    return if (ScratchFileService.getInstance().getRootType(virtualFile) is ScratchRootType) {
         val scratchModule = virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
-        return scratchModule?.testSourceInfo() ?: scratchModule?.productionSourceInfo()
-    }
-
-    return null
+        scratchModule?.testSourceInfo() ?: scratchModule?.productionSourceInfo()
+    } else null
 }
 
 private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
@@ -215,7 +208,6 @@ private fun <T> KtLightElement<*, *>.processLightElement(c: ModuleInfoCollector<
     }
 
     val element = kotlinOrigin ?: when (this) {
-        is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KtLightClassForFacade -> this.files.first()
         else -> return c.onFailure("Light element without origin is referenced by resolve:\n$this\n${this.clsDelegate.text}")
     }
@@ -315,7 +307,7 @@ private fun OrderEntry.toIdeaModuleInfo(
 /**
  * @see [org.jetbrains.kotlin.types.typeUtil.closure].
  */
-fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence {
+fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence<T> {
     if (size == 0) return@sequence
     var sizeBeforeIteration = 0
 

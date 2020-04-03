@@ -13,8 +13,8 @@ inline var value: (p: Int) -> String
 inline var value2: Int.(p: Int) -> String
     get() = {"123" }
     set(ext: Int.(p: Int) -> String) {
-        11.<!UNRESOLVED_REFERENCE!>ext<!>(11)
-        11.<!UNRESOLVED_REFERENCE!>ext<!>(11)
+        11.ext(11)
+        11.ext(11)
 
         val p = ext
     }

@@ -11,6 +11,7 @@ import com.intellij.lang.java.JavaFindUsagesProvider
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -30,14 +31,17 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
 
     override fun getType(element: PsiElement): String {
         return when (element) {
-            is KtNamedFunction -> "function"
-            is KtClass -> "class"
-            is KtParameter -> "parameter"
-            is KtProperty -> if (element.isLocal) "variable" else "property"
-            is KtDestructuringDeclarationEntry -> "variable"
-            is KtTypeParameter -> "type parameter"
-            is KtSecondaryConstructor -> "constructor"
-            is KtObjectDeclaration -> "object"
+            is KtNamedFunction -> KotlinBundle.message("find.usages.function")
+            is KtClass -> KotlinBundle.message("find.usages.class")
+            is KtParameter -> KotlinBundle.message("find.usages.parameter")
+            is KtProperty -> if (element.isLocal)
+                KotlinBundle.message("find.usages.variable")
+            else
+                KotlinBundle.message("find.usages.property")
+            is KtDestructuringDeclarationEntry -> KotlinBundle.message("find.usages.variable")
+            is KtTypeParameter -> KotlinBundle.message("find.usages.type.parameter")
+            is KtSecondaryConstructor -> KotlinBundle.message("find.usages.constructor")
+            is KtObjectDeclaration -> KotlinBundle.message("find.usages.object")
             else -> ""
         }
     }

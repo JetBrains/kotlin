@@ -5,5 +5,5 @@ fun main() {
         if (i == 10) result = "non null"
         else i++
     }
-    result.<!INAPPLICABLE_CANDIDATE!>length<!>
+    result.length
 }

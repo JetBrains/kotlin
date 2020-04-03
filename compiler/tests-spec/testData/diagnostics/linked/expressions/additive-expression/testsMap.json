@@ -1,0 +1,23 @@
+{
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 3,
+          "description": "The return type of these functions is not restricted.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 3,
+          "description": "The return type of these functions is not restricted.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

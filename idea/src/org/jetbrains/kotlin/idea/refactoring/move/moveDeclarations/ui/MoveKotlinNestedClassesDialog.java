@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinTypeReferenceEditorComboWithBrowseButton;
 import org.jetbrains.kotlin.psi.*;
 import javax.swing.*;
@@ -82,6 +82,13 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         validateButtons();
 
         myHelpAction.setEnabled(false);
+
+        initializedCheckBoxesState = getCheckboxesState();
+    }
+
+    private final int initializedCheckBoxesState;
+    private int getCheckboxesState() {
+        return openInEditorCheckBox.isSelected() ? 1 : 0;
     }
 
     private void initClassChooser(@NotNull KtClassOrObject initialTargetClass) {
@@ -217,7 +224,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         return "#" + getClass().getName();
     }
 
-    private Model<MoveKotlinDeclarationsProcessor> getModel() {
+    private Model getModel() {
         return new MoveKotlinNestedClassesModel(
                 myProject,
                 openInEditorCheckBox.isSelected(),
@@ -230,16 +237,22 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     @Override
     protected void doAction() {
 
-        MoveKotlinDeclarationsProcessor processor;
+        ModelResultWithFUSData modelResult;
         try {
-            processor = getModel().computeModelResult();
+             modelResult = getModel().computeModelResult();
         }
         catch (ConfigurationException e) {
             setErrorText(e.getMessage());
             return;
         }
 
-        invokeRefactoring(processor);
+        MoveUtilsKt.logFusForMoveRefactoring(
+                modelResult.getElementsCount(),
+                modelResult.getEntityToMove(),
+                modelResult.getDestination(),
+                getCheckboxesState() == initializedCheckBoxesState,
+                () -> invokeRefactoring(modelResult.getProcessor())
+        );
     }
 
     @Override

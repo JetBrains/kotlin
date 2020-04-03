@@ -66,25 +66,6 @@ fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimp
     }
 }
 
-/**
- * Implementation of given method.
- *
- * TODO: this method is actually a part of resolve and probably duplicates another one
- */
-internal fun IrSimpleFunction.resolveFakeOverrideMaybeAbstract() = this.resolveFakeOverride(allowAbstract = true)
-
-internal fun IrProperty.resolveFakeOverrideMaybeAbstract(): IrProperty =
-    this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingPropertySymbol!!.owner
-
-/**
- * TODO: This method can be simplified if the "overriddenSymbols" list of an IrField always includes only one element.
- * Currently it's not the case for some cinterop libraries (e.g. Foundation). In these libraries interfaces containing
- * final properties with external getters are created (corresponding compiler error is suppressed). Due to KT-33081
- * such a property gets a backing field and a field of a class implementing such interfaces can have several elements
- * in the overriddenSymbols list.
- */
-internal fun IrField.resolveFakeOverride(): IrField = getRealSupers().first()
-
 val IrSimpleFunction.target: IrSimpleFunction
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
 

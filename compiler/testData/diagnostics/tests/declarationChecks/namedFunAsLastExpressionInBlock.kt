@@ -7,8 +7,8 @@ fun test() {
     val x = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named1<!>(x: Int): Int { return 1 }
     x checkType { _<Function1<Int, Int>>() }
 
-    foo { <!EXPECTED_TYPE_MISMATCH("() -> Int")!>fun named2(): Int {return 1}<!> }
-    foo({ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> })
+    foo <!NI;TYPE_MISMATCH!>{ <!EXPECTED_TYPE_MISMATCH("() -> Int")!>fun named2(): Int {return 1}<!> }<!>
+    foo(<!NI;TYPE_MISMATCH!>{ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> }<!>)
 
     val x1 =
     <!INVALID_IF_AS_EXPRESSION!>if<!> (1 == 1)

@@ -257,18 +257,9 @@ public final class Out</*0*/ out T> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public object case_3 {
-    private constructor case_3()
-    public final fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
 public final class case_4 : ClassLevel3 {
     public constructor case_4()
-    public final fun case_4_2(/*0*/ number: kotlin.Int?): kotlin.Boolean
-    public final fun case_4_5(): kotlin.Unit
+    public final fun case_4_3(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun test1(): kotlin.Unit
@@ -276,9 +267,8 @@ public final class case_4 : ClassLevel3 {
     public final override /*1*/ /*fake_override*/ fun test3(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final fun </*0*/ T : kotlin.Number?> T.case_4_1(): kotlin.Boolean
-    public final fun </*0*/ T> T?.case_4_3(): kotlin.Boolean
-    public final fun </*0*/ T : kotlin.Boolean> T.case_4_4(): kotlin.Unit
-    public final fun </*0*/ T> T.case_4_5_wrap(): kotlin.Unit
+    public final fun </*0*/ T : kotlin.Boolean> T.case_4_2(): kotlin.Unit
+    public final fun </*0*/ T> T.case_4_3_wrap(): kotlin.Unit
 }
 
 public final class case_5</*0*/ T> : ClassLevel5 {

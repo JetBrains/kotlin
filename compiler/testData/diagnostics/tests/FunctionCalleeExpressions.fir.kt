@@ -56,10 +56,10 @@ fun f() :  Int.() -> Unit = {}
 
 fun main1() {
     1.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>;
-    <!UNRESOLVED_REFERENCE!>{1}()<!>;
-    <!UNRESOLVED_REFERENCE!>(fun (x : Int) = x)(1)<!>
+    {1}();
+    (fun (x : Int) = x)(1)
     1.<!UNRESOLVED_REFERENCE!>(fun Int.(x : Int) = x)(1)<!>;
-    l@<!UNRESOLVED_REFERENCE!>{1}()<!>
+    l@{1}()
     1.<!UNRESOLVED_REFERENCE!>((fun Int.() = 1))()<!>
     1.<!UNRESOLVED_REFERENCE!>(f())()<!>
     1.<!UNRESOLVED_REFERENCE!>if(true){f()}else{f()}()<!>
@@ -73,12 +73,12 @@ fun main1() {
 }
 
 fun test() {
-    <!UNRESOLVED_REFERENCE!>{x : Int -> 1}()<!>;
-    <!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>
+    <!INAPPLICABLE_CANDIDATE!>{x : Int -> 1}()<!>;
+    <!INAPPLICABLE_CANDIDATE!>(fun Int.() = 1)()<!>
     "sd".<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>
     val i : Int? = null
     i.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>;
-    <!UNRESOLVED_REFERENCE!>{}<Int>()<!>
+    <!INAPPLICABLE_CANDIDATE!>{}<Int>()<!>
     1?.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>
     1.<!UNRESOLVED_REFERENCE!>{}()<!>
 }

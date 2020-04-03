@@ -1,0 +1,15 @@
+FILE: User.kt
+    public final class User : R|Owner| {
+        public constructor(): R|User| {
+            super<R|Owner|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo this@R|/User|.R|/User.text|
+        }
+
+        public final override fun getText(): R|kotlin/String| {
+            ^getText String()
+        }
+
+    }

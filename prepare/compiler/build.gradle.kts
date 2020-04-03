@@ -1,7 +1,6 @@
 @file:Suppress("HasPlatformType")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import proguard.gradle.ProGuardTask
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -12,9 +11,14 @@ plugins {
     java
 }
 
+val JDK_18: String by rootProject.extra
+
 val fatJarContents by configurations.creating
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
+val fatJarContentsStripVersions by configurations.creating
+
+val compilerVersion by configurations.creating
 
 // JPS build assumes fat jar is built from embedded configuration,
 // but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
@@ -24,6 +28,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         extendsFrom(fatJarContents)
         extendsFrom(fatJarContentsStripMetadata)
         extendsFrom(fatJarContentsStripServices)
+        extendsFrom(fatJarContentsStripVersions)
+        extendsFrom(compilerVersion)
     }
 }
 
@@ -73,6 +79,7 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-annotations-android",
     ":kotlin-annotations-jvm",
     ":kotlin-ant",
+    ":kotlin-coroutines-experimental-compat",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
     ":kotlin-daemon-client-new",
@@ -88,9 +95,7 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-jvm",
     ":kotlin-scripting-js",
     ":js:js.engines",
-    ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-source-sections-compiler-plugin",
-    ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -110,8 +115,8 @@ val distCompilerPluginProjects = listOf(
 
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
+    ":kotlin-coroutines-experimental-compat",
     ":kotlin-script-runtime",
-    ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
@@ -132,23 +137,21 @@ dependencies {
     compile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
-    proguardLibraries(
-        files(
-            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
-            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
-            toolsJarFile()
-        )
-    )
 
-    compilerModules.forEach {
-        fatJarContents(project(it)) { isTransitive = false }
-    }
+    compilerVersion(project(":compiler:compiler.version"))
+    proguardLibraries(project(":compiler:compiler.version"))
+    compilerModules
+        .filter { it != ":compiler:compiler.version" } // Version will be added directly to the final jar excluding proguard and relocation
+        .forEach {
+            fatJarContents(project(it)) { isTransitive = false }
+        }
 
     libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
     libraries(commonDep("io.ktor", "ktor-network"))
     libraries(kotlinStdlib("jdk8"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib("js", "distLibrary"))
+        libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
     distLibraryProjects.forEach {
@@ -200,7 +203,7 @@ dependencies {
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
 
     if (Platform.P192.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("lz4-java-1.6.0") }
+        fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
     } else {
         fatJarContents(intellijDep()) { includeJars("lz4-1.3.0") }
     }
@@ -211,24 +214,28 @@ dependencies {
 
     fatJarContents(intellijDep()) {
         includeIntellijCoreJarDependencies(project) {
-            !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j"))
+            !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j") || it.startsWith("streamex"))
         }
     }
 
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
 
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
+
+    fatJarContentsStripVersions(intellijCoreDep()) { includeJars("streamex", rootProject = rootProject) }
 }
 
 publish()
 
-val packCompiler by task<ShadowJar> {
-    configurations = emptyList()
+val packCompiler by task<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(File(buildDir, "libs"))
     archiveClassifier.set("before-proguard")
 
-    from(fatJarContents)
+    dependsOn(fatJarContents)
+    from {
+        fatJarContents.map(::zipTree)
+    }
 
     dependsOn(fatJarContentsStripServices)
     from {
@@ -243,26 +250,51 @@ val packCompiler by task<ShadowJar> {
             zipTree(it).matching { exclude("META-INF/jb/**", "META-INF/LICENSE") }
         }
     }
+
+    dependsOn(fatJarContentsStripVersions)
+    from {
+        fatJarContentsStripVersions.files.map {
+            zipTree(it).matching { exclude("META-INF/versions/**") }
+        }
+    }
 }
 
-val proguard by task<ProGuardTask> {
+val proguard by task<CacheableProguardTask> {
     dependsOn(packCompiler)
-    configuration("$rootDir/compiler/compiler.pro")
 
-    val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
+    jdkHome = File(JDK_18)
 
-    inputs.files(packCompiler.get().outputs.files.singleFile)
-    outputs.file(outputJar)
+    configuration("$projectDir/compiler.pro")
+
+    injars(
+        mapOf("filter" to """
+            !org/apache/log4j/jmx/Agent*,
+            !org/apache/log4j/net/JMS*,
+            !org/apache/log4j/net/SMTP*,
+            !org/apache/log4j/or/jms/MessageRenderer*,
+            !org/jdom/xpath/Jaxen*,
+            !org/jline/builtins/ssh/**,
+            !org/mozilla/javascript/xml/impl/xmlbeans/**,
+            !net/sf/cglib/**,
+            !META-INF/maven**,
+            **.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
+            META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
+            messages/**""".trimIndent()),
+        provider { packCompiler.get().outputs.files.singleFile }
+    )
+
+    outjars(fileFrom(buildDir, "libs", "$compilerBaseName-after-proguard.jar"))
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraries)
+    libraryjars(
+        files(
+            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!),
+            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar", jdkHome = jdkHome!!),
+            toolsJarFile(jdkHome = jdkHome!!)
+        )
+    )
 
     printconfiguration("$buildDir/compiler.pro.dump")
-
-    // This properties are used by proguard config compiler.pro
-    doFirst {
-        System.setProperty("kotlin-compiler-jar-before-shrink", packCompiler.get().outputs.files.singleFile.canonicalPath)
-        System.setProperty("kotlin-compiler-jar", outputJar.canonicalPath)
-    }
 }
 
 val pack = if (kotlinBuildProperties.proguard) proguard else packCompiler
@@ -270,9 +302,14 @@ val distDir: String by rootProject.extra
 
 val jar = runtimeJar {
     dependsOn(pack)
+    dependsOn(compilerVersion)
 
     from {
-        zipTree(pack.get().outputs.files.singleFile)
+        zipTree(pack.get().singleOutputFile())
+    }
+
+    from {
+        compilerVersion.map(::zipTree)
     }
 
     manifest.attributes["Class-Path"] = compilerManifestClassPath

@@ -9,14 +9,15 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.addConstructorKeyword
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.util.addConstructorKeyword
+import org.jetbrains.kotlin.idea.util.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : KotlinQuickFixAction<KtPrimaryConstructor>(element), CleanupFix {
     override fun getFamilyName(): String = text
-    override fun getText(): String = "Add 'constructor' keyword"
+    override fun getText(): String = KotlinBundle.message("add.constructor.keyword")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element?.addConstructorKeyword()

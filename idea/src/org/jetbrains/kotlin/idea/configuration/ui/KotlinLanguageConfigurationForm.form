@@ -35,9 +35,9 @@
           <component id="65662" class="javax.swing.JButton" binding="installButton" default-binding="true">
             <constraints/>
             <properties>
-              <actionCommand value="Install"/>
-              <label value="Install"/>
-              <text value="&amp;Install"/>
+              <actionCommand resource-bundle="messages/KotlinBundle" key="action.text.install"/>
+              <label resource-bundle="messages/KotlinBundle" key="action.text.install"/>
+              <text resource-bundle="messages/KotlinBundle" key="mnemonic.install"/>
               <visible value="true"/>
             </properties>
           </component>
@@ -67,7 +67,7 @@
             <constraints/>
             <properties>
               <foreground color="-65536"/>
-              <text value="(status)"/>
+              <text resource-bundle="messages/KotlinBundle" key="status"/>
             </properties>
           </component>
         </children>
@@ -83,7 +83,7 @@
             <constraints/>
             <properties>
               <labelFor value="ca1a9"/>
-              <text value="Update &amp;channel:"/>
+              <text resource-bundle="messages/KotlinBundle" key="update.channel"/>
             </properties>
           </component>
           <component id="ca1a9" class="javax.swing.JComboBox" binding="channelCombo">
@@ -93,7 +93,7 @@
           <component id="c7546" class="javax.swing.JButton" binding="reCheckButton">
             <constraints/>
             <properties>
-              <text value="Chec&amp;k again"/>
+              <text resource-bundle="messages/KotlinBundle" key="check.again"/>
             </properties>
           </component>
           <component id="3b585" class="com.intellij.util.ui.AsyncProcessIcon" binding="updateCheckProgressIcon" custom-create="true">
@@ -114,14 +114,14 @@
           <component id="f62d1" class="javax.swing.JLabel">
             <constraints/>
             <properties>
-              <text value="Current Kotlin plugin version:"/>
+              <text resource-bundle="messages/KotlinBundle" key="current.kotlin.plugin.version"/>
             </properties>
           </component>
           <component id="e71d" class="javax.swing.JTextPane" binding="currentVersion">
             <constraints/>
             <properties>
               <editable value="false"/>
-              <text value="{version}"/>
+              <text resource-bundle="messages/KotlinBundle" key="version"/>
             </properties>
           </component>
         </children>
@@ -138,19 +138,19 @@
           <component id="a5e8c" class="javax.swing.JLabel">
             <constraints/>
             <properties>
-              <text value="Build number (internal mode):"/>
+              <text resource-bundle="messages/KotlinBundle" key="build.number.internal.mode"/>
             </properties>
           </component>
           <component id="d11da" class="javax.swing.JTextPane" binding="compilerVersion">
             <constraints/>
             <properties>
               <editable value="false"/>
-              <text value="{version}"/>
+              <text resource-bundle="messages/KotlinBundle" key="version"/>
             </properties>
           </component>
         </children>
       </grid>
-      <grid id="15a75" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="15a75" binding="experimentalFeaturesPanelContainer" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
@@ -159,16 +159,19 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title="Experimental Features"/>
+        <border type="etched" title-resource-bundle="messages/KotlinBundle" title-key="experimental.features"/>
         <children>
-          <component id="d2573" class="javax.swing.JCheckBox" binding="useNewJ2kCheckBox" default-binding="true">
+          <component id="31057" class="org.jetbrains.kotlin.idea.configuration.ExperimentalFeaturesPanel" binding="experimentalFeaturesPanel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <text value="Use New Java to Kotlin Converter"/>
-            </properties>
+            <properties/>
           </component>
+          <hspacer id="4e58d">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
         </children>
       </grid>
       <vspacer id="73440">

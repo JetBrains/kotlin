@@ -6,14 +6,14 @@ import kotlin.contracts.*
 
 fun <T> myRun(block: () -> T): T {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     return block()
 }
 
 fun myRepeat(n: Int, action: () -> Unit) {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(action)
+        callsInPlace(action)
     }
     for (i in 1..n) action()
 }

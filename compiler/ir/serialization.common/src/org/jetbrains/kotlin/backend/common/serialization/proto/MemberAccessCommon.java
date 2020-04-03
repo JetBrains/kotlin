@@ -87,17 +87,25 @@ public final class MemberAccessCommon extends
             valueArgument_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.PARSER, extensionRegistry));
             break;
           }
+          case 32: {
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+              typeArgument_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000008;
+            }
+            typeArgument_.add(input.readInt32());
+            break;
+          }
           case 34: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000004) == 0x00000004)) {
-              subBuilder = typeArguments_.toBuilder();
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
+              typeArgument_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000008;
             }
-            typeArguments_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(typeArguments_);
-              typeArguments_ = subBuilder.buildPartial();
+            while (input.getBytesUntilLimit() > 0) {
+              typeArgument_.add(input.readInt32());
             }
-            bitField0_ |= 0x00000004;
+            input.popLimit(limit);
             break;
           }
         }
@@ -110,6 +118,9 @@ public final class MemberAccessCommon extends
     } finally {
       if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
         valueArgument_ = java.util.Collections.unmodifiableList(valueArgument_);
+      }
+      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+        typeArgument_ = java.util.Collections.unmodifiableList(typeArgument_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -202,26 +213,34 @@ public final class MemberAccessCommon extends
     return valueArgument_.get(index);
   }
 
-  public static final int TYPE_ARGUMENTS_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments typeArguments_;
+  public static final int TYPE_ARGUMENT_FIELD_NUMBER = 4;
+  private java.util.List<java.lang.Integer> typeArgument_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+   * <code>repeated int32 type_argument = 4 [packed = true];</code>
    */
-  public boolean hasTypeArguments() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
+  public java.util.List<java.lang.Integer>
+      getTypeArgumentList() {
+    return typeArgument_;
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+   * <code>repeated int32 type_argument = 4 [packed = true];</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments getTypeArguments() {
-    return typeArguments_;
+  public int getTypeArgumentCount() {
+    return typeArgument_.size();
   }
+  /**
+   * <code>repeated int32 type_argument = 4 [packed = true];</code>
+   */
+  public int getTypeArgument(int index) {
+    return typeArgument_.get(index);
+  }
+  private int typeArgumentMemoizedSerializedSize = -1;
 
   private void initFields() {
     dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     valueArgument_ = java.util.Collections.emptyList();
-    typeArguments_ = org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.getDefaultInstance();
+    typeArgument_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -229,10 +248,6 @@ public final class MemberAccessCommon extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasTypeArguments()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (hasDispatchReceiver()) {
       if (!getDispatchReceiver().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -267,8 +282,12 @@ public final class MemberAccessCommon extends
     for (int i = 0; i < valueArgument_.size(); i++) {
       output.writeMessage(3, valueArgument_.get(i));
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeMessage(4, typeArguments_);
+    if (getTypeArgumentList().size() > 0) {
+      output.writeRawVarint32(34);
+      output.writeRawVarint32(typeArgumentMemoizedSerializedSize);
+    }
+    for (int i = 0; i < typeArgument_.size(); i++) {
+      output.writeInt32NoTag(typeArgument_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -291,9 +310,19 @@ public final class MemberAccessCommon extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(3, valueArgument_.get(i));
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(4, typeArguments_);
+    {
+      int dataSize = 0;
+      for (int i = 0; i < typeArgument_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(typeArgument_.get(i));
+      }
+      size += dataSize;
+      if (!getTypeArgumentList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      typeArgumentMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -395,7 +424,7 @@ public final class MemberAccessCommon extends
       bitField0_ = (bitField0_ & ~0x00000002);
       valueArgument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
-      typeArguments_ = org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.getDefaultInstance();
+      typeArgument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
@@ -433,10 +462,11 @@ public final class MemberAccessCommon extends
         bitField0_ = (bitField0_ & ~0x00000004);
       }
       result.valueArgument_ = valueArgument_;
-      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000004;
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        typeArgument_ = java.util.Collections.unmodifiableList(typeArgument_);
+        bitField0_ = (bitField0_ & ~0x00000008);
       }
-      result.typeArguments_ = typeArguments_;
+      result.typeArgument_ = typeArgument_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -459,8 +489,15 @@ public final class MemberAccessCommon extends
         }
         
       }
-      if (other.hasTypeArguments()) {
-        mergeTypeArguments(other.getTypeArguments());
+      if (!other.typeArgument_.isEmpty()) {
+        if (typeArgument_.isEmpty()) {
+          typeArgument_ = other.typeArgument_;
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          ensureTypeArgumentIsMutable();
+          typeArgument_.addAll(other.typeArgument_);
+        }
+        
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -468,10 +505,6 @@ public final class MemberAccessCommon extends
     }
 
     public final boolean isInitialized() {
-      if (!hasTypeArguments()) {
-        
-        return false;
-      }
       if (hasDispatchReceiver()) {
         if (!getDispatchReceiver().isInitialized()) {
           
@@ -757,63 +790,69 @@ public final class MemberAccessCommon extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments typeArguments_ = org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.getDefaultInstance();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
-     */
-    public boolean hasTypeArguments() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+    private java.util.List<java.lang.Integer> typeArgument_ = java.util.Collections.emptyList();
+    private void ensureTypeArgumentIsMutable() {
+      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        typeArgument_ = new java.util.ArrayList<java.lang.Integer>(typeArgument_);
+        bitField0_ |= 0x00000008;
+       }
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments getTypeArguments() {
-      return typeArguments_;
+    public java.util.List<java.lang.Integer>
+        getTypeArgumentList() {
+      return java.util.Collections.unmodifiableList(typeArgument_);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
      */
-    public Builder setTypeArguments(org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      typeArguments_ = value;
-
-      bitField0_ |= 0x00000008;
+    public int getTypeArgumentCount() {
+      return typeArgument_.size();
+    }
+    /**
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
+     */
+    public int getTypeArgument(int index) {
+      return typeArgument_.get(index);
+    }
+    /**
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
+     */
+    public Builder setTypeArgument(
+        int index, int value) {
+      ensureTypeArgumentIsMutable();
+      typeArgument_.set(index, value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
      */
-    public Builder setTypeArguments(
-        org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.Builder builderForValue) {
-      typeArguments_ = builderForValue.build();
-
-      bitField0_ |= 0x00000008;
+    public Builder addTypeArgument(int value) {
+      ensureTypeArgumentIsMutable();
+      typeArgument_.add(value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
      */
-    public Builder mergeTypeArguments(org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments value) {
-      if (((bitField0_ & 0x00000008) == 0x00000008) &&
-          typeArguments_ != org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.getDefaultInstance()) {
-        typeArguments_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.newBuilder(typeArguments_).mergeFrom(value).buildPartial();
-      } else {
-        typeArguments_ = value;
-      }
-
-      bitField0_ |= 0x00000008;
+    public Builder addAllTypeArgument(
+        java.lang.Iterable<? extends java.lang.Integer> values) {
+      ensureTypeArgumentIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, typeArgument_);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+     * <code>repeated int32 type_argument = 4 [packed = true];</code>
      */
-    public Builder clearTypeArguments() {
-      typeArguments_ = org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments.getDefaultInstance();
-
+    public Builder clearTypeArgument() {
+      typeArgument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
+      
       return this;
     }
 

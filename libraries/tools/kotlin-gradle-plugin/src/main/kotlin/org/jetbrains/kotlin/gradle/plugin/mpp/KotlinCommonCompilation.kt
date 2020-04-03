@@ -5,29 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
+
+interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
 
 class KotlinCommonCompilation(
     target: KotlinTarget,
     name: String
-) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(target, name) {
+) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(target, name), KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon
 
-    private val commonSourceSetName by lazy {
-        when (compilationName) {
-            // Historically, a metadata target has a main compilation. We keep using it to compile just the commonMain source set:
-            KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
-            // All other common source sets are compiled by compilations named according to the source sets:
-            else -> compilationName
-        }
-    }
+    internal val isKlibCompilation: Boolean
+        get() = PropertiesProvider(target.project).enableGranularSourceSetsMetadata == true && !forceCompilationToKotlinMetadata
 
-    override val defaultSourceSet: KotlinSourceSet
-        get() = target.project.kotlinExtension.sourceSets.getByName(commonSourceSetName)
+    internal var forceCompilationToKotlinMetadata: Boolean = false
+
+    override val friendArtifacts: FileCollection
+        get() = super.friendArtifacts.plus(run {
+            val project = target.project
+            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(target.project, defaultSourceSet)
+            project.files(friendSourceSets.mapNotNull { target.compilations.findByName(it.name)?.output?.classesDirs })
+        })
 }

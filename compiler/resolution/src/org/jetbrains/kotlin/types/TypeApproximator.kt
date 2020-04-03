@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStra
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.model.CaptureStatus.*
+import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -41,8 +42,8 @@ open class TypeApproximatorConfiguration {
     open val errorType get() = false
     open val integerLiteralType: Boolean = false // IntegerLiteralTypeConstructor
     open val definitelyNotNullType get() = true
-    open val definitelyNotNullTypeInInvariantPosition get() = true
     open val intersection: IntersectionStrategy = TO_COMMON_SUPERTYPE
+    open val intersectionTypesInContravariantPositions = false
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
@@ -61,6 +62,7 @@ open class TypeApproximatorConfiguration {
         override val intersection get() = ALLOWED
         override val errorType get() = true
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object PublicDeclaration : AllFlexibleSameValue() {
@@ -68,6 +70,7 @@ open class TypeApproximatorConfiguration {
         override val errorType get() = true
         override val definitelyNotNullType get() = false
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus) :
@@ -85,14 +88,15 @@ open class TypeApproximatorConfiguration {
 
     object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION)
     object SubtypeCapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_SUBTYPING)
-    object CapturedAndIntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
+    object InternalTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object FinalApproximationAfterResolutionAndInference :
         TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
-        override val definitelyNotNullTypeInInvariantPosition: Boolean get() = false
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object IntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AllFlexibleSameValue() {
@@ -112,7 +116,8 @@ class TypeApproximator(builtIns: KotlinBuiltIns) : AbstractTypeApproximator(Clas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
         val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
-        return approximateToSuperType(baseType.unwrap(), configuration) ?: baseType.unwrap()
+        val preparedType = if (local) baseType.unwrap() else substituteAlternativesInPublicType(baseType)
+        return approximateToSuperType(preparedType, configuration) ?: preparedType
     }
 
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
@@ -132,8 +137,12 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     private val cacheForIncorporationConfigToSuperDirection = ConcurrentHashMap<KotlinTypeMarker, ApproximationResult>()
     private val cacheForIncorporationConfigToSubtypeDirection = ConcurrentHashMap<KotlinTypeMarker, ApproximationResult>()
 
-    private val referenceApproximateToSuperType = this::approximateSimpleToSuperType
-    private val referenceApproximateToSubType = this::approximateSimpleToSubType
+    private val referenceApproximateToSuperType get() = this::approximateSimpleToSuperType
+    private val referenceApproximateToSubType get() = this::approximateSimpleToSubType
+
+    companion object {
+        const val CACHE_FOR_INCORPORATION_MAX_SIZE = 500
+    }
 
     open fun createErrorType(message: String): SimpleTypeMarker =
         ErrorUtils.createErrorType(message)
@@ -184,6 +193,9 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         if (conf !is TypeApproximatorConfiguration.IncorporationConfiguration) return approximate()
 
         val cache = if (toSuper) cacheForIncorporationConfigToSuperDirection else cacheForIncorporationConfigToSubtypeDirection
+
+        if (cache.size > CACHE_FOR_INCORPORATION_MAX_SIZE) return approximate()
+
         return cache.getOrPut(type, { approximate().toApproximationResult() }).type
     }
 
@@ -271,6 +283,13 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             }
             else -> error("sealed")
         }
+    }
+
+    private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructor): Boolean {
+        // We consider intersection as Nothing only if one of it's component is a primitive number type
+        // It's intentional we're not trying to prove population of some type as it was in OI
+
+        return constructor.supertypes.any { !it.isMarkedNullable && it.isSignedOrUnsignedNumberType() }
     }
 
     private fun approximateIntersectionType(
@@ -373,7 +392,11 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
-        return if (type.isMarkedNullable()) baseResult.withNullability(true) else baseResult
+        return when {
+            type.isMarkedNullable() -> baseResult.withNullability(true)
+            type.isProjectionNotNull() -> baseResult.withNullability(false)
+            else -> baseResult
+        }
     }
 
     private fun approximateSimpleToSuperType(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, depth: Int) =
@@ -476,14 +499,21 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             if (argument.isStarProjection()) continue
 
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-            if (effectiveVariance == TypeVariance.INV) {
-                val argumentType = argument.getType()
-                if (argumentType is DefinitelyNotNullTypeMarker && !conf.definitelyNotNullTypeInInvariantPosition) {
-                    newArguments[index] = argumentType.original().withNullability(false).asTypeArgument()
-                }
-            }
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
+
+            val capturedType = argumentType.lowerBoundIfFlexible().asCapturedType()
+            val capturedStarProjectionOrNull =
+                capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
+
+            if (capturedStarProjectionOrNull != null &&
+                (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) &&
+                toSuper &&
+                capturedType.typeParameter() == parameter
+            ) {
+                newArguments[index] = capturedStarProjectionOrNull
+                continue@loop
+            }
 
             when (effectiveVariance) {
                 null -> {
@@ -495,6 +525,18 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                     } else type.defaultResult(toSuper)
                 }
                 TypeVariance.OUT, TypeVariance.IN -> {
+                    if (
+                        conf.intersectionTypesInContravariantPositions &&
+                        effectiveVariance == TypeVariance.IN &&
+                        argumentType.typeConstructor().isIntersection()
+                    ) {
+                        val intersectionTypeConstructor = argumentType.typeConstructor() as? IntersectionTypeConstructor
+                        if (intersectionTypeConstructor != null && isIntersectionTypeEffectivelyNothing(intersectionTypeConstructor)) {
+                            newArguments[index] = createStarProjection(parameter)
+                            continue@loop
+                        }
+                    }
+
                     /**
                      * Out<Foo> <: Out<superType(Foo)>
                      * Inv<out Foo> <: Inv<out superType(Foo)>

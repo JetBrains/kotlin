@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Consumer
 import com.intellij.util.SystemProperties
+import org.jetbrains.kotlin.idea.debugger.coroutine.standaloneCoroutineDebuggerEnabled
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtension() {
@@ -17,10 +17,9 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
         try {
-            if (coroutineDebuggerEnabled())
-                setupCoroutineAgentForJvmForkedTestTasks(initScriptConsumer)
+            setupCoroutineAgentForJvmForkedTestTasks(initScriptConsumer)
         } catch (e: Exception) {
-            log.error("Gradle: not possible to attach coroutine debugger agent. Coroutine debugger disabled.", e)
+            log.error("Gradle: not possible to attach a coroutine debugger agent.", e)
         }
     }
 
@@ -28,7 +27,7 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
         val lines = arrayOf(
             "gradle.taskGraph.beforeTask { Task task ->",
             "  if (task instanceof Test) {",
-            "    def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.contains(\"kotlinx-coroutines-debug\") }",
+            "    def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.startsWith(\"kotlinx-coroutines-debug\") }",
             "    if (kotlinxCoroutinesDebugJar)",
             "        task.jvmArgs (\"-javaagent:\${kotlinxCoroutinesDebugJar?.absolutePath}\", \"-ea\")",
             "  }",
@@ -37,6 +36,4 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
         val script = StringUtil.join(lines, SystemProperties.getLineSeparator())
         initScriptConsumer.consume(script)
     }
-
-    private fun coroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines")
 }

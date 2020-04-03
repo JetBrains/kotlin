@@ -3,28 +3,30 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.TextBrowseFolderListener
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidator
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.asPath
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
-import java.awt.BorderLayout
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.withOnUpdatedListener
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.swing.JComponent
 
 class PathFieldComponent(
-    private val valuesReadingContext: ValuesReadingContext,
-    private val initialText: String = "",
-    labelText: String? = "",
-    private val validator: StringValidator = org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator {  ValidationResult.OK },
-    private val onSuccessValueUpdate: (String) -> Unit = {},
-    private val onAnyValueUpdate: (String) -> Unit = {}
-) : Component() {
-    private val validationIndicator = ValidationIndicator(defaultText = labelText, showText = true)
-    private val pathField = TextFieldWithBrowseButton(
-        textField(initialText, this::fireValueChanged)
-    ).apply {
+    context: Context,
+    labelText: String? = null,
+    initialValue: Path? = null,
+    validator: SettingValidator<Path>? = null,
+    onValueUpdate: (Path) -> Unit = {}
+) : UIComponent<Path>(
+    context,
+    labelText,
+    validator,
+    onValueUpdate
+) {
+    override val uiComponent: TextFieldWithBrowseButton = TextFieldWithBrowseButton().apply {
+        textField.text = initialValue?.toString().orEmpty()
+        textField.withOnUpdatedListener { path -> fireValueUpdated(path.trim().asPath()) }
         addBrowseFolderListener(
             TextBrowseFolderListener(
                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),
@@ -33,33 +35,15 @@ class PathFieldComponent(
         )
     }
 
-    override val component: JComponent = panel {
-        add(validationIndicator, BorderLayout.NORTH)
-        add(pathField, BorderLayout.CENTER)
+    override fun getValidatorTarget(): JComponent = uiComponent.textField
+
+    override fun updateUiValue(newValue: Path) = safeUpdateUi {
+        uiComponent.text = newValue.toString()
     }
 
+    override fun getUiValue(): Path = Paths.get(uiComponent.text.trim())
 
-    var value: String
-        get() = pathField.text
-        set(value) {
-            pathField.text = value
-            fireValueChanged(value)
-        }
-
-    private fun fireValueChanged(text: String) {
-        validate(text)
-        if (validationIndicator.validationState == ValidationResult.OK) {
-            onSuccessValueUpdate(text)
-        }
-        onAnyValueUpdate(text)
-    }
-
-    override fun onInit() {
-        super.onInit()
-        validate(initialText)
-    }
-
-    private fun validate(text: String) {
-        validationIndicator.validationState = validator.validate(valuesReadingContext, text)
+    override fun focusOn() {
+        uiComponent.textField.requestFocus()
     }
 }

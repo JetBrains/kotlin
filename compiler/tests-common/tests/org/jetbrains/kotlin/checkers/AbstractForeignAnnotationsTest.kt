@@ -52,10 +52,6 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             ForTestCompileRuntime.jvmAnnotationsForTests()
     )
 
-    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
-
-    override fun getTestJdkKind(file: File): TestJdkKind = TestJdkKind.FULL_JDK
-
     open protected val annotationsPath: String
         get() = FOREIGN_ANNOTATIONS_SOURCES_PATH
 

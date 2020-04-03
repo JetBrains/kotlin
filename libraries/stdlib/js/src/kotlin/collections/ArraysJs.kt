@@ -6,10 +6,11 @@
 package kotlin.collections
 
 
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 @SinceKotlin("1.3")
 @kotlin.js.JsName("contentDeepHashCodeImpl")
-internal fun <T> Array<out T>.contentDeepHashCodeImpl(): Int {
+internal fun <T> Array<out T>?.contentDeepHashCodeImpl(): Int {
+    if (this == null) return 0
     var result = 1
     for (element in this) {
         val elementHash = when {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var xs: IntArray = intArrayOf(1, 2, 3)
     get() = field
     set(ys) {

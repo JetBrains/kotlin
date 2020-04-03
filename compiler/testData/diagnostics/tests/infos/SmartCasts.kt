@@ -89,17 +89,17 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   a?.foo()
   if (!(a is B)) {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
   else {
     <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   a?.foo()
@@ -109,7 +109,7 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   if (!(a is B) || !(a is C)) {
@@ -202,7 +202,7 @@ fun mergeSmartCasts(a: Any?) {
     val <!UNUSED_VARIABLE!>i<!>: Int = <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("")
   }
   if (a is String && <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("") == 0) {}
-  if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 0) {}
+  if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 0) {}
 }
 
 //mutability

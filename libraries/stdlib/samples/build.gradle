@@ -13,9 +13,9 @@ compileTestKotlin {
     kotlinOptions {
         jdkHome = JDK_18
         freeCompilerArgs = [
-                "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-Xuse-experimental=kotlin.time.ExperimentalTime"
+                "-Xopt-in=kotlin.ExperimentalStdlibApi",
+                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+                "-Xopt-in=kotlin.time.ExperimentalTime",
         ]
     }
 }

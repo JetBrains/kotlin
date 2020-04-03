@@ -4,6 +4,7 @@
 // ACTION: Make protected
 // ACTION: Create test
 // ACTION: Convert to secondary constructor
+// ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Move to class body
 class C(<caret>val x: String) {
 }

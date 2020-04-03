@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: DocumentedAnnotations.java
 
 import java.lang.annotation.*;

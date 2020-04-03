@@ -50,6 +50,15 @@ class Strings {
     }
 
     @Sample
+    fun chunked() {
+        val dnaFragment = "ATTCGCGGCCGCCAA"
+
+        val codons = dnaFragment.chunked(3)
+
+        assertPrints(codons, "[ATT, CGC, GGC, CGC, CAA]")
+    }
+
+    @Sample
     fun chunkedTransform() {
         val codonTable = mapOf("ATT" to "Isoleucine", "CAA" to "Glutamine", "CGC" to "Arginine", "GGC" to "Glycine")
         val dnaFragment = "ATTCGCGGCCGCCAA"
@@ -159,6 +168,14 @@ class Strings {
         string.associateWithTo(result) { char -> char.toInt() }
         // notice each letter occurs only once
         assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
+    fun partition() {
+        fun isVowel(c: Char) = "aeuio".contains(c, ignoreCase = true)
+        val string = "Discussion"
+        val result = string.partition(::isVowel)
+        assertPrints(result, "(iuio, Dscssn)")
     }
 
     @Sample

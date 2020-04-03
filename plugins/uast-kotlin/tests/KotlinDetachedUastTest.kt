@@ -19,18 +19,24 @@ package org.jetbrains.uast.test.kotlin
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.refactoring.rename.RenameProcessor
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.findFunctionByName
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
 import org.junit.runner.RunWith
@@ -135,18 +141,72 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testAnonymousInnerClassWithIDELightClasses() {
 
-        val detachedClass = myFixture.configureByText("MyClass.kt","""
+        val detachedClass = myFixture.configureByText(
+            "MyClass.kt", """
             class MyClass() {
               private val obj = object : MyClass() {}
             }
-        """)
+        """
+        )
 
         val anonymousClass = detachedClass.findUElementByTextFromPsi<UObjectLiteralExpression>("object : MyClass() {}")
             .let { uObjectLiteralExpression -> uObjectLiteralExpression.declaration }
-        TestCase.assertEquals("UClass (name = null), UObjectLiteralExpression, UField (name = obj), UClass (name = MyClass), UFile (package = )", generateSequence<UElement>(anonymousClass, { it.uastParent }).joinToString { it.asLogString() })
+        TestCase.assertEquals(
+            "UClass (name = null), UObjectLiteralExpression, UField (name = obj), UClass (name = MyClass), UFile (package = )",
+            generateSequence<UElement>(anonymousClass, { it.uastParent }).joinToString { it.asLogString() })
 
     }
 
+
+    fun testDontConvertDetachedFunctions() {
+        val ktFile = myFixture.configureByText(
+            "MyClass.kt", """
+            class MyClass() {
+              fun foo1() = 42
+            }
+        """
+        ) as KtFile
+        val ktClass = ktFile.declarations.filterIsInstance<KtClass>().single()//.copied()
+        val ktFunctionDetached = ktClass.findFunctionByName("foo1")!!
+        runWriteAction { ktClass.delete() }
+        TestCase.assertNull(ktFunctionDetached.toUElementOfType<UMethod>())
+    }
+
+    fun testRenameHandlers() {
+        myFixture.configureByText(
+            "JavaClass.java", """
+            class JavaClass {
+              void foo(){
+                 new MyClass().getBar();
+              }
+            }
+        """
+        )
+
+        myFixture.configureByText(
+            "MyClass.kt", """
+            class MyClass() {
+              val b<caret>ar = 42
+            }
+        """
+        )
+
+        val element = myFixture.elementAtCaret
+
+        val substitution =
+            RenamePsiElementProcessor.forElement(element).substituteElementToRename(element, editor).orFail("no element")
+        val linkedMapOf = linkedMapOf<PsiElement, String>()
+        RenameProcessor(project, substitution, "newName", false, false)
+            .prepareRenaming(element, "newName", linkedMapOf)
+
+        UsefulTestCase.assertTrue(linkedMapOf.any())
+
+        for ((k, _) in linkedMapOf) {
+            TestCase.assertEquals(element, k.toUElement()?.sourcePsi)
+        }
+    }
+
 }
+
 
 fun <T> T?.orFail(msg: String): T = this ?: error(msg)

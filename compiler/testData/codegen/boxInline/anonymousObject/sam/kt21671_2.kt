@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: 1.kt
 // FULL_JDK
 

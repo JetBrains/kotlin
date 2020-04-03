@@ -209,6 +209,7 @@ message Class {
     isExternal
     isExpect
     isInline
+    isFun
   */
   optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 

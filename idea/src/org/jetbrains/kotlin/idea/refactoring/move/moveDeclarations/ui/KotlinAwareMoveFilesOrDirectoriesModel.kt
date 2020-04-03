@@ -15,23 +15,25 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-class KotlinAwareMoveFilesOrDirectoriesModel(
+internal class KotlinAwareMoveFilesOrDirectoriesModel(
     val project: Project,
     val elementsToMove: List<PsiFileSystemItem>,
     val targetDirectoryName: String,
     val updatePackageDirective: Boolean,
     val searchReferences: Boolean,
     val moveCallback: MoveCallback?
-) : Model<KotlinAwareMoveFilesOrDirectoriesProcessor> {
+) : Model {
 
     private fun checkedGetElementsToMove(selectedDirectory: PsiDirectory): List<PsiElement> {
 
@@ -64,7 +66,7 @@ class KotlinAwareMoveFilesOrDirectoriesModel(
         try {
             return getOrCreateDirectory(targetDirectoryName, project)
         } catch (e: IncorrectOperationException) {
-            throw ConfigurationException("Cannot create target directory $targetDirectoryName")
+            throw ConfigurationException(KotlinBundle.message("text.cannot.create.target.directory.0", targetDirectoryName))
         }
     }
 
@@ -74,39 +76,48 @@ class KotlinAwareMoveFilesOrDirectoriesModel(
     private fun checkModel() {
 
         elementsToMove.firstOrNull { it !is PsiFile && it !is PsiDirectory }?.let {
-            throw ConfigurationException("Unexpected element type: $it")
+            throw ConfigurationException(KotlinBundle.message("text.unexpected.element.type.0", it))
         }
 
         if (elementsToMove.isEmpty()) {
-            throw ConfigurationException("There is no given files to move")
+            throw ConfigurationException(KotlinBundle.message("text.no.files.to.move"))
         }
 
         try {
             Paths.get(targetDirectoryName)
         } catch (e: InvalidPathException) {
-            throw ConfigurationException("Invalid target path $targetDirectoryName")
+            throw ConfigurationException(KotlinBundle.message("text.invalid.target.path.0", targetDirectoryName))
         }
 
         if (DumbService.isDumb(project)) {
-            throw ConfigurationException("Move refactoring is not available while indexing is in progress")
+            throw ConfigurationException(KotlinBundle.message("text.move.refactoring.not.available.during.indexing"))
         }
     }
 
     @Throws(ConfigurationException::class)
-    override fun computeModelResult(throwOnConflicts: Boolean): KotlinAwareMoveFilesOrDirectoriesProcessor {
+    override fun computeModelResult(throwOnConflicts: Boolean): ModelResultWithFUSData {
 
         checkModel()
 
         val selectedDir = checkedGetTargetDirectory()
 
-        return KotlinAwareMoveFilesOrDirectoriesProcessor(
+        val elementsToMove = checkedGetElementsToMove(selectedDir)
+
+        val processor = KotlinAwareMoveFilesOrDirectoriesProcessor(
             project,
-            checkedGetElementsToMove(selectedDir),
+            elementsToMove,
             selectedDir,
             searchReferences = searchReferences,
             searchInComments = false,
             searchInNonJavaFiles = false,
             moveCallback = moveCallback
+        )
+
+        return ModelResultWithFUSData(
+            processor,
+            elementsToMove.size,
+            MoveRefactoringFUSCollector.MovedEntity.FILES,
+            MoveRefactoringFUSCollector.MoveRefactoringDestination.PACKAGE
         )
     }
 }

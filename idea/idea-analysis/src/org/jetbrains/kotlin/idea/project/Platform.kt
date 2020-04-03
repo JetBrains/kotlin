@@ -169,16 +169,27 @@ val Module.languageVersionSettings: LanguageVersionSettings
         return cachedValue.value
     }
 
-@TestOnly // public for tests
-fun Module.setLanguageVersionSettings(value: LanguageVersionSettings) =
-    putUserData(
-        LANGUAGE_VERSION_SETTINGS,
-        CachedValuesManager.getManager(project).createCachedValue({
-                                                                      CachedValueProvider.Result(
-                                                                          value, ProjectRootModificationTracker.getInstance(project)
-                                                                      )
-                                                                  }, false)
-    )
+@TestOnly
+fun Module.withLanguageVersionSettings(value: LanguageVersionSettings, body: () -> Unit) {
+    val previousLanguageVersionSettings = getUserData(LANGUAGE_VERSION_SETTINGS)
+    try {
+        putUserData(
+            LANGUAGE_VERSION_SETTINGS,
+            CachedValuesManager.getManager(project).createCachedValue(
+                {
+                    CachedValueProvider.Result(
+                        value, ProjectRootModificationTracker.getInstance(project)
+                    )
+                },
+                false
+            )
+        )
+
+        body()
+    } finally {
+        putUserData(LANGUAGE_VERSION_SETTINGS, previousLanguageVersionSettings)
+    }
+}
 
 private fun Module.createCachedValueForLanguageVersionSettings(): CachedValue<LanguageVersionSettings> {
     return CachedValuesManager.getManager(project).createCachedValue({

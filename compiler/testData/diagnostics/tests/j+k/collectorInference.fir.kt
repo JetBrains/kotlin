@@ -7,8 +7,8 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 
 fun test(a: Stream<String>) {
-    a.<!INAPPLICABLE_CANDIDATE!>collect<!>(Collectors.toList()) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><MutableList<String>>() }
+    a.collect(Collectors.toList()) checkType { <!UNRESOLVED_REFERENCE!>_<!><MutableList<String>>() }
     // actually the inferred type is platform
-    a.<!INAPPLICABLE_CANDIDATE!>collect<!>(Collectors.toList()) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><List<String?>>() }
+    a.collect(Collectors.toList()) checkType { <!UNRESOLVED_REFERENCE!>_<!><List<String?>>() }
 }
 

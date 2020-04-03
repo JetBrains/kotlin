@@ -65,11 +65,11 @@ with(B) { A.foo() }   <v2>: {<: ???}           COPY
         A.foo()
     }
 ---------------------
-          <v0>: B                                    NEW: magic[IMPLICIT_RECEIVER](foo) -> <v0>
-          <v3>: C                                    NEW: magic[IMPLICIT_RECEIVER](foo()) -> <v3>
-A         <v1>: A.Companion                          NEW: r(A, Companion) -> <v1>
-foo       <v2>: X                                    NEW: r(foo|<v0>, <v1>) -> <v2>
-foo()     <v4>: {<: [ERROR : Error function type]}   NEW: call(foo(), invoke|<v2>, <v3>) -> <v4>
-A.foo()   <v4>: {<: [ERROR : Error function type]}   COPY
-A.foo()   <v4>: {<: [ERROR : Error function type]}   COPY
+          <v0>: B             NEW: magic[IMPLICIT_RECEIVER](foo) -> <v0>
+          <v3>: C             NEW: magic[IMPLICIT_RECEIVER](foo()) -> <v3>
+A         <v1>: A.Companion   NEW: r(A, Companion) -> <v1>
+foo       <v2>: X             NEW: r(foo|<v0>, <v1>) -> <v2>
+foo()     <v4>: {<: ???}      NEW: call(foo(), invoke|<v2>, <v3>) -> <v4>
+A.foo()   <v4>: {<: ???}      COPY
+A.foo()   <v4>: {<: ???}      COPY
 =====================

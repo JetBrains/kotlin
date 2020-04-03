@@ -1,24 +1,24 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.ui.popup.PopupFactoryImpl
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
-import org.jetbrains.kotlin.tools.projectWizard.settings.fullText
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.htmlText
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.fullTextHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.Icon
 
 class CreateModuleOrTargetPopup private constructor(
     private val target: Module?,
     private val allowMultiplatform: Boolean,
+    private val allowSinglepaltformJs: Boolean,
     private val allowAndroid: Boolean,
     private val allowIos: Boolean,
     private val createTarget: (TargetConfigurator) -> Unit,
@@ -42,13 +42,12 @@ class CreateModuleOrTargetPopup private constructor(
             if (allowMultiplatform) +MppModuleConfigurator
             +JvmSinglePlatformModuleConfigurator
             if (allowAndroid) +AndroidSinglePlatformModuleConfigurator
-
-            //todo ios support
-            //if (allowIos) +IOSSinglePlatformModuleConfigurator
+            if (allowSinglepaltformJs) +JsSingleplatformModuleConfigurator
+            if (allowIos) +IOSSinglePlatformModuleConfigurator
         }
     ) {
         override fun getIconFor(value: ModuleConfigurator): Icon = value.icon
-        override fun getTextFor(value: ModuleConfigurator): String = value.htmlText
+        override fun getTextFor(value: ModuleConfigurator): String = value.fullTextHtml
 
         override fun onChosen(selectedValue: ModuleConfigurator?, finalChoice: Boolean): PopupStep<*>? =
             when (selectedValue) {
@@ -64,16 +63,16 @@ class CreateModuleOrTargetPopup private constructor(
         targetConfiguratorGroup: TargetConfiguratorGroupWithSubItems,
         showTitle: Boolean
     ) : BaseListPopupStep<DisplayableSettingItem>(
-        "Target".takeIf { showTitle },
+        KotlinNewProjectWizardBundle.message("module.kind.target").takeIf { showTitle },
         targetConfiguratorGroup.subItems.filter { it.needToShow() }
     ) {
         override fun getIconFor(value: DisplayableSettingItem): Icon? = when (value) {
             is DisplayableTargetConfiguratorGroup -> value.moduleType.icon
-            is ModuleConfigurator -> value.moduleType.icon
+            is ModuleConfigurator -> value.moduleType?.icon ?: AllIcons.Nodes.Module
             else -> null
         }
 
-        override fun getTextFor(value: DisplayableSettingItem): String = value.htmlText
+        override fun getTextFor(value: DisplayableSettingItem): String = value.fullTextHtml
 
         override fun onChosen(selectedValue: DisplayableSettingItem?, finalChoice: Boolean): PopupStep<*>? {
             when {
@@ -101,6 +100,7 @@ class CreateModuleOrTargetPopup private constructor(
         fun create(
             target: Module?,
             allowMultiplatform: Boolean,
+            allowSinglepaltformJs: Boolean,
             allowAndroid: Boolean,
             allowIos: Boolean,
             createTarget: (TargetConfigurator) -> Unit,
@@ -108,6 +108,7 @@ class CreateModuleOrTargetPopup private constructor(
         ) = CreateModuleOrTargetPopup(
             target = target,
             allowMultiplatform = allowMultiplatform,
+            allowSinglepaltformJs = allowSinglepaltformJs,
             allowAndroid = allowAndroid,
             allowIos = allowIos,
             createTarget = createTarget,

@@ -8,18 +8,19 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class JsIrFileSerializer(
     logger: LoggingContext,
     declarationTable: DeclarationTable,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false
-) : IrFileSerializer(logger, declarationTable, expectDescriptorToSymbol, bodiesOnlyForInlines = bodiesOnlyForInlines, skipExpects = skipExpects) {
-
-    // Temporary keep order of any property, even of constants
-    override fun keepOrderOfProperties(property: IrProperty): Boolean = true
-}
+) : IrFileSerializer(
+    logger,
+    declarationTable,
+    expectDescriptorToSymbol,
+    bodiesOnlyForInlines = bodiesOnlyForInlines,
+    skipExpects = skipExpects
+)

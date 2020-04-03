@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
@@ -10,7 +11,6 @@ inline fun inlineMe() {
 }
 
 // FILE: inlineSite.kt
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 
 import test.*
 

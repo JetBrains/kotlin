@@ -33,7 +33,7 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
         visitor.visitTypeAlias(this, data)
 
     fun isTopLevel(): Boolean =
-        stub?.isTopLevel() ?: parent is KtFile
+        stub?.isTopLevel() ?: (parent is KtFile)
 
     @IfNotParsed
     fun getTypeAliasKeyword(): PsiElement? =

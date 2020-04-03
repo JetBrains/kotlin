@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.ignore
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
@@ -30,7 +31,7 @@ data class ApplicationPluginIR(val mainClass: String) : DefaultBuildSystemPlugin
     }
 }
 
-data class GradleOnlyPluginByNameIR(val pluginId: String) : BuildSystemPluginIR, GradleIR {
+data class GradleOnlyPluginByNameIR(@NonNls val pluginId: String) : BuildSystemPluginIR, GradleIR {
     override fun GradlePrinter.renderGradle() {
         call("id") { +pluginId.quotified }
     }
@@ -43,10 +44,9 @@ data class KotlinBuildSystemPluginIR(
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
-            when {
-                type == Type.android -> call("id") { +"kotlin-android".quotified }
-                dsl == GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
-                else -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
+            when (dsl) {
+                GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
+                GradlePrinter.GradleDsl.GROOVY -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
             }
             version?.let {
                 +" version "
@@ -81,6 +81,6 @@ data class KotlinBuildSystemPluginIR(
 
     @Suppress("EnumEntryName", "unused", "SpellCheckingInspection")
     enum class Type {
-        jvm, multiplatform, android
+        jvm, multiplatform, android, js
     }
 }

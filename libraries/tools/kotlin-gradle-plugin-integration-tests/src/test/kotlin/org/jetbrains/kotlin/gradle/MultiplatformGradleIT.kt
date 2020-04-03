@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
@@ -35,6 +36,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
+
+            assertContains(KOTLIN_12X_MPP_DEPRECATION_WARNING)
+
             assertTasksExecuted(
                 ":lib:compileKotlinCommon",
                 ":lib:compileTestKotlinCommon",
@@ -49,6 +53,13 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
             assertFileExists("libJs/build/classes/kotlin/main/libJs.js")
             assertFileExists("libJs/build/classes/kotlin/test/libJs_test.js")
+        }
+
+        project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
+        project.build {
+            assertSuccessful()
+
+            assertNotContains(KOTLIN_12X_MPP_DEPRECATION_WARNING)
         }
     }
 

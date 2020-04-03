@@ -1,3 +1,5 @@
+// TODO: Reified generics required some design to unify behavior across all backends
+// IGNORE_BACKEND: JS, JS_IR
 // FILE: 1.kt
 // WITH_RUNTIME
 package test
@@ -12,15 +14,15 @@ fun case1(): Int =
         null.castTo<Int?, Int>()
 
 fun box(): String {
-    failTypeCast { case1(); return "failTypeCast 9" }
+    failNPE { case1(); return "Fail" }
     return "OK"
 }
 
-inline fun failTypeCast(s: () -> Unit) {
+inline fun failNPE(s: () -> Unit) {
     try {
         s()
     }
-    catch (e: TypeCastException) {
-
+    catch (e: NullPointerException) {
+        // OK
     }
 }

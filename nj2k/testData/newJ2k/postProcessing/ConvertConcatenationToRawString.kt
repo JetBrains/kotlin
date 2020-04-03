@@ -1,7 +1,7 @@
 class Test {
     var s = """
-        asdf
-        nadfadsf
-        asdfasdf
-        """.trimIndent()
+           asdf
+           nadfadsf
+           asdfasdf
+           """.trimIndent()
 }

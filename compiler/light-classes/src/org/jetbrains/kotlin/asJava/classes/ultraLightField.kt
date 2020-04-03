@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -144,7 +147,9 @@ internal open class KtUltraLightFieldImpl protected constructor(
     override fun hasInitializer(): Boolean = initializer !== null
 
     private val _constantInitializer by lazyPub {
-        if ((declaration as? KtProperty)?.hasInitializer() != true) return@lazyPub null
+        if (declaration !is KtProperty) return@lazyPub null
+        if (!declaration.hasModifier(KtTokens.CONST_KEYWORD)) return@lazyPub null
+        if (!declaration.hasInitializer()) return@lazyPub null
         if (!hasModifierProperty(PsiModifier.FINAL)) return@lazyPub null
         if (!TypeConversionUtil.isPrimitiveAndNotNull(_type) && !_type.equalsToText(CommonClassNames.JAVA_LANG_STRING)) return@lazyPub null
         propertyDescriptor?.compileTimeInitializer

@@ -21,6 +21,7 @@ dependencies {
     testCompile(project(":kotlin-noarg"))
     testCompile(project(":kotlin-sam-with-receiver"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":native:kotlin-native-utils"))
 
     testCompile(projectRuntimeJar(":kotlin-compiler-embeddable"))
     testCompile(intellijCoreDep()) { includeJars("jdom") }
@@ -100,19 +101,33 @@ tasks.withType<Test> {
         ":kotlin-android-extensions:install",
         ":kotlin-build-common:install",
         ":kotlin-compiler-embeddable:install",
+        ":native:kotlin-native-utils:install",
+        ":kotlin-util-klib:install",
+        ":kotlin-util-io:install",
+        ":kotlin-compiler-runner:install",
+        ":kotlin-daemon-embeddable:install",
+        ":kotlin-daemon-client:install",
+        ":kotlin-gradle-plugin-api:install",
         ":kotlin-gradle-plugin:install",
+        ":kotlin-gradle-plugin-model:install",
         ":kotlin-gradle-plugin:plugin-marker:install",
         ":kotlin-reflect:install",
         ":kotlin-annotation-processing-gradle:install",
+        ":kotlin-test:kotlin-test-common:install",
+        ":kotlin-test:kotlin-test-annotations-common:install",
         ":kotlin-test:kotlin-test-jvm:install",
         ":kotlin-test:kotlin-test-js:install",
         ":kotlin-gradle-subplugin-example:install",
+        ":kotlin-stdlib-common:install",
+        ":kotlin-stdlib:install",
         ":kotlin-stdlib-jdk8:install",
         ":kotlin-stdlib-js:install",
         ":examples:annotation-processor-example:install",
+        ":kotlin-script-runtime:install",
         ":kotlin-scripting-common:install",
         ":kotlin-scripting-jvm:install",
         ":kotlin-scripting-compiler-embeddable:install",
+        ":kotlin-scripting-compiler-impl-embeddable:install",
         ":kotlin-test-js-runner:install",
         ":kotlin-source-map-loader:install"
     )

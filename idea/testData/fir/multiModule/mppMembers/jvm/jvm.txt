@@ -17,8 +17,8 @@ FILE: jvm.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|()
-            this@R|/A|.R|/A.bar|()
+            this@R|/C|.R|/A.foo|()
+            this@R|/C|.R|/A.bar|()
         }
 
     }
@@ -28,8 +28,8 @@ FILE: jvm.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|()
-            this@R|/A|.R|/A.bar|()
+            this@R|/D|.R|/A.foo|()
+            this@R|/D|.R|/A.bar|()
         }
 
     }

@@ -110,7 +110,8 @@ open class SerializerCodegenImpl(
         } else {
             load(0, serializerAsmType)
         }
-        invokespecial(descImplType.internalName, "<init>", "(Ljava/lang/String;${generatedSerializerType.descriptor})V", false)
+        aconst(serializableProperties.size)
+        invokespecial(descImplType.internalName, "<init>", "(Ljava/lang/String;${generatedSerializerType.descriptor}I)V", false)
     }
 
     protected open fun ExpressionCodegen.addElementsContentToDescriptor(descriptorVar: Int) = with(v) {
@@ -299,15 +300,11 @@ open class SerializerCodegenImpl(
             val inputVar = 1
             val descVar = 2
             val indexVar = 3
-            val readAllVar = 4
-            val bitMaskBase = 5
+            val bitMaskBase = 4
             val blocksCnt = serializableProperties.bitMaskSlotCount()
             val bitMaskOff = fun(it: Int): Int { return bitMaskBase + bitMaskSlotAt(it) }
             val propsStartVar = bitMaskBase + blocksCnt
             stackSerialClassDesc(descVar)
-            // boolean readAll = false
-            iconst(0)
-            store(readAllVar, Type.BOOLEAN_TYPE)
             // initialize bit mask
             for (i in 0 until blocksCnt) {
                 //int bitMaskN = 0
@@ -332,8 +329,31 @@ open class SerializerCodegenImpl(
                         ")" + kInputType.descriptor
             )
             store(inputVar, kInputType)
-            // readElement: int index = input.readElement(classDesc)
             val readElementLabel = Label()
+            val readEndLabel = Label()
+            // if (decoder.decodeSequentially)
+            load(inputVar, kInputType)
+            invokeinterface(
+                kInputType.internalName, CallingConventions.decodeSequentially,
+                "()Z"
+            )
+            ifeq(readElementLabel)
+            // decodeSequentially = true
+            propVar = propsStartVar
+            for ((index, property) in serializableProperties.withIndex()) {
+                val propertyType = codegen.typeMapper.mapType(property.type)
+                callReadProperty(property, propertyType, index, inputVar, descVar, -1, propVar)
+                propVar += propertyType.size
+            }
+            // set all bit masks to true
+            for (maskVar in bitMaskBase until propsStartVar) {
+                iconst(Int.MAX_VALUE)
+                store(maskVar, OPT_MASK_TYPE)
+            }
+            // go to end
+            goTo(readEndLabel)
+            // branch with decodeSequentially = false
+            // readElement: int index = input.readElement(classDesc)
             visitLabel(readElementLabel)
             load(inputVar, kInputType)
             load(descVar, descType)
@@ -344,78 +364,24 @@ open class SerializerCodegenImpl(
             store(indexVar, Type.INT_TYPE)
             // switch(index)
             val labeledProperties = serializableProperties.filter { !it.transient }
-            val readAllLabel = Label()
-            val readEndLabel = Label()
             val incorrectIndLabel = Label()
-            val labels = arrayOfNulls<Label>(labeledProperties.size + 2)
-            labels[0] = readAllLabel // READ_ALL
-            labels[1] = readEndLabel // READ_DONE
+            val labels = arrayOfNulls<Label>(labeledProperties.size + 1)
+            labels[0] = readEndLabel // READ_DONE
             for (i in labeledProperties.indices) {
-                labels[i + 2] = Label()
+                labels[i + 1] = Label()
             }
             load(indexVar, Type.INT_TYPE)
-            tableswitch(-2, labeledProperties.size - 1, incorrectIndLabel, *labels)
-            // readAll: readAll := true
-            visitLabel(readAllLabel)
-            iconst(1)
-            store(readAllVar, Type.BOOLEAN_TYPE)
+            tableswitch(-1, labeledProperties.size - 1, incorrectIndLabel, *labels)
             // loop for all properties
             propVar = propsStartVar
             var labelNum = 0
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
                 if (!property.transient) {
+                    val propertyAddressInBitMask = bitMaskOff(index)
                     // labelI:
-                    visitLabel(labels[labelNum + 2])
-                    // propX := input.readXxxValue(value)
-                    load(inputVar, kInputType)
-                    load(descVar, descType)
-                    iconst(labelNum)
-
-                    val sti = getSerialTypeInfo(property, propertyType)
-                    val useSerializer = stackValueSerializerInstanceFromSerializer(codegen, sti, this@SerializerCodegenImpl)
-                    val unknownSer = (!useSerializer && sti.elementMethodPrefix.isEmpty())
-                    if (unknownSer) {
-                        aconst(codegen.typeMapper.mapType(property.type))
-                        AsmUtil.wrapJavaClassIntoKClass(this)
-                    }
-
-                    fun produceCall(update: Boolean) {
-                        invokeinterface(
-                            kInputType.internalName,
-                            (if (update) CallingConventions.update else CallingConventions.decode) + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
-                            "(" + descType.descriptor + "I" +
-                                    (if (useSerializer) kSerialLoaderType.descriptor else "")
-                                    + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
-                                    + (if (update) sti.type.descriptor else "")
-                                    + ")" + (if (sti.unit) "V" else sti.type.descriptor)
-                        )
-                    }
-
-                    if (useSerializer) {
-                        // we can choose either it is read or update
-                        val readLabel = Label()
-                        val endL = Label()
-                        genValidateProperty(index, bitMaskOff)
-                        ificmpeq(readLabel)
-                        load(propVar, propertyType)
-                        StackValue.coerce(propertyType, sti.type, this)
-                        produceCall(true)
-                        goTo(endL)
-                        visitLabel(readLabel)
-                        produceCall(false)
-                        visitLabel(endL)
-                    } else {
-                        // update not supported for primitive types
-                        produceCall(false)
-                    }
-
-                    if (sti.unit) {
-                        StackValue.putUnitInstance(this)
-                    } else {
-                        StackValue.coerce(sti.type, propertyType, this)
-                    }
-                    store(propVar, propertyType)
+                    visitLabel(labels[labelNum + 1])
+                    callReadProperty(property, propertyType, index, inputVar, descVar, propertyAddressInBitMask, propVar)
 
                     // mark read bit in mask
                     // bitMask = bitMask | 1 << index
@@ -424,10 +390,7 @@ open class SerializerCodegenImpl(
                     iconst(1 shl (index % OPT_MASK_BITS))
                     or(OPT_MASK_TYPE)
                     store(addr, OPT_MASK_TYPE)
-                    // if (readAll == false) goto readElement
-                    load(readAllVar, Type.BOOLEAN_TYPE)
-                    iconst(0)
-                    ificmpeq(readElementLabel)
+                    goTo(readElementLabel)
                     labelNum++
                 }
                 // next
@@ -444,11 +407,8 @@ open class SerializerCodegenImpl(
             )
             if (!serializableDescriptor.isInternalSerializable) {
                 //validate all required (constructor) fields
-                val nonThrowLabel = Label()
-                val throwLabel = Label()
                 for ((i, property) in properties.serializableConstructorProperties.withIndex()) {
                     if (property.optional || property.transient) {
-                        // todo: Normal reporting of error
                         if (!property.isConstructorParameterWithDefault)
                             throw CompilationException(
                                 "Property ${property.name} was declared as optional/transient but has no default value",
@@ -456,16 +416,13 @@ open class SerializerCodegenImpl(
                                 null
                             )
                     } else {
-                        genValidateProperty(i, bitMaskOff)
-                        // todo: print name of each variable?
-                        ificmpeq(throwLabel)
+                        genValidateProperty(i, bitMaskOff(i))
+                        val nonThrowLabel = Label()
+                        ificmpne(nonThrowLabel)
+                        genMissingFieldExceptionThrow(property.name)
+                        visitLabel(nonThrowLabel)
                     }
                 }
-                goTo(nonThrowLabel)
-                // throwing an exception
-                visitLabel(throwLabel)
-                genExceptionThrow(serializationExceptionName, "Not all required constructor fields were specified")
-                visitLabel(nonThrowLabel)
             }
             // create object with constructor
             anew(serializableAsmType)
@@ -497,6 +454,62 @@ open class SerializerCodegenImpl(
             checkcast(Type.getObjectType("java/lang/Throwable"))
             athrow()
         }
+    }
+
+    private fun InstructionAdapter.callReadProperty(
+        property: SerializableProperty,
+        propertyType: Type,
+        index: Int,
+        inputVar: Int,
+        descriptorVar: Int,
+        propertyAddressInBitMask: Int,
+        propertyVar: Int
+    ) {
+        // propX := input.readXxxValue(value)
+        load(inputVar, kInputType)
+        load(descriptorVar, descType)
+        iconst(index)
+
+        val sti = getSerialTypeInfo(property, propertyType)
+        val useSerializer = stackValueSerializerInstanceFromSerializer(codegen, sti, this@SerializerCodegenImpl)
+        val unknownSer = (!useSerializer && sti.elementMethodPrefix.isEmpty())
+        if (unknownSer) {
+            aconst(codegen.typeMapper.mapType(property.type))
+            AsmUtil.wrapJavaClassIntoKClass(this)
+        }
+
+        fun produceCall(update: Boolean) {
+            invokeinterface(
+                kInputType.internalName,
+                (if (update) CallingConventions.update else CallingConventions.decode) + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
+                "(" + descType.descriptor + "I" +
+                        (if (useSerializer) kSerialLoaderType.descriptor else "")
+                        + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
+                        + (if (update) sti.type.descriptor else "")
+                        + ")" + (sti.type.descriptor)
+            )
+        }
+
+        if (useSerializer && propertyAddressInBitMask != -1) {
+            // we can choose either it is read or update
+            val readLabel = Label()
+            val endL = Label()
+            genValidateProperty(index, propertyAddressInBitMask)
+            ificmpeq(readLabel)
+            load(propertyVar, propertyType)
+            StackValue.coerce(propertyType, sti.type, this)
+            produceCall(true)
+            goTo(endL)
+            visitLabel(readLabel)
+            produceCall(false)
+            visitLabel(endL)
+        } else {
+            // update not supported for primitive types or decodeSequentially
+            produceCall(false)
+        }
+
+        StackValue.coerce(sti.type, propertyType, this)
+        store(propertyVar, propertyType)
     }
 
     private fun InstructionAdapter.buildExternalConstructorDesc(propsStartVar: Int, bitMaskBase: Int): String {
@@ -532,7 +545,7 @@ open class SerializerCodegenImpl(
             //check if property has been seen and should be set
             val nextLabel = Label()
             // seen = bitMask & 1 << pos != 0
-            genValidateProperty(i, bitMaskPos)
+            genValidateProperty(i, bitMaskPos(i))
             if (property.optional) {
                 // if (seen)
                 //    set
@@ -542,7 +555,7 @@ open class SerializerCodegenImpl(
                 //    throw
                 // set
                 ificmpne(nextLabel)
-                genExceptionThrow(serializationExceptionMissingFieldName, property.name)
+                genMissingFieldExceptionThrow(property.name)
                 visitLabel(nextLabel)
             }
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     fun foo() {}
     val bar = 42

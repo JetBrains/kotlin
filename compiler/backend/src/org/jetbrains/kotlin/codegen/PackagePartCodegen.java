@@ -86,7 +86,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             }
         }
         Annotated annotatedFile = new AnnotatedImpl(Annotations.Companion.create(fileAnnotationDescriptors));
-        AnnotationCodegen.forClass(v.getVisitor(), this, state).genAnnotations(annotatedFile, null);
+        AnnotationCodegen.forClass(v.getVisitor(), this, state).genAnnotations(annotatedFile, null, null);
     }
 
     @Override

@@ -1,0 +1,14 @@
+// !WITH_NEW_INFERENCE
+
+fun <K> id(arg: K): K = arg
+fun <M> materialize(): M = TODO()
+
+fun test(b: Boolean) {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(if (b) {
+        id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
+    } else {
+        <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(
+            <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        )
+    })
+}

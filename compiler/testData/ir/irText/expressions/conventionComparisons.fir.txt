@@ -39,25 +39,45 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
-        ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
+        CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test1' type=<root>.IB origin=null
+            $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test1' type=<root>.IA origin=null
+            other: GET_VAR 'a2: <root>.IA declared in <root>.test1' type=<root>.IA origin=null
+          arg1: CONST Int type=kotlin.Int value=0
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
     VALUE_PARAMETER name:a1 index:0 type:<root>.IA
     VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
-        ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
+        CALL 'public final fun greaterOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GTEQ
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test2' type=<root>.IB origin=null
+            $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test2' type=<root>.IA origin=null
+            other: GET_VAR 'a2: <root>.IA declared in <root>.test2' type=<root>.IA origin=null
+          arg1: CONST Int type=kotlin.Int value=0
   FUN name:test3 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
     VALUE_PARAMETER name:a1 index:0 type:<root>.IA
     VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
-        ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
+        CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test3' type=<root>.IB origin=null
+            $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test3' type=<root>.IA origin=null
+            other: GET_VAR 'a2: <root>.IA declared in <root>.test3' type=<root>.IA origin=null
+          arg1: CONST Int type=kotlin.Int value=0
   FUN name:test4 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
     VALUE_PARAMETER name:a1 index:0 type:<root>.IA
     VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
-        ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
+        CALL 'public final fun lessOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LTEQ
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test4' type=<root>.IB origin=null
+            $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test4' type=<root>.IA origin=null
+            other: GET_VAR 'a2: <root>.IA declared in <root>.test4' type=<root>.IA origin=null
+          arg1: CONST Int type=kotlin.Int value=0

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun stringConcat(n : Int) : String? {
   var string : String? = ""
   for (i in 0..(n - 1))

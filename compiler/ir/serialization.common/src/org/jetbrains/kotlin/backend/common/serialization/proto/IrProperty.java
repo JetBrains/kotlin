@@ -72,58 +72,8 @@ public final class IrProperty extends
             break;
           }
           case 26: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000004) == 0x00000004)) {
-              subBuilder = visibility_.toBuilder();
-            }
-            visibility_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(visibility_);
-              visibility_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000004;
-            break;
-          }
-          case 32: {
-            int rawValue = input.readEnum();
-            org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind value = org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind.valueOf(rawValue);
-            if (value == null) {
-              unknownFieldsCodedOutput.writeRawVarint32(tag);
-              unknownFieldsCodedOutput.writeRawVarint32(rawValue);
-            } else {
-              bitField0_ |= 0x00000008;
-              modality_ = value;
-            }
-            break;
-          }
-          case 40: {
-            bitField0_ |= 0x00000010;
-            isVar_ = input.readBool();
-            break;
-          }
-          case 48: {
-            bitField0_ |= 0x00000020;
-            isConst_ = input.readBool();
-            break;
-          }
-          case 56: {
-            bitField0_ |= 0x00000040;
-            isLateinit_ = input.readBool();
-            break;
-          }
-          case 64: {
-            bitField0_ |= 0x00000080;
-            isDelegated_ = input.readBool();
-            break;
-          }
-          case 72: {
-            bitField0_ |= 0x00000100;
-            isExternal_ = input.readBool();
-            break;
-          }
-          case 82: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrField.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000200) == 0x00000200)) {
+            if (((bitField0_ & 0x00000004) == 0x00000004)) {
               subBuilder = backingField_.toBuilder();
             }
             backingField_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrField.PARSER, extensionRegistry);
@@ -131,12 +81,12 @@ public final class IrProperty extends
               subBuilder.mergeFrom(backingField_);
               backingField_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000200;
+            bitField0_ |= 0x00000004;
             break;
           }
-          case 90: {
+          case 34: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000400) == 0x00000400)) {
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
               subBuilder = getter_.toBuilder();
             }
             getter_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.PARSER, extensionRegistry);
@@ -144,12 +94,12 @@ public final class IrProperty extends
               subBuilder.mergeFrom(getter_);
               getter_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000400;
+            bitField0_ |= 0x00000008;
             break;
           }
-          case 98: {
+          case 42: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000800) == 0x00000800)) {
+            if (((bitField0_ & 0x00000010) == 0x00000010)) {
               subBuilder = setter_.toBuilder();
             }
             setter_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.PARSER, extensionRegistry);
@@ -157,17 +107,7 @@ public final class IrProperty extends
               subBuilder.mergeFrom(setter_);
               setter_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000800;
-            break;
-          }
-          case 104: {
-            bitField0_ |= 0x00001000;
-            isExpect_ = input.readBool();
-            break;
-          }
-          case 112: {
-            bitField0_ |= 0x00002000;
-            isFakeOverride_ = input.readBool();
+            bitField0_ |= 0x00000010;
             break;
           }
         }
@@ -234,201 +174,57 @@ public final class IrProperty extends
     return name_;
   }
 
-  public static final int VISIBILITY_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility_;
+  public static final int BACKING_FIELD_FIELD_NUMBER = 3;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrField backingField_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
    */
-  public boolean hasVisibility() {
+  public boolean hasBackingField() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility() {
-    return visibility_;
-  }
-
-  public static final int MODALITY_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality_;
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-   */
-  public boolean hasModality() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind getModality() {
-    return modality_;
-  }
-
-  public static final int IS_VAR_FIELD_NUMBER = 5;
-  private boolean isVar_;
-  /**
-   * <code>required bool is_var = 5;</code>
-   */
-  public boolean hasIsVar() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>required bool is_var = 5;</code>
-   */
-  public boolean getIsVar() {
-    return isVar_;
-  }
-
-  public static final int IS_CONST_FIELD_NUMBER = 6;
-  private boolean isConst_;
-  /**
-   * <code>required bool is_const = 6;</code>
-   */
-  public boolean hasIsConst() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
-  }
-  /**
-   * <code>required bool is_const = 6;</code>
-   */
-  public boolean getIsConst() {
-    return isConst_;
-  }
-
-  public static final int IS_LATEINIT_FIELD_NUMBER = 7;
-  private boolean isLateinit_;
-  /**
-   * <code>required bool is_lateinit = 7;</code>
-   */
-  public boolean hasIsLateinit() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
-  }
-  /**
-   * <code>required bool is_lateinit = 7;</code>
-   */
-  public boolean getIsLateinit() {
-    return isLateinit_;
-  }
-
-  public static final int IS_DELEGATED_FIELD_NUMBER = 8;
-  private boolean isDelegated_;
-  /**
-   * <code>required bool is_delegated = 8;</code>
-   */
-  public boolean hasIsDelegated() {
-    return ((bitField0_ & 0x00000080) == 0x00000080);
-  }
-  /**
-   * <code>required bool is_delegated = 8;</code>
-   */
-  public boolean getIsDelegated() {
-    return isDelegated_;
-  }
-
-  public static final int IS_EXTERNAL_FIELD_NUMBER = 9;
-  private boolean isExternal_;
-  /**
-   * <code>required bool is_external = 9;</code>
-   */
-  public boolean hasIsExternal() {
-    return ((bitField0_ & 0x00000100) == 0x00000100);
-  }
-  /**
-   * <code>required bool is_external = 9;</code>
-   */
-  public boolean getIsExternal() {
-    return isExternal_;
-  }
-
-  public static final int BACKING_FIELD_FIELD_NUMBER = 10;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrField backingField_;
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
-   */
-  public boolean hasBackingField() {
-    return ((bitField0_ & 0x00000200) == 0x00000200);
-  }
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrField getBackingField() {
     return backingField_;
   }
 
-  public static final int GETTER_FIELD_NUMBER = 11;
+  public static final int GETTER_FIELD_NUMBER = 4;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
    */
   public boolean hasGetter() {
-    return ((bitField0_ & 0x00000400) == 0x00000400);
+    return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getGetter() {
     return getter_;
   }
 
-  public static final int SETTER_FIELD_NUMBER = 12;
+  public static final int SETTER_FIELD_NUMBER = 5;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
    */
   public boolean hasSetter() {
-    return ((bitField0_ & 0x00000800) == 0x00000800);
+    return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter() {
     return setter_;
   }
 
-  public static final int IS_EXPECT_FIELD_NUMBER = 13;
-  private boolean isExpect_;
-  /**
-   * <code>required bool is_expect = 13;</code>
-   */
-  public boolean hasIsExpect() {
-    return ((bitField0_ & 0x00001000) == 0x00001000);
-  }
-  /**
-   * <code>required bool is_expect = 13;</code>
-   */
-  public boolean getIsExpect() {
-    return isExpect_;
-  }
-
-  public static final int IS_FAKE_OVERRIDE_FIELD_NUMBER = 14;
-  private boolean isFakeOverride_;
-  /**
-   * <code>required bool is_fake_override = 14;</code>
-   */
-  public boolean hasIsFakeOverride() {
-    return ((bitField0_ & 0x00002000) == 0x00002000);
-  }
-  /**
-   * <code>required bool is_fake_override = 14;</code>
-   */
-  public boolean getIsFakeOverride() {
-    return isFakeOverride_;
-  }
-
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
-    visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-    modality_ = org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind.FINAL_MODALITY;
-    isVar_ = false;
-    isConst_ = false;
-    isLateinit_ = false;
-    isDelegated_ = false;
-    isExternal_ = false;
     backingField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrField.getDefaultInstance();
     getter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
     setter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
-    isExpect_ = false;
-    isFakeOverride_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -444,47 +240,7 @@ public final class IrProperty extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasVisibility()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasModality()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsVar()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsConst()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsLateinit()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsDelegated()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsExternal()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsExpect()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsFakeOverride()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!getBase().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getVisibility().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -520,40 +276,13 @@ public final class IrProperty extends
       output.writeInt32(2, name_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeMessage(3, visibility_);
+      output.writeMessage(3, backingField_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeEnum(4, modality_.getNumber());
+      output.writeMessage(4, getter_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeBool(5, isVar_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeBool(6, isConst_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      output.writeBool(7, isLateinit_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      output.writeBool(8, isDelegated_);
-    }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      output.writeBool(9, isExternal_);
-    }
-    if (((bitField0_ & 0x00000200) == 0x00000200)) {
-      output.writeMessage(10, backingField_);
-    }
-    if (((bitField0_ & 0x00000400) == 0x00000400)) {
-      output.writeMessage(11, getter_);
-    }
-    if (((bitField0_ & 0x00000800) == 0x00000800)) {
-      output.writeMessage(12, setter_);
-    }
-    if (((bitField0_ & 0x00001000) == 0x00001000)) {
-      output.writeBool(13, isExpect_);
-    }
-    if (((bitField0_ & 0x00002000) == 0x00002000)) {
-      output.writeBool(14, isFakeOverride_);
+      output.writeMessage(5, setter_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -574,51 +303,15 @@ public final class IrProperty extends
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(3, visibility_);
+        .computeMessageSize(3, backingField_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeEnumSize(4, modality_.getNumber());
+        .computeMessageSize(4, getter_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(5, isVar_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(6, isConst_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(7, isLateinit_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(8, isDelegated_);
-    }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(9, isExternal_);
-    }
-    if (((bitField0_ & 0x00000200) == 0x00000200)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(10, backingField_);
-    }
-    if (((bitField0_ & 0x00000400) == 0x00000400)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(11, getter_);
-    }
-    if (((bitField0_ & 0x00000800) == 0x00000800)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(12, setter_);
-    }
-    if (((bitField0_ & 0x00001000) == 0x00001000)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(13, isExpect_);
-    }
-    if (((bitField0_ & 0x00002000) == 0x00002000)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(14, isFakeOverride_);
+        .computeMessageSize(5, setter_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -718,30 +411,12 @@ public final class IrProperty extends
       bitField0_ = (bitField0_ & ~0x00000001);
       name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
-      visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000004);
-      modality_ = org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind.FINAL_MODALITY;
-      bitField0_ = (bitField0_ & ~0x00000008);
-      isVar_ = false;
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isConst_ = false;
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isLateinit_ = false;
-      bitField0_ = (bitField0_ & ~0x00000040);
-      isDelegated_ = false;
-      bitField0_ = (bitField0_ & ~0x00000080);
-      isExternal_ = false;
-      bitField0_ = (bitField0_ & ~0x00000100);
       backingField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrField.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000200);
+      bitField0_ = (bitField0_ & ~0x00000004);
       getter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000400);
+      bitField0_ = (bitField0_ & ~0x00000008);
       setter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000800);
-      isExpect_ = false;
-      bitField0_ = (bitField0_ & ~0x00001000);
-      isFakeOverride_ = false;
-      bitField0_ = (bitField0_ & ~0x00002000);
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -776,51 +451,15 @@ public final class IrProperty extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
-      result.visibility_ = visibility_;
+      result.backingField_ = backingField_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
-      result.modality_ = modality_;
+      result.getter_ = getter_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000010;
       }
-      result.isVar_ = isVar_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000020;
-      }
-      result.isConst_ = isConst_;
-      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000040;
-      }
-      result.isLateinit_ = isLateinit_;
-      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000080;
-      }
-      result.isDelegated_ = isDelegated_;
-      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-        to_bitField0_ |= 0x00000100;
-      }
-      result.isExternal_ = isExternal_;
-      if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
-        to_bitField0_ |= 0x00000200;
-      }
-      result.backingField_ = backingField_;
-      if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
-        to_bitField0_ |= 0x00000400;
-      }
-      result.getter_ = getter_;
-      if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
-        to_bitField0_ |= 0x00000800;
-      }
       result.setter_ = setter_;
-      if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
-        to_bitField0_ |= 0x00001000;
-      }
-      result.isExpect_ = isExpect_;
-      if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
-        to_bitField0_ |= 0x00002000;
-      }
-      result.isFakeOverride_ = isFakeOverride_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -833,27 +472,6 @@ public final class IrProperty extends
       if (other.hasName()) {
         setName(other.getName());
       }
-      if (other.hasVisibility()) {
-        mergeVisibility(other.getVisibility());
-      }
-      if (other.hasModality()) {
-        setModality(other.getModality());
-      }
-      if (other.hasIsVar()) {
-        setIsVar(other.getIsVar());
-      }
-      if (other.hasIsConst()) {
-        setIsConst(other.getIsConst());
-      }
-      if (other.hasIsLateinit()) {
-        setIsLateinit(other.getIsLateinit());
-      }
-      if (other.hasIsDelegated()) {
-        setIsDelegated(other.getIsDelegated());
-      }
-      if (other.hasIsExternal()) {
-        setIsExternal(other.getIsExternal());
-      }
       if (other.hasBackingField()) {
         mergeBackingField(other.getBackingField());
       }
@@ -862,12 +480,6 @@ public final class IrProperty extends
       }
       if (other.hasSetter()) {
         mergeSetter(other.getSetter());
-      }
-      if (other.hasIsExpect()) {
-        setIsExpect(other.getIsExpect());
-      }
-      if (other.hasIsFakeOverride()) {
-        setIsFakeOverride(other.getIsFakeOverride());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -883,47 +495,7 @@ public final class IrProperty extends
         
         return false;
       }
-      if (!hasVisibility()) {
-        
-        return false;
-      }
-      if (!hasModality()) {
-        
-        return false;
-      }
-      if (!hasIsVar()) {
-        
-        return false;
-      }
-      if (!hasIsConst()) {
-        
-        return false;
-      }
-      if (!hasIsLateinit()) {
-        
-        return false;
-      }
-      if (!hasIsDelegated()) {
-        
-        return false;
-      }
-      if (!hasIsExternal()) {
-        
-        return false;
-      }
-      if (!hasIsExpect()) {
-        
-        return false;
-      }
-      if (!hasIsFakeOverride()) {
-        
-        return false;
-      }
       if (!getBase().isInitialized()) {
-        
-        return false;
-      }
-      if (!getVisibility().isInitialized()) {
         
         return false;
       }
@@ -1059,276 +631,21 @@ public final class IrProperty extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrField backingField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrField.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
      */
-    public boolean hasVisibility() {
+    public boolean hasBackingField() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility() {
-      return visibility_;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-     */
-    public Builder setVisibility(org.jetbrains.kotlin.backend.common.serialization.proto.Visibility value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      visibility_ = value;
-
-      bitField0_ |= 0x00000004;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-     */
-    public Builder setVisibility(
-        org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.Builder builderForValue) {
-      visibility_ = builderForValue.build();
-
-      bitField0_ |= 0x00000004;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-     */
-    public Builder mergeVisibility(org.jetbrains.kotlin.backend.common.serialization.proto.Visibility value) {
-      if (((bitField0_ & 0x00000004) == 0x00000004) &&
-          visibility_ != org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance()) {
-        visibility_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.newBuilder(visibility_).mergeFrom(value).buildPartial();
-      } else {
-        visibility_ = value;
-      }
-
-      bitField0_ |= 0x00000004;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-     */
-    public Builder clearVisibility() {
-      visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-
-      bitField0_ = (bitField0_ & ~0x00000004);
-      return this;
-    }
-
-    private org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality_ = org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind.FINAL_MODALITY;
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-     */
-    public boolean hasModality() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind getModality() {
-      return modality_;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-     */
-    public Builder setModality(org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      bitField0_ |= 0x00000008;
-      modality_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-     */
-    public Builder clearModality() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      modality_ = org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind.FINAL_MODALITY;
-      
-      return this;
-    }
-
-    private boolean isVar_ ;
-    /**
-     * <code>required bool is_var = 5;</code>
-     */
-    public boolean hasIsVar() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>required bool is_var = 5;</code>
-     */
-    public boolean getIsVar() {
-      return isVar_;
-    }
-    /**
-     * <code>required bool is_var = 5;</code>
-     */
-    public Builder setIsVar(boolean value) {
-      bitField0_ |= 0x00000010;
-      isVar_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_var = 5;</code>
-     */
-    public Builder clearIsVar() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isVar_ = false;
-      
-      return this;
-    }
-
-    private boolean isConst_ ;
-    /**
-     * <code>required bool is_const = 6;</code>
-     */
-    public boolean hasIsConst() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>required bool is_const = 6;</code>
-     */
-    public boolean getIsConst() {
-      return isConst_;
-    }
-    /**
-     * <code>required bool is_const = 6;</code>
-     */
-    public Builder setIsConst(boolean value) {
-      bitField0_ |= 0x00000020;
-      isConst_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_const = 6;</code>
-     */
-    public Builder clearIsConst() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isConst_ = false;
-      
-      return this;
-    }
-
-    private boolean isLateinit_ ;
-    /**
-     * <code>required bool is_lateinit = 7;</code>
-     */
-    public boolean hasIsLateinit() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
-    }
-    /**
-     * <code>required bool is_lateinit = 7;</code>
-     */
-    public boolean getIsLateinit() {
-      return isLateinit_;
-    }
-    /**
-     * <code>required bool is_lateinit = 7;</code>
-     */
-    public Builder setIsLateinit(boolean value) {
-      bitField0_ |= 0x00000040;
-      isLateinit_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_lateinit = 7;</code>
-     */
-    public Builder clearIsLateinit() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      isLateinit_ = false;
-      
-      return this;
-    }
-
-    private boolean isDelegated_ ;
-    /**
-     * <code>required bool is_delegated = 8;</code>
-     */
-    public boolean hasIsDelegated() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
-    }
-    /**
-     * <code>required bool is_delegated = 8;</code>
-     */
-    public boolean getIsDelegated() {
-      return isDelegated_;
-    }
-    /**
-     * <code>required bool is_delegated = 8;</code>
-     */
-    public Builder setIsDelegated(boolean value) {
-      bitField0_ |= 0x00000080;
-      isDelegated_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_delegated = 8;</code>
-     */
-    public Builder clearIsDelegated() {
-      bitField0_ = (bitField0_ & ~0x00000080);
-      isDelegated_ = false;
-      
-      return this;
-    }
-
-    private boolean isExternal_ ;
-    /**
-     * <code>required bool is_external = 9;</code>
-     */
-    public boolean hasIsExternal() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
-    }
-    /**
-     * <code>required bool is_external = 9;</code>
-     */
-    public boolean getIsExternal() {
-      return isExternal_;
-    }
-    /**
-     * <code>required bool is_external = 9;</code>
-     */
-    public Builder setIsExternal(boolean value) {
-      bitField0_ |= 0x00000100;
-      isExternal_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_external = 9;</code>
-     */
-    public Builder clearIsExternal() {
-      bitField0_ = (bitField0_ & ~0x00000100);
-      isExternal_ = false;
-      
-      return this;
-    }
-
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrField backingField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrField.getDefaultInstance();
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
-     */
-    public boolean hasBackingField() {
-      return ((bitField0_ & 0x00000200) == 0x00000200);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrField getBackingField() {
       return backingField_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
      */
     public Builder setBackingField(org.jetbrains.kotlin.backend.common.serialization.proto.IrField value) {
       if (value == null) {
@@ -1336,24 +653,24 @@ public final class IrProperty extends
       }
       backingField_ = value;
 
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
      */
     public Builder setBackingField(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrField.Builder builderForValue) {
       backingField_ = builderForValue.build();
 
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
      */
     public Builder mergeBackingField(org.jetbrains.kotlin.backend.common.serialization.proto.IrField value) {
-      if (((bitField0_ & 0x00000200) == 0x00000200) &&
+      if (((bitField0_ & 0x00000004) == 0x00000004) &&
           backingField_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrField.getDefaultInstance()) {
         backingField_ =
           org.jetbrains.kotlin.backend.common.serialization.proto.IrField.newBuilder(backingField_).mergeFrom(value).buildPartial();
@@ -1361,34 +678,34 @@ public final class IrProperty extends
         backingField_ = value;
       }
 
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
      */
     public Builder clearBackingField() {
       backingField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrField.getDefaultInstance();
 
-      bitField0_ = (bitField0_ & ~0x00000200);
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
      */
     public boolean hasGetter() {
-      return ((bitField0_ & 0x00000400) == 0x00000400);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getGetter() {
       return getter_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
      */
     public Builder setGetter(org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction value) {
       if (value == null) {
@@ -1396,24 +713,24 @@ public final class IrProperty extends
       }
       getter_ = value;
 
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000008;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
      */
     public Builder setGetter(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.Builder builderForValue) {
       getter_ = builderForValue.build();
 
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000008;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
      */
     public Builder mergeGetter(org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction value) {
-      if (((bitField0_ & 0x00000400) == 0x00000400) &&
+      if (((bitField0_ & 0x00000008) == 0x00000008) &&
           getter_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance()) {
         getter_ =
           org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.newBuilder(getter_).mergeFrom(value).buildPartial();
@@ -1421,34 +738,34 @@ public final class IrProperty extends
         getter_ = value;
       }
 
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000008;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
      */
     public Builder clearGetter() {
       getter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
 
-      bitField0_ = (bitField0_ & ~0x00000400);
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
      */
     public boolean hasSetter() {
-      return ((bitField0_ & 0x00000800) == 0x00000800);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter() {
       return setter_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
      */
     public Builder setSetter(org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction value) {
       if (value == null) {
@@ -1456,24 +773,24 @@ public final class IrProperty extends
       }
       setter_ = value;
 
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000010;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
      */
     public Builder setSetter(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.Builder builderForValue) {
       setter_ = builderForValue.build();
 
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000010;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
      */
     public Builder mergeSetter(org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction value) {
-      if (((bitField0_ & 0x00000800) == 0x00000800) &&
+      if (((bitField0_ & 0x00000010) == 0x00000010) &&
           setter_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance()) {
         setter_ =
           org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.newBuilder(setter_).mergeFrom(value).buildPartial();
@@ -1481,80 +798,16 @@ public final class IrProperty extends
         setter_ = value;
       }
 
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000010;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
      */
     public Builder clearSetter() {
       setter_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction.getDefaultInstance();
 
-      bitField0_ = (bitField0_ & ~0x00000800);
-      return this;
-    }
-
-    private boolean isExpect_ ;
-    /**
-     * <code>required bool is_expect = 13;</code>
-     */
-    public boolean hasIsExpect() {
-      return ((bitField0_ & 0x00001000) == 0x00001000);
-    }
-    /**
-     * <code>required bool is_expect = 13;</code>
-     */
-    public boolean getIsExpect() {
-      return isExpect_;
-    }
-    /**
-     * <code>required bool is_expect = 13;</code>
-     */
-    public Builder setIsExpect(boolean value) {
-      bitField0_ |= 0x00001000;
-      isExpect_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_expect = 13;</code>
-     */
-    public Builder clearIsExpect() {
-      bitField0_ = (bitField0_ & ~0x00001000);
-      isExpect_ = false;
-      
-      return this;
-    }
-
-    private boolean isFakeOverride_ ;
-    /**
-     * <code>required bool is_fake_override = 14;</code>
-     */
-    public boolean hasIsFakeOverride() {
-      return ((bitField0_ & 0x00002000) == 0x00002000);
-    }
-    /**
-     * <code>required bool is_fake_override = 14;</code>
-     */
-    public boolean getIsFakeOverride() {
-      return isFakeOverride_;
-    }
-    /**
-     * <code>required bool is_fake_override = 14;</code>
-     */
-    public Builder setIsFakeOverride(boolean value) {
-      bitField0_ |= 0x00002000;
-      isFakeOverride_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_fake_override = 14;</code>
-     */
-    public Builder clearIsFakeOverride() {
-      bitField0_ = (bitField0_ & ~0x00002000);
-      isFakeOverride_ = false;
-      
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 

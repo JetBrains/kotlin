@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager;
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition;
 
 import javax.swing.*;
@@ -93,7 +94,7 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
     @Override
     @Nls
     public String getDisplayName() {
-        return "Kotlin Scripting";
+        return KotlinBundle.message("script.name.kotlin.scripting");
     }
 
     @Override

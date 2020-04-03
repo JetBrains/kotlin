@@ -1,6 +1,6 @@
 // DISABLE-ERRORS
 
-@Experimental
+@RequiresOptIn
 annotation class FirstExperience
 
 open class ParentTarget {

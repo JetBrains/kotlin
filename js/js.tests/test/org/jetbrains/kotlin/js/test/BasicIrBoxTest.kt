@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
-import org.jetbrains.kotlin.ir.backend.js.compile
-import org.jetbrains.kotlin.ir.backend.js.generateKLib
-import org.jetbrains.kotlin.ir.backend.js.jsPhases
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -23,9 +21,9 @@ import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
 
-private val fullRuntimeKlib = "compiler/ir/serialization.js/build/fullRuntime/klib"
-private val defaultRuntimeKlib = "compiler/ir/serialization.js/build/reducedRuntime/klib"
-private val kotlinTestKLib = "compiler/ir/serialization.js/build/kotlin.test/klib"
+private val fullRuntimeKlib = "libraries/stdlib/js-ir/build/fullRuntime/klib"
+private val defaultRuntimeKlib = "libraries/stdlib/js-ir/build/reducedRuntime/klib"
+private val kotlinTestKLib = "libraries/stdlib/js-ir/build/kotlin.test/klib"
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -46,7 +44,13 @@ abstract class BasicIrBoxTest(
 
     override val skipMinification = true
 
-    override val runIrDce: Boolean = true
+    private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { getBoolean(it) } ?: default
+
+    override val skipRegularMode: Boolean = getBoolean("kotlin.js.ir.skipRegularMode")
+
+    override val runIrDce: Boolean = getBoolean("kotlin.js.ir.dce", true)
+
+    override val runIrPir: Boolean = getBoolean("kotlin.js.ir.pir", true)
 
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
@@ -65,6 +69,7 @@ abstract class BasicIrBoxTest(
         units: List<TranslationUnit>,
         outputFile: File,
         dceOutputFile: File,
+        pirOutputFile: File,
         config: JsConfig,
         outputPrefixFile: File?,
         outputPostfixFile: File?,
@@ -74,7 +79,8 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        skipDceDriven: Boolean
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
@@ -113,36 +119,59 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
-            val compiledModule = compile(
-                project = config.project,
-                files = filesToCompile,
-                configuration = config.configuration,
-                phaseConfig = phaseConfig,
-                allDependencies = resolvedLibraries,
-                friendDependencies = emptyList(),
-                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
-                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
-                generateFullJs = true,
-                generateDceJs = runIrDce
-            )
+            if (!skipRegularMode) {
+                val compiledModule = compile(
+                    project = config.project,
+                    mainModule = MainModule.SourceFiles(filesToCompile),
+                    analyzer = AnalyzerWithCompilerReport(config.configuration),
+                    configuration = config.configuration,
+                    phaseConfig = phaseConfig,
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = emptyList(),
+                    mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                    exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+                    generateFullJs = true,
+                    generateDceJs = runIrDce
+                )
 
-            val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
-            outputFile.write(wrappedCode)
+                val wrappedCode =
+                    wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
+                outputFile.write(wrappedCode)
 
-            compiledModule.dceJsCode?.let { dceJsCode ->
-                val dceWrappedCode = wrapWithModuleEmulationMarkers(dceJsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
-                dceOutputFile.write(dceWrappedCode)
+                compiledModule.dceJsCode?.let { dceJsCode ->
+                    val dceWrappedCode =
+                        wrapWithModuleEmulationMarkers(dceJsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+                    dceOutputFile.write(dceWrappedCode)
+                }
+
+                if (generateDts) {
+                    val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
+                    dtsFile?.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
+                }
             }
 
-            if (generateDts) {
-                val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
-                dtsFile?.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
+            if (runIrPir && !skipDceDriven) {
+                compile(
+                    project = config.project,
+                    mainModule = MainModule.SourceFiles(filesToCompile),
+                    analyzer = AnalyzerWithCompilerReport(config.configuration),
+                    configuration = config.configuration,
+                    phaseConfig = phaseConfig,
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = emptyList(),
+                    mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                    exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+                    dceDriven = true
+                ).jsCode!!.let { pirCode ->
+                    val pirWrappedCode = wrapWithModuleEmulationMarkers(pirCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+                    pirOutputFile.write(pirWrappedCode)
+                }
             }
-
         } else {
             generateKLib(
                 project = config.project,
                 files = filesToCompile,
+                analyzer = AnalyzerWithCompilerReport(config.configuration),
                 configuration = config.configuration,
                 allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),

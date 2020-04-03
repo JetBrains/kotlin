@@ -5,25 +5,62 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isInlined
+import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
+import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorBasedKotlinManglerImpl
+import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor
+import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrBasedKotlinManglerImpl
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
-abstract class AbstractJsMangler : KotlinManglerImpl() {
-    override val IrType.isInlined: Boolean
-        get() = this.isInlined()
+abstract class AbstractJsManglerIr : IrBasedKotlinManglerImpl() {
+
+    companion object {
+        private val exportChecker = JsIrExportChecker()
+    }
+
+    private class JsIrExportChecker : IrExportCheckerVisitor() {
+        override fun IrDeclaration.isPlatformSpecificExported() = false
+    }
+
+    private class JsIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer = JsIrManglerComputer(builder, newMode)
+    }
+
+    override fun getExportChecker(): KotlinExportChecker<IrDeclaration> = exportChecker
+
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> {
+        return JsIrManglerComputer(StringBuilder(256), mode)
+    }
 }
 
-object JsMangler : AbstractJsMangler()
+object JsManglerIr : AbstractJsManglerIr()
 
+abstract class AbstractJsDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
 
-/*
- * JsManglerForBE is a special verison of kotlin mangler used in case when IR is not completely correct from Type Parameter perspective.
- * I.e. usage of TypeParameter is not in TP's container. It's acceptable if only required to distinguish declaration somehow.
- */
-object JsManglerForBE : AbstractJsMangler() {
+    companion object {
+        private val exportChecker = JsDescriptorExportChecker()
+    }
 
-    override fun mangleTypeParameter(typeParameter: IrTypeParameter, typeParameterNamer: (IrTypeParameter) -> String): String =
-        typeParameter.name.asString()
+    private class JsDescriptorExportChecker : DescriptorExportCheckerVisitor() {
+        override fun DeclarationDescriptor.isPlatformSpecificExported() = false
+    }
+
+    private class JsDescriptorManglerComputer(builder: StringBuilder, mode: MangleMode) :
+        DescriptorMangleComputer(builder, mode) {
+        override fun copy(newMode: MangleMode): DescriptorMangleComputer = JsDescriptorManglerComputer(builder, newMode)
+    }
+
+    override fun getExportChecker(): KotlinExportChecker<DeclarationDescriptor> = exportChecker
+
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> {
+        return JsDescriptorManglerComputer(StringBuilder(256), mode)
+    }
 }
+
+
+object JsManglerDesc : AbstractJsDescriptorMangler()

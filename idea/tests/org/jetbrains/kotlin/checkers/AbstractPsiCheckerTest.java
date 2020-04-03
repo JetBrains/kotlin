@@ -62,20 +62,19 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
 
     protected long checkHighlighting(boolean checkWarnings, boolean checkInfos, boolean checkWeakWarnings) {
         PsiFile file = getFile();
-        boolean configured = KotlinLightCodeInsightFixtureTestCaseKt.configureCompilerOptions(file.getText(), getProject(), getModule());
-        try {
-            if (file instanceof KtFile && ((KtFile) file).isScript() && myFixture instanceof JavaCodeInsightTestFixtureImpl) {
-                ((JavaCodeInsightTestFixtureImpl) myFixture).canChangeDocumentDuringHighlighting(true);
-            }
-            return myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
-        }
-        catch (FileComparisonFailure e) {
-            throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(), new File(e.getFilePath()).getAbsolutePath());
-        } finally {
-            if (configured) {
-                KotlinLightCodeInsightFixtureTestCaseKt.rollbackCompilerOptions(getProject(), getModule());
-            }
-        }
+        return KotlinLightCodeInsightFixtureTestCaseKt
+                .withCustomCompilerOptions(file.getText(), getProject(), getModule(), () -> {
+                    try {
+                        if (file instanceof KtFile && ((KtFile) file).isScript() && myFixture instanceof JavaCodeInsightTestFixtureImpl) {
+                            ((JavaCodeInsightTestFixtureImpl) myFixture).canChangeDocumentDuringHighlighting(true);
+                        }
+                        return myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
+                    }
+                    catch (FileComparisonFailure e) {
+                        throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(),
+                                                        new File(e.getFilePath()).getAbsolutePath());
+                    }
+                });
     }
 
     void checkResolveToDescriptor() {

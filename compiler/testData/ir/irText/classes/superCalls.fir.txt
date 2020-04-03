@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Base'
           CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-            $this: ERROR_CALL 'Unresolved reference: super<R|kotlin/Any|>' type=kotlin.Any
+            $this: GET_VAR '<this>: <root>.Base declared in <root>.Base.hashCode' type=<root>.Base origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -44,15 +44,15 @@ FILE fqName:<root> fileName:/superCalls.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' type=kotlin.Unit origin=null
-          $this: ERROR_CALL 'Unresolved reference: super<R|Base|>' type=<root>.Base
+          $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
     PROPERTY name:bar visibility:public modality:FINAL [val]
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.String declared in <root>.Derived'
-            CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' type=kotlin.String origin=null
-              $this: ERROR_CALL 'Unresolved reference: super<R|Base|>' type=<root>.Base
+            CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-bar>' type=<root>.Derived origin=null
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Base

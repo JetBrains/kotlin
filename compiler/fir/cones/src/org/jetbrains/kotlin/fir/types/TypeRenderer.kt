@@ -13,9 +13,9 @@ fun ConeKotlinType.render(): String {
     val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
-        is ConeDefinitelyNotNullType -> "${original.render()}!"
-        is ConeClassErrorType -> "class error: $reason"
-        is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"
+        is ConeDefinitelyNotNullType -> "${original.render()}!!"
+        is ConeClassErrorType -> "ERROR CLASS: $reason"
+        is ConeCapturedType -> "CapturedType(${constructor.projection.render()})"
         is ConeClassLikeType -> {
             buildString {
                 append(lookupTag.classId.asString())
@@ -45,12 +45,12 @@ fun ConeKotlinType.render(): String {
                 postfix = ")"
             )
         }
-        is ConeStubType -> "stub type: $variable"
+        is ConeStubType -> "Stub: $variable"
         is ConeIntegerLiteralType -> "ILT: $value"
     } + nullabilitySuffix
 }
 
-private fun ConeKotlinTypeProjection.render(): String {
+private fun ConeTypeProjection.render(): String {
     return when (this) {
         ConeStarProjection -> "*"
         is ConeKotlinTypeProjectionIn -> "in ${type.render()}"
@@ -82,7 +82,7 @@ fun ConeKotlinType.renderFunctionType(kind: FunctionClassDescriptor.Kind?, isExt
     }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun FunctionClassDescriptor.Kind?.withPrettyRender(): Boolean {
     contract {
         returns(true) implies (this@withPrettyRender != null)

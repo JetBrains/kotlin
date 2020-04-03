@@ -14,20 +14,20 @@ class A {
     init {
         foo()
         bar()
-        <!UNRESOLVED_REFERENCE!>baz<!>()
+        baz()
     }
 
     fun test1() {
         foo()
         bar()
-        <!UNRESOLVED_REFERENCE!>baz<!>()
+        baz()
     }
 
     object O {
         fun test() {
             foo()
             bar()
-            <!UNRESOLVED_REFERENCE!>baz<!>()
+            baz()
         }
     }
 

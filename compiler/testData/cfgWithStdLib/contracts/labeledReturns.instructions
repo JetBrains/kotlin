@@ -246,18 +246,16 @@ L8:
     mark({ if (it == null) { return@outer Unit } else { return@outer Unit } })
     r({ if (it == null) { return@outer Unit } else { return@outer Unit } }) -> <v1>
     mark(myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } })
-    call(myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }, myLet|<v0>, <v1>)
+    call(myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } }, myLet|<v0>, <v1>) -> <v2>
 L10 [before inlined declaration]:
-    inlined({ if (it == null) { return@outer Unit } else { return@outer Unit } })                                NEXT:[<SINK>]
-L11 [after inlined declaration]:
--   jmp(error)                                                                                                   NEXT:[<ERROR>]                                                                                                      PREV:[]
--   jmp(error)                                                                                                   NEXT:[<ERROR>]                                                                                                      PREV:[]
+    inlined({ if (it == null) { return@outer Unit } else { return@outer Unit } })                                        NEXT:[<SINK>]
 L9:
-- 5 <END>                                                                                                        NEXT:[<SINK>]                                                                                                       PREV:[]
+L11 [after inlined declaration]:
+- 5 <END>                                                                                                                NEXT:[<SINK>]                                                                                                               PREV:[]
 error:
--   <ERROR>                                                                                                      PREV:[]
+-   <ERROR>                                                                                                              PREV:[]
 sink:
-    <SINK>                                                                                                       PREV:[inlined({ if (it == null) { return@outer Unit } else { return@outer Unit } })]
+    <SINK>                                                                                                               PREV:[inlined({ if (it == null) { return@outer Unit } else { return@outer Unit } })]
 =====================
 == inlined anonymous_4 ==
 {
@@ -288,9 +286,8 @@ L14 [else branch]:
     ret(*|<v5>) L5                                                                                  NEXT:[<END>]
 L15 ['if' expression result]:
 - 8 merge(if (it == null) { return@outer Unit } else { return@outer Unit }|!<v4>, !<v6>) -> <v7>    PREV:[]
-- 7 ret(*|<v7>) L13                                                                                 PREV:[]
 L13:
--   <END>                                                                                           NEXT:[<SINK>]                                                                                          PREV:[]
+- 7 <END>                                                                                           NEXT:[<SINK>]                                                                                          PREV:[]
 error:
 -   <ERROR>                                                                                         PREV:[]
 sink:

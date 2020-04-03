@@ -1,12 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.printer
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 
 class
 MavenPrinter(override val indent: Int = 4) : BuildFilePrinter() {
     fun node(
-        name: String,
+        @NonNls name: String,
         attributes: List<Pair<String, String>> = emptyList(),
         singleLine: Boolean = false,
         body: () -> Unit
@@ -36,7 +37,7 @@ MavenPrinter(override val indent: Int = 4) : BuildFilePrinter() {
     }
 
     // We already have line break after node
-    override fun <T : BuildSystemIR> List<T>.listNl() {
+    override fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean) {
         list(separator = { +"" }) { it.render(this) }
     }
 
@@ -44,7 +45,7 @@ MavenPrinter(override val indent: Int = 4) : BuildFilePrinter() {
         get() = "\"$this\""
 
     fun singleLineNode(
-        name: String,
+        @NonNls name: String,
         attributes: List<Pair<String, String>> = emptyList(),
         body: () -> Unit
     ) = node(name, attributes, singleLine = true, body = body)

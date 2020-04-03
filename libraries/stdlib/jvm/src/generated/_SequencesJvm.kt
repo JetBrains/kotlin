@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(desti
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  *
  * The operation is _terminal_.
  */
@@ -45,7 +45,7 @@ public fun <T : Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T>
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  *

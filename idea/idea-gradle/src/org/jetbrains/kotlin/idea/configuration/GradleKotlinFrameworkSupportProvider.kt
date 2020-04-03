@@ -28,11 +28,13 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
@@ -154,7 +156,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
-        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", false)
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder<out PsiFile>, specifyPluginVersionIfNeeded: Boolean) {}
@@ -162,9 +164,13 @@ abstract class GradleKotlinFrameworkSupportProvider(
     protected abstract fun getDependencies(sdk: Sdk?): List<String>
     protected open fun getTestDependencies(): List<String> = listOf()
 
+    @NonNls
     protected abstract fun getPluginId(): String
+
+    @NonNls
     protected abstract fun getPluginExpression(): String
 
+    @Nls
     protected abstract fun getDescription(): String
 }
 
@@ -194,7 +200,8 @@ open class GradleKotlinJavaFrameworkSupportProvider(
         }
     }
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting the JVM"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.the.jvm")
 }
 
 abstract class GradleKotlinJSFrameworkSupportProvider(
@@ -212,14 +219,24 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
-        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        buildScriptData.addOther(
+            """
+                kotlin {
+                    js {
+                        $jsSubTargetName { }
+                        binaries.executable()
+                    }
+                }
+            """.trimIndent()
+        )
     }
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.js'"
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
     override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.javascript")
 }
 
 open class GradleKotlinJSBrowserFrameworkSupportProvider(
@@ -229,7 +246,8 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
     override val jsSubTargetName: String
         get() = "browser"
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript for browser"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.browser")
 
     override fun addSupport(
         buildScriptData: BuildScriptDataBuilder,
@@ -241,7 +259,8 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
         getNewFileWriter(module, "src/main/resources", "index.html")?.use {
-            it.write("""
+            it.write(
+                """
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -253,18 +272,21 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
                 
                 </body>
                 </html>
-            """.trimIndent().trim())
+            """.trimIndent().trim()
+            )
         }
 
 
         getNewFileWriter(module, "src/main/kotlin", "main.kt")?.use {
-            it.write("""
+            it.write(
+                """
                 import kotlin.browser.document
                 
                 fun main() {
                     document.write("Hello, world!")
                 }
-            """.trimIndent().trim())
+            """.trimIndent().trim()
+            )
         }
     }
 
@@ -292,11 +314,12 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
     override val jsSubTargetName: String
         get() = "nodejs"
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript for Node.js"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.node.js")
 }
 
 open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
-    "KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP
+    "KOTLIN_MPP", KotlinIdeaGradleBundle.message("display.name.kotlin.multiplatform"), KotlinIcons.MPP
 ) {
     override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"
@@ -305,8 +328,7 @@ open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSuppor
     override fun getTestDependencies(): List<String> = listOf()
 
     override fun getDescription() =
-        "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules. " +
-                "The targets can be configured in the project's build script."
+        KotlinIdeaGradleBundle.message("description.text.multi.targeted.jvm.js.ios.etc.project.with.shared.code.in.common.modules")
 }
 
 open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFrameworkSupportProvider() {
@@ -319,6 +341,7 @@ open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFr
         explicitPluginVersion: String?
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
+        NewProjectWizardsFUSCollector.log(this.presentableName + " as framework", "Gradle", false)
 
         buildScriptData.addOther(
             """kotlin {

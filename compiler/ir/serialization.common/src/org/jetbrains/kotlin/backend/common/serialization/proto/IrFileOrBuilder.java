@@ -8,17 +8,17 @@ public interface IrFileOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated int64 declaration_id = 1;</code>
+   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
    */
-  java.util.List<java.lang.Long> getDeclarationIdList();
+  java.util.List<java.lang.Integer> getDeclarationIdList();
   /**
-   * <code>repeated int64 declaration_id = 1;</code>
+   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
    */
   int getDeclarationIdCount();
   /**
-   * <code>repeated int64 declaration_id = 1;</code>
+   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
    */
-  long getDeclarationId(int index);
+  int getDeclarationId(int index);
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
@@ -30,15 +30,15 @@ public interface IrFileOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
 
   /**
-   * <code>repeated int32 fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
    */
   java.util.List<java.lang.Integer> getFqNameList();
   /**
-   * <code>repeated int32 fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
    */
   int getFqNameCount();
   /**
-   * <code>repeated int32 fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3 [packed = true];</code>
    */
   int getFqName(int index);
 
@@ -57,17 +57,17 @@ public interface IrFileOrBuilder extends
   int getAnnotationCount();
 
   /**
-   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
-  java.util.List<java.lang.Integer> getExplicitlyExportedToCompilerList();
+  java.util.List<java.lang.Long> getExplicitlyExportedToCompilerList();
   /**
-   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
   int getExplicitlyExportedToCompilerCount();
   /**
-   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
-  int getExplicitlyExportedToCompiler(int index);
+  long getExplicitlyExportedToCompiler(int index);
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>

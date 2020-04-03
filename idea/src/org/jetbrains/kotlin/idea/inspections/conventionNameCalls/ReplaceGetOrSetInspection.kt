@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
@@ -45,6 +46,11 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         val callExpression = element.callExpression ?: return false
         val calleeName = (callExpression.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
         if (calleeName !in operatorNames) return false
+        if (callExpression.typeArgumentList != null) return false
+        val arguments = callExpression.valueArguments
+        if (arguments.isEmpty()) return false
+        if (arguments.any { it.isNamed() || it.isSpread }) return false
+
         val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
@@ -52,18 +58,12 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return false
         if (!target.isValidOperator() || target.name !in operatorNames) return false
 
-        if (callExpression.typeArgumentList != null) return false
-
-        val arguments = callExpression.valueArguments
-        if (arguments.isEmpty()) return false
-        if (arguments.any { it.isNamed() }) return false
-
         if (!element.isReceiverExpressionWithValue()) return false
 
         return target.name != OperatorNameConventions.SET || !element.isUsedAsExpression(bindingContext)
     }
 
-    override fun inspectionText(element: KtDotQualifiedExpression) = "Should be replaced with indexing"
+    override fun inspectionText(element: KtDotQualifiedExpression) = KotlinBundle.message("should.be.replaced.with.indexing")
 
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType =
         if ((element.toResolvedCall(BodyResolveMode.PARTIAL)?.resultingDescriptor as? FunctionDescriptor)?.isExplicitOperator() == true) {
@@ -72,13 +72,12 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
             ProblemHighlightType.INFORMATION
         }
 
-    override val defaultFixText: String
-        get() = "Replace get or set call with indexing operator"
+    override val defaultFixText: String get() = KotlinBundle.message("replace.get.or.set.call.with.indexing.operator")
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val callExpression = element.callExpression ?: return defaultFixText
         val resolvedCall = callExpression.resolveToCall() ?: return defaultFixText
-        return "Replace '${resolvedCall.resultingDescriptor.name.asString()}' call with indexing operator"
+        return KotlinBundle.message("replace.0.call.with.indexing.operator", resolvedCall.resultingDescriptor.name.asString())
     }
 
     override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()

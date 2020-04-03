@@ -1,0 +1,4 @@
+FILE: toSortedMapWithComparator.kt
+    public final fun test(map: R|kotlin/collections/Map<kotlin/String?, kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit| {
+        lval sortedMap: R|java/util/SortedMap<kotlin/String?, kotlin/collections/List<kotlin/String>>| = R|<local>/map|.R|kotlin/collections/toSortedMap|<R|kotlin/String?|, R|kotlin/collections/List<kotlin/String>|>(R|kotlin/comparisons/nullsLast|<R|kotlin/String|>())
+    }

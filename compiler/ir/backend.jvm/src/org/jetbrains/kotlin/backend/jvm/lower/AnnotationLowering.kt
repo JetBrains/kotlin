@@ -22,19 +22,13 @@ internal val annotationPhase = makeIrFilePhase<JvmBackendContext>(
     description = "Remove constructors of annotation classes"
 )
 
-/**
- * Remove the constructors from annotation classes.
- */
 private class AnnotationLowering : FileLoweringPass, IrElementTransformerVoid() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        if (!declaration.isAnnotationClass) return super.visitClass(declaration)
-
-        declaration.declarations.removeIf {
-            it is IrConstructor
+    override fun visitClass(declaration: IrClass): IrStatement =
+        declaration.transformPostfix {
+            if (isAnnotationClass) {
+                declarations.removeIf { it is IrConstructor }
+            }
         }
-
-        return declaration
-    }
 }

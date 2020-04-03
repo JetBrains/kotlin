@@ -1,17 +1,12 @@
 description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
-apply plugin: 'pill-configurable'
 
 configurePublishing(project)
 
 dependencies {
     compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
-}
-
-pill {
-    importAsLibrary = true
 }
 
 jar {
@@ -37,7 +32,7 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
                 "-module-name", project.name,
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
         ]
     }
 }

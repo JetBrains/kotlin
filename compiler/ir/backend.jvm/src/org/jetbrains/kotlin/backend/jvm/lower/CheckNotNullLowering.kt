@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -43,7 +42,7 @@ private class CheckNotNullLowering(private val backendContext: JvmBackendContext
             // Starting with Kotlin 1.4 null-checks are lowered to calls to the "checkNotNull" intrinsic, which
             // throws a NullPointerException on failure. Prior to Kotlin 1.4 we instead inline the null-check and
             // call the "throwNpe" intrinsic on failure which throws a KotlinNullPointerException.
-            if (backendContext.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) {
+            if (backendContext.state.unifiedNullChecks) {
                 +irCall(backendContext.ir.symbols.checkNotNull).apply {
                     putValueArgument(0, irGet(argument))
                 }

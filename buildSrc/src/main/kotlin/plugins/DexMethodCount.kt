@@ -5,10 +5,12 @@
 
 import com.jakewharton.dex.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 
+@CacheableTask
 open class DexMethodCount : DefaultTask() {
 
     data class Counts(
@@ -19,34 +21,23 @@ open class DexMethodCount : DefaultTask() {
         val byClass: Map<String, Int>
     )
 
-    init {
-        outputs.upToDateWhen { !shouldPrintTeamCityStatistics } // always execute when teamCityStatistics output is required
-    }
-
-    @InputFile
+    @Classpath
     lateinit var jarFile: File
 
-    @Input
     @Optional
+    @Input
     var ownPackages: List<String>? = null
 
-    // ##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='62362']
-    @Input
-    @Optional
-    var teamCityStatistics: Boolean? = null
-
-    private val shouldPrintTeamCityStatistics = teamCityStatistics ?: project.hasProperty("teamcity")
-
-
-    @Input
-    @Optional
+    @Internal
     var artifactName: String? = null
 
-    private val artifactOrArchiveName get() = artifactName ?: project.name
+    @get:Input
+    val artifactOrArchiveName: String
+        get() = artifactName ?: project.name
 
     fun from(jar: Jar) {
-        jarFile = jar.archivePath
-        artifactName = jar.baseName
+        jarFile = jar.archiveFile.get().asFile
+        artifactName = jar.archiveBaseName.orNull
         dependsOn(jar)
     }
 
@@ -54,16 +45,13 @@ open class DexMethodCount : DefaultTask() {
     lateinit var counts: Counts
 
     @get:OutputFile
-    val detailOutputFile: File get() = project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
+    val detailOutputFile: File
+        get() = project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
 
     @TaskAction
     fun invoke() {
         val methods = dexMethods(jarFile)
-
         val counts = methods.getCounts().also { this.counts = it }
-
-        printTotals(counts)
-        printTCStats(counts)
         outputDetails(counts)
     }
 
@@ -71,7 +59,7 @@ open class DexMethodCount : DefaultTask() {
         val byPackage = this.groupingBy { it.`package` }.eachCount()
         val byClass = this.groupingBy { it.declaringType }.eachCount()
 
-        val ownPackages = ownPackages?.map { it + '.' }
+        val ownPackages = ownPackages?.map { "$it." }
         val byOwnPackages = if (ownPackages != null) {
             this.partition { method -> ownPackages.any { method.declaringType.startsWith(it) } }.let {
                 it.first.size to it.second.size
@@ -85,26 +73,6 @@ open class DexMethodCount : DefaultTask() {
             byPackage = byPackage,
             byClass = byClass
         )
-    }
-
-    private fun printTotals(counts: Counts) {
-        logger.lifecycle("Artifact $artifactOrArchiveName, total methods: ${counts.total}")
-        ownPackages?.let { packages ->
-            logger.lifecycle("Artifact $artifactOrArchiveName, total methods from packages ${packages.joinToString { "$it.*" }}: ${counts.totalOwnPackages}")
-            logger.lifecycle("Artifact $artifactOrArchiveName, total methods from other packages: ${counts.totalOtherPackages}")
-        }
-    }
-
-    private fun printTCStats(counts: Counts) {
-        if (shouldPrintTeamCityStatistics) {
-            println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='${counts.total}']")
-            counts.totalOwnPackages?.let { value ->
-                println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OwnPackages' value='$value']")
-            }
-            counts.totalOtherPackages?.let { value ->
-                println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OtherPackages' value='$value']")
-            }
-        }
     }
 
     private fun outputDetails(counts: Counts) {
@@ -126,9 +94,67 @@ open class DexMethodCount : DefaultTask() {
             }
         }
     }
-
 }
 
+open class DexMethodCountStats : DefaultTask() {
+
+    @Internal
+    lateinit var from: TaskProvider<DexMethodCount>
+
+    @get:InputFile
+    internal val inputFile
+        get() = from.get().detailOutputFile
+
+    @TaskAction
+    private fun printStats() {
+        val artifactOrArchiveName = from.get().artifactOrArchiveName
+        inputFile.reader().useLines { lines ->
+            fun String.getStatValue() = substringBefore("\t").trim()
+
+            val ownPackages = from.get().ownPackages
+            val statsLineCount = if (ownPackages == null) 1 else 3
+            val stats = lines.take(statsLineCount).map { it.getStatValue() }.toList()
+
+            val total = stats[0]
+            logger.lifecycle("Artifact $artifactOrArchiveName, total methods: $total")
+
+            if (project.kotlinBuildProperties.isTeamcityBuild) {
+                println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='$total']")
+            }
+
+            ownPackages?.let { packages ->
+                val totalOwnPackages = stats[1]
+                val totalOtherPackages = stats[2]
+
+                logger.lifecycle("Artifact $artifactOrArchiveName, total methods from packages ${packages.joinToString { "$it.*" }}: $totalOwnPackages")
+                logger.lifecycle("Artifact $artifactOrArchiveName, total methods from other packages: $totalOtherPackages")
+
+                if (project.kotlinBuildProperties.isTeamcityBuild) {
+                    println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OwnPackages' value='$totalOwnPackages']")
+                    println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OtherPackages' value='$totalOtherPackages']")
+                }
+            }
+        }
+    }
+}
+
+fun Project.printStats(dexMethodCount: TaskProvider<DexMethodCount>) {
+    val dexMethodCountStats = tasks.register("dexMethodCountStats", DexMethodCountStats::class.java) {
+        dependsOn(dexMethodCount)
+        from = dexMethodCount
+    }
+
+    dexMethodCount.configure {
+        finalizedBy(dexMethodCountStats)
+    }
+}
+
+fun Project.dexMethodCount(action: DexMethodCount.() -> Unit): TaskProvider<DexMethodCount> {
+    val dexMethodCount = tasks.register("dexMethodCount", DexMethodCount::class.java, action)
+    printStats(dexMethodCount)
+    tasks.getByName("check").dependsOn(dexMethodCount)
+    return dexMethodCount
+}
 
 private val DexMethod.`package`: String get() = declaringType.substringBeforeLast('.')
 private fun Int.padRight() = toString().padStart(5, ' ')

@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
+import org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache
+import org.jetbrains.kotlin.idea.klib.KlibMetaFileType
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -49,8 +52,7 @@ abstract class KotlinFileIndexBase<T>(classOfIndex: Class<T>) : ScalarIndexExten
     override fun getKeyDescriptor() = KEY_DESCRIPTOR
 
     protected fun indexer(f: (FileContent) -> FqName?): DataIndexer<FqName, Void, FileContent> =
-        // See KT-11323
-        DataIndexer<FqName, Void, FileContent> {
+        DataIndexer {
             try {
                 val fqName = f(it)
                 if (fqName != null) {
@@ -139,3 +141,29 @@ object KotlinMetadataFileIndex : KotlinMetadataFileIndexBase<KotlinMetadataFileI
 object KotlinMetadataFilePackageIndex : KotlinMetadataFileIndexBase<KotlinMetadataFilePackageIndex>(
     KotlinMetadataFilePackageIndex::class.java, ClassId::getPackageFqName
 )
+
+object KlibMetaFileIndex : KotlinFileIndexBase<KlibMetaFileIndex>(KlibMetaFileIndex::class.java) {
+
+    override fun getIndexer() = INDEXER
+
+    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KlibMetaFileType
+    }
+
+    override fun getVersion() = VERSION
+
+    // This is to express intention to index all Kotlin/Native metadata files irrespectively to file size:
+    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KlibMetaFileType)
+
+    private const val VERSION = 4
+
+    /*todo: check version?!*/
+    private val INDEXER = indexer { fileContent ->
+        val fragment = KlibLoadingMetadataCache
+            .getInstance().getCachedPackageFragment(fileContent.file)
+        if (fragment != null)
+            FqName(fragment.getExtension(KlibMetadataProtoBuf.fqName))
+        else
+            null
+    }
+}
+

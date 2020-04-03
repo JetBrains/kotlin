@@ -439,6 +439,40 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    fun scan() {
+        val accumulators = data.scan("baz") { acc, e -> acc + e }
+        assertEquals(3, accumulators.size)
+        assertEquals("baz", accumulators.first())
+        assertTrue(accumulators.elementAt(1) in listOf("bazfoo", "bazbar"))
+        assertTrue(accumulators.last() in listOf("bazfoobar", "bazbarfoo"))
+    }
+
+    @Test
+    fun scanIndexed() {
+        val accumulators = data.scanIndexed("baz") { i, acc, e -> acc + i + e }
+        assertEquals(3, accumulators.size)
+        assertEquals("baz", accumulators.first())
+        assertTrue(accumulators.elementAt(1) in listOf("baz0foo", "baz0bar"))
+        assertTrue(accumulators.last() in listOf("baz0foo1bar", "baz0bar1foo"))
+    }
+
+    @Test
+    fun scanReduce() {
+        val accumulators = data.scanReduce { acc, e -> acc + e }
+        assertEquals(2, accumulators.size)
+        assertTrue(accumulators.first() in listOf("foo", "bar"))
+        assertTrue(accumulators.last() in listOf("foobar", "barfoo"))
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        val accumulators = data.scanReduceIndexed { i, acc, e -> acc + i + e }
+        assertEquals(2, accumulators.size)
+        assertTrue(accumulators.first() in listOf("foo", "bar"))
+        assertTrue(accumulators.last() in listOf("foo1bar", "bar1foo"))
+    }
+
+    @Test
     fun mapAndJoinToString() {
         val result = data.joinToString(separator = "-") { it.toUpperCase() }
         assertEquals("FOO-BAR", result)

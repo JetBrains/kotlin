@@ -12,7 +12,6 @@ import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.scripting.definitions.*
@@ -206,8 +206,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionsManager =
-            ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
+        fun getInstance(project: Project): ScriptDefinitionsManager = project.getServiceSafe<ScriptDefinitionProvider>() as ScriptDefinitionsManager
     }
 }
 

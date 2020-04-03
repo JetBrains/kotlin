@@ -117,7 +117,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         if (function.parent !is IrClass) return call
 
         fun IrSimpleFunction.isFakeOverriddenFromComparable(): Boolean = when {
-            origin != IrDeclarationOrigin.FAKE_OVERRIDE ->
+            !isFakeOverride ->
                 !isStaticMethodOfClass && parentAsClass.thisReceiver!!.type.isComparable()
 
             else -> overriddenSymbols.all { it.owner.isFakeOverriddenFromComparable() }

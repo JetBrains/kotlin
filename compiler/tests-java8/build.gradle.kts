@@ -11,6 +11,7 @@ dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(project(":kotlin-reflect"))
+    testRuntimeOnly(toolsJar())
     testRuntime(intellijDep())
     Platform[192].orHigher {
         testRuntimeOnly(intellijPluginDep("java"))
@@ -20,11 +21,6 @@ dependencies {
 sourceSets {
     "main" {}
     "test" { projectDefault() }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jdkHome = rootProject.extra["JDK_18"]!!.toString()
-    kotlinOptions.jvmTarget = "1.8"
 }
 
 projectTest(parallel = true) {

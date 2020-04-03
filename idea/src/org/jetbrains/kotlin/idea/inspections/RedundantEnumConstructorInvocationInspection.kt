@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
@@ -25,7 +26,7 @@ class RedundantEnumConstructorInvocationInspection : AbstractKotlinInspection() 
         val valueArgumentList = enumEntry.valueArgumentListIfEmpty() ?: return
         holder.registerProblem(
             valueArgumentList,
-            "Redundant enum constructor invocation",
+            KotlinBundle.message("redundant.enum.constructor.invocation"),
             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
             RemoveEnumConstructorInvocationFix()
         )
@@ -33,7 +34,7 @@ class RedundantEnumConstructorInvocationInspection : AbstractKotlinInspection() 
 }
 
 private class RemoveEnumConstructorInvocationFix : LocalQuickFix {
-    override fun getName() = "Remove enum constructor invocation"
+    override fun getName() = KotlinBundle.message("remove.enum.constructor.invocation.fix.text")
 
     override fun getFamilyName() = name
 

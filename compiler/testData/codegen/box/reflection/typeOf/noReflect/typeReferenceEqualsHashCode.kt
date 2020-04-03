@@ -1,7 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND_FIR: JVM_IR
+// !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 package test
@@ -41,7 +40,7 @@ fun box(): String {
 
     equal<Array<Any>, Array<Any>>()
     equal<Array<IntArray>, Array<IntArray>>()
-    equal<Array<*>, Array<out Any?>>() // This is subject to change if we retain star projections in typeOf
+    equal<Array<*>, Array<*>>()
 
     equal<Int, Int>()
     equal<Int?, Int?>()

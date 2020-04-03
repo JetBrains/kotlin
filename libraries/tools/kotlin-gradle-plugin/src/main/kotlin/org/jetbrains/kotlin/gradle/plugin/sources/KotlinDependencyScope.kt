@@ -9,12 +9,16 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
+import org.jetbrains.kotlin.gradle.utils.API
+import org.jetbrains.kotlin.gradle.utils.COMPILE_ONLY
+import org.jetbrains.kotlin.gradle.utils.IMPLEMENTATION
+import org.jetbrains.kotlin.gradle.utils.RUNTIME_ONLY
 
 internal enum class KotlinDependencyScope(val scopeName: String) {
-    API_SCOPE("api"),
-    IMPLEMENTATION_SCOPE("implementation"),
-    COMPILE_ONLY_SCOPE("compileOnly"),
-    RUNTIME_ONLY_SCOPE("runtimeOnly")
+    API_SCOPE(API),
+    IMPLEMENTATION_SCOPE(IMPLEMENTATION),
+    COMPILE_ONLY_SCOPE(COMPILE_ONLY),
+    RUNTIME_ONLY_SCOPE(RUNTIME_ONLY)
 }
 
 internal fun Project.sourceSetDependencyConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration =

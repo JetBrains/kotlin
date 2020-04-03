@@ -267,6 +267,34 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     }
 
     @Test
+    fun testEnumCallIdentifier() {
+        doTest("EnumValuesConstructors") { _, file ->
+            val enumEntry = file.findElementByTextFromPsi<UElement>("(\"system\")")
+            enumEntry.accept(object : AbstractUastVisitor() {
+                override fun visitCallExpression(node: UCallExpression): Boolean {
+                    val methodIdentifier = node.methodIdentifier
+                    assertEquals("SYSTEM", methodIdentifier?.name)
+                    return super.visitCallExpression(node)
+                }
+            })
+        }
+    }
+
+    @Test
+    fun testEnumCallWithBodyIdentifier() {
+        doTest("EnumValueMembers") { _, file ->
+            val enumEntry = file.findElementByTextFromPsi<UElement>("(\"foo\")")
+            enumEntry.accept(object : AbstractUastVisitor() {
+                override fun visitCallExpression(node: UCallExpression): Boolean {
+                    val methodIdentifier = node.methodIdentifier
+                    assertEquals("SHEET", methodIdentifier?.name)
+                    return super.visitCallExpression(node)
+                }
+            })
+        }
+    }
+
+    @Test
     fun testSimpleAnnotated() {
         doTest("SimpleAnnotated") { _, file ->
             file.findElementByTextFromPsi<UField>("@kotlin.SinceKotlin(\"1.0\")\n    val property: String = \"Mary\"").let { field ->
@@ -290,7 +318,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         doTest("SuperCalls") { _, file ->
             file.checkUastSuperTypes("B", listOf("A"))
             file.checkUastSuperTypes("O", listOf("A"))
-            file.checkUastSuperTypes("innerObject ", listOf("A"))
             file.checkUastSuperTypes("InnerClass", listOf("A"))
             file.checkUastSuperTypes("object : A(\"textForAnon\")", listOf("A"))
         }
@@ -427,7 +454,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         )
         assertArguments(listOf("\"%i %i %i\"", "\"\".chunked(2).toTypedArray()"), "format(\"%i %i %i\", *\"\".chunked(2).toTypedArray())")
         assertArguments(listOf("\"def\"", "8", "7.0"), "with2Receivers(8, 7.0F)")
-        assertArguments(listOf("\"foo\"", "1"), "object : Parent(b = 1, a = \"foo\")\n")
     }
 
     @Test
@@ -591,6 +617,56 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 val sourcePsi = typeReference?.sourcePsi ?: kfail("no sourcePsi")
                 assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
                 assertEquals("Int", sourcePsi.text)
+            }
+        }
+    }
+
+    @Test
+    fun testReifiedReturnTypes() {
+        doTest("ReifiedReturnType") { _, file ->
+            val methods = file.classes.flatMap { it.methods.asIterable() }
+            assertEquals("""
+                function1 -> PsiType:void
+                function2 -> PsiType:T
+                function3 -> PsiType:void
+                function4 -> PsiType:T
+                function5 -> PsiType:int
+                function6 -> PsiType:T
+                function7 -> PsiType:T
+                function8 -> PsiType:T
+                function9 -> PsiType:T
+                function10 -> PsiType:T
+                function11 -> PsiType:T
+            """.trimIndent(), methods.joinToString("\n") { m -> m.name + " -> " + m.returnType.toString() })
+            for (method in methods.drop(3)) {
+                assertEquals("assert return types comparable for '${method.name}'", method.returnType, method.returnType)
+            }
+        }
+    }
+
+    @Test
+    fun testReifiedParameters() {
+        doTest("ReifiedParameters") { _, file ->
+            val methods = file.classes.flatMap { it.methods.asIterable() }
+
+            for (method in methods) {
+                assertNotNull("method ${method.name} should have source", method.sourcePsi)
+                assertEquals("method ${method.name} should be equals to converted from sourcePsi", method, method.sourcePsi.toUElement())
+                assertEquals("method ${method.name} should be equals to converted from javaPsi", method, method.javaPsi.toUElement())
+
+                for (parameter in method.uastParameters) {
+                    assertNotNull("parameter ${parameter.name} should have source", parameter.sourcePsi)
+                    assertEquals(
+                        "parameter ${parameter.name} of method ${method.name} should be equals to converted from sourcePsi",
+                        parameter,
+                        parameter.sourcePsi.toUElementOfType<UParameter>()
+                    )
+                    assertEquals(
+                        "parameter ${parameter.name} of method ${method.name} should be equals to converted from javaPsi",
+                        parameter,
+                        parameter.javaPsi.toUElement()
+                    )
+                }
             }
         }
     }

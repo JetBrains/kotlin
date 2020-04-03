@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -24,32 +25,41 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 class ReplaceNegatedIsEmptyWithIsNotEmptyInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return qualifiedExpressionVisitor(fun(expression) {
-            val callExpression = expression.callExpression ?: return
-            val calleeExpression = callExpression.calleeExpression ?: return
-            val calleeText = calleeExpression.text
-            val isEmptyCall = calleeText == "isEmpty"
-            val isNotEmptyCall = calleeText == "isNotEmpty"
-            if (!isEmptyCall && !isNotEmptyCall) return
-
-            val prefixExpression = expression.getWrappingPrefixExpressionIfAny() ?: return
-            if (prefixExpression.operationToken != KtTokens.EXCL) return
-
-            if (isEmptyCall && isEmptyFunctions.none { callExpression.isCalling(FqName(it)) }
-                || isNotEmptyCall && isNotEmptyFunctions.none { callExpression.isCalling(FqName(it)) }) return
-
-            val (from, to) = if (isEmptyCall) "isEmpty" to "isNotEmpty" else "isNotEmpty" to "isEmpty"
+            if (expression.getWrappingPrefixExpressionIfAny()?.operationToken != KtTokens.EXCL) return
+            val calleeExpression = expression.callExpression?.calleeExpression ?: return
+            val from = calleeExpression.text
+            val to = expression.invertSelectorFunction()?.callExpression?.calleeExpression?.text ?: return
             holder.registerProblem(
                 calleeExpression,
-                "Replace negated '$from' with '$to'",
+                KotlinBundle.message("replace.negated.0.with.1", from, to),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix(from, to)
             )
         })
     }
+
+    companion object {
+        fun KtQualifiedExpression.invertSelectorFunction(): KtQualifiedExpression? {
+            val callExpression = this.callExpression ?: return null
+            val calleeExpression = callExpression.calleeExpression ?: return null
+            val calleeText = calleeExpression.text
+            val isEmptyCall = calleeText == "isEmpty"
+            val isNotEmptyCall = calleeText == "isNotEmpty"
+            if (!isEmptyCall && !isNotEmptyCall) return null
+            if (isEmptyCall && isEmptyFunctions.none { callExpression.isCalling(FqName(it)) }
+                || isNotEmptyCall && isNotEmptyFunctions.none { callExpression.isCalling(FqName(it)) }) return null
+            val to = if (isEmptyCall) "isNotEmpty" else "isEmpty"
+            return KtPsiFactory(this).createExpressionByPattern(
+                "$0.$to()",
+                this.receiverExpression,
+                reformat = false
+            ) as? KtQualifiedExpression
+        }
+    }
 }
 
 class ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix(private val from: String, private val to: String) : LocalQuickFix {
-    override fun getName() = "Replace negated '$from' with '$to'"
+    override fun getName() = KotlinBundle.message("replace.negated.0.with.1", from, to)
 
     override fun getFamilyName() = name
 

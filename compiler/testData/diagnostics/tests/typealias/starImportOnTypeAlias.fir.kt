@@ -25,6 +25,6 @@ import test.EnumAlias
 
 
 fun bar() {
-    <!UNRESOLVED_REFERENCE!>Entry<!>
-    EnumAlias.<!UNRESOLVED_REFERENCE!>Entry<!>
+    Entry
+    EnumAlias.Entry
 }

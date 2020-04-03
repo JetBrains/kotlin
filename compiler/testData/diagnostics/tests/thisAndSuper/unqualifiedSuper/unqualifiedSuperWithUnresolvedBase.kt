@@ -41,13 +41,13 @@ class ClassDerivedFromUnresolved : Base(), Interface, <!UNRESOLVED_REFERENCE!>Un
             super.prop
 
     fun getAmbiguousSuperProp(): Int =
-    <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>ambiguousProp<!>
+    <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguousProp<!>
 
     fun callsFunFromSuperInterface() {
         super.bar()
     }
 
     fun callsAmbiguousSuperFun() {
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>ambiguous<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>()
     }
 }
