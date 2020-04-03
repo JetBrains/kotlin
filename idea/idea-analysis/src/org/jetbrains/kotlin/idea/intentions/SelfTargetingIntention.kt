@@ -30,7 +30,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     @Nls private val familyNameGetter: () -> String = textGetter,
 ) : IntentionAction {
 
-    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention(elementType, { text }, { familyName })"))
+    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention<TElement>(elementType, { text }, { familyName })"))
     constructor(
         elementType: Class<TElement>,
         @Nls text: String,
@@ -130,7 +130,7 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
     @Nls familyNameGetter: () -> String = textGetter,
 ) : SelfTargetingIntention<TElement>(elementType, textGetter, familyNameGetter) {
 
-    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingRangeIntention(elementType, { text }, { familyName })"))
+    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingRangeIntention<TElement>(elementType, { text }, { familyName })"))
     constructor(
         elementType: Class<TElement>,
         @Nls text: String,
@@ -153,7 +153,7 @@ abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
 
     @Deprecated(
         "Replace with primary constructor",
-        ReplaceWith("SelfTargetingOffsetIndependentIntention(elementType, { text }, { familyName })")
+        ReplaceWith("SelfTargetingOffsetIndependentIntention<TElement>(elementType, { text }, { familyName })")
     )
     constructor(
         elementType: Class<TElement>,

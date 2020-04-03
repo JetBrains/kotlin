@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 
 class ConvertLineCommentToBlockCommentIntention : SelfTargetingIntention<PsiComment>(
-    PsiComment::class.java, KotlinBundle.message("replace.with.block.comment")
+    PsiComment::class.java,
+    KotlinBundle.lazyMessage("replace.with.block.comment")
 ) {
 
-    override fun isApplicableTo(element: PsiComment, caretOffset: Int): Boolean {
-        return element.isEndOfLineComment()
-    }
+    override fun isApplicableTo(element: PsiComment, caretOffset: Int): Boolean = element.isEndOfLineComment()
 
     override fun applyTo(element: PsiComment, editor: Editor?) {
         val project = element.project
@@ -59,11 +58,7 @@ private fun PsiElement.isEndOfLineComment() = node.elementType == KtTokens.EOL_C
 
 private fun PsiComment.commentText() = text.substring(2).replace("/*", "/ *").replace("*/", "* /").trim()
 
-private fun PsiComment.nextComment(): PsiComment? {
-    return (getNextSiblingIgnoringWhitespace() as? PsiComment)?.takeIf { it.isEndOfLineComment() }
-}
+private fun PsiComment.nextComment(): PsiComment? = (getNextSiblingIgnoringWhitespace() as? PsiComment)?.takeIf { it.isEndOfLineComment() }
 
-private fun PsiComment.prevComment(): PsiComment? {
-    return (getPrevSiblingIgnoringWhitespace() as? PsiComment)?.takeIf { it.isEndOfLineComment() }
-}
+private fun PsiComment.prevComment(): PsiComment? = (getPrevSiblingIgnoringWhitespace() as? PsiComment)?.takeIf { it.isEndOfLineComment() }
 

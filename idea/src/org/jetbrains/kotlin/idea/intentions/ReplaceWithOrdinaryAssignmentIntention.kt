@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-class ReplaceWithOrdinaryAssignmentIntention :
-    SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, KotlinBundle.message("replace.with.ordinary.assignment")),
-    LowPriorityAction {
+class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(
+    KtBinaryExpression::class.java,
+    KotlinBundle.lazyMessage("replace.with.ordinary.assignment")
+), LowPriorityAction {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
         if (element.left !is KtNameReferenceExpression) return false

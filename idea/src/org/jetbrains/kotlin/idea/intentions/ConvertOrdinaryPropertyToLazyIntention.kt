@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 class ConvertOrdinaryPropertyToLazyIntention : SelfTargetingIntention<KtProperty>(
-    KtProperty::class.java, KotlinBundle.message("convert.to.lazy.property")
+    KtProperty::class.java, KotlinBundle.lazyMessage("convert.to.lazy.property")
 ) {
-    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        return !element.isVar && element.initializer != null && element.getter == null && !element.isLocal
-    }
+    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean =
+        !element.isVar && element.initializer != null && element.getter == null && !element.isLocal
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
         val initializer = element.initializer ?: return

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-sealed class ConvertToScopeIntention(
-    private val scopeFunction: ScopeFunction
-) : SelfTargetingIntention<KtExpression>(KtExpression::class.java, KotlinBundle.message("convert.to.0", scopeFunction.functionName)) {
-
+sealed class ConvertToScopeIntention(private val scopeFunction: ScopeFunction) : SelfTargetingIntention<KtExpression>(
+    KtExpression::class.java,
+    KotlinBundle.lazyMessage("convert.to.0", scopeFunction.functionName)
+) {
     enum class ScopeFunction(val functionName: String, val isParameterScope: Boolean) {
         ALSO(functionName = "also", isParameterScope = true),
         APPLY(functionName = "apply", isParameterScope = false),
@@ -87,8 +87,10 @@ sealed class ConvertToScopeIntention(
 
         val psiFactory = KtPsiFactory(expressionToApply)
 
-        val (scopeFunctionCall, block) =
-            createScopeFunctionCall(psiFactory, refactoringTarget.targetElement) ?: return false
+        val (scopeFunctionCall, block) = createScopeFunctionCall(
+            psiFactory,
+            refactoringTarget.targetElement
+        ) ?: return false
 
         replaceReference(referenceElement, refactoringTarget.targetElementValue, lastTarget, psiFactory)
 
@@ -110,6 +112,7 @@ sealed class ConvertToScopeIntention(
         val thisDotSomethingExpressions = block.collectDescendantsOfType<KtDotQualifiedExpression> {
             it.receiverExpression is KtThisExpression && it.selectorExpression !== null
         }
+
         thisDotSomethingExpressions.forEach { thisDotSomethingExpression ->
             thisDotSomethingExpression.selectorExpression?.let { selector ->
                 thisDotSomethingExpression.replace(selector)
@@ -211,11 +214,10 @@ sealed class ConvertToScopeIntention(
         }
     }
 
-    private fun KtExpression.collectTargetElements(referenceName: String, forward: Boolean): Sequence<PsiElement> {
-        return siblings(forward, withItself = false)
+    private fun KtExpression.collectTargetElements(referenceName: String, forward: Boolean): Sequence<PsiElement> =
+        siblings(forward, withItself = false)
             .filter { it !is PsiWhiteSpace && it !is PsiComment && !(it is LeafPsiElement && it.elementType == KtTokens.SEMICOLON) }
             .takeWhile { it.isTarget(referenceName) }
-    }
 
     private fun PsiElement.isTarget(referenceName: String): Boolean {
         when (this) {
@@ -246,18 +248,15 @@ sealed class ConvertToScopeIntention(
             }
             else -> return false
         }
+
         return !anyDescendantOfType<KtNameReferenceExpression> { it.text == scopeFunction.receiver }
     }
 
-    private fun KtExpression.prevProperty(): KtProperty? {
-        val blockChildExpression = PsiTreeUtil.findFirstParent(this) {
-            it.parent is KtBlockExpression
-        } ?: return null
-
-        return blockChildExpression
-            .siblings(forward = false, withItself = true)
-            .firstOrNull { it is KtProperty && it.isLocal } as? KtProperty
+    private fun KtExpression.prevProperty(): KtProperty? = PsiTreeUtil.findFirstParent(this) {
+        it.parent is KtBlockExpression
     }
+        ?.siblings(forward = false, withItself = true)
+        ?.firstOrNull { it is KtProperty && it.isLocal } as? KtProperty
 
     private fun createScopeFunctionCall(factory: KtPsiFactory, element: PsiElement): ScopedFunctionCallAndBlock? {
         val scopeFunctionName = scopeFunction.functionName

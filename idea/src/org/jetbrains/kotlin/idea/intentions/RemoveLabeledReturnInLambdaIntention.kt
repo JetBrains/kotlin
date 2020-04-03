@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpression>(
     KtReturnExpression::class.java,
-    KotlinBundle.message("remove.labeled.return.from.last.expression.in.a.lambda")
+    KotlinBundle.lazyMessage("remove.labeled.return.from.last.expression.in.a.lambda")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtReturnExpression, caretOffset: Int): Boolean {
         val labelName = element.getLabelName() ?: return false

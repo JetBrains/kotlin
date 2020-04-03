@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 class ConvertUnsafeCastCallToUnsafeCastIntention : SelfTargetingIntention<KtDotQualifiedExpression>(
-    KtDotQualifiedExpression::class.java, KotlinBundle.message("convert.to.unsafe.cast")
+    KtDotQualifiedExpression::class.java,
+    KotlinBundle.lazyMessage("convert.to.unsafe.cast"),
 ) {
 
     override fun isApplicableTo(element: KtDotQualifiedExpression, caretOffset: Int): Boolean {
@@ -29,7 +30,7 @@ class ConvertUnsafeCastCallToUnsafeCastIntention : SelfTargetingIntention<KtDotQ
 
         val type = element.callExpression?.typeArguments?.singleOrNull() ?: return false
 
-        text = KotlinBundle.message("convert.to.0.as.1", element.receiverExpression.text, type.text)
+        setTextGetter(KotlinBundle.lazyMessage("convert.to.0.as.1", element.receiverExpression.text, type.text))
         return true
     }
 

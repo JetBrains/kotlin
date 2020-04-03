@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class EliminateWhenSubjectIntention :
-    SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, KotlinBundle.message("eliminate.argument.of.when")),
+    SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, KotlinBundle.lazyMessage("eliminate.argument.of.when")),
     LowPriorityAction {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         if (element.subjectExpression !is KtNameReferenceExpression) return false
@@ -27,7 +27,7 @@ class EliminateWhenSubjectIntention :
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
-        val subject = element.subjectExpression!!
+        val subject = element.subjectExpression ?: return
 
         val commentSaver = CommentSaver(element, saveLineBreaks = true)
 
