@@ -290,6 +290,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                                     source = operatorCall.argument.source
                                     diagnostic = ConeVariableExpectedError()
                                 }
+                            (leftArgument as? FirQualifiedAccess)?.let {
+                                dispatchReceiver = it.dispatchReceiver
+                                extensionReceiver = it.extensionReceiver
+                            }
                         }
                     assignment.transform(transformer, ResolutionMode.ContextIndependent)
                 }
