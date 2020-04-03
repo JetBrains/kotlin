@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -927,15 +928,24 @@ class ControlFlowGraphBuilder {
 
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         val graphs = mutableListOf<ControlFlowGraph>()
+
         call.acceptChildren(object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 element.acceptChildren(this)
             }
 
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-                anonymousFunction.controlFlowGraphReference.controlFlowGraph?.let {
-                    graphs += it
-                }
+                anonymousFunction.controlFlowGraphReference.accept(this)
+            }
+
+            override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
+                anonymousObject.controlFlowGraphReference.accept(this)
+            }
+
+            override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
+                val graph = controlFlowGraphReference.controlFlowGraph ?: return
+                if (graph.owner == null) return
+                graphs += graph
             }
         }, null)
 
