@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -76,9 +75,7 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
-import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.File
-import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 
 object KotlinToJVMBytecodeCompiler {
@@ -443,26 +440,6 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun compileAndExecuteScript(environment: KotlinCoreEnvironment, scriptArgs: List<String>): ExitCode {
-        val scriptClass = compileScript(environment) ?: return ExitCode.COMPILATION_ERROR
-
-        try {
-            try {
-                tryConstructClassFromStringArgs(scriptClass, scriptArgs)
-                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
-            } finally {
-                // NB: these lines are required (see KT-9546) but aren't covered by tests
-                System.out.flush()
-                System.err.flush()
-            }
-        } catch (e: Throwable) {
-            reportExceptionFromScript(e)
-            return ExitCode.SCRIPT_EXECUTION_ERROR
-        }
-
-        return ExitCode.OK
-    }
-
     private fun repeatAnalysisIfNeeded(
         result: AnalysisResult?,
         environment: KotlinCoreEnvironment,
@@ -494,42 +471,6 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         return result
-    }
-
-    private fun reportExceptionFromScript(exception: Throwable) {
-        // expecting InvocationTargetException from constructor invocation with cause that describes the actual cause
-        val stream = System.err
-        val cause = exception.cause
-        if (exception !is InvocationTargetException || cause == null) {
-            exception.printStackTrace(stream)
-            return
-        }
-        stream.println(cause)
-        val fullTrace = cause.stackTrace
-        for (i in 0 until fullTrace.size - exception.stackTrace.size) {
-            stream.println("\tat " + fullTrace[i])
-        }
-    }
-
-    fun compileScript(environment: KotlinCoreEnvironment, parentClassLoader: ClassLoader? = null): Class<*>? {
-        val state = analyzeAndGenerate(environment) ?: return null
-
-        try {
-            val urls = environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
-                when (root) {
-                    is JvmModulePathRoot -> root.file // TODO: only add required modules
-                    is JvmClasspathRoot -> root.file
-                    else -> null
-                }
-            }.map { it.toURI().toURL() }
-
-            val classLoader = GeneratedClassLoader(state.factory, parentClassLoader ?: URLClassLoader(urls.toTypedArray(), null))
-
-            val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
-            return classLoader.loadClass(script.fqName.asString())
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to evaluate script: $e", e)
-        }
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo

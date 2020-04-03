@@ -1,5 +1,5 @@
 
-import org.jetbrains.kotlin.scripts.*
+import org.jetbrains.kotlin.scripting.compiler.test.*
 
 // this script expected parameter num : Int
 

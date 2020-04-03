@@ -1,19 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripts
+package org.jetbrains.kotlin.scripting.compiler.test
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.daemon.TestMessageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -26,13 +24,10 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.FileBasedScriptSource
-import kotlin.script.experimental.host.FileScriptSource
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.*
 
-private const val testDataPath = "compiler/testData/script/cliCompilation"
+private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
 class ScriptCliCompilationTest : KtUsefulTestCase() {
 
@@ -69,7 +64,6 @@ class ScriptCliCompilationTest : KtUsefulTestCase() {
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             put(MESSAGE_COLLECTOR_KEY, collector)
-            addKotlinSourceRoot(script.path)
             if (scriptDef != null) {
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                     configurationDependencies(JvmDependency(classpath))
@@ -84,7 +78,7 @@ class ScriptCliCompilationTest : KtUsefulTestCase() {
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, args) to collector
+        return compileAndExecuteScript(script.toScriptSource(), environment, null, args) to collector
     }
 
     private fun checkRun(

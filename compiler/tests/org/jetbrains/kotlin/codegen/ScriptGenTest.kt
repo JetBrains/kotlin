@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -145,8 +144,5 @@ class ScriptGenTest : CodegenTestCase() {
 }
 
 @Suppress("unused")
-@ScriptTemplateDefinition(
-    scriptFilePattern = ".*\\.lang\\.kts",
-    resolver = TestKotlinScriptDependenciesResolver::class
-)
+@ScriptTemplateDefinition(scriptFilePattern = ".*\\.lang\\.kts")
 abstract class ScriptWithIntParam(val num: Int)

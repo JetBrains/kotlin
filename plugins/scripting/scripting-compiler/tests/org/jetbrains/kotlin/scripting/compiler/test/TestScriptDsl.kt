@@ -16,7 +16,7 @@
 
 @file:Suppress("unused")
 
-package org.jetbrains.kotlin.scripts
+package org.jetbrains.kotlin.scripting.compiler.test
 
 open class TestDSLClass
 

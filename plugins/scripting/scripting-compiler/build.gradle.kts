@@ -7,6 +7,8 @@ plugins {
 }
 
 dependencies {
+    testRuntimeOnly(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
+
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:psi"))
@@ -32,8 +34,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("jps-model") }
+    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {
@@ -60,4 +61,5 @@ testsJar()
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }

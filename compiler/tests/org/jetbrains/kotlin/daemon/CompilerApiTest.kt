@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
 import java.net.URLClassLoader
 
 class CompilerApiTest : KotlinIntegrationTestBase() {
@@ -202,5 +203,18 @@ fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: Compiler
         "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
         messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
     }
+}
+
+internal fun captureOut(body: () -> Unit): String {
+    val outStream = ByteArrayOutputStream()
+    val prevOut = System.out
+    System.setOut(PrintStream(outStream))
+    try {
+        body()
+    } finally {
+        System.out.flush()
+        System.setOut(prevOut)
+    }
+    return outStream.toString()
 }
 

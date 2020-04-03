@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import junit.framework.Assert
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream

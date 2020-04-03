@@ -1,33 +1,21 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-package org.jetbrains.kotlin.scripts
+@file:Suppress("unused")
+
+package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.daemon.TestMessageCollector
-import org.jetbrains.kotlin.daemon.assertHasMessage
-import org.jetbrains.kotlin.daemon.toFile
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -51,6 +39,7 @@ import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -72,7 +61,8 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 
     fun testScriptWithClassParameter() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("fib_cp.kts", ScriptWithClassParam::class, null, runIsolated = false, messageCollector = messageCollector)
+        val aClass =
+            compileScript("fib_cp.kts", ScriptWithClassParam::class, null, runIsolated = false, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
             aClass!!.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
@@ -82,7 +72,8 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 
     fun testScriptWithBaseClassWithParam() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("fib_dsl.kts", ScriptWithBaseClass::class, null, runIsolated = false, messageCollector = messageCollector)
+        val aClass =
+            compileScript("fib_dsl.kts", ScriptWithBaseClass::class, null, runIsolated = false, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(4, 1)
@@ -106,9 +97,15 @@ class ScriptTemplateTest : KtUsefulTestCase() {
         val savedErr = System.err
         try {
             System.setErr(PrintStream(NullOutputStream()))
-            Assert.assertNull(compileScript("fib_ext_ann2.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
-        }
-        finally {
+            Assert.assertNull(
+                compileScript(
+                    "fib_ext_ann2.kts",
+                    ScriptWithIntParamAndDummyResolver::class,
+                    null,
+                    includeKotlinRuntime = false
+                )
+            )
+        } finally {
             System.setErr(savedErr)
         }
 
@@ -133,7 +130,12 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 
     fun testScriptWithOverriddenParam() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("overridden_parameter.kts", ScriptBaseClassWithOverriddenProperty::class, null, messageCollector = messageCollector)
+        val aClass = compileScript(
+            "overridden_parameter.kts",
+            ScriptBaseClassWithOverriddenProperty::class,
+            null,
+            messageCollector = messageCollector
+        )
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
@@ -176,7 +178,8 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 
     fun testScriptWithNullableProjection() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("nullable_projection.kts", ScriptWithNullableProjection::class, null, messageCollector = messageCollector)
+        val aClass =
+            compileScript("nullable_projection.kts", ScriptWithNullableProjection::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
             aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf<String?>(null))
@@ -203,7 +206,7 @@ class ScriptTemplateTest : KtUsefulTestCase() {
         captureOut {
             aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("4", "other"))
         }.let {
-            assertEqualsTrimmed(NUM_4_LINE + " (other)" + FIB_SCRIPT_OUTPUT_TAIL, it)
+            assertEqualsTrimmed("$NUM_4_LINE (other)$FIB_SCRIPT_OUTPUT_TAIL", it)
         }
     }
 
@@ -263,19 +266,34 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 
     fun testAcceptedAnnotationsSync() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsSyncResolver::class, null, messageCollector = messageCollector)
+        val aClass = compileScript(
+            "acceptedAnnotations.kts",
+            ScriptWithAcceptedAnnotationsSyncResolver::class,
+            null,
+            messageCollector = messageCollector
+        )
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
     fun testAcceptedAnnotationsAsync() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsAsyncResolver::class, null, messageCollector = messageCollector)
+        val aClass = compileScript(
+            "acceptedAnnotations.kts",
+            ScriptWithAcceptedAnnotationsAsyncResolver::class,
+            null,
+            messageCollector = messageCollector
+        )
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
     fun testAcceptedAnnotationsLegacy() {
         val messageCollector = TestMessageCollector()
-        val aClass = compileScript("acceptedAnnotations.kts", ScriptWithAcceptedAnnotationsLegacyResolver::class, null, messageCollector = messageCollector)
+        val aClass = compileScript(
+            "acceptedAnnotations.kts",
+            ScriptWithAcceptedAnnotationsLegacyResolver::class,
+            null,
+            messageCollector = messageCollector
+        )
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
@@ -305,8 +323,7 @@ class ScriptTemplateTest : KtUsefulTestCase() {
         var exceptionThrown = false
         try {
             tryConstructClassFromStringArgs(aClass!!, emptyList())
-        }
-        catch (e: InvocationTargetException) {
+        } catch (e: InvocationTargetException) {
             Assert.assertTrue(e.cause is IllegalStateException)
             exceptionThrown = true
         }
@@ -321,17 +338,19 @@ class ScriptTemplateTest : KtUsefulTestCase() {
     }
 
     private fun compileScript(
-            scriptPath: String,
-            scriptTemplate: KClass<out Any>,
-            environment: Map<String, Any?>? = null,
-            runIsolated: Boolean = true,
-            messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
-            includeKotlinRuntime: Boolean = true
+        scriptPath: String,
+        scriptTemplate: KClass<out Any>,
+        environment: Map<String, Any?>? = null,
+        runIsolated: Boolean = true,
+        messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
+        includeKotlinRuntime: Boolean = true
     ): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(
-                                  scriptTemplate, environment
-                              ), runIsolated, messageCollector, includeKotlinRuntime)
+        compileScriptImpl(
+            "plugins/scripting/scripting-compiler/testData/compiler/$scriptPath",
+            KotlinScriptDefinitionFromAnnotatedTemplate(
+                scriptTemplate, environment
+            ), runIsolated, messageCollector, includeKotlinRuntime
+        )
 
     private fun compileScriptImpl(
         scriptPath: String,
@@ -343,13 +362,13 @@ class ScriptTemplateTest : KtUsefulTestCase() {
         val rootDisposable = Disposer.newDisposable()
         try {
             val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
-                    ?.map{ File(it) }.orEmpty().toTypedArray()
+                ?.map { File(it) }.orEmpty().toTypedArray()
             val configuration = KotlinTestUtils.newConfiguration(
-                    if (includeKotlinRuntime) ConfigurationKind.ALL else ConfigurationKind.JDK_ONLY,
-                    TestJdkKind.FULL_JDK,
-                    *additionalClasspath)
+                if (includeKotlinRuntime) ConfigurationKind.ALL else ConfigurationKind.JDK_ONLY,
+                TestJdkKind.FULL_JDK,
+                *additionalClasspath
+            )
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-            configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromLegacy(
@@ -365,7 +384,12 @@ class ScriptTemplateTest : KtUsefulTestCase() {
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             return try {
-                KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })
+                val res = compileScript(
+                    File(scriptPath).toScriptSource(),
+                    environment,
+                    this::class.java.classLoader.takeUnless { runIsolated }
+                )
+                res.first?.java
             } catch (e: CompilationException) {
                 messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -388,21 +412,24 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
 
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
-    override fun resolve(scriptContents: ScriptContents,
-                         environment: Environment
-    ): ResolveResult
-    {
+    override fun resolve(
+        scriptContents: ScriptContents,
+        environment: Environment
+    ): ResolveResult {
         return ScriptDependencies(
             classpath = classpathFromClassloader(),
-            imports = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
+            imports = listOf(
+                "org.jetbrains.kotlin.scripting.compiler.test.DependsOn",
+                "org.jetbrains.kotlin.scripting.compiler.test.DependsOnTwo"
+            )
         ).asSuccess()
     }
 }
 
 private fun classpathFromClassloader(): List<File> =
-        (TestKotlinScriptDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
-                ?.mapNotNull(URL::toFile)
-                ?.filter { it.path.contains("out") && it.path.contains("test") }
+    (TestKotlinScriptDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
+        ?.mapNotNull(URL::toFile)
+        ?.filter { it.path.contains("out") && it.path.contains("test") }
         ?: emptyList()
 
 
@@ -430,7 +457,10 @@ open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenc
         }
         return ScriptDependencies(
             classpath = classpathFromClassloader() + cp,
-            imports = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
+            imports = listOf(
+                "org.jetbrains.kotlin.scripting.compiler.test.DependsOn",
+                "org.jetbrains.kotlin.scripting.compiler.test.DependsOnTwo"
+            )
         ).asSuccess()
     }
 }
@@ -439,36 +469,38 @@ class TestParamClass(@Suppress("unused") val memberNum: Int)
 
 class ErrorReportingResolver : TestKotlinScriptDependenciesResolver() {
     override fun resolve(
-            scriptContents: ScriptContents,
-            environment: Environment
+        scriptContents: ScriptContents,
+        environment: Environment
     ): ResolveResult {
         return ResolveResult.Success(
-                super.resolve(scriptContents, environment).dependencies!!,
-                listOf(
-                        ScriptReport("error", ScriptReport.Severity.ERROR, null),
-                        ScriptReport("warning", ScriptReport.Severity.WARNING, ScriptReport.Position(1, 0)),
-                        ScriptReport("info", ScriptReport.Severity.INFO, ScriptReport.Position(2, 0)),
-                        ScriptReport("debug", ScriptReport.Severity.DEBUG, ScriptReport.Position(3, 0))
+            super.resolve(scriptContents, environment).dependencies!!,
+            listOf(
+                ScriptReport("error", ScriptReport.Severity.ERROR, null),
+                ScriptReport("warning", ScriptReport.Severity.WARNING, ScriptReport.Position(1, 0)),
+                ScriptReport("info", ScriptReport.Severity.INFO, ScriptReport.Position(2, 0)),
+                ScriptReport("debug", ScriptReport.Severity.DEBUG, ScriptReport.Position(3, 0))
 
-                )
+            )
         )
     }
 }
 
 class TestAsyncResolver : TestKotlinScriptDependenciesResolver(), AsyncDependenciesResolver {
     override suspend fun resolveAsync(
-            scriptContents: ScriptContents,
-            environment: Environment
+        scriptContents: ScriptContents,
+        environment: Environment
     ): ResolveResult = super<TestKotlinScriptDependenciesResolver>.resolve(scriptContents, environment)
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult =
-            super<AsyncDependenciesResolver>.resolve(scriptContents, environment)
+        super<AsyncDependenciesResolver>.resolve(scriptContents, environment)
 }
 
 @Target(AnnotationTarget.FILE)
 annotation class TestAnno1
+
 @Target(AnnotationTarget.FILE)
 annotation class TestAnno2
+
 @Target(AnnotationTarget.FILE)
 annotation class TestAnno3
 
@@ -478,38 +510,38 @@ interface AcceptedAnnotationsCheck {
     fun checkHasAnno1Annotation(scriptContents: ScriptContents): ResolveResult.Success {
         val actualAnnotations = scriptContents.annotations
         Assert.assertTrue(
-                "Loaded annotation: $actualAnnotations",
-                actualAnnotations.single().annotationClass.qualifiedName == TestAnno1::class.qualifiedName
+            "Loaded annotation: $actualAnnotations",
+            actualAnnotations.single().annotationClass.qualifiedName == TestAnno1::class.qualifiedName
         )
 
         return ScriptDependencies(
-                classpath = classpathFromClassloader(),
-                imports = annotationFqNames
+            classpath = classpathFromClassloader(),
+            imports = annotationFqNames
         ).asSuccess()
     }
 }
 
-class TestAcceptedAnnotationsSyncResolver: DependenciesResolver, AcceptedAnnotationsCheck {
+class TestAcceptedAnnotationsSyncResolver : DependenciesResolver, AcceptedAnnotationsCheck {
     @AcceptedAnnotations(TestAnno1::class, TestAnno3::class)
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
         return checkHasAnno1Annotation(scriptContents)
     }
 }
 
-class TestAcceptedAnnotationsAsyncResolver: AsyncDependenciesResolver, AcceptedAnnotationsCheck {
+class TestAcceptedAnnotationsAsyncResolver : AsyncDependenciesResolver, AcceptedAnnotationsCheck {
     @AcceptedAnnotations(TestAnno1::class, TestAnno3::class)
     override suspend fun resolveAsync(scriptContents: ScriptContents, environment: Environment): ResolveResult {
         return checkHasAnno1Annotation(scriptContents)
     }
 }
 
-class TestAcceptedAnnotationsLegacyResolver: ScriptDependenciesResolver, AcceptedAnnotationsCheck {
+class TestAcceptedAnnotationsLegacyResolver : ScriptDependenciesResolver, AcceptedAnnotationsCheck {
     @AcceptedAnnotations(TestAnno1::class, TestAnno3::class)
     override fun resolve(
-            script: ScriptContents,
-            environment: Environment?,
-            report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
-            previousDependencies: KotlinScriptExternalDependencies?
+        script: ScriptContents,
+        environment: Environment?,
+        report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
+        previousDependencies: KotlinScriptExternalDependencies?
     ): Future<KotlinScriptExternalDependencies?> {
         checkHasAnno1Annotation(script)
         return object : KotlinScriptExternalDependencies {
@@ -522,51 +554,58 @@ class TestAcceptedAnnotationsLegacyResolver: ScriptDependenciesResolver, Accepte
     }
 }
 
-class SeveralConstructorsResolver(val c: Int): TestKotlinScriptDependenciesResolver() {
-    constructor(): this(0)
+class SeveralConstructorsResolver(val c: Int) : TestKotlinScriptDependenciesResolver() {
+    constructor() : this(0)
 
 }
-class DefaultArgsConstructorResolver(val c: Int = 0): TestKotlinScriptDependenciesResolver()
 
-class ThrowingResolver: DependenciesResolver {
+class DefaultArgsConstructorResolver(val c: Int = 0) : TestKotlinScriptDependenciesResolver()
+
+class ThrowingResolver : DependenciesResolver {
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
         throw IllegalStateException("Exception from resolver")
     }
 }
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.kts",
-        resolver = TestKotlinScriptDummyDependenciesResolver::class)
+    scriptFilePattern = ".*\\.kts",
+    resolver = TestKotlinScriptDummyDependenciesResolver::class
+)
 abstract class ScriptWithIntParamAndDummyResolver(val num: Int)
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class)
+    scriptFilePattern = ".*\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
+)
 abstract class ScriptWithIntParam(val num: Int)
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class)
+    scriptFilePattern = ".*\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
+)
 abstract class ScriptWithClassParam(val param: TestParamClass)
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class)
+    scriptFilePattern = ".*\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
+)
 abstract class ScriptWithBaseClass(val num: Int, passthrough: Int) : TestDSLClassWithParam(passthrough)
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class)
+    scriptFilePattern = ".*\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
+)
 abstract class ScriptWithoutParams(@Suppress("UNUSED_PARAMETER") num: Int)
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class)
+    scriptFilePattern = ".*\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
+)
 abstract class ScriptBaseClassWithOverriddenProperty(override val num: Int) : TestClassWithOverridableProperty(num)
 
 @ScriptTemplateDefinition(
-        scriptFilePattern = ".*\\.custom\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class
+    scriptFilePattern = ".*\\.custom\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
 )
 abstract class ScriptWithDifferentFileNamePattern
 
@@ -618,7 +657,15 @@ annotation class DependsOn(val path: String)
 annotation class DependsOnTwo(val unused: String = "", val path1: String = "", val path2: String = "")
 
 private class NullOutputStream : OutputStream() {
-    override fun write(b: Int) { }
-    override fun write(b: ByteArray) { }
-    override fun write(b: ByteArray, off: Int, len: Int) { }
+    override fun write(b: Int) {}
+    override fun write(b: ByteArray) {}
+    override fun write(b: ByteArray, off: Int, len: Int) {}
 }
+
+internal fun URL.toFile() =
+    try {
+        File(toURI().schemeSpecificPart)
+    } catch (e: java.net.URISyntaxException) {
+        if (protocol != "file") null
+        else File(file)
+    }

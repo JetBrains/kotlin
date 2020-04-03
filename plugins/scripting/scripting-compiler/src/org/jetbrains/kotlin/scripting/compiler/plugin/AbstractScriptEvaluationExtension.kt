@@ -141,7 +141,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     }
 }
 
-private fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeverity =
+fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeverity =
     when (this) {
         ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.EXCEPTION
         ScriptDiagnostic.Severity.ERROR -> CompilerMessageSeverity.ERROR

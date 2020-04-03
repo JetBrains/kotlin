@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.script.util
 
 import com.intellij.openapi.util.Disposer
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -35,9 +35,12 @@ import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLoca
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
+import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
@@ -45,9 +48,13 @@ import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.onSuccess
+import kotlin.script.experimental.api.valueOr
+import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
@@ -180,8 +187,22 @@ done
             }
             messageCollector.report(CompilerMessageSeverity.LOGGING, "compilation classpath:\n  ${environment.configuration.jvmClasspathRoots.joinToString("\n  ")}")
 
+            val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
+
             return try {
-                KotlinToJVMBytecodeCompiler.compileScript(environment)
+                val script = File(scriptPath).toScriptSource()
+                val newScriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
+                val compiledScript = scriptCompiler.compile(script, newScriptDefinition.compilationConfiguration).onSuccess {
+                    runBlocking {
+                        it.getClass(newScriptDefinition.evaluationConfiguration)
+                    }
+                }.valueOr {
+                    for (report in it.reports) {
+                        messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                    }
+                    return null
+                }
+                compiledScript.java
             } catch (e: CompilationException) {
                 messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
