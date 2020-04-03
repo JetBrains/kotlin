@@ -34,7 +34,7 @@ class KonanLibraryWriterImpl(
 
         val layout: KonanLibraryLayoutForWriter = KonanLibraryLayoutForWriter(libDir, target),
 
-        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack, shortName),
+        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, listOf(target.visibleName), nopack, shortName),
         bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
         metadata: MetadataWriter = MetadataWriterImpl(layout),
         ir: IrWriter = IrMonoliticWriterImpl(layout)

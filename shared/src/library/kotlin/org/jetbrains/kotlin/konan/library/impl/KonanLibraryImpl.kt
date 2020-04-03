@@ -34,18 +34,12 @@ open class TargetedLibraryImpl(
 
     private val target: KonanTarget? get() = access.target
 
-    override val targetList by lazy {
-        access.inPlace { it: TargetedKotlinLibraryLayout ->
-            if (!it.targetsDir.exists)
-                // TODO: We have a choice: either assume it is the CURRENT TARGET
-                //  or a list of ALL KNOWN targets.
-                access.target ?. let { listOf(it.visibleName) } ?: emptyList()
-            else
-                it.targetsDir.listFiles.map {
-                    it.name
-                }
+    override val targetList: List<String>
+        get() = nativeTargets.ifEmpty {
+            // TODO: We have a choice: either assume it is the CURRENT TARGET
+            //  or a list of ALL KNOWN targets.
+            listOfNotNull(access.target?.visibleName)
         }
-    }
 
     override val manifestProperties: Properties by lazy {
         val properties = access.inPlace {
