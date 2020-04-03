@@ -60,6 +60,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static final int LEFT_INSET = 14;
   private static final int RIGHT_INSET = 12;
   private static final int TOP_BOTTOM_INSETS = 2;
+  private static final int ARC_RADIUS = 5;
 
   private static StyleSheet ourCachedStyleSheet;
   private static String ourCachedStyleSheetLinkColor = "non-existing";
@@ -113,8 +114,20 @@ class DocRenderer implements EditorCustomElementRenderer {
     Color bgColor = currentBgColor == null ? defaultBgColor
                                            : ColorUtil.mix(defaultBgColor, textAttributes.getBackgroundColor(),
                                                            Registry.doubleValue("editor.render.doc.comments.bg.transparency"));
-    g.setColor(bgColor);
-    g.fillRect(startX, filledStartY, endX - startX, filledHeight);
+    if (currentBgColor != null) {
+      g.setColor(bgColor);
+      int arcDiameter = ARC_RADIUS * 2;
+      if (endX - startX >= arcDiameter) {
+        g.fillRect(startX, filledStartY, endX - startX - ARC_RADIUS, filledHeight);
+        Object savedHint = ((Graphics2D)g).getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.fillRoundRect(endX - arcDiameter, filledStartY, arcDiameter, filledHeight, arcDiameter, arcDiameter);
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedHint);
+      }
+      else {
+        g.fillRect(startX, filledStartY, endX - startX, filledHeight);
+      }
+    }
     g.setColor(editor.getColorsScheme().getColor(DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE));
     g.fillRect(startX, filledStartY, scale(getLineWidth()), filledHeight);
 
