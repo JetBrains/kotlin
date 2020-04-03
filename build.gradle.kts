@@ -9,11 +9,12 @@ buildscript {
             if (cacheRedirectorEnabled) {
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
             }
+            maven("https://dl.bintray.com/kotlin/kotlin-bootstrap")
             jcenter()
         }
 
         dependencies {
-            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$embeddedKotlinVersion")
+            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-dev-5258")
         }
     }
 }
@@ -31,6 +32,7 @@ if (isStandaloneBuild) { // only for standalone build:
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
             }
             jcenter()
+            maven("https://dl.bintray.com/kotlin/kotlin-bootstrap")
             localMavenRepo?.let { maven(it) }
         }
 
