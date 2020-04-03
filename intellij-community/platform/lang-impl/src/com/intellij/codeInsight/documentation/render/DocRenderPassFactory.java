@@ -29,6 +29,7 @@ import java.util.Objects;
 public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRegistrar, TextEditorHighlightingPassFactory {
   private static final Logger LOG = Logger.getInstance(DocRenderPassFactory.class);
   private static final Key<Long> MODIFICATION_STAMP = Key.create("doc.render.modification.stamp");
+  private static final Key<Boolean> ICONS_ENABLED = Key.create("doc.render.icons.enabled");
 
   @Override
   public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
@@ -39,8 +40,12 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
   @Override
   public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull Editor editor) {
     long current = PsiModificationTracker.SERVICE.getInstance(file.getProject()).getModificationCount();
+    boolean iconsEnabled = DocRenderDummyLineMarkerProvider.isGutterIconEnabled();
     Long existing = editor.getUserData(MODIFICATION_STAMP);
-    return editor.getProject() == null || existing != null && existing == current ? null : new DocRenderPass(editor, file);
+    Boolean iconsWereEnabled = editor.getUserData(ICONS_ENABLED);
+    return editor.getProject() == null ||
+           existing != null && existing == current && iconsWereEnabled != null && iconsWereEnabled == iconsEnabled
+           ? null : new DocRenderPass(editor, file);
   }
 
   static void forceRefreshOnNextPass(@NotNull Editor editor) {
@@ -101,6 +106,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
                                         @NotNull Items items,
                                         boolean collapseNewRegions) {
     editor.putUserData(MODIFICATION_STAMP, PsiModificationTracker.SERVICE.getInstance(project).getModificationCount());
+    editor.putUserData(ICONS_ENABLED, DocRenderDummyLineMarkerProvider.isGutterIconEnabled());
     DocRenderItem.setItemsToEditor(editor, items, collapseNewRegions);
   }
 
