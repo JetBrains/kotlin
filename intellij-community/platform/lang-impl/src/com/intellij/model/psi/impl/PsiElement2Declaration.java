@@ -4,7 +4,6 @@ package com.intellij.model.psi.impl;
 import com.intellij.model.Symbol;
 import com.intellij.model.psi.PsiSymbolDeclaration;
 import com.intellij.model.psi.PsiSymbolService;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomTarget;
 import com.intellij.pom.PsiDeclaredTarget;
@@ -15,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class PsiElement2Declaration implements PsiSymbolDeclaration {
-
-  private static final Logger LOG = Logger.getInstance(PsiElement2Declaration.class);
 
   private final PsiElement myTargetElement;
   private final PsiElement myDeclaringElement;
@@ -77,7 +74,7 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
     if (identifyingElement == null) {
       return rangeOf(declaringElement);
     }
-    TextRange identifyingRange = relateRange(declaredElement, identifyingElement, rangeOf(identifyingElement), declaringElement);
+    TextRange identifyingRange = relateRange(identifyingElement, rangeOf(identifyingElement), declaringElement);
     if (identifyingRange == null) {
       return rangeOf(declaringElement);
     }
@@ -104,7 +101,7 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
       TextRange nameIdentifierRange = declaredTarget.getNameIdentifierRange();
       if (nameIdentifierRange != null) {
         PsiElement navigationElement = declaredTarget.getNavigationElement();
-        return relateRange(target, navigationElement, nameIdentifierRange, declaringElement);
+        return relateRange(navigationElement, nameIdentifierRange, declaringElement);
       }
     }
     return rangeOf(declaringElement);
@@ -136,8 +133,7 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
    * or {@code null} if the elements are from different files
    */
   @Nullable
-  private static TextRange relateRange(@NotNull Object target, // PomTarget or PsiElement; used only for logging
-                                       @NotNull PsiElement identifyingElement,
+  private static TextRange relateRange(@NotNull PsiElement identifyingElement,
                                        @NotNull TextRange rangeInIdentifyingElement,
                                        @NotNull PsiElement declaringElement) {
     if (identifyingElement == declaringElement) {
@@ -154,11 +150,6 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
       }
     }
     else {
-      LOG.error("Identifying element file differs from declaring element file;\n" +
-                "target: " + target + ";\n" +
-                "target class: " + target.getClass().getName() + ";\n" +
-                "identifying element file: " + identifyingElement.getContainingFile() + ";\n" +
-                "declaring element file: " + declaringElement.getContainingFile());
       return null;
     }
   }
