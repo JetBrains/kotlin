@@ -173,6 +173,10 @@ fun <T : Any> mapType(
             return type
         }
 
+        descriptor is TypeAliasDescriptor && mode.mapTypeAliases -> {
+            return mapType(descriptor.expandedType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+        }
+
         else -> throw UnsupportedOperationException("Unknown type $kotlinType")
     }
 }

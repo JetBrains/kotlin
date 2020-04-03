@@ -24110,6 +24110,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/typealias/typeAliasInvisibleObject.kt");
             }
 
+            @TestMetadata("typeAliasIsUsedAsATypeArgumentInOtherAlias.kt")
+            public void testTypeAliasIsUsedAsATypeArgumentInOtherAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/typeAliasIsUsedAsATypeArgumentInOtherAlias.kt");
+            }
+
             @TestMetadata("typeAliasNotNull.kt")
             public void testTypeAliasNotNull() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/typeAliasNotNull.kt");

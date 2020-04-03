@@ -200,7 +200,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return mapType(returnType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod))
         }
 
-        val typeMappingModeFromAnnotation = extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod)
+        val typeMappingModeFromAnnotation =
+            extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod, mapTypeAliases = false)
         if (typeMappingModeFromAnnotation != null) {
             return mapType(returnType, sw, typeMappingModeFromAnnotation)
         }
@@ -1020,7 +1021,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         val typeMappingMode =
-            extractTypeMappingModeFromAnnotation(callableDescriptor, type, isForAnnotationParameter = false)
+            extractTypeMappingModeFromAnnotation(callableDescriptor, type, isForAnnotationParameter = false, mapTypeAliases = false)
                 ?: if (callableDescriptor.isMethodWithDeclarationSiteWildcards && type.arguments.isNotEmpty()) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {
