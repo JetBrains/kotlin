@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 
+/**
+ * The set of properties in manifest of Kotlin/Native library that should be
+ * preserved in commonized libraries (both for "common" and platform-specific library parts).
+ */
 internal data class NativeSensitiveManifestData(
     val uniqueName: String,
     val versions: KotlinLibraryVersioning,
@@ -16,6 +20,7 @@ internal data class NativeSensitiveManifestData(
     val isInterop: Boolean,
     val packageFqName: String?,
     val exportForwardDeclarations: List<String>,
+    val nativeTargets: Collection<String>,
     val shortName: String?
 ) {
     fun applyTo(library: BaseWriterImpl) {
@@ -33,9 +38,34 @@ internal data class NativeSensitiveManifestData(
         addOptionalProperty(KLIB_PROPERTY_INTEROP, isInterop) { "true" }
         addOptionalProperty(KLIB_PROPERTY_PACKAGE, packageFqName != null) { packageFqName!! }
         addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, exportForwardDeclarations.isNotEmpty()) {
-            exportForwardDeclarations.joinToString(separator = " ")
+            exportForwardDeclarations.joinToString(" ")
+        }
+        addOptionalProperty(KLIB_PROPERTY_NATIVE_TARGETS, nativeTargets.isNotEmpty()) {
+            nativeTargets.joinToString(" ")
         }
         addOptionalProperty(KLIB_PROPERTY_SHORT_NAME, shortName != null) { shortName!! }
+    }
+
+    fun mergeWith(other: NativeSensitiveManifestData): NativeSensitiveManifestData {
+        if (this === other) return this
+
+        check(uniqueName == other.uniqueName)
+
+        // Assumption: It's enough to merge native targets list, other properties can be taken from 'this' manifest.
+
+        return NativeSensitiveManifestData(
+            uniqueName = uniqueName,
+            versions = versions,
+            dependencies = dependencies,
+            isInterop = isInterop,
+            packageFqName = packageFqName,
+            exportForwardDeclarations = exportForwardDeclarations,
+            nativeTargets = HashSet<String>().apply {
+                addAll(nativeTargets)
+                addAll(other.nativeTargets)
+            },
+            shortName = shortName
+        )
     }
 
     companion object {
@@ -46,6 +76,7 @@ internal data class NativeSensitiveManifestData(
             isInterop = library.isInterop,
             packageFqName = library.packageFqName,
             exportForwardDeclarations = library.exportForwardDeclarations,
+            nativeTargets = library.nativeTargets,
             shortName = library.shortName
         )
     }

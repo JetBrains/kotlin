@@ -169,6 +169,8 @@ class NativeDistributionCommonizer(
                 }
         }
 
+        val commonManifestProvider = CommonNativeManifestDataProvider(originalLibrariesByTargets.values)
+
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -177,16 +179,16 @@ class NativeDistributionCommonizer(
 
         fun serializeTarget(target: Target) {
             val libsDestination: File
-            val originalLibraries: NativeDistributionLibraries
+            val manifestProvider: NativeManifestDataProvider
 
             when (target) {
                 is InputTarget -> {
                     libsDestination = destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(target.konanTarget!!.name)
-                    originalLibraries = originalLibrariesByTargets.getValue(target)
+                    manifestProvider = originalLibrariesByTargets.getValue(target)
                 }
                 is OutputTarget -> {
                     libsDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-                    originalLibraries = originalLibrariesByTargets.values.first() // just take the first one
+                    manifestProvider = commonManifestProvider
                 }
             }
 
@@ -201,7 +203,7 @@ class NativeDistributionCommonizer(
                 val metadata = serializer.serializeModule(newModule)
                 val plainName = libraryName.asString().removePrefix("<").removeSuffix(">")
 
-                val manifestData = originalLibraries.index.getValue(plainName).manifestData
+                val manifestData = manifestProvider.getManifest(plainName)
                 val libraryDestination = libsDestination.resolve(plainName)
 
                 writeLibrary(metadata, manifestData, libraryDestination)
@@ -218,10 +220,11 @@ class NativeDistributionCommonizer(
         destination: File
     ) {
         val library = KoltinLibraryWriterImpl(
-            KFile(destination.path),
-            manifestData.uniqueName,
-            manifestData.versions,
-            BuiltInsPlatform.NATIVE,
+            libDir = KFile(destination.path),
+            moduleName = manifestData.uniqueName,
+            versions = manifestData.versions,
+            builtInsPlatform = BuiltInsPlatform.NATIVE,
+            nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
             nopack = true,
             shortName = manifestData.shortName
         )

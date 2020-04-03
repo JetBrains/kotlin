@@ -23,6 +23,7 @@ open class BaseWriterImpl(
     moduleName: String,
     override val versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
+    nativeTargets: List<String> = emptyList(),
     val nopack: Boolean = false,
     val shortName: String? = null
 ) : BaseWriter {
@@ -39,11 +40,14 @@ open class BaseWriterImpl(
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
         manifestProperties.writeKonanLibraryVersioning(versions)
-        if (builtInsPlatform != BuiltInsPlatform.COMMON)
+
+        if (builtInsPlatform != BuiltInsPlatform.COMMON) {
             manifestProperties.setProperty(KLIB_PROPERTY_BUILTINS_PLATFORM, builtInsPlatform.name)
-        shortName?.let {
-            manifestProperties.setProperty(KLIB_PROPERTY_SHORT_NAME, it)
+            if (builtInsPlatform == BuiltInsPlatform.NATIVE)
+                manifestProperties.setProperty(KLIB_PROPERTY_NATIVE_TARGETS, nativeTargets.joinToString(" "))
         }
+
+        shortName?.let { manifestProperties.setProperty(KLIB_PROPERTY_SHORT_NAME, it) }
     }
 
     override fun addLinkDependencies(libraries: List<KotlinLibrary>) {
@@ -86,12 +90,13 @@ class KoltinLibraryWriterImpl(
     moduleName: String,
     versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
+    nativeTargets: List<String>,
     nopack: Boolean = false,
     shortName: String? = null,
 
     val layout: KotlinLibraryLayoutForWriter = KotlinLibraryLayoutForWriter(libDir),
 
-    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack, shortName),
+    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
 //    ir: IrWriter = IrPerFileWriterImpl(layout)
@@ -108,10 +113,11 @@ fun buildKoltinLibrary(
     nopack: Boolean,
     manifestProperties: Properties?,
     dataFlowGraph: ByteArray?,
-    builtInsPlatform: BuiltInsPlatform
+    builtInsPlatform: BuiltInsPlatform,
+    nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
 
-    val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, builtInsPlatform, nopack)
+    val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, builtInsPlatform, nativeTargets, nopack)
 
     library.addMetadata(metadata)
 

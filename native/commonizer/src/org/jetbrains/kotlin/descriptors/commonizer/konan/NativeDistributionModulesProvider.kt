@@ -56,9 +56,7 @@ internal class NativeDistributionModulesProvider(
         )
 
         platformModulesMap.forEach { (name, module) ->
-            val dependencies = libraries.index
-                .getValue(name)
-                .manifestData
+            val dependencies = libraries.getManifest(name)
                 .dependencies
                 .map { if (it == KONAN_STDLIB_NAME) stdlib else platformModulesMap.getValue(it) }
 
