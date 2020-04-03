@@ -42,7 +42,8 @@ dependencies {
         exclude("com.jetbrains.intellij.platform", "ide")
     }
 
-    implementation(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
+    compileOnly(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
+    testRuntime(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
     testRuntime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
