@@ -350,7 +350,7 @@ val runMocha by task<NodeTask> {
     val allArgs = getArgs().toList() + listOf(testOutputFile/*, kotlinTestTestOutputFile*/)
     setArgs(allArgs)
 
-    setIgnoreExitValue(rootProject.getBooleanProperty("ignoreTestFailures") ?: false)
+    setIgnoreExitValue(kotlinBuildProperties.ignoreTestFailures)
     setWorkingDir(buildDir)
 }
 

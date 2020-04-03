@@ -54,9 +54,7 @@ pill {
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
-val includeStdlibJsIr by extra(
-    findProperty("include.stdlib.js.ir")?.let { it.toString().toBoolean() } ?: isTeamcityBuild
-)
+val includeStdlibJsIr by extra(project.kotlinBuildProperties.includeStdlibJsIr)
 
 val configuredJdks: List<JdkId> =
     getConfiguredJdks().also {
@@ -327,7 +325,7 @@ fun Task.listConfigurationContents(configName: String) {
 
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget)
-val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toString()?.toBoolean() ?: project.hasProperty("teamcity"))
+val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 allprojects {
 
