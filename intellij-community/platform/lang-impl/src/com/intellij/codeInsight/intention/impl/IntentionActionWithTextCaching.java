@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.intention.impl;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.intention.FileModifier;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.openapi.actionSystem.ShortcutProvider;
@@ -199,8 +200,8 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
     }
 
     @Override
-    public @Nullable IntentionAction tryTransferActionToPreviewFile(@NotNull PsiFile target) {
-      return myAction.tryTransferActionToPreviewFile(target);
+    public @Nullable FileModifier getFileModifierForPreview(@NotNull PsiFile target) {
+      return myAction.getFileModifierForPreview(target);
     }
 
     @Nullable

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.intention.impl.config;
 
+import com.intellij.codeInsight.intention.FileModifier;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionBean;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
@@ -69,8 +70,8 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
   }
 
   @Override
-  public @Nullable IntentionAction tryTransferActionToPreviewFile(@NotNull PsiFile target) {
-    return getDelegate().tryTransferActionToPreviewFile(target);
+  public @Nullable FileModifier getFileModifierForPreview(@NotNull PsiFile target) {
+    return getDelegate().getFileModifierForPreview(target);
   }
 
   @Nullable
