@@ -100,9 +100,37 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         )
     }
 
+    fun useChromeHeadless() {
+        useBrowser(
+            id = "ChromeHeadless",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
+    fun useChromium() {
+        useBrowser(
+            id = "Chromium",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
+    fun useChromiumHeadless() {
+        useBrowser(
+            id = "ChromiumHeadless",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
     fun useChromeCanary() {
         useBrowser(
             id = "ChromeCanary",
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
+    fun useChromeCanaryHeadless() {
+        useBrowser(
+            id = "ChromeCanaryHeadless",
             dependency = versions.karmaChromeLauncher
         )
     }
@@ -120,16 +148,23 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         )
     }
 
-    fun useChromeHeadless() {
-        useBrowser(
-            id = "ChromeHeadless",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
-
     fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomJsLauncher)
 
     fun useFirefox() = useBrowser("Firefox", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxHeadless() = useBrowser("FirefoxHeadless", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxDeveloper() = useBrowser("FirefoxDeveloper", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxDeveloperHeadless() = useBrowser("FirefoxDeveloperHeadless", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxAurora() = useBrowser("FirefoxAurora", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxAuroraHeadless() = useBrowser("FirefoxAuroraHeadless", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxNightly() = useBrowser("FirefoxNightly", versions.karmaFirefoxLauncher)
+
+    fun useFirefoxNightlyHeadless() = useBrowser("FirefoxNightlyHeadless", versions.karmaFirefoxLauncher)
 
     fun useOpera() = useBrowser("Opera", versions.karmaOperaLauncher)
 
@@ -338,7 +373,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
         val karmaConfJs = npmProject.dir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use { confWriter ->
-            confWriter.println("// environment variables")
             envJsCollector.forEach { (envVar, value) ->
                 //language=JavaScript 1.8
                 confWriter.println("process.env.$envVar = $value")
@@ -450,10 +484,5 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         appendln()
         appendConfigsFromDir(configDirectory)
         appendln()
-    }
-
-    companion object {
-        const val CHROME_BIN = "CHROME_BIN"
-        const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
     }
 }

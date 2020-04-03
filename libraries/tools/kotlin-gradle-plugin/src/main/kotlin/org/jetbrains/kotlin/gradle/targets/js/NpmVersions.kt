@@ -32,7 +32,7 @@ class NpmVersions {
 
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.1.0")
     val karmaPhantomJsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
-    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "1.2.0")
+    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "1.3.0")
     val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
     val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "1.0.0")
     val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
