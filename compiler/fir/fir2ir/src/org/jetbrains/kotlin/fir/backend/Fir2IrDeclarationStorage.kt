@@ -430,7 +430,9 @@ class Fir2IrDeclarationStorage(
                     isExpect = simpleFunction?.isExpect == true,
                     isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     isOperator = simpleFunction?.isOperator == true
-                )
+                ).apply {
+                    metadata = MetadataSource.Function(descriptor)
+                }
             }
             result
         }.bindAndDeclareParameters(function, descriptor, irParent, isStatic = simpleFunction?.isStatic == true)
@@ -486,6 +488,7 @@ class Fir2IrDeclarationStorage(
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
                 ).apply {
+                    metadata = MetadataSource.Function(descriptor)
                     enterScope(descriptor)
                 }.bindAndDeclareParameters(constructor, descriptor, irParent, isStatic = false).apply {
                     leaveScope(descriptor)
@@ -532,6 +535,7 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                 isOperator = false
             ).apply {
+                metadata = MetadataSource.Function(descriptor)
                 with(classifierStorage) {
                     setTypeParameters(
                         property, ConversionTypeContext(
@@ -585,6 +589,7 @@ class Fir2IrDeclarationStorage(
                     isExpect = property.isExpect,
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 ).apply {
+                    metadata = MetadataSource.Property(descriptor)
                     descriptor.bind(this)
                     if (irParent != null) {
                         parent = irParent
@@ -638,6 +643,7 @@ class Fir2IrDeclarationStorage(
                     isStatic = field.isStatic,
                     isFakeOverride = false
                 ).apply {
+                    metadata = MetadataSource.Property(descriptor)
                     descriptor.bind(this)
                     fieldCache[field] = this
                 }
