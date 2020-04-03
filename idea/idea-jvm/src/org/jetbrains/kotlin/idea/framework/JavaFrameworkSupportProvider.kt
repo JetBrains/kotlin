@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import javax.swing.JComponent
 
 class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
@@ -49,7 +48,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                     rootModel,
                     JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                    KotlinJvmBundle.message("kotlin.js")
+                    KotlinJvmBundle.message("presentable.name.kotlin.js")
                 )
 
                 description!!.finishLibConfiguration(module, rootModel, false)
@@ -58,7 +57,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 if (isNewProject) {
                     ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
                 }
-                KotlinFUSLogger.log(FUSEventGroups.NPWizards, "KotlinJavaFrameworkSupportProvider")
+                NewProjectWizardsFUSCollector.log("Kotlin/JVM", "Java", false)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {

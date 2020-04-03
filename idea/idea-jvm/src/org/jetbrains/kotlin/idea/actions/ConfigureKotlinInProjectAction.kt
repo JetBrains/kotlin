@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.underModalProgress
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -23,13 +24,19 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
 
-        val modules = getConfigurableModules(project)
+        val (modules, configurators) = underModalProgress(project, KotlinJvmBundle.message("lookup.project.configurators.progress.text")) {
+            val modules = getConfigurableModules(project)
+            if (modules.all(::isModuleConfigured)) {
+                return@underModalProgress modules to emptyList<KotlinProjectConfigurator>()
+            }
+            val configurators = getApplicableConfigurators(project)
+            modules to configurators
+        }
+
         if (modules.all(::isModuleConfigured)) {
             Messages.showInfoMessage(KotlinJvmBundle.message("all.modules.with.kotlin.files.are.configured"), e.presentation.text!!)
             return
         }
-
-        val configurators = getApplicableConfigurators(project)
 
         when {
             configurators.size == 1 -> configurators.first().configure(project, emptyList())

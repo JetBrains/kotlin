@@ -31,6 +31,8 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComponentCall(this, data)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall
+
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall

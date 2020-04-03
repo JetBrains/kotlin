@@ -470,20 +470,26 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
     private constructor(): R|kotlin/Double|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final val MAX_VALUE: R|kotlin/Double|
+        public final const val MAX_VALUE: R|kotlin/Double|
             public get(): R|kotlin/Double|
 
-        public final val MIN_VALUE: R|kotlin/Double|
+        public final const val MIN_VALUE: R|kotlin/Double|
             public get(): R|kotlin/Double|
 
-        public final val NEGATIVE_INFINITY: R|kotlin/Double|
+        public final const val NEGATIVE_INFINITY: R|kotlin/Double|
             public get(): R|kotlin/Double|
 
-        public final val NaN: R|kotlin/Double|
+        public final const val NaN: R|kotlin/Double|
             public get(): R|kotlin/Double|
 
-        public final val POSITIVE_INFINITY: R|kotlin/Double|
+        public final const val POSITIVE_INFINITY: R|kotlin/Double|
             public get(): R|kotlin/Double|
+
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int|
+            public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Double.Companion|
 
@@ -643,20 +649,26 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
     private constructor(): R|kotlin/Float|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final val MAX_VALUE: R|kotlin/Float|
+        public final const val MAX_VALUE: R|kotlin/Float|
             public get(): R|kotlin/Float|
 
-        public final val MIN_VALUE: R|kotlin/Float|
+        public final const val MIN_VALUE: R|kotlin/Float|
             public get(): R|kotlin/Float|
 
-        public final val NEGATIVE_INFINITY: R|kotlin/Float|
+        public final const val NEGATIVE_INFINITY: R|kotlin/Float|
             public get(): R|kotlin/Float|
 
-        public final val NaN: R|kotlin/Float|
+        public final const val NaN: R|kotlin/Float|
             public get(): R|kotlin/Float|
 
-        public final val POSITIVE_INFINITY: R|kotlin/Float|
+        public final const val POSITIVE_INFINITY: R|kotlin/Float|
             public get(): R|kotlin/Float|
+
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int|
+            public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Float.Companion|
 

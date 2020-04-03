@@ -1792,6 +1792,8 @@ public inline fun UShortArray.dropWhile(predicate: (UShort) -> Boolean): List<US
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1802,6 +1804,8 @@ public inline fun UIntArray.filter(predicate: (UInt) -> Boolean): List<UInt> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1812,6 +1816,8 @@ public inline fun ULongArray.filter(predicate: (ULong) -> Boolean): List<ULong> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1822,6 +1828,8 @@ public inline fun UByteArray.filter(predicate: (UByte) -> Boolean): List<UByte> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1940,6 +1948,8 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterIndexedTo
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1950,6 +1960,8 @@ public inline fun UIntArray.filterNot(predicate: (UInt) -> Boolean): List<UInt> 
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1960,6 +1972,8 @@ public inline fun ULongArray.filterNot(predicate: (ULong) -> Boolean): List<ULon
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1970,6 +1984,8 @@ public inline fun UByteArray.filterNot(predicate: (UByte) -> Boolean): List<UByt
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3982,6 +3998,7 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UIntArray.associateWith(valueSelector: (UInt) -> V): Map<UInt, V> {
     val result = LinkedHashMap<UInt, V>()
@@ -4000,6 +4017,7 @@ public inline fun <V> UIntArray.associateWith(valueSelector: (UInt) -> V): Map<U
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map<ULong, V> {
     val result = LinkedHashMap<ULong, V>()
@@ -4018,6 +4036,7 @@ public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map<UByte, V> {
     val result = LinkedHashMap<UByte, V>()
@@ -4036,6 +4055,7 @@ public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UShortArray.associateWith(valueSelector: (UShort) -> V): Map<UShort, V> {
     val result = LinkedHashMap<UShort, V>()
@@ -4052,6 +4072,7 @@ public inline fun <V> UShortArray.associateWith(valueSelector: (UShort) -> V): M
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UInt, in V>> UIntArray.associateWithTo(destination: M, valueSelector: (UInt) -> V): M {
     for (element in this) {
@@ -4070,6 +4091,7 @@ public inline fun <V, M : MutableMap<in UInt, in V>> UIntArray.associateWithTo(d
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in ULong, in V>> ULongArray.associateWithTo(destination: M, valueSelector: (ULong) -> V): M {
     for (element in this) {
@@ -4088,6 +4110,7 @@ public inline fun <V, M : MutableMap<in ULong, in V>> ULongArray.associateWithTo
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UByte, in V>> UByteArray.associateWithTo(destination: M, valueSelector: (UByte) -> V): M {
     for (element in this) {
@@ -4106,6 +4129,7 @@ public inline fun <V, M : MutableMap<in UByte, in V>> UByteArray.associateWithTo
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UShort, in V>> UShortArray.associateWithTo(destination: M, valueSelector: (UShort) -> V): M {
     for (element in this) {

@@ -44,7 +44,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
         it.shortName == DEPRECATED_NAME
     }.textRangeIn(element)
 
-    override val defaultFixText = KotlinBundle.message("add.replacewith.argument.to.specify.replacement.pattern")
+    override val defaultFixText get() = KotlinBundle.message("add.replacewith.argument.to.specify.replacement.pattern")
 
     private class ReplaceWith(val expression: String, vararg val imports: String)
 

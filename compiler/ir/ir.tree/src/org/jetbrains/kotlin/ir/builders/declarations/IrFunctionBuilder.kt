@@ -27,6 +27,8 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
 
     var isPrimary: Boolean = false
 
+    var isFakeOverride: Boolean = false
+
     fun updateFrom(from: IrFunction) {
         super.updateFrom(from)
 
@@ -39,6 +41,7 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
             isTailrec = from.isTailrec
             isSuspend = from.isSuspend
             isOperator = from.isOperator
+            isFakeOverride = from.isFakeOverride
         } else {
             modality = Modality.FINAL
             isTailrec = false

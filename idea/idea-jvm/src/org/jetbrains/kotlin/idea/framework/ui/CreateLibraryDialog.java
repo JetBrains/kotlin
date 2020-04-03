@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.idea.framework.ui;
 
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class CreateLibraryDialog extends CreateLibraryDialogBase {
 
-    public CreateLibraryDialog(@NotNull String defaultPath, @NotNull String title, @NotNull String libraryCaption) {
+    public CreateLibraryDialog(@NotNull String defaultPath, @Nls @NotNull String title, @Nls @NotNull String libraryCaption) {
         super(null, defaultPath, title, libraryCaption);
         updateComponents();
     }

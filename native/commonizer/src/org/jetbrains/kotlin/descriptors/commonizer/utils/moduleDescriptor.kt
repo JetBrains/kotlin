@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.DefaultDeserializedDescriptorFactory
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.createDefaultKonanResolvedModuleDescriptorsFactory
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
@@ -24,7 +26,7 @@ internal fun createKotlinNativeForwardDeclarationsModule(
     storageManager: StorageManager,
     builtIns: KotlinBuiltIns
 ): ModuleDescriptorImpl =
-    (createDefaultKonanResolvedModuleDescriptorsFactory(DefaultDeserializedDescriptorFactory) as KlibResolvedModuleDescriptorsFactoryImpl)
+    (NativeFactories.createDefaultKonanResolvedModuleDescriptorsFactory(NativeFactories.DefaultDeserializedDescriptorFactory) as KlibResolvedModuleDescriptorsFactoryImpl)
         .createForwardDeclarationsModule(
             builtIns = builtIns,
             storageManager = storageManager
@@ -46,3 +48,5 @@ internal fun ModuleDescriptor.resolveClassOrTypeAliasByFqName(
         ?.unsubstitutedInnerClassesScope
         ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassifierDescriptorWithTypeParameters
 }
+
+internal val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())

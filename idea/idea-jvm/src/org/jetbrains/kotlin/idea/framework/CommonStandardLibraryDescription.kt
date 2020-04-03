@@ -14,8 +14,8 @@ class CommonStandardLibraryDescription(project: Project?) : CustomLibraryDescrip
     project, "common", LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_COMMON_STDLIB_KIND, SUITABLE_LIBRARY_KINDS
 ) {
     companion object {
-        val KOTLIN_COMMON_STDLIB_KIND = LibraryKind.create("kotlin-stdlib-common")
-        val LIBRARY_NAME = "KotlinStdlibCommon"
+        val KOTLIN_COMMON_STDLIB_KIND: LibraryKind = LibraryKind.create("kotlin-stdlib-common")
+        const val LIBRARY_NAME = "KotlinStdlibCommon"
 
         val DIALOG_TITLE get() = KotlinJvmBundle.message("create.kotlin.common.standard.library")
         val LIBRARY_CAPTION get() = KotlinJvmBundle.message("kotlin.common.standard.library")

@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.PathUtil
 import org.gradle.util.GradleVersion
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -110,7 +111,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     }
 
     fun configureSilently(project: Project, modules: List<Module>, version: String): NotificationMessageCollector {
-        return project.executeCommand("Configure Kotlin") {
+        return project.executeCommand(KotlinIdeaGradleBundle.message("comman.name.configure.kotlin")) {
             val collector = createConfigureKotlinNotificationCollector(project)
             val changedFiles = configureWithVersion(project, modules, version, collector)
 
@@ -202,7 +203,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         version: String,
         collector: NotificationMessageCollector
     ): Boolean {
-        val isModified = file.project.executeWriteCommand("Configure ${file.name}", null) {
+        val isModified = file.project.executeWriteCommand(KotlinIdeaGradleBundle.message("command.name.configure.0", file.name), null) {
             val isModified = addElementsToFile(file, isTopLevelProjectFile, version)
 
             CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(file)
@@ -305,13 +306,20 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> =
             getManipulatorIfAny(file, preferNewSyntax) ?: error("Unknown build script file type (${file::class.qualifiedName})!")
 
-        val GROUP_ID = "org.jetbrains.kotlin"
-        val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
+        @NonNls
+        const val GROUP_ID = "org.jetbrains.kotlin"
 
-        val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
+        @NonNls
+        const val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
 
-        private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
-        private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
+        @NonNls
+        const val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
+
+        @NonNls
+        private const val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
+
+        @NonNls
+        private const val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
 
         fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean, gradleVersion: GradleVersion): String {
             val updatedScope = gradleVersion.scope(scope)

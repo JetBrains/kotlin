@@ -120,5 +120,18 @@ class RemoveModifierFix(
                 }
             }
         }
+
+        fun createRemoveFunFromInterfaceFactory(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
+                    val keyword = diagnostic.psiElement
+                    val modifierList = keyword.parent as? KtDeclarationModifierList ?: return null
+                    val funInterface = (modifierList.parent as? KtClass)?.takeIf {
+                        it.isInterface() && it.hasModifier(KtTokens.FUN_KEYWORD)
+                    } ?: return null
+                    return RemoveModifierFix(funInterface, KtTokens.FUN_KEYWORD, isRedundant = false)
+                }
+            }
+        }
     }
 }

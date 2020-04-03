@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -48,7 +50,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     val isSearchInNonJavaFiles: Boolean,
     val packageName: String,
     val isOpenInEditor: Boolean
-) : Model<MoveKotlinDeclarationsProcessor> {
+) : Model {
 
     protected abstract fun chooseSourceRoot(
         newPackage: PackageWrapper,
@@ -127,9 +129,11 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
 
         if (targetContainer is KtClassOrObject) {
             val targetClass = targetContainer as KtClassOrObject?
-            for (member in targetClass!!.declarations) {
-                if (member is KtClassOrObject && className == member.getName()) {
-                    throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+            if (targetClass != null) {
+                for (member in targetClass.declarations) {
+                    if (member is KtClassOrObject && className == member.getName()) {
+                        throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+                    }
                 }
             }
         }
@@ -157,9 +161,9 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     }
 
     @Throws(ConfigurationException::class)
-    private fun getMoveTarget(): KotlinMoveTarget {
+    private fun getMoveTarget(): Pair<KotlinMoveTarget, MoveRefactoringDestination> {
         val target = getTargetContainerWithValidation()
-        if (target is PsiDirectory) {
+        return if (target is PsiDirectory) {
             val targetPackageFqName = getTargetPackageFqName(target)
                 ?: throw ConfigurationException(KotlinBundle.message("text.cannot.find.target.package.name"))
 
@@ -169,13 +173,15 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
 
             val targetFileName = suggestedName + "." + KotlinFileType.EXTENSION
 
-            return KotlinMoveTargetForDeferredFile(
+            val target = KotlinMoveTargetForDeferredFile(
                 targetPackageFqName,
                 target,
                 targetFile = null
             ) { createKotlinFile(targetFileName, target, targetPackageFqName.asString()) }
+
+            target to MoveRefactoringDestination.FILE
         } else {
-            return KotlinMoveTargetForExistingElement(target as KtElement)
+            KotlinMoveTargetForExistingElement(target as KtElement) to MoveRefactoringDestination.DECLARATION
         }
     }
 
@@ -183,7 +189,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     override fun computeModelResult() = computeModelResult(throwOnConflicts = false)
 
     @Throws(ConfigurationException::class)
-    override fun computeModelResult(throwOnConflicts: Boolean): MoveKotlinDeclarationsProcessor {
+    override fun computeModelResult(throwOnConflicts: Boolean): ModelResultWithFUSData {
 
         val moveTarget = getMoveTarget()
 
@@ -192,7 +198,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
         val moveDescriptor = MoveDeclarationsDescriptor(
             project,
             MoveSource(innerClass),
-            moveTarget,
+            moveTarget.first,
             delegate,
             searchInComments,
             isSearchInNonJavaFiles,
@@ -201,6 +207,13 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             openInEditor = isOpenInEditor
         )
 
-        return MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default, throwOnConflicts)
+        val processor = MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default, throwOnConflicts)
+
+        return ModelResultWithFUSData(
+            processor = processor,
+            elementsCount = 1,
+            entityToMove = MovedEntity.CLASSES,
+            destination = moveTarget.second
+        )
     }
 }

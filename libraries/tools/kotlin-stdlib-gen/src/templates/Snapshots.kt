@@ -12,6 +12,9 @@ object Snapshots : TemplateGroupBase() {
     init {
         defaultBuilder {
             sequenceClassification(SequenceClass.terminal)
+            specialFor(ArraysOfUnsigned) {
+                annotation("@ExperimentalUnsignedTypes")
+            }
         }
     }
 

@@ -20,7 +20,7 @@ interface DescriptorWithContainerSource : MemberDescriptor {
     val containerSource: DeserializedContainerSource?
 }
 
-interface DeserializedMemberDescriptor : MemberDescriptor, DescriptorWithContainerSource {
+interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescriptor, DescriptorWithContainerSource {
     val proto: MessageLite
 
     val nameResolver: NameResolver

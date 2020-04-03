@@ -21,8 +21,8 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     companion object {
         val EP_NAME = ExtensionPointName.create<ModuleBuilder>("org.jetbrains.kotlin.moduleBuilder")
 
-        val KOTLIN_GROUP_NAME: String = "Kotlin"
-        val KOTLIN_PARENT_GROUP_NAME = "Kotlin Group"
+        const val KOTLIN_GROUP_NAME: String = "Kotlin"
+        const val KOTLIN_PARENT_GROUP_NAME = "Kotlin Group"
     }
 
     override fun getGroups() = arrayOf(KOTLIN_GROUP_NAME)
@@ -36,6 +36,7 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
                 KotlinModuleBuilder(
                     JvmPlatforms.unspecifiedJvmPlatform,
                     "JVM | IDEA",
+                    KotlinJvmBundle.message("presentable.name.jvm.idea"),
                     KotlinJvmBundle.message("kotlin.project.with.a.jvm.target.based.on.the.intellij.idea.build.system"),
                     KotlinIcons.SMALL_LOGO
                 )
@@ -43,7 +44,9 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
 
             BuilderBasedTemplate(
                 KotlinModuleBuilder(
-                    JsPlatforms.defaultJsPlatform, "JS | IDEA",
+                    JsPlatforms.defaultJsPlatform,
+                    "JS | IDEA",
+                    KotlinJvmBundle.message("presentable.name.js.idea"),
                     KotlinJvmBundle.message("kotlin.project.with.a.javascript.target.based.on.the.intellij.idea.build.system"),
                     KotlinIcons.JS
                 )

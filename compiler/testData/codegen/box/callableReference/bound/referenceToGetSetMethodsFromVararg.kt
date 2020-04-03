@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 
 import kotlin.test.assertEquals

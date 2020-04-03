@@ -58,7 +58,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
 
     override fun inspectionText(element: KtBinaryExpression) = KotlinBundle.message("replaceable.with.operator.assignment")
 
-    override val defaultFixText = KotlinBundle.message("replace.with.operator.assignment")
+    override val defaultFixText get() = KotlinBundle.message("replace.with.operator.assignment")
 
     override fun fixText(element: KtBinaryExpression) =
         KotlinBundle.message(

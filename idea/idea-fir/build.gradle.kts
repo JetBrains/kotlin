@@ -23,7 +23,6 @@ dependencies {
     }
 
     testRuntime(intellijRuntimeAnnotations())
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-preloader"))

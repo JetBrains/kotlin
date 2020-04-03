@@ -74,6 +74,6 @@ FILE: invokePriority.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|E|.R|/E.Companion.f|.R|/E.f.invoke|()
+        Q|E|.<Ambiguity: f, [/E.f.invoke, kotlin/Function0.invoke]>#()
         Q|E.f|.R|/E.f.invoke|()
     }

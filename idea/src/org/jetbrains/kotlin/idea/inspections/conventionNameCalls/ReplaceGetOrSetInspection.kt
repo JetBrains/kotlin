@@ -72,8 +72,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
             ProblemHighlightType.INFORMATION
         }
 
-    override val defaultFixText: String
-        get() = KotlinBundle.message("replace.get.or.set.call.with.indexing.operator")
+    override val defaultFixText: String get() = KotlinBundle.message("replace.get.or.set.call.with.indexing.operator")
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val callExpression = element.callExpression ?: return defaultFixText

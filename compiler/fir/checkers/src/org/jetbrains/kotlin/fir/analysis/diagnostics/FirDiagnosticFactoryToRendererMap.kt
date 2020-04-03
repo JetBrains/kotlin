@@ -16,13 +16,13 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
 
     operator fun get(factory: AbstractFirDiagnosticFactory<*, *>): DiagnosticRenderer<*>? = diagnosticsMap[factory]
 
-    fun put(factory: FirDiagnosticFactory0<*>, message: String) {
+    fun put(factory: FirDiagnosticFactory0<*, *>, message: String) {
         psiDiagnosticMap.put(factory.psiDiagnosticFactory, message)
         putToFirMap(factory)
     }
 
     fun <A> put(
-        factory: FirDiagnosticFactory1<*, A>,
+        factory: FirDiagnosticFactory1<*, *, A>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?
     ) {
@@ -31,7 +31,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     fun <A, B> put(
-        factory: FirDiagnosticFactory2<*, A, B>,
+        factory: FirDiagnosticFactory2<*, *, A, B>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
         rendererB: DiagnosticParameterRenderer<B>?
@@ -41,7 +41,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     fun <A, B, C> put(
-        factory: FirDiagnosticFactory3<*, A, B, C>,
+        factory: FirDiagnosticFactory3<*, *, A, B, C>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
         rendererB: DiagnosticParameterRenderer<B>?,

@@ -70,7 +70,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         body = body?.transformSingle(transformer, data)
         transformContractDescription(transformer, data)
         transformStatus(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 
@@ -100,6 +100,11 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         status = status.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

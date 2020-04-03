@@ -106,9 +106,11 @@ class BunchFileCheckInHandlerFactory : CheckinHandlerFactory() {
                     "several.bunch.files.haven.t.been.updated.0.do.you.want.to.review.them.before.commit",
                     filePaths.joinToString("\n")
                 ),
-                KotlinJvmBundle.message("forgotten.bunch.files"),
-                KotlinJvmBundle.message("review"),
-                KotlinJvmBundle.message("commit"), CommonBundle.getCancelButtonText(), Messages.getWarningIcon()
+                KotlinJvmBundle.message("button.text.forgotten.bunch.files"),
+                KotlinJvmBundle.message("button.text.review"),
+                KotlinJvmBundle.message("button.text.commit"),
+                CommonBundle.getCancelButtonText(),
+                Messages.getWarningIcon()
             )) {
                 YES -> {
                     return ReturnResult.CLOSE_WINDOW
@@ -132,7 +134,7 @@ object BunchFileUtils {
         val file = File(bunchFile.path)
         if (!file.exists()) return null
 
-        val lines = file.readLines().map { it.trim() }.filter { !it.isEmpty() }
+        val lines = file.readLines().map { it.trim() }.filter { it.isNotEmpty() }
         if (lines.size <= 1) return null
 
         return lines.drop(1).map { it.split('_').first() }

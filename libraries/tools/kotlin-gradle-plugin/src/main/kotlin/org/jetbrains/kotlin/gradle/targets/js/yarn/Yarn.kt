@@ -38,6 +38,13 @@ class Yarn : NpmApi {
     override fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
-    ) = getDelegate(rootProject.project).resolveRootProject(rootProject, subProjects, skipExecution)
+        skipExecution: Boolean,
+        cliArgs: List<String>
+    ) = getDelegate(rootProject.project)
+        .resolveRootProject(
+            rootProject,
+            subProjects,
+            skipExecution,
+            cliArgs
+        )
 }

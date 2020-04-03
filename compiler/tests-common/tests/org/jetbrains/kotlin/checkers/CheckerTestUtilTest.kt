@@ -11,8 +11,8 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -43,9 +43,7 @@ private abstract class Test(private vararg val expectedMessages: String) {
                 bindingContext, psiFile,
                 false,
                 mutableListOf(),
-                null,
-                false,
-                languageVersionSettings,
+                DiagnosticsRenderingConfiguration(null, false, languageVersionSettings),
                 dataFlowValueFactory,
                 emptyModule
             )
@@ -59,9 +57,7 @@ private abstract class Test(private vararg val expectedMessages: String) {
             psiFile,
             false,
             mutableListOf(),
-            null,
-            false,
-            languageVersionSettings,
+            DiagnosticsRenderingConfiguration(null, false, languageVersionSettings),
             dataFlowValueFactory,
             emptyModule
         )

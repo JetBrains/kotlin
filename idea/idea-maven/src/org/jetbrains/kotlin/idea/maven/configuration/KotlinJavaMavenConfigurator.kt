@@ -30,12 +30,7 @@ import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
-class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
-    TEST_LIB_ID,
-    false,
-    NAME,
-    PRESENTABLE_TEXT
-) {
+class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(TEST_LIB_ID, false, NAME, PRESENTABLE_TEXT) {
 
     override fun isKotlinModule(module: Module) =
         hasKotlinJvmRuntimeInScope(module)
@@ -77,6 +72,6 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
     companion object {
         private const val NAME = "maven"
         const val TEST_LIB_ID = "kotlin-test"
-        private val PRESENTABLE_TEXT = KotlinMavenBundle.message("configure.java.with.maven")
+        private val PRESENTABLE_TEXT get() = KotlinMavenBundle.message("configure.java.with.maven")
     }
 }

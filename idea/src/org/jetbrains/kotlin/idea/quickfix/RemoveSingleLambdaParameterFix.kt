@@ -48,6 +48,9 @@ class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixActio
 
             val lambda = parameterList.parent.parent as? KtLambdaExpression ?: return null
 
+            val lambdaParent = lambda.parent
+            if (lambdaParent is KtWhenEntry || lambdaParent is KtContainerNodeForControlStructureBody) return null
+
             val property = lambda.getStrictParentOfType<KtProperty>()
             if (property != null && property.typeReference == null) return null
 

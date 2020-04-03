@@ -17,14 +17,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import java.util.concurrent.ConcurrentHashMap
 
 class KotlinCodeHintsModel(val project: Project) : EditorFactoryListener {
     companion object {
-        fun getInstance(project: Project): KotlinCodeHintsModel =
-            project.getComponent(KotlinCodeHintsModel::class.java) ?: error("Component `KotlinCodeHintsModel` is expected to be registered")
+        fun getInstance(project: Project): KotlinCodeHintsModel = project.getServiceSafe()
     }
 
     private class DocumentExtensionInfoModel(val document: Document) {

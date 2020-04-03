@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
@@ -51,7 +52,9 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
+import org.jetbrains.uast.kotlin.psi.UastFakeLightMethod
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameterBase
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 interface KotlinUastResolveProviderService {
@@ -194,6 +197,8 @@ internal object KotlinConverter {
         is KtLightParameterList -> unwrapElements(element.parent)
         is KtTypeElement -> unwrapElements(element.parent)
         is KtSuperTypeList -> unwrapElements(element.parent)
+        is KtFinallySection -> unwrapElements(element.parent)
+        is KtAnnotatedExpression -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -248,14 +253,18 @@ internal object KotlinConverter {
             is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, expectedTypes) } ?: expr<UExpression> { UastEmptyExpression(givenParent) }
             is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
             is KtWhenCondition -> convertWhenCondition(element, givenParent, expectedTypes)
-            is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
+            is KtTypeReference ->
+                expectedTypes.accommodate(
+                    alternative { LazyKotlinUTypeReferenceExpression(element, givenParent) },
+                    alternative { convertReceiverParameter(element) }
+                ).firstOrNull()
             is KtConstructorDelegationCall ->
                 el<UCallExpression> { KotlinUFunctionCallExpression(element, givenParent) }
             is KtSuperTypeCallEntry ->
                 el<UExpression> {
                     (element.getParentOfType<KtClassOrObject>(true)?.parent as? KtObjectLiteralExpression)
-                            ?.toUElementOfType<UExpression>()
-                    ?: KotlinUFunctionCallExpression(element, givenParent)
+                        ?.toUElementOfType<UExpression>()
+                        ?: KotlinUFunctionCallExpression(element, givenParent)
                 }
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
@@ -282,6 +291,11 @@ internal object KotlinConverter {
         }}
     }
 
+    internal fun convertReceiverParameter(receiver: KtTypeReference): UParameter? {
+        val call = (receiver.parent as? KtCallableDeclaration) ?: return null
+        if (call.receiverTypeReference != receiver) return null
+        return call.toUElementOfType<UMethod>()?.uastParameters?.firstOrNull()
+    }
 
     internal fun convertEntry(entry: KtStringTemplateEntry,
                               givenParent: UElement?,
@@ -409,6 +423,11 @@ internal object KotlinConverter {
             else {
                 expr<UDeclarationsExpression>(build(::createLocalFunctionDeclaration))
             }
+            is KtAnnotatedExpression -> {
+                expression.baseExpression
+                    ?.let { convertExpression(it, givenParent, requiredType) }
+                    ?: expr<UExpression>(build(::UnknownKotlinExpression))
+            }
 
             else -> expr<UExpression>(build(::UnknownKotlinExpression))
         }}
@@ -468,25 +487,27 @@ internal object KotlinConverter {
         givenParent: UElement?,
         expectedTypes: Array<out Class<out UElement>>
     ): UElement? {
+        val original = element.originalElement
+
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = {
             @Suppress("UNCHECKED_CAST")
-            ctor(element as P, givenParent)
+            ctor(original as P, givenParent)
         }
 
         fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? = {
             @Suppress("UNCHECKED_CAST")
-            ctor(element as P, ktElement, givenParent)
+            ctor(original as P, ktElement, givenParent)
         }
 
         fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? = {
             @Suppress("UNCHECKED_CAST")
-            ctor(element as P, ktElement, givenParent)
+            ctor(original as P, ktElement, givenParent)
         }
 
-        val original = element.originalElement
         return with(expectedTypes) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
+                is UastFakeLightMethod -> el<UMethod> { KotlinUMethodWithFakeLightDelegate(original.original, original, givenParent) }
                 is KtLightClass -> when (original.kotlinOrigin) {
                     is KtEnumEntry -> el<UEnumConstant> {
                         convertEnumEntry(original.kotlinOrigin as KtEnumEntry, givenParent)
@@ -500,6 +521,9 @@ internal object KotlinConverter {
                         el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
                 is KtLightParameter -> el<UParameter>(buildKtOpt(original.kotlinOrigin, ::KotlinUParameter))
                 is UastKotlinPsiParameter -> el<UParameter>(buildKt(original.ktParameter, ::KotlinUParameter))
+                is UastKotlinPsiParameterBase<*> -> el<UParameter> {
+                    original.ktOrigin.safeAs<KtTypeReference>()?.let { convertReceiverParameter(it) }
+                }
                 is UastKotlinPsiVariable -> el<UVariable>(buildKt(original.ktElement, ::KotlinUVariable))
 
                 is KtEnumEntry -> el<UEnumConstant> {
@@ -526,9 +550,7 @@ internal object KotlinConverter {
                             if (lightMethod != null)
                                 convertDeclaration(lightMethod, givenParent, expectedTypes)
                             else {
-                                val ktLightClass = original.containingClassOrObject?.toLightClass()
-                                    ?: original.containingKtFile.findFacadeClass()
-                                    ?: return null
+                                val ktLightClass = getLightClassForFakeMethod(original) ?: return null
                                 KotlinUMethodWithFakeLightDelegate(original, ktLightClass, givenParent)
                             }
                         }
@@ -541,7 +563,7 @@ internal object KotlinConverter {
 
                 is KtProperty ->
                     if (original.isLocal) {
-                        KotlinConverter.convertPsiElement(element, givenParent, expectedTypes)
+                        KotlinConverter.convertPsiElement(original, givenParent, expectedTypes)
                     } else {
                         convertNonLocalProperty(original, givenParent, expectedTypes).firstOrNull()
                     }
@@ -564,6 +586,10 @@ internal object KotlinConverter {
         }
     }
 
+    private fun getLightClassForFakeMethod(original: KtFunction): KtLightClass? {
+        if (original.isLocal) return null
+        return (original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass())
+    }
 
     fun convertDeclarationOrElement(
         element: PsiElement,
@@ -613,11 +639,18 @@ internal object KotlinConverter {
         alternative uParam@{
             val lightMethod = when (val ownerFunction = element.ownerFunction) {
                 is KtFunction -> LightClassUtil.getLightClassMethod(ownerFunction)
+                    ?: getLightClassForFakeMethod(ownerFunction)
+                        ?.takeIf { !it.isAnnotationType }
+                        ?.let { UastFakeLightMethod(ownerFunction, it) }
                 is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(ownerFunction)
                 else -> null
             } ?: return@uParam null
             val lightParameter = lightMethod.parameterList.parameters.find { it.name == element.name } ?: return@uParam null
             KotlinUParameter(lightParameter, element, givenParent)
+        },
+        alternative catch@{
+            val uCatchClause = element.parent?.parent?.safeAs<KtCatchClause>()?.toUElementOfType<UCatchClause>() ?: return@catch null
+            uCatchClause.parameters.firstOrNull { it.sourcePsi == element }
         },
         *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
     )

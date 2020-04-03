@@ -13,7 +13,7 @@ public class A {
 fun test() {
     A.bar(null, "")
 
-    A.<!INAPPLICABLE_CANDIDATE!>bar<!><String>(null, "")
+    A.bar<String>(null, "")
     A.bar<String?>(null, "")
     A.bar(null, A.platformString())
 }

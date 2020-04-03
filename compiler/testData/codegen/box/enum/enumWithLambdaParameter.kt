@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // KT-4423 Enum with function not compiled
 
 enum class Sign(val str: String, val func: (x: Int, y: Int) -> Int){

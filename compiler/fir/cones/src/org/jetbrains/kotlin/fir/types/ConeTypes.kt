@@ -141,7 +141,7 @@ class ConeCapturedTypeConstructor(
     val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker
 
-class ConeCapturedType(
+data class ConeCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: ConeKotlinType?,
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,

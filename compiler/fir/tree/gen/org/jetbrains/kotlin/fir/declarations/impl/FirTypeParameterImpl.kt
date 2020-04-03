@@ -43,6 +43,11 @@ internal class FirTypeParameterImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
         bounds.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
         annotations.transformInplace(transformer, data)
         return this
     }

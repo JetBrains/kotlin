@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.generators.CallGenerator
+import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -67,7 +64,7 @@ class Fir2IrVisitor(
 
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, fakeOverrideMode)
 
-    private val callGenerator = CallGenerator(components, this, conversionScope)
+    private val callGenerator = CallAndReferenceGenerator(components, this, conversionScope)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -286,24 +283,33 @@ class Fir2IrVisitor(
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
-        if (calleeReference.labelName == null && calleeReference.boundSymbol is FirRegularClassSymbol) {
-            // Object case
-            val firObject = (calleeReference.boundSymbol?.fir as? FirClass)?.takeIf {
-                it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
-            }
-            if (firObject != null) {
-                val irObject = classifierStorage.getCachedIrClass(firObject)!!
-                if (irObject != conversionScope.lastClass()) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetObjectValueImpl(startOffset, endOffset, irObject.defaultType, irObject.symbol)
+        val boundSymbol = calleeReference.boundSymbol
+        if (calleeReference.labelName == null) {
+            if (boundSymbol is FirClassSymbol) {
+                // Object case
+                val firClass = boundSymbol.fir as FirClass
+                val irClass = classifierStorage.getCachedIrClass(firClass)!!
+                if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
+                    if (irClass != conversionScope.lastClass()) {
+                        return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                            IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
+                        }
                     }
                 }
-            }
 
-            val dispatchReceiver = conversionScope.lastDispatchReceiverParameter()
-            if (dispatchReceiver != null) {
-                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                    IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
+                if (dispatchReceiver != null) {
+                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                        IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                    }
+                }
+            } else if (boundSymbol is FirCallableSymbol) {
+                val receiverSymbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
+                val receiver = (receiverSymbol?.owner as? IrSimpleFunction)?.extensionReceiverParameter
+                if (receiver != null) {
+                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                        IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
+                    }
                 }
             }
         }
@@ -327,32 +333,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
-        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage)
-        val type = callableReferenceAccess.typeRef.toIrType()
-        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-            when (symbol) {
-                is IrPropertySymbol -> {
-                    IrPropertyReferenceImpl(
-                        startOffset, endOffset, type, symbol, 0,
-                        symbol.owner.backingField?.symbol,
-                        symbol.owner.getter?.symbol,
-                        symbol.owner.setter?.symbol
-                    )
-                }
-                is IrFunctionSymbol -> {
-                    IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = 0,
-                        reflectionTarget = symbol
-                    )
-                }
-                else -> {
-                    IrErrorCallExpressionImpl(
-                        startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
-                    )
-                }
-            }
-        }
+        return callGenerator.convertToIrCallableReference(callableReferenceAccess)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {

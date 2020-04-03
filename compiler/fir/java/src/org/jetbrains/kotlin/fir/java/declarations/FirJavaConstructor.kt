@@ -86,7 +86,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         typeParameters.transformInplace(transformer, data)
         transformValueParameters(transformer, data)
         status = status.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 
@@ -96,6 +96,11 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         status = status.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

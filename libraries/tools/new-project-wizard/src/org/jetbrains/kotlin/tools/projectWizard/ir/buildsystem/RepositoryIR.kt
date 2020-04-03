@@ -7,7 +7,17 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.CustomMaven
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 
-data class RepositoryIR(val repository: Repository) : BuildSystemIR {
+interface RepositoryWrapper {
+    val repository: Repository
+}
+
+fun <W : RepositoryWrapper> List<W>.distinctAndSorted() =
+    distinctBy(RepositoryWrapper::repository)
+        .sortedBy { wrapper ->
+            if (wrapper.repository is DefaultRepository) 0 else 1
+        }
+
+data class RepositoryIR(override val repository: Repository) : BuildSystemIR, RepositoryWrapper {
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> when (repository) {
             is DefaultRepository -> {

@@ -146,6 +146,14 @@ class Arrays {
             val array = arrayOf(1 to 'a', 2 to 'b', 3 to 'c')
             assertPrints(array.unzip(), "([1, 2, 3], [a, b, c])")
         }
+
+        @Sample
+        fun partitionArrayOfPrimitives() {
+            val array = intArrayOf(1, 2, 3, 4, 5)
+            val (even, odd) = array.partition { it % 2 == 0 }
+            assertPrints(even, "[2, 4]")
+            assertPrints(odd, "[1, 3, 5]")
+        }
     }
 
     class ContentOperations {

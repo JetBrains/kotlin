@@ -60,7 +60,7 @@ internal class FirAnonymousFunctionImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         typeParameters.transformInplace(transformer, data)
@@ -69,6 +69,11 @@ internal class FirAnonymousFunctionImpl(
         body = body?.transformSingle(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         label = label?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

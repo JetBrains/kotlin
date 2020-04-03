@@ -20,7 +20,8 @@ interface NpmApi {
     fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        skipExecution: Boolean,
+        cliArgs: List<String>
     )
 
     fun resolveDependency(

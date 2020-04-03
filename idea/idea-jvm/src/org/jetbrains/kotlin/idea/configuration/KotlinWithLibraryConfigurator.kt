@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
 import org.jetbrains.kotlin.idea.quickfix.askUpdateRuntime
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.underModalProgress
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
@@ -68,10 +70,13 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val defaultPathToJar = getDefaultPathToJarFile(project)
         val showPathToJarPanel = needToChooseJarPath(project)
 
-        var nonConfiguredModules = if (!ApplicationManager.getApplication().isUnitTestMode)
-            getCanBeConfiguredModules(project, this)
-        else
+        var nonConfiguredModules = if (!isUnitTestMode()) {
+            underModalProgress(project, KotlinJvmBundle.message("lookup.modules.configurations.progress.text")) {
+                getCanBeConfiguredModules(project, this)
+            }
+        } else {
             listOf(*ModuleManager.getInstance(project).modules)
+        }
         nonConfiguredModules -= excludeModules
 
         var modulesToConfigure = nonConfiguredModules
@@ -85,7 +90,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
                 excludeModules
             )
 
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
+            if (!isUnitTestMode()) {
                 dialog.show()
                 if (!dialog.isOK) return
             } else {
@@ -459,7 +464,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
     }
 
     companion object {
-        val DEFAULT_LIBRARY_DIR = "lib"
+        const val DEFAULT_LIBRARY_DIR = "lib"
 
         fun getPathFromLibrary(library: Library?, type: OrderRootType): String? {
             if (library == null) return null

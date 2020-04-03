@@ -6,14 +6,14 @@ FILE: companionObjectCall.kt
 
     }
     public final fun case1(a: R|A?|): R|kotlin/Unit| {
-        lval test: R|kotlin/Nothing?| = R|<local>/a|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
+        lval test: R|kotlin/String?| = R|<local>/a|?.R|kotlin/let|<R|A|, R|kotlin/String|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             Q|Case1|.R|/Case1.Companion.invoke|(R|<local>/it|)
-            <Inapplicable(HIDDEN): [/Case1.Case1]>#(R|<local>/it|)
-            ^ <Inapplicable(HIDDEN): [/Case1.Case1]>#(R|/A.A|())
+            Q|Case1|.R|/Case1.Companion.invoke|(R|<local>/it|)
+            ^ Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
         }
         )
-        <Inapplicable(HIDDEN): [/Case1.Case1]>#(R|/A.A|())
-        <Inapplicable(HIDDEN): [/Case1.Case1]>#(a = R|/A.A|())
+        Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
+        Q|Case1|.R|/Case1.Companion.invoke|(a = R|/A.A|())
     }
     public final class Case1 : R|kotlin/Any| {
         private constructor(a: R|kotlin/String|): R|Case1| {
@@ -36,8 +36,8 @@ FILE: companionObjectCall.kt
 
     }
     public final fun case2(a: R|A|): R|kotlin/Unit| {
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/Case2.Case2]>#(R|<local>/a|)
-        <Inapplicable(INAPPLICABLE): [/Case2.Case2]>#(a = R|<local>/a|)
+        Q|Case2|.R|/Case2.Companion.invoke|(R|<local>/a|)
+        Q|Case2|.R|/Case2.Companion.invoke|(a = R|<local>/a|)
     }
     public final class Case2 : R|kotlin/Any| {
         public constructor(): R|Case2| {
@@ -57,8 +57,8 @@ FILE: companionObjectCall.kt
 
     }
     public final fun case3(a: R|A|): R|kotlin/Unit| {
-        Q|Case3|.R|/Case3.Companion|.R|/Case3.Companion.invoke|(R|<local>/a|)
-        Q|Case3|.R|/Case3.Companion|.R|/Case3.Companion.invoke|(parameterA = R|<local>/a|)
+        Q|Case3.Companion|.R|/Case3.Companion.invoke|(R|<local>/a|)
+        Q|Case3.Companion|.R|/Case3.Companion.invoke|(parameterA = R|<local>/a|)
     }
     public final class Case3 : R|kotlin/Any| {
         public constructor(): R|Case3| {

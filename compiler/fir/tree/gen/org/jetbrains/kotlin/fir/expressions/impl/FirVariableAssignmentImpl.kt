@@ -51,7 +51,7 @@ internal class FirVariableAssignmentImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -62,6 +62,11 @@ internal class FirVariableAssignmentImpl(
         }
         transformCalleeReference(transformer, data)
         transformRValue(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

@@ -17,23 +17,19 @@
     <actions>
         <!-- Kotlin Console REPL-->
         <action id="KotlinConsoleREPL" class="org.jetbrains.kotlin.console.actions.RunKotlinConsoleAction"
-                text="Kotlin REPL"
                 icon="/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.png">
             <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
         </action>
 
-        <action id="ConfigureKotlinInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJavaInProjectAction"
-                text="Configure Kotlin in Project">
+        <action id="ConfigureKotlinInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJavaInProjectAction">
             <add-to-group group-id="KotlinToolsGroup"/>
         </action>
 
-        <action id="ConfigureKotlinJsInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJsInProjectAction"
-                text="Configure Kotlin (JavaScript) in Project">
+        <action id="ConfigureKotlinJsInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJsInProjectAction">
             <add-to-group group-id="KotlinToolsGroup"/>
         </action>
 
-        <action id="ShowKotlinBytecode" class="org.jetbrains.kotlin.idea.actions.ShowKotlinBytecodeAction"
-                text="Show Kotlin Bytecode">
+        <action id="ShowKotlinBytecode" class="org.jetbrains.kotlin.idea.actions.ShowKotlinBytecodeAction">
             <add-to-group group-id="KotlinToolsGroup"/>
         </action>
 
@@ -47,26 +43,22 @@
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
 
-        <action id="AddToProblemApiInspection" class="org.jetbrains.kotlin.idea.inspections.api.AddIncompatibleApiAction"
-                text="Report as incompatible API">
+        <action id="AddToProblemApiInspection" class="org.jetbrains.kotlin.idea.inspections.api.AddIncompatibleApiAction">
         </action>
 
         <group id="Kotlin.XDebugger.Actions">
 <!--            TODO(design)-->
             <action id="Kotlin.XDebugger.CoroutinesDump"
                 class="org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineDumpAction"
-            text="Get Coroutines Dump"
-            icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
+                    icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
         </group>
 
         <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
-                class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
-                text="Show Kotlin Variables Only">
+                class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView">
             <add-to-group group-id="XDebugger.Settings" relative-to-action="XDebugger.Inline" anchor="after"/>
         </action>
 
-        <action id="InspectBreakpointApplicability" class="org.jetbrains.kotlin.idea.debugger.breakpoints.InspectBreakpointApplicabilityAction"
-                text="Inspect Breakpoint Applicability" internal="true">
+        <action id="InspectBreakpointApplicability" class="org.jetbrains.kotlin.idea.debugger.breakpoints.InspectBreakpointApplicabilityAction" internal="true">
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
     </actions>
@@ -236,4 +228,5 @@
         <completionInformationProvider implementation="org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldCompletionInformationProvider" />
         <kotlinIndicesHelperExtension implementation="org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldKotlinIndicesHelperExtension"/>
     </extensions>
+    <resource-bundle>messages.KotlinBundle</resource-bundle>
 </idea-plugin>

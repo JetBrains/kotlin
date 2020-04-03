@@ -54,7 +54,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertEquals(1, problems.size)
-        Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
+        Assert.assertEquals("Plugin version (1.3.20) is not the same as library version (1.3.30)", problems.single())
     }
 
     @Test
@@ -62,7 +62,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertEquals(1, problems.size)
-        Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
+        Assert.assertEquals("Plugin version (1.3.20) is not the same as library version (1.3.30)", problems.single())
     }
 
     @Test

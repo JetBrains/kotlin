@@ -19,7 +19,7 @@ class Test3 {
 }
 
 fun test4() {
-    break@test4
+    <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@test4<!>
 }
 
 class Test5 {
@@ -43,11 +43,11 @@ class Test6 {
 class Test7 {
     fun Test7() {
         Test8@ while (true) {
-            break@Test7
+            <!NOT_A_LOOP_LABEL!>break@Test7<!>
         }
 
         Test7@ while (true) {
-            break@Test8
+            <!NOT_A_LOOP_LABEL!>break@Test8<!>
         }
     }
 }

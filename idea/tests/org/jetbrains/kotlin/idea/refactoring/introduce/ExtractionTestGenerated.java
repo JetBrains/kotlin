@@ -2787,6 +2787,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/introduceProperty"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("conflictWithParentClass.kt")
+        public void testConflictWithParentClass() throws Exception {
+            runTest("idea/testData/refactoring/introduceProperty/conflictWithParentClass.kt");
+        }
+
         @TestMetadata("extractExtensionWithInitializer.kt")
         public void testExtractExtensionWithInitializer() throws Exception {
             runTest("idea/testData/refactoring/introduceProperty/extractExtensionWithInitializer.kt");

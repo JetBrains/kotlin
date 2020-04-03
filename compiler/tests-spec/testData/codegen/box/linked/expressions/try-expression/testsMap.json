@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "finally block has no effect on the value returned by the try-expression",
           "unexpectedBehaviour": false

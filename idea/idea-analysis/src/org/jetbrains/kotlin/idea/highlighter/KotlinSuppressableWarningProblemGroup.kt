@@ -61,11 +61,16 @@ fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppre
                 // Add suppress action at first statement
                 if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
                     val kind = if (current.parent is KtBlockExpression)
-                        KotlinIdeaAnalysisBundle.message("statement")
+                        KotlinIdeaAnalysisBundle.message("declaration.kind.statement")
                     else
-                        KotlinIdeaAnalysisBundle.message("initializer")
+                        KotlinIdeaAnalysisBundle.message("declaration.kind.initializer")
+
                     actions.add(
-                        KotlinSuppressIntentionAction(current, suppressionKey, AnnotationHostKind(kind, "", true))
+                        KotlinSuppressIntentionAction(
+                            current,
+                            suppressionKey,
+                            AnnotationHostKind(kind, "", true)
+                        )
                     )
                     suppressAtStatementAllowed = false
                 }
@@ -73,7 +78,15 @@ fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppre
 
             current is KtFile -> {
                 actions.add(
-                    KotlinSuppressIntentionAction(current, suppressionKey, AnnotationHostKind("file", current.name, true))
+                    KotlinSuppressIntentionAction(
+                        current,
+                        suppressionKey,
+                        AnnotationHostKind(
+                            KotlinIdeaAnalysisBundle.message("declaration.kind.file"),
+                            current.name,
+                            true
+                        )
+                    )
                 )
                 suppressAtStatementAllowed = false
             }
@@ -90,32 +103,50 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
 
     override fun visitDeclaration(d: KtDeclaration, data: Unit?) = null
 
-    override fun visitClass(d: KtClass, data: Unit?) = detect(d, if (d.isInterface()) "interface" else "class")
+    override fun visitClass(d: KtClass, data: Unit?) = detect(
+        d,
+        if (d.isInterface())
+            KotlinIdeaAnalysisBundle.message("declaration.kind.interface")
+        else
+            KotlinIdeaAnalysisBundle.message("declaration.kind.class")
+    )
 
-    override fun visitNamedFunction(d: KtNamedFunction, data: Unit?) = detect(d, "fun")
+    override fun visitNamedFunction(d: KtNamedFunction, data: Unit?) = detect(d, KotlinIdeaAnalysisBundle.message("declaration.kind.fun"))
 
     override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.valOrVarKeyword.text!!)
 
     override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) =
         detect(d, d.valOrVarKeyword?.text ?: "val", name = d.entries.joinToString(", ", "(", ")") { it.name!! })
 
-    override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
+    override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(
+        d,
+        KotlinIdeaAnalysisBundle.message("declaration.kind.type.parameter"), newLineNeeded = false
+    )
 
-    override fun visitEnumEntry(d: KtEnumEntry, data: Unit?) = detect(d, "enum entry")
+    override fun visitEnumEntry(d: KtEnumEntry, data: Unit?) = detect(d, KotlinIdeaAnalysisBundle.message("declaration.kind.enum.entry"))
 
-    override fun visitParameter(d: KtParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
+    override fun visitParameter(d: KtParameter, data: Unit?) = detect(
+        d,
+        KotlinIdeaAnalysisBundle.message("declaration.kind.parameter"),
+        newLineNeeded = false
+    )
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?) =
-        detect(constructor, "secondary constructor of")
+        detect(constructor, KotlinIdeaAnalysisBundle.message("declaration.kind.secondary.constructor.of"))
 
     override fun visitObjectDeclaration(d: KtObjectDeclaration, data: Unit?): AnnotationHostKind? {
         if (d.isCompanion()) return detect(
             d,
-            KotlinIdeaAnalysisBundle.message("companion.object"),
-            name = KotlinIdeaAnalysisBundle.message("0.of.1", d.name.toString(), d.getStrictParentOfType<KtClass>()?.name.toString())
+            KotlinIdeaAnalysisBundle.message("declaration.kind.companion.object"),
+            name = KotlinIdeaAnalysisBundle.message(
+                "declaration.name.0.of.1",
+                d.name.toString(),
+                d.getStrictParentOfType<KtClass>()?.name.toString()
+            )
         )
+
         if (d.parent is KtObjectLiteralExpression) return null
-        return detect(d, KotlinIdeaAnalysisBundle.message("object"))
+        return detect(d, KotlinIdeaAnalysisBundle.message("declaration.kind.object"))
     }
 
     private fun detect(

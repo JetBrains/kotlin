@@ -21,7 +21,7 @@
           <borderPainted value="false"/>
           <contentAreaFilled value="true"/>
           <hideActionText value="false"/>
-          <text resource-bundle="messages/KotlinJvmBundle" key="copy.to"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="choose.library.copy.to"/>
         </properties>
       </component>
       <grid id="258c2" binding="copyPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">

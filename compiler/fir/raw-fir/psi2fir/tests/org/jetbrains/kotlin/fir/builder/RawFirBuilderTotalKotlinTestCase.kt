@@ -56,13 +56,13 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
             if (file.extension != "kt") continue
             try {
                 val ktFile = createKtFile(file.toRelativeString(root))
-                var firFile: FirFile? = null
+                val firFile: FirFile
                 time += measureNanoTime {
                     firFile = ktFile.toFirFile(stubMode)
                 }
-                totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile!!) }.length
+                totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile) }.length
                 counter++
-                firFile?.accept(object : FirVisitorVoid() {
+                firFile.accept(object : FirVisitorVoid() {
                     override fun visitElement(element: FirElement) {
                         element.acceptChildren(this)
                     }

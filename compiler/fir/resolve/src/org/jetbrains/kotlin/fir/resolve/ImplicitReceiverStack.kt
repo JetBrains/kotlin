@@ -19,6 +19,7 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
     abstract operator fun get(name: String?): ImplicitReceiverValue<*>?
 
     abstract fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
+    abstract fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue?
     abstract fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
 }
 
@@ -67,12 +68,22 @@ class ImplicitReceiverStackImpl private constructor(
     }
 
     override operator fun get(name: String?): ImplicitReceiverValue<*>? {
-        if (name == null) return stack.lastOrNull()
-        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }
+        if (name == null) {
+            return stack.lastOrNull {
+                it !is ImplicitDispatchReceiverValue || !it.inDelegated
+            }
+        }
+        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }?.takeIf {
+            it !is ImplicitDispatchReceiverValue || !it.inDelegated
+        }
     }
 
     override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
         return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
+    }
+
+    override fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue? {
+        return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull(lookupCondition)
     }
 
     override fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = stack.asReversed()

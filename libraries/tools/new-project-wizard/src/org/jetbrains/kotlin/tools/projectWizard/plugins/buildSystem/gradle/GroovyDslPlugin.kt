@@ -7,8 +7,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
 class GroovyDslPlugin(context: Context) : GradlePlugin(context) {
-    override val title: String = "Gradle (Groovy DSL)"
-
     val addBuildSystemData by addBuildSystemData(
         BuildSystemData(
             type = BuildSystemType.GradleGroovyDsl,

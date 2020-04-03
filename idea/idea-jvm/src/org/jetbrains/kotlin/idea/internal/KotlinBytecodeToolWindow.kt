@@ -181,7 +181,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         val optionPanel = JPanel(FlowLayout())
         add(optionPanel, BorderLayout.NORTH)
 
-        decompile = JButton(KotlinJvmBundle.message("decompile"))
+        decompile = JButton(KotlinJvmBundle.message("button.text.decompile"))
         if (KotlinDecompilerService.getInstance() != null) {
             optionPanel.add(decompile)
             decompile.addActionListener {
@@ -204,11 +204,11 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         }
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = JCheckBox(KotlinJvmBundle.message("inline"), true)
-        enableOptimization = JCheckBox(KotlinJvmBundle.message("optimization"), true)
-        enableAssertions = JCheckBox(KotlinJvmBundle.message("assertions"), true)
-        jvm8Target = JCheckBox(KotlinJvmBundle.message("jvm.8.target"), false)
-        ir = JCheckBox(KotlinJvmBundle.message("ir"), false)
+        enableInline = JCheckBox(KotlinJvmBundle.message("checkbox.text.inline"), true)
+        enableOptimization = JCheckBox(KotlinJvmBundle.message("checkbox.text.optimization"), true)
+        enableAssertions = JCheckBox(KotlinJvmBundle.message("checkbox.text.assertions"), true)
+        jvm8Target = JCheckBox(KotlinJvmBundle.message("checkbox.text.jvm.8.target"), false)
+        ir = JCheckBox(KotlinJvmBundle.message("checkbox.text.ir"), false)
         optionPanel.add(enableInline)
         optionPanel.add(enableOptimization)
         optionPanel.add(enableAssertions)

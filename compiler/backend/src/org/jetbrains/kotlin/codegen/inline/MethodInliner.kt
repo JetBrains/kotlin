@@ -132,8 +132,6 @@ class MethodInliner(
         processReturns(resultNode, returnLabelOwner, remapReturn, end)
         //flush transformed node to output
         resultNode.accept(SkipMaxAndEndVisitor(adapter))
-
-        sourceMapper.endMapping()
         return result
     }
 
@@ -285,10 +283,8 @@ class MethodInliner(
                     val childSourceMapper =
                         if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
                             NestedSourceMapper(sourceMapper, lambdaSMAP)
-                        else if (info is DefaultLambda)
-                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP)
                         else
-                            SameFileNestedSourceMapper(sourceMapper.parent!!, info.node.classSMAP)
+                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP, sameFile = info !is DefaultLambda)
 
                     val inliner = MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
@@ -309,7 +305,6 @@ class MethodInliner(
                         .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    childSourceMapper.endMapping()
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message

@@ -66,7 +66,7 @@ internal class FirPrimaryConstructor(
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         transformStatus(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         delegatedConstructor = delegatedConstructor?.transformSingle(transformer, data)
         body = body?.transformSingle(transformer, data)
         return this
@@ -94,6 +94,11 @@ internal class FirPrimaryConstructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         status = status.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

@@ -28,8 +28,9 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.mobile.shared.library.gradle")
 
-    override fun getDescription() =
-        KotlinIdeaGradleBundle.message("description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.two.mobile.platforms.jvm.android.and.native")
+    override fun getDescription() = KotlinIdeaGradleBundle.message(
+        "description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.two.mobile.platforms.jvm.android.and.native"
+    )
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 
 abstract class WizardStepComponent(
-    ideContext: IdeContext
-) : DynamicComponent(ideContext)
+    context: Context
+) : DynamicComponent(context)

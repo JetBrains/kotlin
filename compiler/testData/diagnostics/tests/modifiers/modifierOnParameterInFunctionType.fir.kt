@@ -19,30 +19,30 @@ class A : (vararg Int)->Unit {
         get(): (vararg x: Int)->Unit = {}
 }
 
-val allProhibited: (abstract
+val allProhibited: (<!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>abstract<!>
                     annotation
                     companion
-                    const
-                    crossinline
-                    data
+                    <!INCOMPATIBLE_MODIFIERS!>const<!>
+                    <!INCOMPATIBLE_MODIFIERS!>crossinline<!>
+                    <!INCOMPATIBLE_MODIFIERS!>data<!>
                     enum
                     external
-                    final
-                    in
-                    inline
-                    inner
-                    internal
+                    <!INCOMPATIBLE_MODIFIERS!>final<!>
+                    <!INCOMPATIBLE_MODIFIERS!>in<!>
+                    <!INCOMPATIBLE_MODIFIERS!>inline<!>
+                    <!INCOMPATIBLE_MODIFIERS!>inner<!>
+                    <!INCOMPATIBLE_MODIFIERS!>internal<!>
                     lateinit
-                    noinline
-                    open
+                    <!INCOMPATIBLE_MODIFIERS!>noinline<!>
+                    <!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>open<!>
                     operator
-                    out
-                    override
-                    private
-                    protected
-                    public
+                    <!INCOMPATIBLE_MODIFIERS!>out<!>
+                    <!INCOMPATIBLE_MODIFIERS!>override<!>
+                    <!INCOMPATIBLE_MODIFIERS!>private<!>
+                    <!INCOMPATIBLE_MODIFIERS!>protected<!>
+                    <!INCOMPATIBLE_MODIFIERS!>public<!>
                     reified
-                    sealed
+                    <!INCOMPATIBLE_MODIFIERS!>sealed<!>
                     tailrec
                     vararg
 

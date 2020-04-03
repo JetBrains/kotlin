@@ -1,3 +1,0 @@
-final sealed class Base {
-
-}

@@ -45,7 +45,7 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
 
     override fun inspectionText(element: KtIfExpression) = KotlinBundle.message("replace.guard.clause.with.kotlin.s.function.call")
 
-    override val defaultFixText = KotlinBundle.message("replace.with.kotlin.s.function.call")
+    override val defaultFixText get() = KotlinBundle.message("replace.with.kotlin.s.function.call")
 
     override fun fixText(element: KtIfExpression) =
         element.getKotlinFunction()?.let { KotlinBundle.message("replace.with.0.call", it.functionName) } ?: defaultFixText

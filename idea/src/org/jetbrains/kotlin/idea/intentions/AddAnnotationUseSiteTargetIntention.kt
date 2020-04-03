@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,14 +26,15 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class AddAnnotationUseSiteTargetIntention : SelfTargetingIntention<KtAnnotationEntry>(
-    KtAnnotationEntry::class.java, KotlinBundle.message("add.use.site.target")
+    KtAnnotationEntry::class.java,
+    KotlinBundle.lazyMessage("add.use.site.target")
 ) {
 
     override fun isApplicableTo(element: KtAnnotationEntry, caretOffset: Int): Boolean {
         val useSiteTargets = element.applicableUseSiteTargets()
         if (useSiteTargets.isEmpty()) return false
         if (useSiteTargets.size == 1) {
-            text = KotlinBundle.message("text.add.use.site.target.0", useSiteTargets.first().renderName)
+            setTextGetter(KotlinBundle.lazyMessage("text.add.use.site.target.0", useSiteTargets.first().renderName))
         }
         return true
     }

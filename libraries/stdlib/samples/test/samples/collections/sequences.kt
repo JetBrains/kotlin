@@ -228,6 +228,20 @@ class Sequences {
             val result = sequenceA.zip(sequenceB) { a, b -> "$a/$b" }
             assertPrints(result.take(4).toList(), "[a/1, b/3, c/7, d/15]")
         }
+
+        @Sample
+        fun partition() {
+            fun fibonacci(): Sequence<Int> {
+                // fibonacci terms
+                // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, ...
+                return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
+            }
+
+            val (even, odd) = fibonacci().take(10).partition { it % 2 == 0 }
+
+            assertPrints(even, "[0, 2, 8, 34]")
+            assertPrints(odd, "[1, 1, 3, 5, 13, 21]")
+        }
     }
 
 }

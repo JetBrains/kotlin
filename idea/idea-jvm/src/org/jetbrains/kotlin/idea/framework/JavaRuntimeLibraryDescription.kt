@@ -37,8 +37,8 @@ class JavaRuntimeLibraryDescription(project: Project?) : CustomLibraryDescriptor
     }
 
     companion object {
-        val KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime")
-        val LIBRARY_NAME = "KotlinJavaRuntime"
+        val KOTLIN_JAVA_RUNTIME_KIND: LibraryKind = LibraryKind.create("kotlin-java-runtime")
+        const val LIBRARY_NAME = "KotlinJavaRuntime"
 
         val JAVA_RUNTIME_LIBRARY_CREATION get() = KotlinJvmBundle.message("java.runtime.library.creation")
         val DIALOG_TITLE get() = KotlinJvmBundle.message("create.kotlin.java.runtime.library")

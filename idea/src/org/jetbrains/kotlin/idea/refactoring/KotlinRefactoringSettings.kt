@@ -62,6 +62,9 @@ class KotlinRefactoringSettings : PersistentStateComponent<KotlinRefactoringSett
     var MOVE_DELETE_EMPTY_SOURCE_FILES = true
 
     @JvmField
+    var MOVE_MPP_DECLARATIONS = true
+
+    @JvmField
     var EXTRACT_INTERFACE_JAVADOC: Int = 0
 
     @JvmField

@@ -27,8 +27,9 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.js.client.and.jvm.server.gradle")
 
-    override fun getDescription() =
-        KotlinIdeaGradleBundle.message("description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.js.client.and.jvm.server")
+    override fun getDescription() = KotlinIdeaGradleBundle.message(
+        "description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.js.client.and.jvm.server"
+    )
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptRepositoriesDefinition("jcenter()")
@@ -216,7 +217,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
     override fun buildMultiPlatformPart(): String {
         //language=Gradle
         return """
-            def ktor_version = '1.1.3'
+            def ktor_version = '1.3.2'
             def logback_version = '1.2.3'
 
             kotlin {
@@ -224,7 +225,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                 js {
                     browser {
                     }
-                    produceExecutable()
+                    binaries.executable()
                 }
                 sourceSets {
                     $commonSourceName {

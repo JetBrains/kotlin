@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
-import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.PluginReference
 import org.jetbrains.kotlin.tools.projectWizard.core.path
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs

@@ -2,20 +2,11 @@ kotlin:
   projectKind: Multiplatform
   modules:
     - type: multiplatform
-      kind: multiplatform
       name: a
       subModules:
         - type: jsNode
-          kind: target
           name: nodeJs
-          sourcesets:
-            - type: main
-            - type: test
         - type:
             name: jsBrowser
             testFramework: JS
-          kind: target
           name: browser
-          sourcesets:
-            - type: main
-            - type: test

@@ -27,7 +27,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.16")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
@@ -181,7 +181,7 @@ extra["versions.kotlinx-collections-immutable"] = "0.3.1"
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4-M2-dev-15039"
+    extra["versions.kotlin-native"] = "1.4-M2-dev-15123"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -208,6 +208,8 @@ extra["IntellijCoreDependencies"] =
 
 extra["compilerModules"] = arrayOf(
     ":compiler:util",
+    ":compiler:config",
+    ":compiler:config.jvm",
     ":compiler:container",
     ":compiler:resolution",
     ":compiler:serialization",
@@ -232,6 +234,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:light-classes",
+    ":compiler:javac-wrapper",
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
@@ -239,10 +242,12 @@ extra["compilerModules"] = arrayOf(
     ":js:js.ast",
     ":js:js.serializer",
     ":js:js.parser",
+    ":js:js.config",
     ":js:js.frontend",
     ":js:js.translator",
     ":js:js.dce",
     ":native:frontend.native",
+    ":native:kotlin-native-utils",
     ":compiler",
     ":kotlin-build-common",
     ":core:metadata",
@@ -256,7 +261,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:tree",
-    ":compiler:fir:raw-fir:common",
+    ":compiler:fir:raw-fir:fir-common",
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:fir2ir",
@@ -276,6 +281,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib-js-ir".takeIf { includeStdlibJsIr },
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
+    ":kotlin-test:kotlin-test-annotations-common",
     ":kotlin-test:kotlin-test-common",
     ":kotlin-test:kotlin-test-jvm",
     ":kotlin-test:kotlin-test-junit",
@@ -358,6 +364,7 @@ allprojects {
         "-Xopt-in=kotlin.RequiresOptIn",
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
+        "-Xno-optimized-callable-references",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
@@ -531,7 +538,7 @@ tasks {
             ":compiler:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
-            ":compiler:tests-spec:remoteRunTests",
+            ":compiler:tests-spec:test",
             ":compiler:tests-against-klib:test"
         )
         dependsOn(":plugins:jvm-abi-gen:test")
@@ -552,6 +559,10 @@ tasks {
     register("wasmCompilerTest") {
 //  TODO: fix once
 //        dependsOn(":js:js.tests:wasmTest")
+    }
+
+    register("nativeCompilerTest") {
+        dependsOn(":native:kotlin-native-utils:test")
     }
 
     register("firCompilerTest") {
@@ -595,6 +606,7 @@ tasks {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
         dependsOn("wasmCompilerTest")
+        dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
         dependsOn("scriptingTest")
@@ -607,6 +619,7 @@ tasks {
 
     register("toolsTest") {
         dependsOn(":tools:kotlinp:test")
+        dependsOn(":native:kotlin-klib-commonizer:test")
     }
 
     register("examplesTest") {
@@ -637,13 +650,6 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
-    register("konan-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":native:kotlin-klib-commonizer:test"
-        )
-    }
-
     register("idea-plugin-main-tests") {
         dependsOn("dist")
         dependsOn(":idea:test")
@@ -666,21 +672,26 @@ tasks {
         )
     }
 
-    register("idea-new-project-wizard-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":libraries:tools:new-project-wizard:test",
-            ":libraries:tools:new-project-wizard:new-project-wizard-cli:test"
-        )
+    if (Ide.IJ()) {
+        register("idea-new-project-wizard-tests") {
+            dependsOn("dist")
+            dependsOn(
+                ":libraries:tools:new-project-wizard:test",
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
+                ":idea:idea-new-project-wizard:test"
+            )
+        }
     }
 
     register("idea-plugin-tests") {
         dependsOn("dist")
         dependsOn(
             "idea-plugin-main-tests",
-            "idea-plugin-additional-tests",
-            "idea-new-project-wizard-tests"
+            "idea-plugin-additional-tests"
         )
+        if (Ide.IJ()) {
+            dependsOn("idea-new-project-wizard-tests")
+        }
     }
 
     register("idea-plugin-performance-tests") {
@@ -720,7 +731,6 @@ tasks {
         dependsOn(
             "idea-plugin-tests",
             "jps-tests",
-            "konan-tests",
             "plugins-tests",
             "android-ide-tests",
             ":generators:test"
@@ -763,6 +773,7 @@ val zipStdlibTests by task<Zip> {
     archiveFileName.set("kotlin-stdlib-tests.zip")
     from("libraries/stdlib/common/test") { into("common") }
     from("libraries/stdlib/test") { into("test") }
+    from("libraries/kotlin.test/common/src/test/kotlin") { into("kotlin-test") }
     doLast {
         logger.lifecycle("Stdlib tests are packed to ${archiveFile.get()}")
     }

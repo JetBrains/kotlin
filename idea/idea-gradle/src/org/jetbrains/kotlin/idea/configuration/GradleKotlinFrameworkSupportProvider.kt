@@ -28,12 +28,13 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
@@ -155,7 +156,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
-        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", false)
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder<out PsiFile>, specifyPluginVersionIfNeeded: Boolean) {}
@@ -163,9 +164,13 @@ abstract class GradleKotlinFrameworkSupportProvider(
     protected abstract fun getDependencies(sdk: Sdk?): List<String>
     protected open fun getTestDependencies(): List<String> = listOf()
 
+    @NonNls
     protected abstract fun getPluginId(): String
+
+    @NonNls
     protected abstract fun getPluginExpression(): String
 
+    @Nls
     protected abstract fun getDescription(): String
 }
 
@@ -217,9 +222,9 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
         buildScriptData.addOther(
             """
                 kotlin {
-                    target {
+                    js {
                         $jsSubTargetName { }
-                        produceExecutable()
+                        binaries.executable()
                     }
                 }
             """.trimIndent()
@@ -254,7 +259,8 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
         getNewFileWriter(module, "src/main/resources", "index.html")?.use {
-            it.write("""
+            it.write(
+                """
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -266,18 +272,21 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
                 
                 </body>
                 </html>
-            """.trimIndent().trim())
+            """.trimIndent().trim()
+            )
         }
 
 
         getNewFileWriter(module, "src/main/kotlin", "main.kt")?.use {
-            it.write("""
+            it.write(
+                """
                 import kotlin.browser.document
                 
                 fun main() {
                     document.write("Hello, world!")
                 }
-            """.trimIndent().trim())
+            """.trimIndent().trim()
+            )
         }
     }
 
@@ -310,7 +319,7 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
 }
 
 open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
-    "KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP
+    "KOTLIN_MPP", KotlinIdeaGradleBundle.message("display.name.kotlin.multiplatform"), KotlinIcons.MPP
 ) {
     override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"
@@ -332,6 +341,7 @@ open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFr
         explicitPluginVersion: String?
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
+        NewProjectWizardsFUSCollector.log(this.presentableName + " as framework", "Gradle", false)
 
         buildScriptData.addOther(
             """kotlin {

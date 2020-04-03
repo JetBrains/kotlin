@@ -126,7 +126,7 @@ class BasicCompletionSession(
 
         if (parameters.isAutoPopup) {
             collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(LookupCancelWatcher.AUTO_POPUP_AT, position.startOffset)
+                lookupElement.putUserData(LookupCancelService.AUTO_POPUP_AT, position.startOffset)
                 lookupElement
             }
 
@@ -533,7 +533,7 @@ class BasicCompletionSession(
     }
 
     private fun wasAutopopupRecentlyCancelled(parameters: CompletionParameters) =
-        LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)
+        LookupCancelService.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)
 
     private val KEYWORDS_ONLY = object : CompletionKind {
         override val descriptorKindFilter: DescriptorKindFilter?

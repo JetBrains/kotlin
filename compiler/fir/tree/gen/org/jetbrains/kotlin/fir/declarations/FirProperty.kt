@@ -60,6 +60,8 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirProperty
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty
+
     abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty

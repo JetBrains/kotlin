@@ -489,15 +489,6 @@ KtFile: withReveiver.kt
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('Any')
-                    PsiWhiteSpace(' ')
-                    PsiElement(EQ)('=')
-                    PsiWhiteSpace(' ')
-                    LAMBDA_EXPRESSION
-                      FUNCTION_LITERAL
-                        PsiElement(LBRACE)('{')
-                        BLOCK
-                          <empty list>
-                        PsiElement(RBRACE)('}')
                   PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 PsiElement(ARROW)('->')

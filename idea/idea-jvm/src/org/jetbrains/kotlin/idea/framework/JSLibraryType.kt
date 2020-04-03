@@ -69,7 +69,7 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
 
     object JSRootFilter : FileTypeBasedRootFilter(
         OrderRootType.CLASSES, false, PlainTextFileType.INSTANCE,
-        KotlinJvmBundle.message("js.files")
+        KotlinJvmBundle.message("presentable.type.js.files")
     ) {
         override fun isFileAccepted(virtualFile: VirtualFile) = isAcceptedForJsLibrary(virtualFile.extension)
 

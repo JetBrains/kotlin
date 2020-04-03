@@ -67,7 +67,7 @@ class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
             isFinal = true,
             isExternal = false,
             isStatic = false,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            isFakeOverride = false
         ).also {
             descriptor.bind(it)
             it.parent = parent

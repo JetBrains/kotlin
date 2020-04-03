@@ -31,7 +31,7 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
 
     override fun inspectionText(element: KtPrefixExpression) = KotlinBundle.message("negated.operation.should.be.simplified")
 
-    override val defaultFixText = KotlinBundle.message("simplify.negated.operation")
+    override val defaultFixText get() = KotlinBundle.message("simplify.negated.operation")
 
     override fun fixText(element: KtPrefixExpression): String {
         val expression = KtPsiUtil.deparenthesize(element.baseExpression) as? KtOperationExpression ?: return defaultFixText

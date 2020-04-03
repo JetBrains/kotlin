@@ -41,6 +41,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("anonymousObjectInDefault.kt")
+        public void testAnonymousObjectInDefault() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInDefault.kt");
+        }
+
         @TestMetadata("anonymousObjectOnCallSite.kt")
         public void testAnonymousObjectOnCallSite() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnCallSite.kt");
@@ -79,6 +84,16 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         @TestMetadata("capturedLambdaInInlineObject.kt")
         public void testCapturedLambdaInInlineObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInlineObject.kt");
+        }
+
+        @TestMetadata("capturedLocalFun.kt")
+        public void testCapturedLocalFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFun.kt");
+        }
+
+        @TestMetadata("capturedLocalFunRef.kt")
+        public void testCapturedLocalFunRef() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunRef.kt");
         }
 
         @TestMetadata("changingReturnType.kt")
@@ -246,9 +261,19 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/anonymousObject/safeCall_2.kt");
         }
 
+        @TestMetadata("sharedFromCrossinline.kt")
+        public void testSharedFromCrossinline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/sharedFromCrossinline.kt");
+        }
+
         @TestMetadata("superConstructorWithObjectParameter.kt")
         public void testSuperConstructorWithObjectParameter() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/superConstructorWithObjectParameter.kt");
+        }
+
+        @TestMetadata("typeInfo.kt")
+        public void testTypeInfo() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/typeInfo.kt");
         }
 
         @TestMetadata("withInlineMethod.kt")
@@ -2870,6 +2895,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
         }
 
+        @TestMetadata("defaultFunctionWithInlineCall.kt")
+        public void testDefaultFunctionWithInlineCall() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/defaultFunctionWithInlineCall.kt");
+        }
+
         @TestMetadata("interleavedFiles.kt")
         public void testInterleavedFiles() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/interleavedFiles.kt");
@@ -2890,9 +2920,24 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/smap/kt23369_3.kt");
         }
 
+        @TestMetadata("kt35006.kt")
+        public void testKt35006() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt35006.kt");
+        }
+
         @TestMetadata("oneFile.kt")
         public void testOneFile() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/oneFile.kt");
+        }
+
+        @TestMetadata("rangeFolding.kt")
+        public void testRangeFolding() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/rangeFolding.kt");
+        }
+
+        @TestMetadata("rangeFoldingInClass.kt")
+        public void testRangeFoldingInClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/rangeFoldingInClass.kt");
         }
 
         @TestMetadata("smap.kt")
@@ -3341,6 +3386,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         @TestMetadata("multipleSuspensionPoints.kt")
         public void testMultipleSuspensionPoints_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/multipleSuspensionPoints.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("nonLocalReturn.kt")
+        public void testNonLocalReturn() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/nonLocalReturn.kt");
         }
 
         @TestMetadata("nonSuspendCrossinline.kt")

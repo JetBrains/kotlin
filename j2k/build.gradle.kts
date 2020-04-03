@@ -33,8 +33,7 @@ dependencies {
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
     testRuntimeOnly(toolsJar())
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
@@ -60,11 +59,7 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
-    if (Platform[201].orHigher()) {
-        testRuntime(intellijPluginDep("platform-langInjection"))
-    } else {
-        testRuntime(intellijPluginDep("IntelliLang"))
-    }
+    testRuntime(intellijPluginDep("IntelliLang"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("properties"))

@@ -35,7 +35,7 @@ class RemoveAnnotationFix(private val text: String, annotationEntry: KtAnnotatio
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): RemoveAnnotationFix? {
             val annotationEntry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
-            return RemoveAnnotationFix("Remove annotation", annotationEntry = annotationEntry)
+            return RemoveAnnotationFix(KotlinBundle.message("fix.remove.annotation.text"), annotationEntry = annotationEntry)
         }
     }
 }

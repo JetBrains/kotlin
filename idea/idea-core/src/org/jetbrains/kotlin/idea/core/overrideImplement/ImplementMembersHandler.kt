@@ -37,12 +37,12 @@ open class ImplementMembersHandler : OverrideImplementMembersHandler(), Intentio
             .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.FROM_TEMPLATE) }
     }
 
-    override fun getChooserTitle() = KotlinIdeaCoreBundle.message("title.implement.members")
+    override fun getChooserTitle() = KotlinIdeaCoreBundle.message("implement.members.handler.title")
 
-    override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("hint.text.no.members.to.implement.have.been.found")
+    override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("implement.members.handler.no.members.hint")
 
     override fun getText() = familyName
-    override fun getFamilyName() = KotlinIdeaCoreBundle.message("action.text.implement.members")
+    override fun getFamilyName() = KotlinIdeaCoreBundle.message("implement.members.handler.family")
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = isValidFor(editor, file)
 }

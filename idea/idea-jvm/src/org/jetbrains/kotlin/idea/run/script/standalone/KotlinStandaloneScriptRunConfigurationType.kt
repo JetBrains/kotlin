@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.KotlinJvmBundle
 
 class KotlinStandaloneScriptRunConfigurationType : SimpleConfigurationType(
     "KotlinStandaloneScriptRunConfigurationType",
-    KotlinJvmBundle.message("kotlin.script"),
+    KotlinJvmBundle.message("name.kotlin.script"),
     KotlinJvmBundle.message("run.kotlin.script"),
     NotNullLazyValue.createValue { KotlinIcons.SMALL_LOGO }
 ) {

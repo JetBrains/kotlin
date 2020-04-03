@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.PlatformModuleInfo
 
 fun Module.isAndroidModule(modelsProvider: IdeModifiableModelsProvider? = null): Boolean {
-    val facetModel = if (modelsProvider != null) modelsProvider.getModifiableFacetModel(this) else FacetManager.getInstance(this)
+    val facetModel = modelsProvider?.getModifiableFacetModel(this) ?: FacetManager.getInstance(this)
     val facets = facetModel.allFacets
     return facets.any { it.javaClass.simpleName == "AndroidFacet" }
 }

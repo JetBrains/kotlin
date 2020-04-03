@@ -194,9 +194,9 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     ) : LocalQuickFix {
         private val pointer = file.createSmartPointer()
 
-        override fun getName() = KotlinMavenBundle.message("fix.create.execution.name", goal)
+        override fun getName() = KotlinMavenBundle.message("fix.add.execution.name", goal)
 
-        override fun getFamilyName() = KotlinMavenBundle.message("fix.create.execution.family")
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.add.execution.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = pointer.element ?: return
@@ -206,9 +206,9 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     }
 
     private class FixExecutionPhaseLocalFix(val execution: MavenDomPluginExecution, val newPhase: String) : LocalQuickFix {
-        override fun getName() = KotlinMavenBundle.message("fix.change.phase.name", newPhase)
+        override fun getName() = KotlinMavenBundle.message("fix.execution.phase.name", newPhase)
 
-        override fun getFamilyName() = KotlinMavenBundle.message("fix.change.phase.family")
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.execution.phase.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             execution.phase.value = newPhase
@@ -218,7 +218,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     private class AddJavaExecutionsLocalFix(val module: Module, file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
         private val pointer = file.createSmartPointer()
 
-        override fun getName() = KotlinMavenBundle.message("fix.configure.right.order")
+        override fun getName() = KotlinMavenBundle.message("fix.add.java.executions.name")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
@@ -230,8 +230,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     private class FixAddStdlibLocalFix(pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
         private val pointer = pomFile.createSmartPointer()
 
-        override fun getName() = KotlinMavenBundle.message("fix.add.dependency.name", id)
-        override fun getFamilyName() = KotlinMavenBundle.message("fix.add.dependency.family")
+        override fun getName() = KotlinMavenBundle.message("fix.add.stdlib.name", id)
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.add.stdlib.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = pointer.element ?: return
@@ -247,8 +247,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     ) : LocalQuickFix {
         private val pointer = xmlFile.createSmartPointer()
 
-        override fun getName() = KotlinMavenBundle.message("fix.create.execution.compiler.name", goal)
-        override fun getFamilyName() = KotlinMavenBundle.message("fix.create.execution.compiler.family")
+        override fun getName() = KotlinMavenBundle.message("fix.configure.plugin.execution.name", goal)
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.configure.plugin.execution.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = pointer.element ?: return

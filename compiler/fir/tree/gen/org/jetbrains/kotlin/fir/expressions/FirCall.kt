@@ -21,4 +21,6 @@ interface FirCall : FirStatement {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCall(this, data)
 
     fun replaceArgumentList(newArgumentList: FirArgumentList)
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCall
 }

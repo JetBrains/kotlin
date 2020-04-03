@@ -62,20 +62,16 @@ public abstract class CallableReference implements KCallable, Serializable {
 
     @SinceKotlin(version = "1.1")
     protected CallableReference(Object receiver) {
-        this(receiver, null, null, null, 0);
+        this(receiver, null, null, null, false);
     }
 
-    /**
-     * @param flags Bitmask where bits represent the following flags:<br/>
-     *              <li><ul>0 - the owner of this reference is a package, not a class.</ul></li>
-     */
     @SinceKotlin(version = "1.4")
-    protected CallableReference(Object receiver, Class owner, String name, String signature, int flags) {
+    protected CallableReference(Object receiver, Class owner, String name, String signature, boolean isTopLevel) {
         this.receiver = receiver;
         this.owner = owner;
         this.name = name;
         this.signature = signature;
-        this.isTopLevel = (flags & 1) == 1;
+        this.isTopLevel = isTopLevel;
     }
 
     protected abstract KCallable computeReflected();

@@ -28,7 +28,8 @@ class ConfigureKotlinNotification(
     excludeModules: List<Module>,
     val notificationState: ConfigureKotlinNotificationState
 ) : Notification(
-    KotlinConfigurationCheckerService.CONFIGURE_NOTIFICATION_GROUP_ID, KotlinJvmBundle.message("configure.kotlin"),
+    KotlinConfigurationCheckerService.CONFIGURE_NOTIFICATION_GROUP_ID,
+    KotlinJvmBundle.message("configure.kotlin"),
     notificationState.notificationString,
     NotificationType.WARNING,
     NotificationListener { notification, event ->
@@ -63,7 +64,10 @@ class ConfigureKotlinNotification(
 
             val isOnlyOneModule = configurableModules.size == 1
 
-            val modulesString = if (isOnlyOneModule) "'${configurableModules.first().baseModule.name}' module" else "modules"
+            val modulesString = if (isOnlyOneModule)
+                KotlinJvmBundle.message("configure.0.module", configurableModules.first().baseModule.name)
+            else
+                KotlinJvmBundle.message("configure.modules")
             val links = ableToRunConfigurators.joinToString(separator = "<br/>") { configurator ->
                 getLink(configurator, isOnlyOneModule)
             }
@@ -76,6 +80,10 @@ class ConfigureKotlinNotification(
         }
 
         private fun getLink(configurator: KotlinProjectConfigurator, isOnlyOneModule: Boolean): String =
-            "<a href=\"${configurator.name}\">as Kotlin (${configurator.presentableText}) module${if (!isOnlyOneModule) "s" else ""}</a>"
+            "<a href=\"${configurator.name}\">${KotlinJvmBundle.message(
+                "as.kotlin.1.module",
+                configurator.presentableText,
+                1.takeIf { isOnlyOneModule } ?: 2
+            )}</a>"
     }
 }

@@ -255,9 +255,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 private const val KOTLIN_DSL_SCRIPT_EXTENSION = "gradle.kts"
             }
 
-            override val name: String = KotlinIdeaGradleBundle.message("text.default.kotlin.gradle.script")
-            override val fileExtension: String =
-                KOTLIN_DSL_SCRIPT_EXTENSION
+            override val name: String get() = KotlinIdeaGradleBundle.message("text.default.kotlin.gradle.script")
+            override val fileExtension: String = KOTLIN_DSL_SCRIPT_EXTENSION
 
             override val scriptCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration.Default
             override val hostConfiguration: ScriptingHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)

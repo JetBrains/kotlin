@@ -129,7 +129,7 @@ public class IdeErrorMessages {
                 KotlinIdeaAnalysisBundle.htmlMessage("html.types.of.inherited.var.properties.do.not.match.br.0.br.1.html"),
                 HTML, HTML);
 
-        MAP.put(VAR_OVERRIDDEN_BY_VAL, KotlinIdeaAnalysisBundle.htmlMessage("html.val.property.cannot.override.var.property.br.1.html2"), HTML, HTML);
+        MAP.put(VAR_OVERRIDDEN_BY_VAL, KotlinIdeaAnalysisBundle.htmlMessage("html.val.property.cannot.override.var.property.br.1.html"), HTML, HTML);
         MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
                 KotlinIdeaAnalysisBundle.htmlMessage("html.val.property.cannot.override.var.property.br.1.html"), HTML, HTML);
 
@@ -147,6 +147,9 @@ public class IdeErrorMessages {
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY,
                 KotlinIdeaAnalysisBundle.htmlMessage("html.overload.resolution.ambiguity.all.these.functions.match.ul.0.ul.html"),
                 HTML_AMBIGUOUS_CALLS);
+        MAP.put(CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY,
+                KotlinIdeaAnalysisBundle.htmlMessage("html.overload.resolution.ambiguity.all.these.functions.match.ul.0.ul.html"),
+                HTML_AMBIGUOUS_REFERENCES);
         MAP.put(NONE_APPLICABLE, KotlinIdeaAnalysisBundle.htmlMessage("html.none.of.the.following.functions.can.be.called.with.the.arguments.supplied.ul.0.ul.html"),
                 HTML_NONE_APPLICABLE_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE,

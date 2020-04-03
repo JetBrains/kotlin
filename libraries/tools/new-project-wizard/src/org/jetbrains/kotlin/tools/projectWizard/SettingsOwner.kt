@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Parser
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.core.enumParser
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
@@ -84,6 +84,6 @@ inline fun <reified E> SettingsOwner.enumSettingImpl(
     crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
 ) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
     values = enumValues<E>().asList()
-    defaultValue = values.firstOrNull()
+    //
     init()
 }

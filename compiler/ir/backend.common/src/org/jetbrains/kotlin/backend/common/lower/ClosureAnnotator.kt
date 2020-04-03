@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(body: IrBody, declaration: IrDeclaration) {
+class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
 
     init {
         // Collect all closures for classes and functions. Collect call graph
-        body.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
+        irElement.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
     }
 
     fun getFunctionClosure(declaration: IrFunction) = getClosure(declaration)

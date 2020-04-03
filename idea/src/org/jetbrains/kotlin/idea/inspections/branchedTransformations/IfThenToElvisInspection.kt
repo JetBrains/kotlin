@@ -30,7 +30,7 @@ class IfThenToElvisInspection(
 ) : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
     override fun inspectionText(element: KtIfExpression): String = KotlinBundle.message("if.then.foldable.to")
 
-    override val defaultFixText: String = INTENTION_TEXT
+    override val defaultFixText: String get() = INTENTION_TEXT
 
     override fun isApplicable(element: KtIfExpression): Boolean = isApplicableTo(element, expressionShouldBeStable = true)
 

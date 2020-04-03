@@ -5,10 +5,10 @@ val A.prop: Int get() = 2
 
 class A {
     constructor(x: Int)
-    constructor() : this(
-            foobar() +
+    constructor() : <!INAPPLICABLE_CANDIDATE!>this<!>(
+            <!UNRESOLVED_REFERENCE!>foobar<!>() +
             this.foobar() +
-            prop +
+            <!UNRESOLVED_REFERENCE!>prop<!> +
             this.prop +
             this@A.prop
     )

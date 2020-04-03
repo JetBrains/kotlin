@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.idea.configuration.klib
 
+import org.jetbrains.annotations.NonNls
+
 object KotlinNativeLibraryNameUtil {
+    @NonNls
     internal const val KOTLIN_NATIVE_LIBRARY_PREFIX = "Kotlin/Native"
     internal const val KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE = "$KOTLIN_NATIVE_LIBRARY_PREFIX "
+
+    @NonNls
     internal const val GRADLE_LIBRARY_PREFIX = "Gradle: "
 
     private val IDE_LIBRARY_NAME_REGEX = Regex("^$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE([^\\s]+) - ([^\\s]+)( \\[([\\w ,()*]+)])?$")

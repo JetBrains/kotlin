@@ -106,6 +106,8 @@ class FirCallCompletionResultsWriterTransformer(
     ): CompositeTransformResult<FirStatement> {
         val calleeReference =
             callableReferenceAccess.calleeReference as? FirNamedReferenceWithCandidate ?: return callableReferenceAccess.compose()
+        val subCandidate = calleeReference.candidate
+        val typeArguments = computeTypeArguments(callableReferenceAccess, subCandidate)
 
         val typeRef = callableReferenceAccess.typeRef as FirResolvedTypeRef
 
@@ -114,6 +116,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val resultType = typeRef.withReplacedConeType(finalType)
         callableReferenceAccess.replaceTypeRef(resultType)
+        callableReferenceAccess.replaceTypeArguments(typeArguments)
 
         return callableReferenceAccess.transformCalleeReference(
             StoreCalleeReference,
@@ -132,6 +135,7 @@ class FirCallCompletionResultsWriterTransformer(
     ): CompositeTransformResult<FirStatement> {
         val calleeReference = variableAssignment.calleeReference as? FirNamedReferenceWithCandidate
             ?: return variableAssignment.compose()
+        val typeArguments = computeTypeArguments(variableAssignment, calleeReference.candidate)
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
             buildResolvedNamedReference {
@@ -139,7 +143,9 @@ class FirCallCompletionResultsWriterTransformer(
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
             },
-        ).compose()
+        ).apply {
+            replaceTypeArguments(typeArguments)
+        }.compose()
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {

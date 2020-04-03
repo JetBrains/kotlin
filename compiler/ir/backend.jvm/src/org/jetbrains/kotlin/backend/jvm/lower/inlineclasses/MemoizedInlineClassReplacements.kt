@@ -146,7 +146,7 @@ class MemoizedInlineClassReplacements {
         }
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
-        buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
+        buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
             val newValueParameters = ArrayList<IrValueParameter>()
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 newValueParameters += when (parameter) {
@@ -171,13 +171,21 @@ class MemoizedInlineClassReplacements {
             valueParameters = newValueParameters
         }
 
-    private fun buildReplacement(function: IrFunction, replacementOrigin: IrDeclarationOrigin, body: IrFunctionImpl.() -> Unit) =
+    private fun buildReplacement(
+        function: IrFunction,
+        replacementOrigin: IrDeclarationOrigin,
+        noFakeOverride: Boolean = false,
+        body: IrFunctionImpl.() -> Unit
+    ) =
         buildFunWithDescriptorForInlining(function.descriptor) {
             updateFrom(function)
             origin = if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
                 JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
             } else {
                 replacementOrigin
+            }
+            if (noFakeOverride) {
+                isFakeOverride = false
             }
             name = mangledNameFor(function)
             returnType = function.returnType

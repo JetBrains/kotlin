@@ -35,7 +35,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
     override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
         if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
 
-    override val defaultFixText = KotlinBundle.message("simplify.foldable.if.then")
+    override val defaultFixText get() = KotlinBundle.message("simplify.foldable.if.then")
 
     override fun fixText(element: KtIfExpression): String = fixTextFor(element)
 

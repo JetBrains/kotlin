@@ -18,4 +18,4 @@ class G {
     companion object F<T>
 }
 
-object H<T, R>()
+object H<T, R><!CONSTRUCTOR_IN_OBJECT!>()<!>

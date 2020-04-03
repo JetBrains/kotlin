@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
@@ -27,7 +28,7 @@ internal class FirErrorLoopImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorLoop() {
     override var block: FirBlock = FirEmptyExpressionBlock()
-    override var condition: FirExpression = FirErrorExpressionImpl(source, diagnostic)
+    override var condition: FirExpression = FirErrorExpressionImpl(source, ConeStubDiagnostic(diagnostic))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -43,6 +44,11 @@ internal class FirErrorLoopImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         block = block.transformSingle(transformer, data)
         return this
@@ -54,7 +60,7 @@ internal class FirErrorLoopImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         label = label?.transformSingle(transformer, data)
         return this
     }

@@ -32,8 +32,9 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
     override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.mobile.android.ios.gradle")
 
-    override fun getDescription() =
-        KotlinIdeaGradleBundle.message("description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.android.and.ios.mobile.platforms")
+    override fun getDescription() = KotlinIdeaGradleBundle.message(
+        "description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.android.and.ios.mobile.platforms"
+    )
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.2.1'")

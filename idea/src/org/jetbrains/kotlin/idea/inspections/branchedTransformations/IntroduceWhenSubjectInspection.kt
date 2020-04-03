@@ -33,7 +33,7 @@ class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWh
 
     override fun inspectionText(element: KtWhenExpression) = KotlinBundle.message("when.with.subject.should.be.used")
 
-    override val defaultFixText = KotlinBundle.message("introduce.when.subject")
+    override val defaultFixText get() = KotlinBundle.message("introduce.when.subject")
 
     override fun fixText(element: KtWhenExpression): String {
         val subject = element.getSubjectToIntroduce() ?: return ""

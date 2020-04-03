@@ -1,15 +1,5 @@
 {
   "1": {
-    "neg": {
-      "2": [
-        {
-          "specVersion": "0.1-218",
-          "casesNumber": 0,
-          "description": "E is T: The type T must be runtime-available, otherwise it is a compiler error",
-          "unexpectedBehaviour": false
-        }
-      ]
-    },
     "pos": {
       "3": [
         {
@@ -27,11 +17,23 @@
       ]
     }
   },
-  "4": {
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "E is T: The type T must be runtime-available, otherwise it is a compiler error",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "the expression null is T? for any type T always evaluates to true",
           "unexpectedBehaviour": false

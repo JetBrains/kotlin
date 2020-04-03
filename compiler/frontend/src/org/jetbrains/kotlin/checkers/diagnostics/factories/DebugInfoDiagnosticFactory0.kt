@@ -54,7 +54,7 @@ class DebugInfoDiagnosticFactory0 : DiagnosticFactory0<PsiElement>,
         val IMPLICIT_RECEIVER_SMARTCAST =
             DebugInfoDiagnosticFactory0("IMPLICIT_RECEIVER_SMARTCAST", Severity.INFO)
         val CONSTANT = DebugInfoDiagnosticFactory0("CONSTANT", Severity.INFO)
-        val LEAKING_THIS = DebugInfoDiagnosticFactory0("LEAKING_THIS")
+        val LEAKING_THIS = DebugInfoDiagnosticFactory0("LEAKING_THIS", Severity.INFO)
         val IMPLICIT_EXHAUSTIVE =
             DebugInfoDiagnosticFactory0("IMPLICIT_EXHAUSTIVE", Severity.INFO)
         val ELEMENT_WITH_ERROR_TYPE = DebugInfoDiagnosticFactory0("ELEMENT_WITH_ERROR_TYPE")

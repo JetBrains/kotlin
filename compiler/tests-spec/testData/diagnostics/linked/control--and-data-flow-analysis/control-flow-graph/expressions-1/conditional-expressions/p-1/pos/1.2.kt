@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-213
+ * SPEC VERSION: 0.1-296
  * PLACE: control--and-data-flow-analysis, control-flow-graph, expressions-1, conditional-expressions -> paragraph 1 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: check if-expressions must have both branches.

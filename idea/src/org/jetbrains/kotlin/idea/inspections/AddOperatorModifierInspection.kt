@@ -21,7 +21,7 @@ class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNam
 
     override fun inspectionText(element: KtNamedFunction) = KotlinBundle.message("function.should.have.operator.modifier")
 
-    override val defaultFixText = KotlinBundle.message("add.operator.modifier")
+    override val defaultFixText get() = KotlinBundle.message("add.operator.modifier")
 
     override fun isApplicable(element: KtNamedFunction): Boolean {
         if (element.nameIdentifier == null || element.hasModifier(KtTokens.OPERATOR_KEYWORD)) return false

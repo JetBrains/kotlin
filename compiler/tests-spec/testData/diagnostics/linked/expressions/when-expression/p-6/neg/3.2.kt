@@ -4,7 +4,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-100
+ * SPEC VERSION: 0.1-296
  * PLACE: expressions, when-expression -> paragraph 6 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION: 'When' with bound value and 'when condition' with contains operator and type without defined contains operator.

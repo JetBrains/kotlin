@@ -35,5 +35,7 @@ abstract class FirResolvedQualifier : FirExpression() {
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedQualifier
+
     abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifier
 }

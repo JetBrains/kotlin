@@ -1,26 +1,32 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
+
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenPropertyIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenPropertyIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 
 interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
     companion object : ModuleConfiguratorSettings() {
-        val targetJvmVersion by enumSetting<TargetJvmVersion>("Target JVM Version", GenerationPhase.PROJECT_GENERATION) {
-            defaultValue = TargetJvmVersion.JVM_1_8
+        val targetJvmVersion by enumSetting<TargetJvmVersion>(
+            KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.target.jvm.version"),
+            GenerationPhase.PROJECT_GENERATION
+        ) {
+            defaultValue = value(TargetJvmVersion.JVM_1_8)
         }
     }
 
@@ -30,7 +36,7 @@ interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
     }
 }
 
-enum class TargetJvmVersion(val value: String) : DisplayableSettingItem {
+enum class TargetJvmVersion(@NonNls val value: String) : DisplayableSettingItem {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     JVM_9("9"),
@@ -53,12 +59,16 @@ val ModuleConfigurator.moduleType: ModuleType?
 
 object MppModuleConfigurator : ModuleConfigurator {
     override val moduleKind = ModuleKind.multiplatform
+
+    @NonNls
     override val suggestedModuleName = "shared"
+
+    @NonNls
     override val id = "multiplatform"
-    override val text = "Multiplatform"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.mpp")
     override val canContainSubModules = true
 
-    override fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         KotlinBuildSystemPluginIR(
             KotlinBuildSystemPluginIR.Type.multiplatform,
             version = configurationData.kotlinVersion
@@ -67,21 +77,24 @@ object MppModuleConfigurator : ModuleConfigurator {
 
 
 interface SinglePlatformModuleConfigurator : ModuleConfigurator {
-    override val moduleKind get() = ModuleKind.singleplatformJvm
+    val needCreateBuildFile: Boolean get() = true
 }
 
 object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithModuleType {
     override val moduleType get() = ModuleType.jvm
-    override val suggestedModuleName = "jvm"
-    override val id = "JVM Module"
+    override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
+    @NonNls override val suggestedModuleName = "jvm"
+    @NonNls override val id = "JVM Module"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.jvm")
+
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
     override val canContainSubModules = true
 
-    override fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         KotlinBuildSystemPluginIR(
             KotlinBuildSystemPluginIR.Type.jvm,
             version = configurationData.kotlinVersion
@@ -89,15 +102,15 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
 
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         buildList {
             +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
 
             val targetVersionValue = withSettingsOf(module) {
-                with(readingContext) {
+                reader {
                     JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 }
             }
@@ -118,18 +131,11 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
 }
 
 
-object IOSSinglePlatformModuleConfigurator :
-    SinglePlatformModuleConfigurator {
-    override val id = "IOS Module"
-    override val suggestedModuleName = "ios"
-    override val greyText = "Requires Apple Xcode"
-}
-
-
 val ModuleType.defaultTarget
     get() = when (this) {
         ModuleType.jvm -> JvmTargetConfigurator
         ModuleType.js -> JsBrowserTargetConfigurator
         ModuleType.native -> NativeForCurrentSystemTarget
         ModuleType.common -> CommonTargetConfigurator
+        ModuleType.android -> AndroidTargetConfigurator
     }

@@ -7,6 +7,9 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.fileVersion
+import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
+import java.io.File
 
 class DefaultKotlinDependencyHandler(
     val parent: HasKotlinDependencies,
@@ -80,7 +83,27 @@ class DefaultKotlinDependencyHandler(
         }
 
     override fun npm(name: String, version: String): NpmDependency =
-        NpmDependency(project, name, version)
+        NpmDependency(
+            project = project,
+            name = name,
+            version = version
+        )
+
+    override fun npm(name: String, directory: File): NpmDependency {
+        check(directory.isDirectory) {
+            "Dependency on local path should point on directory but $directory found"
+        }
+        return npm(
+            name = name,
+            version = fileVersion(directory)
+        )
+    }
+
+    override fun npm(directory: File): NpmDependency =
+        npm(
+            name = moduleName(directory),
+            directory = directory
+        )
 
     override fun npm(org: String?, packageName: String, version: String) =
         npm("${if (org != null) "@$org/" else ""}$packageName", version)

@@ -18,9 +18,13 @@ package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -28,9 +32,13 @@ import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
+import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
 
-class KotlinConfigurationCheckerStartupActivity : StartupActivity.DumbAware {
+class KotlinConfigurationCheckerStartupActivity : StartupActivity {
     override fun runActivity(project: Project) {
         NotificationsConfiguration.getNotificationsConfiguration()
             .register(
@@ -45,7 +53,7 @@ class KotlinConfigurationCheckerStartupActivity : StartupActivity.DumbAware {
 
         notifyKotlinStyleUpdateIfNeeded(project)
 
-        KotlinConfigurationCheckerService.getInstanceIfNotDisposed(project)?.performProjectPostOpenActions()
+        KotlinConfigurationCheckerService.getInstance(project).performProjectPostOpenActions()
     }
 }
 
@@ -53,16 +61,33 @@ class KotlinConfigurationCheckerService(val project: Project) {
     private val syncDepth = AtomicInteger()
 
     fun performProjectPostOpenActions() {
-        nonBlocking {
-            val modulesWithKotlinFiles = getModulesWithKotlinFiles(project)
+        val callable = Callable {
+            return@Callable getModulesWithKotlinFiles(project)
+        }
+
+        fun continuation(modulesWithKotlinFiles: Collection<Module>) {
             for (module in modulesWithKotlinFiles) {
-                module.getAndCacheLanguageLevelByDependencies()
+                ProgressManager.checkCanceled()
+                runReadAction {
+                    module.getAndCacheLanguageLevelByDependencies()
+                }
             }
         }
-            .inSmartMode(project)
-            .expireWith(project)
-            .coalesceBy(this)
-            .submit(AppExecutorUtil.getAppExecutorService())
+
+        if (!isUnitTestMode()) {
+            nonBlocking(callable)
+                .inSmartMode(project)
+                .expireWith(project)
+                .coalesceBy(this)
+                .finishOnUiThread(ModalityState.any()) { modulesWithKotlinFiles ->
+                    ApplicationManager.getApplication().executeOnPooledThread {
+                        continuation(modulesWithKotlinFiles)
+                    }
+                }
+                .submit(AppExecutorUtil.getAppExecutorService())
+        } else {
+            continuation(callable.call())
+        }
     }
 
     val isSyncing: Boolean get() = syncDepth.get() > 0
@@ -78,15 +103,7 @@ class KotlinConfigurationCheckerService(val project: Project) {
     companion object {
         const val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
 
-        fun getInstanceIfNotDisposed(project: Project): KotlinConfigurationCheckerService? {
-            return runReadAction {
-                if (!project.isDisposed) {
-                    project.getService(KotlinConfigurationCheckerService::class.java)
-                        ?: error("Can't find ${KotlinConfigurationCheckerService::class} service")
-                } else {
-                    null
-                }
-            }
-        }
+        fun getInstance(project: Project): KotlinConfigurationCheckerService = project.getServiceSafe()
+
     }
 }

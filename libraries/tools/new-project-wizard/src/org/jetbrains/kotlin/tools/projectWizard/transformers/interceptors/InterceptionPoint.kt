@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors
 
-data class InterceptionPoint<out T: Any>(val name: String, val initialValue: T)
+import org.jetbrains.annotations.NonNls
+
+data class InterceptionPoint<out T: Any>(@NonNls val name: String, val initialValue: T)
 
 data class InterceptionPointModifier<out T : Any>(
     val point: InterceptionPoint<@UnsafeVariance T>,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
@@ -20,11 +21,18 @@ object IdeRenderers {
 
     @JvmField
     val HTML_AMBIGUOUS_CALLS = Renderer { calls: Collection<ResolvedCall<*>> ->
-        val descriptors = calls
-            .map { it.resultingDescriptor }
-            .sortedWith(MemberComparator.INSTANCE)
-        val context = RenderingContext.Impl(descriptors)
-        descriptors.joinToString("") { "<li>${HTML.render(it, context)}</li>" }
+        renderAmbiguousDescriptors(calls.map { it.resultingDescriptor })
+    }
+
+    @JvmField
+    val HTML_AMBIGUOUS_REFERENCES = Renderer { descriptors: Collection<CallableDescriptor> ->
+        renderAmbiguousDescriptors(descriptors)
+    }
+
+    private fun renderAmbiguousDescriptors(descriptors: Collection<CallableDescriptor>): String {
+        val sortedDescriptors = descriptors.sortedWith(MemberComparator.INSTANCE)
+        val context = RenderingContext.Impl(sortedDescriptors)
+        return sortedDescriptors.joinToString("") { "<li>${HTML.render(it, context)}</li>" }
     }
 
     @JvmField

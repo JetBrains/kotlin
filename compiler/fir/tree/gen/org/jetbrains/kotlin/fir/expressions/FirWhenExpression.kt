@@ -30,6 +30,8 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     abstract fun replaceIsExhaustive(newIsExhaustive: Boolean)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression
+
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression
 
     abstract fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression

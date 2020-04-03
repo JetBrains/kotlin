@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
@@ -69,7 +70,10 @@ class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     }
 
     companion object {
-        val NAME = "gradle"
-        val KOTLIN = "kotlin"
+        @NonNls
+        const val NAME = "gradle"
+
+        @NonNls
+        const val KOTLIN = "kotlin"
     }
 }

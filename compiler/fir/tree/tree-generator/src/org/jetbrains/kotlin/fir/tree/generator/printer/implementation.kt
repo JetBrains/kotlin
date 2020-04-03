@@ -228,7 +228,9 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             }
 
                             field.needsSeparateTransform -> {
-                                println("transform${field.name.capitalize()}(transformer, data)")
+                                if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {
+                                    println("transform${field.name.capitalize()}(transformer, data)")
+                                }
                             }
 
                             !element.needTransformOtherChildren -> {
@@ -294,6 +296,9 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             if (!field.isMutable || !field.isFirType || field.name == "subjectVariable") continue
                             if (!field.needsSeparateTransform) {
                                 field.transform()
+                            }
+                            if (field.needTransformInOtherChildren) {
+                                println("transform${field.name.capitalize()}(transformer, data)")
                             }
                         }
                         println("return this")

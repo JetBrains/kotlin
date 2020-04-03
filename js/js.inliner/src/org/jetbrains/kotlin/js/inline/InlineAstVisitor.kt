@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.forcedReturnVariable
-import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInline
 import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedLocalFunctionDeclarations
 import org.jetbrains.kotlin.js.inline.clean.substituteKTypes
-import org.jetbrains.kotlin.js.inline.util.extractFunction
 import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -99,18 +98,16 @@ class InlineAstVisitor(
     private fun hasToBeInlined(node: JsNode): Boolean {
         return when (node) {
             is JsInvocation -> hasToBeInlined(node)
-            is JsNameRef -> node.inlineStrategy != null && tryCreatePropertyGetterInvocation(node)?.let { hasToBeInlined(it) } ?: false
+            is JsNameRef -> node.isInline != null && tryCreatePropertyGetterInvocation(node)?.let { hasToBeInlined(it) } ?: false
             is JsBinaryOperation -> node.operator.isAssignment && node.arg1?.let { left ->
-                left is JsNameRef && left.inlineStrategy != null && tryCreatePropertySetterInvocation(node)?.let { hasToBeInlined(it) } ?: false
+                left is JsNameRef && left.isInline != null && tryCreatePropertySetterInvocation(node)?.let { hasToBeInlined(it) } ?: false
             } ?: false
             else -> false
         }
     }
 
-    private fun hasToBeInlined(call: JsInvocation): Boolean {
-        val strategy = call.inlineStrategy
-        return if (strategy == null || !strategy.isInline) false else jsInliner.functionDefinitionLoader.hasFunctionDefinition(call, scope)
-    }
+    private fun hasToBeInlined(call: JsInvocation): Boolean =
+        call.isInline == true && jsInliner.functionDefinitionLoader.hasFunctionDefinition(call, scope)
 
     private fun patchReturnsFromSecondaryConstructor(function: JsFunction) {
         // Support non-local return from secondary constructor
@@ -125,7 +122,7 @@ class InlineAstVisitor(
     }
 
     private fun tryCreatePropertyGetterInvocation(x: JsNameRef): JsInvocation? {
-        if (x.inlineStrategy != null && x.descriptor is PropertyGetterDescriptor) {
+        if (x.isInline != null && x.descriptor is PropertyGetterDescriptor) {
             val dummyInvocation = JsInvocation(x)
             copyInlineMetadata(x, dummyInvocation)
             return dummyInvocation
@@ -136,7 +133,7 @@ class InlineAstVisitor(
     private fun tryCreatePropertySetterInvocation(x: JsBinaryOperation): JsInvocation? {
         if (!x.operator.isAssignment || x.arg1 !is JsNameRef) return null
         val name = x.arg1 as JsNameRef
-        if (name.inlineStrategy != null && name.descriptor is PropertySetterDescriptor) {
+        if (name.isInline != null && name.descriptor is PropertySetterDescriptor) {
             val dummyInvocation = JsInvocation(name, x.arg2)
             copyInlineMetadata(name, dummyInvocation)
             return dummyInvocation
@@ -145,7 +142,7 @@ class InlineAstVisitor(
     }
 
     private fun copyInlineMetadata(from: JsNameRef, to: JsInvocation) {
-        to.inlineStrategy = from.inlineStrategy
+        to.isInline = from.isInline
         to.descriptor = from.descriptor
         to.psiElement = from.psiElement
     }

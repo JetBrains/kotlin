@@ -33,6 +33,11 @@ internal class FirContinueExpressionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContinueExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirContinueExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }

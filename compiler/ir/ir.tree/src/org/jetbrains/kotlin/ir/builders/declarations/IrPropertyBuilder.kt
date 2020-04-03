@@ -16,4 +16,5 @@ class IrPropertyBuilder : IrDeclarationBuilder() {
     var isDelegated: Boolean = false
     var isExternal: Boolean = false
     var isExpect: Boolean = false
+    var isFakeOverride: Boolean = false
 }

@@ -10,6 +10,7 @@
  * DESCRIPTION: Non-exhaustive when using nullable boolean values.
  */
 
+
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Boolean?): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     true -> ""

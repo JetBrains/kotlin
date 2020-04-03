@@ -64,14 +64,12 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
 
     override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("assert.should.be.replaced.with.operator")
 
-    override val defaultFixText: String = KotlinBundle.message("replace.assert.with.operator")
+    override val defaultFixText: String get() = KotlinBundle.message("replace.assert.with.operator")
 
-    override fun fixText(element: KtCallExpression): String {
-        return if (element.valueArguments.size == 1) {
-            KotlinBundle.message("replace.with.0.operator", "!!")
-        } else {
-            KotlinBundle.message("replace.with.error")
-        }
+    override fun fixText(element: KtCallExpression): String = if (element.valueArguments.size == 1) {
+        KotlinBundle.message("replace.with.0.operator", "!!")
+    } else {
+        KotlinBundle.message("replace.with.error")
     }
 
     override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {

@@ -34,4 +34,8 @@ internal class FirDelegatedTypeRefImpl(
         typeRef = typeRef.transformSingle(transformer, data)
         return this
     }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedTypeRefImpl {
+        return this
+    }
 }

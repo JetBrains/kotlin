@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.printer
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 
@@ -25,7 +26,7 @@ abstract class BuildFilePrinter {
         builder.append(this)
     }
 
-    operator fun String.unaryPlus() {
+    operator fun @receiver:NonNls String.unaryPlus() {
         builder.append(this)
     }
 

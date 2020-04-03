@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -14,7 +15,8 @@ import org.jetbrains.kotlin.utils.keysToMap
 
 class LocalClassesNavigationInfo(
     val parentForClass: Map<FirClass<*>, FirClass<*>?>,
-    private val parentClassForFunction: Map<FirCallableMemberDeclaration<*>, FirClass<*>>
+    private val parentClassForFunction: Map<FirCallableMemberDeclaration<*>, FirClass<*>>,
+    val allMembers: List<FirSymbolOwner<*>>
 ) {
     val designationMap by lazy {
         parentClassForFunction.keys.keysToMap {
@@ -39,12 +41,13 @@ fun FirClass<*>.collectLocalClassesNavigationInfo(): LocalClassesNavigationInfo 
     NavigationInfoVisitor().run {
         this@collectLocalClassesNavigationInfo.accept(this@run)
 
-        LocalClassesNavigationInfo(parentForClass, resultingMap)
+        LocalClassesNavigationInfo(parentForClass, resultingMap, allMembers)
     }
 
 private class NavigationInfoVisitor : FirDefaultVisitorVoid() {
     val resultingMap = mutableMapOf<FirCallableMemberDeclaration<*>, FirClass<*>>()
     val parentForClass = mutableMapOf<FirClass<*>, FirClass<*>?>()
+    val allMembers = mutableListOf<FirSymbolOwner<*>>()
     private var currentPath = persistentListOf<FirClass<*>>()
 
     override fun visitElement(element: FirElement) {}
@@ -75,10 +78,19 @@ private class NavigationInfoVisitor : FirDefaultVisitorVoid() {
         visitCallableMemberDeclaration(property)
     }
 
+    override fun visitConstructor(constructor: FirConstructor) {
+        visitCallableMemberDeclaration(constructor)
+    }
+
     override fun <F : FirCallableMemberDeclaration<F>> visitCallableMemberDeclaration(
         callableMemberDeclaration: FirCallableMemberDeclaration<F>
     ) {
+        allMembers += callableMemberDeclaration
         if (callableMemberDeclaration.returnTypeRef !is FirImplicitTypeRef) return
         resultingMap[callableMemberDeclaration] = currentPath.last()
+    }
+
+    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        allMembers += anonymousInitializer
     }
 }

@@ -4,7 +4,7 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 
-def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
+def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
 sourceSets {
     main {

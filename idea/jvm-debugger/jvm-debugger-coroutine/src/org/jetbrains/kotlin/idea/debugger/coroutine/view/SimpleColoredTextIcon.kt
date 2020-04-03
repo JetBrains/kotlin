@@ -179,7 +179,8 @@ class SimpleColoredTextIconPresentationRenderer {
 
     fun renderCreationNode(infoData: CoroutineInfoData) =
         SimpleColoredTextIcon(
-            AllIcons.Debugger.ThreadSuspended, true,
+            AllIcons.Debugger.ThreadSuspended,
+            true,
             KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.frame", infoData.key.name)
         )
 

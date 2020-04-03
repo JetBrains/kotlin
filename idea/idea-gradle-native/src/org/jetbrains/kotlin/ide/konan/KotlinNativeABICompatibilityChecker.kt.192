@@ -163,7 +163,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                                 ?.let { "${'$'}project/$it" }
                         } ?: libraryRoot
 
-                        return "\"$libraryName\" at $relativeRoot"
+                        return KotlinGradleNativeBundle.message("library.name.0.at.1.relative.root", libraryName, relativeRoot)
                     }
 
                     val text = when (isOldMetadata) {

@@ -3,8 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.8"
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
@@ -17,6 +15,7 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:serialization"))
     compile(project(":compiler:plugin-api"))
+    compile(project(":compiler:javac-wrapper"))
     compile(project(":js:js.translator"))
     compile(project(":native:frontend.native"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
@@ -44,8 +43,7 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("../builtins-serializer/src",
-                     "../javac-wrapper/src")
+        java.srcDirs("../builtins-serializer/src")
     }
     "test" { }
 }

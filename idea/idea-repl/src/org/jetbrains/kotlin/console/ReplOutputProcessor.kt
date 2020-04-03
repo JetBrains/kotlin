@@ -68,7 +68,7 @@ class ReplOutputProcessor(
         printOutput(message, ReplColors.WARNING_INFO_CONTENT_TYPE, ReplIcons.BUILD_WARNING_INDICATOR)
 
         if (isAddHyperlink) {
-            consoleView.printHyperlink("Build module '${runner.module.name}' and restart") {
+            consoleView.printHyperlink(KotlinIdeaReplBundle.message("build.module.0.and.restart1", runner.module.name)) {
                 runner.compilerHelper.compileModule()
             }
         }
@@ -145,7 +145,7 @@ class ReplOutputProcessor(
     }
 
     fun printInternalErrorMessage(internalErrorText: String) = WriteCommandAction.runWriteCommandAction(project) {
-        val promptText = "Internal error occurred. Please, send report to developers.\n"
+        val promptText = KotlinIdeaReplBundle.message("internal.error.occurred.please.send.report.to.developers")
         printOutput(promptText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
         logError(this::class.java, internalErrorText)
     }

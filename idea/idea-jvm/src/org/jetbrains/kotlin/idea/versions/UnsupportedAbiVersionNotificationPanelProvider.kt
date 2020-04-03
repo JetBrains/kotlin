@@ -79,9 +79,9 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 val isPluginNewForAllRuntimeLibraries = badRootsInRuntimeLibraries.all { it.supportedVersion > it.version }
 
                 val updateAction = when {
-                    isPluginNewForAllRuntimeLibraries -> KotlinJvmBundle.message("update")
-                    isPluginOldForAllRuntimeLibraries -> KotlinJvmBundle.message("downgrade")
-                    else -> KotlinJvmBundle.message("replace")
+                    isPluginNewForAllRuntimeLibraries -> KotlinJvmBundle.message("button.text.update.library")
+                    isPluginOldForAllRuntimeLibraries -> KotlinJvmBundle.message("button.text.downgrade.library")
+                    else -> KotlinJvmBundle.message("button.text.replace.library")
                 }
 
                 val actionLabelText = "$updateAction " + KotlinJvmBundle.message(
@@ -124,7 +124,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                     }
                 }
 
-                answer.createActionLabel(KotlinJvmBundle.message("go.to.0", presentableName)) {
+                answer.createActionLabel(KotlinJvmBundle.message("button.text.go.to.0", presentableName)) {
                     navigateToLibraryRoot(
                         project,
                         badVersionedRoot.file
@@ -149,7 +149,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
         }
 
-        createShowPathsActionLabel(module, answer, KotlinJvmBundle.message("details"))
+        createShowPathsActionLabel(module, answer, KotlinJvmBundle.message("button.text.details"))
 
         return answer
     }
@@ -178,7 +178,10 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
     }
 
     private fun createUpdatePluginLink(answer: ErrorNotificationPanel) {
-        answer.createProgressAction(KotlinJvmBundle.message("check"), KotlinJvmBundle.message("update.plugin")) { link, updateLink ->
+        answer.createProgressAction(
+            KotlinJvmBundle.message("progress.action.text.check"),
+            KotlinJvmBundle.message("progress.action.text.update.plugin")
+        ) { link, updateLink ->
             KotlinPluginUpdater.getInstance().runCachedUpdate { pluginUpdateStatus ->
                 when (pluginUpdateStatus) {
                     is PluginUpdateStatus.Update -> {

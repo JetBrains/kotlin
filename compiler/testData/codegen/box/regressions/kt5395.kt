@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class D {
     companion object {
         protected val F: String = "OK"

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.assertIsDirectory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertModulesAreEqual
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertValidModule
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -123,7 +124,8 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                     files = psiFiles,
                     moduleName = environment.moduleName,
                     dependOnBuiltIns = true,
-                    languageVersionSettings = environment.configuration.languageVersionSettings
+                    languageVersionSettings = environment.configuration.languageVersionSettings,
+                    targetPlatform = CommonPlatforms.defaultCommonPlatform
                 ) { content ->
                     environment.createPackagePartProvider(content.moduleContentScope)
                 }.moduleDescriptor

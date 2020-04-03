@@ -26,7 +26,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val statement = element("Statement", Expression, annotationContainer)
     val expression = element("Expression", Expression, statement)
     val declaration = element("Declaration", Declaration)
-    val anonymousInitializer = element("AnonymousInitializer", Declaration, declaration)
+    val anonymousInitializer = element("AnonymousInitializer", Declaration, declaration, symbolOwner)
     val typedDeclaration = element("TypedDeclaration", Declaration, declaration, annotationContainer)
     val callableDeclaration = element("CallableDeclaration", Declaration, typedDeclaration, symbolOwner)
     val typeParameter = element("TypeParameter", Declaration, declaration, symbolOwner, annotationContainer)

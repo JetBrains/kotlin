@@ -34,7 +34,6 @@ class MavenProject {
     MavenExecutionResult exec(String... targets) throws Exception {
         List<String> cmd = buildCmd(targets);
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-        setUpEnvVars(processBuilder.environment());
 
         processBuilder.directory(workingDir);
         processBuilder.redirectErrorStream(true);
@@ -45,13 +44,6 @@ class MavenProject {
         int exitCode = process.waitFor();
 
         return new MavenExecutionResult(stdout, workingDir, exitCode);
-    }
-
-    private void setUpEnvVars(Map<String, String> env) throws IOException {
-        String mavenHome = getNotNullSystemProperty("maven.home");
-        env.put("M2_HOME", mavenHome);
-        String mavenPath = mavenHome + File.separator + "bin";
-        env.put("PATH", env.get("PATH") + File.pathSeparator + mavenPath);
     }
 
     private List<String> buildCmd(String... args) {
@@ -65,7 +57,10 @@ class MavenProject {
             cmd.add("/bin/bash");
         }
 
-        cmd.add("mvn");
+        String mavenHome = getNotNullSystemProperty("maven.home");
+        String mavenBin = mavenHome + File.separator + "bin/mvn";
+
+        cmd.add(mavenBin);
         cmd.add("-Dkotlin.compiler.incremental.log.level=info");
 
         String kotlinVersionProperty = "kotlin.version";

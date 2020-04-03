@@ -316,7 +316,7 @@ open class ClassCodegen protected constructor(
         ClassCodegen(klass, context, this, parentFunction)
 
     private fun generateField(field: IrField) {
-        if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
+        if (field.isFakeOverride) return
 
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
@@ -349,12 +349,13 @@ open class ClassCodegen protected constructor(
     }
 
     private fun generateMethod(method: IrFunction) {
-        if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+        if (method.isFakeOverride) {
             jvmSignatureClashDetector.trackFakeOverrideMethod(method)
             return
         }
 
         val node = FunctionCodegen(method, this).generate()
+        node.preprocessSuspendMarkers(method)
         val mv = with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
         if (method.hasContinuation() || method.isInvokeSuspendOfLambda()) {
             // Generate a state machine within this method. The continuation class for it should be generated

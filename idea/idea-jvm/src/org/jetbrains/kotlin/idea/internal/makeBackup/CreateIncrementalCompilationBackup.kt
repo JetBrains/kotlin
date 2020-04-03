@@ -48,7 +48,8 @@ class CreateIncrementalCompilationBackup : AnAction(KotlinJvmBundle.message("cre
         ProgressManager.getInstance().run(
             object : Task.Backgroundable(
                 project,
-                KotlinJvmBundle.message("creating.backup.for.debugging.kotlin.incremental.compilation"), true
+                KotlinJvmBundle.message("creating.backup.for.debugging.kotlin.incremental.compilation"),
+                true
             ) {
                 override fun run(indicator: ProgressIndicator) {
                     createPatches(backupDir, project, indicator)

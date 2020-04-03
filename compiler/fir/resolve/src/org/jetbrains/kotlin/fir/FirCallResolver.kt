@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -20,6 +19,9 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -51,7 +53,7 @@ class FirCallResolver(
     }
 
     private val towerResolver = FirTowerResolver(
-        returnTypeCalculator, components, resolutionStageRunner,
+        components, resolutionStageRunner,
     )
 
     private val conflictResolver =
@@ -210,22 +212,7 @@ class FirCallResolver(
 
         when {
             referencedSymbol is FirClassLikeSymbol<*> -> {
-                val classId = referencedSymbol.classId
-                return buildResolvedQualifier {
-                    source = nameReference.source
-                    packageFqName = classId.packageFqName
-                    relativeClassFqName = classId.relativeClassName
-                    safe = false
-                    typeArguments.addAll(qualifiedAccess.typeArguments)
-                    symbol = referencedSymbol
-                }.apply {
-                    resultType = if (classId.isLocal) {
-                        typeForQualifierByDeclaration(referencedSymbol.fir, resultType, session)
-                            ?: session.builtinTypes.unitType
-                    } else {
-                        typeForQualifier(this)
-                    }
-                }
+                return buildResolvedQualifierForClass(referencedSymbol, nameReference.source, qualifiedAccess.typeArguments)
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
                 return buildResolvedReifiedParameterReference {
@@ -261,11 +248,12 @@ class FirCallResolver(
             expectedType, constraintSystemBuilder,
         )
         // No reset here!
+        val localCollector = CandidateCollector(this, resolutionStageRunner)
         val result = towerResolver.runResolver(
             implicitReceiverStack.receiversAsReversed(),
             info,
-            collector = CandidateCollector(this, resolutionStageRunner),
-            manager = TowerResolveManager(towerResolver),
+            collector = localCollector,
+            manager = TowerResolveManager(localCollector),
         )
         val bestCandidates = result.bestCandidates()
         val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
@@ -369,6 +357,7 @@ class FirCallResolver(
             session,
             file,
             transformer.components.implicitReceiverStack,
+            candidateForCommonInvokeReceiver = null,
             // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,

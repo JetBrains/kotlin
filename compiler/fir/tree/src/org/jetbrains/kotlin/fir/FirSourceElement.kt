@@ -6,14 +6,9 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 sealed class FirSourceElement {
     abstract val elementType: IElementType
@@ -21,15 +16,15 @@ sealed class FirSourceElement {
     abstract val endOffset: Int
 }
 
-class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
+class FirPsiSourceElement<P : PsiElement>(val psi: P) : FirSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
 
     override val startOffset: Int
-        get() = psi.startOffset
+        get() = psi.textRange.startOffset
 
     override val endOffset: Int
-        get() = psi.endOffset
+        get() = psi.textRange.endOffset
 }
 
 class FirLightSourceElement(
@@ -42,24 +37,17 @@ class FirLightSourceElement(
         get() = element.tokenType
 }
 
-val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement)?.psi
+val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi
 
-val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement)?.psi
+val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toFirSourceElement(): FirPsiSourceElement = FirPsiSourceElement(this)
+inline fun PsiElement.toFirPsiSourceElement(): FirPsiSourceElement<*> = FirPsiSourceElement(this)
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun LighterASTNode.toFirLightSourceElement(
+    startOffset: Int, endOffset: Int,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>
+): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree)
 
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element
-
-fun FirSourceElement?.getModifierList(): FirModifierList? {
-    return when (this) {
-        null -> null
-        is FirPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
-        is FirLightSourceElement -> {
-            val kidsRef = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(element, kidsRef)
-            val modifierListNode = kidsRef.get().find { it?.tokenType == KtNodeTypes.MODIFIER_LIST } ?: return null
-            FirLightModifierList(modifierListNode, tree)
-        }
-    }
-}

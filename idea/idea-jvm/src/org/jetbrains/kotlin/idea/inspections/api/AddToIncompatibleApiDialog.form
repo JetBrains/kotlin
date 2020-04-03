@@ -24,7 +24,7 @@
             </constraints>
             <properties>
               <labelFor value="49f89"/>
-              <text resource-bundle="messages/KotlinJvmBundle" key="reference"/>
+              <text resource-bundle="messages/KotlinJvmBundle" key="api.dialog.reference"/>
             </properties>
           </component>
           <vspacer id="eac19">
@@ -44,7 +44,7 @@
             </constraints>
             <properties>
               <labelFor value="ec77c"/>
-              <text resource-bundle="messages/KotlinJvmBundle" key="reason"/>
+              <text resource-bundle="messages/KotlinJvmBundle" key="api.dialog.reason"/>
             </properties>
           </component>
           <component id="ec77c" class="javax.swing.JTextField" binding="reasonTextField">

@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -65,24 +63,26 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         reporter.report(coneDiagnostic)
     }
 
-    private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement> {
+    private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
         @Suppress("UNCHECKED_CAST")
         return when (kind) {
-            DiagnosticKind.Syntax -> FirErrors.SYNTAX_ERROR
-            DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
-            DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
-            DiagnosticKind.IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
-            DiagnosticKind.ConstructorInObject -> FirErrors.CONSTRUCTOR_IN_OBJECT
-            DiagnosticKind.DeserializationError -> FirErrors.DESERIALIZATION_ERROR
-            DiagnosticKind.InferenceError -> FirErrors.INFERENCE_ERROR
-            DiagnosticKind.NoSupertype -> FirErrors.NO_SUPERTYPE
-            DiagnosticKind.TypeParameterAsSupertype -> FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
-            DiagnosticKind.EnumAsSupertype -> FirErrors.ENUM_AS_SUPERTYPE
-            DiagnosticKind.RecursionInSupertypes -> FirErrors.RECURSION_IN_SUPERTYPES
-            DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
-            DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-            DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
-            DiagnosticKind.Other -> FirErrors.OTHER_ERROR
+            Syntax -> FirErrors.SYNTAX_ERROR
+            ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
+            UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
+            IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
+            DeserializationError -> FirErrors.DESERIALIZATION_ERROR
+            InferenceError -> FirErrors.INFERENCE_ERROR
+            TypeParameterAsSupertype -> FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
+            EnumAsSupertype -> FirErrors.ENUM_AS_SUPERTYPE
+            RecursionInSupertypes -> FirErrors.RECURSION_IN_SUPERTYPES
+            RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
+            SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
+            Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
+            ExpressionRequired -> FirErrors.EXPRESSION_REQUIRED
+            JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
+            NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
+            VariableExpected -> FirErrors.VARIABLE_EXPECTED
+            Other -> FirErrors.OTHER_ERROR
             else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
         }
     }

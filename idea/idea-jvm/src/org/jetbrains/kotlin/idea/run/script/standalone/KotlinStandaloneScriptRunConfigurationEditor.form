@@ -31,7 +31,7 @@
         </constraints>
         <properties>
           <labelLocation value="West"/>
-          <text resource-bundle="messages/KotlinJvmBundle" key="script.file"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="configuration.title.script.file"/>
         </properties>
       </component>
     </children>

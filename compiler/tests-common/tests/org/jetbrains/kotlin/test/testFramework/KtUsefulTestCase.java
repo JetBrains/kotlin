@@ -97,8 +97,12 @@ public abstract class KtUsefulTestCase extends TestCase {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
 
+        // -- KOTLIN ADDITIONAL START --
+
         FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true;
+
+        // -- KOTLIN ADDITIONAL END --
     }
 
     protected boolean shouldContainTempFiles() {

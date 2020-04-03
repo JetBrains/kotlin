@@ -20,7 +20,8 @@ class IdeaMavenWizardService(private val project: Project) : ProjectImportingWiz
 
     override fun importProject(
         path: Path,
-        modulesIrs: List<ModuleIR>
+        modulesIrs: List<ModuleIR>,
+        buildSystem: BuildSystemType
     ): TaskResult<Unit> = safe {
         MavenProjectImporter(project).importProject(path)
     }

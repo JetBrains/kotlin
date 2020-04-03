@@ -200,7 +200,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         }
 
         InstructionAdapter v = codegen.v;
-        result.put(returnType, v);
+        result.put(returnType, functionDescriptor.getReturnType(), v);
         v.areturn(returnType);
     }
 

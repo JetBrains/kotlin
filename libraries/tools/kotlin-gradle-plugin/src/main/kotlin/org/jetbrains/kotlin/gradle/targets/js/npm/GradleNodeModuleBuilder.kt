@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
@@ -19,15 +16,14 @@ import java.io.File
 internal class GradleNodeModuleBuilder(
     val project: Project,
     val dependency: ResolvedDependency,
-    val artifacts: Collection<ResolvedArtifact>,
+    val srcFiles: Collection<File>,
     val cache: GradleNodeModulesCache
 ) {
     var srcPackageJsonFile: File? = null
     val files = mutableListOf<File>()
 
     fun visitArtifacts() {
-        artifacts.forEach { artifact ->
-            val srcFile = artifact.file
+        srcFiles.forEach { srcFile ->
             when {
                 isKotlinJsRuntimeFile(srcFile) -> files.add(srcFile)
                 srcFile.isCompatibleArchive -> project.zipTree(srcFile).forEach { innerFile ->
@@ -65,11 +61,6 @@ internal class GradleNodeModuleBuilder(
     }
 }
 
-internal fun fromSrcPackageJson(packageJson: File?): PackageJson? =
-    packageJson?.reader()?.use {
-        Gson().fromJson(it, PackageJson::class.java)
-    }
-
 private val File.isCompatibleArchive
     get() = isFile
             && (extension == "jar"
@@ -82,34 +73,3 @@ private fun isKotlinJsRuntimeFile(file: File): Boolean {
     return (name.endsWith(".js") && !name.endsWith(".meta.js"))
             || name.endsWith(".js.map")
 }
-
-fun makeNodeModule(
-    container: File,
-    packageJson: PackageJson,
-    files: (File) -> Unit
-): File {
-    val dir = importedPackageDir(container, packageJson.name, packageJson.version)
-
-    if (dir.exists()) dir.deleteRecursively()
-
-    check(dir.mkdirs()) {
-        "Cannot create directory: $dir"
-    }
-
-    val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .create()
-
-    files(dir)
-
-    dir.resolve("package.json").writer().use {
-        gson.toJson(packageJson, it)
-    }
-
-    return dir
-}
-
-fun importedPackageDir(container: File, name: String, version: String): File =
-    container.resolve(name).resolve(version)
-
-fun GradleNodeModule(dir: File) = GradleNodeModule(dir.parentFile.name, dir.name, dir)

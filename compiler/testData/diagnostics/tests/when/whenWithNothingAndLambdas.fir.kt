@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
+
 val test1 = when {
     true -> { { true } }
     else -> TODO()

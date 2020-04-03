@@ -21,4 +21,6 @@ abstract class FirComposedSuperTypeRef : FirPureAbstractElement(), FirTypeRef {
     abstract val superTypeRefs: List<FirResolvedTypeRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComposedSuperTypeRef(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComposedSuperTypeRef
 }

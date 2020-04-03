@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class InfixCallToOrdinaryIntention :
-    SelfTargetingIntention<KtBinaryExpression>(
-        KtBinaryExpression::class.java,
-        KotlinBundle.message("replace.infix.call.with.ordinary.call")
-    ) {
+class InfixCallToOrdinaryIntention : SelfTargetingIntention<KtBinaryExpression>(
+    KtBinaryExpression::class.java,
+    KotlinBundle.lazyMessage("replace.infix.call.with.ordinary.call")
+) {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken != KtTokens.IDENTIFIER || element.left == null || element.right == null) return false
         return element.operationReference.textRange.containsOffset(caretOffset)
@@ -31,8 +30,14 @@ class InfixCallToOrdinaryIntention :
                 is KtLambdaExpression -> " $2:'{}'"
                 else -> "($2)"
             }
-            val replacement =
-                KtPsiFactory(element).createExpressionByPattern(pattern, element.left!!, element.operationReference.text, argument)
+
+            val replacement = KtPsiFactory(element).createExpressionByPattern(
+                pattern,
+                element.left!!,
+                element.operationReference.text,
+                argument
+            )
+
             return element.replace(replacement) as KtExpression
         }
     }

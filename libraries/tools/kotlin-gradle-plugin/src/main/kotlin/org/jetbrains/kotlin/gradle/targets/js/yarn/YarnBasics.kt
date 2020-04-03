@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import com.github.gundy.semver4j.SemVer
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLock.Companion.dependencyKey
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -28,7 +26,7 @@ abstract class YarnBasics : NpmApi {
         project: Project,
         dir: File,
         description: String,
-        vararg args: String
+        args: List<String>
     ) {
         val nodeJs = NodeJsRootPlugin.apply(project)
         val yarnPlugin = YarnPlugin.apply(project)
@@ -141,31 +139,6 @@ abstract class YarnBasics : NpmApi {
 
         srcDependenciesList.forEach { src ->
             resolveRecursively(src)
-        }
-    }
-}
-
-private class YarnEntryRegistry(lockFile: File) {
-    val entryMap = YarnLock.parse(lockFile)
-        .entries
-        .associateBy { it.dependencyKey }
-
-    fun find(packageKey: String, version: String): YarnLock.Entry {
-        val key = dependencyKey(packageKey, version)
-        var entry = entryMap[key]
-
-        if (entry == null && version == "*") {
-            val searchKey = dependencyKey(packageKey, "")
-            entry = entryMap.entries
-                .filter { it.key.startsWith(searchKey) }
-                .firstOrNull {
-                    SemVer.satisfies(it.key.removePrefix(searchKey), "*")
-                }
-                ?.value
-        }
-
-        return checkNotNull(entry) {
-            "Cannot find $key in yarn.lock"
         }
     }
 }

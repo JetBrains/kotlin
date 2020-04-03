@@ -33,8 +33,10 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
         if (target is ValueParameterDescriptor && bindingContext.get(AUTO_CREATED_IT, target) == true) {
-            createInfoAnnotation(expression, FUNCTION_LITERAL_DEFAULT_PARAMETER,
-                                 KotlinIdeaAnalysisBundle.message("automatically.declared.based.on.the.expected.type")
+            createInfoAnnotation(
+                expression,
+                FUNCTION_LITERAL_DEFAULT_PARAMETER,
+                KotlinIdeaAnalysisBundle.message("automatically.declared.based.on.the.expected.type")
             )
         } else if (expression.parent !is KtValueArgumentName) { // highlighted separately
             highlightVariable(expression, target)

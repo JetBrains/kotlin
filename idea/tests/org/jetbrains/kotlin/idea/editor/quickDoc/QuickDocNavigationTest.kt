@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.editor.quickDoc
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
@@ -46,7 +46,7 @@ class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
         UsefulTestCase.assertInstanceOf(target, KtFunction::class.java)
         Assert.assertEquals("reader", (target as KtFunction).name)
 
-        val secondaryTarget = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
+        val secondaryTarget = KotlinDocumentationProvider().getDocumentationElementForLink(
             myFixture.psiManager, "InputStream", target
         )
         UsefulTestCase.assertInstanceOf(secondaryTarget, PsiClass::class.java)
@@ -74,7 +74,7 @@ class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
     private fun resolveDocLink(linkText: String): PsiElement? {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val source = myFixture.elementAtCaret.getParentOfType<KtDeclaration>(false)
-        return KotlinQuickDocumentationProvider().getDocumentationElementForLink(
+        return KotlinDocumentationProvider().getDocumentationElementForLink(
             myFixture.psiManager, linkText, source
         )
     }

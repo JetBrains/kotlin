@@ -29,7 +29,10 @@ data class ScriptModuleInfo(
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("script.0.1", scriptFile.name, scriptDefinition.name))
+    override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("script.0.1", scriptFile.presentableName, scriptDefinition.name)
 
     override fun contentScope() = GlobalSearchScope.fileScope(project, scriptFile)
 
@@ -62,7 +65,10 @@ data class ScriptModuleInfo(
 sealed class ScriptDependenciesInfo(override val project: Project) : IdeaModuleInfo, BinaryModuleInfo {
     abstract val sdk: Sdk?
 
-    override val name = Name.special(KotlinIdeaAnalysisBundle.message("script.dependencies"))
+    override val name = Name.special("<Script dependencies>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("script.dependencies")
 
     override fun dependencies(): List<IdeaModuleInfo> = listOfNotNull(this, sdk?.let { SdkInfo(project, it) })
 
@@ -119,7 +125,10 @@ sealed class ScriptDependenciesInfo(override val project: Project) : IdeaModuleI
 }
 
 sealed class ScriptDependenciesSourceInfo(override val project: Project) : IdeaModuleInfo, SourceForBinaryModuleInfo {
-    override val name = Name.special(KotlinIdeaAnalysisBundle.message("source.for.script.dependencies"))
+    override val name = Name.special("<Source for script dependencies>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("source.for.script.dependencies")
 
     override val binariesModuleInfo: ScriptDependenciesInfo
         get() = ScriptDependenciesInfo.ForProject(project)

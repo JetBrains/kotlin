@@ -36,7 +36,7 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
             val diagnostics = fileToDiagnostics[firFile] ?: emptyList()
 
             val actualDiagnostics = diagnostics.groupBy {
-                require(it is FirLightDiagnostic<*>)
+                require(it is FirLightDiagnostic)
                 it.element.startOffset
             }.mapValues { (_, diagnostics) -> diagnostics.map { it.factory.name }.countEntries() }
 

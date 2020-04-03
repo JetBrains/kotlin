@@ -1,12 +1,17 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 
-abstract class Component : Displayable {
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.core.SettingsWriter
+import org.jetbrains.kotlin.tools.projectWizard.core.Writer
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingPropertyReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
+
+abstract class Component : Displayable, ErrorNavigatable {
     private val subComponents = mutableListOf<Component>()
 
     open fun onInit() {
@@ -16,9 +21,17 @@ abstract class Component : Displayable {
     protected fun <C : Component> C.asSubComponent(): C = also {
         this@Component.subComponents += it
     }
+
+    protected fun clearSubComponents() {
+        subComponents.clear()
+    }
+
+    override fun navigateTo(error: ValidationResult.ValidationError) {
+        subComponents.forEach { it.navigateTo(error) }
+    }
 }
 
-abstract class DynamicComponent(private val ideContext: IdeContext) : Component() {
+abstract class DynamicComponent(private val context: Context) : Component() {
     private var isInitialized: Boolean = false
 
     override fun onInit() {
@@ -37,23 +50,37 @@ abstract class DynamicComponent(private val ideContext: IdeContext) : Component(
         get() = reference.value
 
     init {
-        ideContext.eventManager.addSettingUpdaterEventListener { reference ->
-            if (isInitialized) onValueUpdated(reference)
+        write {
+            eventManager.addSettingUpdaterEventListener { reference ->
+                if (isInitialized) onValueUpdated(reference)
+            }
         }
     }
 
-    protected fun <T> read(reader: ReadingContext.() -> T): T =
-        reader(ideContext)
+    protected fun <T> read(reader: Reader.() -> T): T =
+        context.read(reader)
 
-    protected fun <T> write(writer: WritingContext.() -> T): T =
-        writer(ideContext)
+    protected fun <T> write(writer: Writer.() -> T): T =
+        context.write(writer)
 
-    protected fun <T> modify(modifier: SettingsWritingContext.() -> T): T =
-        modifier(ideContext)
+    protected fun <T> modify(modifier: SettingsWriter.() -> T): T =
+        context.writeSettings(modifier)
 
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }
 
+abstract class TitledComponent(context: Context) : DynamicComponent(context) {
+    open val forceLabelCenteringOffset: Int? = null
+    open val additionalComponentPadding: Int = 0
+    open val maximumWidth: Int? = null
+    abstract val title: String?
+    open fun shouldBeShow(): Boolean = true
+}
+
 interface FocusableComponent {
     fun focusOn() {}
+}
+
+interface ErrorNavigatable {
+    fun navigateTo(error: ValidationResult.ValidationError)
 }

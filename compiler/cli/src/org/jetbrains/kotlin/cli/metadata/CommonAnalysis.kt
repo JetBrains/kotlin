@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import java.io.File
 
 internal val KotlinCoreEnvironment.destDir: File?
@@ -49,6 +50,7 @@ private fun runCommonAnalysis(
     analyzer.analyzeAndReport(files) {
         CommonResolverForModuleFactory.analyzeFiles(
             files, moduleName, dependOnBuiltins, configuration.languageVersionSettings,
+            CommonPlatforms.defaultCommonPlatform,
             dependenciesContainer = dependencyContainer
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)

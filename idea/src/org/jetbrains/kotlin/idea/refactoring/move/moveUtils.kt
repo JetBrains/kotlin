@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.ide.util.DirectoryUtil
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMemberHandler
+import com.intellij.refactoring.move.moveMembers.MoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
@@ -38,7 +40,9 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -55,6 +59,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
+import java.lang.System.currentTimeMillis
 import java.util.*
 
 sealed class ContainerInfo {
@@ -399,8 +404,9 @@ fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String
     if (declarationsToMove.isEmpty()) return null
     val representative = declarationsToMove.singleOrNull()
         ?: declarationsToMove.filterIsInstance<KtClassOrObject>().singleOrNull()
-    val newFileName = representative?.run { "$name.${KotlinFileType.EXTENSION}" }
-        ?: declarationsToMove.first().containingFile.name
+    val newFileName = representative?.run {
+        if (containingKtFile.isScript()) "$name.kts" else "$name.${KotlinFileType.EXTENSION}"
+    } ?: declarationsToMove.first().containingFile.name
     return newFileName.capitalize()
 }
 
@@ -424,13 +430,21 @@ private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: P
 
         val newClass = newElement.containingClass
         if (newClass != null && reference.qualifierExpression != null) {
-            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.qualifiedName, arrayOf(newElement))
+
+            val refactoringOptions = object : MoveMembersOptions {
+                override fun getMemberVisibility(): String? = PsiModifier.PUBLIC
+                override fun makeEnumConstant(): Boolean = true
+                override fun getSelectedMembers(): Array<PsiMember> = arrayOf(newElement)
+                override fun getTargetClassName(): String? = newClass.qualifiedName
+            }
+
             val moveMembersUsageInfo = MoveMembersProcessor.MoveMembersUsageInfo(
                 newElement, reference.element, newClass, reference.qualifierExpression, reference
             )
+
             val moveMemberHandler = MoveMemberHandler.EP_NAME.forLanguage(reference.element.language)
             if (moveMemberHandler != null) {
-                moveMemberHandler.changeExternalUsage(mockMoveMembersOptions, moveMembersUsageInfo)
+                moveMemberHandler.changeExternalUsage(refactoringOptions, moveMembersUsageInfo)
                 return true
             }
         }
@@ -670,4 +684,52 @@ internal fun getTargetPackageFqName(targetContainer: PsiElement): FqName? {
         return if (targetPackage != null) FqName(targetPackage.qualifiedName) else null
     }
     return if (targetContainer is KtFile) targetContainer.packageFqName else null
+}
+
+internal fun logFusForMoveRefactoring(
+    numberOfEntities: Int,
+    entity: MoveRefactoringFUSCollector.MovedEntity,
+    destination: MoveRefactoringFUSCollector.MoveRefactoringDestination,
+    isDefault: Boolean,
+    body: Runnable
+) {
+    val timeStarted = currentTimeMillis()
+
+    var succeeded = false
+    try {
+        body.run()
+        succeeded = true
+    } finally {
+        MoveRefactoringFUSCollector.log(
+            timeStarted = timeStarted,
+            timeFinished = currentTimeMillis(),
+            numberOfEntities = numberOfEntities,
+            destination = destination,
+            isDefault = isDefault,
+            entity = entity,
+            isSucceeded = succeeded,
+        )
+    }
+}
+
+internal fun <T> List<KtNamedDeclaration>.mapWithReadActionInProcess(
+    project: Project,
+    title: String,
+    body: (KtNamedDeclaration) -> T
+): List<T> = let { declarations ->
+    val result = mutableListOf<T>()
+    val task: Task.Modal = object : Task.Modal(project, title, false) {
+        override fun run(indicator: ProgressIndicator) {
+            val fraction: Double = 1.0 / declarations.size
+            indicator.fraction = 0.0
+            runReadAction {
+                declarations.forEachIndexed { index, declaration ->
+                    result.add(body(declaration))
+                    indicator.fraction = fraction * index
+                }
+            }
+        }
+    }
+    ProgressManager.getInstance().run(task)
+    return result
 }

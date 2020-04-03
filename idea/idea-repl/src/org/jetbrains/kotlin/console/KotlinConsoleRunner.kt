@@ -123,7 +123,7 @@ class KotlinConsoleRunner(
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
     private val consoleScriptDefinition = object : KotlinScriptDefinition(Any::class) {
-        override val name = KotlinIdeaReplBundle.message("kotlin.repl")
+        override val name get() = KotlinIdeaReplBundle.message("name.kotlin.repl")
         override fun isScript(fileName: String): Boolean = fileName.startsWith(consoleView.virtualFile.name)
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
     }
@@ -207,13 +207,13 @@ class KotlinConsoleRunner(
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler) =
         ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, KOTLIN_SHELL_EXECUTE_ACTION_ID, consoleExecuteActionHandler)
 
-    override fun constructConsoleTitle(title: String) = "$title (in module ${module.name})"
+    override fun constructConsoleTitle(title: String) = KotlinIdeaReplBundle.message("constructor.title.0.in.module.1", title, module.name)
 
     private fun setupPlaceholder(editor: EditorEx) {
         val executeCommandAction = ActionManager.getInstance().getAction(KOTLIN_SHELL_EXECUTE_ACTION_ID)
         val executeCommandActionShortcutText = KeymapUtil.getFirstKeyboardShortcutText(executeCommandAction)
 
-        editor.setPlaceholder(KotlinIdeaReplBundle.message("0.to.execute", executeCommandActionShortcutText))
+        editor.setPlaceholder(KotlinIdeaReplBundle.message("command.0.to.execute", executeCommandActionShortcutText))
         editor.setShowPlaceholderWhenFocused(true)
 
         val placeholderAttrs = TextAttributes()

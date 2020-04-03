@@ -16,6 +16,7 @@ sealed class Field : Importable {
 
     var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
+    open var needTransformInOtherChildren: Boolean = false
 
     open val defaultValueInImplementation: String? get() = null
     abstract var isMutable: Boolean
@@ -34,6 +35,7 @@ sealed class Field : Importable {
             copy.arguments.clear()
             copy.arguments.addAll(arguments)
             copy.needsSeparateTransform = needsSeparateTransform
+            copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.isMutable = isMutable
         }
         copy.fromParent = fromParent
@@ -69,6 +71,10 @@ class FieldWithDefault(val origin: Field) : Field() {
     override val isFirType: Boolean get() = origin.isFirType
     override var needsSeparateTransform: Boolean
         get() = origin.needsSeparateTransform
+        set(_) {}
+
+    override var needTransformInOtherChildren: Boolean
+        get() = origin.needTransformInOtherChildren
         set(_) {}
 
     override val arguments: MutableList<Importable>

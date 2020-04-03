@@ -9,13 +9,16 @@ class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind
 
 enum class DiagnosticKind {
     Syntax,
+    ExpressionRequired,
+    NotLoopLabel,
+    JumpOutsideLoop,
+    VariableExpected,
+
     ReturnNotAllowed,
     UnresolvedLabel,
     IllegalConstExpression,
-    ConstructorInObject,
     DeserializationError,
     InferenceError,
-    NoSupertype,
     TypeParameterAsSupertype,
     EnumAsSupertype,
     RecursionInSupertypes,

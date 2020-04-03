@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 
 class AddNamesToFollowingArgumentsIntention : SelfTargetingIntention<KtValueArgument>(
-    KtValueArgument::class.java, KotlinBundle.message("add.names.to.this.argument.and.following.arguments")
+    KtValueArgument::class.java, KotlinBundle.lazyMessage("add.names.to.this.argument.and.following.arguments")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val argumentList = element.parent as? KtValueArgumentList ?: return false

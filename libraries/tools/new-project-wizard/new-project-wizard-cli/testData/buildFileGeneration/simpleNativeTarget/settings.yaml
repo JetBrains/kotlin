@@ -2,12 +2,7 @@ kotlin:
   projectKind: Multiplatform
   modules:
     - type: multiplatform
-      kind: multiplatform
       name: a
       subModules:
         - type: linuxX64Target
-          kind: target
           name: linuxX64
-          sourcesets:
-            - type: main
-            - type: test

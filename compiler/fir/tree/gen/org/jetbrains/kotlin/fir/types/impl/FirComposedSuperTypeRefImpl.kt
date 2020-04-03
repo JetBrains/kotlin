@@ -27,8 +27,13 @@ internal class FirComposedSuperTypeRefImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComposedSuperTypeRefImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         superTypeRefs.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComposedSuperTypeRefImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 }

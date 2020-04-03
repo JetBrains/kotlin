@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class OperatorToFunctionIntention :
-    SelfTargetingIntention<KtExpression>(KtExpression::class.java,
-                                         KotlinIdeaAnalysisBundle.message("replace.overloaded.operator.with.function.call")
-    ) {
+class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
+    KtExpression::class.java,
+    KotlinIdeaAnalysisBundle.lazyMessage("replace.overloaded.operator.with.function.call"),
+) {
     companion object {
         private fun isApplicableUnary(element: KtUnaryExpression, caretOffset: Int): Boolean {
             if (element.baseExpression == null) return false
@@ -64,7 +64,8 @@ class OperatorToFunctionIntention :
             return when (opRef.getReferencedNameElementType()) {
                 KtTokens.PLUS, KtTokens.MINUS, KtTokens.MUL, KtTokens.DIV, KtTokens.PERC, KtTokens.RANGE,
                 KtTokens.IN_KEYWORD, KtTokens.NOT_IN, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ,
-                KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> true
+                KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ
+                -> true
                 KtTokens.EQEQ, KtTokens.EXCLEQ -> listOf(element.left, element.right).none { it?.node?.elementType == KtNodeTypes.NULL }
                 KtTokens.EQ -> element.left is KtArrayAccessExpression
                 else -> false

@@ -27,6 +27,8 @@ interface FirQualifiedAccessWithoutCallee : FirStatement {
 
     fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessWithoutCallee
+
     fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessWithoutCallee
 
     fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessWithoutCallee

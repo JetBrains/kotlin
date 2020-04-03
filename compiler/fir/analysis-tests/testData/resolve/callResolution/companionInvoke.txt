@@ -1,0 +1,27 @@
+FILE: companionInvoke.kt
+    internal final class Method<out T : R|kotlin/String?|> : R|kotlin/Any| {
+        private constructor<out T : R|kotlin/String?|>(name: R|kotlin/String|, signature: R|T|): R|Method<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public[internal] final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public[internal] final val signature: R|T| = R|<local>/signature|
+            public get(): R|T|
+
+        public[internal] final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Method.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public[internal] final operator fun invoke(name: R|kotlin/String|): R|Method<kotlin/String?>| {
+                ^invoke R|kotlin/TODO|()
+            }
+
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|Method|.R|/Method.Companion.invoke|(String(asd))
+    }

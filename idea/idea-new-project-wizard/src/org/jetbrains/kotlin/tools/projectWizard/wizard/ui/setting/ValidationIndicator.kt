@@ -18,68 +18,25 @@ import javax.swing.JPanel
 
 interface ValidationIndicator {
     fun updateValidationState(newState: ValidationResult)
+    val validationState: ValidationResult
 }
 
 class IdeaBasedComponentValidator(
     parentDisposable: Disposable,
     private val jComponent: JComponent
 ) : ValidationIndicator {
+    override var validationState: ValidationResult = ValidationResult.OK
+        private set
+
     private val validator = ComponentValidator(parentDisposable).installOn(jComponent)
 
     override fun updateValidationState(newState: ValidationResult) {
+        validationState = newState
         validator.updateInfo(
             newState.safeAs<ValidationResult.ValidationError>()
                 ?.messages
                 ?.firstOrNull()
                 ?.let { ValidationInfo(it, jComponent) }
         )
-    }
-}
-
-class AlwaysShownValidationIndicator(
-    private val showText: Boolean,
-    private val onClickAction: ((ValidationResult.ValidationError) -> Unit)? = null
-) : JPanel(BorderLayout()), ValidationIndicator {
-    private val errorLabel = label(" ")
-
-    private var currentError: ValidationResult.ValidationError? = null
-
-    init {
-        errorLabel.icon = AllIcons.General.Error
-        background = JBUI.CurrentTheme.Validator.errorBackgroundColor()
-        border =
-            BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(JBUI.CurrentTheme.Validator.errorBorderColor()),
-                JBUI.Borders.empty(4, 8)
-            )
-        add(errorLabel, BorderLayout.CENTER)
-
-        if (onClickAction != null) {
-            cursor = Cursor(Cursor.HAND_CURSOR)
-            addMouseListener(object : MouseListener {
-                override fun mouseReleased(p0: MouseEvent?) {}
-                override fun mouseEntered(p0: MouseEvent?) {}
-                override fun mouseExited(p0: MouseEvent?) {}
-                override fun mousePressed(p0: MouseEvent?) {}
-
-                override fun mouseClicked(p0: MouseEvent?) {
-                    currentError?.let(onClickAction)
-                }
-            })
-        }
-    }
-
-    override fun updateValidationState(newState: ValidationResult) {
-        isVisible = !newState.isOk
-        when (newState) {
-            ValidationResult.OK -> {
-                currentError = null
-            }
-            is ValidationResult.ValidationError -> {
-                val errors = newState.messages.firstOrNull().orEmpty()
-                if (showText) errorLabel.text = errors
-                currentError = newState
-            }
-        }
     }
 }

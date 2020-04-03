@@ -89,11 +89,14 @@ class FunctionCodegen(
         if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
-            val frameMap = irFunction.createFrameMapWithReceivers()
+            // `$$forInline` versions of suspend functions have the same bodies are the originals, but with different
+            // name/flags/annotations and with no state machine.
+            val notForInline = irFunction.suspendForInlineToOriginal() ?: irFunction
+            val frameMap = notForInline.createFrameMapWithReceivers()
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, smapOverride).generate()
+                ExpressionCodegen(notForInline, signature, frameMap, adapter, classCodegen, inlinedInto, smapOverride).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }

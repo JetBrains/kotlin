@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
     override fun inspectionText(element: KtIfExpression): String = KotlinBundle.message("if.null.return.break.foldable.to")
 
-    override val defaultFixText: String = KotlinBundle.message("replace.if.with.elvis.operator")
+    override val defaultFixText: String get() = KotlinBundle.message("replace.if.with.elvis.operator")
 
     override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.fromIfKeywordToRightParenthesisTextRangeInThis()
 

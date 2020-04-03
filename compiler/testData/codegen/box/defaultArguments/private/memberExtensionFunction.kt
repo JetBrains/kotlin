@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class A {
     private fun Int.foo(other: Int = 5): Int = this + other
 

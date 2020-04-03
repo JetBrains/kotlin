@@ -1,0 +1,13 @@
+public final class AnnotatedExpressionsKt {
+    public static final fun foo() : void {
+        foo()
+        @kotlin.Suppress var a: int = 1
+        @kotlin.Suppress var b: int = 2
+        b = a
+        if (a > 2) a else b
+        var c: int = elvis {
+            var varae507364: int = a
+            if (varae507364 != null) varae507364 else b
+        }
+    }
+}

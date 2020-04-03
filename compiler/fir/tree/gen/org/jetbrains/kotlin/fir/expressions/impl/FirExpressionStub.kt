@@ -29,6 +29,11 @@ class FirExpressionStub @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionStub {
         typeRef = typeRef.transformSingle(transformer, data)
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionStub {
         annotations.transformInplace(transformer, data)
         return this
     }

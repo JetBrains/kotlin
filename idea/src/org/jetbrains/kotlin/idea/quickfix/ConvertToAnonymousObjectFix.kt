@@ -31,11 +31,12 @@ class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQu
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val nameReference = element ?: return
         val call = nameReference.parent as? KtCallExpression ?: return
+        val lambda = SamConversionToAnonymousObjectIntention.getLambdaExpression(call) ?: return
         val functionDescriptor = nameReference.analyze().diagnostics.forElement(nameReference).firstNotNullResult {
             if (it.factory == Errors.RESOLUTION_TO_CLASSIFIER) getFunctionDescriptor(Errors.RESOLUTION_TO_CLASSIFIER.cast(it)) else null
         } ?: return
         val functionName = functionDescriptor.name.asString()
-        SamConversionToAnonymousObjectIntention.convertToAnonymousObject(call, functionDescriptor, functionName)
+        SamConversionToAnonymousObjectIntention.convertToAnonymousObject(call, lambda, functionDescriptor, functionName)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -43,7 +44,8 @@ class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQu
             val casted = Errors.RESOLUTION_TO_CLASSIFIER.cast(diagnostic)
             if (casted.b != WrongResolutionToClassifier.INTERFACE_AS_FUNCTION) return null
             val nameReference = casted.psiElement as? KtNameReferenceExpression ?: return null
-            if (nameReference.parent as? KtCallExpression == null) return null
+            val call = nameReference.parent as? KtCallExpression ?: return null
+            if (SamConversionToAnonymousObjectIntention.getLambdaExpression(call) == null) return null
             if (getFunctionDescriptor(casted) == null) return null
             return ConvertToAnonymousObjectFix(nameReference)
         }

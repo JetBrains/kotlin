@@ -28,6 +28,8 @@ interface FirModifiableQualifiedAccess : FirQualifiedAccessWithoutCallee {
     override var extensionReceiver: FirExpression
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
+
     override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
 
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess

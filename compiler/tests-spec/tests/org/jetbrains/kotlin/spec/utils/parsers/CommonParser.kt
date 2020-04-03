@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.parsers
 
-import org.jetbrains.kotlin.spec.utils.SpecTestInfoElementContent
-import org.jetbrains.kotlin.spec.utils.SpecTestInfoElementType
-import org.jetbrains.kotlin.spec.utils.SpecTestLinkedType
-import org.jetbrains.kotlin.spec.utils.TestFiles
+import org.jetbrains.kotlin.spec.utils.*
 import org.jetbrains.kotlin.spec.utils.models.*
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testInfoElementPattern
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testPathBaseRegexTemplate
@@ -45,6 +42,32 @@ object CommonParser {
             Pair(parseNotLinkedSpecTest(testFilePath, files), SpecTestLinkedType.NOT_LINKED)
         else ->
             throw SpecTestValidationException(SpecTestValidationFailedReason.FILENAME_NOT_VALID)
+    }
+
+    fun parseImplementationTest(file: File, testArea: TestArea): LinkedSpecTest? {
+        val matcher = ImplementationTestPatterns.testInfoPattern.matcher(file.readText())
+
+        if (!matcher.find())
+            return null
+
+        val testType = TestType.fromValue(matcher.group("testType"))
+            ?: throw SpecTestValidationException(SpecTestValidationFailedReason.TESTINFO_NOT_VALID)
+        val specVersion = matcher.group("specVersion")
+        val testSpecSentenceList = matcher.group("testSpecSentenceList")
+        val specSentenceListMatcher = ImplementationTestPatterns.relevantSpecSentencesPattern.matcher(testSpecSentenceList)
+        val specPlaces = mutableListOf<SpecPlace>()
+
+        while (specSentenceListMatcher.find()) {
+            specPlaces.add(
+                SpecPlace(
+                    sections = specSentenceListMatcher.group("specSections").split(Regex(""",\s*""")),
+                    paragraphNumber = specSentenceListMatcher.group("specParagraph").toInt(),
+                    sentenceNumber = specSentenceListMatcher.group("specSentence").toInt()
+                )
+            )
+        }
+
+        return LinkedSpecTest.getInstanceForImplementationTest(specVersion, testArea, testType, specPlaces, file.nameWithoutExtension)
     }
 
     private fun createSpecPlace(placeMatcher: Matcher, basePlaceMatcher: Matcher = placeMatcher) =
@@ -120,7 +143,15 @@ object CommonParser {
                 SpecTestValidationFailedReason.TESTINFO_NOT_VALID,
                 "Unknown '$testInfoOriginalElementName' test info element name."
             )
-            val testInfoElementValue = testInfoElementMatcher.group("value")
+            val testInfoElementValue: String?
+            testInfoElementValue = if (testInfoOriginalElementName == "RELEVANT PLACES") {
+                val relevantPlacesMatcher = LinkedSpecTestPatterns.relevantPlaces.matcher(rawElements)
+                if (relevantPlacesMatcher.find()) {
+                    relevantPlacesMatcher.group("places")
+                } else throw Exception("Relevant link is incorrect")
+            } else {
+                testInfoElementMatcher.group("value")
+            }
             val testInfoElementValueMatcher = testInfoElementName.valuePattern?.matcher(testInfoElementValue)
 
             if (testInfoElementValueMatcher != null && !testInfoElementValueMatcher.find())
@@ -130,7 +161,7 @@ object CommonParser {
                 )
 
             testInfoElementsMap[testInfoElementName] =
-                    SpecTestInfoElementContent(testInfoElementValue ?: "", testInfoElementValueMatcher)
+                SpecTestInfoElementContent(testInfoElementValue ?: "", testInfoElementValueMatcher)
         }
 
         rules.forEach {

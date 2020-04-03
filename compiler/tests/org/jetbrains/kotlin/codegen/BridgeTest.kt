@@ -52,7 +52,7 @@ class BridgeTest : TestCase() {
         return Fun(text)
     }
 
-    private fun bridge(from: Fun, to: Fun): Bridge<Meth> = Bridge(Meth(from), Meth(to))
+    private fun bridge(from: Fun, to: Fun): Bridge<Meth, Fun> = Bridge(Meth(from), Meth(to), emptySet())
 
     /**
      * Constructs a graph out of the given pairs of vertices. First vertex should be a function in the derived class,
@@ -125,13 +125,17 @@ class BridgeTest : TestCase() {
         }
     }
 
-    private fun doTest(function: Fun, expectedBridges: Set<Bridge<Meth>>) {
+    private fun doTest(function: Fun, expectedBridges: Set<Bridge<Meth, Fun>>) {
         val actualBridges = generateBridges(function, ::Meth)
-        assert(actualBridges.firstOrNull { it.from == it.to } == null) {
+        assert(actualBridges.all { it.from != it.to }) {
             "A bridge invoking itself was generated, which makes no sense, since it will result in StackOverflowError" +
                     " once called: $actualBridges"
         }
-        assertEquals(expectedBridges, actualBridges, "Expected and actual bridge sets differ for function $function")
+        assertEquals(
+            expectedBridges.map { it.from to it.to },
+            actualBridges.map { it.from to it.to },
+            "Expected and actual bridge sets differ for function $function"
+        )
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -473,7 +477,7 @@ class BridgeTest : TestCase() {
         graph(c to a, e to d, f to b, f to c, f to e)
         doTest(e, setOf())
         // Although "a" is a concrete declaration, it's overridden with abstract in "c" and all bridges should delegate to "d" instead
-        doTest(f, setOf(bridge(a, d), bridge(b, d), bridge(c, d)))
+        doTest(f, setOf(bridge(b, d), bridge(a, d), bridge(c, d)))
     }
 
     // Fake override overrides another fake override (or declaration) with some bridges already present there

@@ -6,7 +6,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {

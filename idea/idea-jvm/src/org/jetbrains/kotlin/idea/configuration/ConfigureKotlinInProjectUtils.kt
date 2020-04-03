@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
 import org.jetbrains.kotlin.idea.util.isDev
@@ -41,6 +44,8 @@ import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.utils.ifEmpty
+
+private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils")
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
@@ -78,11 +83,11 @@ fun devRepository(version: String) = RepositoryDescription(
     isSnapshot = false
 )
 
-val MAVEN_CENTRAL = "mavenCentral()"
+const val MAVEN_CENTRAL = "mavenCentral()"
 
-val JCENTER = "jcenter()"
+const val JCENTER = "jcenter()"
 
-val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
+const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 fun isRepositoryConfigured(repositoriesBlockText: String): Boolean =
     repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
@@ -122,8 +127,13 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
 /**
  * Returns a list of modules which contain sources in Kotlin.
  * Note that this method is expensive and should not be called more often than strictly necessary.
+ *
+ * DO NOT CALL THIS ON AWT THREAD
  */
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
+    if (!isUnitTestMode() && ApplicationManager.getApplication().isDispatchThread) {
+        LOG.error("getModulesWithKotlinFiles could be a heavy operation and should not be call on AWT thread")
+    }
     if (!runReadAction {
             !project.isDisposed &&
                     FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -34,9 +23,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
     KtForExpression::class.java,
-    KotlinBundle.message("add.indices.to.for.loop")
-),
-    LowPriorityAction {
+    KotlinBundle.lazyMessage("add.indices.to.for.loop"),
+), LowPriorityAction {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES: Set<String> by lazy {
         sequenceOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
@@ -88,8 +76,7 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         val templateBuilder = TemplateBuilderImpl(forExpression)
         templateBuilder.replaceElement(indexVariable, ChooseStringExpression(listOf("index", "i")))
 
-        val body = forExpression.body
-        when (body) {
+        when (val body = forExpression.body) {
             is KtBlockExpression -> {
                 val statement = body.statements.firstOrNull()
                 if (statement != null) {
@@ -107,10 +94,9 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         templateBuilder.run(editor, true)
     }
 
-    private fun createWithIndexExpression(originalExpression: KtExpression, reformat: Boolean): KtExpression {
-        return KtPsiFactory(originalExpression).createExpressionByPattern(
+    private fun createWithIndexExpression(originalExpression: KtExpression, reformat: Boolean): KtExpression =
+        KtPsiFactory(originalExpression).createExpressionByPattern(
             "$0.$WITH_INDEX_NAME()", originalExpression,
             reformat = reformat
         )
-    }
 }

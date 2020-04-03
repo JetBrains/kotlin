@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
-class KotlinJavascriptMavenConfigurator :
-    KotlinMavenConfigurator(null, false, NAME, PRESENTABLE_TEXT) {
+class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(null, false, NAME, PRESENTABLE_TEXT) {
 
     override fun getStdlibArtifactId(module: Module, version: String) = MAVEN_JS_STDLIB_ID
 
@@ -53,6 +52,6 @@ class KotlinJavascriptMavenConfigurator :
 
     companion object {
         private const val NAME = "js maven"
-        private val PRESENTABLE_TEXT = KotlinMavenBundle.message("configure.javascript.with.maven")
+        private val PRESENTABLE_TEXT get() = KotlinMavenBundle.message("configure.javascript.with.maven")
     }
 }

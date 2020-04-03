@@ -7,7 +7,7 @@ class B: A() {
         <!UNRESOLVED_REFERENCE!>invoke<!>()
 
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> {
-            println('weird')
+            println(<!ILLEGAL_CONST_EXPRESSION!>'weird'<!>)
         }
     }
 }

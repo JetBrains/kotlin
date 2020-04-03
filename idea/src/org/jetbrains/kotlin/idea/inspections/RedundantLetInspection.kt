@@ -33,7 +33,7 @@ abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtC
 
     final override fun inspectionHighlightRangeInElement(element: KtCallExpression) = element.calleeExpression?.textRangeIn(element)
 
-    final override val defaultFixText = KotlinBundle.message("remove.let.call")
+    final override val defaultFixText get() = KotlinBundle.message("remove.let.call")
 
     final override fun isApplicable(element: KtCallExpression): Boolean {
         if (!element.isLetMethodCall()) return false

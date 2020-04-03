@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = KotlinMavenBundle.message("fix.move.to.compile.execution")
+    override fun getFamilyName() = KotlinMavenBundle.message("fix.move.to.execution.family")
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
@@ -96,7 +96,7 @@ class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction
 }
 
 class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = KotlinMavenBundle.message("fix.move.to.build.sourceDirectory.tag")
+    override fun getFamilyName() = KotlinMavenBundle.message("fix.move.to.build.family")
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {

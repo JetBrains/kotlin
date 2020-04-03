@@ -7,6 +7,6 @@ fun Base.foo() {
     class B : Base {
         constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>(foo1())
         constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>(this@foo.foo1())
-        constructor(x: Int, y: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>(this@B.foo1())
+        constructor(x: Int, y: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>(this@B.<!UNRESOLVED_REFERENCE!>foo1<!>())
     }
 }

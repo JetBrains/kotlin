@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
 import org.jetbrains.kotlin.platform.TargetPlatform;
-import org.jetbrains.kotlin.platform.konan.KonanPlatformKt;
+import org.jetbrains.kotlin.platform.konan.NativePlatformKt;
 import org.jetbrains.plugins.gradle.execution.build.CachedModuleDataFinder;
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
@@ -152,7 +152,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             else {
                 projectName = projectFile.getName();
             }
-            String executionName = KotlinIdeaGradleBundle.message("build.0", projectName);
+            String executionName = KotlinIdeaGradleBundle.message("build.0.project", projectName);
             settings.setExecutionName(executionName);
             settings.setExternalProjectPath(rootProjectPath);
             settings.setTaskNames(ContainerUtil.collect(ContainerUtil.concat(cleanTasks, buildTasks).iterator()));
@@ -302,7 +302,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getTargetPlatform();
         if (platform == null) return false;
 
-        return KonanPlatformKt.isNative(platform);
+        return NativePlatformKt.isNative(platform);
     }
 
     private static boolean isCommonProductionSourceModule(Module module) {

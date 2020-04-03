@@ -95,7 +95,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    interface B : A { class DefaultImpls { fun foo() = A.DefaultImpls.foo() } }
                  *    ```
                  */
-                function.origin == IrDeclarationOrigin.FAKE_OVERRIDE -> {
+                function.isFakeOverride -> {
                     // We check to see if this is a default stub function BEFORE finding the implementation because of a front-end bug
                     // (KT-36188) where there could be multiple implementations. (resolveFakeOverride() only returns the implementation if
                     // there's only one.)

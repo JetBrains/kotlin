@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.psi2ir.transformations
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -62,7 +59,7 @@ internal class InsertImplicitCasts(
     private val builtIns: KotlinBuiltIns,
     private val irBuiltIns: IrBuiltIns,
     private val typeTranslator: TypeTranslator,
-    private val callToSubstitutedDescriptorMap: Map<IrMemberAccessExpression, CallableDescriptor>,
+    private val callToSubstitutedDescriptorMap: Map<IrDeclarationReference, CallableDescriptor>,
     private val generatorExtensions: GeneratorExtensions
 ) : IrElementTransformerVoid() {
 
@@ -84,7 +81,7 @@ internal class InsertImplicitCasts(
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    private val IrMemberAccessExpression.substitutedDescriptor
+    private val IrDeclarationReference.substitutedDescriptor
         get() = callToSubstitutedDescriptorMap[this] ?: symbol.descriptor as CallableDescriptor
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression {
@@ -189,13 +186,14 @@ internal class InsertImplicitCasts(
 
     override fun visitGetField(expression: IrGetField): IrExpression =
         expression.transformPostfix {
-            receiver = receiver?.cast(getEffectiveDispatchReceiverType(expression.symbol.descriptor))
+            receiver = receiver?.cast(getEffectiveDispatchReceiverType(expression.substitutedDescriptor))
         }
 
     override fun visitSetField(expression: IrSetField): IrExpression =
         expression.transformPostfix {
-            receiver = receiver?.cast(getEffectiveDispatchReceiverType(expression.symbol.descriptor))
-            value = value.cast(expression.symbol.descriptor.type)
+            val substituted = expression.substitutedDescriptor as PropertyDescriptor
+            receiver = receiver?.cast(getEffectiveDispatchReceiverType(substituted))
+            value = value.cast(substituted.type)
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =

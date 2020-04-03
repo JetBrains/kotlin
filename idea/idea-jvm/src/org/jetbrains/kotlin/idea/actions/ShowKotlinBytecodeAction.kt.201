@@ -27,14 +27,12 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.internal.KotlinBytecodeToolWindow
 
 class ShowKotlinBytecodeAction : AnAction() {
-    val TOOLWINDOW_ID = "Kotlin Bytecode"
-
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val toolWindowManager = ToolWindowManager.getInstance(project)
 
         val toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID) ?: toolWindowManager.registerToolWindow(
-            "Kotlin Bytecode",
+            TOOLWINDOW_ID,
             false,
             ToolWindowAnchor.RIGHT,
         )
@@ -50,5 +48,9 @@ class ShowKotlinBytecodeAction : AnAction() {
     override fun update(e: AnActionEvent) {
         val file = e.getData(CommonDataKeys.PSI_FILE)
         e.presentation.isEnabled = e.project != null && file?.fileType == KotlinFileType.INSTANCE
+    }
+
+    companion object {
+        const val TOOLWINDOW_ID = "Kotlin Bytecode"
     }
 }

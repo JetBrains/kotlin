@@ -25,9 +25,6 @@ data class YarnLock(val entries: List<Entry>) {
     }
 
     companion object {
-        val Entry.dependencyKey: String
-            get() = key.replace("@github:", "@")
-
         fun dependencyKey(packageKey: String, version: String) = "$packageKey@$version"
 
         private class Node(val parent: Node?, val value: String? = null) {

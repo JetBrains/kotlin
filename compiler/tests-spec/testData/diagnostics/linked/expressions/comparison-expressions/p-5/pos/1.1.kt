@@ -7,6 +7,7 @@
  *
  * SPEC VERSION: 0.1-218
  * PLACE: expressions, comparison-expressions -> paragraph 5 -> sentence 1
+ * RELEVANT PLACES: overloadable-operators -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: All comparison expressions always have type kotlin.Boolean.
  * HELPERS: checkType

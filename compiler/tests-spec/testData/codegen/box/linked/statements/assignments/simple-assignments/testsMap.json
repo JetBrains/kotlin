@@ -1,0 +1,136 @@
+{
+  "6": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "7": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "If a property has a setter, it is called using the right-hand side expression as its argument;",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "If a property has a setter (including delegated properties), it is called using the right-hand side expression as its argument",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "If a property has a setter, it is called using the right-hand side expression as its argument;",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.6.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "If a property has a setter, it is called using the right-hand side expression as its argument;",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.7.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.8.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "If a property has a setter (including delegated properties), it is called using the right-hand side expression as its argument",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 0,
+          "description": "check if a property has a setter, it is called using the right-hand side expression as its argument;If the left-hand side of an assignment refers to a mutable property through the usage of safe navigation operator (?.)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "If a property has a setter, it is called using the right-hand side expression as its argument;",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

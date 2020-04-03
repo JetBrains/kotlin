@@ -27,7 +27,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.16")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
     }
 }
 
@@ -59,6 +59,8 @@ include ":kotlin-build-common",
         ":benchmarks",
         ":compiler",
         ":compiler:util",
+        ":compiler:config",
+        ":compiler:config.jvm",
         ":kotlin-util-io",
         ":kotlin-util-klib",
         ":kotlin-util-klib-metadata",
@@ -80,7 +82,7 @@ include ":kotlin-build-common",
         ":compiler:fir:cones",
         ":compiler:fir:tree",
         ":compiler:fir:tree:tree-generator",
-        ":compiler:fir:raw-fir:common",
+        ":compiler:fir:raw-fir:fir-common",
         ":compiler:fir:raw-fir:psi2fir",
         ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:fir2ir",
@@ -112,6 +114,7 @@ include ":kotlin-build-common",
         ":compiler:backend",
         ":compiler:plugin-api",
         ":compiler:light-classes",
+        ":compiler:javac-wrapper",
         ":compiler:cli",
         ":compiler:cli-js",
         ":compiler:cli-js-klib",
@@ -124,6 +127,7 @@ include ":kotlin-build-common",
         ":js:js.ast",
         ":js:js.serializer",
         ":js:js.parser",
+        ":js:js.config",
         ":js:js.engines",
         ":js:js.frontend",
         ":js:js.translator",

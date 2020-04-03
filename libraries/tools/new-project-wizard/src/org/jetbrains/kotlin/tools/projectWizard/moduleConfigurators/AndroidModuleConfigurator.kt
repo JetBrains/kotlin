@@ -5,31 +5,32 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.PluginSettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
+import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
@@ -41,23 +42,21 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     GradleModuleConfigurator {
 
     override val moduleType: ModuleType
-        get() = ModuleType.jvm
-    override val greyText: String
-        get() = "Requires Android SDK"
+        get() = ModuleType.android
 
     override fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> =
         listOf(AndroidPlugin::androidSdkPath.reference)
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +GradleOnlyPluginByNameIR(readingContext.createAndroidPlugin(module).pluginName)
+        +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName)
 
         +GradleOnlyPluginByNameIR("kotlin-android-extensions")
         +AndroidConfigIR(
-            when (readingContext.createAndroidPlugin(module)) {
+            when (reader.createAndroidPlugin(module)) {
                 AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
                 AndroidGradlePlugin.LIBRARY -> null
             }
@@ -65,16 +64,16 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         +createRepositories(configurationData.kotlinVersion).map(::RepositoryIR)
     }
 
-    fun ReadingContext.createAndroidPlugin(module: Module): AndroidGradlePlugin
+    fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin
 
-    override fun ReadingContext.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
+    override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
         +createRepositories(KotlinPlugin::version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
         +AndroidResolutionStrategyIR(Versions.GradlePlugins.ANDROID)
     }
 
     override fun createModuleIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         buildList {
@@ -86,7 +85,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         }
 
 
-    override fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
+    override fun createStdlibType(configurationData: ModulesToIrConversionData, module: Module): StdlibType? =
         StdlibType.StdlibJdk7
 
     object FileTemplateDescriptors {
@@ -127,9 +126,11 @@ object AndroidTargetConfigurator : TargetConfigurator,
     SingleCoexistenceTargetConfigurator,
     ModuleConfiguratorSettings() {
     override val moduleSubType = ModuleSubType.android
-    override val moduleType = ModuleType.jvm
+    override val moduleType = ModuleType.android
 
-    override fun ReadingContext.createAndroidPlugin(module: Module): AndroidGradlePlugin =
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
+
+    override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         withSettingsOf(module) { androidPlugin.reference.settingValue }
 
     override fun getConfiguratorSettings() = buildList<ModuleConfiguratorSetting<*, *>> {
@@ -137,13 +138,13 @@ object AndroidTargetConfigurator : TargetConfigurator,
         +androidPlugin
     }
 
-    override fun WritingContext.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+    override fun Writer.runArbitraryTask(
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
         val javaPackage = module.javaPackage(configurationData.pomIr)
-        val settings = mapOf("package" to javaPackage)
+        val settings = mapOf("package" to javaPackage.asCodePackage())
         TemplatesPlugin::addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidanifestForLibraryXml, modulePath, settings)
@@ -151,10 +152,19 @@ object AndroidTargetConfigurator : TargetConfigurator,
         )
     }
 
-    val androidPlugin by enumSetting<AndroidGradlePlugin>("Android Library", neededAtPhase = GenerationPhase.PROJECT_GENERATION)
+    val androidPlugin by enumSetting<AndroidGradlePlugin>(
+        KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin"),
+        neededAtPhase = GenerationPhase.PROJECT_GENERATION
+    )
 }
 
-enum class AndroidGradlePlugin(override val text: String, val pluginName: String) : DisplayableSettingItem {
-    APPLICATION("Android Application", "com.android.application"),
-    LIBRARY("Android Library", "com.android.library")
+enum class AndroidGradlePlugin(override val text: String, @NonNls val pluginName: String) : DisplayableSettingItem {
+    APPLICATION(
+        KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin.application"),
+        "com.android.application"
+    ),
+    LIBRARY(
+        KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin.library"),
+        "com.android.library"
+    )
 }
