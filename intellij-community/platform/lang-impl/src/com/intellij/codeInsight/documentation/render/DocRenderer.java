@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -171,8 +172,10 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   private int calcInlayStartX() {
+    RangeHighlighter highlighter = myItem.highlighter;
+    if (!highlighter.isValid()) return 0;
     Document document = myItem.editor.getDocument();
-    int lineStartOffset = document.getLineStartOffset(document.getLineNumber(myItem.highlighter.getEndOffset()) + 1);
+    int lineStartOffset = document.getLineStartOffset(document.getLineNumber(highlighter.getEndOffset()) + 1);
     int contentStartOffset = CharArrayUtil.shiftForward(document.getImmutableCharSequence(), lineStartOffset, " \t\n");
     return myItem.editor.offsetToXY(contentStartOffset, false, true).x;
   }
