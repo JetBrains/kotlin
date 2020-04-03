@@ -21,7 +21,7 @@ for s in $SDKS; do
   tarball_var=TARBALL_${s}
   tarball=${!tarball_var}
   echo "Packing SDK $s as $OUT/$tarball.tar.gz..."
-  $SHELL -c "tar czf $OUT/$tarball.tar.gz -C $p -s '/^\./$tarball/'  ."
+  $SHELL -c "tar czf $OUT/$tarball.tar.gz -C $p -s '/^\./$tarball/HS'  ."
 done
 
 t=`xcrun -f ld`
@@ -29,11 +29,11 @@ t=`dirname $t`
 t=`grealpath $t/../..`
 tarball=$TARBALL_xcode
 echo "Packing toolchain $OUT/$tarball.tar.gz..."
-$SHELL -c "tar czf $OUT/$tarball.tar.gz -C $t -s '/^\./$tarball/'  ."
+$SHELL -c "tar czf $OUT/$tarball.tar.gz -C $t -s '/^\./$tarball/HS'  ."
 
 t=`xcrun -f bitcode-build-tool`
 t=`dirname $t`
 t=`grealpath $t/..`
 tarball=$TARBALL_xcode_addon
 echo "Packing additional tools $OUT/$tarball.tar.gz..."
-$SHELL -c "tar czf $OUT/$tarball.tar.gz -C $t -s '/^\./$tarball/'  ."
+$SHELL -c "tar czf $OUT/$tarball.tar.gz -C $t -s '/^\./$tarball/HS'  ."
