@@ -5250,6 +5250,159 @@ public fun CharArray.reverse(): Unit {
 }
 
 /**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun <T> Array<T>.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun ByteArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun ShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun IntArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun LongArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun FloatArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun DoubleArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun BooleanArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
+ * Reverses elements of the array in the specified range in-place.
+ */
+@SinceKotlin("1.4")
+public fun CharArray.reverse(fromIndex: Int, toIndex: Int): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val midPoint = (fromIndex + toIndex) / 2
+    if (fromIndex == midPoint) return
+    var reverseIndex = toIndex - 1
+    for (index in fromIndex until midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
+
+/**
  * Returns a list with elements in reversed order.
  */
 public fun <T> Array<out T>.reversed(): List<T> {
@@ -7752,11 +7905,165 @@ public expect fun CharArray.sort(): Unit
 public expect fun <T : Comparable<T>> Array<out T>.sort(): Unit
 
 /**
+ * Sorts a range in the array in-place.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable
+ */
+@SinceKotlin("1.4")
+public expect fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+public expect fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+@SinceKotlin("1.4")
+public fun <T : Comparable<T>> Array<out T>.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sortWith(reverseOrder(), fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun ByteArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun ShortArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun IntArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun LongArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun FloatArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun DoubleArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
+ * Sorts elements of the array in the specified range in-place.
+ * The elements are sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.4")
+public fun CharArray.sortDescending(fromIndex: Int, toIndex: Int): Unit {
+    sort(fromIndex, toIndex)
+    reverse(fromIndex, toIndex)
+}
+
+/**
  * Sorts the array in-place according to the order specified by the given [comparator].
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
+
+/**
+ * Sorts a range in the array in-place with the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit
 
 /**
  * Returns an array of Boolean containing all of the elements of this generic array.

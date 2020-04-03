@@ -53,6 +53,32 @@ object Ordering : TemplateGroupBase() {
         }
     }
 
+    val f_reverse_range = fn("reverse(fromIndex: Int, toIndex: Int)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
+    } builder {
+        since("1.4")
+        doc { "Reverses elements of the ${f.collection} in the specified range in-place." }
+        returns("Unit")
+        body {
+            """
+            AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+            val midPoint = (fromIndex + toIndex) / 2
+            if (fromIndex == midPoint) return
+            var reverseIndex = toIndex - 1
+            for (index in fromIndex until midPoint) {
+                val tmp = this[index]
+                this[index] = this[reverseIndex]
+                this[reverseIndex] = tmp
+                reverseIndex--
+            }
+            """
+        }
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { """storage.reverse(fromIndex, toIndex)""" }
+        }
+    }
+
     val f_reversed = fn("reversed()") {
         include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, Strings)
     } builder {

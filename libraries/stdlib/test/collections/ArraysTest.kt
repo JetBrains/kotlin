@@ -1456,6 +1456,48 @@ class ArraysTest {
         doTest(build = { map {it.toUShort()}.toUShortArray() }, reverse = { reverse() }, snapshot = { toList() })
     }
 
+    @Test
+    fun reverseRangeInPlace() {
+
+        fun <TArray, T> doTest(
+            build: Iterable<Int>.() -> TArray,
+            reverse: TArray.(fromIndex: Int, toIndex: Int) -> Unit,
+            snapshot: TArray.() -> List<T>
+        ) {
+            val arrays = (0..7).map { n -> n to (0 until n).build() }
+            for ((size, array) in arrays) {
+                for (fromIndex in 0 until size) {
+                    for (toIndex in fromIndex..size) {
+                        val original = array.snapshot().toMutableList()
+                        array.reverse(fromIndex, toIndex)
+                        val reversed = array.snapshot()
+                        assertEquals(original.apply { subList(fromIndex, toIndex).reverse() }, reversed)
+                    }
+                }
+
+                assertFailsWith<IndexOutOfBoundsException> { array.reverse(-1, size) }
+                assertFailsWith<IndexOutOfBoundsException> { array.reverse(0, size + 1) }
+                assertFailsWith<IllegalArgumentException> { array.reverse(0, -1) }
+            }
+        }
+
+        doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+
+        doTest(build = { map {it}.toIntArray() },               reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toLong()}.toLongArray() },     reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toByte()}.toByteArray() },     reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toShort()}.toShortArray() },   reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toFloat()}.toFloatArray() },   reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toDouble()}.toDoubleArray() }, reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {'a' + it}.toCharArray() },        reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUInt()}.toUIntArray() },     reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toULong()}.toULongArray() },   reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUByte()}.toUByteArray() },   reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUShort()}.toUShortArray() }, reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+    }
+
 
     @Test fun reversed() {
         expect(listOf(3, 2, 1)) { intArrayOf(1, 2, 3).reversed() }
@@ -1818,6 +1860,120 @@ class ArraysTest {
         assertArrayNotSameButEquals(arrayOf("80", "9", "Foo", "all"), strArr)
         strArr.sortDescending()
         assertArrayNotSameButEquals(arrayOf("all", "Foo", "9", "80"), strArr)
+    }
+
+    @Test fun sortRange() {
+
+        fun <TArray, T : Comparable<T>> doTest(
+            build: Iterable<Int>.() -> TArray,
+            sort: TArray.(fromIndex: Int, toIndex: Int) -> Unit,
+            snapshot: TArray.() -> List<T>
+        ) {
+            val arrays = (0..7).map { n -> n to (-2 until n - 2).shuffled().build() }
+            for ((size, array) in arrays) {
+                for (fromIndex in 0 until size) {
+                    for (toIndex in fromIndex..size) {
+                        val original = array.snapshot().toMutableList()
+                        array.sort(fromIndex, toIndex)
+                        val sorted = array.snapshot()
+                        assertEquals(original.apply { subList(fromIndex, toIndex).sort() }, sorted)
+                    }
+                }
+
+                assertFailsWith<IndexOutOfBoundsException> { array.sort(-1, size) }
+                assertFailsWith<IndexOutOfBoundsException> { array.sort(0, size + 1) }
+                assertFailsWith<IllegalArgumentException> { array.sort(0, -1) }
+            }
+        }
+
+        doTest(build = { map {it.toString()}.toTypedArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+
+        doTest(build = { map {it}.toIntArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toLong()}.toLongArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toByte()}.toByteArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toShort()}.toShortArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toFloat()}.toFloatArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toDouble()}.toDoubleArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {'a' + it}.toCharArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUInt()}.toUIntArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toULong()}.toULongArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUByte()}.toUByteArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUShort()}.toUShortArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+    }
+
+    @Test
+    fun sortDescendingRangeInPlace() {
+
+        fun <TArray, T : Comparable<T>> doTest(
+            build: Iterable<Int>.() -> TArray,
+            sortDescending: TArray.(fromIndex: Int, toIndex: Int) -> Unit,
+            snapshot: TArray.() -> List<T>
+        ) {
+            val arrays = (0..7).map { n -> n to (-2 until n - 2).build() }
+            for ((size, array) in arrays) {
+                for (fromIndex in 0 until size) {
+                    for (toIndex in fromIndex..size) {
+                        val original = array.snapshot().toMutableList()
+                        array.sortDescending(fromIndex, toIndex)
+                        val reversed = array.snapshot()
+                        assertEquals(original.apply { subList(fromIndex, toIndex).sortDescending() }, reversed)
+                    }
+                }
+
+                assertFailsWith<IndexOutOfBoundsException> { array.sortDescending(-1, size) }
+                assertFailsWith<IndexOutOfBoundsException> { array.sortDescending(0, size + 1) }
+                assertFailsWith<IllegalArgumentException> { array.sortDescending(1, 0) }
+            }
+        }
+
+        doTest(build = { map {it.toString()}.toTypedArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+
+        doTest(build = { map {it}.toIntArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toLong()}.toLongArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toByte()}.toByteArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toShort()}.toShortArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toFloat()}.toFloatArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toDouble()}.toDoubleArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {'a' + it}.toCharArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUInt()}.toUIntArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toULong()}.toULongArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUByte()}.toUByteArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        doTest(build = { map {it.toUShort()}.toUShortArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+    }
+
+    @Test
+    fun sortDescendingRangeInPlace_Objects() {
+        data class Text(val data: String) : Comparable<Text> {
+            override fun compareTo(other: Text): Int = data.compareTo(other.data)
+        }
+
+        val first1 = Text("first")
+        val first2 = Text(first1.data)
+        val first3 = Text(first1.data)
+        val second1 = Text("second")
+        val second2 = Text(second1.data)
+        val third1 = Text("third")
+
+        assertEquals(first1, first2)
+        assertEquals(first1, first3)
+        assertNotSame(first1, first2)
+        assertNotSame(first1, first3)
+        assertNotSame(first2, first3)
+
+        assertEquals(second1, second2)
+        assertNotSame(second1, second2)
+
+        val original = arrayOf(first3, third1, second2, first2, first1, second1)
+        original.copyOf().apply { sortDescending(1, 5) }.forEachIndexed { i, e ->
+            assertSame(original[i], e)
+        }
+
+        val sorted = arrayOf(third1, second2, second1, first3, first2, first1)
+        original.apply { sortDescending(0, 6) }.forEachIndexed { i, e ->
+            assertSame(sorted[i], e)
+        }
     }
 
     @Test fun sortedTests() {

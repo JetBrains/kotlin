@@ -1556,14 +1556,23 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun reduceRightOrNull ([ZLkotlin/jvm/functions/Function2;)Ljava/lang/Boolean;
 	public static final fun requireNoNulls ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public static final fun reverse ([B)V
+	public static final fun reverse ([BII)V
 	public static final fun reverse ([C)V
+	public static final fun reverse ([CII)V
 	public static final fun reverse ([D)V
+	public static final fun reverse ([DII)V
 	public static final fun reverse ([F)V
+	public static final fun reverse ([FII)V
 	public static final fun reverse ([I)V
+	public static final fun reverse ([III)V
 	public static final fun reverse ([J)V
+	public static final fun reverse ([JII)V
 	public static final fun reverse ([Ljava/lang/Object;)V
+	public static final fun reverse ([Ljava/lang/Object;II)V
 	public static final fun reverse ([S)V
+	public static final fun reverse ([SII)V
 	public static final fun reverse ([Z)V
+	public static final fun reverse ([ZII)V
 	public static final fun reversed ([B)Ljava/util/List;
 	public static final fun reversed ([C)Ljava/util/List;
 	public static final fun reversed ([D)Ljava/util/List;
@@ -1692,6 +1701,7 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun sort ([III)V
 	public static final fun sort ([J)V
 	public static final fun sort ([JII)V
+	public static final fun sort ([Ljava/lang/Comparable;II)V
 	public static final fun sort ([Ljava/lang/Object;)V
 	public static final fun sort ([Ljava/lang/Object;II)V
 	public static final fun sort ([S)V
@@ -1702,18 +1712,27 @@ public final class kotlin/collections/ArraysKt {
 	public static synthetic fun sort$default ([FIIILjava/lang/Object;)V
 	public static synthetic fun sort$default ([IIIILjava/lang/Object;)V
 	public static synthetic fun sort$default ([JIIILjava/lang/Object;)V
+	public static synthetic fun sort$default ([Ljava/lang/Comparable;IIILjava/lang/Object;)V
 	public static synthetic fun sort$default ([Ljava/lang/Object;IIILjava/lang/Object;)V
 	public static synthetic fun sort$default ([SIIILjava/lang/Object;)V
 	public static final fun sortBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static final fun sortByDescending ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static final fun sortDescending ([B)V
+	public static final fun sortDescending ([BII)V
 	public static final fun sortDescending ([C)V
+	public static final fun sortDescending ([CII)V
 	public static final fun sortDescending ([D)V
+	public static final fun sortDescending ([DII)V
 	public static final fun sortDescending ([F)V
+	public static final fun sortDescending ([FII)V
 	public static final fun sortDescending ([I)V
+	public static final fun sortDescending ([III)V
 	public static final fun sortDescending ([J)V
+	public static final fun sortDescending ([JII)V
 	public static final fun sortDescending ([Ljava/lang/Comparable;)V
+	public static final fun sortDescending ([Ljava/lang/Comparable;II)V
 	public static final fun sortDescending ([S)V
+	public static final fun sortDescending ([SII)V
 	public static final fun sortWith ([Ljava/lang/Object;Ljava/util/Comparator;)V
 	public static final fun sortWith ([Ljava/lang/Object;Ljava/util/Comparator;II)V
 	public static synthetic fun sortWith$default ([Ljava/lang/Object;Ljava/util/Comparator;IIILjava/lang/Object;)V
@@ -2619,12 +2638,24 @@ public final class kotlin/collections/unsigned/UArraysKt {
 	public static final fun sliceArray-tAntMlw ([ILkotlin/ranges/IntRange;)[I
 	public static final fun sliceArray-xo_DsdI ([BLjava/util/Collection;)[B
 	public static final fun sort--ajY-9A ([I)V
+	public static final fun sort--nroSd4 ([JII)V
+	public static synthetic fun sort--nroSd4$default ([JIIILjava/lang/Object;)V
+	public static final fun sort-4UcCI2c ([BII)V
+	public static synthetic fun sort-4UcCI2c$default ([BIIILjava/lang/Object;)V
+	public static final fun sort-Aa5vz7o ([SII)V
+	public static synthetic fun sort-Aa5vz7o$default ([SIIILjava/lang/Object;)V
 	public static final fun sort-GBYM_sE ([B)V
 	public static final fun sort-QwZRm1k ([J)V
+	public static final fun sort-oBK06Vg ([III)V
+	public static synthetic fun sort-oBK06Vg$default ([IIIILjava/lang/Object;)V
 	public static final fun sort-rL5Bavg ([S)V
 	public static final fun sortDescending--ajY-9A ([I)V
+	public static final fun sortDescending--nroSd4 ([JII)V
+	public static final fun sortDescending-4UcCI2c ([BII)V
+	public static final fun sortDescending-Aa5vz7o ([SII)V
 	public static final fun sortDescending-GBYM_sE ([B)V
 	public static final fun sortDescending-QwZRm1k ([J)V
+	public static final fun sortDescending-oBK06Vg ([III)V
 	public static final fun sortDescending-rL5Bavg ([S)V
 	public static final fun sorted--ajY-9A ([I)Ljava/util/List;
 	public static final fun sorted-GBYM_sE ([B)Ljava/util/List;
