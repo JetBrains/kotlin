@@ -3910,6 +3910,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceInvoke"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
             }
 
+            @TestMetadata("dotQualifiedReceiver.kt")
+            public void testDotQualifiedReceiver() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/dotQualifiedReceiver.kt");
+            }
+
+            @TestMetadata("dotQualifiedReceiver2.kt")
+            public void testDotQualifiedReceiver2() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/dotQualifiedReceiver2.kt");
+            }
+
+            @TestMetadata("dotQualifiedReceiver3.kt")
+            public void testDotQualifiedReceiver3() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/dotQualifiedReceiver3.kt");
+            }
+
             @TestMetadata("expressionReceiver.kt")
             public void testExpressionReceiver() throws Exception {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/expressionReceiver.kt");

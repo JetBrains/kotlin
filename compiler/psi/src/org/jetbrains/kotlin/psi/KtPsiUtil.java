@@ -455,15 +455,21 @@ public class KtPsiUtil {
 
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
             KtCallExpression parentCall = (KtCallExpression) parentElement;
-            if (innerExpression instanceof KtSimpleNameExpression) return false;
+            KtExpression targetInnerExpression = innerExpression;
+            if (targetInnerExpression instanceof KtDotQualifiedExpression) {
+                KtExpression selector = ((KtDotQualifiedExpression) targetInnerExpression).getSelectorExpression();
+                if (selector != null) {
+                    targetInnerExpression = selector;
+                }
+            }
+            if (targetInnerExpression instanceof KtSimpleNameExpression) return false;
             if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentElement) != null) return true;
-            if (innerExpression instanceof KtCallExpression
-                && parentCall.getValueArgumentList() == null) return true;
-            return !(innerExpression instanceof KtThisExpression
-                     || innerExpression instanceof KtArrayAccessExpression
-                     || innerExpression instanceof KtConstantExpression
-                     || innerExpression instanceof KtStringTemplateExpression
-                     || innerExpression instanceof KtCallExpression);
+            if (targetInnerExpression instanceof KtCallExpression && parentCall.getValueArgumentList() == null) return true;
+            return !(targetInnerExpression instanceof KtThisExpression
+                     || targetInnerExpression instanceof KtArrayAccessExpression
+                     || targetInnerExpression instanceof KtConstantExpression
+                     || targetInnerExpression instanceof KtStringTemplateExpression
+                     || targetInnerExpression instanceof KtCallExpression);
         }
 
         if (parentElement instanceof KtValueArgument) {
