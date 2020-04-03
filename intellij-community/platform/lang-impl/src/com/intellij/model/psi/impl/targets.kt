@@ -44,7 +44,10 @@ private fun fromTargetEvaluator(file: PsiFile, offset: Int): Collection<Symbol> 
   val project = file.project
   val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return emptyList()
   val editor = mockEditor(project, document)
-  val targetElement = TargetElementUtil.getInstance().findTargetElement(editor, TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED, offset)
+  val flags = TargetElementUtil.getInstance().allAccepted and
+    TargetElementUtil.ELEMENT_NAME_ACCEPTED.inv() and
+    TargetElementUtil.LOOKUP_ITEM_ACCEPTED.inv()
+  val targetElement = TargetElementUtil.getInstance().findTargetElement(editor, flags, offset)
   if (targetElement != null) {
     return listOf(PsiSymbolService.getInstance().asSymbol(targetElement))
   }
