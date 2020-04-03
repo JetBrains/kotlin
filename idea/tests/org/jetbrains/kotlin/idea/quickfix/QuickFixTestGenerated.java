@@ -7086,6 +7086,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/keepOriginalIfQualified.kt");
             }
 
+            @TestMetadata("kt36225.kt")
+            public void testKt36225() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/kt36225.kt");
+            }
+
             @TestMetadata("noImplicitTypeArgImportRuntime.kt")
             public void testNoImplicitTypeArgImportRuntime() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/noImplicitTypeArgImportRuntime.kt");
