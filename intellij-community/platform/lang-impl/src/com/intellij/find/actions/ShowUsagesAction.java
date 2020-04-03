@@ -407,7 +407,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                            UsageViewBundle.message("usages.were.filtered.out.tooltip")) {
           @Override
           public void onSelected() {
-            restartShowUsagesWithFiltersToggled(unselectedActions, project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
+            // toggle back unselected toggle actions
+            toggleFilters(unselectedActions);
+            // and restart show usages in hope it will show filtered out items now
+            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
           }
         });
       }
@@ -501,21 +504,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     ));
   }
 
-  private static void restartShowUsagesWithFiltersToggled(@NotNull List<? extends ToggleAction> unselectedActions,
-                                                          @NotNull Project project,
-                                                          @Nullable Editor editor,
-                                                          @NotNull RelativePoint popupPosition,
-                                                          int maxUsages,
-                                                          @NotNull IntRef minWidth,
-                                                          @NotNull UsageSearchPresentation presentation,
-                                                          @NotNull UsageSearcher usageSearcher,
-                                                          @NotNull ShowUsagesActionHandler actionHandler) {
-    // toggle back unselected toggle actions and restart show usages in hope it will show filtered out items now
+  private static void toggleFilters(@NotNull List<? extends ToggleAction> unselectedActions) {
     for (ToggleAction action : unselectedActions) {
-      AnActionEvent fakeEvent = new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", action.getTemplatePresentation(), ActionManager.getInstance(), 0);
+      AnActionEvent fakeEvent = new AnActionEvent(
+        null, DataContext.EMPTY_CONTEXT, "", action.getTemplatePresentation(), ActionManager.getInstance(), 0
+      );
       action.actionPerformed(fakeEvent);
     }
-    showElementUsages(project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
   }
 
   @NotNull
