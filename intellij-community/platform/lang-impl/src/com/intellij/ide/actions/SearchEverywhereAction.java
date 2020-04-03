@@ -209,18 +209,18 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       @Override protected void updateToolTipText() {
         String shortcutText = getShortcut();
 
+        String classesTabName = String.join("/",GotoClassPresentationUpdater.getActionTitlePluralized());
         if (Registry.is("ide.helptooltip.enabled")) {
           HelpTooltip.dispose(this);
 
           new HelpTooltip()
             .setTitle(myPresentation.getText())
             .setShortcut(shortcutText)
-            .setDescription("Searches for:<br/> - Classes<br/> - Files<br/> - Tool Windows<br/> - Actions<br/> - Settings")
+            .setDescription(IdeBundle.message("search.everywhere.action.tooltip.description.text", classesTabName))
             .installOn(this);
         }
         else {
-          setToolTipText("<html><body>Search Everywhere<br/>Press <b>" + shortcutText +
-                         "</b> to access<br/> - Classes<br/> - Files<br/> - Tool Windows<br/> - Actions<br/> - Settings</body></html>");
+          setToolTipText(IdeBundle.message("search.everywhere.action.tooltip.text", shortcutText, classesTabName));
         }
       }
     };
