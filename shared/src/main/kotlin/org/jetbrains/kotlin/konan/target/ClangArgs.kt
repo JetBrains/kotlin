@@ -353,7 +353,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     }
 
     private val extraHostClangArgs =
-            if (configurables is LinuxConfigurables) {
+            if (configurables is GccConfigurables) {
                 listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}")
             } else {
                 emptyList()

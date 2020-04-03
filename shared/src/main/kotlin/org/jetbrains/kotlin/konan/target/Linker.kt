@@ -289,8 +289,8 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             listOf(dsymutil, "-dump-debug-map", executable)
 }
 
-open class LinuxBasedLinker(targetProperties: LinuxConfigurables)
-    : LinkerFlags(targetProperties), LinuxConfigurables by targetProperties {
+open class GccBasedLinker(targetProperties: GccConfigurables)
+    : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
     private val ar = if (HostManager.hostIsMac) "$absoluteTargetToolchain/bin/llvm-ar"
         else "$absoluteTargetToolchain/bin/ar"
@@ -486,7 +486,7 @@ fun linker(configurables: Configurables): LinkerFlags =
             KonanTarget.LINUX_X64,
             KonanTarget.LINUX_ARM32_HFP,  KonanTarget.LINUX_ARM64,
             KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
-                LinuxBasedLinker(configurables as LinuxConfigurables)
+                GccBasedLinker(configurables as GccConfigurables)
 
             KonanTarget.MACOS_X64,
             KonanTarget.TVOS_X64, KonanTarget.TVOS_ARM64,

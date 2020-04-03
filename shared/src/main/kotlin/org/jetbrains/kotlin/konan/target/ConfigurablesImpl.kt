@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.properties.*
 
-class LinuxConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : LinuxConfigurables, KonanPropertiesLoader(target, properties, baseDir)
+class GccConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
+    : GccConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 
 class AndroidConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : AndroidConfigurables, KonanPropertiesLoader(target, properties, baseDir)
@@ -37,7 +37,7 @@ class ZephyrConfigurablesImpl(target: KonanTarget, properties: Properties, baseD
 fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?): Configurables = when (target)  {
         KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM32_HFP, KonanTarget.LINUX_ARM64,
         KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
-            LinuxConfigurablesImpl(target, properties, baseDir)
+            GccConfigurablesImpl(target, properties, baseDir)
 
         KonanTarget.MACOS_X64,
         KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64,
