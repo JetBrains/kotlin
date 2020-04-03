@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSymbol>() {
     override fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
         return when (stub) {
-            is ObjCProtocol -> KtOCProtocolSymbol(StubAndProject(stubTrace, stub), file)
-            is ObjCInterface -> KtOCInterfaceSymbol(StubAndProject(stubTrace, stub), file)
+            is ObjCProtocol -> KtOCProtocolSymbol(TranslationState(stubTrace, stub), file)
+            is ObjCInterface -> KtOCInterfaceSymbol(TranslationState(stubTrace, stub), file)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 null

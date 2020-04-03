@@ -12,15 +12,15 @@ import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.VirtualFileOwner
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
-import org.jetbrains.konan.resolve.translation.StubAndProject
+import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 
 abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtLazySymbol<State, Stb>, VirtualFileOwner {
     @Transient
     private lateinit var file: VirtualFile
 
-    constructor(stubAndProject: StubAndProject<Stb>, file: VirtualFile)
-            : super(stubAndProject, stubAndProject.stub.name) {
+    constructor(translationState: TranslationState<Stb>, file: VirtualFile)
+            : super(translationState, translationState.stub.name) {
         this.file = file
     }
 

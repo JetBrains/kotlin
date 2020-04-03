@@ -8,14 +8,14 @@ import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftGenericParametersInfo
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
-import org.jetbrains.konan.resolve.translation.StubAndProject
+import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
 abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stb : ObjCClass<*>>
     : KtSwiftLazySymbol<State, Stb>, SwiftTypeSymbol {
 
-    constructor(stubAndProject: StubAndProject<Stb>, file: VirtualFile)
-            : super(stubAndProject, file)
+    constructor(translationState: TranslationState<Stb>, file: VirtualFile)
+            : super(translationState, file)
 
     constructor() : super()
 

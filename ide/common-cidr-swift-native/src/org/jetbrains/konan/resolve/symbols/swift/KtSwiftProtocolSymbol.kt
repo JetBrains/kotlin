@@ -11,7 +11,7 @@ import com.jetbrains.swift.symbols.SwiftAssociatedTypeSymbol
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftProtocolSymbol
 import com.jetbrains.swift.symbols.impl.SwiftAllMemberHolder
-import org.jetbrains.konan.resolve.translation.StubAndProject
+import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 
 class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolState, ObjCProtocol>, SwiftProtocolSymbol {
@@ -19,8 +19,8 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
     @Volatile
     private var myCachedMemberHolder: SwiftAllMemberHolder? = null
 
-    constructor(stubAndProject: StubAndProject<ObjCProtocol>, file: VirtualFile)
-            : super(stubAndProject, file)
+    constructor(translationState: TranslationState<ObjCProtocol>, file: VirtualFile)
+            : super(translationState, file)
 
     constructor() : super()
 

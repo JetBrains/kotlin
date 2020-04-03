@@ -6,6 +6,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.KonanBridgeFileManager"/>
     <projectService serviceImplementation="org.jetbrains.konan.resolve.KtModificationCount"/>
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.KtPendingTranslationsManager"/>
 
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFunctionOCUsagesSearcher"/>
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>

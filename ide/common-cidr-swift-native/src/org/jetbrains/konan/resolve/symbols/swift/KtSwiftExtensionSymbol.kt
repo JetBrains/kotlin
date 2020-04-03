@@ -9,12 +9,12 @@ import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftExtensionSymbol
-import org.jetbrains.konan.resolve.translation.StubAndProject
+import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 
 class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftExtensionSymbol.ExtensionState, ObjCInterface>, SwiftExtensionSymbol {
-    constructor(stubAndProject: StubAndProject<ObjCInterface>, file: VirtualFile)
-            : super(stubAndProject, file)
+    constructor(translationState: TranslationState<ObjCInterface>, file: VirtualFile)
+            : super(translationState, file)
 
     constructor() : super()
 

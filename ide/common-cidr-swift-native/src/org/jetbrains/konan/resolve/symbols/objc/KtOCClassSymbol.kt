@@ -19,15 +19,15 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCImplementationSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
-import org.jetbrains.konan.resolve.translation.StubAndProject
+import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
 abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCClass<*>> : KtOCLazySymbol<State, Stub>, OCClassSymbol {
     private lateinit var qualifiedName: OCQualifiedName
 
-    constructor(stubAndProject: StubAndProject<Stub>, file: VirtualFile)
-            : super(stubAndProject, file) {
-        qualifiedName = OCQualifiedName.interned(stubAndProject.stub.name)
+    constructor(translationState: TranslationState<Stub>, file: VirtualFile)
+            : super(translationState, file) {
+        qualifiedName = OCQualifiedName.interned(translationState.stub.name)
     }
 
     constructor() : super()

@@ -62,7 +62,13 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
         val resolveSession = resolutionFacade.frontendService<ResolveSession>()
         val deprecationResolver = resolutionFacade.frontendService<DeprecationResolver>()
 
-        return StubTrace(resolutionFacade, moduleDescriptor) to createObjCExportLazy(
+        val stubTrace = StubTrace(
+            file.virtualFile,
+            resolutionFacade,
+            moduleDescriptor
+        )
+
+        return stubTrace to createObjCExportLazy(
             configuration,
             ObjCExportWarningCollector.SILENT,
             resolveSession,

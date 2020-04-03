@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTypeSymbol<*, *>, SwiftMemberSymbol>() {
     override fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): KtSwiftTypeSymbol<*, *>? {
         return when (stub) {
-            is ObjCProtocol -> KtSwiftProtocolSymbol(StubAndProject(stubTrace, stub), file)
+            is ObjCProtocol -> KtSwiftProtocolSymbol(TranslationState(stubTrace, stub), file)
             is ObjCInterface -> when (stub.categoryName) {
-                null -> KtSwiftClassSymbol(StubAndProject(stubTrace, stub), file)
-                else -> KtSwiftExtensionSymbol(StubAndProject(stubTrace, stub), file)
+                null -> KtSwiftClassSymbol(TranslationState(stubTrace, stub), file)
+                else -> KtSwiftExtensionSymbol(TranslationState(stubTrace, stub), file)
             }
             else -> {
                 OCLog.LOG.error("unknown kotlin declaration: " + stub::class)
