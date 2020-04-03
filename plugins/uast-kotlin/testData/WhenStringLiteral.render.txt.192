@@ -2,15 +2,18 @@ public final class WhenStringLiteralKt {
     @org.jetbrains.annotations.Nullable private static final var a: java.lang.String = readLine()
     @org.jetbrains.annotations.NotNull private static final var b: int = switch (a)  {
         "abc" -> {
-            yield 1
+            1
+            break
         }
 
         "def", "ghi" -> {
-            yield 2
+            2
+            break
         }
 
          -> {
-            yield 3
+            3
+            break
         }
 
     }

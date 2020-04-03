@@ -14,20 +14,20 @@ UFile (package = )
                         UPolyadicExpression (operator = +)
                             ULiteralExpression (value = "abc")
                         UExpressionList (when_entry)
-                            UYieldExpression
-                                ULiteralExpression (value = 1)
+                            ULiteralExpression (value = 1)
+                            UBreakExpression (label = null)
                     USwitchClauseExpressionWithBody
                         UPolyadicExpression (operator = +)
                             ULiteralExpression (value = "def")
                         UPolyadicExpression (operator = +)
                             ULiteralExpression (value = "ghi")
                         UExpressionList (when_entry)
-                            UYieldExpression
-                                ULiteralExpression (value = 2)
+                            ULiteralExpression (value = 2)
+                            UBreakExpression (label = null)
                     USwitchClauseExpressionWithBody
                         UExpressionList (when_entry)
-                            UYieldExpression
-                                ULiteralExpression (value = 3)
+                            ULiteralExpression (value = 3)
+                            UBreakExpression (label = null)
         UMethod (name = getA)
         UMethod (name = getB)
         UMethod (name = <no name provided>)

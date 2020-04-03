@@ -193,10 +193,6 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     }
 
     if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {
-        val uYieldExpression = result.body.expressions.lastOrNull().safeAs<UYieldExpression>()
-        if (uYieldExpression != null && uYieldExpression.expression == element)
-            return uYieldExpression
-
         return result.body
     }
 

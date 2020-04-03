@@ -20,10 +20,10 @@ UFile (package = )
                             UPolyadicExpression (operator = +)
                                 ULiteralExpression (value = "aaaa")
                             UExpressionList (when_entry)
-                                UYieldExpression
-                                    UReturnExpression
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "bindingContext")
+                                UReturnExpression
+                                    UPolyadicExpression (operator = +)
+                                        ULiteralExpression (value = "bindingContext")
+                                UBreakExpression (label = null)
                         USwitchClauseExpressionWithBody
                             UExpressionList (when_entry)
                                 UDeclarationsExpression
@@ -44,6 +44,6 @@ UFile (package = )
                                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                                 UIdentifier (Identifier (component2))
                                                 USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
-                                UYieldExpression
-                                    UReturnExpression
-                                        USimpleNameReferenceExpression (identifier = bindingContext)
+                                UReturnExpression
+                                    USimpleNameReferenceExpression (identifier = bindingContext)
+                                UBreakExpression (label = null)
