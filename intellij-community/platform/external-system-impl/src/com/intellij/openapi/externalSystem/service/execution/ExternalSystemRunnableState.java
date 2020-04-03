@@ -279,8 +279,9 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
   @Nullable
   private String getJvmParametersSetup() throws ExecutionException {
     final SimpleJavaParameters extensionsJP = new SimpleJavaParameters();
-    ExternalSystemRunConfiguration.EP_NAME.forEachExtensionSafe(
-      extension -> extension.updateVMParameters(myConfiguration, extensionsJP, myEnv.getRunnerSettings(), myEnv.getExecutor()));
+    for (ExternalSystemRunConfigurationExtension extension : ExternalSystemRunConfiguration.EP_NAME.getExtensionList()) {
+      extension.updateVMParameters(myConfiguration, extensionsJP, myEnv.getRunnerSettings(), myEnv.getExecutor());
+    }
     String jvmParametersSetup = "";
     if (myDebugPort <= 0) {
       final ParametersList allVMParameters = new ParametersList();
