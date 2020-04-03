@@ -23,7 +23,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
 ) {
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR, arguments.useFir)
-    put(CommonConfigurationKeys.KLIB_MPP, arguments.klibBasedMpp)
+    put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
 
