@@ -110,7 +110,7 @@ class SerializableCompanionIrGenerator(
     }
 
     private fun generateSerializerFactoryIfNeeded(getterDescriptor: FunctionDescriptor) {
-        if (serializableDescriptor.declaredTypeParameters.isEmpty()) return
+        if (!companionDescriptor.needSerializerFactory()) return
         val serialFactoryDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
             SerialEntityNames.SERIALIZER_PROVIDER_NAME,
             NoLookupLocation.FROM_BACKEND

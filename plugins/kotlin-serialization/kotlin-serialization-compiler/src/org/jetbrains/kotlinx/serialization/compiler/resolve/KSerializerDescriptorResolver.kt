@@ -58,13 +58,6 @@ object KSerializerDescriptorResolver {
         }
     }
 
-    private fun ClassDescriptor.needSerializerFactory(): Boolean {
-        if (this.platform?.isNative() != true) return false
-        val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
-        if (serializableClass.declaredTypeParameters.isEmpty()) return false
-        return true
-    }
-
     fun addSerializerFactorySuperType(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         if (!classDescriptor.needSerializerFactory()) return
         val serializerFactoryClass =
