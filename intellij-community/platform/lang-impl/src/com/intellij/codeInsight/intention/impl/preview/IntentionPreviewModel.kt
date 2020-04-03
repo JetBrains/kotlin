@@ -47,15 +47,16 @@ internal class IntentionPreviewModel {
 
       lines.forEach { lineFragment -> reformatRange(project, psiFileCopy, lineFragment) }
 
-      return ComparisonManager.getInstance().compareLines(originalFile.text, psiFileCopy.text,
+      val fileText = psiFileCopy.text
+      return ComparisonManager.getInstance().compareLines(originalFile.text, fileText,
                                                           ComparisonPolicy.TRIM_WHITESPACES, DumbProgressIndicator.INSTANCE)
         .mapNotNull {
-          val start = StringUtil.lineColToOffset(psiFileCopy.text, it.startLine2, 0)
-          val end = StringUtil.lineColToOffset(psiFileCopy.text, it.endLine2, 0)
+          val start = StringUtil.lineColToOffset(fileText, it.startLine2, 0)
+          val end = StringUtil.lineColToOffset(fileText, it.endLine2, 0).let { pos -> if (pos == -1) fileText.length else pos }
 
           if (start >= end) return@mapNotNull null
 
-          var text = psiFileCopy.text.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
+          var text = fileText.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
           if (text.isBlank()) return@mapNotNull null
 
           text = text.lines().joinToString(separator = "\n") { line -> "$line    "}
