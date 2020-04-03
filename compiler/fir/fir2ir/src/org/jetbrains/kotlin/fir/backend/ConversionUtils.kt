@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.psi
@@ -97,7 +98,8 @@ fun FirReference.toSymbol(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
-    conversionScope: Fir2IrConversionScope
+    conversionScope: Fir2IrConversionScope,
+    preferGetter: Boolean = true
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference -> {
@@ -105,7 +107,7 @@ fun FirReference.toSymbol(
                 is FirCallableSymbol<*> -> {
                     val originalCallableSymbol =
                         resolvedSymbol.overriddenSymbol?.takeIf { it.callableId == resolvedSymbol.callableId } ?: resolvedSymbol
-                    originalCallableSymbol.toSymbol(declarationStorage)
+                    originalCallableSymbol.toSymbol(declarationStorage, preferGetter)
                 }
                 is FirClassifierSymbol<*> -> {
                     resolvedSymbol.toSymbol(session, classifierStorage)
@@ -130,8 +132,17 @@ fun FirReference.toSymbol(
     }
 }
 
-private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
+private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? = when (this) {
     is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
+    is SyntheticPropertySymbol -> {
+        (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
+            if (preferGetter) {
+                syntheticProperty.getter.delegate.symbol.toSymbol(declarationStorage, preferGetter)
+            } else {
+                syntheticProperty.setter!!.delegate.symbol.toSymbol(declarationStorage, preferGetter)
+            }
+        } ?: if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
+    }
     is FirPropertySymbol -> {
         if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
     }

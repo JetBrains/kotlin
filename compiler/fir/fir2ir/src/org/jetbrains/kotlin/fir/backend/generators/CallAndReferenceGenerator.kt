@@ -193,7 +193,7 @@ internal class CallAndReferenceGenerator(
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment): IrExpression {
         val type = irBuiltIns.unitType
         val calleeReference = variableAssignment.calleeReference
-        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
+        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
         val origin = IrStatementOrigin.EQ
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
@@ -214,6 +214,11 @@ internal class CallAndReferenceGenerator(
                             value = assignedValue
                         }
                         else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
+                    }
+                }
+                is IrSimpleFunctionSymbol -> {
+                    IrCallImpl(startOffset, endOffset, type, symbol, origin).apply {
+                        putValueArgument(0, assignedValue)
                     }
                 }
                 is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
