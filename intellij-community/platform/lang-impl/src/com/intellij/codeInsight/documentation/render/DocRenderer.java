@@ -142,11 +142,7 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   @Override
   public ActionGroup getContextMenuGroup(@NotNull Inlay inlay) {
-    return new DefaultActionGroup(getToggleAction(), new DocRenderItem.ChangeFontSize());
-  }
-
-  private AnAction getToggleAction() {
-    return Objects.requireNonNull(myItem.highlighter.getGutterIconRenderer()).getClickAction();
+    return new DefaultActionGroup(myItem.createToggleAction(), new DocRenderItem.ChangeFontSize());
   }
 
   private static int getTopMargin() {
