@@ -128,7 +128,8 @@ internal class KotlinNothingValueException : RuntimeException {
  * - the detailed description of each throwable in the [Throwable.cause] chain.
  */
 @SinceKotlin("1.4")
-public expect fun Throwable.toStringWithTrace(): String
+public expect fun Throwable.stackTraceToString(): String
+
 /**
  * When supported by the platform, adds the specified exception to the list of exceptions that were
  * suppressed in order to deliver this exception.

@@ -109,7 +109,7 @@ class ExceptionTest {
             e.apply { addSuppressed(suppressedError(2)) }
         }
 
-        val topLevelTrace = e.toStringWithTrace()
+        val topLevelTrace = e.stackTraceToString()
         fun assertInTrace(value: Any) {
             if (value.toString() !in topLevelTrace) {
                 fail("Expected top level trace: $topLevelTrace\n\nto contain: $value")
@@ -153,7 +153,7 @@ class ExceptionTest {
         e3.addSuppressed(e1)
         e2.addSuppressed(e1)
 
-        val topLevelTrace = e1.toStringWithTrace()
+        val topLevelTrace = e1.stackTraceToString()
         fun assertAppearsInTrace(value: Any, count: Int) {
             if (Regex.fromLiteral(value.toString()).findAll(topLevelTrace).count() != count) {
                 fail("Expected to find $value $count times in $topLevelTrace")

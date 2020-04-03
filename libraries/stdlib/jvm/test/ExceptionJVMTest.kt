@@ -53,7 +53,7 @@ class ExceptionJVMTest {
     }
 
     fun assertToStringWithTrace(t: Throwable) {
-        val content = t.toStringWithTrace()
+        val content = t.stackTraceToString()
         comparePrintedThrowableResult(t, content)
     }
 
@@ -88,7 +88,7 @@ class ExceptionJVMTest {
         assertSame(e1, e2.cause)
         assertSame(e2, e1.cause)
         testOnJvm7AndAbove {
-            val trace = e2.toStringWithTrace()
+            val trace = e2.stackTraceToString()
             assertTrue("CIRCULAR REFERENCE" in trace, trace)
         }
     }

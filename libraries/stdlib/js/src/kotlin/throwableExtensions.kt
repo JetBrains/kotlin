@@ -15,7 +15,7 @@ package kotlin
  * - the detailed description of each throwable in the [Throwable.cause] chain.
  */
 @SinceKotlin("1.4")
-public actual fun Throwable.toStringWithTrace(): String = ExceptionTraceBuilder().buildFor(this)
+public actual fun Throwable.stackTraceToString(): String = ExceptionTraceBuilder().buildFor(this)
 
 /**
  * Adds the specified exception to the list of exceptions that were

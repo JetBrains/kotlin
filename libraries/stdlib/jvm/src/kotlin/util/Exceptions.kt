@@ -14,21 +14,21 @@ import java.io.StringWriter
 import kotlin.internal.*
 
 /**
- * Prints the [detailed description][Throwable.toStringWithTrace] of this throwable to the standard error output.
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard error output.
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
 public inline fun Throwable.printStackTrace(): Unit = (this as java.lang.Throwable).printStackTrace()
 
 /**
- * Prints the [detailed description][Throwable.toStringWithTrace] of this throwable to the specified [writer].
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the specified [writer].
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
 public inline fun Throwable.printStackTrace(writer: PrintWriter): Unit = (this as java.lang.Throwable).printStackTrace(writer)
 
 /**
- * Prints the [detailed description][Throwable.toStringWithTrace] of this throwable to the specified [stream].
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the specified [stream].
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
@@ -52,7 +52,7 @@ public val Throwable.stackTrace: Array<StackTraceElement>
  * - the detailed description of each throwable in the [Throwable.cause] chain.
  */
 @SinceKotlin("1.4")
-public actual fun Throwable.toStringWithTrace(): String {
+public actual fun Throwable.stackTraceToString(): String {
     val sw = StringWriter()
     val pw = PrintWriter(sw)
     printStackTrace(pw)
