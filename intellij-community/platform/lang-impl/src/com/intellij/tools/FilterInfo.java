@@ -4,13 +4,11 @@ package com.intellij.tools;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.JDOMExternalizable;
-import java.util.Objects;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author dyoma
- */
+import java.util.Objects;
+
 public class FilterInfo implements JDOMExternalizable {
   @NonNls private static final String FILTER_NAME = "NAME";
   @NonNls private static final String FILTER_DESCRIPTION = "DESCRIPTION";

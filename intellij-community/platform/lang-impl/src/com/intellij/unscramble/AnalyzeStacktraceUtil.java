@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.unscramble;
 
@@ -34,7 +34,7 @@ import static com.intellij.openapi.application.ex.ClipboardUtil.getTextInClipboa
 /**
  * @author yole
  */
-public class AnalyzeStacktraceUtil {
+public final class AnalyzeStacktraceUtil {
   public static final ProjectExtensionPointName<Filter> EP_NAME = new ProjectExtensionPointName<>("com.intellij.analyzeStacktraceFilter");
 
   private AnalyzeStacktraceUtil() {
@@ -148,7 +148,7 @@ public class AnalyzeStacktraceUtil {
       return myEditor;
     }
 
-    public final void setText(@NotNull final String text) {
+    public final void setText(final @NotNull String text) {
       Runnable runnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
         final Document document = myEditor.getDocument();
         document.replaceString(0, document.getTextLength(), StringUtil.convertLineSeparators(text));
@@ -161,7 +161,6 @@ public class AnalyzeStacktraceUtil {
       if (text != null) {
         setText(text);
       }
-
     }
 
     @Override
