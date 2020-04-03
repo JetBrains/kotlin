@@ -23,7 +23,7 @@ import org.junit.Test
 class ImportAndCheckNavigation : MultiplePluginVersionGradleImportingTestCase() {
 
     @Test
-    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testNavigationToCommonizedLibrary() {
         val files = configureAndImportProject()
 

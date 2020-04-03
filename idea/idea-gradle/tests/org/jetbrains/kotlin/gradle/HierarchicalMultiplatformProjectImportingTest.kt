@@ -36,7 +36,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testImportHMPPFlag() {
         configureByFiles()
         importProject()
@@ -51,7 +51,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testImportIntermediateModules() {
         configureByFiles()
         importProject()
@@ -225,7 +225,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testJvmWithJavaOnHMPP() {
         configureByFiles()
         importProject()
