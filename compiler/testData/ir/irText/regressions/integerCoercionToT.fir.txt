@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX
     BLOCK_BODY
       CALL 'public final fun <set-value> <T_INT> (value: T_INT of <root>.<get-value>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <T_INT>: <none>
+        <T_INT>: kotlin.Int
         $receiver: GET_VAR 'cv: <root>.CInt32VarX declared in <root>.foo' type=<root>.CInt32VarX origin=null
         value: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IdType' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'value: <root>.IdType declared in <root>.foo' type=<root>.IdType origin=null

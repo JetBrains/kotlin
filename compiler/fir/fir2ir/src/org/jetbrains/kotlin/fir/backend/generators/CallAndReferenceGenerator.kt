@@ -219,7 +219,7 @@ internal class CallAndReferenceGenerator(
                 is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }.applyReceivers(variableAssignment)
+        }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment)
     }
 
     fun convertToIrConstructorCall(annotationCall: FirAnnotationCall): IrExpression {
