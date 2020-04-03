@@ -67,12 +67,6 @@ abstract class LinkerFlags(val configurables: Configurables)
     protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
     protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
 
-    private val libLTODir = when (HostManager.host) {
-        KonanTarget.MACOS_X64, KonanTarget.LINUX_X64 -> llvmLib
-        KonanTarget.MINGW_X64 -> llvmBin
-        else -> error("Don't know libLTO location for this platform.")
-    }
-
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
     // TODO: Number of arguments is quite big. Better to pass args via object.
@@ -295,8 +289,8 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             listOf(dsymutil, "-dump-debug-map", executable)
 }
 
-open class LinuxBasedLinker(targetProperties: LinuxBasedConfigurables)
-    : LinkerFlags(targetProperties), LinuxBasedConfigurables by targetProperties {
+open class LinuxBasedLinker(targetProperties: LinuxConfigurables)
+    : LinkerFlags(targetProperties), LinuxConfigurables by targetProperties {
 
     private val ar = if (HostManager.hostIsMac) "$absoluteTargetToolchain/bin/llvm-ar"
         else "$absoluteTargetToolchain/bin/ar"
@@ -323,7 +317,7 @@ open class LinuxBasedLinker(targetProperties: LinuxBasedConfigurables)
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
-        val isMips = (configurables is LinuxMIPSConfigurables)
+        val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = if (configurables.target == KonanTarget.LINUX_ARM64) "usr/lib" else "usr/lib64"
         // TODO: Can we extract more to the konan.configurables?
@@ -489,11 +483,10 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
 
 fun linker(configurables: Configurables): LinkerFlags =
         when (configurables.target) {
-            KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM32_HFP,  KonanTarget.LINUX_ARM64 ->
-                LinuxBasedLinker(configurables as LinuxConfigurables)
-
+            KonanTarget.LINUX_X64,
+            KonanTarget.LINUX_ARM32_HFP,  KonanTarget.LINUX_ARM64,
             KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
-                LinuxBasedLinker(configurables as LinuxMIPSConfigurables)
+                LinuxBasedLinker(configurables as LinuxConfigurables)
 
             KonanTarget.MACOS_X64,
             KonanTarget.TVOS_X64, KonanTarget.TVOS_ARM64,

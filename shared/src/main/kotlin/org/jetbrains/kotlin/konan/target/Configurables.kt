@@ -43,8 +43,6 @@ interface Configurables : TargetableExternalStorage {
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
     val linkerNoDebugFlags get() = targetList("linkerNoDebugFlags")
     val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
-    val llvmDebugOptFlags get() = targetList("llvmDebugOptFlags")
-    val llvmDebugLlcFlags get() = targetList("llvmDebugLlcFlags")
     val targetSysRoot get() = targetString("targetSysRoot")
 
     // Notice: these ones are host-target.
@@ -69,19 +67,15 @@ interface AppleConfigurables : Configurables, ClangFlags {
 
 interface MingwConfigurables : TargetableConfigurables, ClangFlags
 
-interface LinuxBasedConfigurables : TargetableConfigurables, ClangFlags {
+interface LinuxConfigurables : TargetableConfigurables, ClangFlags {
     val gccToolchain get() = hostString("gccToolchain")
     val absoluteGccToolchain get() = absolute(gccToolchain)
 
     val libGcc get() = targetString("libGcc")!!
     val dynamicLinker get() = targetString("dynamicLinker")!!
-    val pluginOptimizationFlags get() = targetList("pluginOptimizationFlags")
     val abiSpecificLibraries get() = targetList("abiSpecificLibraries")
 }
 
-interface LinuxConfigurables : LinuxBasedConfigurables
-interface LinuxMIPSConfigurables : LinuxBasedConfigurables
-interface RaspberryPiConfigurables : LinuxBasedConfigurables
 interface AndroidConfigurables : TargetableConfigurables, ClangFlags
 
 interface WasmConfigurables : TargetableConfigurables, ClangFlags, LldFlags
