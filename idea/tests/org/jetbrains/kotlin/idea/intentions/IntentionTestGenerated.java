@@ -3930,6 +3930,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/invokeInExpression.kt");
             }
 
+            @TestMetadata("java.kt")
+            public void testJava() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/java.kt");
+            }
+
             @TestMetadata("namedArgumentInvoke.kt")
             public void testNamedArgumentInvoke() throws Exception {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/namedArgumentInvoke.kt");
@@ -3938,6 +3943,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("noArgumentInvoke.kt")
             public void testNoArgumentInvoke() throws Exception {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/noArgumentInvoke.kt");
+            }
+
+            @TestMetadata("notOperator.kt")
+            public void testNotOperator() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceInvoke/notOperator.kt");
             }
 
             @TestMetadata("typeAndValueArgument.kt")
