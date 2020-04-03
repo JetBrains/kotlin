@@ -377,6 +377,10 @@ class ExpressionCodegen(
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
         val isSuspensionPoint = expression.isSuspensionPoint()
 
+        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
+            addInlineMarker(mv, isStartNotEnd = true)
+        }
+
         when {
             expression is IrConstructorCall -> {
                 closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
@@ -404,8 +408,6 @@ class ExpressionCodegen(
             }
             expression.symbol.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            isSuspensionPoint != SuspensionPointKind.NEVER ->
-                addInlineMarker(mv, isStartNotEnd = true)
         }
 
         expression.dispatchReceiver?.let { receiver ->
@@ -430,7 +432,7 @@ class ExpressionCodegen(
         expression.markLineNumber(true)
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
-            addSuspendMarker(mv, isSuspensionPoint, isStartNotEnd = true)
+            addSuspendMarker(mv, isStartNotEnd = true, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
         }
 
         if (irFunction.isInvokeSuspendOfContinuation()) {
@@ -443,7 +445,7 @@ class ExpressionCodegen(
         }
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
-            addSuspendMarker(mv, isSuspensionPoint, isStartNotEnd = false)
+            addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
