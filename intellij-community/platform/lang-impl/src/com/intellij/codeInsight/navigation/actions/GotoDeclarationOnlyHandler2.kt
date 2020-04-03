@@ -1,15 +1,13 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.navigation.actions
 
 import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.findAllTargets
-import com.intellij.codeInsight.hint.HintManager
-import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction.isKeywordUnderCaret
-import com.intellij.openapi.actionSystem.ex.ActionUtil.underModalProgress
 import com.intellij.featureStatistics.FeatureUsageTracker
 import com.intellij.navigation.NavigationTarget
 import com.intellij.navigation.chooseTarget
+import com.intellij.openapi.actionSystem.ex.ActionUtil.underModalProgress
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
@@ -38,18 +36,12 @@ object GotoDeclarationOnlyHandler2 : CodeInsightActionHandler {
     }
 
     if (targets.isEmpty()) {
-      notifyCantGoAnywhere(project, editor, file)
+      notifyNowhereToGo(project, editor, file, editor.caretModel.offset)
     }
     else {
       chooseTarget(editor, CodeInsightBundle.message("declaration.navigation.title"), targets.toList()) {
         gotoTarget(project, editor, file, it)
       }
-    }
-  }
-
-  private fun notifyCantGoAnywhere(project: Project, editor: Editor, file: PsiFile) {
-    if (!isKeywordUnderCaret(project, file, editor.caretModel.offset)) {
-      HintManager.getInstance().showErrorHint(editor, "Cannot find declaration to go to")
     }
   }
 

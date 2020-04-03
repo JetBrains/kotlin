@@ -6,17 +6,13 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
-import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.navigation.*;
 import com.intellij.codeInsight.navigation.action.GotoDeclarationUtil;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.actions.ShowUsagesAction;
-import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.injected.editor.EditorWindow;
-import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.command.CommandProcessor;
@@ -45,12 +41,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.*;
+
+import static com.intellij.codeInsight.navigation.actions.UiKt.notifyNowhereToGo;
 
 public class GotoDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware, CtrlMouseAction {
 
@@ -164,15 +160,9 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       chooseAmbiguousTarget(project, editor, offset, navigateProcessor, CodeInsightBundle.message("declaration.navigation.title"),
                             elements);
 
-    // Disable the 'no declaration found' notification for keywords
-    if (!found && !isUnderDoubleClick() && !isKeywordUnderCaret(project, currentFile, offset)) {
-      HintManager.getInstance().showErrorHint(editor, "Cannot find declaration to go to");
+    if (!found) {
+      notifyNowhereToGo(project, editor, currentFile, offset);
     }
-  }
-
-  private static boolean isUnderDoubleClick() {
-    AWTEvent event = IdeEventQueue.getInstance().getTrueCurrentEvent();
-    return event instanceof MouseEvent && ((MouseEvent)event).getClickCount() == 2;
   }
 
   private static boolean navigateInCurrentEditor(@NotNull PsiElement element, @NotNull PsiFile currentFile, @NotNull Editor currentEditor) {
@@ -366,13 +356,6 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     }
 
     super.update(event);
-  }
-
-  static boolean isKeywordUnderCaret(@NotNull Project project, @NotNull PsiFile file, int offset) {
-    final PsiElement elementAtCaret = file.findElementAt(offset);
-    if (elementAtCaret == null) return false;
-    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(elementAtCaret.getLanguage());
-    return namesValidator.isKeyword(elementAtCaret.getText(), project);
   }
 
   @Override
