@@ -1180,7 +1180,7 @@ object ArrayOps : TemplateGroupBase() {
         returns("Unit")
 
         body(ArraysOfUnsigned) {
-            """if (size > 1) sortArray(this)"""
+            """if (size > 1) sortArray(this, 0, size)"""
         }
 
         specialFor(ArraysOfPrimitives, ArraysOfObjects) {
@@ -1227,7 +1227,7 @@ object ArrayOps : TemplateGroupBase() {
                 }
             }
             on(Platform.Native) {
-                body { """if (size > 1) sortArray(this)""" }
+                body { """if (size > 1) sortArray(this, 0, size)""" }
             }
         }
     }
@@ -1291,11 +1291,24 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_sort_range = fn("sort(fromIndex: Int = 0, toIndex: Int = size)") {
+    val f_sort_range_jvm = fn("sort(fromIndex: Int = 0, toIndex: Int = size)") {
         platforms(Platform.JVM)
-        include(ArraysOfObjects, ArraysOfPrimitives)
+        include(ArraysOfObjects)
+    } builder {
+        doc { "Sorts a range in the array in-place." }
+        appendStableSortNote()
+        sample("samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable")
+        returns("Unit")
+        body { "java.util.Arrays.sort(this, fromIndex, toIndex)" }
+    }
+
+    val f_sort_range = fn("sort(fromIndex: Int = 0, toIndex: Int = size)") {
+        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
         exclude(PrimitiveType.Boolean)
     } builder {
+        on(Platform.Common) { since("1.4") }
+
+        typeParam("T : Comparable<T>")
         doc { "Sorts a range in the array in-place." }
         specialFor(ArraysOfObjects) {
             appendStableSortNote()
@@ -1305,30 +1318,123 @@ object ArrayOps : TemplateGroupBase() {
             sample("samples.collections.Arrays.Sorting.sortRangeOfArray")
         }
         returns("Unit")
-        body {
-            "java.util.Arrays.sort(this, fromIndex, toIndex)"
+
+        if (f == ArraysOfUnsigned) {
+            since("1.4")
+            body {
+                """
+                AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                sortArray(this, fromIndex, toIndex)
+                """
+            }
+            return@builder
+        }
+
+        on(Platform.JVM) {
+            if (f == ArraysOfObjects) since("1.4")
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                "java.util.Arrays.sort(this, fromIndex, toIndex)"
+            }
+        }
+        on(Platform.Native) {
+            since("1.4")
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                sortArray(this, fromIndex, toIndex)
+                """
+            }
+        }
+        on(Platform.JS) {
+            since("1.4")
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                sortArrayWith(this, fromIndex, toIndex, naturalOrder())
+                """
+            }
+            specialFor(ArraysOfPrimitives) {
+                if (primitive != PrimitiveType.Long) {
+                    body {
+                        """
+                        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                        val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<SELF>()
+                        subarray.sort()
+                        """
+                    }
+                } else {
+                    body {
+                        """
+                        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                        sortArrayWith(this.unsafeCast<Array<Long>>(), fromIndex, toIndex, naturalOrder())
+                        """
+                    }
+                }
+            }
         }
     }
 
     val f_sortWith_range = fn("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
-        platforms(Platform.JVM, Platform.Native)
         include(ArraysOfObjects)
     } builder {
         doc { "Sorts a range in the array in-place with the given [comparator]." }
         appendStableSortNote()
         returns("Unit")
         on(Platform.JVM) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
             body {
                 "java.util.Arrays.sort(this, fromIndex, toIndex, comparator)"
             }
         }
         on(Platform.Native) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
             body {
-                "sortArrayWith(this, fromIndex, toIndex, comparator)"
+                """
+                AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                sortArrayWith(this, fromIndex, toIndex, comparator)
+                """
+            }
+        }
+        on(Platform.JS) {
+            since("1.4")
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                sortArrayWith(this, fromIndex, toIndex, comparator)
+                """
             }
         }
     }
 
+    val f_sortDescending_range = fn("sortDescending(fromIndex: Int, toIndex: Int)") {
+        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
+        exclude(PrimitiveType.Boolean)
+    } builder {
+        since("1.4")
+        doc {
+            """
+            Sorts elements of the ${f.collection} in the specified range in-place.
+            The elements are sorted descending according to their natural sort order.
+            """
+        }
+        returns("Unit")
+        typeParam("T : Comparable<T>")
+
+        specialFor(ArraysOfObjects) {
+            appendStableSortNote()
+            body { """sortWith(reverseOrder(), fromIndex, toIndex)""" }
+        }
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            sort(fromIndex, toIndex)
+            reverse(fromIndex, toIndex)
+            """
+        }
+    }
 
 
     val f_asList = fn("asList()") {

@@ -1845,6 +1845,110 @@ public fun <T> Array<out T>.sort(comparison: (a: T, b: T) -> Int): Unit {
 }
 
 /**
+ * Sorts a range in the array in-place.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArrayWith(this, fromIndex, toIndex, naturalOrder())
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<ByteArray>()
+    subarray.sort()
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<ShortArray>()
+    subarray.sort()
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<IntArray>()
+    subarray.sort()
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArrayWith(this.unsafeCast<Array<Long>>(), fromIndex, toIndex, naturalOrder())
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<FloatArray>()
+    subarray.sort()
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<DoubleArray>()
+    subarray.sort()
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<CharArray>()
+    subarray.sort()
+}
+
+/**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @kotlin.internal.InlineOnly
@@ -1907,6 +2011,18 @@ public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int)
  */
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
     if (size > 1) sortArrayWith(this, comparator)
+}
+
+/**
+ * Sorts a range in the array in-place with the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArrayWith(this, fromIndex, toIndex, comparator)
 }
 
 /**
