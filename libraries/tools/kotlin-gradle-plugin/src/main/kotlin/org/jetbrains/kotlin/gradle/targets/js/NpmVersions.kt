@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 class NpmVersions {
     val dukat = NpmPackageVersion("dukat", "0.0.28")
 
-    val webpack = NpmPackageVersion("webpack", "4.41.2")
-    val webpackCli = NpmPackageVersion("webpack-cli", "3.3.10")
-    val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.6.0")
-    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.9.0")
+    val webpack = NpmPackageVersion("webpack", "4.42.1")
+    val webpackCli = NpmPackageVersion("webpack-cli", "3.3.11")
+    val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.6.1")
+    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.10.3")
 
     // Temporarily use our own source-map-loader, while original source-map-loader is not updated
     //  https://github.com/webpack-contrib/source-map-loader/pull/91
@@ -26,7 +26,7 @@ class NpmVersions {
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "0.2.4")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.16")
 
-    val mocha = NpmPackageVersion("mocha", "6.2.2")
+    val mocha = NpmPackageVersion("mocha", "7.1.1")
 
     val karma = NpmPackageVersion("karma", "4.4.1")
 
