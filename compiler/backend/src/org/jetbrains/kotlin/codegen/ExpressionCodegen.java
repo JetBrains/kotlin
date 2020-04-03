@@ -1033,13 +1033,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         );
 
         ClosureCodegen coroutineCodegen = CoroutineCodegenForLambda.create(this, descriptor, declaration, cv);
-        ClosureContext closureContext = descriptor.isSuspend() ? this.context.intoCoroutineClosure(
-                CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state),
-                descriptor, this, state.getTypeMapper()
-        ) : this.context.intoClosure(descriptor, this, typeMapper);
-        ClosureCodegen closureCodegen = coroutineCodegen != null ? coroutineCodegen : new ClosureCodegen(
-                state, declaration, samType, closureContext, functionReferenceCall, strategy, parentCodegen, cv
-        );
+        ClosureContext closureContext =
+                descriptor.isSuspend()
+                ? this.context.intoCoroutineClosure(
+                        CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state),
+                        descriptor, this, state.getTypeMapper()
+                )
+                : this.context.intoClosure(descriptor, this, typeMapper);
+        ClosureCodegen closureCodegen =
+                coroutineCodegen != null
+                ? coroutineCodegen
+                : new ClosureCodegen(
+                        state, declaration, samType, closureContext, functionReferenceCall, strategy, parentCodegen, cv
+                );
 
         closureCodegen.generate();
 
@@ -3399,7 +3405,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         StackValue result;
 
         if (!isPrimitive(expressionType(expression.getReceiverExpression()))) {
-            result = new StackValue.SafeFallback(type, ifnull, newReceiver);
+            result = new StackValue.SafeFallback(type, kotlinType, ifnull, newReceiver);
         } else {
             result = newReceiver;
         }
@@ -4363,7 +4369,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         return StackValue.none();
     }
-
     @Override
     public StackValue visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, StackValue receiver) {
         return initializeDestructuringDeclaration(multiDeclaration, false);

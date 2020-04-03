@@ -12534,6 +12534,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/kt34268.kt");
         }
 
+        @TestMetadata("kt37998.kt")
+        public void testKt37998() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt37998.kt");
+        }
+
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");
@@ -12897,6 +12902,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("inlineClassTypeTopLevelVar.kt")
             public void testInlineClassTypeTopLevelVar() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVar.kt");
+            }
+
+            @TestMetadata("kt37986.kt")
+            public void testKt37986() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986.kt");
             }
         }
 
