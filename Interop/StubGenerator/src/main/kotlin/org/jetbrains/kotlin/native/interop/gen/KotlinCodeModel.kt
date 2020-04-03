@@ -217,6 +217,9 @@ object KotlinTypes {
     val objCObjectBase by InteropClassifier
     val objCObjectBaseMeta by InteropClassifier
 
+    val objCBlockVar by InteropClassifier
+    val objCNotImplementedVar by InteropClassifier
+
     val cValue by InteropClassifier
 
     private open class ClassifierAtPackage(val pkg: String) {
