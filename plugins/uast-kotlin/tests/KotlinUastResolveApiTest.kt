@@ -315,5 +315,30 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         val resolved = compiledAnnotationParameter.resolve() as PsiMethod
         TestCase.assertEquals("message", resolved.name)
     }
+
+    fun testAssigningArrayElementType() {
+        myFixture.configureByText(
+            "MyClass.kt", """ 
+            fun foo() {
+                val arr = arrayOfNulls<List<*>>(10)
+                arr[0] = emptyList<Any>()
+                
+                val lst = mutableListOf<List<*>>()
+                lst[0] = emptyList<Any>()
+            }
+        """
+        )
+
+        val uFile = myFixture.file.toUElement()!!
+
+        TestCase.assertEquals(
+            "PsiType:List<?>",
+            uFile.findElementByTextFromPsi<UExpression>("arr[0]").getExpressionType().toString()
+        )
+        TestCase.assertEquals(
+            "PsiType:List<?>",
+            uFile.findElementByTextFromPsi<UExpression>("lst[0]").getExpressionType().toString()
+        )
+    }
 }
 
