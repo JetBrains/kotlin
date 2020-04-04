@@ -64,7 +64,7 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
     companion object {
         private val DEFAULT_TEXT: () -> String get() = KotlinBundle.lazyMessage("convert.to.vararg.parameter")
 
-        private val BREAKING_TEXT: () -> String get() = KotlinBundle.lazyMessage("0.may.break.code", DEFAULT_TEXT)
+        private val BREAKING_TEXT: () -> String get() = { KotlinBundle.message("0.may.break.code", DEFAULT_TEXT()) }
     }
 
 }
