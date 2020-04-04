@@ -90,7 +90,6 @@ public final class FileColorManagerImpl extends FileColorManager {
   @Override
   @Nullable
   public Color getColor(@NotNull String name) {
-    if (!isEnabled()) return null;
     Color color = ourDefaultColors.get(name);
     return color == null ? ColorUtil.fromHex(name, null) : color;
   }
