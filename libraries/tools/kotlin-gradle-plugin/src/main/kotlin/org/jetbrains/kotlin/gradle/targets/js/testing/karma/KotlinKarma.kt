@@ -93,47 +93,19 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         configDirectory = dir
     }
 
-    fun useChrome() {
-        useBrowser(
-            id = "Chrome",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
+    private fun useChromeLike(id: String) = useBrowser(id, versions.karmaChromeLauncher)
 
-    fun useChromeHeadless() {
-        useBrowser(
-            id = "ChromeHeadless",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
+    fun useChrome() = useChromeLike("Chrome")
 
-    fun useChromium() {
-        useBrowser(
-            id = "Chromium",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
+    fun useChromeHeadless() = useChromeLike("ChromeHeadless")
 
-    fun useChromiumHeadless() {
-        useBrowser(
-            id = "ChromiumHeadless",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
+    fun useChromium() = useChromeLike("Chromium")
 
-    fun useChromeCanary() {
-        useBrowser(
-            id = "ChromeCanary",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
+    fun useChromiumHeadless() = useChromeLike("ChromiumHeadless")
 
-    fun useChromeCanaryHeadless() {
-        useBrowser(
-            id = "ChromeCanaryHeadless",
-            dependency = versions.karmaChromeLauncher
-        )
-    }
+    fun useChromeCanary() = useChromeLike("ChromeCanary")
+
+    fun useChromeCanaryHeadless() = useChromeLike("ChromeCanaryHeadless")
 
     fun useDebuggableChrome() {
         val debuggableChrome = "DebuggableChrome"
@@ -142,29 +114,28 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             flags.add("--remote-debugging-port=9222")
         }
 
-        useBrowser(
-            id = debuggableChrome,
-            dependency = versions.karmaChromeLauncher
-        )
+        useChromeLike(debuggableChrome)
     }
 
     fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomJsLauncher)
 
-    fun useFirefox() = useBrowser("Firefox", versions.karmaFirefoxLauncher)
+    private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
 
-    fun useFirefoxHeadless() = useBrowser("FirefoxHeadless", versions.karmaFirefoxLauncher)
+    fun useFirefox() = useFirefoxLike("Firefox")
 
-    fun useFirefoxDeveloper() = useBrowser("FirefoxDeveloper", versions.karmaFirefoxLauncher)
+    fun useFirefoxHeadless() = useFirefoxLike("FirefoxHeadless")
 
-    fun useFirefoxDeveloperHeadless() = useBrowser("FirefoxDeveloperHeadless", versions.karmaFirefoxLauncher)
+    fun useFirefoxDeveloper() = useFirefoxLike("FirefoxDeveloper")
 
-    fun useFirefoxAurora() = useBrowser("FirefoxAurora", versions.karmaFirefoxLauncher)
+    fun useFirefoxDeveloperHeadless() = useFirefoxLike("FirefoxDeveloperHeadless")
 
-    fun useFirefoxAuroraHeadless() = useBrowser("FirefoxAuroraHeadless", versions.karmaFirefoxLauncher)
+    fun useFirefoxAurora() = useFirefoxLike("FirefoxAurora")
 
-    fun useFirefoxNightly() = useBrowser("FirefoxNightly", versions.karmaFirefoxLauncher)
+    fun useFirefoxAuroraHeadless() = useFirefoxLike("FirefoxAuroraHeadless")
 
-    fun useFirefoxNightlyHeadless() = useBrowser("FirefoxNightlyHeadless", versions.karmaFirefoxLauncher)
+    fun useFirefoxNightly() = useFirefoxLike("FirefoxNightly")
+
+    fun useFirefoxNightlyHeadless() = useFirefoxLike("FirefoxNightlyHeadless")
 
     fun useOpera() = useBrowser("Opera", versions.karmaOperaLauncher)
 
