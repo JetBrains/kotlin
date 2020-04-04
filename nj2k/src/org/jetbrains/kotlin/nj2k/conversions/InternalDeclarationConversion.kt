@@ -26,7 +26,7 @@ class InternalDeclarationConversion(context: NewJ2kConverterContext) : Recursive
         element.visibility = when {
             containingClassKind == JKClass.ClassKind.INTERFACE || containingClassKind == JKClass.ClassKind.ANNOTATION ->
                 Visibility.PUBLIC
-            containingClassKind == JKClass.ClassKind.ENUM && element is JKKtPrimaryConstructor ->
+            containingClassKind == JKClass.ClassKind.ENUM && element is JKConstructor ->
                 Visibility.PRIVATE
             element is JKClass && !element.isLocalClass() ->
                 Visibility.INTERNAL

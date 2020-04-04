@@ -1864,6 +1864,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/enum/fieldsWithPrimaryPrivateConstructor.java");
         }
 
+        @TestMetadata("implicitlyPrivateConstructorsEnum.java")
+        public void testImplicitlyPrivateConstructorsEnum() throws Exception {
+            runTest("nj2k/testData/newJ2k/enum/implicitlyPrivateConstructorsEnum.java");
+        }
+
         @TestMetadata("internalEnum.java")
         public void testInternalEnum() throws Exception {
             runTest("nj2k/testData/newJ2k/enum/internalEnum.java");
