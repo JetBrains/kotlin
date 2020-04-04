@@ -28,7 +28,6 @@ class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
         val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(Name.identifier(getter.name)) ?: return getterReferences
         val setterName = JvmAbi.setterName(propertyName.asString())
         val containingClass = getter.containingClass ?: return getterReferences
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
         val setterReferences = containingClass
             .findMethodsByName(setterName, true)
             .filter { it.parameters.size == 1 && it.returnType == PsiType.VOID }
