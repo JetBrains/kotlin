@@ -140,7 +140,7 @@ internal val buildCExportsPhase = konanUnitPhase(
 internal val psiToIrPhase = konanUnitPhase(
         op = {
             // Translate AST to high level IR.
-            val mppKlibs = config.configuration.get(CommonConfigurationKeys.KLIB_MPP)?:false
+            val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER)?:false
 
             val symbolTable = symbolTable!!
 
@@ -239,7 +239,7 @@ internal val psiToIrPhase = konanUnitPhase(
                 // referenceExpectsForUsedActuals() appears to be quadratic in time because of
                 // how ExpectedActualResolver is implemented.
                 // Need to fix ExpectActualResolver to either cache expects or somehow reduce the member scope searches.
-                if (mppKlibs) expectDescriptorToSymbol else null
+                if (expectActualLinker) expectDescriptorToSymbol else null
             )
 
             deserializer.finalizeExpectActualLinker()
@@ -287,18 +287,18 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
 
 internal val serializerPhase = konanUnitPhase(
         op = {
-            val mppKlibs = config.configuration.get(CommonConfigurationKeys.KLIB_MPP)?:false
+            val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER)?:false
 
             serializedIr = irModule?.let { ir ->
                 KonanIrModuleSerializer(
-                    this, ir.irBuiltins, expectDescriptorToSymbol, skipExpects = !mppKlibs
+                    this, ir.irBuiltins, expectDescriptorToSymbol, skipExpects = !expectActualLinker
                 ).serializedIrModule(ir)
             }
 
             val serializer = KlibMetadataMonolithicSerializer(
                 this.config.configuration.languageVersionSettings,
                 config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-                !mppKlibs)
+                !expectActualLinker)
             serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
         name = "Serializer",
