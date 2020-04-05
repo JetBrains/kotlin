@@ -7,23 +7,15 @@ import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions.createOptions
 import com.intellij.model.Symbol
 import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.IntRef
 import com.intellij.psi.search.SearchScope
-import com.intellij.ui.awt.RelativePoint
 import com.intellij.usages.UsageSearchPresentation
 import com.intellij.usages.UsageSearcher
 
 // data class for `copy` method
 internal data class ShowTargetUsagesActionHandler<O>(
   private val project: Project,
-  private val editor: Editor?,
-  private val popupPosition: RelativePoint,
-  private val minWidth: IntRef,
   private val symbol: Symbol,
   private val usageHandler: UsageHandler<O>,
   private val allOptions: AllSearchOptions<O>
@@ -44,17 +36,19 @@ internal data class ShowTargetUsagesActionHandler<O>(
     }
   }
 
-  override fun showDialogAndShowUsages(newEditor: Editor?) {
+  override fun showDialog(): ShowUsagesActionHandler? {
     val dialog = UsageOptionsDialog(project, getLongDescription(symbol), usageHandler, allOptions, false)
     if (!dialog.showAndGet()) {
       // cancelled
-      return
+      return null
     }
-    copy(editor = newEditor, allOptions = dialog.result()).showUsages()
+    else {
+      return copy(allOptions = dialog.result())
+    }
   }
 
-  override fun showUsagesInScope(searchScope: SearchScope) {
-    copy(allOptions = allOptions.copy(options = createOptions(allOptions.options.isUsages, searchScope))).showUsages()
+  override fun withScope(searchScope: SearchScope): ShowUsagesActionHandler {
+    return copy(allOptions = allOptions.copy(options = createOptions(allOptions.options.isUsages, searchScope)))
   }
 
   override fun findUsages(): Unit = findUsages(project, symbol, usageHandler, allOptions)
@@ -63,33 +57,21 @@ internal data class ShowTargetUsagesActionHandler<O>(
 
   override fun getMaximalScope(): SearchScope = usageHandler.maximalSearchScope
 
-  fun showUsages() {
-    ShowUsagesAction.showElementUsages(
-      project,
-      editor,
-      popupPosition,
-      ShowUsagesAction.getUsagesPageSize(),
-      IntRef(0),
-      this
-    )
-  }
-
   companion object {
 
     @JvmStatic
     fun showUsages(project: Project, dataContext: DataContext, symbol: Symbol) {
-      create(project, dataContext, symbol, symbol.createUsageHandler(project)).showUsages()
+      val searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().defaultScopeName)
+      val showUsagesActionHandler = createActionHandler(project, searchScope, symbol, symbol.createUsageHandler(project))
+      ShowUsagesAction.showElementUsages(ShowUsagesParameters.initial(project, dataContext), showUsagesActionHandler)
     }
 
-    private fun <O> create(project: Project,
-                           dataContext: DataContext,
-                           symbol: Symbol,
-                           usageHandler: UsageHandler<O>): ShowTargetUsagesActionHandler<O> {
-      val editor = dataContext.getData(CommonDataKeys.EDITOR)
-      val popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(dataContext)
-      val searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().defaultScopeName)
+    private fun <O> createActionHandler(project: Project,
+                                        searchScope: SearchScope,
+                                        symbol: Symbol,
+                                        usageHandler: UsageHandler<O>): ShowTargetUsagesActionHandler<O> {
       return ShowTargetUsagesActionHandler(
-        project, editor, popupPosition, IntRef(0),
+        project,
         symbol = symbol,
         usageHandler = usageHandler,
         allOptions = AllSearchOptions(
