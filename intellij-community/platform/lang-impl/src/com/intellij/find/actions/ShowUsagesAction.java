@@ -261,13 +261,17 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     showElementUsages(
       project, editor, popupPosition, getUsagesPageSize(), minWidth,
-      () -> searchString,
       usageSearcher,
       new ShowUsagesActionHandler() {
 
         @Override
         public boolean isValid() {
           return handler.getPsiElement().isValid();
+        }
+
+        @Override
+        public @NotNull UsageSearchPresentation getPresentation() {
+          return () -> searchString;
         }
 
         @Override
@@ -312,7 +316,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                 @NotNull RelativePoint popupPosition,
                                 int maxUsages,
                                 @NotNull IntRef minWidth,
-                                @NotNull UsageSearchPresentation presentation,
                                 @NotNull UsageSearcher usageSearcher,
                                 @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
@@ -343,13 +346,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       () -> showElementUsages(
         project, editor, popupPosition,
         maxUsages + getUsagesPageSize(), minWidth,
-        presentation, usageSearcher, actionHandler)
+        usageSearcher, actionHandler)
       , () -> showUsagesInMaximalScope(actionHandler)
     );
 
 
     JBPopup popup = createUsagePopup(project,
-                                     usageView, table, itemChosenCallback, presentation, statusPanel, minWidth,
+                                     usageView, table, itemChosenCallback, statusPanel, minWidth,
                                      () -> actionHandler.showDialogAndShowUsages(editor),
                                      actionHandler);
     ProgressIndicator indicator = new ProgressIndicatorBase();
@@ -410,7 +413,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
             // toggle back unselected toggle actions
             toggleFilters(unselectedActions);
             // and restart show usages in hope it will show filtered out items now
-            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
+            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, usageSearcher, actionHandler);
           }
         });
       }
@@ -597,7 +600,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                           @NotNull UsageViewImpl usageView,
                                           @NotNull JTable table,
                                           @NotNull Runnable itemChoseCallback,
-                                          @NotNull UsageSearchPresentation presentation,
                                           @NotNull TitlePanel statusPanel,
                                           @NotNull IntRef minWidth,
                                           @NotNull Runnable showDialogAndFindUsagesRunnable,
@@ -607,7 +609,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
     String title = UsageViewBundle.message(
       "search.title.0.in.1",
-      presentation.getSearchString(),
+      actionHandler.getPresentation().getSearchString(),
       actionHandler.getSelectedScope().getDisplayName()
     );
     builder.setTitle(XmlStringUtil.wrapInHtml("<body><nobr>" + StringUtil.escapeXmlEntities(title) + "</nobr></body>"));

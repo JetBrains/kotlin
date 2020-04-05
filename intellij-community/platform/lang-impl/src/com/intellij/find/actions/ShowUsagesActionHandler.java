@@ -5,12 +5,15 @@ import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.usages.UsageSearchPresentation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 interface ShowUsagesActionHandler {
 
   boolean isValid();
+
+  @NotNull UsageSearchPresentation getPresentation();
 
   void findUsages();
 

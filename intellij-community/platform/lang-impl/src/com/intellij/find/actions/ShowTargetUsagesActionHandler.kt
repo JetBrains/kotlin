@@ -31,6 +31,12 @@ internal data class ShowTargetUsagesActionHandler<O>(
 
   override fun isValid(): Boolean = true
 
+  override fun getPresentation(): UsageSearchPresentation {
+    return UsageSearchPresentation {
+      usageHandler.getSearchString(allOptions)
+    }
+  }
+
   override fun showDialogAndShowUsages(newEditor: Editor?) {
     val dialog = UsageOptionsDialog(project, getLongDescription(symbol), usageHandler, allOptions, false)
     if (!dialog.showAndGet()) {
@@ -55,15 +61,12 @@ internal data class ShowTargetUsagesActionHandler<O>(
     val usageSearcher = UsageSearcher {
       query.forEach(it)
     }
-    val searchTitle = usageHandler.getSearchString(allOptions)
-    val presentation = UsageSearchPresentation { searchTitle }
     ShowUsagesAction.showElementUsages(
       project,
       editor,
       popupPosition,
       ShowUsagesAction.getUsagesPageSize(),
       IntRef(0),
-      presentation,
       usageSearcher,
       this
     )
