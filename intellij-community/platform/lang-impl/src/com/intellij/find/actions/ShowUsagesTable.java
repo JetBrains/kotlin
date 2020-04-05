@@ -231,7 +231,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
       UsageNode node = (UsageNode)element;
       if (node instanceof ShowUsagesAction.StringNode) return "";
       Usage usage = node.getUsage();
-      if (usage == getTable().MORE_USAGES_SEPARATOR || usage == getTable().USAGES_OUTSIDE_SCOPE_SEPARATOR) return "";
+      if (usage == getTable().MORE_USAGES_SEPARATOR || usage == getTable().USAGES_OUTSIDE_SCOPE_SEPARATOR || usage == getTable().USAGES_FILTERED_OUT_SEPARATOR) return "";
       GroupNode group = (GroupNode)node.getParent();
       String groupText = group == null ? "" : group.getGroup().getText(null);
       return groupText + usage.getPresentation().getPlainText();
