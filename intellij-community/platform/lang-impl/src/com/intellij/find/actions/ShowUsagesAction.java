@@ -399,7 +399,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         List<ToggleAction> unselectedActions = Arrays.stream(filteringActions.getChildren(null))
           .filter(action -> action instanceof ToggleAction)
           .map(action -> (ToggleAction)action)
-          .filter(ta -> !ta.isSelected(new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", ta.getTemplatePresentation(), ActionManager.getInstance(), 0)))
+          .filter(ta -> !ta.isSelected(fakeEvent(ta)))
           .filter(ta -> !StringUtil.isEmpty(ta.getTemplatePresentation().getText()))
           .collect(Collectors.toList());
         data.add(new FilteredOutUsagesNode(table.USAGES_FILTERED_OUT_SEPARATOR,
@@ -506,11 +506,15 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
   private static void toggleFilters(@NotNull List<? extends ToggleAction> unselectedActions) {
     for (ToggleAction action : unselectedActions) {
-      AnActionEvent fakeEvent = new AnActionEvent(
-        null, DataContext.EMPTY_CONTEXT, "", action.getTemplatePresentation(), ActionManager.getInstance(), 0
-      );
-      action.actionPerformed(fakeEvent);
+      action.actionPerformed(fakeEvent(action));
     }
+  }
+
+  private static @NotNull AnActionEvent fakeEvent(@NotNull ToggleAction action) {
+    return new AnActionEvent(
+      null, DataContext.EMPTY_CONTEXT, "",
+      action.getTemplatePresentation(), ActionManager.getInstance(), 0
+    );
   }
 
   @NotNull
