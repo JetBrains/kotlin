@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -54,7 +55,8 @@ class JsScriptDependencyCompiler(
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it) }
         val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer = jsLinker)
 
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
+            .generateUnboundSymbolsAsDependencies()
         moduleFragment.patchDeclarationParents()
 
         val backendContext = JsIrBackendContext(
@@ -67,7 +69,8 @@ class JsScriptDependencyCompiler(
             true
         )
 
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
+            .generateUnboundSymbolsAsDependencies()
         moduleFragment.patchDeclarationParents()
 
         moduleFragment.files += irDependencies.flatMap { it.files }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -59,7 +60,8 @@ fun compile(
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
         val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
+            .generateUnboundSymbolsAsDependencies()
     }
 
     val allModules = when (mainModule) {
@@ -74,7 +76,8 @@ fun compile(
 
     val irProvidersWithoutDeserializer = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable)
     // Create stubs
-    ExternalDependenciesGenerator(symbolTable, irProvidersWithoutDeserializer).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, irProvidersWithoutDeserializer, configuration.languageVersionSettings)
+        .generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
     deserializer.finalizeExpectActualLinker()

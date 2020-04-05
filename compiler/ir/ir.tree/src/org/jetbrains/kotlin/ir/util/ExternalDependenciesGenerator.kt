@@ -16,14 +16,23 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class ExternalDependenciesGenerator(val symbolTable: SymbolTable, private val irProviders: List<IrProvider>) {
+class ExternalDependenciesGenerator(
+    val symbolTable: SymbolTable,
+    private val irProviders: List<IrProvider>,
+    private val languageVersionSettings: LanguageVersionSettings
+) {
     fun generateUnboundSymbolsAsDependencies() {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+            require(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters are forbidden" }
+        }
         // There should be at most one DeclarationStubGenerator (none in closed world?)
         irProviders.singleOrNull { it is DeclarationStubGenerator }?.let {
             (it as DeclarationStubGenerator).unboundSymbolGeneration = true
@@ -31,8 +40,6 @@ class ExternalDependenciesGenerator(val symbolTable: SymbolTable, private val ir
         /*
             Deserializing a reference may lead to new unbound references, so we loop until none are left.
          */
-        require(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters are forbidden" }
-
         lateinit var unbound: List<IrSymbol>
         do {
             unbound = symbolTable.allUnbound

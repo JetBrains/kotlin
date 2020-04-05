@@ -186,7 +186,7 @@ class Fir2IrConverter(
             }
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
-                symbolTable, generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable)
+                symbolTable, generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable), languageVersionSettings
             )
             // Necessary call to generate built-in IR classes
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
