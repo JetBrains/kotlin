@@ -37,6 +37,13 @@ internal data class ShowTargetUsagesActionHandler<O>(
     }
   }
 
+  override fun createUsageSearcher(): UsageSearcher {
+    val query = buildQuery(project, symbol, usageHandler, allOptions)
+    return UsageSearcher {
+      query.forEach(it)
+    }
+  }
+
   override fun showDialogAndShowUsages(newEditor: Editor?) {
     val dialog = UsageOptionsDialog(project, getLongDescription(symbol), usageHandler, allOptions, false)
     if (!dialog.showAndGet()) {
@@ -57,17 +64,12 @@ internal data class ShowTargetUsagesActionHandler<O>(
   override fun getMaximalScope(): SearchScope = usageHandler.maximalSearchScope
 
   fun showUsages() {
-    val query = buildQuery(project, symbol, usageHandler, allOptions)
-    val usageSearcher = UsageSearcher {
-      query.forEach(it)
-    }
     ShowUsagesAction.showElementUsages(
       project,
       editor,
       popupPosition,
       ShowUsagesAction.getUsagesPageSize(),
       IntRef(0),
-      usageSearcher,
       this
     )
   }

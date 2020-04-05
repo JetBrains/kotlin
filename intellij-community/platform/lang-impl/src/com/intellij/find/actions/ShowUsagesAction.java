@@ -253,7 +253,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     // show super method warning dialogs before starting finding usages
     PsiElement[] primaryElements = handler.getPrimaryElements();
     PsiElement[] secondaryElements = handler.getSecondaryElements();
-    UsageSearcher usageSearcher = FindUsagesManager.createUsageSearcher(handler, primaryElements, secondaryElements, options);
     String searchString = FindBundle.message(
       "find.usages.of.element.tab.name",
       options.generateUsagesString(), UsageViewUtil.getLongName(handler.getPsiElement())
@@ -261,7 +260,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     showElementUsages(
       project, editor, popupPosition, getUsagesPageSize(), minWidth,
-      usageSearcher,
       new ShowUsagesActionHandler() {
 
         @Override
@@ -272,6 +270,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         @Override
         public @NotNull UsageSearchPresentation getPresentation() {
           return () -> searchString;
+        }
+
+        @Override
+        public @NotNull UsageSearcher createUsageSearcher() {
+          return FindUsagesManager.createUsageSearcher(handler, primaryElements, secondaryElements, options);
         }
 
         @Override
@@ -316,7 +319,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                 @NotNull RelativePoint popupPosition,
                                 int maxUsages,
                                 @NotNull IntRef minWidth,
-                                @NotNull UsageSearcher usageSearcher,
                                 @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
@@ -346,7 +348,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       () -> showElementUsages(
         project, editor, popupPosition,
         maxUsages + getUsagesPageSize(), minWidth,
-        usageSearcher, actionHandler)
+        actionHandler)
       , () -> showUsagesInMaximalScope(actionHandler)
     );
 
@@ -413,7 +415,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
             // toggle back unselected toggle actions
             toggleFilters(unselectedActions);
             // and restart show usages in hope it will show filtered out items now
-            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, usageSearcher, actionHandler);
+            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, actionHandler);
           }
         });
       }
@@ -458,6 +460,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       return true;
     };
 
+    UsageSearcher usageSearcher = actionHandler.createUsageSearcher();
     FindUsagesManager.startProcessUsages(indicator, project, usageSearcher, collect, () -> ApplicationManager.getApplication().invokeLater(
       () -> {
         Disposer.dispose(processIcon);
