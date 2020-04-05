@@ -88,11 +88,12 @@ public final class EnforcedPlainTextFileTypeManager {
   private void setPlainTextStatus(@NotNull final Project project, final boolean toAdd, final VirtualFile @NotNull ... files) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
+      ProjectPlainTextFileTypeManager plainTextFileTypeManager = ProjectPlainTextFileTypeManager.getInstance(project);
       for (VirtualFile file : files) {
         if (fileIndex.isInContent(file) || fileIndex.isInLibrarySource(file) || fileIndex.isExcluded(file)) {
           boolean changed = toAdd ?
-                            ProjectPlainTextFileTypeManager.getInstance(project).addFile(file) :
-                            ProjectPlainTextFileTypeManager.getInstance(project).removeFile(file);
+                            plainTextFileTypeManager.addFile(file) :
+                            plainTextFileTypeManager.removeFile(file);
           if (changed) {
             ensureProjectFileUpToDate(project);
           }
