@@ -9,6 +9,7 @@ import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.ui.search.OptionDescription;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.FileColorManager;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public final class FileColorsOptionsTopHitProvider implements OptionsSearchTopHi
   private static class Option extends PublicMethodBasedOptionDescription {
     private final FileColorManager myManager;
 
-    Option(FileColorManager manager, String option, String getter, String setter) {
+    Option(FileColorManager manager, @Nls String option, String getter, String setter) {
       super(option, "reference.settings.ide.settings.file-colors", getter, setter);
       myManager = manager;
     }
