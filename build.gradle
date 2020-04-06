@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.CollisionDetector
 import org.jetbrains.kotlin.CollisionTransformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.jetbrains.kotlin.UtilsKt
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -465,6 +466,15 @@ targetList.each { target ->
         from(project(':runtime').file("build/${target}Stdlib")) {
             include('**')
             into(stdlib)
+            eachFile {
+                if (name == 'manifest') {
+                    def existingManifest = file("$destinationDir/$path")
+                    if (existingManifest.exists()) {
+                        UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
+                        exclude()
+                    }
+                }
+            }
         }
         from(project(':runtime').file("build/$target")) {
             include("runtime.bc")
