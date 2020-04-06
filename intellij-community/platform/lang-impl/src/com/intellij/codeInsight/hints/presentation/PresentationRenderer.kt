@@ -9,7 +9,7 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Rectangle
 
-class PresentationRenderer(var presentation: InlayPresentation) : EditorCustomElementRenderer {
+class PresentationRenderer(val presentation: InlayPresentation) : EditorCustomElementRenderer, InputHandler by presentation {
   override fun paint(inlay: Inlay<*>, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
     g as Graphics2D
     g.withTranslated(targetRegion.x, targetRegion.y) {
