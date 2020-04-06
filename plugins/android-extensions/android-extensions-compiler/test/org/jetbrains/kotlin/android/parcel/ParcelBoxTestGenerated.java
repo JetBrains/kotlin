@@ -64,6 +64,11 @@ public class ParcelBoxTestGenerated extends AbstractParcelBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/charSequence.kt");
     }
 
+    @TestMetadata("customParcelerScoping.kt")
+    public void testCustomParcelerScoping() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/customParcelerScoping.kt");
+    }
+
     @TestMetadata("customSerializerBoxing.kt")
     public void testCustomSerializerBoxing() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/customSerializerBoxing.kt");
