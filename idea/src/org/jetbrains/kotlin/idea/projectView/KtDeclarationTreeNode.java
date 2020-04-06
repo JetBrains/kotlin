@@ -44,7 +44,7 @@ public class KtDeclarationTreeNode extends AbstractPsiBasedNode<KtDeclaration> {
     }
 
     @Override
-    protected Collection<AbstractTreeNode> getChildrenImpl() {
+    protected Collection<AbstractTreeNode<?>> getChildrenImpl() {
         return Collections.emptyList();
     }
 

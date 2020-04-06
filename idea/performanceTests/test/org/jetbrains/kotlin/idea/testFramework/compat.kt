@@ -11,5 +11,5 @@ import com.intellij.openapi.project.ex.ProjectManagerEx
 // BUNCH: 193
 fun ProjectManagerEx.forceCloseProjectEx(project: Project, dispose: Boolean): Boolean {
     if (!dispose) error("dispose should be true")
-    return this.forceCloseProject(project, true)
+    return this.forceCloseProject(project)
 }
