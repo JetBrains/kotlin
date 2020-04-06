@@ -209,6 +209,11 @@ public class ParcelBoxTestGenerated extends AbstractParcelBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/openParcelize.kt");
     }
 
+    @TestMetadata("persistableBundle.kt")
+    public void testPersistableBundle() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/persistableBundle.kt");
+    }
+
     @TestMetadata("primitiveTypes.kt")
     public void testPrimitiveTypes() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/primitiveTypes.kt");
