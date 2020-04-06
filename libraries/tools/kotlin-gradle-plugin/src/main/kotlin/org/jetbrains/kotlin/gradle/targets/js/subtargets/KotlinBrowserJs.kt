@@ -222,6 +222,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
                         it.dependsOn(webpackCommonTask)
                         it.dependsOn(distributeResourcesTask)
+
+                        it.outputs.dir(distribution.directory)
                     }
                 }
             }

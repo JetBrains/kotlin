@@ -176,6 +176,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
                         it.dependsOn(webpackCommonTask)
                         it.dependsOn(distributeResourcesTask)
+
+                        it.outputs.dir(distribution.directory)
                     }
                 }
             }
