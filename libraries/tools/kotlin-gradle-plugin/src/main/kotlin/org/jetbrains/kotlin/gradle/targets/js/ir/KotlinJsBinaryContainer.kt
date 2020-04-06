@@ -97,25 +97,39 @@ constructor(
         jsBinaryType: JsBinaryType,
         create: (compilation: KotlinJsCompilation, name: String, type: KotlinJsBinaryType) -> T
     ) {
-        types.forEach { buildVariantKind ->
-            val name = generateBinaryName(
+        types.forEach {
+            createBinary(
                 compilation,
-                buildVariantKind,
-                jsBinaryType
+                it,
+                jsBinaryType,
+                create
             )
+        }
+    }
 
-            require(name !in binaryNames) {
-                "Cannot create binary $name: binary with such a name already exists"
-            }
+    private fun <T : JsBinary> createBinary(
+        compilation: KotlinJsCompilation,
+        type: KotlinJsBinaryType,
+        jsBinaryType: JsBinaryType,
+        create: (compilation: KotlinJsCompilation, name: String, type: KotlinJsBinaryType) -> T
+    ) {
+        val name = generateBinaryName(
+            compilation,
+            type,
+            jsBinaryType
+        )
 
-            binaryNames.add(name)
+        if (name in binaryNames) {
+            return
+        }
 
-            val binary = create(compilation, name, buildVariantKind)
-            add(binary)
-            // Allow accessing binaries as properties of the container in Groovy DSL.
-            if (this is ExtensionAware) {
-                extensions.add(binary.name, binary)
-            }
+        binaryNames.add(name)
+
+        val binary = create(compilation, name, type)
+        add(binary)
+        // Allow accessing binaries as properties of the container in Groovy DSL.
+        if (this is ExtensionAware) {
+            extensions.add(binary.name, binary)
         }
     }
 
