@@ -561,8 +561,13 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         for (int i = shift;
              i < anonymousAdaptedFunction.getValueParameters().size() && i - shift < target.getValueParameters().size();
              i++) {
-            KotlinType varargElementType = target.getValueParameters().get(i - shift).getVarargElementType();
-            if (varargElementType != null && !varargElementType.equals(anonymousAdaptedFunction.getValueParameters().get(i).getType())) {
+            ValueParameterDescriptor targetParameter = target.getValueParameters().get(i - shift);
+            ValueParameterDescriptor adaptedParameter = anonymousAdaptedFunction.getValueParameters().get(i);
+
+            // Vararg to element conversion is happening if the target parameter is vararg (e.g. `vararg xs: Int`),
+            // but the adapted parameter's type is not equal to the target parameter's type (which is `IntArray`).
+            if (targetParameter.getVarargElementType() != null &&
+                !targetParameter.getType().equals(adaptedParameter.getType())) {
                 hasVarargMappedToElement = true;
                 break;
             }
