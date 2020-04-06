@@ -209,3 +209,17 @@ fun IrFunction.getLastOverridden(): IrFunction {
     }
     return function
 }
+
+fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
+    return when (type.getFqName()) {
+        "kotlin.ByteArray" -> Primitive(ByteArray(size) { i -> (this[i] as Number).toByte() }, type)
+        "kotlin.CharArray" -> Primitive(CharArray(size) { i -> this[i] as Char }, type)
+        "kotlin.ShortArray" -> Primitive(ShortArray(size) { i -> (this[i] as Number).toShort() }, type)
+        "kotlin.IntArray" -> Primitive(IntArray(size) { i -> (this[i] as Number).toInt() }, type)
+        "kotlin.LongArray" -> Primitive(LongArray(size) { i -> (this[i] as Number).toLong() }, type)
+        "kotlin.FloatArray" -> Primitive(FloatArray(size) { i -> (this[i] as Number).toFloat() }, type)
+        "kotlin.DoubleArray" -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
+        "kotlin.BooleanArray" -> Primitive(BooleanArray(size) { i -> this[i].toString().toBoolean() }, type)
+        else -> Primitive<Array<*>>(this.toTypedArray(), type)
+    }
+}

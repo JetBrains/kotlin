@@ -93,6 +93,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrBreak -> interpretBreak(this, data)
                 is IrContinue -> interpretContinue(this, data)
                 is IrVararg -> interpretVararg(this, data)
+                is IrSpreadElement -> interpretSpreadElement(this, data)
                 is IrTry -> interpretTry(this, data)
                 is IrCatch -> interpretCatch(this, data)
                 is IrThrow -> interpretThrow(this, data)
@@ -441,7 +442,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val sizeDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "size" }.descriptor
             val size = (newFrame.getVariableState(sizeDescriptor) as Primitive<*>).value as Int
 
-            val arrayValue = Array<Any?>(size) { 0 }
+            val arrayValue = MutableList<Any>(size) { 0 }
             if (owner.valueParameters.size == 2) {
                 val initDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "init" }.descriptor
                 val initLambda = newFrame.getVariableState(initDescriptor) as Lambda
@@ -452,20 +453,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     arrayValue[i] = lambdaFrame.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
                 }
             }
-
-            val array = when (parent.defaultType.getFqName()) {
-                "kotlin.ByteArray" -> Primitive(ByteArray(size) { i -> (arrayValue[i] as Number).toByte() }, parent.defaultType)
-                "kotlin.CharArray" -> Primitive(CharArray(size) { i -> (arrayValue[i] as Number).toChar() }, parent.defaultType)
-                "kotlin.ShortArray" -> Primitive(ShortArray(size) { i -> (arrayValue[i] as Number).toShort() }, parent.defaultType)
-                "kotlin.IntArray" -> Primitive(IntArray(size) { i -> (arrayValue[i] as Number).toInt() }, parent.defaultType)
-                "kotlin.LongArray" -> Primitive(LongArray(size) { i -> (arrayValue[i] as Number).toLong() }, parent.defaultType)
-                "kotlin.FloatArray" -> Primitive(FloatArray(size) { i -> (arrayValue[i] as Number).toFloat() }, parent.defaultType)
-                "kotlin.DoubleArray" -> Primitive(DoubleArray(size) { i -> (arrayValue[i] as Number).toDouble() }, parent.defaultType)
-                "kotlin.BooleanArray" -> Primitive(BooleanArray(size) { i -> arrayValue[i].toString().toBoolean() }, parent.defaultType)
-                else -> Primitive<Array<*>>(arrayValue, parent.defaultType)
-            } as Primitive<*>
-
-            data.pushReturnValue(array)
+            data.pushReturnValue(arrayValue.toPrimitiveStateArray(parent.defaultType))
             return Next
         }
 
@@ -718,27 +706,33 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     private suspend fun interpretVararg(expression: IrVararg, data: Frame): ExecutionResult {
-        val args = expression.elements.map {
-            it.interpret(data).apply { if (this.returnLabel != ReturnLabel.NEXT) return this }
-            data.popReturnValue()
+        val args = expression.elements.flatMap {
+            it.interpret(data).check { return it }
+            return@flatMap when (val result = data.popReturnValue()) {
+                is Wrapper -> listOf(result.value)
+                is Primitive<*> ->
+                    when (val value = result.value) {
+                        is ByteArray -> value.toList()
+                        is CharArray -> value.toList()
+                        is ShortArray -> value.toList()
+                        is IntArray -> value.toList()
+                        is LongArray -> value.toList()
+                        is FloatArray -> value.toList()
+                        is DoubleArray -> value.toList()
+                        is BooleanArray -> value.toList()
+                        is Array<*> -> value.toList()
+                        else -> listOf(value)
+                    }
+                else -> listOf(result)
+            }
         }
-        val type = expression.type
-        val array = when (type.getFqName()) {
-            "kotlin.ByteArray" -> Primitive(args.map { (it as Primitive<Byte>).value }.toByteArray(), type)
-            "kotlin.CharArray" -> Primitive(args.map { (it as Primitive<Char>).value }.toCharArray(), type)
-            "kotlin.ShortArray" -> Primitive(args.map { (it as Primitive<Short>).value }.toShortArray(), type)
-            "kotlin.IntArray" -> Primitive(args.map { (it as Primitive<Int>).value }.toIntArray(), type)
-            "kotlin.LongArray" -> Primitive(args.map { (it as Primitive<Long>).value }.toLongArray(), type)
-            "kotlin.FloatArray" -> Primitive(args.map { (it as Primitive<Float>).value }.toFloatArray(), type)
-            "kotlin.DoubleArray" -> Primitive(args.map { (it as Primitive<Double>).value }.toDoubleArray(), type)
-            "kotlin.BooleanArray" -> Primitive(args.map { (it as Primitive<Boolean>).value }.toBooleanArray(), type)
-            else -> Primitive<Array<*>>(args.map { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }.toTypedArray(), type)
-        }
-        data.pushReturnValue(array)
-
+        data.pushReturnValue(args.toPrimitiveStateArray(expression.type))
         return Next
+    }
+
+    private suspend fun interpretSpreadElement(spreadElement: IrSpreadElement, data: Frame): ExecutionResult {
+        return spreadElement.expression.interpret(data).check { return it }
     }
 
     private suspend fun interpretTry(expression: IrTry, data: Frame): ExecutionResult {
