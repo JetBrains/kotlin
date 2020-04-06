@@ -9,8 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import gnu.trove.TObjectIntHashMap
+import org.jetbrains.kotlin.analyzer.ModuleDescriptorListener
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptorListener
 import java.util.concurrent.ConcurrentMap
 
 class KtPendingTranslationsManager(val project: Project) : ModuleDescriptorListener {
