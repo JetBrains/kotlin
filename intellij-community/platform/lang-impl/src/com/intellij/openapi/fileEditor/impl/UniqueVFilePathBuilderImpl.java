@@ -57,13 +57,6 @@ public class UniqueVFilePathBuilderImpl extends UniqueVFilePathBuilder {
     return getUniqueVirtualFilePath(project, vFile, true, GlobalSearchScope.projectScope(project));
   }
 
-  @Override
-  public boolean hasFilesWithSameName(@NotNull Project project, @NotNull VirtualFile vFile) {
-    UniqueNameBuilder<VirtualFile> builder =
-      getUniqueVirtualFileNameBuilder(project, vFile, false, GlobalSearchScope.projectScope(project));
-    return builder != null && builder.size() > 1;
-  }
-
   private static final Key<CachedValue<Map<GlobalSearchScope, Map<String, UniqueNameBuilder<VirtualFile>>>>>
     ourShortNameBuilderCacheKey = Key.create("project's.short.file.name.builder");
   private static final Key<CachedValue<Map<GlobalSearchScope, Map<String, UniqueNameBuilder<VirtualFile>>>>>
@@ -98,7 +91,6 @@ public class UniqueVFilePathBuilderImpl extends UniqueVFilePathBuilder {
           new ConcurrentHashMap<>(2),
           DumbService.getInstance(project),
           getFilenameIndexModificationTracker(project),
-          //ProjectRootModificationTracker.getInstance(project),
           FileEditorManagerImpl.OPEN_FILE_SET_MODIFICATION_COUNT
         ), false));
     }
@@ -179,11 +171,10 @@ public class UniqueVFilePathBuilderImpl extends UniqueVFilePathBuilder {
       Collection<VirtualFile> rawDataFromIndex = disableIndexUpToDateCheckInEdt(() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
       // filter only suitable files, we can miss some files but it's ok for presentation reasons
       return ContainerUtil.filter(rawDataFromIndex, f -> fileName.equals(f.getName()));
-    } else {
+    }
+    else {
       Ref<Collection<VirtualFile>> filesFromIndex = Ref.create();
-      FileBasedIndex.getInstance().ignoreDumbMode(() -> {
-        filesFromIndex.set(FilenameIndex.getVirtualFilesByName(project, fileName, scope));
-      }, project, DumbModeAccessType.RELIABLE_DATA_ONLY);
+      FileBasedIndex.getInstance().ignoreDumbMode(() -> filesFromIndex.set(FilenameIndex.getVirtualFilesByName(project, fileName, scope)), project, DumbModeAccessType.RELIABLE_DATA_ONLY);
       return filesFromIndex.get();
     }
   }
