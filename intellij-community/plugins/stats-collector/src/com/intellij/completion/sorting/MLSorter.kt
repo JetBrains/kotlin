@@ -127,7 +127,9 @@ class MLSorter : CompletionFinalSorter() {
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
       calculateAdditionalFeaturesTo(additional, element, queryLength, prefix.length, position, items.size, parameters)
-      PrefixMatchingUtil.calculateFeatures(element, prefixMatchingScorer, additional)
+      lookupStorage.performanceTracker.trackElementFeaturesCalculation(PrefixMatchingUtil.baseName) {
+        PrefixMatchingUtil.calculateFeatures(element, prefixMatchingScorer, additional)
+      }
       val score = tracker.measure {
         calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), queryLength)
       }

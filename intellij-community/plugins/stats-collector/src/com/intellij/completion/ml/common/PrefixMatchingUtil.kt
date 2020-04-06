@@ -6,7 +6,7 @@ import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.stats.personalization.impl.PrefixMatchingType
 
 internal object PrefixMatchingUtil {
-  private const val baseName = "prefix_matching"
+  const val baseName = "prefix_matching"
 
   fun calculateFeatures(element: LookupElement, scorer: PrefixMatchingScoringFunction, features: MutableMap<String, Any>) {
     if (scorer.prefix.isEmpty() || element.lookupString.isEmpty()) return
