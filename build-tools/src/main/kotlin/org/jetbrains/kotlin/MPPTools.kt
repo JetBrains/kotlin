@@ -194,20 +194,23 @@ fun createRunTask(
     return subproject.tasks.create(name, RunKotlinNativeTask::class.java, linkTask, executable, outputFileName)
 }
 
-fun getJvmCompileTime(programName: String): BenchmarkResult =
-        TaskTimerListener.getBenchmarkResult(programName, listOf("compileKotlinMetadata", "jvmJar"))
+fun getJvmCompileTime(subproject: Project,programName: String): BenchmarkResult =
+        TaskTimerListener.getTimerListenerOfSubproject(subproject)
+                .getBenchmarkResult(programName, listOf("compileKotlinMetadata", "jvmJar"))
 
 @JvmOverloads
-fun getNativeCompileTime(programName: String,
+fun getNativeCompileTime(subproject: Project, programName: String,
                          tasks: List<String> = listOf("linkBenchmarkReleaseExecutableNative")): BenchmarkResult =
-        TaskTimerListener.getBenchmarkResult(programName, tasks)
+        TaskTimerListener.getTimerListenerOfSubproject(subproject).getBenchmarkResult(programName, tasks)
 
-fun getCompileBenchmarkTime(programName: String, tasksNames: Iterable<String>, repeats: Int, exitCodes: Map<String, Int>) =
+fun getCompileBenchmarkTime(subproject: Project,
+                            programName: String, tasksNames: Iterable<String>,
+                            repeats: Int, exitCodes: Map<String, Int>) =
     (1..repeats).map { number ->
         var time = 0.0
         var status = BenchmarkResult.Status.PASSED
         tasksNames.forEach {
-            time += TaskTimerListener.getTime("$it$number")
+            time += TaskTimerListener.getTimerListenerOfSubproject(subproject).getTime("$it$number")
             status = if (exitCodes["$it$number"] != 0) BenchmarkResult.Status.FAILED else status
         }
 
@@ -227,19 +230,24 @@ fun toCompileBenchmark(metricDescription: String, status: String, programName: S
 // Class time tracker for all tasks.
 class TaskTimerListener: TaskExecutionListener {
     companion object {
-        val tasksTimes = mutableMapOf<String, Double>()
+        internal val timerListeners = mutableMapOf<String, TaskTimerListener>()
 
-        fun getBenchmarkResult(programName: String, tasksNames: List<String>): BenchmarkResult {
-            val time = tasksNames.map { tasksTimes[it] ?: 0.0 }.sum()
-            // TODO get this info from gradle plugin with exit code end stacktrace.
-            val status = tasksNames.map { tasksTimes.containsKey(it) }.reduce { a, b -> a && b }
-            return BenchmarkResult(programName,
-                                    if (status) BenchmarkResult.Status.PASSED else BenchmarkResult.Status.FAILED,
-                                    time, BenchmarkResult.Metric.COMPILE_TIME, time, 1, 0)
-        }
-
-        fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
+        internal fun getTimerListenerOfSubproject(subproject: Project) =
+                timerListeners[subproject.name] ?: error("TimeListener for project ${subproject.name} wasn't set")
     }
+
+    val tasksTimes = mutableMapOf<String, Double>()
+
+    fun getBenchmarkResult(programName: String, tasksNames: List<String>): BenchmarkResult {
+        val time = tasksNames.map { tasksTimes[it] ?: 0.0 }.sum()
+        // TODO get this info from gradle plugin with exit code end stacktrace.
+        val status = tasksNames.map { tasksTimes.containsKey(it) }.reduce { a, b -> a && b }
+        return BenchmarkResult(programName,
+                if (status) BenchmarkResult.Status.PASSED else BenchmarkResult.Status.FAILED,
+                time, BenchmarkResult.Metric.COMPILE_TIME, time, 1, 0)
+    }
+
+    fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
 
     private var startTime = System.nanoTime()
 
@@ -253,5 +261,7 @@ class TaskTimerListener: TaskExecutionListener {
 }
 
 fun addTimeListener(subproject: Project) {
-    subproject.gradle.addListener(TaskTimerListener())
+    val listener = TaskTimerListener()
+    TaskTimerListener.timerListeners.put(subproject.name, listener)
+    subproject.gradle.addListener(listener)
 }

@@ -91,7 +91,7 @@ task konanJsonReport {
             def frameworkPath = kotlin.macosX64("macos").binaries.
                     getFramework(frameworkName, kotlin.macosX64("macos").binaries.DEBUG).outputFile.absolutePath
             def nativeExecutable = new File("$frameworkPath/$frameworkName").canonicalPath
-            def nativeCompileTime = MPPTools.getNativeCompileTime(applicationName, ['compileKotlinMacos',
+            def nativeCompileTime = MPPTools.getNativeCompileTime(project, applicationName, ['compileKotlinMacos',
                                                                                     'linkBenchmarksAnalyzerDebugFrameworkMacos',
                                                                                     'cinteropLibcurlMacos'])
             def properties = getCommonProperties() + ['type'           : 'native',

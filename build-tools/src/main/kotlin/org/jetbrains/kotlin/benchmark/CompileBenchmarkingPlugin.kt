@@ -85,6 +85,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
 
             doLast {
                 val nativeCompileTime = getCompileBenchmarkTime(
+                    project,
                     applicationName,
                     buildSteps.names,
                     repeatNumber,

@@ -43,7 +43,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
             it.doLast {
                 val applicationName = benchmark.applicationName
                 val jarPath = (tasks.getByName("jvmJar") as Jar).archiveFile.get().asFile
-                val jvmCompileTime = getJvmCompileTime(applicationName)
+                val jvmCompileTime = getJvmCompileTime(project, applicationName)
                 val benchContents = buildDir.resolve(jvmBenchResults).readText()
 
                 val properties: Map<String, Any> = commonBenchmarkProperties + mapOf(
