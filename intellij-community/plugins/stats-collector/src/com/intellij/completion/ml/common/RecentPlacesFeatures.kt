@@ -10,6 +10,8 @@ import com.intellij.lang.LanguageNamesValidation
 import com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class RecentPlacesFeatures : ElementFeatureProvider {
   override fun getName(): String = "common_recent_places"
@@ -27,10 +29,15 @@ class RecentPlacesFeatures : ElementFeatureProvider {
 
   class StoreRecentPlacesListener(private val project: Project) : IdeDocumentHistoryImpl.RecentPlacesListener {
     companion object {
-      val recentPlaces = mutableListOf<String>()
-      val childrenRecentPlaces = mutableListOf<String>()
-      private const val RECENT_PLACES_COUNT = 20
-      private const val RECENT_CHILDREN_PLACES_COUNT = 100
+      val recentPlaces = createFixedSizeSet(20)
+      val childrenRecentPlaces = createFixedSizeSet(100)
+
+      private fun createFixedSizeSet(maxSize: Int): MutableSet<String> =
+        Collections.newSetFromMap(object : LinkedHashMap<String, Boolean>() {
+          override fun removeEldestEntry(eldest: Map.Entry<String, Boolean>): Boolean {
+            return size > maxSize
+          }
+        })
     }
 
     override fun recentPlaceAdded(changePlace: IdeDocumentHistoryImpl.PlaceInfo, isChanged: Boolean) {
@@ -39,12 +46,12 @@ class RecentPlacesFeatures : ElementFeatureProvider {
       val offset = changePlace.caretPosition?.startOffset ?: return
       val element = provider.findElementAt(offset)
       if (element != null && namesValidator.isIdentifier(element.text, project)) {
-        recentPlaces.addToFixedSizeList(element.text, RECENT_PLACES_COUNT)
+        recentPlaces.addToTop(element.text)
         val declaration = findDeclaration(element) ?: return
         for(child in declaration.children) {
           if (child is PsiNamedElement) {
             val name = child.name ?: continue
-            childrenRecentPlaces.addToFixedSizeList(name, RECENT_CHILDREN_PLACES_COUNT)
+            childrenRecentPlaces.addToTop(name)
           }
         }
       }
@@ -61,9 +68,8 @@ class RecentPlacesFeatures : ElementFeatureProvider {
       return null
     }
 
-    private fun<T> MutableList<T>.addToFixedSizeList(value: T, size: Int) {
+    private fun<T> MutableSet<T>.addToTop(value: T) {
       this.remove(value)
-      if (this.size == size) this.removeAt(0)
       this.add(value)
     }
   }
