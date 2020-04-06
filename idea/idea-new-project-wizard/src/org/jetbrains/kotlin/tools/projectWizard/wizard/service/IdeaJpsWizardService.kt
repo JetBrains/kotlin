@@ -9,10 +9,12 @@ import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.jarRepository.JarRepositoryManager
+import com.intellij.jarRepository.RemoteRepositoryDescription
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.libraries.ui.OrderRoot
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.idea.maven.utils.library.RepositoryLibraryProperties
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetTy
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import java.nio.file.Path
 import java.util.*
 import com.intellij.openapi.module.Module as IdeaModule
@@ -147,18 +150,13 @@ private class ProjectImporter(
         module: IdeaModule
     ) {
         val artifact = libraryDependency.artifact as? MavenArtifact ?: return
-        val libraryProperties = RepositoryLibraryProperties(
-            artifact.groupId,
-            artifact.artifactId,
-            libraryDependency.version.toString()
-        )
-        val classesRoots = downloadLibraryAndGetItsClasses(libraryProperties)
+        val (classesRoots, sourcesRoots) = downloadLibraryAndGetItsClasses(libraryDependency, artifact)
 
         ModuleRootModificationUtil.addModuleLibrary(
             module,
-            if (classesRoots.size > 1) libraryProperties.artifactId else null,
-            OrderEntryFix.refreshAndConvertToUrls(classesRoots),
-            emptyList(),
+            if (classesRoots.size > 1) artifact.artifactId else null,
+            classesRoots,
+            sourcesRoots,
             when (libraryDependency.dependencyType) {
                 DependencyType.MAIN -> DependencyScope.COMPILE
                 DependencyType.TEST -> DependencyScope.TEST
@@ -166,18 +164,50 @@ private class ProjectImporter(
         )
     }
 
-    private fun downloadLibraryAndGetItsClasses(libraryProperties: RepositoryLibraryProperties) =
-        JarRepositoryManager.loadDependenciesModal(
+    private fun downloadLibraryAndGetItsClasses(
+        libraryDependency: LibraryDependencyIR,
+        artifact: MavenArtifact
+    ): LibraryClassesAndSources {
+        val libraryProperties = RepositoryLibraryProperties(
+            artifact.groupId,
+            artifact.artifactId,
+            libraryDependency.version.toString()
+        )
+        val orderRoots = JarRepositoryManager.loadDependenciesModal(
             project,
             libraryProperties,
-            false,
-            false,
+            true,
+            true,
             librariesPath.toString(),
-            null
-        ).asSequence()
-            .filter { it.type == OrderRootType.CLASSES }
-            .map { PathUtil.getLocalPath(it.file) }
-            .toList()
+            listOf(artifact.repository.asJPSRepository())
+        )
+
+        return LibraryClassesAndSources.fromOrderRoots(orderRoots)
+    }
+
+    private fun Repository.asJPSRepository() = RemoteRepositoryDescription(
+        idForMaven,
+        idForMaven,
+        url
+    )
+
+    private data class LibraryClassesAndSources(
+        val classes: List<String>,
+        val sources: List<String>
+    ) {
+        companion object {
+            fun fromOrderRoots(orderRoots: Collection<OrderRoot>) = LibraryClassesAndSources(
+                orderRoots.filterRootTypes(OrderRootType.CLASSES),
+                orderRoots.filterRootTypes(OrderRootType.SOURCES)
+            )
+
+            private fun Collection<OrderRoot>.filterRootTypes(rootType: OrderRootType) =
+                filter { it.type == rootType }
+                    .mapNotNull { PathUtil.getLocalPath(it.file) }
+                    .let(OrderEntryFix::refreshAndConvertToUrls)
+
+        }
+    }
 }
 
 private val Path.url

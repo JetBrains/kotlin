@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.LibraryArtifact
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository.Companion.MAVEN_CENTRAL
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModulePath
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
@@ -117,7 +119,7 @@ abstract class KotlinLibraryDependencyIR(
 
     override val artifact: LibraryArtifact
         get() = MavenArtifact(
-            MAVEN_CENTRAL,
+            version.kotlinVersionKind.repository,
             "org.jetbrains.kotlin",
             "kotlin-$artifactName"
         )
