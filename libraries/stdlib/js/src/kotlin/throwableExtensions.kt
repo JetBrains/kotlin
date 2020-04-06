@@ -18,6 +18,14 @@ package kotlin
 public actual fun Throwable.stackTraceToString(): String = ExceptionTraceBuilder().buildFor(this)
 
 /**
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to console error output.
+ */
+@SinceKotlin("1.4")
+public actual fun Throwable.printStackTrace() {
+    console.error(this.stackTraceToString())
+}
+
+/**
  * Adds the specified exception to the list of exceptions that were
  * suppressed in order to deliver this exception.
  */

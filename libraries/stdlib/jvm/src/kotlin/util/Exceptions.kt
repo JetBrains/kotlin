@@ -18,7 +18,7 @@ import kotlin.internal.*
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
-public inline fun Throwable.printStackTrace(): Unit = (this as java.lang.Throwable).printStackTrace()
+public actual inline fun Throwable.printStackTrace(): Unit = (this as java.lang.Throwable).printStackTrace()
 
 /**
  * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the specified [writer].

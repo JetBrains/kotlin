@@ -131,6 +131,12 @@ internal class KotlinNothingValueException : RuntimeException {
 public expect fun Throwable.stackTraceToString(): String
 
 /**
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output or standard error output.
+ */
+@SinceKotlin("1.4")
+public expect fun Throwable.printStackTrace(): Unit
+
+/**
  * When supported by the platform, adds the specified exception to the list of exceptions that were
  * suppressed in order to deliver this exception.
  */
