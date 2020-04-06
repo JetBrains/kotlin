@@ -37,11 +37,11 @@ public final class LargeFileNotificationProvider extends EditorNotifications.Pro
     }
 
     EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.createActionLabel(EditorBundle.message("large.file.editor.hide.notification.action.text"), () -> {
+    panel.createActionLabel(EditorBundle.message("notification.hide.message"), () -> {
       editor.putUserData(HIDDEN_KEY, "true");
       update(file, project);
     });
-    panel.createActionLabel(EditorBundle.message("large.file.editor.dont.show.again.action.text"), () -> {
+    panel.createActionLabel(EditorBundle.message("notification.dont.show.again.message"), () -> {
       PropertiesComponent.getInstance().setValue(DISABLE_KEY, "true");
       update(file, project);
     });

@@ -37,7 +37,7 @@ public final class LargeFileRegexSearchNotificationProvider extends EditorNotifi
     if (!largeFileEditor.getSearchManager().canShowRegexSearchWarning()) return null;
 
     EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.createActionLabel(EditorBundle.message("large.file.editor.hide.notification.action.text"), () -> {
+    panel.createActionLabel(EditorBundle.message("notification.hide.message"), () -> {
       editor.putUserData(HIDDEN_KEY, "true");
       update(file, project);
     });
