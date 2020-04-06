@@ -128,5 +128,8 @@ private val urls = listOf(
     "https://www.w3.org/TR/hr-time/" to "org.w3c.performance",
     "https://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
 
-    "https://w3c.github.io/ServiceWorker/" to "org.w3c.workers"
+    "https://w3c.github.io/ServiceWorker/" to "org.w3c.workers",
+
+    "https://www.w3.org/TR/media-source/" to "org.w3c.dom.mediasource",
+    "https://www.w3.org/TR/encrypted-media" to "org.w3c.dom.encryptedmedia"
 )
