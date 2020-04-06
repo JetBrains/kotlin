@@ -64,6 +64,11 @@ public class ParcelIrBytecodeListingTestGenerated extends AbstractParcelIrByteco
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/duplicatingClinit.kt");
     }
 
+    @TestMetadata("efficientParcelable.kt")
+    public void testEfficientParcelable() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/efficientParcelable.kt");
+    }
+
     @TestMetadata("IBinderIInterface.kt")
     public void testIBinderIInterface() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
