@@ -82,22 +82,23 @@ private val cdShowWhitespacesInLSTGutterCheckBox                       get() = C
 
 // @formatter:on
 
-internal val optionDescriptors: List<OptionDescription> = listOf(
-  myCbHonorCamelHumpsWhenSelectingByClicking,
-  enableWheelFontChange,
-  enableDnD,
-  virtualSpace,
-  caretInsideTabs,
-  virtualPageAtBottom,
-  highlightBraces,
-  highlightScope,
-  highlightIdentifierUnderCaret,
-  showNotificationAfterReformatCodeCheckBox,
-  myShowNotificationAfterOptimizeImportsCheckBox,
-  renameLocalVariablesInplace,
-  preselectCheckBox,
-  showInlineDialogForCheckBox
-).map(CheckboxDescriptor::asOptionDescriptor)
+internal val optionDescriptors: List<OptionDescription>
+  get() = listOf(
+    myCbHonorCamelHumpsWhenSelectingByClicking,
+    enableWheelFontChange,
+    enableDnD,
+    virtualSpace,
+    caretInsideTabs,
+    virtualPageAtBottom,
+    highlightBraces,
+    highlightScope,
+    highlightIdentifierUnderCaret,
+    showNotificationAfterReformatCodeCheckBox,
+    myShowNotificationAfterOptimizeImportsCheckBox,
+    renameLocalVariablesInplace,
+    preselectCheckBox,
+    showInlineDialogForCheckBox
+  ).map(CheckboxDescriptor::asOptionDescriptor)
 
 
 class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {

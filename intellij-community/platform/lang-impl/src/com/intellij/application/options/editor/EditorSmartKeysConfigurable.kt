@@ -36,24 +36,25 @@ private val myCbEnableAddingCaretsOnDoubleCtrlArrows           get() = CheckboxD
 private val myCbSmartIndentOnEnter                             get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.smart.indent"), codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
 private val myCbInsertPairCurlyBraceOnEnter                    get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.insert.pair.curly.brace"), codeInsightSettings::INSERT_BRACE_ON_ENTER.toBinding())
 private val myCbInsertJavadocStubOnEnter                       get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.javadoc.stub.after.slash.star.star"), codeInsightSettings::JAVADOC_STUB_ON_ENTER.toBinding())
-internal val myCbHonorCamelHumpsWhenSelectingByClicking         get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.honor.camelhumps.words.settings.on.double.click"), PropertyBinding(editorSettings::isMouseClickSelectionHonorsCamelWords, editorSettings::setMouseClickSelectionHonorsCamelWords))
+internal val myCbHonorCamelHumpsWhenSelectingByClicking        get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.honor.camelhumps.words.settings.on.double.click"), PropertyBinding(editorSettings::isMouseClickSelectionHonorsCamelWords, editorSettings::setMouseClickSelectionHonorsCamelWords))
 // @formatter:on
 
-internal val editorSmartKeysOptionDescriptors = listOf(
-  myCbSmartHome,
-  myCbSmartEnd,
-  myCbInsertPairBracket,
-  myCbInsertPairQuote,
-  myCbReformatBlockOnTypingRBrace,
-  myCbCamelWords,
-  myCbSurroundSelectionOnTyping,
-  myCbTabExistsBracketsAndQuotes,
-  myCbEnableAddingCaretsOnDoubleCtrlArrows,
-  myCbSmartIndentOnEnter,
-  myCbInsertPairCurlyBraceOnEnter,
-  myCbInsertJavadocStubOnEnter,
-  myCbHonorCamelHumpsWhenSelectingByClicking
-).map(CheckboxDescriptor::asOptionDescriptor)
+internal val editorSmartKeysOptionDescriptors
+  get() = listOf(
+    myCbSmartHome,
+    myCbSmartEnd,
+    myCbInsertPairBracket,
+    myCbInsertPairQuote,
+    myCbReformatBlockOnTypingRBrace,
+    myCbCamelWords,
+    myCbSurroundSelectionOnTyping,
+    myCbTabExistsBracketsAndQuotes,
+    myCbEnableAddingCaretsOnDoubleCtrlArrows,
+    myCbSmartIndentOnEnter,
+    myCbInsertPairCurlyBraceOnEnter,
+    myCbInsertJavadocStubOnEnter,
+    myCbHonorCamelHumpsWhenSelectingByClicking
+  ).map(CheckboxDescriptor::asOptionDescriptor)
 
 @NonNls
 const val ID = "editor.preferences.smartKeys"
