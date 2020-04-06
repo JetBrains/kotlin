@@ -16,6 +16,7 @@ internal object PrefixMatchingUtil {
     features.addFeature("symbols_with_case_length", prefixMatchingScores.symbolsWithCase(), 0.0)
     features.addFeature("words_length", prefixMatchingScores.words(), 0.0)
     features.addFeature("words_with_case_length", prefixMatchingScores.wordsWithCase(), 0.0)
+    features.addFeature("skipped_words", prefixMatchingScores.skippedWords(), 0)
     val wordsCount = prefixMatchingScores.wordsCount()
     if (prefixMatchingScores.wordsCount() != 0) {
       features.addFeature("words_relative", prefixMatchingScores.words() / wordsCount, 0.0)
@@ -68,11 +69,14 @@ internal object PrefixMatchingUtil {
     private var symbolsWithCaseMeasure = 0.0
     private var symbolsWithCaseCount = 0
     private var wordsWithCase = 0.0
+    private var skippedWords = 0
     private var curWord = -1
 
     fun updateMatching(word: Int, withCase: Boolean) {
       if (word != curWord) {
-        val step = 1.0 / (word - curWord)
+        val wordsDif = word - curWord
+        skippedWords += wordsDif - 1
+        val step = 1.0 / wordsDif
         curWord = word
         words += step
         symbolsMeasure += step
@@ -94,6 +98,7 @@ internal object PrefixMatchingUtil {
     fun symbolsWithCase(): Double = symbolsWithCaseMeasure
     fun words(): Double = words
     fun wordsWithCase(): Double = wordsWithCase
+    fun skippedWords(): Int = skippedWords
     fun wordsCount(): Int = wordsCount
     fun type(prefix: String): PrefixMatchingType =
       when (prefix.length) {
