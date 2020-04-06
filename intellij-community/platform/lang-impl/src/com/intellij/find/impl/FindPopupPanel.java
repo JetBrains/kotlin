@@ -883,7 +883,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
         return false;
       }
 
-      @SuppressWarnings({"UseOfObsoleteCollectionType", "unchecked"})
+      @SuppressWarnings({"UseOfObsoleteCollectionType", "unchecked", "rawtypes"})
       @Override
       //Inserts search results in sorted order
       public void addRow(Object[] rowData) {
@@ -891,14 +891,14 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
           dataVector.clear();
           fireTableDataChanged();
         }
-        final Vector<UsageInfo2UsageAdapter> v = convertToVector(rowData);
+        final Vector<UsageInfo2UsageAdapter> v = (Vector)convertToVector(rowData);
         if (dataVector.isEmpty()) {
           addRow(v);
           myResultsPreviewTable.getSelectionModel().setSelectionInterval(0, 0);
           firstResultPath = v.get(0).getFile().getPath();
         }
         else {
-          final int p = Collections.binarySearch(dataVector, v, COMPARATOR);
+          final int p = Collections.binarySearch((Vector<Vector<UsageInfo2UsageAdapter>>)((Vector)dataVector), v, COMPARATOR);
           assert p < 0 : "duplicate result found";
           int row = -(p + 1);
           insertRow(row, v);
