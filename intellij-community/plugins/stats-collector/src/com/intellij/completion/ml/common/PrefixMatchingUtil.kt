@@ -18,12 +18,13 @@ internal object PrefixMatchingUtil {
     features.addFeature("words_with_case_length", prefixMatchingScores.wordsWithCase(), 0.0)
     features.addFeature("skipped_words", prefixMatchingScores.skippedWords(), 0)
     val wordsCount = prefixMatchingScores.wordsCount()
-    if (prefixMatchingScores.wordsCount() != 0) {
+    if (wordsCount != 0) {
       features.addFeature("words_relative", prefixMatchingScores.words() / wordsCount, 0.0)
       features.addFeature("words_with_case_relative", prefixMatchingScores.wordsWithCase() / wordsCount, 0.0)
     }
     features.addFeature("type", prefixMatchingScores.type(scorer.prefix), PrefixMatchingType.UNKNOWN)
     features.addFeature("exact", prefixMatchingScores.exact(), false)
+    features.addFeature("exact_final", prefixMatchingScores.exactFinal(), false)
   }
 
   fun createPrefixMatchingScoringFunction(prefix: String) = PrefixMatchingScoringFunction(prefix)
@@ -32,7 +33,10 @@ internal object PrefixMatchingUtil {
     fun score(value: String): PrefixMatchingScores {
       if (prefix.isEmpty()) return PrefixMatchingScores.EMPTY_PREFIX_MATCHING_SCORE
       val words = NameUtil.nameToWords(value)
-      val scores = PrefixMatchingScores(value.commonPrefixWith(prefix, true).length, value == prefix, words.size)
+      val scores = PrefixMatchingScores(value.commonPrefixWith(prefix, true).length,
+                                        value == prefix,
+                                        words.size,
+                                        (words.lastOrNull() ?: "").length)
       val iter = prefix.iterator()
       var ch = iter.next()
       for ((i, word) in words.withIndex()) {
@@ -59,9 +63,12 @@ internal object PrefixMatchingUtil {
     private fun next(iter: Iterator<Char>): Char? = if (iter.hasNext()) iter.next() else null
   }
 
-  data class PrefixMatchingScores(private val start: Int, private val exact: Boolean, private val wordsCount: Int) {
+  data class PrefixMatchingScores(private val start: Int,
+                                  private val exact: Boolean,
+                                  private val wordsCount: Int,
+                                  private val lastWordSize: Int) {
     companion object {
-      val EMPTY_PREFIX_MATCHING_SCORE = PrefixMatchingScores(0, false, 0)
+      val EMPTY_PREFIX_MATCHING_SCORE = PrefixMatchingScores(0, false, 0, 0)
     }
     private var words = 0.0
     private var symbolsMeasure = 0.0
@@ -70,6 +77,7 @@ internal object PrefixMatchingUtil {
     private var symbolsWithCaseCount = 0
     private var wordsWithCase = 0.0
     private var skippedWords = 0
+    private var lastWord = 0
     private var curWord = -1
 
     fun updateMatching(word: Int, withCase: Boolean) {
@@ -90,6 +98,7 @@ internal object PrefixMatchingUtil {
       }
       symbolsCount++
       if (withCase) symbolsWithCaseCount++
+      if (word == wordsCount - 1) lastWord++
     }
 
     fun start(): Int = start
@@ -99,6 +108,7 @@ internal object PrefixMatchingUtil {
     fun words(): Double = words
     fun wordsWithCase(): Double = wordsWithCase
     fun skippedWords(): Int = skippedWords
+    fun exactFinal(): Boolean = lastWord == lastWordSize
     fun wordsCount(): Int = wordsCount
     fun type(prefix: String): PrefixMatchingType =
       when (prefix.length) {
