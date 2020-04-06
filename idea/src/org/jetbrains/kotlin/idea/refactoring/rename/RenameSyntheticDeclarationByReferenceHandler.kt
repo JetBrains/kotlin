@@ -16,8 +16,6 @@ import com.intellij.refactoring.rename.RenameHandler
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 
@@ -39,7 +37,6 @@ class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
             RefactoringBundle.message("rename.title"),
             null
         )
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

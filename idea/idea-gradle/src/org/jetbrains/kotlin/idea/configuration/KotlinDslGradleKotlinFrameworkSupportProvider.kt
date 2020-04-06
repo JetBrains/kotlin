@@ -193,9 +193,9 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
         buildScriptData.addOther(
             """
                 kotlin {
-                    target {
+                    js {
                         $jsSubTargetName { }
-                        produceExecutable()
+                        binaries.executable()
                     }
                 }
             """.trimIndent()

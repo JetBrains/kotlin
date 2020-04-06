@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
     KtIfExpression::class.java,
-    KotlinBundle.message("invert.if.condition")
+    KotlinBundle.lazyMessage("invert.if.condition")
 ) {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         if (!element.ifKeyword.textRange.containsOffset(caretOffset)) return false
@@ -39,10 +39,9 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
             PsiChildRange(element, rBrace)
         else
             PsiChildRange.singleElement(element)
+
         val commentSaver = CommentSaver(commentSavingRange)
-        if (rBrace != null) {
-            element.nextEolCommentOnSameLine()?.delete()
-        }
+        if (rBrace != null) element.nextEolCommentOnSameLine()?.delete()
 
         val condition = element.condition!!
         val newCondition = (condition as? KtQualifiedExpression)?.invertSelectorFunction() ?: condition.negate()
@@ -53,6 +52,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
             PsiChildRange(newIf, rBrace)
         else
             PsiChildRange(newIf, parentBlockRBrace(newIf) ?: newIf)
+
         commentSaver.restore(commentRestoreRange)
 
         val newIfCondition = newIf.condition
@@ -207,12 +207,13 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
             val lastStatement = parent.statements.last()
             return if (expression == lastStatement) {
                 exitStatementExecutedAfter(parent)
-            } else if (lastStatement.isExitStatement() && expression.siblings(withItself = false)
-                    .firstIsInstance<KtExpression>() == lastStatement
+            } else if (lastStatement.isExitStatement() &&
+                expression.siblings(withItself = false).firstIsInstance<KtExpression>() == lastStatement
             ) {
                 lastStatement
-            } else
+            } else {
                 null
+            }
         }
 
         when (parent) {
@@ -225,18 +226,16 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
                 }
             }
 
-            is KtContainerNode -> {
-                when (val pparent = parent.parent) {
-                    is KtLoopExpression -> {
-                        if (expression == pparent.body) {
-                            return KtPsiFactory(expression).createExpression("continue")
-                        }
+            is KtContainerNode -> when (val pparent = parent.parent) {
+                is KtLoopExpression -> {
+                    if (expression == pparent.body) {
+                        return KtPsiFactory(expression).createExpression("continue")
                     }
+                }
 
-                    is KtIfExpression -> {
-                        if (expression == pparent.then || expression == pparent.`else`) {
-                            return exitStatementExecutedAfter(pparent)
-                        }
+                is KtIfExpression -> {
+                    if (expression == pparent.then || expression == pparent.`else`) {
+                        return exitStatementExecutedAfter(pparent)
                     }
                 }
             }
@@ -244,13 +243,10 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
         return null
     }
 
-    private fun parentBlockRBrace(element: KtIfExpression): PsiElement? {
-        return (element.parent as? KtBlockExpression)?.rBrace
-    }
+    private fun parentBlockRBrace(element: KtIfExpression): PsiElement? = (element.parent as? KtBlockExpression)?.rBrace
 
-    private fun KtIfExpression.nextEolCommentOnSameLine(): PsiElement? {
-        val lastLineNumber = getLineNumber(false)
-        return siblings(withItself = false)
+    private fun KtIfExpression.nextEolCommentOnSameLine(): PsiElement? = getLineNumber(false).let { lastLineNumber ->
+        siblings(withItself = false)
             .takeWhile { it.getLineNumber() == lastLineNumber }
             .firstOrNull { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }
     }

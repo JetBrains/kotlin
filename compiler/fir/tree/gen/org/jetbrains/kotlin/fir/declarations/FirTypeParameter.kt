@@ -34,4 +34,6 @@ abstract class FirTypeParameter : FirPureAbstractElement(), FirDeclaration, FirS
     abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter
 }

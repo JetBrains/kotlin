@@ -34,6 +34,8 @@ constructor(
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
+    // For Groovy DSL
+    @JvmOverloads
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
@@ -106,6 +108,8 @@ constructor(
             require(name !in binaryNames) {
                 "Cannot create binary $name: binary with such a name already exists"
             }
+
+            binaryNames.add(name)
 
             val binary = create(compilation, name, buildVariantKind)
             add(binary)

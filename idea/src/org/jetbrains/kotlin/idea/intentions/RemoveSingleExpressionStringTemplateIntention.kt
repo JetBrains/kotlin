@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
-private fun KtStringTemplateExpression.singleExpressionOrNull() =
-    children.singleOrNull()?.children?.firstOrNull() as? KtExpression
+private fun KtStringTemplateExpression.singleExpressionOrNull() = children.singleOrNull()?.children?.firstOrNull() as? KtExpression
 
 class RemoveSingleExpressionStringTemplateInspection : IntentionBasedInspection<KtStringTemplateExpression>(
     RemoveSingleExpressionStringTemplateIntention::class,
@@ -32,10 +31,9 @@ class RemoveSingleExpressionStringTemplateInspection : IntentionBasedInspection<
 
 class RemoveSingleExpressionStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
     KtStringTemplateExpression::class.java,
-    KotlinBundle.message("remove.single.expression.string.template")
+    KotlinBundle.lazyMessage("remove.single.expression.string.template")
 ) {
-    override fun isApplicableTo(element: KtStringTemplateExpression) =
-        element.singleExpressionOrNull() != null
+    override fun isApplicableTo(element: KtStringTemplateExpression) = element.singleExpressionOrNull() != null
 
     override fun applyTo(element: KtStringTemplateExpression, editor: Editor?) {
         val expression = element.singleExpressionOrNull() ?: return
@@ -44,6 +42,7 @@ class RemoveSingleExpressionStringTemplateIntention : SelfTargetingOffsetIndepen
             expression
         else
             KtPsiFactory(element).createExpressionByPattern("$0.$1()", expression, "toString")
+
         element.replace(newElement)
     }
 }

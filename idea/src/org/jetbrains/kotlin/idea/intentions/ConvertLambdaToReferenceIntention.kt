@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,11 +41,12 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 @Suppress("DEPRECATION")
 class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpression>(ConvertLambdaToReferenceIntention::class)
 
-open class ConvertLambdaToReferenceIntention(text: String) :
-    SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(KtLambdaExpression::class.java, text) {
-
+open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
+    KtLambdaExpression::class.java,
+    textGetter
+) {
     @Suppress("unused")
-    constructor() : this(KotlinBundle.message("convert.lambda.to.reference"))
+    constructor() : this(KotlinBundle.lazyMessage("convert.lambda.to.reference"))
 
     open fun buildReferenceText(element: KtLambdaExpression) = buildReferenceText(lambdaExpression = element, shortTypes = false)
 
@@ -220,7 +221,6 @@ open class ConvertLambdaToReferenceIntention(text: String) :
     }
 
     companion object {
-
         private fun buildReferenceText(lambdaExpression: KtLambdaExpression, shortTypes: Boolean): String? {
             return when (val singleStatement = lambdaExpression.singleStatementOrNull()) {
                 is KtCallExpression -> {
@@ -234,6 +234,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                                 lambdaExpression.getResolutionScope().getImplicitReceiversHierarchy().size == 1 -> "this"
                         else -> descriptor?.name?.let { "this@$it" } ?: return null
                     }
+
                     "$receiverText::${singleStatement.getCallReferencedName()}"
                 }
                 is KtDotQualifiedExpression -> {

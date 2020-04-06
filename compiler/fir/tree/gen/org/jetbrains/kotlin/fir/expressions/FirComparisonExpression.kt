@@ -22,4 +22,6 @@ abstract class FirComparisonExpression : FirExpression() {
     abstract val compareToCall: FirFunctionCall
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComparisonExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComparisonExpression
 }

@@ -122,20 +122,18 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return graphBuilder.returnExpressionsOfAnonymousFunction(function)
     }
 
+    fun dropSubgraphFromCall(call: FirFunctionCall) {
+        graphBuilder.dropSubgraphFromCall(call)
+    }
+
     // ----------------------------------- Named function -----------------------------------
 
     fun enterFunction(function: FirFunction<*>) {
         val (functionEnterNode, previousNode) = graphBuilder.enterFunction(function)
-        if (previousNode == null) {
-            functionEnterNode.mergeIncomingFlow()
-        } else {
-            // Enter anonymous function
-            assert(functionEnterNode.previousNodes.isEmpty())
-            functionEnterNode.flow = logicSystem.forkFlow(previousNode.flow)
-        }
+        functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 
-    fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
+    fun exitFunction(function: FirFunction<*>): ControlFlowGraph {
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
         if (!graphBuilder.isTopLevel()) {
@@ -160,10 +158,31 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         enterNode.flow = enterNode.flow.fork()
     }
 
-    // ----------------------------------- Anonymous object -----------------------------------
+    // ----------------------------------- Classes -----------------------------------
 
-    fun exitAnonymousObject(anonymousObject: FirAnonymousObject) {
-        graphBuilder.exitAnonymousObject(anonymousObject).mergeIncomingFlow()
+    fun enterClass() {
+        graphBuilder.enterClass()
+    }
+
+    fun exitClass() {
+        graphBuilder.exitClass()
+    }
+
+    fun exitRegularClass(klass: FirRegularClass): ControlFlowGraph {
+        if (klass.isLocal) return exitLocalClass(klass)
+        return graphBuilder.exitClass(klass)
+    }
+
+    private fun exitLocalClass(klass: FirRegularClass): ControlFlowGraph {
+        val (node, controlFlowGraph) = graphBuilder.exitLocalClass(klass)
+        node.mergeIncomingFlow()
+        return controlFlowGraph
+    }
+
+    fun exitAnonymousObject(anonymousObject: FirAnonymousObject): ControlFlowGraph {
+        val (node, controlFlowGraph) = graphBuilder.exitAnonymousObject(anonymousObject)
+        node.mergeIncomingFlow()
+        return controlFlowGraph
     }
 
     // ----------------------------------- Property -----------------------------------
@@ -924,8 +943,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitInitBlock(initBlock: FirAnonymousInitializer) {
-        graphBuilder.exitInitBlock(initBlock).mergeIncomingFlow()
+    fun exitInitBlock(initBlock: FirAnonymousInitializer): ControlFlowGraph {
+        val (node, controlFlowGraph) = graphBuilder.exitInitBlock(initBlock)
+        node.mergeIncomingFlow()
+        return controlFlowGraph
     }
 
     // ------------------------------------------------------ Utils ------------------------------------------------------
@@ -938,14 +959,20 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
 
-    private fun <T : CFGNode<*>> T.mergeIncomingFlow(updateReceivers: Boolean = false): T = this.also { node ->
+    private fun <T : CFGNode<*>> T.mergeIncomingFlow(
+        updateReceivers: Boolean = false,
+        shouldForkFlow: Boolean = false
+    ): T = this.also { node ->
         val previousFlows = if (node.isDead)
             node.previousNodes.map { it.flow }
         else
             node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges.getValue(it).usedInDfa }?.flow }
-        val flow = logicSystem.joinFlow(previousFlows)
+        var flow = logicSystem.joinFlow(previousFlows)
         if (updateReceivers) {
             logicSystem.updateAllReceivers(flow)
+        }
+        if (shouldForkFlow) {
+            flow = flow.fork()
         }
         node.flow = flow
     }

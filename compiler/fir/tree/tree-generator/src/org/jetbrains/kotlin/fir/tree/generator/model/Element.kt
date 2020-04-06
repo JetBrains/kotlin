@@ -80,6 +80,7 @@ class Element(val name: String, kind: Kind) : AbstractElement {
                 val existingField = result.first { it == field }
                 existingField.fromParent = true
                 existingField.needsSeparateTransform = existingField.needsSeparateTransform || field.needsSeparateTransform
+                existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || field.needTransformInOtherChildren
             }
         }
         result.toList().asReversed()

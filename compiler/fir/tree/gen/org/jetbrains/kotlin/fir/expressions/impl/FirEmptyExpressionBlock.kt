@@ -34,6 +34,10 @@ class FirEmptyExpressionBlock : FirBlock() {
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
+        return this
+    }
+
     override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
         return this
     }

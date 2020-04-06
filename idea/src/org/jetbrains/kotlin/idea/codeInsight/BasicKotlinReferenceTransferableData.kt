@@ -16,7 +16,8 @@ class BasicKotlinReferenceTransferableData(
     val imports: List<String>,
     val sourceTextOffset: Int,
     val sourceText: String,
-    val textRanges: List<TextRange>
+    val textRanges: List<TextRange>,
+    val locationFqName: String?
 ) : TextBlockTransferableData, Cloneable, Serializable {
     override fun getFlavor() = dataFlavor
     override fun getOffsetCount() = 0

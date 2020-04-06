@@ -28,5 +28,7 @@ interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
 
     fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
+
     fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 }

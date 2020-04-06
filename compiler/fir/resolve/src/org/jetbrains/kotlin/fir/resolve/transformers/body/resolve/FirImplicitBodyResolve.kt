@@ -83,7 +83,7 @@ fun <F : FirClass<F>> F.runBodiesResolutionForLocalClass(
     )
 
     val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
-    val members = designationMap.keys
+    val members = localClassesNavigationInfo.allMembers
     graphBuilder.prepareForLocalClassMembers(members)
 
     return this.transform<F, ResolutionMode>(transformer, resolutionMode).single.also {

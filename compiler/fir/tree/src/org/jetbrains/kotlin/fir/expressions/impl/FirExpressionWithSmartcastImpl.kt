@@ -67,6 +67,10 @@ internal class FirExpressionWithSmartcastImpl(
         throw IllegalStateException()
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
+        throw IllegalStateException()
+    }
+
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         throw IllegalStateException()
     }

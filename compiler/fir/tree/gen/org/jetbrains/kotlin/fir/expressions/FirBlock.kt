@@ -24,6 +24,8 @@ abstract class FirBlock : FirExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlock
+
     abstract fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlock
 
     abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlock

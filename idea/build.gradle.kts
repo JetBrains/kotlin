@@ -1,7 +1,11 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
+
+val kotlinVersion: String by rootProject.extra
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
@@ -181,6 +185,17 @@ dependencies {
 }
 
 tasks.named<Copy>("processResources") {
+    val currentIde = IdeVersionConfigurator.currentIde
+    val pluginPatchNumber = findProperty("pluginPatchNumber") as String? ?: "1"
+    val defaultPluginVersion = "$kotlinVersion-${currentIde.kind.shortName}${currentIde.platform.version}-$pluginPatchNumber"
+    val pluginVersion = findProperty("pluginVersion") as String? ?: defaultPluginVersion
+
+    inputs.property("pluginVersion", pluginVersion)
+
+    filesMatching("META-INF/plugin.xml") {
+        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to pluginVersion))
+    }
+
     from(provider { project(":compiler:cli-common").mainSourceSet.resources }) {
         include("META-INF/extensions/compiler.xml")
     }

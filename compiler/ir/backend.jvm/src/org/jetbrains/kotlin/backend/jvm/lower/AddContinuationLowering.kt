@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -59,9 +56,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         // each lambda is referenced at most once while creating `$$forInline` methods.
         addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile)
         addContinuationParameterToSuspendCalls(irFile)
-        // This should be done after adding continuation parameters so that `attributeContainerId` links
-        // inside `$$forInline` copies of `invokeSuspend` do not confuse the previous passes.
-        fillInvokeSuspendForInlineBodies(irFile)
     }
 
     private fun addContinuationParameterToSuspendCalls(irFile: IrFile) {
@@ -213,7 +207,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
-    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, fields: List<IrField>, receiverField: IrField?): IrFunction {
+    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, fields: List<IrField>, receiverField: IrField?): IrSimpleFunction {
         val superMethod = context.ir.symbols.suspendLambdaClass.functions.single {
             it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type.isKotlinResult()
@@ -231,29 +225,24 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
-    private fun IrClass.addInvokeSuspendForInlineForLambda(invokeSuspend: IrFunction): IrFunction {
+    private fun IrClass.addInvokeSuspendForInlineForLambda(invokeSuspend: IrSimpleFunction): IrSimpleFunction {
         return addFunction(
             INVOKE_SUSPEND_METHOD_NAME + FOR_INLINE_SUFFIX,
             context.irBuiltIns.anyNType,
             Modality.FINAL,
             origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
         ).apply {
+            copyAttributes(invokeSuspend)
+            generateErrorForInlineBody()
             valueParameters += invokeSuspend.valueParameters.map { it.copyTo(this) }
         }
     }
 
-    private fun fillInvokeSuspendForInlineBodies(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitClass(declaration: IrClass): IrStatement = declaration.transformPostfix {
-                if (origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) {
-                    for (function in functions) {
-                        if (function.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE) {
-                            function.body = functions.single { it.name.asString() == "invokeSuspend" }.copyBodyTo(function)
-                        }
-                    }
-                }
-            }
-        })
+    private fun IrSimpleFunction.generateErrorForInlineBody() {
+        val message = "This is a stub representing a copy of a suspend method without the state machine " +
+                "(used by the inliner). Since the difference is at the bytecode level, the body is " +
+                "still on the original function. Use suspendForInlineToOriginal() to retrieve it."
+        body = IrExpressionBodyImpl(startOffset, endOffset, IrErrorExpressionImpl(startOffset, endOffset, returnType, message))
     }
 
     private fun IrDeclarationContainer.addFunctionOverride(function: IrSimpleFunction): IrSimpleFunction =
@@ -593,7 +582,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         annotations += view.annotations.map { it.deepCopyWithSymbols(this) }
                         copyParameterDeclarationsFrom(view)
                         copyAttributes(view)
-                        body = view.copyBodyTo(this)
+                        generateErrorForInlineBody()
                     }
                 }
 

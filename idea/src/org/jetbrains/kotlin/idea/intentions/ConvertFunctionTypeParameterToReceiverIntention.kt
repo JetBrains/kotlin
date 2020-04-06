@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntention<KtTypeReference>(
     KtTypeReference::class.java,
-    KotlinBundle.message("convert.function.type.parameter.to.receiver")
+    KotlinBundle.lazyMessage("convert.function.type.parameter.to.receiver")
 ) {
     class FunctionDefinitionInfo(element: KtFunction) : AbstractProcessableUsageInfo<KtFunction, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
@@ -82,15 +82,15 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             val parameterNames = lambdaType.arguments
                 .dropLast(1)
                 .map { KotlinNameSuggester.suggestNamesByType(it.type, validator, "p").first() }
+
             val receiver = parameterNames.getOrNull(data.typeParameterIndex) ?: return
             val arguments = parameterNames.filter { it != receiver }
             val adapterLambda = KtPsiFactory(expression).createLambdaExpression(
                 parameterNames.joinToString(),
                 "$receiver.${expression.text}(${arguments.joinToString()})"
             )
-            expression.replaced(adapterLambda).let {
-                it.moveFunctionLiteralOutsideParenthesesIfPossible()
-            }
+
+            expression.replaced(adapterLambda).moveFunctionLiteralOutsideParenthesesIfPossible()
         }
     }
 
@@ -151,9 +151,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 appendFixedText(" }")
             } as KtLambdaExpression
 
-            expression.replaced(replacingLambda).let {
-                it.moveFunctionLiteralOutsideParenthesesIfPossible()
-            }
+            expression.replaced(replacingLambda).moveFunctionLiteralOutsideParenthesesIfPossible()
         }
 
         private fun generateVariable(expression: KtExpression): String {
@@ -161,6 +159,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             KotlinIntroduceVariableHandler.doRefactoring(project, null, expression, false, emptyList()) {
                 baseCallee = it.name!!
             }
+
             return baseCallee
         }
     }
@@ -307,6 +306,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 is KtConstructor<*> -> callable.containingClassOrObject?.body
                 else -> callable.bodyExpression
             }
+
             if (body != null) {
                 val functionParameter = callable.valueParameters.getOrNull(data.functionParameterIndex) ?: return
                 for (ref in ReferencesSearch.search(functionParameter, LocalSearchScope(body))) {
@@ -354,8 +354,8 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             setReceiverTypeReference(element)
             parameterList!!.removeParameter(data.typeParameterIndex)
         }
-        text = KotlinBundle.message("convert.0.to.1", elementBefore.text, elementAfter.text)
 
+        setTextGetter(KotlinBundle.lazyMessage("convert.0.to.1", elementBefore.text, elementAfter.text))
         return element.textRange
     }
 

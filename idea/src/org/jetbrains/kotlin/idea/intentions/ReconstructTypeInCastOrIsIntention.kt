@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,12 +18,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 
-class ReconstructTypeInCastOrIsIntention :
-    SelfTargetingOffsetIndependentIntention<KtTypeReference>(
-        KtTypeReference::class.java,
-        KotlinBundle.message("replace.by.reconstructed.type")
-    ),
-    LowPriorityAction {
+class ReconstructTypeInCastOrIsIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(
+    KtTypeReference::class.java,
+    KotlinBundle.lazyMessage("replace.by.reconstructed.type")
+), LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
         // Only user types (like Foo) are interesting
         val typeElement = element.typeElement as? KtUserType ?: return false
@@ -42,7 +40,7 @@ class ReconstructTypeInCastOrIsIntention :
         if (type.constructor.parameters.isEmpty()) return false
 
         val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
-        text = KotlinBundle.message("replace.by.0", typePresentation)
+        setTextGetter(KotlinBundle.lazyMessage("replace.by.0", typePresentation))
 
         return true
     }
@@ -53,7 +51,5 @@ class ReconstructTypeInCastOrIsIntention :
         ShortenReferences.DEFAULT.process(element.replaced(newType))
     }
 
-    private fun getReconstructedType(typeRef: KtTypeReference): KotlinType? {
-        return typeRef.analyze().get(BindingContext.TYPE, typeRef)
-    }
+    private fun getReconstructedType(typeRef: KtTypeReference): KotlinType? = typeRef.analyze().get(BindingContext.TYPE, typeRef)
 }

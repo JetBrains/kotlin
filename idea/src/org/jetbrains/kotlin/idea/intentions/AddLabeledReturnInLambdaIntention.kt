@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExpression>(
     KtBlockExpression::class.java,
-    KotlinBundle.message("add.labeled.return.to.last.expression.in.a.lambda")
+    KotlinBundle.lazyMessage("add.labeled.return.to.last.expression.in.a.lambda")
 ), LowPriorityAction {
     override fun applicabilityRange(element: KtBlockExpression): TextRange? {
         if (!isApplicableTo(element)) return null
         val labelName = element.getParentLambdaLabelName() ?: return null
         if (labelName == KtTokens.SUSPEND_KEYWORD.value) return null
-        text = KotlinBundle.message("add.return.at.0", labelName)
+        setTextGetter(KotlinBundle.lazyMessage("add.return.at.0", labelName))
         return element.statements.lastOrNull()?.textRange
     }
 

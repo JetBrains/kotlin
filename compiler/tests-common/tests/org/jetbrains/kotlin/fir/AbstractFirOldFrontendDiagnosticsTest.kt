@@ -26,12 +26,12 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         if (testFiles.any { "FIR_IGNORE" in it.directives }) return
-        val failure: AssertionError? = try {
+        val failure: FirRuntimeException? = try {
             for ((_, firFiles) in firFilesPerSession) {
                 doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
             }
             null
-        } catch (e: AssertionError) {
+        } catch (e: FirRuntimeException) {
             e
         }
         val failureFile = File(testDataFile.path.replace(".kt", ".fail"))
@@ -57,13 +57,11 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
         }
     }
 
-    private fun checkFailureFile(failure: AssertionError, failureFile: File) {
+    private fun checkFailureFile(failure: FirRuntimeException, failureFile: File) {
         val failureMessage = buildString {
             appendln(failure.message)
-            failure.cause?.let {
-                append("Cause: ")
-                appendln(it)
-            }
+            append("Cause: ")
+            appendln(failure.cause)
         }
         KotlinTestUtils.assertEqualsToFile(failureFile, failureMessage)
     }

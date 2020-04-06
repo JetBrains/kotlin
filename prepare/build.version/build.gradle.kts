@@ -44,19 +44,7 @@ val writeStdlibVersion by tasks.registering {
     }
 }
 
-val writePluginVersion by tasks.registering {
-    val versionFile = project(":idea").projectDir.resolve("resources/META-INF/plugin.xml")
-    val pluginVersion = rootProject.findProperty("pluginVersion") as String?
-    inputs.property("version", pluginVersion)
-    outputs.file(versionFile)
-    doLast {
-        requireNotNull(pluginVersion) { "Specify 'pluginVersion' property" }
-        replaceVersion(versionFile, """<version>([^<]+)</version>""") {
-            logger.lifecycle("Writing new plugin version: $pluginVersion")
-            pluginVersion!!
-        }
-    }
-}
+val writePluginVersion by tasks.registering // Remove this task after removing usages in the TeamCity build
 
 val writeVersions by tasks.registering {
     dependsOn(writeBuildNumber, writeStdlibVersion)

@@ -33,6 +33,11 @@ open class FirUserTypeRefImpl(
         for (part in qualifier) {
             (part.typeArguments as MutableList<FirTypeProjection>).transformInplace(transformer, data)
         }
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
         annotations.transformInplace(transformer, data)
         return this
     }

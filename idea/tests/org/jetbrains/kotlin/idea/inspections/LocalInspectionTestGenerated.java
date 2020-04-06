@@ -8335,6 +8335,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testParenthesized() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/parenthesized.kt");
         }
+
+        @TestMetadata("recursiveCall.kt")
+        public void testRecursiveCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSuspend/recursiveCall.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantUnitExpression")

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.coroutines.isSuspendLambdaOrLocalFunction
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -29,14 +28,11 @@ import org.jetbrains.kotlin.types.KotlinType
 class JvmRuntimeTypes(
     module: ModuleDescriptor,
     private val languageVersionSettings: LanguageVersionSettings,
-    forceNoOptimizedCallableReferences: Boolean
+    private val generateOptimizedCallableReferenceSuperClasses: Boolean
 ) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
     private val kotlinCoroutinesJvmInternalPackage =
         MutablePackageFragmentDescriptor(module, languageVersionSettings.coroutinesJvmInternalPackageFqName())
-
-    val generateOptimizedCallableReferenceSuperClasses =
-        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 && !forceNoOptimizedCallableReferences
 
     private fun internal(className: String, packageFragment: PackageFragmentDescriptor = kotlinJvmInternalPackage): Lazy<ClassDescriptor> =
         lazy { createClass(packageFragment, className) }

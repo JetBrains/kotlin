@@ -2,10 +2,10 @@ fun test(x: Any?) {
   if (x !is String) return
 
   class C {
-    val v = x.<!UNRESOLVED_REFERENCE!>length<!>
+    val v = x.length
 
     val vGet: Int
-      get() = x.<!UNRESOLVED_REFERENCE!>length<!>
+      get() = x.length
 
     val s: String = x
   }

@@ -2308,8 +2308,8 @@ public abstract class StackValue {
 
         @Nullable private final Label ifNull;
 
-        public SafeFallback(@NotNull Type type, @Nullable Label ifNull, StackValue receiver) {
-            super(type, null, false, false, receiver, true);
+        public SafeFallback(@NotNull Type type, @Nullable KotlinType kotlinType, @Nullable Label ifNull, StackValue receiver) {
+            super(type, kotlinType, false, false, receiver, true);
             this.ifNull = ifNull;
         }
 

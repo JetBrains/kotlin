@@ -26,4 +26,8 @@ internal class FirImplicitTypeRefImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
         return this
     }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
+        return this
+    }
 }

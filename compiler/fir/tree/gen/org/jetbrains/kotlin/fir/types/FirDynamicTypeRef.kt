@@ -21,4 +21,6 @@ abstract class FirDynamicTypeRef : FirPureAbstractElement(), FirTypeRefWithNulla
     abstract override val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDynamicTypeRef(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDynamicTypeRef
 }

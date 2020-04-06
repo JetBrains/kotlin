@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
 class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
     KtClass::class.java,
-    KotlinBundle.message("convert.to.enum.class")
+    KotlinBundle.lazyMessage("convert.to.enum.class")
 ) {
     override fun applicabilityRange(element: KtClass): TextRange? {
         val nameIdentifier = element.nameIdentifier ?: return null
@@ -83,7 +83,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
         }
 
         if (subclassesByContainer.isNotEmpty()) {
-            subclassesByContainer.forEach { currentClass, currentSubclasses -> processClass(currentClass!!, currentSubclasses, project) }
+            subclassesByContainer.forEach { (currentClass, currentSubclasses) -> processClass(currentClass!!, currentSubclasses, project) }
         } else {
             processClass(klass, emptyList(), project)
         }
@@ -116,8 +116,8 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
                     append((subclass.superTypeListEntries.firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
                 }
             }
-            val entry = psiFactory.createEnumEntry(entryText)
 
+            val entry = psiFactory.createEnumEntry(entryText)
             subclass.body?.let { body -> entry.add(body) }
 
             if (i < subclasses.lastIndex) {

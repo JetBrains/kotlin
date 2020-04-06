@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class T(var value: Int) {}
 
 fun plusAssign(): T {

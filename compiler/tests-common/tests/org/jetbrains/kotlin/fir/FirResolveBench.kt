@@ -99,15 +99,15 @@ class FirResolveBench(val withProgress: Boolean) {
     ): List<FirFile> {
         return ktFiles.map { file ->
             val before = vmStateSnapshot()
-            var firFile: FirFile? = null
+            val firFile: FirFile
             val time = measureNanoTime {
                 firFile = builder.buildFirFile(file)
-                (builder.baseSession.firProvider as FirProviderImpl).recordFile(firFile!!)
+                (builder.baseSession.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
-            firFile!!
+            firFile
         }.also {
             totalTime = timePerTransformer.values.sumByLong { it.time }
         }
@@ -119,15 +119,15 @@ class FirResolveBench(val withProgress: Boolean) {
     ): List<FirFile> {
         return files.map { file ->
             val before = vmStateSnapshot()
-            var firFile: FirFile? = null
+            val firFile: FirFile
             val time = measureNanoTime {
                 firFile = builder.buildFirFile(file)
-                (builder.session.firProvider as FirProviderImpl).recordFile(firFile!!)
+                (builder.session.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
-            firFile!!
+            firFile
         }.also {
             totalTime = timePerTransformer.values.sumByLong { it.time }
         }
@@ -297,7 +297,7 @@ class FirResolveBench(val withProgress: Boolean) {
     fun throwFailure() {
         if (fails.any()) {
             val (transformerClass, failure, file) = fails.first()
-            throw AssertionError("Failures detected in ${transformerClass.simpleName}, file: $file", failure)
+            throw FirRuntimeException("Failures detected in ${transformerClass.simpleName}, file: $file", failure)
         }
     }
 
@@ -417,3 +417,5 @@ private fun RTableContext.printMeasureAsTable(measure: FirResolveBench.Measure, 
         cell(measure.gcCollections.toString())
     }
 }
+
+class FirRuntimeException(override val message: String, override val cause: Throwable) : RuntimeException(message, cause)

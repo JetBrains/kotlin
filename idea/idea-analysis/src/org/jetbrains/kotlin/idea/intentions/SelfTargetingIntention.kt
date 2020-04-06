@@ -29,8 +29,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     @Nls private var textGetter: () -> String,
     @Nls private val familyNameGetter: () -> String = textGetter,
 ) : IntentionAction {
-
-    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention(elementType, { text }, { familyName })"))
+    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention<TElement>(elementType, { text }, { familyName })"))
     constructor(
         elementType: Class<TElement>,
         @Nls text: String,
@@ -38,7 +37,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     ) : this(elementType, { text }, { familyName })
 
     protected val defaultText: String get() = defaultTextGetter()
-    private val defaultTextGetter: () -> String = textGetter
+    protected val defaultTextGetter: () -> String = textGetter
 
     @Deprecated("Replace with `setTextGetter`", ReplaceWith("setTextGetter { text }"))
     protected fun setText(@Nls text: String) {
@@ -62,15 +61,9 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         val commonParent = if (leaf1 != null && leaf2 != null) PsiTreeUtil.findCommonParent(leaf1, leaf2) else null
 
         var elementsToCheck: Sequence<PsiElement> = emptySequence()
-        if (leaf1 != null) {
-            elementsToCheck += leaf1.parentsWithSelf.takeWhile { it != commonParent }
-        }
-        if (leaf2 != null) {
-            elementsToCheck += leaf2.parentsWithSelf.takeWhile { it != commonParent }
-        }
-        if (commonParent != null && commonParent !is PsiFile) {
-            elementsToCheck += commonParent.parentsWithSelf
-        }
+        if (leaf1 != null) elementsToCheck += leaf1.parentsWithSelf.takeWhile { it != commonParent }
+        if (leaf2 != null) elementsToCheck += leaf2.parentsWithSelf.takeWhile { it != commonParent }
+        if (commonParent != null && commonParent !is PsiFile) elementsToCheck += commonParent.parentsWithSelf
 
         for (element in elementsToCheck) {
             @Suppress("UNCHECKED_CAST")
@@ -130,7 +123,10 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
     @Nls familyNameGetter: () -> String = textGetter,
 ) : SelfTargetingIntention<TElement>(elementType, textGetter, familyNameGetter) {
 
-    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingRangeIntention(elementType, { text }, { familyName })"))
+    @Deprecated(
+        "Replace with primary constructor",
+        ReplaceWith("SelfTargetingRangeIntention<TElement>(elementType, { text }, { familyName })")
+    )
     constructor(
         elementType: Class<TElement>,
         @Nls text: String,
@@ -153,7 +149,7 @@ abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
 
     @Deprecated(
         "Replace with primary constructor",
-        ReplaceWith("SelfTargetingOffsetIndependentIntention(elementType, { text }, { familyName })")
+        ReplaceWith("SelfTargetingOffsetIndependentIntention<TElement>(elementType, { text }, { familyName })")
     )
     constructor(
         elementType: Class<TElement>,

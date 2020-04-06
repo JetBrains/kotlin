@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-class RemoveExplicitLambdaParameterTypesIntention :
-    SelfTargetingIntention<KtLambdaExpression>(
-        KtLambdaExpression::class.java,
-        KotlinBundle.message("remove.explicit.lambda.parameter.types.may.break.code")
-    ) {
+class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtLambdaExpression>(
+    KtLambdaExpression::class.java,
+    KotlinBundle.lazyMessage("remove.explicit.lambda.parameter.types.may.break.code")
+) {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.valueParameters.none { it.typeReference != null }) return false
         val arrow = element.functionLiteral.arrow ?: return false
@@ -28,6 +27,7 @@ class RemoveExplicitLambdaParameterTypesIntention :
         val parameterString = oldParameterList.parameters.asSequence().map {
             it.destructuringDeclaration?.text ?: it.name
         }.joinToString(", ")
+
         val newParameterList = KtPsiFactory(element).createLambdaParameterList(parameterString)
         oldParameterList.replace(newParameterList)
     }

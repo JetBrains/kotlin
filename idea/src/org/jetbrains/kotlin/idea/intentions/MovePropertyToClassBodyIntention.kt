@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,17 +21,15 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(
     KtParameter::class.java,
-    KotlinBundle.message("move.to.class.body")
+    KotlinBundle.lazyMessage("move.to.class.body")
 ) {
-    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
-        return element.isPropertyParameter() && (element.ownerFunction as KtPrimaryConstructor).isNotContainedInAnnotation()
-    }
+    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean =
+        element.isPropertyParameter() && (element.ownerFunction as KtPrimaryConstructor).isNotContainedInAnnotation()
 
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val parentClass = PsiTreeUtil.getParentOfType(element, KtClass::class.java) ?: return
 
-        val propertyDeclaration = KtPsiFactory(element)
-            .createProperty("${element.valOrVarKeyword?.text} ${element.name} = ${element.name}")
+        val propertyDeclaration = KtPsiFactory(element).createProperty("${element.valOrVarKeyword?.text} ${element.name} = ${element.name}")
 
         val firstProperty = parentClass.getProperties().firstOrNull()
         parentClass.addDeclarationBefore(propertyDeclaration, firstProperty).apply {
@@ -59,6 +57,7 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(
         } else {
             element.modifierList?.delete()
         }
+
         if (hasVararg) element.addModifier(KtTokens.VARARG_KEYWORD)
     }
 

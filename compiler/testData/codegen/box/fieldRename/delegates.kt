@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 import kotlin.reflect.KProperty
 
 public open class TestDelegate<T: Any>(private val initializer: () -> T) {

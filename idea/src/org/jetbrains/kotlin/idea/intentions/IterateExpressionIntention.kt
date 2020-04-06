@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(
     KtExpression::class.java,
-    KotlinBundle.message("iterate.over.collection")
+    KotlinBundle.lazyMessage("iterate.over.collection")
 ),
     HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
@@ -36,10 +36,13 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(
         val range = element.textRange
         if (caretOffset != range.startOffset && caretOffset != range.endOffset) return false
         val data = data(element) ?: return false
-        text = KotlinBundle.message(
-            "iterate.over.0",
-            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(data.collectionType)
+        setTextGetter(
+            KotlinBundle.lazyMessage(
+                "iterate.over.0",
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(data.collectionType)
+            )
         )
+
         return true
     }
 

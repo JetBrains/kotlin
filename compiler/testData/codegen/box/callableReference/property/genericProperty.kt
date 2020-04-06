@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: NATIVE
 //For KT-6020
 import kotlin.reflect.KProperty1

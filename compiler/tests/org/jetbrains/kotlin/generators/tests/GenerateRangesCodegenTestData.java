@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.generators.tests;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.LineSeparator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -148,7 +147,7 @@ public class GenerateRangesCodegenTestData {
                 .replace("$LIST", "list" + number)
                 .replace("$RANGE", "range" + number)
                 .replace("$TYPE", elementType)
-                .replace("\n", LineSeparator.getSystemLineSeparator().getSeparatorString());
+                .replace("\n", System.lineSeparator());
     }
 
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -41,10 +42,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.*
@@ -66,6 +64,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.*
@@ -936,7 +935,20 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private fun forceBoxedReturnType(descriptor: FunctionDescriptor): Boolean {
         if (isBoxMethodForInlineClass(descriptor)) return true
 
-        return isJvmPrimitiveOrInlineClass(descriptor.returnType!!) &&
+        val returnType = descriptor.returnType!!
+
+        // Crude hack to determine whether it is an AnonymousFunctionDescriptor created for callable reference.
+        // Ideally, we should force return type boxing for all anonymous functions returning an inline class value
+        // (so that the result is boxed properly, since technically it is a covariant override of a corresponding generic 'invoke').
+        // But, unfortunately, we can't do so right now, because it'd break binary compatibility for lambdas returning 'Result'.
+        if (descriptor is AnonymousFunctionDescriptor) {
+            val source = descriptor.source
+            if (source is KotlinSourceElement && source.psi is KtCallableReferenceExpression && returnType.isInlineClassType()) {
+                return true
+            }
+        }
+
+        return isJvmPrimitiveOrInlineClass(returnType) &&
                 getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitiveOrInlineClass(it.returnType!!) }
     }
 

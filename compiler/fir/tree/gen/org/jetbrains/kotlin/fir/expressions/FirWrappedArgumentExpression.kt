@@ -22,4 +22,6 @@ abstract class FirWrappedArgumentExpression : FirWrappedExpression() {
     abstract val isSpread: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedArgumentExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression
 }

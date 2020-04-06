@@ -64,7 +64,7 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             )
 
             UpdateFunctionCallSites(functionDelegates).lower(input)
-            UpdateConstantFacadePropertyReferences(context).lower(input)
+            UpdateConstantFacadePropertyReferences(context, shouldGeneratePartHierarchy).lower(input)
 
             context.multifileFacadesToAdd.clear()
 
@@ -280,17 +280,12 @@ private class UpdateFunctionCallSites(
     }
 }
 
-private class UpdateConstantFacadePropertyReferences(private val context: JvmBackendContext) : ClassLoweringPass {
+private class UpdateConstantFacadePropertyReferences(
+    private val context: JvmBackendContext,
+    private val shouldGeneratePartHierarchy: Boolean
+) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        // Find property reference classes for properties whose fields were moved to the facade class.
-        if (irClass.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
-            return
-        val property = (irClass.attributeOwnerId as? IrPropertyReference)?.getter?.owner?.correspondingPropertySymbol?.owner
-            ?: return
-        val facadeClass = context.multifileFacadeClassForPart[property.parentAsClass.attributeOwnerId]
-            ?: return
-        if (property.backingField?.shouldMoveToFacade() != true)
-            return
+        val facadeClass = getReplacementFacadeClassOrNull(irClass) ?: return
 
         // Replace the class reference in the body of the property reference class (in getOwner) to refer to the facade class instead.
         irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -300,5 +295,26 @@ private class UpdateConstantFacadePropertyReferences(private val context: JvmBac
                 expression.startOffset, expression.endOffset, facadeClass.defaultType, facadeClass.symbol, facadeClass.defaultType
             )
         })
+    }
+
+    // We should replace references to facade classes in the following cases:
+    // - if -Xmultifile-parts-inherit is enabled, always replace all references;
+    // - otherwise, replace references in classes for properties whose fields were moved to the facade class.
+    private fun getReplacementFacadeClassOrNull(irClass: IrClass): IrClass? {
+        if (irClass.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE &&
+            irClass.origin != JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+        ) return null
+
+        val declaration = when (val callableReference = irClass.attributeOwnerId) {
+            is IrPropertyReference -> callableReference.getter?.owner?.correspondingPropertySymbol?.owner
+            is IrFunctionReference -> callableReference.symbol.owner
+            else -> null
+        } ?: return null
+        val parent = declaration.parent as? IrClass ?: return null
+        val facadeClass = context.multifileFacadeClassForPart[parent.attributeOwnerId]
+
+        return if (shouldGeneratePartHierarchy ||
+            (declaration is IrProperty && declaration.backingField?.shouldMoveToFacade() == true)
+        ) facadeClass else null
     }
 }

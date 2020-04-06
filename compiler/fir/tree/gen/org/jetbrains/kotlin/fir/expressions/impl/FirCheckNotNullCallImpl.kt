@@ -34,9 +34,14 @@ internal class FirCheckNotNullCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCheckNotNullCallImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         argumentList = argumentList.transformSingle(transformer, data)
         transformCalleeReference(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckNotNullCallImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

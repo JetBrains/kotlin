@@ -22,4 +22,6 @@ abstract class FirContinueExpression : FirLoopJump() {
     abstract override val target: FirTarget<FirLoop>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContinueExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirContinueExpression
 }

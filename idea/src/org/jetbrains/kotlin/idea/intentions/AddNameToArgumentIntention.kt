@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -38,9 +27,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
 class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
-    KtValueArgument::class.java, KotlinBundle.message("add.name.to.argument")
+    KtValueArgument::class.java, KotlinBundle.lazyMessage("add.name.to.argument")
 ), LowPriorityAction {
-
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
         val name = detectNameToAdd(
@@ -48,7 +36,7 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
             shouldBeLastUnnamed = !element.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)
         ) ?: return false
 
-        text = KotlinBundle.message("add.0.to.argument", name)
+        setTextGetter(KotlinBundle.lazyMessage("add.0.to.argument", name))
 
         if (expression is KtLambdaExpression) {
             val range = expression.textRange
@@ -58,8 +46,9 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
         return true
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) =
-        element !is KtValueArgumentList && element !is KtContainerNode && super.allowCaretInsideElement(element)
+    override fun allowCaretInsideElement(element: PsiElement) = element !is KtValueArgumentList &&
+            element !is KtContainerNode &&
+            super.allowCaretInsideElement(element)
 
     override fun applyTo(element: KtValueArgument, editor: Editor?) {
         apply(element)

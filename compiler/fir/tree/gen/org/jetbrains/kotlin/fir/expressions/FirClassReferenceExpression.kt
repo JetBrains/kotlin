@@ -21,4 +21,6 @@ abstract class FirClassReferenceExpression : FirExpression() {
     abstract val classTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassReferenceExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassReferenceExpression
 }

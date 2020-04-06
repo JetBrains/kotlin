@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -22,8 +21,6 @@ import org.jetbrains.kotlin.idea.refactoring.AbstractPullPushMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
 import org.jetbrains.kotlin.idea.refactoring.pullUp.PULL_MEMBERS_UP
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -79,10 +76,5 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
             members.filter { manager.areElementsEquivalent(it.member, member) }.forEach { it.isChecked = true }
             KotlinPushDownDialog(project, members, classOrObject).show()
         }
-    }
-
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        super.invoke(project, editor, file, dataContext)
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
     }
 }

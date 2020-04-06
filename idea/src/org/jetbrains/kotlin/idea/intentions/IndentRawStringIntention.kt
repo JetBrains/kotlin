@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,14 +19,11 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class IndentRawStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
-    KtStringTemplateExpression::class.java, KotlinBundle.message("indent.raw.string")
+    KtStringTemplateExpression::class.java, KotlinBundle.lazyMessage("indent.raw.string")
 ) {
-
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         if (!element.text.startsWith("\"\"\"")) return false
-        if (element.parents
-                .any { it is KtAnnotationEntry || (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true }
-        ) return false
+        if (element.parents.any { it is KtAnnotationEntry || (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true }) return false
         if (element.getQualifiedExpressionForReceiver() != null) return false
         val entries = element.entries
         if (entries.size <= 1 || entries.any { it.text.startsWith(" ") || it.text.startsWith("\t") }) return false

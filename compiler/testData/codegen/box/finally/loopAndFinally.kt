@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3869 Loops and finally: outer finally block not run
 
 class MyString {

@@ -477,7 +477,7 @@ class BridgeTest : TestCase() {
         graph(c to a, e to d, f to b, f to c, f to e)
         doTest(e, setOf())
         // Although "a" is a concrete declaration, it's overridden with abstract in "c" and all bridges should delegate to "d" instead
-        doTest(f, setOf(bridge(a, d), bridge(b, d), bridge(c, d)))
+        doTest(f, setOf(bridge(b, d), bridge(a, d), bridge(c, d)))
     }
 
     // Fake override overrides another fake override (or declaration) with some bridges already present there

@@ -6,84 +6,85 @@ digraph delayedAssignment_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        2 [label="Exit function <init>" style="filled" fillcolor=red];
+        2 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-
-    0 -> {1};
-    1 -> {2};
+    0 -> {2};
+    2 -> {1};
 
     subgraph cluster_1 {
         color=red
         3 [label="Enter function foo" style="filled" fillcolor=red];
         4 [label="Exit function foo" style="filled" fillcolor=red];
     }
-
     3 -> {4};
 
     subgraph cluster_2 {
         color=red
-        5 [label="Enter function test" style="filled" fillcolor=red];
-        6 [label="Variable declaration: lval a: R|A?|"];
-        subgraph cluster_3 {
+        5 [label="Enter class A" style="filled" fillcolor=red];
+        6 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    5 -> {6} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        7 [label="Enter function test" style="filled" fillcolor=red];
+        9 [label="Variable declaration: lval a: R|A?|"];
+        subgraph cluster_4 {
             color=blue
-            7 [label="Enter when"];
-            subgraph cluster_4 {
-                color=blue
-                8 [label="Enter when branch condition "];
-                9 [label="Access variable R|<local>/b|"];
-                10 [label="Exit when branch condition"];
-            }
+            10 [label="Enter when"];
             subgraph cluster_5 {
                 color=blue
-                11 [label="Enter when branch condition else"];
-                12 [label="Exit when branch condition"];
+                12 [label="Enter when branch condition "];
+                13 [label="Access variable R|<local>/b|"];
+                14 [label="Exit when branch condition"];
             }
-            13 [label="Enter when branch result"];
             subgraph cluster_6 {
                 color=blue
-                14 [label="Enter block"];
-                15 [label="Const: Null(null)"];
-                16 [label="Assignmenet: R|<local>/a|"];
-                17 [label="Exit block"];
+                23 [label="Enter when branch condition else"];
+                24 [label="Exit when branch condition"];
             }
-            18 [label="Exit when branch result"];
-            19 [label="Enter when branch result"];
+            25 [label="Enter when branch result"];
             subgraph cluster_7 {
                 color=blue
-                20 [label="Enter block"];
-                21 [label="Function call: R|/A.A|()"];
-                22 [label="Assignmenet: R|<local>/a|"];
-                23 [label="Access variable R|<local>/a|"];
-                24 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                25 [label="Exit block"];
+                26 [label="Enter block"];
+                27 [label="Const: Null(null)"];
+                28 [label="Assignment: R|<local>/a|"];
+                29 [label="Exit block"];
             }
-            26 [label="Exit when branch result"];
-            27 [label="Exit when"];
+            30 [label="Exit when branch result"];
+            15 [label="Enter when branch result"];
+            subgraph cluster_8 {
+                color=blue
+                16 [label="Enter block"];
+                17 [label="Function call: R|/A.A|()"];
+                18 [label="Assignment: R|<local>/a|"];
+                19 [label="Access variable R|<local>/a|"];
+                20 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                21 [label="Exit block"];
+            }
+            22 [label="Exit when branch result"];
+            11 [label="Exit when"];
         }
-        28 [label="Access variable R|<local>/a|"];
-        29 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
-        30 [label="Exit function test" style="filled" fillcolor=red];
+        31 [label="Access variable R|<local>/a|"];
+        32 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+        8 [label="Exit function test" style="filled" fillcolor=red];
     }
-
-    5 -> {6};
-    6 -> {7};
-    7 -> {8};
-    8 -> {9};
+    7 -> {9};
     9 -> {10};
-    10 -> {19 11};
-    11 -> {12};
+    10 -> {12};
+    11 -> {31};
     12 -> {13};
     13 -> {14};
-    14 -> {15};
+    14 -> {15 23};
     15 -> {16};
     16 -> {17};
     17 -> {18};
-    18 -> {27};
+    18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {23};
+    22 -> {11};
     23 -> {24};
     24 -> {25};
     25 -> {26};
@@ -91,5 +92,8 @@ digraph delayedAssignment_kt {
     27 -> {28};
     28 -> {29};
     29 -> {30};
+    30 -> {11};
+    31 -> {32};
+    32 -> {8};
 
 }

@@ -128,7 +128,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 
     private fun initializeKotlinContext(context: CompileContext): KotlinCompileContext {
-        lateinit var kotlinContext: KotlinCompileContext
+        val kotlinContext: KotlinCompileContext
 
         val time = measureTimeMillis {
             kotlinContext = KotlinCompileContext(context)

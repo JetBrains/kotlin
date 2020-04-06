@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.konan.file.*
 import java.lang.StringBuilder
 
 fun <T> printMillisec(message: String, body: () -> T): T {
-    var result: T? = null
-    val msec = measureTimeMillis{
+    val result: T
+    val msec = measureTimeMillis {
         result = body()
     }
     println("$message: $msec msec")
-    return result!!
+    return result
 }
 
 fun profile(message: String, body: () -> Unit) = profileIf(

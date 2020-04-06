@@ -5,96 +5,101 @@ digraph thisOfExtensionProperty_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function getter" style="filled" fillcolor=red];
-        1 [label="Exit function getter" style="filled" fillcolor=red];
+        0 [label="Enter class A" style="filled" fillcolor=red];
+        1 [label="Exit class A" style="filled" fillcolor=red];
     }
-
-    0 -> {1};
+    0 -> {1} [color=green];
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter property" style="filled" fillcolor=red];
-        3 [label="Exit property" style="filled" fillcolor=red];
-    }
-
-    2 -> {3};
-
-    subgraph cluster_2 {
-        color=red
-        4 [label="Enter function getter" style="filled" fillcolor=red];
+        6 [label="Enter class B" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            2 [label="Enter function getter" style="filled" fillcolor=red];
+            3 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_3 {
             color=blue
-            5 [label="Enter &&"];
-            6 [label="Access variable this@R|/check_1|"];
-            7 [label="Type operator: (this@R|/check_1| is R|B|)"];
-            8 [label="Exit left part of &&"];
-            9 [label="Enter right part of &&"];
-            10 [label="Access variable R|/B.b|"];
-            11 [label="Exit &&"];
+            4 [label="Enter property" style="filled" fillcolor=red];
+            5 [label="Exit property" style="filled" fillcolor=red];
         }
-        12 [label="Jump: ^ (this@R|/check_1| is R|B|) && this@R|/check_1|.R|/B.b|"];
-        13 [label="Stub" style="filled" fillcolor=gray];
-        14 [label="Exit function getter" style="filled" fillcolor=red];
+        7 [label="Exit class B" style="filled" fillcolor=red];
     }
-
+    6 -> {4} [color=green];
     4 -> {5};
-    5 -> {6};
-    6 -> {7};
-    7 -> {8};
-    8 -> {11 9};
-    9 -> {10};
-    10 -> {11};
-    11 -> {12};
-    12 -> {14};
-    12 -> {13} [style=dotted];
-    13 -> {14} [style=dotted];
+    5 -> {7} [color=green];
+    2 -> {3};
 
     subgraph cluster_4 {
         color=red
-        15 [label="Enter property" style="filled" fillcolor=red];
-        16 [label="Exit property" style="filled" fillcolor=red];
-    }
-
-    15 -> {16};
-
-    subgraph cluster_5 {
-        color=red
-        17 [label="Enter function getter" style="filled" fillcolor=red];
-        subgraph cluster_6 {
+        19 [label="Enter property" style="filled" fillcolor=red];
+        subgraph cluster_5 {
             color=blue
-            18 [label="Enter &&"];
-            19 [label="Access variable this@R|/check_2|"];
-            20 [label="Type operator: (this@R|/check_2| is R|B|)"];
-            21 [label="Exit left part of &&"];
-            22 [label="Enter right part of &&"];
-            23 [label="Access variable this@R|/check_2|"];
-            24 [label="Access variable R|/B.b|"];
-            25 [label="Exit &&"];
+            8 [label="Enter function getter" style="filled" fillcolor=red];
+            subgraph cluster_6 {
+                color=blue
+                11 [label="Enter &&"];
+                12 [label="Access variable this@R|/check_1|"];
+                13 [label="Type operator: (this@R|/check_1| is R|B|)"];
+                14 [label="Exit left part of &&"];
+                15 [label="Enter right part of &&"];
+                16 [label="Access variable R|/B.b|"];
+                10 [label="Exit &&"];
+            }
+            17 [label="Jump: ^ (this@R|/check_1| is R|B|) && this@R|/check_1|.R|/B.b|"];
+            18 [label="Stub" style="filled" fillcolor=gray];
+            9 [label="Exit function getter" style="filled" fillcolor=red];
         }
-        26 [label="Jump: ^ (this@R|/check_2| is R|B|) && this@R|/check_2|.R|/B.b|"];
-        27 [label="Stub" style="filled" fillcolor=gray];
-        28 [label="Exit function getter" style="filled" fillcolor=red];
+        20 [label="Exit property" style="filled" fillcolor=red];
     }
-
-    17 -> {18};
-    18 -> {19};
     19 -> {20};
-    20 -> {21};
-    21 -> {25 22};
-    22 -> {23};
-    23 -> {24};
-    24 -> {25};
-    25 -> {26};
-    26 -> {28};
-    26 -> {27} [style=dotted];
-    27 -> {28} [style=dotted];
+    8 -> {11};
+    10 -> {17};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {10 15};
+    15 -> {16};
+    16 -> {10};
+    17 -> {9};
+    17 -> {18} [style=dotted];
+    18 -> {9} [style=dotted];
 
     subgraph cluster_7 {
         color=red
-        29 [label="Enter property" style="filled" fillcolor=red];
-        30 [label="Exit property" style="filled" fillcolor=red];
+        33 [label="Enter property" style="filled" fillcolor=red];
+        subgraph cluster_8 {
+            color=blue
+            21 [label="Enter function getter" style="filled" fillcolor=red];
+            subgraph cluster_9 {
+                color=blue
+                24 [label="Enter &&"];
+                25 [label="Access variable this@R|/check_2|"];
+                26 [label="Type operator: (this@R|/check_2| is R|B|)"];
+                27 [label="Exit left part of &&"];
+                28 [label="Enter right part of &&"];
+                29 [label="Access variable this@R|/check_2|"];
+                30 [label="Access variable R|/B.b|"];
+                23 [label="Exit &&"];
+            }
+            31 [label="Jump: ^ (this@R|/check_2| is R|B|) && this@R|/check_2|.R|/B.b|"];
+            32 [label="Stub" style="filled" fillcolor=gray];
+            22 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        34 [label="Exit property" style="filled" fillcolor=red];
     }
-
+    33 -> {34};
+    21 -> {24};
+    23 -> {31};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {23 28};
+    28 -> {29};
     29 -> {30};
+    30 -> {23};
+    31 -> {22};
+    31 -> {32} [style=dotted];
+    32 -> {22} [style=dotted];
 
 }

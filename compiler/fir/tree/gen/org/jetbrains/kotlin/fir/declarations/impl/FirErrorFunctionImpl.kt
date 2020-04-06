@@ -54,11 +54,16 @@ internal class FirErrorFunctionImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformReturnTypeRef(transformer, data)
         typeParameters.transformInplace(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

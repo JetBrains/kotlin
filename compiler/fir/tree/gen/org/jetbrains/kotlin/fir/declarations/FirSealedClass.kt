@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -36,11 +37,16 @@ abstract class FirSealedClass : FirRegularClass() {
     abstract override val companionObject: FirRegularClass?
     abstract override val hasLazyNestedClassifiers: Boolean
     abstract override val superTypeRefs: List<FirTypeRef>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract val inheritors: List<ClassId>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSealedClass(this, data)
 
     abstract fun replaceInheritors(newInheritors: List<ClassId>)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSealedClass
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSealedClass
+
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSealedClass
 }

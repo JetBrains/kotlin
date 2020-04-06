@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,8 +60,8 @@ class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteral
 
 class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
     KtObjectLiteralExpression::class.java,
-    KotlinBundle.message("convert.to.lambda"),
-    KotlinBundle.message("convert.object.literal.to.lambda")
+    KotlinBundle.lazyMessage("convert.to.lambda"),
+    KotlinBundle.lazyMessage("convert.object.literal.to.lambda")
 ) {
     override fun applicabilityRange(element: KtObjectLiteralExpression): TextRange? {
         val (baseTypeRef, baseType, singleFunction) = extractData(element) ?: return null
