@@ -8,5 +8,5 @@ FILE: test.kt
     }
     public final fun test(some: R|kotlin/collections/Iterable<kotlin/String>|): R|kotlin/Unit| {
         lval it: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/some|.R|FakeOverride<kotlin/collections/Iterable.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
-        lval split: R|java/util/Spliterator<ft<kotlin/String, kotlin/String?>!>| = R|<local>/some|.R|FakeOverride<java/lang/Iterable.spliterator: R|java/util/Spliterator<ft<kotlin/String, kotlin/String?>!>|>|()
+        lval split: R|java/util/Spliterator<ft<kotlin/String, kotlin/String?>!>| = R|<local>/some|.R|FakeOverride<kotlin/collections/Iterable.spliterator: R|java/util/Spliterator<ft<kotlin/String, kotlin/String?>!>|>|()
     }

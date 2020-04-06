@@ -30,16 +30,18 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Any
     VALUE_PARAMETER name:c index:2 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=<root>.Outer.Inner<kotlin.Int, kotlin.String> origin=CAST typeOperand=<root>.Outer.Inner<kotlin.Int, kotlin.String>
+      TYPE_OP type=<root>.Outer.Inner<kotlin.String, kotlin.Int> origin=CAST typeOperand=<root>.Outer.Inner<kotlin.String, kotlin.Int>
         GET_VAR 'a: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
         GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Outer.Inner.use]>#' type=IrErrorType
-        TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+      CALL 'public final fun use (x1: T1 of <root>.Outer, x2: T2 of <root>.Outer.Inner): kotlin.Unit declared in <root>.Outer.Inner' type=kotlin.Unit origin=null
+        $this: TYPE_OP type=<root>.Outer.Inner<kotlin.String, kotlin.Int> origin=IMPLICIT_CAST typeOperand=<root>.Outer.Inner<kotlin.String, kotlin.Int>
+          GET_VAR 'a: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
+        x1: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
           GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
-        TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+        x2: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
   FUN name:testNonSubstitutedTypeParameter visibility:public modality:FINAL <T> (a:kotlin.Any, b:kotlin.Any) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -103,15 +105,15 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
-      FUN name:use visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner>, x1:T1 of <root>.Outer, x2:T2 of <root>.Outer.Inner) returnType:kotlin.Unit
-        $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
+      FUN name:use visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>, x1:T1 of <root>.Outer, x2:T2 of <root>.Outer.Inner) returnType:kotlin.Unit
+        $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
         VALUE_PARAMETER name:x1 index:0 type:T1 of <root>.Outer
         VALUE_PARAMETER name:x2 index:1 type:T2 of <root>.Outer.Inner
         BLOCK_BODY

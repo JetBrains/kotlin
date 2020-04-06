@@ -17,7 +17,7 @@ class Q {
         x = foo<CharSequence>()
         y = foo<String>()
 
-        x.prop.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><CharSequence>() }
-        y.prop.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        x.prop.checkType { _<CharSequence>() }
+        y.prop.checkType { _<String>() }
     }
 }

@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
-  FUN name:testKotlin visibility:public modality:FINAL <> () returnType:<root>.K1.K2<kotlin.String>
+  FUN name:testKotlin visibility:public modality:FINAL <> () returnType:<root>.K1.K2<kotlin.String, kotlin.Int>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String> origin=null
+      RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String, kotlin.Int> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String, kotlin.Int> origin=null
           <class: T2>: kotlin.String
           $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1' type=<root>.K1<kotlin.Int> origin=null
             <class: T1>: kotlin.Int
@@ -18,10 +18,10 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:K2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1.K2<T2 of <root>.K1.K2>
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1.K2<T2 of <root>.K1.K2, T1 of <root>.K1>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.CharSequence]
-      CONSTRUCTOR visibility:public <> ($this:<root>.K1.K2<T2 of <root>.K1.K2>) returnType:<root>.K1.K2<T2 of <root>.K1.K2> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.K1.K2<T2 of <root>.K1.K2>
+      CONSTRUCTOR visibility:public <> ($this:<root>.K1.K2<T2 of <root>.K1.K2, T1 of <root>.K1>) returnType:<root>.K1.K2<T2 of <root>.K1.K2, T1 of <root>.K1> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.K1.K2<T2 of <root>.K1.K2, T1 of <root>.K1>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'

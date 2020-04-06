@@ -11,7 +11,7 @@ object A2 public <!CONSTRUCTOR_IN_OBJECT!>constructor(private val prop: Int)<!> 
 }
 
 val x = object <!CONSTRUCTOR_IN_OBJECT!>(val prop: Int)<!> {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor()<!> : <!UNRESOLVED_REFERENCE!>this<!>(1) {
+    <!CONSTRUCTOR_IN_OBJECT!>constructor()<!> : this(1) {
         val x = 1
         x * x
     }

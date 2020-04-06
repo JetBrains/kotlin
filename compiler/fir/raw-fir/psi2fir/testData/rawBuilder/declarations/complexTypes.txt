@@ -4,8 +4,8 @@ FILE: complexTypes.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? inner class D<R, in P> : R|kotlin/Any| {
-            public? constructor<R, in P>(): R|a/b/C.D<R, P>| {
+        public? final? inner class D<R, in P, T, out S> : R|kotlin/Any| {
+            public? constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
                 super<R|kotlin/Any|>()
             }
 

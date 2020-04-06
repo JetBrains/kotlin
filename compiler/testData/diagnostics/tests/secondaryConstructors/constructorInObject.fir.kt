@@ -5,7 +5,7 @@ object A {
 
 enum class B {
     X() {
-        <!CONSTRUCTOR_IN_OBJECT, UNRESOLVED_REFERENCE!>constructor()<!>
+        <!CONSTRUCTOR_IN_OBJECT, INAPPLICABLE_CANDIDATE!>constructor()<!>
     }
 }
 

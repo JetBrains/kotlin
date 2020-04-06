@@ -36,13 +36,13 @@ fun topLevel(): Outer<String> = null!!
 fun foo() {
     val strInt: Outer<String>.Inner<Int> = Outer<String>().Inner()
 
-    strInt.foo().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-    strInt.baz().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    strInt.foo().checkType { _<String>() }
+    strInt.baz().checkType { _<Int>() }
 
-    strInt.instance().<!INAPPLICABLE_CANDIDATE!>setE<!>("")
-    strInt.instance().outerE().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    strInt.instance().setE("")
+    strInt.instance().outerE().checkType { _<String>() }
 
-    strInt.instance().Inner<Double>().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<String>.Inner<Double>>() }
+    strInt.instance().Inner<Double>().checkType { _<Outer<String>.Inner<Double>>() }
 
     Outer<String>().<!INAPPLICABLE_CANDIDATE!>setInner<!>(strInt)
     Outer<CharSequence>().<!INAPPLICABLE_CANDIDATE!>setInner<!>(strInt)

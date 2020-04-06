@@ -23,6 +23,6 @@ fun main() {
     val strInt: Outer<String>.Inner<Int> = outerStr.Inner()
 
     strInt.foo().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-    strInt.bar().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    strInt.bar().checkType { _<Int>() }
     strInt.outer().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<String>>() }
 }

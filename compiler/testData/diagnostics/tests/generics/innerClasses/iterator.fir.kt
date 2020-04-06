@@ -33,5 +33,5 @@ fun foo() {
 
     val csIt: Iterator<CharSequence> = A<String>().iterator()
 
-    commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { _<A<out Any>.MyIt>() }
+    commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<out Any>.MyIt>() }
 }
