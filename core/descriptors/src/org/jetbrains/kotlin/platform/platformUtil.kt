@@ -25,16 +25,16 @@ fun <T> TargetPlatform?.has(klass: Class<T>): Boolean = this != null && subplatf
  * also provides better description for multiplatforms.
  */
 val TargetPlatform.oldFashionedDescription: String
-    // the invocation if isCommon is not preferable as it could be governed by separate flag and may
-    // to appear independently on count of target platforms
+    // this method mistakenly detects "common native" platform as "Common (experimental)"
+    // though this does not seem to have any significant effect
     get() = this.singleOrNull()?.oldFashionedDescription ?: "Common (experimental) "
 
 
 /**
  * Renders multiplatform in form
- *      '$PLATFORM_1 / $PLATFORM_2 / ...'
+ *      '$PLATFORM_1/$PLATFORM_2/...'
  * e.g.
- *      'JVM (1.8) / JS / Native'
+ *      'JVM (1.8)/JS/Native (ios_x64)'
  */
 val TargetPlatform.presentableDescription: String
     get() = componentPlatforms.joinToString(separator = "/")

@@ -10,20 +10,21 @@ import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.toTargetPlatform
 
-sealed class NativePlatform : SimplePlatform("Native")
+sealed class NativePlatform : SimplePlatform("Native") {
+    override val oldFashionedDescription: String
+        get() = toString() + " "
+}
 
 object NativePlatformUnspecifiedTarget : NativePlatform() {
-    override fun toString() = "$platformName (general)"
-
-    override val oldFashionedDescription: String
-        get() = "Native (general) "
+    override val targetName: String
+        get() = "general"
 }
 
 data class NativePlatformWithTarget(val target: KonanTarget) : NativePlatform() {
-    override fun toString() = "$platformName ($target)"
+    override fun toString() = super.toString() // override the method generated for data class
 
-    override val oldFashionedDescription: String
-        get() = "Native ($target) "
+    override val targetName: String
+        get() = target.visibleName
 }
 
 @Suppress("DEPRECATION_ERROR")
@@ -64,3 +65,6 @@ object NativePlatforms {
 }
 
 fun TargetPlatform?.isNative(): Boolean = this?.isNotEmpty() == true && all { it is NativePlatform }
+
+private val legacyNativePlatformUnspecifiedTargetSerializedRepresentation = "${NativePlatformUnspecifiedTarget.platformName} []"
+fun NativePlatformUnspecifiedTarget.legacySerializeToString(): String = legacyNativePlatformUnspecifiedTargetSerializedRepresentation
