@@ -317,10 +317,25 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return constructorCall.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
     }
 
-    private suspend fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): ExecutionResult {
-        val defaultValues = (parametersContainer.symbol.owner as IrFunction).valueParameters.map { it.defaultValue }
-        for (i in (parametersContainer.valueArgumentsCount - 1) downTo 0) {
-            (parametersContainer.getValueArgument(i)?.interpret(data) ?: defaultValues[i]!!.expression.interpret(data)).check { return it }
+    private suspend fun interpretValueParameters(
+        expression: IrFunctionAccessExpression, irFunction: IrFunction, data: Frame, newFrame: Frame
+    ): ExecutionResult {
+        // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
+        val receiverAsFirstArgument = when (expression.dispatchReceiver?.type?.isFunction()) {
+            true -> listOfNotNull(irFunction.symbol.getExtensionReceiver())
+            else -> listOf()
+        }
+        val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
+
+        val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
+        val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
+        val frameWithReceiverAndData = data.copy().apply { addAll(newFrame.getAll()) } // primary use case: copy method in data class
+        for ((i, valueArgument) in valueArguments.withIndex()) {
+            (valueArgument ?: defaultValues[i])!!.interpret(frameWithReceiverAndData).checkForReturn(frameWithReceiverAndData, data) { return it }
+            with(Variable(valueParametersDescriptors[i], frameWithReceiverAndData.popReturnValue())) {
+                frameWithReceiverAndData.addVar(this)
+                newFrame.addVar(this)
+            }
         }
         return Next
     }
@@ -332,9 +347,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val rawDispatchReceiver = expression.dispatchReceiver
         rawDispatchReceiver?.interpret(data)?.check { return it }
         val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
-        val irFunctionReceiver = when (expression.superQualifierSymbol) {
-            null -> dispatchReceiver
-            else -> (dispatchReceiver as Complex).superClass?.takeIf { it.irClass.isSubclassOf(expression.superQualifierSymbol!!.owner) }
+
+        val superQualifier = expression.superQualifierSymbol
+        val irFunctionReceiver = when {
+            superQualifier == null -> dispatchReceiver
+            superQualifier.owner.isInterface -> null
+            else -> (dispatchReceiver as Complex).superClass
         }
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
@@ -349,13 +367,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val extensionReceiver = rawExtensionReceiver?.let { data.popReturnValue() }
         extensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, it)) }
 
-        // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
-        val receiverAsFirstArgument = if (dispatchReceiver is Lambda) listOfNotNull(irFunction.symbol.getExtensionReceiver()) else listOf()
-        val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
-        val frameWithReceiverAndData = data.copy().apply { addAll(newFrame.getAll()) } // primary use case: copy method in data class
-        interpretValueParameters(expression, frameWithReceiverAndData).checkForReturn(frameWithReceiverAndData, data) { return it }
-        newFrame.addAll(valueParametersDescriptors.map { Variable(it, frameWithReceiverAndData.popReturnValue()) })
+        interpretValueParameters(expression, irFunction, data, newFrame).check { return it }
 
+        // TODO fun saveReifiedParameters
         irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
             if (typeParameter.isReified) {
                 val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner)
@@ -397,23 +411,23 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): ExecutionResult {
-        val isPrimary = (constructorCall.symbol.owner as IrConstructor).isPrimary
-        interpretValueParameters(constructorCall, data).check { return it }
-        val valueParameters = constructorCall.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }.toMutableList()
-        val newFrame = InterpreterFrame(valueParameters)
-
         val owner = constructorCall.symbol.owner
+        val isPrimary = (owner as IrConstructor).isPrimary
+        val newFrame = InterpreterFrame()
+
+        interpretValueParameters(constructorCall, owner, data, newFrame)
+
         val parent = owner.parent as IrClass
         if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            return when (constructorCall.symbol.owner.parentAsClass.getEvaluateIntrinsicValue()) {
+            return when (owner.parentAsClass.getEvaluateIntrinsicValue()) {
                 "kotlin.Long" -> {
-                    val low = (valueParameters[0].state as Primitive<*>).value as Int
-                    val high = (valueParameters[1].state as Primitive<*>).value as Int
+                    val low = (newFrame.getVariableState(owner.valueParameters[0].descriptor) as Primitive<*>).value as Int
+                    val high = (newFrame.getVariableState(owner.valueParameters[1].descriptor) as Primitive<*>).value as Int
                     data.pushReturnValue((high.toLong().shl(32) + low).toState(irBuiltIns.longType))
                     Next
                 }
                 "kotlin.Char" -> {
-                    val value = (valueParameters.single().state as Primitive<*>).value as Int
+                    val value = (newFrame.getVariableState(owner.valueParameters[0].descriptor) as Primitive<*>).value as Int
                     data.pushReturnValue(value.toChar().toState(irBuiltIns.longType))
                     Next
                 }
@@ -428,7 +442,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val size = (newFrame.getVariableState(sizeDescriptor) as Primitive<*>).value as Int
 
             val arrayValue = Array<Any?>(size) { 0 }
-            if (valueParameters.size == 2) {
+            if (owner.valueParameters.size == 2) {
                 val initDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "init" }.descriptor
                 val initLambda = newFrame.getVariableState(initDescriptor) as Lambda
                 val indexDescriptor = initLambda.irFunction.valueParameters.single().descriptor
@@ -575,6 +589,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val executionResult = expression.value.interpret(data)
         if (executionResult.returnLabel != ReturnLabel.NEXT) return executionResult
 
+        // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
         val receiver = (expression.receiver as IrDeclarationReference).symbol.descriptor
         data.getVariableState(receiver).setState(Variable(expression.symbol.owner.descriptor, data.popReturnValue()))
         return Next
@@ -596,7 +611,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretVariable(expression: IrVariable, data: Frame): ExecutionResult {
-        val executionResult = expression.initializer?.interpret(data)
+        val executionResult = expression.initializer?.interpret(data)// TODO replace with check
         if (executionResult?.returnLabel != ReturnLabel.NEXT) return executionResult ?: Next
         data.addVar(Variable(expression.descriptor, data.popReturnValue()))
         return Next
