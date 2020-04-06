@@ -59,7 +59,6 @@ internal abstract class KotlinNativeToolRunner(
             "java.library.path" to "${project.konanHome}/konan/nativelib"
         )
     }
-    final override val systemPropertiesBlacklist = setOf("java.endorsed.dirs")
 
     final override val classpath by lazy {
         project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }.toSet()
