@@ -379,7 +379,7 @@ class ScriptingHostTest : TestCase() {
             val res = compiler(script.toScriptSource(), scriptCompilationConfiguration).throwOnFailure()
             (res as ResultWithDiagnostics.Success<CompiledScript>).value
         }
-        val compiledScriptClass = runBlocking { compiledScript.getClass(null).throwOnFailure().valueOrNull()!! as KClass<*> }
+        val compiledScriptClass = runBlocking { compiledScript.getClass(null).throwOnFailure().valueOrNull()!! }
         val classLoader = compiledScriptClass.java.classLoader
 
         Assert.assertTrue(classLoader is CompiledScriptClassLoader)
@@ -394,8 +394,8 @@ class ScriptingHostTest : TestCase() {
         Assert.assertNotNull(classAsResourceUrl)
         Assert.assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream.readBytes()
+        val classAsResourceData = classAsResourceUrl!!.openConnection().getInputStream().readBytes()
+        val classAsResourceStreamData = classAssResourceStream!!.readBytes()
 
         Assert.assertArrayEquals(classAsResourceData, classAsResourceStreamData)
 

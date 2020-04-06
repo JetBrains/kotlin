@@ -300,8 +300,7 @@ internal fun makeScriptContents(
 fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
     if (this is VirtualFileScriptSource) return virtualFile
     if (this is KtFileScriptSource) {
-        val vFile = virtualFile
-        if (vFile != null) return vFile
+        return virtualFile
     }
     if (this is FileScriptSource) {
         val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
@@ -351,6 +350,7 @@ fun getScriptCollectedData(
     val acceptedAnnotations =
         compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
             it.annotations.mapNotNull { ann ->
+                @Suppress("UNCHECKED_CAST")
                 jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
             }
         }.orEmpty()

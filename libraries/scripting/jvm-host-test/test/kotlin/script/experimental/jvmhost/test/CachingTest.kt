@@ -52,7 +52,7 @@ class CachingTest : TestCase() {
     fun testFileCache() {
         withTempDir("scriptingTestCache") { cacheDir ->
             val cache = FileBasedScriptCache(cacheDir)
-            Assert.assertTrue(cache.baseDir.listFiles().isEmpty())
+            Assert.assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
 
             checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
         }
@@ -62,7 +62,7 @@ class CachingTest : TestCase() {
     fun testSimpleImportWithFileCache() {
         withTempDir("scriptingTestCache") { cacheDir ->
             val cache = FileBasedScriptCache(cacheDir)
-            Assert.assertTrue(cache.baseDir.listFiles().isEmpty())
+            Assert.assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
 
             checkWithCache(
                 cache, scriptWithImport, scriptWithImportExpectedOutput,
@@ -190,9 +190,7 @@ class CachingTest : TestCase() {
     }
 }
 
-object Implicit {
-    val ix = 0
-}
+object Implicit
 
 private interface ScriptingCacheWithCounters : CompiledJvmScriptsCache {
 
@@ -230,7 +228,7 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
 
     override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript? {
         val file = File(baseDir, uniqueScriptHash(script, scriptCompilationConfiguration))
-        return if (!file.exists()) null else file.readCompiledScript(scriptCompilationConfiguration)?.also { retrievedScripts++ }
+        return if (!file.exists()) null else file.readCompiledScript().also { retrievedScripts++ }
     }
 
     override fun store(
@@ -254,11 +252,13 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
         private set
 }
 
-class TestCompiledScriptJarsCache(val baseDir: File) : CompiledScriptJarsCache(
-    { script, scriptCompilationConfiguration ->
-        File(baseDir, uniqueScriptHash(script, scriptCompilationConfiguration) + ".jar")
-    }), ScriptingCacheWithCounters
-{
+class TestCompiledScriptJarsCache(val baseDir: File) :
+    CompiledScriptJarsCache(
+        { script, scriptCompilationConfiguration ->
+            File(baseDir, uniqueScriptHash(script, scriptCompilationConfiguration) + ".jar")
+        }
+    ), ScriptingCacheWithCounters {
+
     override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript? =
         super.get(script, scriptCompilationConfiguration)?.also { retrievedScripts++ }
 
@@ -289,7 +289,7 @@ internal fun uniqueScriptHash(script: SourceCode, scriptCompilationConfiguration
     return digestWrapper.digest().toHexString()
 }
 
-private fun File.readCompiledScript(scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript {
+private fun File.readCompiledScript(): CompiledScript {
     return inputStream().use { fs ->
         ObjectInputStream(fs).use {
             it.readObject() as KJvmCompiledScript

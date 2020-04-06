@@ -155,7 +155,7 @@ obj
 //        assertThrows(NoSuchMethodException::class.java) {
 //            invocator!!.invokeMethod(res1, "fn", 3)
 //        }
-        val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
+        val res3 = invocator.invokeMethod(res1, "fn1", 3)
         Assert.assertEquals(6, res3)
     }
 

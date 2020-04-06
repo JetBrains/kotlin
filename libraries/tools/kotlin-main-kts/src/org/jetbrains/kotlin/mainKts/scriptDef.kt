@@ -141,7 +141,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
 
         return resolveResult.onSuccess { resolvedClassPath ->
             ScriptCompilationConfiguration(context.compilationConfiguration) {
-                if (resolvedClassPath != null) updateClasspath(resolvedClassPath)
+                updateClasspath(resolvedClassPath)
                 if (importedSources.isNotEmpty()) importScripts.append(importedSources)
                 if (compileOptions.isNotEmpty()) compilerOptions.append(compileOptions)
             }.asSuccess()

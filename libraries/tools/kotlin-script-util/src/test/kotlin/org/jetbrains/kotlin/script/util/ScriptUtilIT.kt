@@ -56,6 +56,7 @@ import kotlin.script.experimental.api.onSuccess
 import kotlin.script.experimental.api.valueOr
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
 
@@ -63,12 +64,12 @@ class ScriptUtilIT {
 
     companion object {
         private val argsHelloWorldOutput =
-"""Hello, world!
+            """Hello, world!
 a1
 done
 """
         private val bindingsHelloWorldOutput =
-"""Hello, world!
+            """Hello, world!
 a1 = 42
 done
 """
@@ -107,8 +108,7 @@ done
         try {
             System.setErr(PrintStream(NullOutputStream()))
             Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
-        }
-        finally {
+        } finally {
             System.setErr(savedErr)
         }
 
@@ -127,23 +127,28 @@ done
         val (out, err) = captureOutAndErr {
             Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
         }
-        Assert.assertTrue("Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err", err.contains("error: unresolved reference: assertThrows"))
+        Assert.assertTrue(
+            "Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err",
+            err.contains("error: unresolved reference: assertThrows")
+        )
 
         val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         Assert.assertNotNull(scriptClass)
     }
 
     private fun compileScript(
-            scriptFileName: String,
-            scriptTemplate: KClass<out Any>,
-            environment: Map<String, Any?>? = null,
-            suppressOutput: Boolean = false
+        scriptFileName: String,
+        scriptTemplate: KClass<out Any>,
+        environment: Map<String, Any?>? = null,
+        suppressOutput: Boolean = false
     ): Class<*>? =
-            compileScriptImpl("libraries/tools/kotlin-script-util/src/test/resources/scripts/" + scriptFileName,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(
-                                  scriptTemplate,
-                                  environment
-                              ), suppressOutput)
+        compileScriptImpl(
+            "libraries/tools/kotlin-script-util/src/test/resources/scripts/$scriptFileName",
+            KotlinScriptDefinitionFromAnnotatedTemplate(
+                scriptTemplate,
+                environment
+            ), suppressOutput
+        )
 
     private fun compileScriptImpl(
         scriptPath: String,
@@ -157,9 +162,7 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                scriptCompilationClasspathFromContextOrNull(KOTLIN_JAVA_RUNTIME_JAR)?.let {
-                    addJvmClasspathRoots(it)
-                }
+                addJvmClasspathRoots(scriptCompilationClasspathFromContext(KOTLIN_JAVA_RUNTIME_JAR))
 
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
@@ -185,7 +188,10 @@ done
             environment.getSourceFiles().forEach {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "file: $it -> script def: ${it.findScriptDefinition()?.name}")
             }
-            messageCollector.report(CompilerMessageSeverity.LOGGING, "compilation classpath:\n  ${environment.configuration.jvmClasspathRoots.joinToString("\n  ")}")
+            messageCollector.report(
+                CompilerMessageSeverity.LOGGING,
+                "compilation classpath:\n  ${environment.configuration.jvmClasspathRoots.joinToString("\n  ")}"
+            )
 
             val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
 
@@ -223,7 +229,7 @@ done
     }
 
     private fun String.linesSplitTrim() =
-            split('\n','\r').map(String::trim).filter(String::isNotBlank)
+        split('\n', '\r').map(String::trim).filter(String::isNotBlank)
 
     private fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
 
@@ -247,8 +253,8 @@ done
 }
 
 private class NullOutputStream : OutputStream() {
-    override fun write(b: Int) { }
-    override fun write(b: ByteArray) { }
-    override fun write(b: ByteArray, off: Int, len: Int) { }
+    override fun write(b: Int) {}
+    override fun write(b: ByteArray) {}
+    override fun write(b: ByteArray, off: Int, len: Int) {}
 }
 

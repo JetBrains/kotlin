@@ -87,7 +87,7 @@ class JvmReplEvaluator(
 }
 
 open class JvmReplEvaluatorState(
-    scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
+    @Suppress("UNUSED_PARAMETER") scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
     override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
 ) : IReplStageState<Pair<KClass<*>?, Any?>> {
     override val history: IReplStageHistory<Pair<KClass<*>?, Any?>> = ReplStageHistoryWithReplace(lock)

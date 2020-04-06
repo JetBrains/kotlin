@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.mainKts.test
 
-import junit.framework.Assert
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinLauncherScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
+import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File

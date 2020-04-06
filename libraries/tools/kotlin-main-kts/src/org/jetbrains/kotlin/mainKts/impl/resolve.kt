@@ -29,7 +29,7 @@ suspend fun resolveFromAnnotations(resolver: ExternalDependenciesResolver, annot
     return annotations.filterIsInstance(DependsOn::class.java).flatMapSuccess { dep ->
         val artifactCoordinates =
             if (dep.value.isNotBlank()) dep.value
-            else listOf(dep.groupId, dep.artifactId, dep.version).filter { it?.isNotBlank() ?: false }.joinToString(":")
+            else listOf(dep.groupId, dep.artifactId, dep.version).filter { it.isNotBlank() }.joinToString(":")
         resolver.resolve(artifactCoordinates)
     }
 }

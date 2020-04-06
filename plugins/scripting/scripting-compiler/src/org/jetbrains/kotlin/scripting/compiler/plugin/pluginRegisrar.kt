@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExten
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.net.URLClassLoader
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private fun <T : Any> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(project: MockProject, extension: T) {
     try {
@@ -42,7 +44,9 @@ private fun <T : Any> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(
 class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val hostConfiguration = makeHostConfiguration(project, configuration)
+        val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            // TODO: add jdk path and other params if needed
+        }
         withClassloadingProblemsReporting(messageCollector) {
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project,

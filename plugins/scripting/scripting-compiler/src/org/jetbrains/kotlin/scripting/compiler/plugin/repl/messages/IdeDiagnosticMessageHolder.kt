@@ -34,7 +34,7 @@ class IdeDiagnosticMessageHolder : DiagnosticMessageHolder {
             reportEntry.setAttribute("severity", diagnostic.severity.toString())
             reportEntry.setAttribute("rangeStart", errorRange.startOffset.toString())
             reportEntry.setAttribute("rangeEnd", errorRange.endOffset.toString())
-            reportEntry.appendChild(errorReport.createTextNode(StringUtil.escapeXml(message)))
+            reportEntry.appendChild(errorReport.createTextNode(StringUtil.escapeXmlEntities(message)))
 
             rootElement.appendChild(reportEntry)
         }

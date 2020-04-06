@@ -68,6 +68,7 @@ open class GenericReplCompiler(
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
+            @Suppress("DEPRECATION")
             val newDependencies =
                 ScriptDependenciesProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
                     ?.legacyDependencies

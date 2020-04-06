@@ -50,19 +50,19 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
     }
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <T> get(key: PropertiesCollection.Key<T>): T? =
+    operator fun <T> get(key: Key<T>): T? =
         (properties[key] ?: if (properties.containsKey(key)) null else key.getDefaultValue(this)) as? T
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> getNoDefault(key: PropertiesCollection.Key<T>): T? =
+    fun <T> getNoDefault(key: Key<T>): T? =
         properties[key]?.let { it as T }
 
-    fun <T> containsKey(key: PropertiesCollection.Key<T>): Boolean =
+    fun <T> containsKey(key: Key<T>): Boolean =
         properties.containsKey(key)
 
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
-    val notTransientData: Map<Key<*>, Any?> get() = properties.filterKeys { it !is TransientKey<*>}
+    val notTransientData: Map<Key<*>, Any?> get() = properties.filterKeys { it !is TransientKey<*> }
 
     fun isEmpty(): Boolean = properties.isEmpty()
 
@@ -97,159 +97,162 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
 
     open class Builder(baseProperties: Iterable<PropertiesCollection> = emptyList()) {
 
-        val data: MutableMap<PropertiesCollection.Key<*>, Any?> = LinkedHashMap<PropertiesCollection.Key<*>, Any?>().apply {
+        val data: MutableMap<Key<*>, Any?> = LinkedHashMap<Key<*>, Any?>().apply {
             baseProperties.forEach { putAll(it.properties) }
         }
 
         // generic for all properties
 
-        operator fun <T> PropertiesCollection.Key<T>.invoke(v: T) {
+        operator fun <T> Key<T>.invoke(v: T) {
             data[this] = v
         }
 
-        fun <T> PropertiesCollection.Key<T>.put(v: T) {
+        fun <T> Key<T>.put(v: T) {
             data[this] = v
         }
 
-        fun <T> PropertiesCollection.Key<T>.putIfNotNull(v: T?) {
+        fun <T> Key<T>.putIfNotNull(v: T?) {
             if (v != null) {
                 data[this] = v
             }
         }
 
-        fun <T> PropertiesCollection.Key<T>.replaceOnlyDefault(v: T?) {
+        fun <T> Key<T>.replaceOnlyDefault(v: T?) {
             if (!data.containsKey(this) || data[this] == this.getDefaultValue(PropertiesCollection(data))) {
                 data[this] = v
             }
         }
 
-        fun <T> PropertiesCollection.Key<T>.update(body: (T?) -> T?) {
-            putIfNotNull(body(data[this]?.let { it as T }))
+        fun <T> Key<T>.update(body: (T?) -> T?) {
+            putIfNotNull(body(data[this]?.let {
+                @Suppress("UNCHECKED_CAST")
+                it as T
+            }))
         }
 
         // generic for lists
 
-        fun <T> PropertiesCollection.Key<in List<T>>.putIfAny(vals: Iterable<T>?) {
+        fun <T> Key<in List<T>>.putIfAny(vals: Iterable<T>?) {
             if (vals?.any() == true) {
                 data[this] = if (vals is List) vals else vals.toList()
             }
         }
 
-        operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {
+        operator fun <T> Key<in List<T>>.invoke(vararg vals: T) {
             append(vals.asIterable())
         }
 
         // generic for maps:
 
         @JvmName("putIfAny_map")
-        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Iterable<Pair<K, V>>?) {
+        fun <K, V> Key<in Map<K, V>>.putIfAny(vals: Iterable<Pair<K, V>>?) {
             if (vals?.any() == true) {
                 data[this] = vals.toMap()
             }
         }
 
-        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Map<K, V>?) {
+        fun <K, V> Key<in Map<K, V>>.putIfAny(vals: Map<K, V>?) {
             if (vals?.isNotEmpty() == true) {
                 data[this] = vals
             }
         }
 
-        operator fun <K, V> PropertiesCollection.Key<Map<K, V>>.invoke(vararg vs: Pair<K, V>) {
+        operator fun <K, V> Key<Map<K, V>>.invoke(vararg vs: Pair<K, V>) {
             append(vs.asIterable())
         }
 
         // for strings and list of strings that could be converted from other types
 
         @JvmName("invoke_string_fqn_from_reflected_class")
-        operator fun PropertiesCollection.Key<String>.invoke(kclass: KClass<*>) {
+        operator fun Key<String>.invoke(kclass: KClass<*>) {
             data[this] = kclass.java.name
         }
 
         @JvmName("invoke_string_list_fqn_from_reflected_class")
-        operator fun PropertiesCollection.Key<in List<String>>.invoke(vararg kclasses: KClass<*>) {
+        operator fun Key<in List<String>>.invoke(vararg kclasses: KClass<*>) {
             append(kclasses.map { it.java.name })
         }
 
         // for KotlinType:
 
-        operator fun PropertiesCollection.Key<KotlinType>.invoke(kclass: KClass<*>) {
+        operator fun Key<KotlinType>.invoke(kclass: KClass<*>) {
             data[this] = KotlinType(kclass)
         }
 
-        operator fun PropertiesCollection.Key<KotlinType>.invoke(ktype: KType) {
+        operator fun Key<KotlinType>.invoke(ktype: KType) {
             data[this] = KotlinType(ktype)
         }
 
-        operator fun PropertiesCollection.Key<KotlinType>.invoke(fqname: String) {
+        operator fun Key<KotlinType>.invoke(fqname: String) {
             data[this] = KotlinType(fqname)
         }
 
         // for list of KotlinTypes
 
-        operator fun PropertiesCollection.Key<List<KotlinType>>.invoke(vararg classes: KClass<*>) {
+        operator fun Key<List<KotlinType>>.invoke(vararg classes: KClass<*>) {
             append(classes.map { KotlinType(it) })
         }
 
-        operator fun PropertiesCollection.Key<List<KotlinType>>.invoke(vararg types: KType) {
+        operator fun Key<List<KotlinType>>.invoke(vararg types: KType) {
             append(types.map { KotlinType(it) })
         }
 
-        operator fun PropertiesCollection.Key<List<KotlinType>>.invoke(vararg fqnames: String) {
+        operator fun Key<List<KotlinType>>.invoke(vararg fqnames: String) {
             append(fqnames.map { KotlinType(it) })
         }
 
         // for map of generic keys to KotlinTypes:
 
         @JvmName("invoke_kotlintype_map_from_kclass")
-        operator fun <K> PropertiesCollection.Key<Map<K, KotlinType>>.invoke(vararg classes: Pair<K, KClass<*>>) {
+        operator fun <K> Key<Map<K, KotlinType>>.invoke(vararg classes: Pair<K, KClass<*>>) {
             append(classes.map { (k, v) -> k to KotlinType(v) })
         }
 
         @JvmName("invoke_kotlintype_map_from_ktype")
-        operator fun <K> PropertiesCollection.Key<Map<K, KotlinType>>.invoke(vararg types: Pair<K, KType>) {
+        operator fun <K> Key<Map<K, KotlinType>>.invoke(vararg types: Pair<K, KType>) {
             append(types.map { (k, v) -> k to KotlinType(v) })
         }
 
         @JvmName("invoke_kotlintype_map_from_fqname")
-        operator fun <K> PropertiesCollection.Key<Map<K, KotlinType>>.invoke(vararg fqnames: Pair<K, String>) {
+        operator fun <K> Key<Map<K, KotlinType>>.invoke(vararg fqnames: Pair<K, String>) {
             append(fqnames.map { (k, v) -> k to KotlinType(v) })
         }
 
         // direct manipulation - public - for usage in inline dsl methods and for extending dsl
 
-        operator fun <T> set(key: PropertiesCollection.Key<in T>, value: T) {
+        operator fun <T> set(key: Key<in T>, value: T) {
             data[key] = value
         }
 
-        fun <T> reset(key: PropertiesCollection.Key<in T>) {
+        fun <T> reset(key: Key<in T>) {
             data.remove(key)
         }
 
         @Suppress("UNCHECKED_CAST")
-        operator fun <T : Any> get(key: PropertiesCollection.Key<in T>): T? = data[key]?.let { it as T }
+        operator fun <T : Any> get(key: Key<in T>): T? = data[key]?.let { it as T }
 
-        operator fun <T : Any> PropertiesCollection.Key<T>.invoke(): T? = get(this)
+        operator fun <T : Any> Key<T>.invoke(): T? = get(this)
 
         // appenders to list and map properties
 
         @JvmName("appendToList")
-        fun <V> PropertiesCollection.Key<in List<V>>.append(values: Iterable<V>) {
+        fun <V> Key<in List<V>>.append(values: Iterable<V>) {
             val newValues = get(this)?.let { it + values } ?: values.toList()
             data[this] = newValues
         }
 
-        fun <V> PropertiesCollection.Key<in List<V>>.append(vararg values: V) {
+        fun <V> Key<in List<V>>.append(vararg values: V) {
             val newValues = get(this)?.let { it + values } ?: values.toList()
             data[this] = newValues
         }
 
-        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.append(values: Map<K, V>) {
+        fun <K, V> Key<in Map<K, V>>.append(values: Map<K, V>) {
             val newValues = get(this)?.let { it + values } ?: values
             data[this] = newValues
         }
 
         @JvmName("appendToMap")
-        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.append(values: Iterable<Pair<K, V>>) {
+        fun <K, V> Key<in Map<K, V>>.append(values: Iterable<Pair<K, V>>) {
             val newValues = get(this)?.let { it + values } ?: values.toMap()
             data[this] = newValues
         }

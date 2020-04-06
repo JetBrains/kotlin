@@ -45,7 +45,7 @@ public class XmlMessageRenderer implements MessageRenderer {
     }
 
     private static String e(String str) {
-        return StringUtil.escapeXml(str);
+        return StringUtil.escapeXmlEntities(str);
     }
 
     @Override

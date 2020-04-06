@@ -141,6 +141,7 @@ class MainKtsTest {
         DataInputStream(ByteArrayInputStream(scriptClassResource.readBytes())).use { stream ->
             val header = stream.readInt()
             if (0xCAFEBABE.toInt() != header) throw IOException("Invalid header class header: $header")
+            @Suppress("UNUSED_VARIABLE")
             val minor = stream.readUnsignedShort()
             val major = stream.readUnsignedShort()
             Assert.assertTrue(major == 50)
