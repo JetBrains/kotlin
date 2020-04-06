@@ -26,6 +26,15 @@ class PrefixMatchingTypeRatio(private val type: PrefixMatchingType) : UserFactor
   }
 }
 
+/**
+ * Matching prefixes for *isEmptyString* lookup element as example:
+ *  - `isempt` -> [START]
+ *  - `isEmpt` -> [START]
+ *  - `isEmpSt` -> [SYMBOLS_WITH_CASE]
+ *  - `EmpSt` -> [SYMBOLS_WITH_CASE]
+ *  - `isempst` -> [SYMBOLS]
+ *  - `Emstr` -> [SYMBOLS]
+ */
 enum class PrefixMatchingType {
   START,
   SYMBOLS_WITH_CASE,
