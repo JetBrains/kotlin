@@ -93,6 +93,11 @@
 
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ngram.NGramFeatureProvider"/>
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.ContextSimilarityFeatures"/>
-
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.RecentPlacesFeatures"/>
   </extensions>
+
+  <projectListeners>
+    <listener class="com.intellij.completion.ml.common.RecentPlacesFeatures$StoreRecentPlacesListener"
+              topic="com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl$RecentPlacesListener" />
+  </projectListeners>
 </idea-plugin>
