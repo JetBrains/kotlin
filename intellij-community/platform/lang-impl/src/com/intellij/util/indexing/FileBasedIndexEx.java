@@ -333,9 +333,30 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, @Nullable ProgressIndicator indicator) {
     List<IndexableFilesProvider> providers = getOrderedIndexableFilesProviders(project);
     ConcurrentBitSet visitedFileSet = new ConcurrentBitSet();
-    for (IndexableFilesProvider provider : providers) {
-      if (!provider.iterateFiles(project, processor, visitedFileSet)) {
-        break;
+    boolean wasIndeterminate = false;
+    if (indicator != null) {
+      wasIndeterminate = indicator.isIndeterminate();
+      indicator.setIndeterminate(false);
+      indicator.setFraction(0);
+      indicator.pushState();
+    }
+    try {
+      for (int i = 0; i < providers.size(); i++) {
+        if (indicator != null) {
+          indicator.checkCanceled();
+        }
+        IndexableFilesProvider provider = providers.get(i);
+        if (!provider.iterateFiles(project, processor, visitedFileSet)) {
+          break;
+        }
+        if (indicator != null) {
+          indicator.setFraction((i + 1) * 1.0 / providers.size());
+        }
+      }
+    } finally {
+      if (indicator != null) {
+        indicator.popState();
+        indicator.setIndeterminate(wasIndeterminate);
       }
     }
   }
