@@ -27,7 +27,7 @@ class ClassWrapper(
     val hasDefaultConstructor: Boolean,
     val delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
-    val superTypeCallEntry: MutableList<FirExpression>,
+    val superTypeCallEntry: List<FirExpression>,
 ) {
     fun isObjectLiteral(): Boolean {
         return className == SpecialNames.NO_NAME_PROVIDED && isObject()

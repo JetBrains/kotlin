@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
-import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -22,11 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.ANONYMOUS_CLASS_ID
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -79,6 +74,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     fun addCapturedTypeParameters(typeParameters: List<FirTypeParameterRef>) {
         context.capturedTypeParameters =
             context.capturedTypeParameters.addAll(0, typeParameters.map { typeParameter -> typeParameter.symbol })
+    }
+
+    fun clearCapturedTypeParameters() {
+        context.capturedTypeParameters = context.capturedTypeParameters.clear()
     }
 
     fun callableIdForName(name: Name, local: Boolean = false) =
@@ -145,39 +144,21 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun T?.toDelegatedSelfType(firClass: AbstractFirRegularClassBuilder): FirResolvedTypeRef {
+    fun T?.toDelegatedSelfType(firClass: AbstractFirRegularClassBuilder): FirResolvedTypeRef =
+        toDelegatedSelfType(firClass, firClass.symbol)
+
+    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
+        toDelegatedSelfType(firObject, firObject.symbol)
+
+    private fun T?.toDelegatedSelfType(firClass: FirClassBuilder, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
         return buildResolvedTypeRef {
             source = this@toDelegatedSelfType?.toFirSourceElement()
             type = ConeClassLikeTypeImpl(
-                firClass.symbol.toLookupTag(),
+                symbol.toLookupTag(),
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }
-    }
-
-    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef {
-        return buildResolvedTypeRef {
-            source = this@toDelegatedSelfType?.toFirSourceElement()
-            type = ConeClassLikeTypeImpl(
-                firObject.symbol.toLookupTag(),
-                firObject.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                false
-            )
-        }
-    }
-
-    fun typeParametersFromSelfType(
-        delegatedSelfTypeRef: FirTypeRef
-    ): List<FirTypeParameterRef> {
-        return delegatedSelfTypeRef.coneTypeSafe<ConeKotlinType>()
-            ?.typeArguments
-            ?.map {
-                buildConstructedClassTypeParameterRef {
-                    symbol = ((it as ConeTypeParameterType).lookupTag.symbol as FirTypeParameterSymbol)
-                }
-            }
-            ?: emptyList()
     }
 
     fun constructorTypeParametersFromConstructedClass(ownerTypeParameters: List<FirTypeParameterRef>): List<FirTypeParameterRef> {
