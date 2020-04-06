@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
@@ -590,6 +593,15 @@ class Fir2IrDeclarationStorage(
                         parent = irParent
                     }
                     val type = property.returnTypeRef.toIrType()
+                    if (property.isConst && property.initializer is FirConstExpression<*>) {
+                        backingField = IrFieldImpl(startOffset, endOffset, origin, descriptor, type).also {
+                            it.initializer = property.initializer?.convertWithOffsets {
+                                fieldStartOffset, fieldEndOffset ->
+                                IrExpressionBodyImpl(property.initializer.toIrConst(type))
+                            }
+                            it.correspondingPropertySymbol = symbol
+                        }
+                    }
                     getter = createIrPropertyAccessor(
                         property.getter, property, this, type, irParent, false,
                         when {
