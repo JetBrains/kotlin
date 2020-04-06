@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -20,15 +21,15 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * This pass runs before inlining and performs the following additional transformations over some operations:
  *     - Assertion call removal.
  */
-internal class PreInlineLowering(val context: Context) : FileLoweringPass {
+internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
 
     private val symbols get() = context.ir.symbols
 
     private val asserts = symbols.asserts
     private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(object : IrBuildingTransformer(context) {
 
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)

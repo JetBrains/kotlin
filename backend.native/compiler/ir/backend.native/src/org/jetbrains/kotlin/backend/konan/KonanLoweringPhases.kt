@@ -131,7 +131,7 @@ internal val extractLocalClassesFromInlineBodies = namedIrModulePhase(
 internal val inlinePhase = namedIrModulePhase(
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
-                FunctionInlining(context).run {
+                FunctionInlining(context, NativeInlineFunctionResolver(context)).run {
                     input.files.forEach { lower(it) }
                 }
                 return input

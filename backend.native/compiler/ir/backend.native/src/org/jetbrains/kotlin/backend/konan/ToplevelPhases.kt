@@ -25,11 +25,7 @@ import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.addFile
-import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -320,6 +316,7 @@ internal val linkerPhase = konanUnitPhase(
 internal val allLoweringsPhase = namedIrModulePhase(
         name = "IrLowering",
         description = "IR Lowering",
+        // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
         lower = removeExpectDeclarationsPhase then
                 stripTypeAliasDeclarationsPhase then
                 lowerBeforeInlinePhase then
@@ -392,6 +389,7 @@ internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
                                     ?: return@forEach
                             input.files += libModule.files
                         }
+
                 input.files += files
 
                 return input

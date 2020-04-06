@@ -3302,6 +3302,18 @@ linkTest("inline_defaultArgs_linkTest") {
     lib = "codegen/inline/defaultArgs_linkTest_lib.kt"
 }
 
+linkTest("inline_sharedVar_linkTest") {
+    goldValue = "6\n"
+    source = "codegen/inline/sharedVar_linkTest_main.kt"
+    lib = "codegen/inline/sharedVar_linkTest_lib.kt"
+}
+
+linkTest("inline_lateinitProperty_linkTest") {
+    goldValue = "OK\n"
+    source = "codegen/inline/lateinitProperty_linkTest_main.kt"
+    lib = "codegen/inline/lateinitProperty_linkTest_lib.kt"
+}
+
 def generateWithSpaceDefFile() {
     def mapOption = "--Map \"${buildDir}/cutom map.map\""
     if (isAppleTarget(project)) {

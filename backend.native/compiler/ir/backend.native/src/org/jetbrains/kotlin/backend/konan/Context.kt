@@ -66,6 +66,8 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     private val loweredEnums = mutableMapOf<IrClass, LoweredEnum>()
     private val ordinals = mutableMapOf<ClassDescriptor, Map<ClassDescriptor, Int>>()
 
+    val loweredInlineFunctions = mutableSetOf<IrFunction>()
+
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
