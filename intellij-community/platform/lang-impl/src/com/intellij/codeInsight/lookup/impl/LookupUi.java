@@ -268,7 +268,7 @@ class LookupUi {
       setLayout(new AbstractLayoutManager() {
         @Override
         public Dimension preferredLayoutSize(@Nullable Container parent) {
-          int maxCellWidth = myLookup.myLookupTextWidth + myLookup.myCellRenderer.getTextIndent();
+          int maxCellWidth = myLookup.myCellRenderer.getLookupTextWidth() + myLookup.myCellRenderer.getTextIndent();
           int scrollBarWidth = myScrollPane.getVerticalScrollBar().getWidth();
           int listWidth = Math.min(scrollBarWidth + maxCellWidth, UISettings.getInstance().getMaxLookupWidth());
 

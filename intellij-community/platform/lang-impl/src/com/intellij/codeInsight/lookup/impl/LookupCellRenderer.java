@@ -2,6 +2,7 @@
 
 package com.intellij.codeInsight.lookup.impl;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.lookup.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -13,6 +14,7 @@ import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,10 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.codeInsight.documentation.DocumentationComponent.COLOR_KEY;
 
@@ -55,19 +54,9 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private final FontMetrics myNormalMetrics;
   private final FontMetrics myBoldMetrics;
 
-  /**
-   * @deprecated unused
-   */
-  @Deprecated
-  public static final Color FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.foreground", JBColor.foreground());
+  private static final Key<Font> CUSTOM_FONT_KEY = Key.create("CustomLookupElementFont");
 
-  /**
-   * @deprecated unused
-   */
-  @Deprecated
-  public static final Color SELECTED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionForeground", new JBColor(JBColor.WHITE, JBColor.foreground()));
-
-  public static final Color BACKGROUND_COLOR = new JBColor(() -> EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
+  static final Color BACKGROUND_COLOR = new JBColor(() -> Objects.requireNonNull(EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY)));
   private static final Color MATCHED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.matchForeground", JBUI.CurrentTheme.Link.linkColor());
   private static final Color SELECTED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionBackground", new JBColor(0xc5dffc, 0x113a5c));
   public static final Color SELECTED_NON_FOCUSED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionInactiveBackground", new JBColor(0xE0E0E0, 0x515457));
@@ -83,6 +72,8 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
   private static final String ELLIPSIS = "\u2026";
   private int myMaxWidth = -1;
+  private volatile int myLookupTextWidth = 50;
+  private final Object myWidthLock = ObjectUtils.sentinel("lookup width lock");
 
   public LookupCellRenderer(LookupImpl lookup) {
     EditorColorsScheme scheme = lookup.getTopLevelEditor().getColorsScheme();
@@ -162,7 +153,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     Color itemColor = presentation.getItemTextForeground();
     allowedWidth -= setItemTextLabel(item, itemColor, presentation, allowedWidth);
 
-    Font font = myLookup.getCustomFont(item, false);
+    Font font = getCustomFont(item, false);
     if (font == null) {
       font = myNormalFont;
     }
@@ -197,7 +188,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
                      myTailComponent.getPreferredSize().getWidth() +
                      myTypeLabel.getPreferredSize().getWidth();
 
-    boolean useBoxLayout = isSelected && w > list.getWidth() && ((JBList)list).getExpandableItemsHandler().isEnabled();
+    boolean useBoxLayout = isSelected && w > list.getWidth() && ((JBList<?>)list).getExpandableItemsHandler().isEnabled();
     if (useBoxLayout != myPanel.getLayout() instanceof BoxLayout) {
       myPanel.removeAll();
       if (useBoxLayout) {
@@ -216,6 +207,11 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     AccessibleContextUtil.setCombinedName(myPanel, myNameComponent, "", myTailComponent, " - ", myTypeLabel);
     AccessibleContextUtil.setCombinedDescription(myPanel, myNameComponent, "", myTailComponent, " - ", myTypeLabel);
     return myPanel;
+  }
+
+  @VisibleForTesting
+  public int getLookupTextWidth() {
+    return myLookupTextWidth;
   }
 
   private static int calcSpacing(@NotNull SimpleColoredComponent component, @Nullable Icon icon) {
@@ -323,7 +319,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private int setItemTextLabel(LookupElement item, final Color foreground, LookupElementPresentation presentation, int allowedWidth) {
     boolean bold = presentation.isItemTextBold();
 
-    Font customItemFont = myLookup.getCustomFont(item, bold);
+    Font customItemFont = getCustomFont(item, bold);
     myNameComponent.setFont(customItemFont != null ? customItemFont : bold ? myBoldFont : myNormalFont);
     int style = getStyle(bold, presentation.isStrikeout(), presentation.isItemTextUnderlined(), presentation.isItemTextItalic());
 
@@ -336,7 +332,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   }
 
   private FontMetrics getRealFontMetrics(LookupElement item, boolean bold) {
-    Font customFont = myLookup.getCustomFont(item, bold);
+    Font customFont = getCustomFont(item, bold);
     if (customFont != null) {
       return myLookup.getTopLevelEditor().getComponent().getFontMetrics(customFont);
     }
@@ -463,7 +459,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   }
 
   @Nullable
-  Font getFontAbleToDisplay(LookupElementPresentation p) {
+  private Font getFontAbleToDisplay(LookupElementPresentation p) {
     String sampleString = p.getItemText() + p.getTailText() + p.getTypeText();
 
     // assume a single font can display all lookup item chars
@@ -486,8 +482,24 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     return null;
   }
 
+  @Nullable
+  private static Font getCustomFont(LookupElement item, boolean bold) {
+    Font font = item.getUserData(CUSTOM_FONT_KEY);
+    return font == null ? null : bold ? font.deriveFont(Font.BOLD) : font;
+  }
 
-  int updateMaximumWidth(final LookupElementPresentation p, LookupElement item) {
+  void updateLookupWidth(LookupElement item, LookupElementPresentation presentation) {
+    final Font customFont = getFontAbleToDisplay(presentation);
+    if (customFont != null) {
+      item.putUserData(CUSTOM_FONT_KEY, customFont);
+    }
+    int maxWidth = updateMaximumWidth(presentation, item);
+    synchronized (myWidthLock) {
+      myLookupTextWidth = Math.max(maxWidth, myLookupTextWidth);
+    }
+  }
+
+  private int updateMaximumWidth(LookupElementPresentation p, LookupElement item) {
     Icon icon = p.getIcon();
     if (icon != null && (icon.getIconWidth() > myEmptyIcon.getIconWidth() || icon.getIconHeight() > myEmptyIcon.getIconHeight())) {
       if (icon instanceof DeferredIcon) {
@@ -504,7 +516,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
            calcSpacing(myTailComponent, null) + calcSpacing(myTypeLabel, null);
   }
 
-  public int getTextIndent() {
+  int getTextIndent() {
     return myNameComponent.getIpad().left + myEmptyIcon.getIconWidth() + myNameComponent.getIconTextGap();
   }
 

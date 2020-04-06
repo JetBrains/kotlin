@@ -73,7 +73,6 @@ import java.util.function.Supplier;
 
 public class LookupImpl extends LightweightHint implements LookupEx, Disposable, LookupElementListPresenter {
   private static final Logger LOG = Logger.getInstance(LookupImpl.class);
-  private static final Key<Font> CUSTOM_FONT_KEY = Key.create("CustomLookupElementFont");
 
   private final LookupOffsets myOffsets;
   private final Project myProject;
@@ -108,7 +107,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   private LookupFocusDegree myLookupFocusDegree = LookupFocusDegree.FOCUSED;
   private volatile boolean myCalculating;
   private final Advertiser myAdComponent;
-  volatile int myLookupTextWidth = 50;
   private int myGuardedChanges;
   private volatile LookupArranger myArranger;
   private LookupArranger myPresentableArranger;
@@ -164,10 +162,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   private CollectionListModel<LookupElement> getListModel() {
     //noinspection unchecked
     return (CollectionListModel<LookupElement>)myList.getModel();
-  }
-
-  public LookupArranger getArranger() {
-    return myArranger;
   }
 
   public void setArranger(LookupArranger arranger) {
@@ -269,7 +263,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
       return false;
     }
 
-    updateLookupWidth(item, presentation);
+    myCellRenderer.updateLookupWidth(item, presentation);
     LookupArranger arranger = myArranger;
     arranger.registerMatcher(item, matcher);
     arranger.addElement(item, presentation);
@@ -288,22 +282,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   }
 
   public void updateLookupWidth(LookupElement item) {
-    updateLookupWidth(item, renderItemApproximately(item));
-  }
-
-  private void updateLookupWidth(LookupElement item, LookupElementPresentation presentation) {
-    final Font customFont = myCellRenderer.getFontAbleToDisplay(presentation);
-    if (customFont != null) {
-      item.putUserData(CUSTOM_FONT_KEY, customFont);
-    }
-    int maxWidth = myCellRenderer.updateMaximumWidth(presentation, item);
-    myLookupTextWidth = Math.max(maxWidth, myLookupTextWidth);
-  }
-
-  @Nullable
-  Font getCustomFont(LookupElement item, boolean bold) {
-    Font font = item.getUserData(CUSTOM_FONT_KEY);
-    return font == null ? null : bold ? font.deriveFont(Font.BOLD) : font;
+    myCellRenderer.updateLookupWidth(item, renderItemApproximately(item));
   }
 
   public void requestResize() {
@@ -1048,10 +1027,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
       return myLastVisibleIndex;
     }
     return myList.getLastVisibleIndex();
-  }
-
-  public void setLastVisibleIndex(int lastVisibleIndex) {
-    myLastVisibleIndex = lastVisibleIndex;
   }
 
   @Override
