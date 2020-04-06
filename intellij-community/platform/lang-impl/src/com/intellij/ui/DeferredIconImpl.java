@@ -5,6 +5,7 @@
  */
 package com.intellij.ui;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -18,8 +19,8 @@ import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.Alarm;
 import com.intellij.util.Function;
 import com.intellij.util.IconUtil;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.EdtExecutorService;
-import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBCachingScalableIcon;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -32,7 +33,8 @@ import java.awt.*;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<T>> implements DeferredIcon, RetrievableIcon {
   private static final Logger LOG = Logger.getInstance(DeferredIconImpl.class);
@@ -44,7 +46,7 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
   private volatile Icon myScaledDelegateIcon;
   private Function<? super T, ? extends Icon> myEvaluator;
   private volatile boolean myIsScheduled;
-  private T myParam;
+  private final T myParam;
   private static final Icon EMPTY_ICON = EmptyIcon.create(16).withIconPreScaled(false);
   private final boolean myNeedReadAction;
   private boolean myDone;
@@ -52,7 +54,8 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
   private long myLastCalcTime;
   private long myLastTimeSpent;
 
-  private static final Executor ourIconsCalculatingExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("OurIconsCalculating Pool");
+  private static final ExecutorService ourIconCalculatingExecutor =
+    AppExecutorUtil.createBoundedApplicationPoolExecutor("OurIconCalculating Pool", 1);
 
   private final IconListener<T> myEvalListener;
 
@@ -143,12 +146,17 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
     if (isDone() || myIsScheduled || PowerSaveMode.isEnabled()) {
       return;
     }
+    scheduleEvaluation(c, x, y);
+  }
+
+  @VisibleForTesting
+  Future<?> scheduleEvaluation(Component c, int x, int y) {
     myIsScheduled = true;
 
     final Component target = getTarget(c);
     final Component paintingParent = SwingUtilities.getAncestorOfClass(PaintingParent.class, c);
     final Rectangle paintingParentRec = paintingParent == null ? null : ((PaintingParent)paintingParent).getChildRec(c);
-    ourIconsCalculatingExecutor.execute(() -> {
+    return ourIconCalculatingExecutor.submit(() -> {
       int oldWidth = myScaledDelegateIcon.getIconWidth();
       final Icon[] evaluated = new Icon[1];
 
@@ -250,7 +258,6 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
     myDone = true;
     if (!myAutoUpdatable) {
       myEvaluator = null;
-      myParam = null;
     }
   }
 
