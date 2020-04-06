@@ -15,6 +15,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.andThen
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
@@ -34,6 +35,7 @@ class IdeaGradleWizardService(private val project: Project) : ProjectImportingWi
     // We have to call action directly as there is no common way
     // to import Gradle project in all IDEAs from 183 to 193
     override fun importProject(
+        reader: Reader,
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
