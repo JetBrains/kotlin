@@ -27,7 +27,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
-        val companionObject = irClass.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion  }
+        val companionObject = irClass.companionObject()
         val classMethods = companionObject?.generateMethodDescs().orEmpty()
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {

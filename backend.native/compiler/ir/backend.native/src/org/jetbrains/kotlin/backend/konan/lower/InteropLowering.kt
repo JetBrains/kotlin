@@ -466,6 +466,15 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         }
     }
 
+    private fun IrClass.hasFields() =
+            this.declarations.any {
+                when (it) {
+                    is IrField ->  it.isReal
+                    is IrProperty -> it.isReal && it.backingField != null
+                    else -> false
+                }
+            }
+
     private fun checkKotlinObjCClass(irClass: IrClass) {
         val kind = irClass.descriptor.kind
         if (kind != ClassKind.CLASS && kind != ClassKind.OBJECT) {
@@ -480,6 +489,16 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     "Non-final Kotlin subclasses of Objective-C classes are not yet supported",
                     currentFile, irClass
             )
+        }
+
+        irClass.companionObject()?.let {
+            if (it.hasFields() ||
+                    it.getSuperClassNotAny()?.hasFields() ?: false) {
+                context.reportCompilationError(
+                        "Fields are not supported for Companion of subclass of ObjC type",
+                        currentFile, irClass
+                )
+            }
         }
 
         var hasObjCClassSupertype = false
