@@ -34,9 +34,9 @@ fun main() {
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Outer<CharSequence>.Inner<CharSequence>>(outer.bar())
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Outer<CharSequence>.Inner<CharSequence>>(outer.Inner())
 
-    outer.set(outer.bar())
-    outer.set(outer.Inner())
+    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(outer.bar())
+    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(outer.Inner())
 
     val x: Outer<String>.Inner<String> = factoryString()
-    outer.set(x)
+    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(x)
 }

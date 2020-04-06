@@ -8,8 +8,8 @@ typealias CIn = C<in Int>
 typealias COut = C<out Int>
 typealias CT<T> = C<T>
 
-val test1 = <!UNRESOLVED_REFERENCE!>CStar<!>()
-val test2 = <!UNRESOLVED_REFERENCE!>CIn<!>()
-val test3 = <!UNRESOLVED_REFERENCE!>COut<!>()
+val test1 = CStar()
+val test2 = CIn()
+val test3 = COut()
 val test4 = CT<*>()
 val test5 = CT<CT<*>>()
