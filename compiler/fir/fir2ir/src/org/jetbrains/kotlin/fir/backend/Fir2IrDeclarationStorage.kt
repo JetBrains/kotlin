@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -19,6 +16,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
@@ -36,10 +34,12 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -564,6 +564,39 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    private fun IrProperty.createBackingField(
+        property: FirProperty,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor,
+        visibility: Visibility,
+        name: Name,
+        isFinal: Boolean,
+        firInitializerExpression: FirExpression?,
+        type: IrType? = null
+    ): IrField {
+        val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType()
+        return symbolTable.declareField(
+            startOffset, endOffset, origin, descriptor, inferredType
+        ) { symbol ->
+            IrFieldImpl(
+                startOffset, endOffset, origin, symbol,
+                name, inferredType,
+                visibility, isFinal = isFinal, isExternal = false,
+                isStatic = property.isStatic || parent !is IrClass,
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            ).also {
+                it.correspondingPropertySymbol = this@createBackingField.symbol
+            }
+        }
+    }
+
+    private val FirProperty.fieldVisibility: Visibility
+        get() = when {
+            isLateInit -> setter?.visibility ?: status.visibility
+            isConst -> status.visibility
+            else -> Visibilities.PRIVATE
+        }
+
     fun createIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
@@ -597,28 +630,51 @@ class Fir2IrDeclarationStorage(
                     }
                     val type = property.returnTypeRef.toIrType()
                     val initializer = property.initializer
-                    if (property.isConst && initializer is FirConstExpression<*>) {
-                        backingField = IrFieldImpl(startOffset, endOffset, origin, descriptor, type).also {
-                            it.initializer = IrExpressionBodyImpl(initializer.toIrConst(type))
-                            it.correspondingPropertySymbol = symbol
+                    val delegate = property.delegate
+                    val getter = property.getter
+                    val setter = property.setter
+                    // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
+                    if (property.isConst || (property.modality != Modality.ABSTRACT && (irParent !is IrClass || !irParent.isInterface))) {
+                        if (initializer != null || getter is FirDefaultPropertyGetter ||
+                            property.isVar && setter is FirDefaultPropertySetter
+                        ) {
+                            backingField = createBackingField(
+                                property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
+                                property.fieldVisibility, property.name, property.isVal, initializer, type
+                            ).also { field ->
+                                if (initializer is FirConstExpression<*>) {
+                                    // TODO: Normally we shouldn't have error type here
+                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
+                                    field.initializer = IrExpressionBodyImpl(initializer.toIrConst(constType))
+                                }
+                            }
+                        } else if (delegate != null) {
+                            backingField = createBackingField(
+                                property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
+                                property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate
+                            )
                         }
+                        if (irParent != null) {
+                            backingField?.parent = irParent
+                        }
+
                     }
-                    getter = createIrPropertyAccessor(
-                        property.getter, property, this, type, irParent, false,
+                    this.getter = createIrPropertyAccessor(
+                        getter, property, this, type, irParent, false,
                         when {
                             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                            property.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                            property.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                            delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                            getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
                         startOffset, endOffset
                     )
                     if (property.isVar) {
-                        setter = createIrPropertyAccessor(
-                            property.setter, property, this, type, irParent, true,
+                        this.setter = createIrPropertyAccessor(
+                            setter, property, this, type, irParent, true,
                             when {
-                                property.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                                property.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                                delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                                setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
                             startOffset, endOffset
