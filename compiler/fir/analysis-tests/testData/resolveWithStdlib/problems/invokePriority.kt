@@ -29,6 +29,6 @@ class E {
 }
 
 fun main() {
-    E.<!AMBIGUITY!>f<!>() // Resolves to (2) in old FE (ambiguity in FIR)
+    E.f() // Resolves to (2) in old FE (Resolves to (1) in FIR)
     E.f.invoke() // Resolves to (1)
 }

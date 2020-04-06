@@ -51,6 +51,8 @@ private constructor(
     companion object {
         private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(arrayOf(kind))
 
+        val EmptyRoot = TowerGroup(emptyArray())
+
         val Start = kindOf(TowerGroupKind.Start)
 
         val ClassifierPrioritized = kindOf(TowerGroupKind.ClassifierPrioritized)
