@@ -30,5 +30,5 @@ enum class PrefixMatchingType {
   START,
   SYMBOLS_WITH_CASE,
   SYMBOLS,
-  UNDEFINED
+  UNKNOWN
 }

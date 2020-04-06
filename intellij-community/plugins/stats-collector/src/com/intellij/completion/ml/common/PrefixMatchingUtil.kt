@@ -10,16 +10,18 @@ internal object PrefixMatchingUtil {
 
   fun calculateFeatures(element: LookupElement, scorer: PrefixMatchingScoringFunction, features: MutableMap<String, Any>) {
     if (scorer.prefix.isEmpty() || element.lookupString.isEmpty()) return
-    val wordsCount = NameUtil.nameToWords(element.lookupString).size
     val prefixMatchingScores = scorer.score(element.lookupString)
     features.addFeature("start_length", prefixMatchingScores.start(), 0)
     features.addFeature("symbols_length", prefixMatchingScores.symbols(), 0.0)
     features.addFeature("symbols_with_case_length", prefixMatchingScores.symbolsWithCase(), 0.0)
     features.addFeature("words_length", prefixMatchingScores.words(), 0.0)
-    features.addFeature("words_relative", prefixMatchingScores.words() / wordsCount, 0.0)
     features.addFeature("words_with_case_length", prefixMatchingScores.wordsWithCase(), 0.0)
-    features.addFeature("words_with_case_relative", prefixMatchingScores.wordsWithCase() / wordsCount, 0.0)
-    features.addFeature("type", prefixMatchingScores.type(scorer.prefix), PrefixMatchingType.UNDEFINED)
+    val wordsCount = prefixMatchingScores.wordsCount()
+    if (prefixMatchingScores.wordsCount() != 0) {
+      features.addFeature("words_relative", prefixMatchingScores.words() / wordsCount, 0.0)
+      features.addFeature("words_with_case_relative", prefixMatchingScores.wordsWithCase() / wordsCount, 0.0)
+    }
+    features.addFeature("type", prefixMatchingScores.type(scorer.prefix), PrefixMatchingType.UNKNOWN)
     features.addFeature("exact", prefixMatchingScores.exact(), false)
   }
 
@@ -27,9 +29,9 @@ internal object PrefixMatchingUtil {
 
   class PrefixMatchingScoringFunction(val prefix: String) {
     fun score(value: String): PrefixMatchingScores {
-      val scores = PrefixMatchingScores(value.commonPrefixWith(prefix, true).length, value == prefix)
-      if (prefix.isEmpty()) return scores
+      if (prefix.isEmpty()) return PrefixMatchingScores.EMPTY_PREFIX_MATCHING_SCORE
       val words = NameUtil.nameToWords(value)
+      val scores = PrefixMatchingScores(value.commonPrefixWith(prefix, true).length, value == prefix, words.size)
       val iter = prefix.iterator()
       var ch = iter.next()
       for ((i, word) in words.withIndex()) {
@@ -56,7 +58,10 @@ internal object PrefixMatchingUtil {
     private fun next(iter: Iterator<Char>): Char? = if (iter.hasNext()) iter.next() else null
   }
 
-  class PrefixMatchingScores(private val start: Int, private val exact: Boolean) {
+  data class PrefixMatchingScores(private val start: Int, private val exact: Boolean, private val wordsCount: Int) {
+    companion object {
+      val EMPTY_PREFIX_MATCHING_SCORE = PrefixMatchingScores(0, false, 0)
+    }
     private var words = 0.0
     private var symbolsMeasure = 0.0
     private var symbolsCount = 0
@@ -89,16 +94,17 @@ internal object PrefixMatchingUtil {
     fun symbolsWithCase(): Double = symbolsWithCaseMeasure
     fun words(): Double = words
     fun wordsWithCase(): Double = wordsWithCase
+    fun wordsCount(): Int = wordsCount
     fun type(prefix: String): PrefixMatchingType =
       when (prefix.length) {
         start -> PrefixMatchingType.START
         symbolsWithCaseCount -> PrefixMatchingType.SYMBOLS_WITH_CASE
         symbolsCount -> PrefixMatchingType.SYMBOLS
-        else -> PrefixMatchingType.UNDEFINED
+        else -> PrefixMatchingType.UNKNOWN
     }
   }
 
-  private fun MutableMap<String, Any>.addFeature(name: String, value: Any, defaultValue: Any) {
+  private fun<T> MutableMap<String, T>.addFeature(name: String, value: T, defaultValue: T) {
     if (value != defaultValue) this["${baseName}_$name"] = value
   }
 }
