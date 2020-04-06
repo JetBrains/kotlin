@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 
 buildscript {
@@ -36,11 +37,22 @@ targetList.each { target ->
         endorsedLibrariesList.each { library ->
             dependsOn "$library:${target}${ toTaskName(library) }"
         }
+
         destinationDir project.buildDir
+
         endorsedLibrariesList.each { library ->
             from(project("$library").file("build/${target}${ toTaskName(library) }")) {
                 include('**')
                 into("${library.replaceAll("\\.", "-")}")
+                eachFile {
+                    if (name == 'manifest') {
+                        def existingManifest = file("$destinationDir/$path")
+                        if (existingManifest.exists()) {
+                            UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
+                            exclude()
+                        }
+                    }
+                }
             }
         }
     }
