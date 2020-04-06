@@ -330,9 +330,13 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 propertyIrType,
                 getterSymbol,
-                getterDescriptor?.let { computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it) },
+                getterDescriptor?.let {
+                    computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it, unwrappedPropertyDescriptor.getter!!)
+                },
                 setterSymbol,
-                setterDescriptor?.let { computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it) },
+                setterDescriptor?.let {
+                    computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it, unwrappedPropertyDescriptor.setter!!)
+                },
                 typeArgumentsList,
                 propertyReceiver,
                 superQualifierSymbol

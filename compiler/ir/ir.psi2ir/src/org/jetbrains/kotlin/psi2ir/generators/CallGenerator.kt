@@ -211,7 +211,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         IrStatementOrigin.GET_PROPERTY,
                         superQualifierSymbol
                     ).apply {
-                        context.callToSubstitutedDescriptorMap[this] = computeSubstitutedSyntheticAccessor(descriptor, getMethodDescriptor)
+                        context.callToSubstitutedDescriptorMap[this] = computeSubstitutedSyntheticAccessor(
+                            descriptor, getMethodDescriptor, descriptor.getter!!
+                        )
                         putTypeArguments(call.typeArguments) { it.toIrType() }
                         dispatchReceiver = dispatchReceiverValue?.load()
                         extensionReceiver = extensionReceiverValue?.load()

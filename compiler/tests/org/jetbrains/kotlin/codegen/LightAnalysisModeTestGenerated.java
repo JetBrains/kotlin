@@ -15602,6 +15602,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testJavaNestedSamInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/generics/javaNestedSamInterface.kt");
             }
+
+            @TestMetadata("propertyVarianceConflict.kt")
+            public void testPropertyVarianceConflict() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/generics/propertyVarianceConflict.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
