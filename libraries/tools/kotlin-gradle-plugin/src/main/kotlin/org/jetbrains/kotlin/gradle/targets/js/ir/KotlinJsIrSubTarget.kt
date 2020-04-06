@@ -96,9 +96,9 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            val testExecutableTask = compilation.binaries.getIrBinary(
+            val testExecutableTask = compilation.binaries.getIrBinaries(
                 KotlinJsBinaryType.DEVELOPMENT
-            ).linkTask
+            ).single().linkTask
 
             testJs.inputFileProperty.set(
                 testExecutableTask.map { it.outputFileProperty.get() }
