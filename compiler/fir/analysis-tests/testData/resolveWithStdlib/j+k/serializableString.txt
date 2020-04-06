@@ -1,0 +1,6 @@
+FILE: serializableString.kt
+    public final fun foo(x: R|java/io/Serializable|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(String())
+    }
