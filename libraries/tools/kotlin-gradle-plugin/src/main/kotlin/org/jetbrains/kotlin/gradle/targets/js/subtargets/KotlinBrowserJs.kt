@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Task
-import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -36,7 +35,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
-    private val distribution: Distribution = BrowserDistribution()
+    private val distribution: Distribution = BrowserDistribution(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -150,11 +149,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val compileKotlinTask = compilation.compileKotlinTask
 
-        val basePluginConvention = project.convention.plugins["base"] as BasePluginConvention?
-
-        val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
-        distribution.directory = distribution.directory ?: baseDist
-
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
         val distributeResourcesTask = project.registerTask<Copy>(
@@ -163,7 +157,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             )
         ) {
             it.from(processResourcesTask)
-            it.into(distribution.directory ?: baseDist)
+            it.into(distribution.directory)
         }
 
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
