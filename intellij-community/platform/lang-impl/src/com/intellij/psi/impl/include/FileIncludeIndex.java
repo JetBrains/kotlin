@@ -165,15 +165,8 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
 
   @Override
   public int getVersion() {
-    int version = BASE_VERSION;
-
-    if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
-      for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
-        version = version * 31 + (provider.getVersion() ^ provider.getClass().getName().hashCode());
-      }
-    }
-
-    return version;
+    // composite indexer
+    return BASE_VERSION;
   }
 
   private static class StringSetDescriptor implements KeyDescriptor<Set<String>> {

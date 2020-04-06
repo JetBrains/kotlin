@@ -668,9 +668,9 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     index.removeTransientDataForKeys(inputId, keys);
   }
 
-  private boolean dropUnregisteredIndices(@NotNull AsyncState state) {
+  private void dropUnregisteredIndices(@NotNull AsyncState state) {
     if (ApplicationManager.getApplication().isDisposed() || !IndexInfrastructure.hasIndices()) {
-      return false;
+      return;
     }
 
     Set<String> indicesToDrop = new HashSet<>(myPreviouslyRegistered != null ? myPreviouslyRegistered.registeredIndices : Collections.emptyList());
@@ -684,9 +684,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       for (String s : indicesToDrop) {
         FileUtil.delete(IndexInfrastructure.getStubIndexRootDir(s));
       }
-      return true;
     }
-    return false;
   }
 
   @Override
@@ -788,12 +786,11 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
     @Override
     protected AsyncState finish() {
-      boolean someIndicesWereDropped = dropUnregisteredIndices(state);
+      dropUnregisteredIndices(state);
 
       StringBuilder updated = new StringBuilder();
       String updatedIndices = indicesRegistrationSink.changedIndices();
       if (!updatedIndices.isEmpty()) updated.append(updatedIndices);
-      if (someIndicesWereDropped && !InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) updated.append(" and some indices were dropped");
       indicesRegistrationSink.logChangedAndFullyBuiltIndices(LOG, "Following stub indices will be updated:",
                                                              "Following stub indices will be built:");
 
