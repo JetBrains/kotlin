@@ -39,14 +39,16 @@ fun Properties.propertyString(key: String, suffix: String? = null): String? = ge
 
 /**
  * TODO: this method working with suffixes should be replaced with
- * functionality borrowed from def file parser and unified for interop tool
- * and kotlin compiler.
+ *  functionality borrowed from def file parser and unified for interop tool
+ *  and kotlin compiler.
  */
 fun Properties.propertyList(key: String, suffix: String? = null, escapeInQuotes: Boolean = false): List<String> {
-    val value = this.getProperty(key.suffix(suffix)) ?: this.getProperty(key)
-    if (value?.isBlank() == true) return emptyList()
-    return if (escapeInQuotes) value?.let { parseSpaceSeparatedArgs(it) } ?: emptyList()
-    else value?.split(Regex("\\s+")) ?: emptyList()
+    val value: String? = (getProperty(key.suffix(suffix)) ?: getProperty(key))?.trim(Char::isWhitespace)
+    return when {
+        value.isNullOrEmpty() -> emptyList()
+        escapeInQuotes -> parseSpaceSeparatedArgs(value)
+        else -> value.split(Regex("\\s+"))
+    }
 }
 
 fun Properties.hasProperty(key: String, suffix: String? = null): Boolean
