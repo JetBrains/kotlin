@@ -3,6 +3,7 @@ package com.intellij.util.textCompletion;
 
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
@@ -67,7 +68,8 @@ public class TextCompletionUtil {
           }
           if (toShowHintRef.get() && editor.getDocument().getText().isEmpty() && !hasValidationInfo(editor)) {
             ApplicationManager.getApplication().invokeLater(
-              () -> HintManager.getInstance().showInformationHint(editor, "Code completion available ( " + completionShortcutText + " )"));
+              () -> HintManager.getInstance().showInformationHint(editor, LangBundle.message("hint.text.code.completion.available",
+                                                                                             completionShortcutText)));
           }
         }
 
