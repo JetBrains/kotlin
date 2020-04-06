@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -37,6 +39,8 @@ abstract class KotlinJsSubTarget(
 
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
+
+    protected val taskGroupName = "Kotlin $disambiguationClassifier"
 
     internal open fun produceExecutable() {
         configureMain()
@@ -136,6 +140,15 @@ abstract class KotlinJsSubTarget(
     }
 
     protected abstract fun configureMain(compilation: KotlinJsCompilation)
+
+    internal inline fun <reified T : Task> registerSubTargetTask(
+        name: String,
+        noinline body: (T) -> (Unit)
+    ): TaskProvider<T> =
+        project.registerTask(name) {
+            it.group = taskGroupName
+            body(it)
+        }
 
     companion object {
         const val RUN_TASK_NAME = "run"

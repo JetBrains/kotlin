@@ -81,13 +81,13 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val compileKotlinTask = compilation.compileKotlinTask
 
-        val commonRunTask = project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
+        val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
         compilation.binaries
             .all { binary ->
                 val type = binary.type
 
-                val runTask = project.registerTask<KotlinWebpack>(
+                val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         RUN_TASK_NAME
@@ -151,7 +151,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
-        val distributeResourcesTask = project.registerTask<Copy>(
+        val distributeResourcesTask = registerSubTargetTask<Copy>(
             disambiguateCamelCased(
                 DISTRIBUTE_RESOURCES_TASK_NAME
             )
@@ -167,7 +167,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             .all { binary ->
                 val type = binary.type
 
-                val webpackTask = project.registerTask<KotlinWebpack>(
+                val webpackTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         WEBPACK_TASK_NAME
@@ -208,12 +208,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 if (type == KotlinJsBinaryType.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
-                    val webpackCommonTask = project.registerTask<Task>(
+                    val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
                     ) {
                         it.dependsOn(webpackTask)
                     }
-                    project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                    registerSubTargetTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
                         it.dependsOn(webpackCommonTask)
                         it.dependsOn(distributeResourcesTask)
 

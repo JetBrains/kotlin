@@ -40,6 +40,7 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         compilation: KotlinJsCompilation
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
+            group = taskGroupName
             inputFileProperty.set(compilation.compileKotlinTask.outputFile)
         }
         target.runTask.dependsOn(runTaskHolder)
