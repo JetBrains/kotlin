@@ -6504,9 +6504,7 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         public void testAllFilesPresentInPropertyAccess() throws Exception {
-            KotlinTestUtils
-                    .assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"),
-                                                                 Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
         }
 
         @TestMetadata("classUsesPackageProperties.kt")
