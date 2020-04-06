@@ -39,7 +39,9 @@ class BuildSystemTypeSettingComponent(
     context
 ), Disposable {
     override val forceLabelCenteringOffset: Int? = 2
-    private val buttons = setting.type.values.map(::BuildSystemChooseButton)
+    private val buttons by lazy(LazyThreadSafetyMode.NONE) {
+        read { setting.type.values.filter { setting.type.filter(this, reference, it) }.map(::BuildSystemChooseButton) }
+    }
     override val component = panel {
         row {
             buttons.forEach { button -> button(growX) }
