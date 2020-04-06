@@ -3,8 +3,10 @@ package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -66,13 +68,21 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       new RecentFilesSEContributor(initEvent),
       new RunConfigurationsSEContributor(project, contextComponent, () -> mySearchEverywhereUI.getSearchField().getText())
     );
+
+    Map<String, String> shortcuts = new HashMap<>();
+    shortcuts.put(ALL_CONTRIBUTORS_GROUP_ID, "Double Shift");
     List<SearchEverywhereContributor<?>> contributors = new ArrayList<>(serviceContributors);
     for (SearchEverywhereContributorFactory<?> factory : SearchEverywhereContributor.EP_NAME.getExtensionList()) {
-      contributors.add(factory.createContributor(initEvent));
+      SearchEverywhereContributor<?> contributor = factory.createContributor(initEvent);
+      contributors.add(contributor);
+      KeyboardShortcut shortcut = factory.getShortcut();
+      if (shortcut != null){
+        shortcuts.put(contributor.getSearchProviderId(), KeymapUtil.getShortcutText(shortcut));
+      }
     }
     contributors.sort(Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
 
-    mySearchEverywhereUI = createView(myProject, contributors);
+    mySearchEverywhereUI = createView(myProject, contributors, shortcuts);
     mySearchEverywhereUI.switchToContributor(contributorID);
 
     myHistoryIterator = myHistoryList.getIterator(contributorID);
@@ -210,8 +220,9 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   }
 
   private SearchEverywhereUI createView(Project project,
-                                        List<? extends SearchEverywhereContributor<?>> contributors) {
-    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors);
+                                        List<? extends SearchEverywhereContributor<?>> contributors,
+                                        Map<String, String> shortcuts) {
+    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors, shortcuts::get);
 
     view.setSearchFinishedHandler(() -> {
       if (isShown()) {

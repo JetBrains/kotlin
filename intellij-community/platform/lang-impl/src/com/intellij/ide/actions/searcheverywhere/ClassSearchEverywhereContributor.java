@@ -8,9 +8,7 @@ import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.ide.util.gotoByName.GotoClassSymbolConfiguration;
 import com.intellij.ide.util.gotoByName.LanguageRef;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -179,6 +177,11 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
       return new ClassSearchEverywhereContributor(initEvent);
+    }
+
+    @Override
+    public @Nullable KeyboardShortcut getShortcut() {
+      return ActionManager.getInstance().getKeyboardShortcut("GotoClass");
     }
   }
 

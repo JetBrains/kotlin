@@ -6,9 +6,7 @@ import com.intellij.ide.util.gotoByName.FileTypeRef;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoFileConfiguration;
 import com.intellij.ide.util.gotoByName.GotoFileModel;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -18,6 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
@@ -134,6 +133,11 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
       return new FileSearchEverywhereContributor(initEvent);
+    }
+
+    @Override
+    public @Nullable KeyboardShortcut getShortcut() {
+      return ActionManager.getInstance().getKeyboardShortcut("GotoFile");
     }
   }
 
