@@ -57,9 +57,12 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    internal val produceExecutable: () -> Unit by lazy {
+    private val produceExecutable: Unit by lazy {
         configureMain()
-        return@lazy { Unit }
+    }
+
+    internal fun produceExecutable() {
+        produceExecutable
     }
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {

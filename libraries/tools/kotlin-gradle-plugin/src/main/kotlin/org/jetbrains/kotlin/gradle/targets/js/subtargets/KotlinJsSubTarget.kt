@@ -42,8 +42,12 @@ abstract class KotlinJsSubTarget(
 
     protected val taskGroupName = "Kotlin $disambiguationClassifier"
 
-    internal open fun produceExecutable() {
+    private val produceExecutable: Unit by lazy {
         configureMain()
+    }
+
+    internal fun produceExecutable() {
+        produceExecutable
     }
 
     internal fun configure() {

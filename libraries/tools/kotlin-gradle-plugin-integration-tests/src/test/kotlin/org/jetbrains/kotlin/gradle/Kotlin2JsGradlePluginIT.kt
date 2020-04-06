@@ -81,13 +81,13 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         val appProject = transformProjectWithPluginsDsl(
             projectName = "app",
             directoryPrefix = rootProjectName,
-            wrapperVersion = GradleVersionRequired.AtLeast("5.3")
+            wrapperVersion = GradleVersionRequired.AtLeast("5.5")
         )
 
         val libProject = transformProjectWithPluginsDsl(
             projectName = "lib",
             directoryPrefix = rootProjectName,
-            wrapperVersion = GradleVersionRequired.AtLeast("5.3")
+            wrapperVersion = GradleVersionRequired.AtLeast("5.5")
         )
 
         libProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))

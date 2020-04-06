@@ -8,10 +8,17 @@ repositories {
     mavenCentral()
 }
 
-kotlin.js {
-    binaries.executable()
-    nodejs()
-    browser()
+kotlin {
+    js {
+        nodejs()
+        binaries.executable()
+    }
+}
+kotlin {
+    js {
+        browser()
+        binaries.executable()
+    }
 }
 
 tasks.named("browserTest") {
