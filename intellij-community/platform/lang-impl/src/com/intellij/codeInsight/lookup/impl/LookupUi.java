@@ -190,6 +190,7 @@ class LookupUi {
     if (myLookup.myResizePending || itemsChanged) {
       myLookup.myResizePending = false;
       myLookup.pack();
+      rectangle = calculatePosition();
     }
     HintManagerImpl.updateLocation(myLookup, editor, rectangle.getLocation());
 
@@ -245,6 +246,16 @@ class LookupUi {
 
     Rectangle candidate = new Rectangle(location, dim);
     ScreenUtil.cropRectangleToFitTheScreen(candidate);
+
+    if (isPositionedAboveCaret()) {
+      // need to crop as well at bottom if lookup overlaps current line  
+      Point caretLocation = editor.logicalPositionToXY(pos);
+      SwingUtilities.convertPointToScreen(caretLocation, editor.getContentComponent());
+      int offset = location.y + dim.height - caretLocation.y;
+      if (offset > 0) {
+        candidate.height -= offset;
+      }
+    }
 
     JRootPane rootPane = editor.getComponent().getRootPane();
     if (rootPane != null) {
