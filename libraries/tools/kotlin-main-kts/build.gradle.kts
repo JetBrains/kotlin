@@ -11,8 +11,17 @@ plugins {
 val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
-val proguardLibraryJars by configurations.creating
-val relocatedJarContents by configurations.creating
+val proguardLibraryJars by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+}
+val relocatedJarContents by configurations.creating  {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+}
+        
 val embedded by configurations
 
 dependencies {
@@ -32,6 +41,12 @@ dependencies {
     embedded(project(":kotlin-script-util")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    embedded(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { 
+        isTransitive = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+    }
 
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))

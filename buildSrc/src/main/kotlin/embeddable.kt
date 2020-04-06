@@ -11,17 +11,20 @@ import java.io.File
 val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
 val packagesToRelocate =
-        listOf( "com.intellij",
-                "com.google",
-                "com.sampullara",
-                "org.apache",
-                "org.jdom",
-                "org.picocontainer",
-                "org.jline",
-                "org.fusesource",
-                "kotlinx.coroutines",
-                "net.jpountz",
-                "one.util.streamex")
+    listOf(
+        "com.intellij",
+        "com.google",
+        "com.sampullara",
+        "org.apache",
+        "org.jdom",
+        "org.picocontainer",
+        "org.jline",
+        "org.fusesource",
+        "kotlinx.coroutines",
+        "net.jpountz",
+        "one.util.streamex",
+        "kotlinx.collections.immutable"
+    )
 
 // The shaded compiler "dummy" is used to rewrite dependencies in projects that are used with the embeddable compiler
 // on the runtime and use some shaded dependencies from the compiler
