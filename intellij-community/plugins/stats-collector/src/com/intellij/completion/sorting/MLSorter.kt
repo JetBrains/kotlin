@@ -121,14 +121,13 @@ class MLSorter : CompletionFinalSorter() {
     val features = RankingFeatures(lookupStorage.userFactors, contextFactors, commonSessionFactors)
     val relevanceObjects = lookup.getRelevanceObjects(items, false)
     val tracker = ModelTimeTracker()
-    val prefixMatchingScorer = PrefixMatchingUtil.createPrefixMatchingScoringFunction(prefix)
     for (element in items) {
       val position = positionsBefore.getValue(element)
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
       calculateAdditionalFeaturesTo(additional, element, queryLength, prefix.length, position, items.size, parameters)
       lookupStorage.performanceTracker.trackElementFeaturesCalculation(PrefixMatchingUtil.baseName) {
-        PrefixMatchingUtil.calculateFeatures(element, prefixMatchingScorer, additional)
+        PrefixMatchingUtil.calculateFeatures(element, prefix, additional)
       }
       val score = tracker.measure {
         calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), queryLength)
