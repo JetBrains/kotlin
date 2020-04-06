@@ -1983,11 +1983,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/callableReference/nested.kt");
         }
 
-        @TestMetadata("noReflectionForAdaptedCallableReferences.kt")
-        public void testNoReflectionForAdaptedCallableReferences() throws Exception {
-            runTest("compiler/testData/codegen/box/callableReference/noReflectionForAdaptedCallableReferences.kt");
-        }
-
         @TestMetadata("optimizedSuperclasses_after.kt")
         public void testOptimizedSuperclasses_after() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/optimizedSuperclasses_after.kt");
@@ -1996,6 +1991,124 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("optimizedSuperclasses_before.kt")
         public void testOptimizedSuperclasses_before() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/optimizedSuperclasses_before.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AdaptedReferences extends AbstractFirBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+            }
+
+            public void testAllFilesPresentInAdaptedReferences() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("bothWithCoercionToUnit.kt")
+            public void testBothWithCoercionToUnit() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/bothWithCoercionToUnit.kt");
+            }
+
+            @TestMetadata("boundReferences.kt")
+            public void testBoundReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/boundReferences.kt");
+            }
+
+            @TestMetadata("defaultAfterVararg.kt")
+            public void testDefaultAfterVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/defaultAfterVararg.kt");
+            }
+
+            @TestMetadata("defaultWithGenericExpectedType.kt")
+            public void testDefaultWithGenericExpectedType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/defaultWithGenericExpectedType.kt");
+            }
+
+            @TestMetadata("emptyVarargAndDefault.kt")
+            public void testEmptyVarargAndDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/emptyVarargAndDefault.kt");
+            }
+
+            @TestMetadata("inlineDefault.kt")
+            public void testInlineDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineDefault.kt");
+            }
+
+            @TestMetadata("inlineVararg.kt")
+            public void testInlineVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVararg.kt");
+            }
+
+            @TestMetadata("inlineVarargAndDefault.kt")
+            public void testInlineVarargAndDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVarargAndDefault.kt");
+            }
+
+            @TestMetadata("inlineVarargInts.kt")
+            public void testInlineVarargInts() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVarargInts.kt");
+            }
+
+            @TestMetadata("innerConstructorWithVararg.kt")
+            public void testInnerConstructorWithVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorWithVararg.kt");
+            }
+
+            @TestMetadata("largeVararg.kt")
+            public void testLargeVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/largeVararg.kt");
+            }
+
+            @TestMetadata("localFunctionWithDefault.kt")
+            public void testLocalFunctionWithDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/localFunctionWithDefault.kt");
+            }
+
+            @TestMetadata("manyDefaultsAndVararg.kt")
+            public void testManyDefaultsAndVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/manyDefaultsAndVararg.kt");
+            }
+
+            @TestMetadata("noReflectionForAdaptedCallableReferences.kt")
+            public void testNoReflectionForAdaptedCallableReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noReflectionForAdaptedCallableReferences.kt");
+            }
+
+            @TestMetadata("reflectionForVarargAsArray.kt")
+            public void testReflectionForVarargAsArray() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/reflectionForVarargAsArray.kt");
+            }
+
+            @TestMetadata("simpleDefaultArgument.kt")
+            public void testSimpleDefaultArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleDefaultArgument.kt");
+            }
+
+            @TestMetadata("simpleEmptyVararg.kt")
+            public void testSimpleEmptyVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
+            }
+
+            @TestMetadata("unboundReferences.kt")
+            public void testUnboundReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
+            }
+
+            @TestMetadata("varargViewedAsArray.kt")
+            public void testVarargViewedAsArray() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargViewedAsArray.kt");
+            }
+
+            @TestMetadata("varargViewedAsPrimitiveArray.kt")
+            public void testVarargViewedAsPrimitiveArray() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargViewedAsPrimitiveArray.kt");
+            }
+
+            @TestMetadata("varargWithDefaultValue.kt")
+            public void testVarargWithDefaultValue() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargWithDefaultValue.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
@@ -2831,114 +2944,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("withReflect.kt")
             public void testWithReflect() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/serializability/withReflect.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/box/callableReference/varargAndDefaults")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class VarargAndDefaults extends AbstractFirBlackBoxCodegenTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
-            }
-
-            public void testAllFilesPresentInVarargAndDefaults() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/varargAndDefaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-            }
-
-            @TestMetadata("bothWithCoercionToUnit.kt")
-            public void testBothWithCoercionToUnit() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/bothWithCoercionToUnit.kt");
-            }
-
-            @TestMetadata("boundReferences.kt")
-            public void testBoundReferences() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/boundReferences.kt");
-            }
-
-            @TestMetadata("defaultAfterVararg.kt")
-            public void testDefaultAfterVararg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/defaultAfterVararg.kt");
-            }
-
-            @TestMetadata("defaultWithGenericExpectedType.kt")
-            public void testDefaultWithGenericExpectedType() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/defaultWithGenericExpectedType.kt");
-            }
-
-            @TestMetadata("emptyVarargAndDefault.kt")
-            public void testEmptyVarargAndDefault() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/emptyVarargAndDefault.kt");
-            }
-
-            @TestMetadata("inlineDefault.kt")
-            public void testInlineDefault() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/inlineDefault.kt");
-            }
-
-            @TestMetadata("inlineVararg.kt")
-            public void testInlineVararg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/inlineVararg.kt");
-            }
-
-            @TestMetadata("inlineVarargAndDefault.kt")
-            public void testInlineVarargAndDefault() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/inlineVarargAndDefault.kt");
-            }
-
-            @TestMetadata("inlineVarargInts.kt")
-            public void testInlineVarargInts() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/inlineVarargInts.kt");
-            }
-
-            @TestMetadata("innerConstructorWithVararg.kt")
-            public void testInnerConstructorWithVararg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/innerConstructorWithVararg.kt");
-            }
-
-            @TestMetadata("largeVararg.kt")
-            public void testLargeVararg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/largeVararg.kt");
-            }
-
-            @TestMetadata("localFunctionWithDefault.kt")
-            public void testLocalFunctionWithDefault() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/localFunctionWithDefault.kt");
-            }
-
-            @TestMetadata("manyDefaultsAndVararg.kt")
-            public void testManyDefaultsAndVararg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/manyDefaultsAndVararg.kt");
-            }
-
-            @TestMetadata("simpleDefaultArgument.kt")
-            public void testSimpleDefaultArgument() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/simpleDefaultArgument.kt");
-            }
-
-            @TestMetadata("simpleEmptyVararg.kt")
-            public void testSimpleEmptyVararg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/simpleEmptyVararg.kt");
-            }
-
-            @TestMetadata("unboundReferences.kt")
-            public void testUnboundReferences() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/unboundReferences.kt");
-            }
-
-            @TestMetadata("varargViewedAsArray.kt")
-            public void testVarargViewedAsArray() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/varargViewedAsArray.kt");
-            }
-
-            @TestMetadata("varargViewedAsPrimitiveArray.kt")
-            public void testVarargViewedAsPrimitiveArray() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/varargViewedAsPrimitiveArray.kt");
-            }
-
-            @TestMetadata("varargWithDefaultValue.kt")
-            public void testVarargWithDefaultValue() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/varargAndDefaults/varargWithDefaultValue.kt");
             }
         }
     }
