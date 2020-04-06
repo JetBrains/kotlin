@@ -340,29 +340,8 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrSetCall(variableAssignment)
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
-        return constExpression.convertWithOffsets { startOffset, endOffset ->
-            @Suppress("UNCHECKED_CAST")
-            val kind = constExpression.getIrConstKind() as IrConstKind<T>
-
-            @Suppress("UNCHECKED_CAST")
-            val value = (constExpression.value as? Long)?.let {
-                when (kind) {
-                    IrConstKind.Byte -> it.toByte()
-                    IrConstKind.Short -> it.toShort()
-                    IrConstKind.Int -> it.toInt()
-                    IrConstKind.Float -> it.toFloat()
-                    IrConstKind.Double -> it.toDouble()
-                    else -> it
-                }
-            } as T ?: constExpression.value
-            IrConstImpl(
-                startOffset, endOffset,
-                constExpression.typeRef.toIrType(),
-                kind, value
-            )
-        }
-    }
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement =
+        constExpression.toIrConst(constExpression.typeRef.toIrType())
 
     // ==================================================================================
 

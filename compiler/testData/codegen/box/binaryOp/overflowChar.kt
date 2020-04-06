@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val c1: Char = Char.MIN_VALUE
     val c2 = c1 - 1

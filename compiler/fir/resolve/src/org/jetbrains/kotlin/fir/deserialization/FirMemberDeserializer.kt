@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
@@ -193,6 +194,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 FirDefaultPropertySetter(null, c.session, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags)))
             } else null
             this.containerSource = c.containerSource
+            this.initializer = if (Flags.HAS_CONSTANT.get(flags)) {
+                proto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)?.let {
+                    c.annotationDeserializer.resolveValue(returnTypeRef, it, c.nameResolver)
+                }
+            } else null
         }
     }
 

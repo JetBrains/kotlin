@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
@@ -595,6 +596,13 @@ class Fir2IrDeclarationStorage(
                         parent = irParent
                     }
                     val type = property.returnTypeRef.toIrType()
+                    val initializer = property.initializer
+                    if (property.isConst && initializer is FirConstExpression<*>) {
+                        backingField = IrFieldImpl(startOffset, endOffset, origin, descriptor, type).also {
+                            it.initializer = IrExpressionBodyImpl(initializer.toIrConst(type))
+                            it.correspondingPropertySymbol = symbol
+                        }
+                    }
                     getter = createIrPropertyAccessor(
                         property.getter, property, this, type, irParent, false,
                         when {
