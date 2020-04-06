@@ -3265,6 +3265,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/smap/assertion.kt");
         }
 
+        @TestMetadata("classCycle.kt")
+        public void testClassCycle() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/classCycle.kt");
+        }
+
         @TestMetadata("classFromDefaultPackage.kt")
         public void testClassFromDefaultPackage() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
