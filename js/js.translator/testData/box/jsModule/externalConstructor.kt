@@ -1,3 +1,5 @@
+// EXPECTED_REACHABLE_NODES: 1334
+// MODULE_KIND: AMD
 package foo
 
 @JsModule("lib")
