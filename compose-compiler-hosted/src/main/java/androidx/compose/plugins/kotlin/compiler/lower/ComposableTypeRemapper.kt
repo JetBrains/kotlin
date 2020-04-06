@@ -19,6 +19,7 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -69,9 +70,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.replace
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     val context: JvmBackendContext,
@@ -208,9 +207,19 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         // as well, since if it is @Composable it will have its unmodified signature. These
         // functions won't be traversed by default by the DeepCopyIrTreeWithSymbols so we have to
         // do it ourself here.
+        //
+        // When this copying is done for a property getter, it breaks the
+        // correspondence between the getter and the property:
+        //
+        // `getterFun.correspondingPropertySymbol.owner.getter == getterFun`
+        //
+        // That breaks compilation of inline class getters as it uses that correspondence to detect
+        // inline class getters. Since inline class getters cannot be composable, there is no
+        // need for copying and rewriting.
         if (
             ownerFn != null &&
-            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+            !ownerFn.isInlineClassFieldGetter
         ) {
             symbolRemapper.visitSimpleFunction(ownerFn)
             val newFn = super.visitSimpleFunction(ownerFn).also {
@@ -224,6 +233,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                 transformValueArguments(expression)
             }
         }
+
         return super.visitCall(expression)
     }
 
