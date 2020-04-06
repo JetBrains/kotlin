@@ -801,6 +801,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       PsiElement element = collector.getElement();
       if (element == null) {
         LOG.debug("Element for precalculated documentation is not available anymore");
+        component.setText(CodeInsightBundle.message("no.documentation.available"), null, collector.provider);
+        callback.setDone();
         return callback;
       }
       PsiElement originalElement = getOriginalElement(collector, element);
@@ -826,6 +828,10 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       PsiElement element = collector.getElement();
       if (element == null || !ReadAction.compute(() -> element.isValid())) {
         LOG.debug("Element for which documentation was requested is not available anymore");
+        GuiUtils.invokeLaterIfNeeded(() -> {
+          component.setText(CodeInsightBundle.message("no.documentation.available"), null, collector.provider);
+        }, ModalityState.any());
+        callback.setDone();
         return;
       }
 
