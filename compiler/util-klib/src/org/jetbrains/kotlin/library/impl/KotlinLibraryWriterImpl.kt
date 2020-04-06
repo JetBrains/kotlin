@@ -87,10 +87,11 @@ class KoltinLibraryWriterImpl(
     versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
     nopack: Boolean = false,
+    shortName: String? = null,
 
     val layout: KotlinLibraryLayoutForWriter = KotlinLibraryLayoutForWriter(libDir),
 
-    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack),
+    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack, shortName),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
 //    ir: IrWriter = IrPerFileWriterImpl(layout)

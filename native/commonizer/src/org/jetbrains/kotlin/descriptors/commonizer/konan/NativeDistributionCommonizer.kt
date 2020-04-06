@@ -222,7 +222,8 @@ class NativeDistributionCommonizer(
             manifestData.uniqueName,
             manifestData.versions,
             BuiltInsPlatform.NATIVE,
-            nopack = true
+            nopack = true,
+            shortName = manifestData.shortName
         )
         library.addMetadata(metadata)
         manifestData.applyTo(library.base as BaseWriterImpl)

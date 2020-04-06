@@ -15,7 +15,8 @@ internal data class NativeSensitiveManifestData(
     val dependencies: List<String>,
     val isInterop: Boolean,
     val packageFqName: String?,
-    val exportForwardDeclarations: List<String>
+    val exportForwardDeclarations: List<String>,
+    val shortName: String?
 ) {
     fun applyTo(library: BaseWriterImpl) {
         library.manifestProperties[KLIB_PROPERTY_UNIQUE_NAME] = uniqueName
@@ -34,6 +35,7 @@ internal data class NativeSensitiveManifestData(
         addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, exportForwardDeclarations.isNotEmpty()) {
             exportForwardDeclarations.joinToString(separator = " ")
         }
+        addOptionalProperty(KLIB_PROPERTY_SHORT_NAME, shortName != null) { shortName!! }
     }
 
     companion object {
@@ -43,7 +45,8 @@ internal data class NativeSensitiveManifestData(
             dependencies = library.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true),
             isInterop = library.isInterop,
             packageFqName = library.packageFqName,
-            exportForwardDeclarations = library.exportForwardDeclarations
+            exportForwardDeclarations = library.exportForwardDeclarations,
+            shortName = library.shortName
         )
     }
 }
