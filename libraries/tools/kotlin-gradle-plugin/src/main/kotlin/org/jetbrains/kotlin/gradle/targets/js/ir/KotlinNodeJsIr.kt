@@ -34,6 +34,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val developmentExecutable = compilation.binaries.getIrBinary(KotlinJsBinaryType.DEVELOPMENT)
 
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
+            this.group = taskGroupName
             inputFileProperty.set(developmentExecutable.linkTask.map { it.outputFileProperty.get() })
         }
         target.runTask.dependsOn(runTaskHolder)
