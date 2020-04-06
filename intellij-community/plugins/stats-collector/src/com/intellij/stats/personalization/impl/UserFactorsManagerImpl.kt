@@ -17,6 +17,7 @@
 package com.intellij.stats.personalization.impl
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.completion.sorting.PrefixMatchingType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.stats.personalization.UserFactor
 import com.intellij.stats.personalization.UserFactorsManager

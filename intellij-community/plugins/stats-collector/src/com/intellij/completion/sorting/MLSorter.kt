@@ -254,3 +254,23 @@ class MLSorter : CompletionFinalSorter() {
 }
 
 private data class ItemRankInfo(val positionBefore: Int, val mlRank: Double?, val prefixLength: Int)
+
+
+/**
+ * Matching prefixes for *isEmptyString* lookup element as example:
+ *  - `isempt` -> [START]
+ *  - `isEmpt` -> [START]
+ *  - `ies` -> [FIRST_CHARS]
+ *  - `iES` -> [FIRST_CHARS]
+ *  - `isEmpSt` -> [SYMBOLS_WITH_CASE]
+ *  - `EmpSt` -> [SYMBOLS_WITH_CASE]
+ *  - `isempst` -> [SYMBOLS]
+ *  - `Emstr` -> [SYMBOLS]
+ */
+enum class PrefixMatchingType {
+  START,
+  FIRST_CHARS,
+  SYMBOLS_WITH_CASE,
+  SYMBOLS,
+  UNKNOWN
+}

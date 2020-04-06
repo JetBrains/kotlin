@@ -4,9 +4,9 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.sorting.PrefixMatchingType
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
-import com.intellij.stats.personalization.impl.PrefixMatchingType
 import com.intellij.stats.storage.factors.MutableLookupStorage
 
 /**

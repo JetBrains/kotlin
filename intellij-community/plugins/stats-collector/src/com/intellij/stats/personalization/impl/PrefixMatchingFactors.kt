@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.personalization.impl
 
+import com.intellij.completion.sorting.PrefixMatchingType
 import com.intellij.stats.personalization.*
 
 class PrefixMatchingTypeReader(private val factor: DailyAggregatedDoubleFactor) : FactorReader {
@@ -24,20 +25,4 @@ class PrefixMatchingTypeRatio(private val type: PrefixMatchingType) : UserFactor
     val total = reader.getTotalCompletionCount()
     return if (total == 0.0) "0.0" else (reader.getCompletionCountByType(type) / total).toString()
   }
-}
-
-/**
- * Matching prefixes for *isEmptyString* lookup element as example:
- *  - `isempt` -> [START]
- *  - `isEmpt` -> [START]
- *  - `isEmpSt` -> [SYMBOLS_WITH_CASE]
- *  - `EmpSt` -> [SYMBOLS_WITH_CASE]
- *  - `isempst` -> [SYMBOLS]
- *  - `Emstr` -> [SYMBOLS]
- */
-enum class PrefixMatchingType {
-  START,
-  SYMBOLS_WITH_CASE,
-  SYMBOLS,
-  UNKNOWN
 }

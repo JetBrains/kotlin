@@ -2,8 +2,8 @@
 package com.intellij.completion.ml.common
 
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.completion.sorting.PrefixMatchingType
 import com.intellij.psi.codeStyle.NameUtil
-import com.intellij.stats.personalization.impl.PrefixMatchingType
 
 internal object PrefixMatchingUtil {
   const val baseName = "prefix_matching"
@@ -70,12 +70,13 @@ internal object PrefixMatchingUtil {
     companion object {
       val EMPTY_PREFIX_MATCHING_SCORE = PrefixMatchingScores(0, false, 0, 0)
     }
-    private var words = 0.0
-    private var symbolsMeasure = 0.0
-    private var symbolsCount = 0
-    private var symbolsWithCaseMeasure = 0.0
-    private var symbolsWithCaseCount = 0
-    private var wordsWithCase = 0.0
+    private var wordsMatchingMeasure = 0.0
+    private var wordsMatchingWithCase = 0.0
+    private var wordsMatchingCount = 0
+    private var symbolsMatchingMeasure = 0.0
+    private var symbolsMatchingCount = 0
+    private var symbolsMatchingWithCaseMeasure = 0.0
+    private var symbolsMatchingWithCaseCount = 0
     private var skippedWords = 0
     private var lastWord = 0
     private var curWord = -1
@@ -86,35 +87,37 @@ internal object PrefixMatchingUtil {
         skippedWords += wordsDif - 1
         val step = 1.0 / wordsDif
         curWord = word
-        words += step
-        symbolsMeasure += step
+        wordsMatchingMeasure += step
+        symbolsMatchingMeasure += step
+        wordsMatchingCount++
         if (withCase) {
-          symbolsWithCaseMeasure += step
-          wordsWithCase += step
+          symbolsMatchingWithCaseMeasure += step
+          wordsMatchingWithCase += step
         }
       } else {
-        symbolsMeasure++
-        if (withCase) symbolsWithCaseMeasure++
+        symbolsMatchingMeasure++
+        if (withCase) symbolsMatchingWithCaseMeasure++
       }
-      symbolsCount++
-      if (withCase) symbolsWithCaseCount++
+      symbolsMatchingCount++
+      if (withCase) symbolsMatchingWithCaseCount++
       if (word == wordsCount - 1) lastWord++
     }
 
     fun start(): Int = start
     fun exact(): Boolean = exact
-    fun symbols(): Double = symbolsMeasure
-    fun symbolsWithCase(): Double = symbolsWithCaseMeasure
-    fun words(): Double = words
-    fun wordsWithCase(): Double = wordsWithCase
+    fun symbols(): Double = symbolsMatchingMeasure
+    fun symbolsWithCase(): Double = symbolsMatchingWithCaseMeasure
+    fun words(): Double = wordsMatchingMeasure
+    fun wordsWithCase(): Double = wordsMatchingWithCase
     fun skippedWords(): Int = skippedWords
     fun exactFinal(): Boolean = lastWord == lastWordSize
     fun wordsCount(): Int = wordsCount
     fun type(prefix: String): PrefixMatchingType =
       when (prefix.length) {
         start -> PrefixMatchingType.START
-        symbolsWithCaseCount -> PrefixMatchingType.SYMBOLS_WITH_CASE
-        symbolsCount -> PrefixMatchingType.SYMBOLS
+        wordsMatchingCount -> PrefixMatchingType.FIRST_CHARS
+        symbolsMatchingWithCaseCount -> PrefixMatchingType.SYMBOLS_WITH_CASE
+        symbolsMatchingCount -> PrefixMatchingType.SYMBOLS
         else -> PrefixMatchingType.UNKNOWN
     }
   }
