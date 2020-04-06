@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.ide.RecentProjectsManager
+import com.intellij.ide.actions.NewProjectAction
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
@@ -62,7 +63,8 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
 
-    override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
+    override fun isAvailable(): Boolean =
+        ExperimentalFeatures.NewWizard.isEnabled && isCreatingNewProject()
 
     private var wizardContext: WizardContext? = null
     private var finishButtonClicked: Boolean = false
@@ -237,6 +239,10 @@ class ModuleNewWizardSecondStep(
     override fun handleErrors(error: ValidationResult.ValidationError) {
         component.navigateTo(error)
     }
+}
+
+private fun isCreatingNewProject() = Thread.currentThread().stackTrace.any { element ->
+    element.className == NewProjectAction::class.java.name
 }
 
 private fun WizardContext.getNextButton() = try {
