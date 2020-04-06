@@ -74,6 +74,45 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @Test
+    fun testJsCompositeBuild() {
+        val rootProjectName = "js-composite-build"
+        val appProject = transformProjectWithPluginsDsl(
+            projectName = "app",
+            directoryPrefix = rootProjectName,
+            wrapperVersion = GradleVersionRequired.AtLeast("5.3")
+        )
+
+        val libProject = transformProjectWithPluginsDsl(
+            projectName = "lib",
+            directoryPrefix = rootProjectName,
+            wrapperVersion = GradleVersionRequired.AtLeast("5.3")
+        )
+
+        libProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
+        appProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
+
+        libProject.projectDir.copyRecursively(appProject.projectDir.resolve(libProject.projectDir.name))
+
+        fun Project.asyncVersion(rootModulePath: String, moduleName: String): String =
+            NpmProjectModules(projectDir.resolve(rootModulePath))
+                .require(moduleName)
+                .let { File(it).parentFile.parentFile.resolve(NpmProject.PACKAGE_JSON) }
+                .let { fromSrcPackageJson(it) }
+                .let { it!!.version }
+
+        with(appProject) {
+            build("build") {
+                assertSuccessful()
+                val appAsyncVersion = asyncVersion("build/js/node_modules/app", "async")
+                assertEquals("3.2.0", appAsyncVersion)
+
+                val libAsyncVersion = asyncVersion("build/js/node_modules/lib2", "async")
+                assertEquals("2.6.2", libAsyncVersion)
+            }
+        }
+    }
 }
 
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
