@@ -54,7 +54,7 @@ internal val editorSmartKeysOptionDescriptors
     myCbInsertPairCurlyBraceOnEnter,
     myCbInsertJavadocStubOnEnter,
     myCbHonorCamelHumpsWhenSelectingByClicking
-  ).map(CheckboxDescriptor::asOptionDescriptor)
+  ).map(CheckboxDescriptor::asUiOptionDescriptor)
 
 @NonNls
 const val ID = "editor.preferences.smartKeys"

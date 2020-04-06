@@ -98,7 +98,7 @@ internal val optionDescriptors: List<OptionDescription>
     renameLocalVariablesInplace,
     preselectCheckBox,
     showInlineDialogForCheckBox
-  ).map(CheckboxDescriptor::asOptionDescriptor)
+  ).map(CheckboxDescriptor::asUiOptionDescriptor)
 
 
 class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
