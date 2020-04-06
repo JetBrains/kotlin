@@ -7,8 +7,8 @@ FILE fqName:<root> fileName:/innerClassWithDelegatingConstructor.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner, x:kotlin.Int) returnType:<root>.Outer.Inner [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer, x:kotlin.Int) returnType:<root>.Outer.Inner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
         VALUE_PARAMETER name:x index:0 type:kotlin.Int
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -24,8 +24,8 @@ FILE fqName:<root> fileName:/innerClassWithDelegatingConstructor.kt
             RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Outer.Inner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner.<get-x>' type=<root>.Outer.Inner origin=null
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner) returnType:<root>.Outer.Inner
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Outer.Inner'
             x: CONST Int type=kotlin.Int value=0

@@ -9,8 +9,8 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo>
       TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> ($this:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo>, a:T of test.Foo, b:P of test.Foo.Inner) returnType:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo>
+      CONSTRUCTOR visibility:public <> ($this:test.Foo<T of test.Foo>, a:T of test.Foo, b:P of test.Foo.Inner) returnType:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:test.Foo<T of test.Foo>
         VALUE_PARAMETER name:a index:0 type:T of test.Foo
         VALUE_PARAMETER name:b index:1 type:P of test.Foo.Inner
         BLOCK_BODY

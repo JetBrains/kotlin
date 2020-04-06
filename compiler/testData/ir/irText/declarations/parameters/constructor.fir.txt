@@ -66,8 +66,8 @@ FILE fqName:<root> fileName:/constructor.kt
     CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
       TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> ($this:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>, z:Z of <root>.Test2.TestInner) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
+      CONSTRUCTOR visibility:public <> ($this:<root>.Test2, z:Z of <root>.Test2.TestInner) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Test2
         VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -83,8 +83,8 @@ FILE fqName:<root> fileName:/constructor.kt
             RETURN type=kotlin.Nothing from='public final fun <get-z> (): Z of <root>.Test2.TestInner declared in <root>.Test2.TestInner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:Z of <root>.Test2.TestInner visibility:private [final]' type=Z of <root>.Test2.TestInner origin=null
                 receiver: GET_VAR '<this>: <root>.Test2.TestInner<Z of <root>.Test2.TestInner> declared in <root>.Test2.TestInner.<get-z>' type=<root>.Test2.TestInner<Z of <root>.Test2.TestInner> origin=null
-      CONSTRUCTOR visibility:public <> ($this:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>, z:Z of <root>.Test2.TestInner, i:kotlin.Int) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
+      CONSTRUCTOR visibility:public <> ($this:<root>.Test2, z:Z of <root>.Test2.TestInner, i:kotlin.Int) returnType:<root>.Test2.TestInner<Z of <root>.Test2.TestInner>
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Test2
         VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
         VALUE_PARAMETER name:i index:1 type:kotlin.Int
         BLOCK_BODY

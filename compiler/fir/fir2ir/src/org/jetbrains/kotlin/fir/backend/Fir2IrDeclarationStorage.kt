@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -356,10 +353,11 @@ class Fir2IrDeclarationStorage(
                 }
             } else {
                 // Set dispatch receiver parameter for inner class's constructor.
-                if (containingClass?.isInner == true) {
+                val outerClass = containingClass?.parentClassOrNull
+                if (containingClass?.isInner == true && outerClass != null) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
                         symbolTable,
-                        thisType = containingClass.thisReceiver!!.type,
+                        thisType = outerClass.thisReceiver!!.type,
                         thisOrigin = thisOrigin
                     )
                 }

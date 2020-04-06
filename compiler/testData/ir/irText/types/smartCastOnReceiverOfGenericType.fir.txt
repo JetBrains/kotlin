@@ -107,8 +107,8 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer<T1 of <root>.Outer>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer<T1 of <root>.Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'

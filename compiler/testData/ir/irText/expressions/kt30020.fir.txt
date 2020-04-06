@@ -104,8 +104,8 @@ FILE fqName:<root> fileName:/kt30020.kt
           element: CONST Int type=kotlin.Int value=200
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AML.Inner
-      CONSTRUCTOR visibility:public <> ($this:<root>.AML.Inner) returnType:<root>.AML.Inner [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.AML.Inner
+      CONSTRUCTOR visibility:public <> ($this:<root>.AML) returnType:<root>.AML.Inner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.AML
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
