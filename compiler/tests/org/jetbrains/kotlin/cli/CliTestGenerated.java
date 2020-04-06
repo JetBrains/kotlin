@@ -615,6 +615,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.args");
         }
 
+        @TestMetadata("resultInReturnTypeUnsupportedByDefault14.args")
+        public void testResultInReturnTypeUnsupportedByDefault14() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeUnsupportedByDefault14.args");
+        }
+
+        @TestMetadata("resultInReturnTypeWithEnabledInlineClasses.args")
+        public void testResultInReturnTypeWithEnabledInlineClasses() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeWithEnabledInlineClasses.args");
+        }
+
+        @TestMetadata("resultInReturnTypeWithEnabledInlineClassesXX.args")
+        public void testResultInReturnTypeWithEnabledInlineClassesXX() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeWithEnabledInlineClassesXX.args");
+        }
+
         @TestMetadata("returnAsWhenKey.args")
         public void testReturnAsWhenKey() throws Exception {
             runTest("compiler/testData/cli/jvm/returnAsWhenKey.args");

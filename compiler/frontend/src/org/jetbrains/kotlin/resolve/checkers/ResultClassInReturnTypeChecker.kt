@@ -22,7 +22,7 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
         val languageVersionSettings = context.languageVersionSettings
         if (
             languageVersionSettings.getFlag(AnalysisFlags.allowResultReturnType) ||
-            languageVersionSettings.supportsFeature(LanguageFeature.InlineClasses) &&
+            languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses) == LanguageFeature.State.ENABLED &&
             languageVersionSettings.supportsFeature(LanguageFeature.AllowResultInReturnType)
         ) return
 
