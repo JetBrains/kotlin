@@ -262,7 +262,11 @@ fun StatementGenerator.generateVarargExpressionUsing(
         val irArgumentExpression = generateArgumentExpression(ktArgumentExpression)
             ?: throw AssertionError("'generateArgumentExpression' should return non-null for vararg element ${ktArgumentExpression.text}")
         val irVarargElement =
-            if (argument.getSpreadElement() != null)
+            if (argument.getSpreadElement() != null ||
+                context.languageVersionSettings
+                    .supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions) &&
+                argument.isNamed()
+            )
                 IrSpreadElementImpl(
                     ktArgumentExpression.startOffsetSkippingComments, ktArgumentExpression.endOffset,
                     irArgumentExpression
