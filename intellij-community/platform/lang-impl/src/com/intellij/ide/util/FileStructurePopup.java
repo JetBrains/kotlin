@@ -19,9 +19,8 @@ import com.intellij.ide.ui.UISettingsListener;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.ide.util.treeView.smartTree.*;
-import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsCollectorImpl;
-import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsEventLogGroup;
+import com.intellij.internal.statistic.eventLog.EventFields;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
@@ -817,14 +816,15 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
     if (fileType instanceof LanguageFileType) {
       language = ((LanguageFileType) fileType).getLanguage();
     }
-    FeatureUsageData data = new FeatureUsageData()
-      .addProject(myProject)
-      .addPluginInfo(pluginInfo)
-      .addPlace(ActionPlaces.FILE_STRUCTURE_POPUP)
-      .addCurrentFile(language)
-      .addData("class", action.getClass().getName())
-      .addData("action_id", action.getClass().getName());
-    FUCounterUsageLogger.getInstance().logEvent(ActionsCollectorImpl.GROUP, ActionsCollectorImpl.ACTION_INVOKED_EVENT_ID, data);
+
+    ActionsEventLogGroup.ACTION_INVOKED.log(
+      EventFields.Project.with(myProject),
+      EventFields.PluginInfoFromInstance.with(action),
+      EventFields.ActionPlace.with(ActionPlaces.FILE_STRUCTURE_POPUP),
+      EventFields.CurrentFile.with(language),
+      ActionsEventLogGroup.ACTION_CLASS.with(action.getClass().getName()),
+      ActionsEventLogGroup.ACTION_ID.with(action.getClass().getName())
+    );
   }
 
   @NotNull

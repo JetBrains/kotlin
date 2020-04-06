@@ -16,8 +16,11 @@ fun getAnonymizedSystemId(systemId: ProjectSystemId): String {
 
 fun addExternalSystemId(data: FeatureUsageData,
                         systemId: ProjectSystemId?) {
-  data.addData("system_id", systemId?.let { getAnonymizedSystemId(it) } ?: "undefined.system")
+  data.addData("system_id", anonymizeSystemId(systemId))
 }
+
+fun anonymizeSystemId(systemId: ProjectSystemId?) =
+  systemId?.let { getAnonymizedSystemId(it) } ?: "undefined.system"
 
 fun importActivityStarted(project: Project, externalSystemId: ProjectSystemId,
                           dataConsumer: Consumer<FeatureUsageData>): IdeActivity {
