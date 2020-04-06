@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -156,6 +156,14 @@ private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<Str
  */
 @SinceKotlin("1.4")
 public actual fun Throwable.stackTraceToString(): String = dumpStackTrace()
+
+/**
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output.
+ */
+@SinceKotlin("1.4")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@kotlin.internal.InlineOnly
+public actual inline fun Throwable.printStackTrace(): Unit = printStackTrace()
 
 /**
  * Adds the specified exception to the list of exceptions that were
