@@ -1,0 +1,134 @@
+public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+          NEW
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFEQ (L2)
+          ALOAD (1)
+          GETSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          SWAP
+          INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
+          CHECKCAST
+          GOTO (L3)
+        LABEL (L2)
+          ACONST_NULL
+        LABEL (L3)
+          INVOKESPECIAL (test/Bar, <init>, (Ltest/Foo;)V)
+          ARETURN
+        LABEL (L4)
+    }
+
+    public final java.lang.Object[] newArray(int size)
+}
+
+public final class test/Bar : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final test.Foo foo
+
+    static void <clinit>() {
+          NEW
+          DUP
+          INVOKESPECIAL (test/Bar$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    public void <init>(test.Foo foo)
+
+    public int describeContents()
+
+    public final test.Foo getFoo()
+
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (foo, Ltest/Foo;)
+          DUP
+          IFNULL (L1)
+          ALOAD (1)
+          LDC (1)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          SWAP
+          LDC (0)
+          INVOKEINTERFACE (android/os/Parcelable, writeToParcel, (Landroid/os/Parcel;I)V)
+          GOTO (L2)
+        LABEL (L1)
+          POP
+          LDC (0)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L2)
+          RETURN
+        LABEL (L3)
+    }
+}
+
+public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW
+          DUP
+          ALOAD (1)
+          GETSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          SWAP
+          INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
+          CHECKCAST
+          INVOKESPECIAL (test/Foo, <init>, (Ltest/Bar;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final java.lang.Object[] newArray(int size)
+}
+
+public final class test/Foo : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final test.Bar bar
+
+    static void <clinit>() {
+          NEW
+          DUP
+          INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    public void <init>(test.Bar bar)
+
+    public int describeContents()
+
+    public final test.Bar getBar()
+
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (bar, Ltest/Bar;)
+          SWAP
+          LDC (0)
+          INVOKEINTERFACE (android/os/Parcelable, writeToParcel, (Landroid/os/Parcel;I)V)
+          RETURN
+        LABEL (L1)
+    }
+}
