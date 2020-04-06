@@ -30,7 +30,7 @@ val TargetPlatform.oldFashionedDescription: String
     get() = this.singleOrNull()?.oldFashionedDescription ?: "Common (experimental) "
 
 
-    /**
+/**
  * Renders multiplatform in form
  *      '$PLATFORM_1 / $PLATFORM_2 / ...'
  * e.g.
