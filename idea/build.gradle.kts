@@ -187,7 +187,7 @@ dependencies {
 tasks.named<Copy>("processResources") {
     val currentIde = IdeVersionConfigurator.currentIde
     val pluginPatchNumber = findProperty("pluginPatchNumber") as String? ?: "1"
-    val defaultPluginVersion = "$kotlinVersion-${currentIde.kind.shortName}${currentIde.platform.version}-$pluginPatchNumber"
+    val defaultPluginVersion = "$kotlinVersion-${currentIde.displayVersion}-$pluginPatchNumber"
     val pluginVersion = findProperty("pluginVersion") as String? ?: defaultPluginVersion
 
     inputs.property("pluginVersion", pluginVersion)
