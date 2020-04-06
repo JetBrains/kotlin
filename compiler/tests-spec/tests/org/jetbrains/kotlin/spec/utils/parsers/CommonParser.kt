@@ -56,7 +56,7 @@ object CommonParser {
 
     private fun parseRelevantPlaces(
         placesMatcher: Matcher?,
-        relevantPlaces: MutableList<SpecPlace>
+        relevantPlaces: MutableSet<SpecPlace>
     ) {
         if (placesMatcher == null)
             return
@@ -69,29 +69,36 @@ object CommonParser {
     }
 
     fun parseLinkedSpecTest(testFilePath: String, testFiles: TestFiles, isImplementationTest: Boolean = false): LinkedSpecTest {
-        val relevantAndAlternativePlaces = mutableListOf<SpecPlace>()
+        val relevantPlaces = mutableSetOf<SpecPlace>()
         val parsedTestFile = tryParseTestInfo(testFilePath, testFiles, SpecTestLinkedType.LINKED, isImplementationTest)
 
         val testInfoElements = parsedTestFile.testInfoElements
 
         parseRelevantPlaces(
             testInfoElements[LinkedSpecTestFileInfoElementType.PRIMARY_LINKS]?.additionalMatcher,
-            relevantAndAlternativePlaces
+            relevantPlaces
         )
 
         parseRelevantPlaces(
             testInfoElements[LinkedSpecTestFileInfoElementType.SECONDARY_LINKS]?.additionalMatcher,
-            relevantAndAlternativePlaces
+            relevantPlaces
         )
 
         val placeMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.MAIN_LINK]?.additionalMatcher
 
+        val mainPlace: SpecPlace
+        if (placeMatcher != null) {
+            mainPlace = createSpecPlace(placeMatcher)
+        } else {
+            mainPlace = relevantPlaces.first()
+            relevantPlaces.remove(mainPlace)
+        }
         return LinkedSpecTest(
             testInfoElements[LinkedSpecTestFileInfoElementType.SPEC_VERSION]!!.content,
             parsedTestFile.testArea,
             parsedTestFile.testType,
-            if (placeMatcher != null) createSpecPlace(placeMatcher) else relevantAndAlternativePlaces.first(),
-            relevantAndAlternativePlaces,
+            mainPlace,
+            relevantPlaces,
             parsedTestFile.testNumber,
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,

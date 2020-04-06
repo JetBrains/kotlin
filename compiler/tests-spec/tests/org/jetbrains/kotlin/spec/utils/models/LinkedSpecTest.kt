@@ -41,7 +41,7 @@ class LinkedSpecTest(
     testArea: TestArea,
     testType: TestType,
     val place: SpecPlace,
-    val relevantPlaces: List<SpecPlace>?,
+    val relevantPlaces: Set<SpecPlace>?,
     testNumber: Int,
     description: String,
     cases: SpecTestCasesSet,
@@ -51,25 +51,6 @@ class LinkedSpecTest(
     helpers: Set<String>?,
     exception: TestsExceptionType?
 ) : AbstractSpecTest(testArea, testType, place.sections, testNumber, description, cases, unexpectedBehavior, issues, helpers, exception) {
-    companion object {
-        fun getInstanceForImplementationTest(
-            specVersion: String,
-            testArea: TestArea,
-            testType: TestType,
-            specPlaces: List<SpecPlace>,
-            filename: String
-        ): LinkedSpecTest {
-            val description = filename[0].toUpperCase() +
-                    filename.substring(1).replace(Regex("""([A-Z])"""), " $1").toLowerCase()
-
-            return LinkedSpecTest(
-                specVersion, testArea, testType, specPlaces.first(),
-                if (specPlaces.size > 1) specPlaces.subList(1, specPlaces.size) else null, 0, description,
-                SpecTestCasesSet(mutableMapOf(), mutableMapOf(), mutableMapOf()),
-                unexpectedBehavior = false, unspecifiedBehavior = false, issues = setOf(), helpers = null, exception = null
-            )
-        }
-    }
 
     override fun checkPathConsistency(pathMatcher: Matcher) =
         testArea == TestArea.valueOf(pathMatcher.group("testArea").withUnderscores())

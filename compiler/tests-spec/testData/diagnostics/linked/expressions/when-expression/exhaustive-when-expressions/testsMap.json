@@ -453,13 +453,6 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Branch false bypass else",
-          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
-          "unexpectedBehaviour": false
-        },
-        {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10809",
@@ -518,13 +511,6 @@
           "casesNumber": 0,
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Branch false bypass",
-          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false
         },
         {
@@ -687,13 +673,6 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Branch bypass val",
-          "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
-          "unexpectedBehaviour": false
-        },
-        {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning",
@@ -712,13 +691,6 @@
           "casesNumber": 0,
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Branch bypass var",
-          "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
           "unexpectedBehaviour": false
         },
         {
