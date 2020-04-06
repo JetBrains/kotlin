@@ -202,16 +202,16 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
     private constructor(): R|kotlin/Byte|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Byte|
+        public final const val MAX_VALUE: R|kotlin/Byte| = Byte(127)
             public get(): R|kotlin/Byte|
 
-        public final const val MIN_VALUE: R|kotlin/Byte|
+        public final const val MIN_VALUE: R|kotlin/Byte| = Byte(-128)
             public get(): R|kotlin/Byte|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(8)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Byte.Companion|
@@ -270,34 +270,34 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>| {
     private constructor(): R|kotlin/Char|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_HIGH_SURROGATE: R|kotlin/Char|
+        public final const val MAX_HIGH_SURROGATE: R|kotlin/Char| = Char(56319)
             public get(): R|kotlin/Char|
 
-        public final const val MAX_LOW_SURROGATE: R|kotlin/Char|
+        public final const val MAX_LOW_SURROGATE: R|kotlin/Char| = Char(57343)
             public get(): R|kotlin/Char|
 
-        public final const val MAX_SURROGATE: R|kotlin/Char|
+        public final const val MAX_SURROGATE: R|kotlin/Char| = Char(57343)
             public get(): R|kotlin/Char|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val MAX_VALUE: R|kotlin/Char|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val MAX_VALUE: R|kotlin/Char| = Char(65535)
             public get(): R|kotlin/Char|
 
-        public final const val MIN_HIGH_SURROGATE: R|kotlin/Char|
+        public final const val MIN_HIGH_SURROGATE: R|kotlin/Char| = Char(55296)
             public get(): R|kotlin/Char|
 
-        public final const val MIN_LOW_SURROGATE: R|kotlin/Char|
+        public final const val MIN_LOW_SURROGATE: R|kotlin/Char| = Char(56320)
             public get(): R|kotlin/Char|
 
-        public final const val MIN_SURROGATE: R|kotlin/Char|
+        public final const val MIN_SURROGATE: R|kotlin/Char| = Char(55296)
             public get(): R|kotlin/Char|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val MIN_VALUE: R|kotlin/Char|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val MIN_VALUE: R|kotlin/Char| = Char(0)
             public get(): R|kotlin/Char|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(16)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(2)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Char.Companion|
@@ -470,25 +470,25 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
     private constructor(): R|kotlin/Double|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Double|
+        public final const val MAX_VALUE: R|kotlin/Double| = Double(1.7976931348623157E308)
             public get(): R|kotlin/Double|
 
-        public final const val MIN_VALUE: R|kotlin/Double|
+        public final const val MIN_VALUE: R|kotlin/Double| = Double(4.9E-324)
             public get(): R|kotlin/Double|
 
-        public final const val NEGATIVE_INFINITY: R|kotlin/Double|
+        public final const val NEGATIVE_INFINITY: R|kotlin/Double| = Double(-Infinity)
             public get(): R|kotlin/Double|
 
-        public final const val NaN: R|kotlin/Double|
+        public final const val NaN: R|kotlin/Double| = Double(NaN)
             public get(): R|kotlin/Double|
 
-        public final const val POSITIVE_INFINITY: R|kotlin/Double|
+        public final const val POSITIVE_INFINITY: R|kotlin/Double| = Double(Infinity)
             public get(): R|kotlin/Double|
 
-        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int| = Int(64)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(8)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Double.Companion|
@@ -649,25 +649,25 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
     private constructor(): R|kotlin/Float|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Float|
+        public final const val MAX_VALUE: R|kotlin/Float| = Float(3.4028235E38)
             public get(): R|kotlin/Float|
 
-        public final const val MIN_VALUE: R|kotlin/Float|
+        public final const val MIN_VALUE: R|kotlin/Float| = Float(1.4E-45)
             public get(): R|kotlin/Float|
 
-        public final const val NEGATIVE_INFINITY: R|kotlin/Float|
+        public final const val NEGATIVE_INFINITY: R|kotlin/Float| = Float(-Infinity)
             public get(): R|kotlin/Float|
 
-        public final const val NaN: R|kotlin/Float|
+        public final const val NaN: R|kotlin/Float| = Float(NaN)
             public get(): R|kotlin/Float|
 
-        public final const val POSITIVE_INFINITY: R|kotlin/Float|
+        public final const val POSITIVE_INFINITY: R|kotlin/Float| = Float(Infinity)
             public get(): R|kotlin/Float|
 
-        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int| = Int(32)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(4)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Float.Companion|
@@ -817,16 +817,16 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
     private constructor(): R|kotlin/Int|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Int|
+        public final const val MAX_VALUE: R|kotlin/Int| = Int(2147483647)
             public get(): R|kotlin/Int|
 
-        public final const val MIN_VALUE: R|kotlin/Int|
+        public final const val MIN_VALUE: R|kotlin/Int| = Int(-2147483648)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(32)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(4)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Int.Companion|
@@ -973,16 +973,16 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
     private constructor(): R|kotlin/Long|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Long|
+        public final const val MAX_VALUE: R|kotlin/Long| = Long(9223372036854775807)
             public get(): R|kotlin/Long|
 
-        public final const val MIN_VALUE: R|kotlin/Long|
+        public final const val MIN_VALUE: R|kotlin/Long| = Long(-9223372036854775808)
             public get(): R|kotlin/Long|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(64)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(8)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Long.Companion|
@@ -1163,16 +1163,16 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
     private constructor(): R|kotlin/Short|
 
     public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Short|
+        public final const val MAX_VALUE: R|kotlin/Short| = Short(32767)
             public get(): R|kotlin/Short|
 
-        public final const val MIN_VALUE: R|kotlin/Short|
+        public final const val MIN_VALUE: R|kotlin/Short| = Short(-32768)
             public get(): R|kotlin/Short|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(16)
             public get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(2)
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Short.Companion|

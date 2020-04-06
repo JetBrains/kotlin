@@ -655,7 +655,19 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
         constExpression.annotations.renderAnnotations()
-        print("${constExpression.kind}(${constExpression.value})")
+        val kind = constExpression.kind
+        val value = constExpression.value
+        print("$kind(")
+        if (value !is Char) {
+            print(value.toString())
+        } else {
+            if (value.toInt() in 32..127) {
+                print(value)
+            } else {
+                print(value.toInt())
+            }
+        }
+        print(")")
     }
 
     override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression) {

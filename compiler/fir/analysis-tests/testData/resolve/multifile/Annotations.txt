@@ -86,8 +86,7 @@ FILE: main.kt
             }
 
         @R|annotations/WithString|(String(constructor)) public constructor(): R|test/Second| {
-            this<R|test/Second|>(Char(
-))
+            this<R|test/Second|>(Char(10))
         }
 
     }
