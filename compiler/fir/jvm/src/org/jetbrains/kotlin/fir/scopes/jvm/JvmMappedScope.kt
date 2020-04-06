@@ -44,10 +44,13 @@ class JvmMappedScope(
                 val jvmSignature = symbol.fir.computeJvmDescriptor()
                     .replace("kotlin/Any", "java/lang/Object")
                     .replace("kotlin/String", "java/lang/String")
+                    .replace("kotlin/Throwable", "java/lang/Throwable")
                 if (jvmSignature !in constructorBlackList) {
                     processor(symbol)
                 }
             }
+        } else {
+            javaMappedClassUseSiteScope.processDeclaredConstructors(processor)
         }
 
         declaredMemberScope.processDeclaredConstructors(processor)
@@ -67,7 +70,17 @@ class JvmMappedScope(
             fun isNotEmpty() = !isEmpty()
         }
 
+        // NOTE: No-arg constructors
+        private val additionalConstructorBlackList = setOf(
+            "java/lang/String.<init>()V",
+            "java/lang/Throwable.<init>()V",
+            "java/lang/Throwable.<init>(Ljava/lang/String;Ljava/lang/Throwable;)V",
+            "java/lang/Throwable.<init>(Ljava/lang/Throwable;)V",
+            "java/lang/Throwable.<init>(Ljava/lang/String;)V"
+        )
+
         fun prepareSignatures(klass: FirRegularClass): Signatures {
+
             val signaturePrefix = klass.symbol.classId.toString()
             val whiteListSignaturesByName = mutableMapOf<Name, MutableSet<String>>()
             JvmBuiltInsSettings.WHITE_LIST_METHOD_SIGNATURES.filter { signature ->
@@ -79,9 +92,11 @@ class JvmMappedScope(
                 whiteListSignaturesByName.getOrPut(Name.identifier(it.substringBefore("("))) { mutableSetOf() }.add(it)
             }
 
-            val constructorBlackList = JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES
-                .filter { it.startsWith(signaturePrefix) }
-                .mapTo(mutableSetOf()) { it.substring(signaturePrefix.length + 1) }
+            val constructorBlackList =
+                (JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES + additionalConstructorBlackList)
+                    .filter { it.startsWith(signaturePrefix) }
+                    .mapTo(mutableSetOf()) { it.substring(signaturePrefix.length + 1) }
+
             return Signatures(whiteListSignaturesByName, constructorBlackList)
         }
     }
