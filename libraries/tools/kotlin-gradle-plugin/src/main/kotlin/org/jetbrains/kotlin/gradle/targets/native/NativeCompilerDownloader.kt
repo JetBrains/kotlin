@@ -43,7 +43,7 @@ class NativeCompilerDownloader(
     private val distributionType: NativeDistributionType
         get() = PropertiesProvider(project).nativeDistributionType?.takeIf {
             it.isAvailableFor(HostManager.host, compilerVersion)
-        } ?: NativeDistributionType.REGULAR
+        } ?: NativeDistributionType.LIGHT
 
     private val simpleOsName: String
         get() = HostManager.simpleOsName()

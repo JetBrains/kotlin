@@ -142,7 +142,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
                     project,
                     "Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=restricted' instead"
                 )
-                result = if (deprecatedRestricted) NativeDistributionType.RESTRICTED else NativeDistributionType.REGULAR
+                result = if (deprecatedRestricted) NativeDistributionType.RESTRICTED else NativeDistributionType.LIGHT
             }
 
             return result
