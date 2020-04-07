@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
+import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -36,7 +37,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.replace
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlinx.stm.compiler.*
@@ -253,7 +257,7 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
                     this.startOffset,
                     this.endOffset
                 ) {
-                    irFunction.body?.deepCopyWithSymbols()?.statements?.forEach { st ->
+                    irFunction.body?.deepCopyWithSymbols(initialParent = irLambda)?.statements?.forEach { st ->
                         when (st) {
                             is IrReturn -> +irReturn(st.value)
                             else -> +st
@@ -270,16 +274,28 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
             val funReturnType = (functionDescriptor.returnType
                 ?: functionDescriptor.module.builtIns.unitType).toIrType()
 
-            val lambdaType = IrSimpleTypeBuilder().run {
-
-                classifier = runAtomically.descriptor.valueParameters[1].type.toIrType().classifierOrFail
-                hasQuestionMark = funReturnType.isMarkedNullable()
-
-                arguments = listOf(
-                    makeTypeProjection(funReturnType, Variance.INVARIANT)
+            val lambdaType = runAtomically.descriptor.valueParameters[1].type.replace(
+                listOf(
+                    TypeProjectionImpl(
+                        Variance.INVARIANT,
+                        runAtomically.descriptor.valueParameters[0].type.makeNotNullable(),
+                    ),
+                    TypeProjectionImpl(
+                        Variance.INVARIANT,
+                        funReturnType.toKotlinType()
+                    )
                 )
-                buildSimpleType()
-            }
+            ).toIrType()
+//                IrSimpleTypeBuilder().run {
+//
+//                    classifier = . classifierOrFail
+//                            hasQuestionMark = funReturnType.isMarkedNullable()
+//
+//                    arguments = listOf(
+//                        makeTypeProjection(funReturnType, Variance.INVARIANT)
+//                    )
+//                    buildSimpleType()
+//                }
 
             val lambdaExpression = IrFunctionExpressionImpl(
                 irLambda.startOffset, irLambda.endOffset,
@@ -690,7 +706,7 @@ open class StmIrGenerator {
                 descriptor = newDescriptor,
                 declareNew = true
             ).apply {
-                body = oldFunction.body?.deepCopyWithSymbols()
+                this.body = oldFunction.body?.deepCopyWithSymbols(initialParent = this)
             }
 
             oldFunction.valueParameters.forEachIndexed { i, oldArg ->
