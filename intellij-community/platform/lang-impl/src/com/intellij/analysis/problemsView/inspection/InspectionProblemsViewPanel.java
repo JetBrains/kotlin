@@ -152,16 +152,21 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
     AnalysisProblem updatedSelectedProblem = model.addProblemsAndReturnReplacementForSelection(Collections.singletonList(problem), oldSelectedProblem);
 
     if (updatedSelectedProblem != null) {
-      myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
+      selectProblem(updatedSelectedProblem);
     }
 
     updateStatusDescription();
+  }
+
+  private void selectProblem(@NotNull AnalysisProblem updatedSelectedProblem) {
+    myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
   }
 
   private Disposable myCurrentFileDisposable = Disposer.newDisposable();
   public void setCurrentFile(@Nullable VirtualFile file) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     AnalysisProblemsTableModel model = getModel();
+    AnalysisProblem oldSelectedProblem = myTable.getSelectedObject();
     model.removeRows(problem -> true); // remove everything, in case setCurrentFile() was called with the same file to refresh from highlights
     if (file != null) {
       PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
@@ -188,6 +193,9 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
           return true;
         });
       }
+    }
+    if (oldSelectedProblem != null) {
+      selectProblem(oldSelectedProblem);
     }
     updateStatusDescription();
   }
