@@ -20,15 +20,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.AbstractReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) : DeclarationDescriptor {
     private val annotations_ = annotations
@@ -208,8 +213,10 @@ open class WrappedReceiverParameterDescriptor(
     sourceElement: SourceElement = SourceElement.NO_SOURCE
 ) : ReceiverParameterDescriptor, WrappedCallableDescriptor<IrValueParameter>(annotations, sourceElement) {
 
-    override fun getValue(): ReceiverValue {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getValue() = object : AbstractReceiverValue(type, null) {
+        override fun replaceType(newType: KotlinType): ReceiverValue {
+            throw UnsupportedOperationException("The type of the receiver value from wrapped descriptors SHOULD NOT be replaced")
+        }
     }
 
     override fun getContainingDeclaration(): DeclarationDescriptor =
@@ -252,7 +259,7 @@ open class WrappedTypeParameterDescriptor(
 
     override fun getUpperBounds() = owner.superTypes.map { it.toKotlinType() }
 
-    private val _typeConstryuctor: TypeConstructor by lazy {
+    private val _typeConstructor: TypeConstructor by lazy {
         object : AbstractTypeConstructor(LockBasedStorageManager.NO_LOCKS) {
             override fun computeSupertypes() = upperBounds
 
@@ -270,7 +277,7 @@ open class WrappedTypeParameterDescriptor(
         }
     }
 
-    override fun getTypeConstructor() = _typeConstryuctor
+    override fun getTypeConstructor() = _typeConstructor
 
     override fun getOriginal() = this
 
@@ -312,7 +319,7 @@ open class WrappedVariableDescriptor(
 
     override fun getContainingDeclaration() = (owner.parent as IrFunction).descriptor
     override fun getType() = owner.type.toKotlinType()
-    override fun getReturnType() = getType()
+    override fun getReturnType() = type
     override fun getName() = owner.name
     override fun isConst() = owner.isConst
     override fun isVar() = owner.isVar
@@ -665,7 +672,36 @@ open class WrappedClassDescriptor(
 
     override fun getMemberScope(typeSubstitution: TypeSubstitution) = MemberScope.Empty
 
-    override fun getUnsubstitutedMemberScope() = MemberScope.Empty
+    override fun getUnsubstitutedMemberScope() = _unsubstitutedMemberScope
+
+    private val _unsubstitutedMemberScope: MemberScope = object : MemberScopeImpl() {
+        override fun printScopeStructure(p: Printer) {
+            TODO("Not yet implemented")
+        }
+
+        override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+        ): Collection<DeclarationDescriptor> =
+            owner.declarations
+                .filter {
+                    // TODO: Unified way to determine _contributed_ declarations, e.g., more synthetic mark to IrDeclarationOrigin?
+                    when (it) {
+                        // @Metadata.Class has a separate place to serialize constructors.
+                        is IrConstructor -> false
+                        is IrFunction -> it.isReal && !it.origin.isSynthetic &&
+                                it.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER &&
+                                // TODO: Better way to filter out <clinit>, e.g., JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER?
+                                (!it.isStaticMethodOfClass || !it.nameForIrSerialization.isSpecial)
+                        is IrProperty -> !it.isFakeOverride && !it.origin.isSynthetic &&
+                                it.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                        is IrField -> !it.isFakeOverride && !it.origin.isSynthetic &&
+                                it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+                                it.origin != IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
+                        else -> !it.isFakeOverride && !it.origin.isSynthetic
+                    }
+                }.map { it.descriptor }
+    }
 
     override fun getUnsubstitutedInnerClassesScope() = MemberScope.Empty
 
@@ -961,13 +997,14 @@ open class WrappedPropertyDescriptor(
 
     override val isDelegated get() = owner.isDelegated
 
-    override fun getBackingField(): FieldDescriptor? {
-        TODO("not implemented")
-    }
+    override fun getBackingField(): FieldDescriptor? = owner.backingField?.descriptor as? FieldDescriptor
 
-    override fun getDelegateField(): FieldDescriptor? {
-        TODO("not implemented")
-    }
+    override fun getDelegateField(): FieldDescriptor? =
+        if (owner.isDelegated) {
+            owner.backingField?.descriptor as? FieldDescriptor
+        } else {
+            null
+        }
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
@@ -1093,7 +1130,10 @@ open class WrappedFieldDescriptor(
     override fun getValueParameters(): MutableList<ValueParameterDescriptor> = mutableListOf()
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? {
-        TODO("not implemented")
+        if (owner.initializer != null && owner.initializer is IrConst<*>) {
+            owner.initializer.safeAs<IrConst<*>>()?.value?.let { ConstantValueFactory.createConstantValue(it) }
+        }
+        return null
     }
 
     override fun isSetterProjectedOut(): Boolean {
