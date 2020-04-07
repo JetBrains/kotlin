@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.findAnyActualForExpected
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualForExpected
 
 internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
 
@@ -80,12 +82,10 @@ fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
     actualsFor(descriptor).isNotEmpty()
 
 fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = false): List<DeclarationDescriptor> =
-    with(ExpectedActualResolver) {
-        if (checkCompatible) {
-            descriptor.findCompatibleActualForExpected(this@actualsFor)
-        } else {
-            descriptor.findAnyActualForExpected(this@actualsFor)
-        }
+    if (checkCompatible) {
+        descriptor.findCompatibleActualForExpected(this@actualsFor)
+    } else {
+        descriptor.findAnyActualForExpected(this@actualsFor)
     }.filter { (it as? MemberDescriptor)?.isEffectivelyActual() == true }
 
 private fun MemberDescriptor.isEffectivelyActual(checkConstructor: Boolean = true): Boolean =
