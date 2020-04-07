@@ -1037,6 +1037,25 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
+    private fun FlowContent.generate(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        generateMultiLineExpression(isStatement = true) {
+            iline {
+                exprType(delegatedConstructorCall.constructedTypeRef) {
+                    if (delegatedConstructorCall.isSuper) keyword("super")
+                    if (delegatedConstructorCall.isThis) keyword("this")
+                    +"<"
+                    generate(delegatedConstructorCall.calleeReference)
+                    +">"
+                    +"("
+                    generateList(delegatedConstructorCall.arguments) {
+                        generate(it)
+                    }
+                    +")"
+                }
+            }
+        }
+    }
+
     private fun FlowContent.generate(variable: FirVariable<*>) {
         if (variable.isVal) {
             keyword("val ")
@@ -1692,7 +1711,19 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
             +"): "
             generate(function.returnTypeRef)
-            generateBlockIfAny(function.body)
+
+            val delegatedConstructorCall = function.delegatedConstructor
+            val body = function.body
+            if (delegatedConstructorCall != null || body != null) {
+                +" {"
+                generateMultiLineExpression(isStatement = false) {
+                    if (delegatedConstructorCall != null) {
+                        generate(delegatedConstructorCall)
+                    }
+                    if (body != null) generateBlockContent(body)
+                }
+                +"}"
+            }
         }
     }
 
