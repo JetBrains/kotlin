@@ -11,19 +11,19 @@ class State(val p1: Double, val p2: () -> Int, val p3: String?)
 
 fun test(s: SelectorFor<State>): Double {
     val a = s { p1 }
-    a checkType { <!UNRESOLVED_REFERENCE!>_<!><AbstractSelector<State, Double>>() }
+    a checkType { _<AbstractSelector<State, Double>>() }
 
     val b = s { p2 }
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><AbstractSelector<State, () -> Int>>()}
+    b checkType { _<AbstractSelector<State, () -> Int>>()}
 
     val c = s { p3 }
-    c checkType { <!UNRESOLVED_REFERENCE!>_<!><AbstractSelector<State, String?>>() }
+    c checkType { _<AbstractSelector<State, String?>>() }
 
     val d = s { }
-    d checkType { <!UNRESOLVED_REFERENCE!>_<!><AbstractSelector<State, Unit>>() }
+    d checkType { _<AbstractSelector<State, Unit>>() }
 
     val e = s { return p1 }
-    e checkType { <!UNRESOLVED_REFERENCE!>_<!><AbstractSelector<State, Nothing>>() }
+    e checkType { _<AbstractSelector<State, Nothing>>() }
 
     return null!!
 }

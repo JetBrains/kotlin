@@ -9,8 +9,8 @@ public fun <T> listOf(t: T): List<T> = TODO()
 
 fun usage(c: List<String>) {
     val cn = c.ifEmpty { null }
-    cn checkType { <!UNRESOLVED_REFERENCE!>_<!><List<String>?>() }
+    cn checkType { _<List<String>?>() }
 
     val cs = c.ifEmpty { listOf("x") }
-    cs checkType { <!UNRESOLVED_REFERENCE!>_<!><List<String>>() }
+    cs checkType { _<List<String>>() }
 }

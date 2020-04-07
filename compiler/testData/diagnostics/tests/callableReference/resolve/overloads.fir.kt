@@ -22,7 +22,7 @@ fun fas(i: Int = 1) {}
 fun test() {
     <!UNRESOLVED_REFERENCE!>B::foo<!> // todo KT-9601 Chose maximally specific function in callable reference
 
-    B::bar checkType { <!UNRESOLVED_REFERENCE!>_<!><KFunction1<B, Unit>>() }
+    B::bar checkType { _<KFunction1<B, Unit>>() }
 
     <!UNRESOLVED_REFERENCE!>B::bas<!>
 

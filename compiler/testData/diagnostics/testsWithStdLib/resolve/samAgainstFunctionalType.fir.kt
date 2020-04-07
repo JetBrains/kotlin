@@ -25,6 +25,6 @@ public class StaticOverrides {
 
 fun test() {
     StaticOverrides.A.<!AMBIGUITY!>foo<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Boolean>() }
-    StaticOverrides.B.foo {} checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-    StaticOverrides.C.foo {} checkType { <!UNRESOLVED_REFERENCE!>_<!><Boolean>() }
+    StaticOverrides.B.foo {} checkType { _<String>() }
+    StaticOverrides.C.foo {} checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Boolean>() }
 }

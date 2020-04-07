@@ -9,8 +9,8 @@ public class A<E> {
 // FILE: main.kt
 
 fun test(x: List<Int>, y: List<String>) {
-    A("", x) checkType { <!UNRESOLVED_REFERENCE!>_<!><A<Any?>>() }
-    A("", y) checkType { <!UNRESOLVED_REFERENCE!>_<!><A<String?>>() }
+    A("", x) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<Any?>>() }
+    A("", y) checkType { _<A<String?>>() }
 
     <!INAPPLICABLE_CANDIDATE!>A<!><CharSequence, String>("", x)
     A<CharSequence, String>("", y)

@@ -6,7 +6,7 @@ interface B : A
 interface C : B
 
 fun test(b: B) {
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><B>() }
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><A>() }
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><C>() }
+    b checkType { _<B>() }
+    b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A>() }
+    b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><C>() }
 }

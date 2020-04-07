@@ -8,8 +8,8 @@ fun case_0() {
         this as Int
         this // error in NI: required Int, found Any?; just inferred to Any? in OI
     }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    y checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
+    y checkType { _<Int>() }
 }
 
 fun case_1(z: Any?) {
@@ -20,8 +20,8 @@ fun case_1(z: Any?) {
             else -> return@run ""
         }
     }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><kotlin.String>() }
+    y checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
+    y checkType { _<kotlin.String>() }
     // y is inferred to Any?
 }
 
@@ -33,7 +33,7 @@ fun case_2(z: Any?) {
             else -> return@run ""
         }
     }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><kotlin.String>() }
+    y checkType { _<kotlin.String>() }
     // y is inferred to String
 }
 
@@ -45,7 +45,7 @@ fun case_3(z: Any?) {
             else -> return@let ""
         }
     }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><kotlin.String>() }
+    y checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
+    y checkType { _<kotlin.String>() }
     // y is inferred to String
 }

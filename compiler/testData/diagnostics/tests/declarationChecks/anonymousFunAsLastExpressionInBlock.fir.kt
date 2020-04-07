@@ -37,7 +37,7 @@ fun test() {
         y: Int -> fun(): Int {return 1}
     }
 
-    x4 checkType { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Function0<Int>>>() }
+    x4 checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Int, Function0<Int>>>() }
 
     { y: Int -> fun(): Int {return 1} }
 }

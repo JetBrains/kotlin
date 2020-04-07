@@ -4,6 +4,6 @@ val x get() = null
 val y get() = null!!
 
 fun foo() {
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><Nothing?>() }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Nothing>() }
+    x checkType { _<Nothing?>() }
+    y checkType { _<Nothing>() }
 }

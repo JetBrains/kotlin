@@ -7,5 +7,5 @@ import kotlin.reflect.KSuspendFunction0
 suspend fun foo() {}
 
 fun test() {
-    ::foo checkType { <!UNRESOLVED_REFERENCE!>_<!><KSuspendFunction0<Unit>>() }
+    ::foo checkType { <!INAPPLICABLE_CANDIDATE!>_<!><KSuspendFunction0<Unit>>() }
 }

@@ -6,7 +6,7 @@ fun noCoercionLastExpressionUsedAsReturnArgument() {
         42
     }
 
-    a checkType { <!UNRESOLVED_REFERENCE!>_<!><() -> Int>() }
+    a checkType { _<() -> Int>() }
 }
 
 fun noCoercionBlockHasExplicitType() {

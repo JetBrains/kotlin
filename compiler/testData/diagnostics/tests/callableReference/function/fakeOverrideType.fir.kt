@@ -11,7 +11,7 @@ class B : A() {
 
 
 fun test() {
-    B::foo checkType { <!UNRESOLVED_REFERENCE!>_<!><KFunction2<B, String, String>>() }
+    B::foo checkType { _<KFunction2<B, String, String>>() }
 
     <!INAPPLICABLE_CANDIDATE!>(B::hashCode)("No.")<!>
 }

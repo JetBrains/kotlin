@@ -18,20 +18,20 @@ class C : B(), A {
     override var y
         get() = super.y
         set(value) {
-            value checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+            value checkType { _<String>() }
         }
 
     override var z
         get() = ""
         set(value) {
-            value checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+            value checkType { _<String>() }
         }
 }
 
 fun foo(c: C) {
-    c.x checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    c.y checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-    c.z checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    c.x checkType { _<Int>() }
+    c.y checkType { _<String>() }
+    c.z checkType { _<String>() }
 
     c.y = ""
     c.y = 1

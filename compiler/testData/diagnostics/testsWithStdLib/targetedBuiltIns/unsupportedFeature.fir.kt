@@ -44,7 +44,7 @@ fun foo(x: List<String>, y: Throwable, z: A3) {
     x.stream()
     java.util.ArrayList<String>().stream()
 
-    y.fillInStackTrace() checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    y.fillInStackTrace() checkType { _<Int>() }
 
     HashMap<String, Int>().getOrDefault(Any(), null)
 
