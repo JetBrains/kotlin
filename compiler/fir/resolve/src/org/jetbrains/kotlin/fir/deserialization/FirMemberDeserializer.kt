@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class FirDeserializationContext(
     val nameResolver: NameResolver,
@@ -39,19 +40,24 @@ class FirDeserializationContext(
     val typeDeserializer: FirTypeDeserializer,
     val annotationDeserializer: AbstractAnnotationDeserializer,
     val containerSource: DeserializedContainerSource?,
+    outerTypeParameters: List<FirTypeParameterSymbol>,
     val components: FirDeserializationComponents
 ) {
+    val allTypeParameters: List<FirTypeParameterSymbol> =
+        typeDeserializer.ownTypeParameters + outerTypeParameters
+
     fun childContext(
         typeParameterProtos: List<ProtoBuf.TypeParameter>,
         nameResolver: NameResolver = this.nameResolver,
         typeTable: TypeTable = this.typeTable,
-        relativeClassName: FqName? = this.relativeClassName
+        relativeClassName: FqName? = this.relativeClassName,
+        capturesTypeParameters: Boolean = true
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,
         FirTypeDeserializer(
             session, nameResolver, typeTable, typeParameterProtos, typeDeserializer
         ),
-        annotationDeserializer, containerSource, components
+        annotationDeserializer, containerSource, if (capturesTypeParameters) allTypeParameters else emptyList(), components
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
@@ -118,6 +124,7 @@ class FirDeserializationContext(
                 ),
                 annotationDeserializer,
                 containerSource,
+                emptyList(),
                 FirDeserializationComponents()
             )
         }
@@ -284,7 +291,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             this.symbol = symbol
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { this.symbol = it.symbol } }
+            this.typeParameters +=
+                typeParameters.filterIsInstance<FirTypeParameter>()
+                    .map { buildConstructedClassTypeParameterRef { this.symbol = it.symbol } }
             valueParameters += local.memberDeserializer.valueParameters(
                 proto.valueParameterList, addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
             )

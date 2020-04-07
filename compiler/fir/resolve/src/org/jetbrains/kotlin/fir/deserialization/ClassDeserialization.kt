@@ -75,7 +75,8 @@ fun deserializeClassToSymbol(
             classProto.typeParameterList,
             nameResolver,
             TypeTable(classProto.typeTable),
-            classId.relativeClassName
+            classId.relativeClassName,
+            status.isInner
         ) ?: FirDeserializationContext.createForClass(
             classId, classProto, nameResolver, session,
             defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
@@ -90,7 +91,10 @@ fun deserializeClassToSymbol(
         this.symbol = symbol
 
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.fir }
+        if (status.isInner)
+            typeParameters += parentContext?.allTypeParameters?.map { buildOuterClassTypeParameterRef { this.symbol = it } }.orEmpty()
 //        annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         val typeDeserializer = context.typeDeserializer
