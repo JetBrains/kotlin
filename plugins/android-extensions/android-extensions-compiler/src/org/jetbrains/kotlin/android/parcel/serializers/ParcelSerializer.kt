@@ -42,7 +42,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-private val RAWVALUE_ANNOTATION_FQNAME = FqName("kotlinx.android.parcel.RawValue")
+val RAWVALUE_ANNOTATION_FQNAME = FqName("kotlinx.android.parcel.RawValue")
 
 internal typealias TypeParcelerMapping = Pair<KotlinType, KotlinType>
 
