@@ -195,6 +195,25 @@ class ConeIntersectionType(
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
+
+    private var hashCode = 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeIntersectionType
+
+        if (intersectedTypes != other.intersectedTypes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        if (hashCode != 0) return hashCode
+        return intersectedTypes.hashCode().also { hashCode = it }
+    }
+
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
