@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle
 
 
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
@@ -24,13 +25,6 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
 
 abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
-    val version by versionSetting("Gradle Version", GenerationPhase.FIRST_STEP) {
-        defaultValue = value(defaultVersions.first())
-        isAvailable = isGradle
-    }
-
-    val gradleVersions by property<List<Version>>(emptyList())
-
     val gradleProperties by listProperty(
         "kotlin.code.style" to "official"
     )
@@ -94,7 +88,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                     ),
                     StructurePlugin::projectPath.reference.settingValue,
                     mapOf(
-                        "version" to GradlePlugin::version.reference.settingValue.toString()
+                        "version" to Versions.GRADLE
                     )
                 )
             )
@@ -130,11 +124,6 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                 buildFileText
             )
         }
-    }
-
-    companion object {
-        // TODO update default versions
-        private val defaultVersions = listOf("5.5.1").map(Version.Companion::fromString)
     }
 }
 

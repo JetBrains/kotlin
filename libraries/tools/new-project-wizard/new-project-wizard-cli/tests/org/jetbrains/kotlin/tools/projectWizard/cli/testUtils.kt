@@ -71,16 +71,14 @@ enum class BuildSystem(
         additionalFileNames = listOf("settings.gradle.kts"),
         yaml = """buildSystem:
                             type: GradleKotlinDsl
-                            gradle:
-                              version: 5.4.1""".trimIndent()
+                            """.trimIndent()
     ),
     GRADLE_GROOVY_DSL(
         buildFileName = "build.gradle",
         additionalFileNames = listOf("settings.gradle"),
         yaml = """buildSystem:
                             type: GradleGroovyDsl
-                            gradle:
-                              version: 5.4.1""".trimIndent()
+                            """.trimIndent()
     ),
     MAVEN(
         buildFileName = "pom.xml",
