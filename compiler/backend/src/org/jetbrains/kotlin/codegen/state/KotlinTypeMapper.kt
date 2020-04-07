@@ -88,7 +88,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val isIrBackend: Boolean = false,
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
     private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
-): KotlinTypeMapperBase() {
+) : KotlinTypeMapperBase() {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
@@ -269,10 +269,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
     }
 
-    private fun mapInlineClassType(kotlinType: KotlinType): Type {
-        return mapInlineClassType(kotlinType, TypeMappingMode.DEFAULT, typeMappingConfiguration)
-    }
-
     private fun writeGenericType(
         type: KotlinType,
         asmType: Type,
@@ -367,13 +363,36 @@ class KotlinTypeMapper @JvmOverloads constructor(
             ?: functionDescriptor.returnType!!
 
     private fun getActualReturnTypeForSuspendFunctionWithInlineClassReturnTypeHack(functionDescriptor: FunctionDescriptor): KotlinType? {
-        val originalSuspendFunctionForJvmView = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
-        if (originalSuspendFunctionForJvmView === functionDescriptor) return null
-        val originalReturnType = originalSuspendFunctionForJvmView.returnType!!
+        // For each suspend function, we have a corresponding JVM view function that has an extra continuation parameter,
+        // and, more importantly, returns 'kotlin.Any' (so that it can return as a reference value or a special COROUTINE_SUSPENDED object).
+        // This also causes boxing of primitives and inline class values.
+        // If we have a function returning an inline class value that is mapped to a reference type, we want to avoid boxing.
+        // However, we have to do that consistently both on declaration site and on call site in case of covariant overrides.
+
+        if (!functionDescriptor.isSuspend) return null
+
+        val originalSuspendFunction = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
+        val originalReturnType = originalSuspendFunction.returnType!!
         if (!originalReturnType.isInlineClassType()) return null
-        val jvmReturnType = mapType(originalReturnType)
-        return if (AsmUtil.isPrimitive(jvmReturnType)) null else originalReturnType
+
+        if (!originalReturnType.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn()) {
+            return originalSuspendFunction.module.builtIns.nullableAnyType
+        }
+
+        // NB JVM view of a Kotlin function overrides JVM views of corresponding overridden functions
+        val originalOverridden = getAllOverriddenDeclarations(functionDescriptor).map {
+            it.unwrapInitialDescriptorForSuspendFunction().original
+        }
+        if (originalOverridden.any { !it.returnType!!.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn() }) {
+            return originalSuspendFunction.module.builtIns.nullableAnyType
+        }
+
+        return originalReturnType
     }
+
+    private fun KotlinType.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn(): Boolean =
+        isInlineClassType() && !AsmUtil.isPrimitive(mapType(this)) && (!isMarkedNullable || !isNullableUnderlyingType())
+
 
     @JvmOverloads
     fun mapToCallableMethod(
@@ -806,13 +825,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
         } else {
             val directMember = DescriptorUtils.getDirectMember(f)
-            val thisIfNeeded: KotlinType? = when {
-                kind == OwnerKind.DEFAULT_IMPLS -> {
+            val thisIfNeeded: KotlinType? = when (kind) {
+                OwnerKind.DEFAULT_IMPLS -> {
                     val receiverTypeAndTypeParameters = patchTypeParametersForDefaultImplMethod(directMember)
                     writeFormalTypeParameters(receiverTypeAndTypeParameters.typeParameters + directMember.typeParameters, sw)
                     receiverTypeAndTypeParameters.receiverType
                 }
-                kind == OwnerKind.ERASED_INLINE_CLASS -> {
+                OwnerKind.ERASED_INLINE_CLASS -> {
                     writeFormalTypeParameters(directMember.typeParameters, sw)
                     (directMember.containingDeclaration as ClassDescriptor).defaultType
                 }
