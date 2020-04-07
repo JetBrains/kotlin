@@ -1199,7 +1199,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         try {
           ProgressManager.checkCanceled();
           final ID<?, ?> indexId = affectedIndexCandidates.get(i);
-          if (shouldIndexFile(fc, indexId) == FileIndexingState.SHOULD_INDEX) {
+          if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
             ProgressManager.checkCanceled();
             if (!updateSingleIndex(indexId, file, inputId, fc)) {
               setIndexedStatus.set(Boolean.FALSE);
@@ -1219,7 +1219,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
       for(ID<?, ?> indexId : currentIndexedStates) {
         ProgressManager.checkCanceled();
-        if (!getIndex(indexId).isIndexedStateForFile(inputId, fc)) {
+        if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
           ProgressManager.checkCanceled();
           if (!updateSingleIndex(indexId, file, inputId, null)) {
             setIndexedStatus.set(Boolean.FALSE);
@@ -1535,13 +1535,19 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   FileIndexingState shouldIndexFile(@NotNull IndexedFile file, @NotNull ID<?, ?> indexId) {
-    VirtualFile virtualFile = file.getFile();
-    if (!getInputFilter(indexId).acceptInput(virtualFile)) {
-      return FileIndexingState.SHOULD_NOT_INDEX;
+    if (!getInputFilter(indexId).acceptInput(file.getFile())) {
+      return getIndexingState(file, indexId) == FileIndexingState.NOT_INDEXED
+             ? FileIndexingState.UP_TO_DATE
+             : FileIndexingState.OUT_DATED;
     }
-    return (isMock(virtualFile) || !getIndex(indexId).isIndexedStateForFile(((NewVirtualFile) virtualFile).getId(), file))
-           ? FileIndexingState.SHOULD_INDEX
-           : FileIndexingState.UP_TO_DATE;
+    return getIndexingState(file, indexId);
+  }
+
+  @NotNull
+  private FileIndexingState getIndexingState(@NotNull IndexedFile file, @NotNull ID<?, ?> indexId) {
+    VirtualFile virtualFile = file.getFile();
+    if (isMock(virtualFile)) return FileIndexingState.NOT_INDEXED;
+    return getIndex(indexId).getIndexingStateForFile(((NewVirtualFile)virtualFile).getId(), file);
   }
 
   static boolean isMock(final VirtualFile file) {
@@ -1742,10 +1748,5 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       version += SnapshotInputMappings.getVersion();
     }
     return version;
-  }
-
-  @ApiStatus.Internal
-  enum FileIndexingState {
-    SHOULD_INDEX, SHOULD_NOT_INDEX, UP_TO_DATE
   }
 }

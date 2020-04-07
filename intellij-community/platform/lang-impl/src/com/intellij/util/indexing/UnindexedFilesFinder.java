@@ -59,8 +59,7 @@ class UnindexedFilesFinder implements VirtualFileFilter {
         boolean isDirectory = file.isDirectory();
         int inputId = Math.abs(FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file));
         if (!isDirectory && !myFileBasedIndex.isTooLarge(file)) {
-
-          if (!myFileTypeIndex.isIndexedStateForFile(inputId, fileContent)) {
+          if (myFileTypeIndex.getIndexingStateForFile(inputId, fileContent) == FileIndexingState.OUT_DATED) {
             myFileBasedIndex.dropNontrivialIndexedStates(inputId);
             shouldIndexFile.set(true);
           } else {
@@ -70,10 +69,10 @@ class UnindexedFilesFinder implements VirtualFileFilter {
               final ID<?, ?> indexId = affectedIndexCandidates.get(i);
               try {
                 if (myFileBasedIndex.needsFileContentLoading(indexId)) {
-                  FileBasedIndexImpl.FileIndexingState fileIndexingState = myFileBasedIndex.shouldIndexFile(fileContent, indexId);
-                  if (fileIndexingState == FileBasedIndexImpl.FileIndexingState.UP_TO_DATE) {
+                  FileIndexingState fileIndexingState = myFileBasedIndex.shouldIndexFile(fileContent, indexId);
+                  if (fileIndexingState == FileIndexingState.UP_TO_DATE) {
                     myStateProcessors.forEach(p -> p.processUpToDateFile(file, inputId, indexId));
-                  } else if (fileIndexingState == FileBasedIndexImpl.FileIndexingState.SHOULD_INDEX) {
+                  } else if (fileIndexingState.updateRequired()) {
                     if (myDoTraceForFilesToBeIndexed) {
                       LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
                     }
@@ -97,7 +96,7 @@ class UnindexedFilesFinder implements VirtualFileFilter {
         }
 
         for (ID<?, ?> indexId : myFileBasedIndex.getContentLessIndexes(isDirectory)) {
-          if (myFileBasedIndex.shouldIndexFile(fileContent, indexId) == FileBasedIndexImpl.FileIndexingState.SHOULD_INDEX) {
+          if (myFileBasedIndex.shouldIndexFile(fileContent, indexId).updateRequired()) {
             myFileBasedIndex.updateSingleIndex(indexId, file, inputId, new IndexedFileWrapper(fileContent));
           }
         }

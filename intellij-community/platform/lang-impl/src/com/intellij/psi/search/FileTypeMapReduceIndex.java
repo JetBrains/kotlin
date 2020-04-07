@@ -3,16 +3,17 @@ package com.intellij.psi.search;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.*;
+import com.intellij.util.indexing.FileBasedIndexExtension;
+import com.intellij.util.indexing.FileIndexingState;
+import com.intellij.util.indexing.IndexedFile;
+import com.intellij.util.indexing.VfsAwareMapReduceIndex;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 
 class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void> {
   private static final Logger LOG = Logger.getInstance(FileTypeIndexImpl.class);
@@ -22,16 +23,18 @@ class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void> {
   }
 
   @Override
-  public boolean isIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
-    boolean isIndexed = super.isIndexedStateForFile(fileId, file);
-    if (!isIndexed) return false;
+  public @NotNull FileIndexingState getIndexingStateForFile(int fileId, @NotNull IndexedFile file) {
+    @NotNull FileIndexingState isIndexed = super.getIndexingStateForFile(fileId, file);
+    if (isIndexed != FileIndexingState.UP_TO_DATE) return isIndexed;
     try {
       Collection<FileType> inputData = ((MapInputDataDiffBuilder<FileType, Void>) getKeysDiffBuilder(fileId)).getKeys();
       FileType indexedFileType = ContainerUtil.getFirstItem(inputData);
-      return FileTypeKeyDescriptor.INSTANCE.isEqual(indexedFileType, file.getFileType());
+      return FileTypeKeyDescriptor.INSTANCE.isEqual(indexedFileType, file.getFileType())
+             ? FileIndexingState.UP_TO_DATE
+             : FileIndexingState.OUT_DATED;
     } catch (IOException e) {
       LOG.error(e);
-      return false;
+      return FileIndexingState.OUT_DATED;
     }
   }
 }

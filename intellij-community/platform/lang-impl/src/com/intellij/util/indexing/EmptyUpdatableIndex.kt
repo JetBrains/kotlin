@@ -6,8 +6,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Processor
 import com.intellij.util.indexing.impl.AbstractUpdateData
 import com.intellij.util.indexing.snapshot.EmptyValueContainer
-import java.lang.UnsupportedOperationException
-import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
@@ -28,7 +26,7 @@ class EmptyUpdatableIndex<Key, Value, Input> : UpdatableIndex<Key, Value, Input>
 
   override fun setIndexedStateForFile(fileId: Int, file: IndexedFile) = Unit
   override fun resetIndexedStateForFile(fileId: Int) {}
-  override fun isIndexedStateForFile(fileId: Int, file: IndexedFile): Boolean = false
+  override fun getIndexingStateForFile(fileId: Int, file: IndexedFile): FileIndexingState = FileIndexingState.NOT_INDEXED
 
   override fun getModificationStamp(): Long = 0
 
