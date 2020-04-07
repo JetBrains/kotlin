@@ -57,16 +57,19 @@ data class KotlinWebpackConfig(
                 it.add(versions.webpackDevServer)
             }
 
-            if (!cssSettings.enabled) return@also
+            if (!cssSettings.enabled || cssSettings.rules.isEmpty()) return@also
 
             it.add(versions.cssLoader)
-            when (cssSettings.mode) {
-                EXTRACT -> it.add(versions.miniCssExtractPlugin)
-                INLINE -> it.add(versions.styleLoader)
-                IMPORT -> {
+            cssSettings.rules.forEach { rule ->
+                when (rule.mode) {
+                    EXTRACT -> it.add(versions.miniCssExtractPlugin)
+                    INLINE -> it.add(versions.styleLoader)
+                    IMPORT -> {
+                    }
+                    else -> cssError()
                 }
-                else -> cssError()
             }
+
         }
 
     enum class Mode(val code: String) {
@@ -253,7 +256,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendCssSettings() {
-        if (!cssSettings.enabled)
+        if (!cssSettings.enabled || cssSettings.rules.isEmpty())
             return
 
         appendln(
@@ -263,53 +266,81 @@ data class KotlinWebpackConfig(
             """.trimIndent()
         )
 
-        appendln(
-            """
-        |    const use = [
-        |        {
-        |            loader: 'css-loader',
-        |            options: {},
-        |        }
-        |    ]
-            """.trimMargin()
-        )
-
         val extractedCss =
             """
-            |    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-            |    use.unshift({
-            |        loader: MiniCssExtractPlugin.loader,
-            |        options: {}
-            |    })
-            |    config.plugins.push(new MiniCssExtractPlugin())
+            |       const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+            |       use.unshift({
+            |           loader: MiniCssExtractPlugin.loader,
+            |           options: {}
+            |       })
+            |       config.plugins.push(new MiniCssExtractPlugin())
             """.trimMargin()
 
         val inlinedCss =
             """
-            |    use.unshift({
-            |        loader: 'style-loader',
-            |        options: {}
-            |    })
-            |    
+            |       use.unshift({
+            |           loader: 'style-loader',
+            |           options: {}
+            |       })
+            |       
             """.trimMargin()
 
-        when (cssSettings.mode) {
-            EXTRACT -> appendln(extractedCss)
-            INLINE -> appendln(inlinedCss)
-            IMPORT -> {
+        cssSettings.rules.forEach { rule ->
+            appendln(
+                """
+            |    ;(function(config) {
+            """.trimMargin()
+            )
+            appendln(
+                """
+            |       const use = [
+            |           {
+            |               loader: 'css-loader',
+            |               options: {},
+            |           }
+            |       ]
+            """.trimMargin()
+            )
+
+            when (rule.mode) {
+                EXTRACT -> appendln(extractedCss)
+                INLINE -> appendln(inlinedCss)
+                IMPORT -> {
+                }
+                else -> cssError()
             }
-            else -> cssError()
-        }
 
-        appendln(
-            """
-            |    config.module.rules.push({
-            |        test: /\.css${'$'}/,
-            |        use: use
-            |    })
+            val excluded = rule.exclude.let {
+                if (it.isNotEmpty()) {
+                    "[${it.joinToString()}]"
+                } else null
+            }
+
+            val included = rule.include.let {
+                if (it.isNotEmpty()) {
+                    "[${it.joinToString()}]"
+                } else null
+            }
+
+            appendln(
+                """
+            |       config.module.rules.push({
+            |           test: /\.css${'$'}/,
+            |           use: use,
+            |           ${excluded?.let { "exclude: $it," } ?: ""}
+            |           ${included?.let { "include: $it" } ?: ""}
+            |       })
 
             """.trimMargin()
-        )
+            )
+
+            appendln(
+                """
+            |   })(config);
+            
+            """.trimMargin()
+            )
+        }
 
         appendln(
             """

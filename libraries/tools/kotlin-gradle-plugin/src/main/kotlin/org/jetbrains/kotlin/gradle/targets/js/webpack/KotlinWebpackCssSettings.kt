@@ -6,14 +6,46 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 
 data class KotlinWebpackCssSettings(
     @Input
     var enabled: Boolean = true,
 
+    @Nested
+    var rules: MutableList<KotlinWebpackCssRule> = mutableListOf(
+        KotlinWebpackCssRule()
+    )
+) {
+    @get:Internal
+    var mode: String
+        get() =
+            rules
+                .singleOrNull()
+                ?.mode ?: singleRuleError()
+        set(value) {
+            rules.singleOrNull()
+                ?.let {
+                    it.mode = value
+                } ?: singleRuleError()
+        }
+
+    private fun singleRuleError(): Nothing {
+        throw error("CSS mode shortcut can be applied only with one css rule")
+    }
+}
+
+data class KotlinWebpackCssRule(
     @Input
-    var mode: String = INLINE
+    var mode: String = INLINE,
+
+    @Input
+    var include: MutableList<String> = mutableListOf(),
+
+    @Input
+    var exclude: MutableList<String> = mutableListOf()
 )
 
 object KotlinWebpackCssMode {
