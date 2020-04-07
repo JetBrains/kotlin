@@ -183,4 +183,14 @@ public class HighlightingSettingsPerFile extends HighlightingLevelManager implem
 
     return !SingleRootFileViewProvider.isTooLargeForIntelligence(virtualFile);
   }
+
+  public int countRoots(FileHighlightingSetting setting) {
+    int count = 0;
+    for (FileHighlightingSetting[] settingsForRoots : myHighlightSettings.values()) {
+      for (FileHighlightingSetting settingForRoot : settingsForRoots) {
+        if (settingForRoot == setting) count++;
+      }
+    }
+    return count;
+  }
 }
