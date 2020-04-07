@@ -464,12 +464,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         // Step 2. Find references to restore in a target file
         return ProgressIndicatorUtils.awaitWithCheckCanceled(
-            nonBlocking<List<ReferenceToRestoreData>> {
-                return@nonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
+            submitNonBlocking(project, indicator) {
+                return@submitNonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
             }
-                .withDocumentsCommitted(project)
-                //.cancelWith(indicator)
-                .submit(AppExecutorUtil.getAppExecutorService())
         )
     }
 
