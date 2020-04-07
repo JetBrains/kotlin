@@ -50,7 +50,7 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
     presentation.setText(() -> IdeBundle.message("go.to.class.title.prefix", GotoClassPresentationUpdater.getActionTitle() + "..."));
     presentation.setDescription(() -> IdeBundle.message("go.to.class.action.description",
                                                         StringUtil.join(GotoClassPresentationUpdater.getElementKinds(), "/")));
-    addTextOverride(ActionPlaces.MAIN_MENU, GotoClassPresentationUpdater.getActionTitle() + "...");
+    addTextOverride(ActionPlaces.MAIN_MENU, () -> GotoClassPresentationUpdater.getActionTitle() + "...");
   }
 
   @Override
