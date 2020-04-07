@@ -113,6 +113,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
                 else ->
                     KotlinIcons.FUNCTION
             }
+            is KtConstructor<*> -> PlatformIcons.METHOD_ICON
             is KtFunctionLiteral -> KotlinIcons.LAMBDA
             is KtClass -> when {
                 isInterface() -> KotlinIcons.INTERFACE
