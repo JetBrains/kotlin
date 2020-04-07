@@ -58,6 +58,7 @@ object ExpectedActualResolver {
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {
+        val compatibilityChecker = ExpectActualCompatibilityChecker(platformModule)
         return when (expected) {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(platformModule).filter { actual ->
@@ -67,7 +68,7 @@ object ExpectedActualResolver {
                             // TODO: support non-source definitions (e.g. from Java)
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    ExpectActualCompatibilityChecker.areCompatibleCallables(expected, actual)
+                    compatibilityChecker.areCompatibleCallables(expected, actual)
                 }
             }
             is ClassDescriptor -> {
@@ -75,7 +76,7 @@ object ExpectedActualResolver {
                     expected != actual && !actual.isExpect &&
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    ExpectActualCompatibilityChecker.areCompatibleClassifiers(expected, actual)
+                    compatibilityChecker.areCompatibleClassifiers(expected, actual)
                 }
             }
             else -> null
@@ -86,6 +87,8 @@ object ExpectedActualResolver {
         actual: MemberDescriptor,
         commonModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {
+        val compatibilityChecker = ExpectActualCompatibilityChecker(actual.module)
+
         return when (actual) {
             is CallableMemberDescriptor -> {
                 val container = actual.containingDeclaration
@@ -110,7 +113,7 @@ object ExpectedActualResolver {
                             // TODO: this might not work for members of inner generic classes
                             Substitutor(expectedClass.declaredTypeParameters, container.declaredTypeParameters)
                         } else null
-                    ExpectActualCompatibilityChecker.areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
+                    compatibilityChecker.areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
@@ -118,7 +121,7 @@ object ExpectedActualResolver {
                     actual != declaration &&
                             declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
-                    ExpectActualCompatibilityChecker.areCompatibleClassifiers(expected as ClassDescriptor, actual)
+                    compatibilityChecker.areCompatibleClassifiers(expected as ClassDescriptor, actual)
                 }
             }
             else -> null

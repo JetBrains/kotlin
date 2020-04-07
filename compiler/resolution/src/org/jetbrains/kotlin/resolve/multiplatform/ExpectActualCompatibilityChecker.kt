@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.*
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
-internal object ExpectActualCompatibilityChecker {
+internal class ExpectActualCompatibilityChecker(private val platformModule: ModuleDescriptor) {
     internal fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         assert(a.name == other.name) { "This function should be invoked only for declarations with the same name: $a, $other" }
@@ -46,19 +45,18 @@ internal object ExpectActualCompatibilityChecker {
 
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
-        val platformModule = other.module
         val substitutor = Substitutor(aTypeParams, bTypeParams)
-        areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
+        areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
 
         // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,
         // and not added if an explicit supertype _is_ specified
         val aSupertypes = a.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         val bSupertypes = b.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         if (aSupertypes.map(substitutor).any { aSupertype ->
-                bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
+                bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype) }
             }) return Incompatible.Supertypes
 
-        areCompatibleClassScopes(a, b, platformModule, substitutor).let { if (it != Compatible) return it }
+        areCompatibleClassScopes(a, b, substitutor).let { if (it != Compatible) return it }
 
         return Compatible
     }
@@ -67,7 +65,6 @@ internal object ExpectActualCompatibilityChecker {
     internal fun areCompatibleCallables(
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,
-        platformModule: ModuleDescriptor = b.module,
         parentSubstitutor: Substitutor? = null
     ): Compatibility {
         assert(a.name == b.name) {
@@ -97,11 +94,11 @@ internal object ExpectActualCompatibilityChecker {
 
         val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
-        if (!areCompatibleTypeLists(aParams.map { substitutor(it.type) }, bParams.map { it.type }, platformModule) ||
-            !areCompatibleTypes(aExtensionReceiver?.type?.let(substitutor), bExtensionReceiver?.type, platformModule)
+        if (!areCompatibleTypeLists(aParams.map { substitutor(it.type) }, bParams.map { it.type }) ||
+            !areCompatibleTypes(aExtensionReceiver?.type?.let(substitutor), bExtensionReceiver?.type)
         )
             return Incompatible.ParameterTypes
-        if (!areCompatibleTypes(substitutor(a.returnType), b.returnType, platformModule)) return Incompatible.ReturnType
+        if (!areCompatibleTypes(substitutor(a.returnType), b.returnType)) return Incompatible.ReturnType
 
         if (b.hasStableParameterNames() && !equalsBy(
                 aParams,
@@ -114,7 +111,7 @@ internal object ExpectActualCompatibilityChecker {
         if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
         if (!areDeclarationsWithCompatibleVisibilities(a, b)) return Incompatible.Visibility
 
-        areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
+        areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
 
         if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null) })) return Incompatible.ValueParameterVararg
 
@@ -147,15 +144,15 @@ internal object ExpectActualCompatibilityChecker {
             false
     }
 
-    private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?, platformModule: ModuleDescriptor): Boolean {
+    private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?): Boolean {
         if (a == null) return b == null
         if (b == null) return false
 
         with(NewKotlinTypeChecker.Default) {
             val context = object : ClassicTypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
-                    return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||
-                            isExpectedClassAndActualTypeAlias(b, a, platformModule) ||
+                    return isExpectedClassAndActualTypeAlias(a, b) ||
+                            isExpectedClassAndActualTypeAlias(b, a) ||
                             super.areEqualTypeConstructors(a, b)
                 }
             }
@@ -169,8 +166,7 @@ internal object ExpectActualCompatibilityChecker {
     // as the corresponding expected class, so their type constructors are equal as per AbstractClassTypeConstructor#equals
     private fun isExpectedClassAndActualTypeAlias(
         expectedTypeConstructor: TypeConstructor,
-        actualTypeConstructor: TypeConstructor,
-        platformModule: ModuleDescriptor
+        actualTypeConstructor: TypeConstructor
     ): Boolean {
         val expected = expectedTypeConstructor.declarationDescriptor
         val actual = actualTypeConstructor.declarationDescriptor
@@ -185,9 +181,9 @@ internal object ExpectActualCompatibilityChecker {
                 }
     }
 
-    private fun areCompatibleTypeLists(a: List<KotlinType?>, b: List<KotlinType?>, platformModule: ModuleDescriptor): Boolean {
+    private fun areCompatibleTypeLists(a: List<KotlinType?>, b: List<KotlinType?>): Boolean {
         for (i in a.indices) {
-            if (!areCompatibleTypes(a[i], b[i], platformModule)) return false
+            if (!areCompatibleTypes(a[i], b[i])) return false
         }
         return true
     }
@@ -195,13 +191,12 @@ internal object ExpectActualCompatibilityChecker {
     private fun areCompatibleTypeParameters(
         a: List<TypeParameterDescriptor>,
         b: List<TypeParameterDescriptor>,
-        platformModule: ModuleDescriptor,
         substitutor: Substitutor
     ): Compatibility {
         for (i in a.indices) {
             val aBounds = a[i].upperBounds
             val bBounds = b[i].upperBounds
-            if (aBounds.size != bBounds.size || !areCompatibleTypeLists(aBounds.map(substitutor), bBounds, platformModule)) {
+            if (aBounds.size != bBounds.size || !areCompatibleTypeLists(aBounds.map(substitutor), bBounds)) {
                 return Incompatible.TypeParameterUpperBounds
             }
         }
@@ -256,7 +251,6 @@ internal object ExpectActualCompatibilityChecker {
     private fun areCompatibleClassScopes(
         a: ClassDescriptor,
         b: ClassDescriptor,
-        platformModule: ModuleDescriptor,
         substitutor: Substitutor
     ): Compatibility {
         val unfulfilled = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
@@ -274,7 +268,7 @@ internal object ExpectActualCompatibilityChecker {
             val mapping = bMembers.keysToMap { bMember ->
                 when (aMember) {
                     is CallableMemberDescriptor ->
-                        areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, platformModule, substitutor)
+                        areCompatibleCallables(aMember, bMember as CallableMemberDescriptor, substitutor)
                     is ClassDescriptor ->
                         areCompatibleClassifiers(aMember, bMember as ClassDescriptor)
                     else -> throw UnsupportedOperationException("Unsupported declaration: $aMember ($bMembers)")
