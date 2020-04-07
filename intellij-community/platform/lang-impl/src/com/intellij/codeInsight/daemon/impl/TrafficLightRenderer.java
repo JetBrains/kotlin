@@ -261,7 +261,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   @Override
-  public void paint(Component c, Graphics g, Rectangle r) {
+  public void paint(@NotNull Component c, Graphics g, @NotNull Rectangle r) {
     DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
     Icon icon = getIcon(status);
     icon.paintIcon(c, g, r.x, r.y);
@@ -659,7 +659,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public void openProblemsView() {
-      ProblemsViewToolWindowFactory.wakeup(getProject(), true);
+      ProblemsViewToolWindowFactory.wakeup(getProject(), true, true);
     }
   }
 
@@ -670,6 +670,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     catch (ConfigurationException ignored) {}
   }
 
+  @NotNull
   private static InspectionsLevel getHighlightLevel(boolean highlight, boolean inspect) {
     if (!highlight && !inspect) return InspectionsLevel.NONE;
     else if (highlight && !inspect) return InspectionsLevel.ERRORS;
