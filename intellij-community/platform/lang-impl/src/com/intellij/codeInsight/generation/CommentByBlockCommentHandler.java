@@ -195,6 +195,7 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
     if (!myCaret.hasSelection()) {
       return true;
     }
+    PsiDocumentManager.getInstance(myFile.getProject()).commitDocument(myDocument);
     TextRange range
       = new TextRange(myCaret.getSelectionStart(), myCaret.getSelectionEnd() - 1);
     for (PsiElement element = myFile.findElementAt(range.getStartOffset()); element != null && range.intersects(element.getTextRange());
