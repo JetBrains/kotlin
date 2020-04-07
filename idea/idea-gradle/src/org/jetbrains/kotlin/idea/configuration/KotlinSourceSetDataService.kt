@@ -150,7 +150,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 kind = kotlinSourceSet.kotlinModule.kind
 
                 isTestModule = kotlinSourceSet.isTestModule
-                externalSystemTestTasks = ArrayList(kotlinSourceSet.externalSystemTestTasks)
+                externalSystemRunTasks = ArrayList(kotlinSourceSet.externalSystemRunTasks)
 
                 externalProjectId = kotlinSourceSet.gradleModuleId
 
