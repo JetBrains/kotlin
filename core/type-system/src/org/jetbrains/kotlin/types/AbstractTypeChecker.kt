@@ -47,7 +47,12 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
     }
 
     open fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy = CHECK_SUBTYPE_AND_LOWER
-    open fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? = null
+
+    open fun addSubtypeConstraint(
+        subType: KotlinTypeMarker,
+        superType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean = false
+    ): Boolean? = null
 
     enum class LowerCapturedTypePolicy {
         CHECK_ONLY_LOWER,
@@ -162,9 +167,17 @@ object AbstractTypeChecker {
         return AbstractTypeChecker.equalTypes(context.newBaseTypeCheckerContext(false, stubTypesEqualToAnything), a, b)
     }
 
-    fun isSubtypeOf(context: AbstractTypeCheckerContext, subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
+    fun isSubtypeOf(
+        context: AbstractTypeCheckerContext,
+        subType: KotlinTypeMarker,
+        superType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean = false
+    ): Boolean {
         if (subType === superType) return true
-        return with(context) { completeIsSubTypeOf(prepareType(refineType(subType)), prepareType(refineType(superType))) }
+
+        return with(context) {
+            completeIsSubTypeOf(prepareType(refineType(subType)), prepareType(refineType(superType)), isFromNullabilityConstraint)
+        }
     }
 
     fun equalTypes(context: AbstractTypeCheckerContext, a: KotlinTypeMarker, b: KotlinTypeMarker): Boolean = with(context) {
@@ -186,14 +199,18 @@ object AbstractTypeChecker {
     }
 
 
-    private fun AbstractTypeCheckerContext.completeIsSubTypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
+    private fun AbstractTypeCheckerContext.completeIsSubTypeOf(
+        subType: KotlinTypeMarker,
+        superType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean
+    ): Boolean {
         checkSubtypeForSpecialCases(subType.lowerBoundIfFlexible(), superType.upperBoundIfFlexible())?.let {
-            addSubtypeConstraint(subType, superType)
+            addSubtypeConstraint(subType, superType, isFromNullabilityConstraint)
             return it
         }
 
         // we should add constraints with flexible types, otherwise we never get flexible type as answer in constraint system
-        addSubtypeConstraint(subType, superType)?.let { return it }
+        addSubtypeConstraint(subType, superType, isFromNullabilityConstraint)?.let { return it }
 
         return isSubtypeOfForSingleClassifierType(subType.lowerBoundIfFlexible(), superType.upperBoundIfFlexible())
     }

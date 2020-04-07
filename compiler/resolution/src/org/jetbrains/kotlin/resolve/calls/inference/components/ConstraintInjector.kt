@@ -181,13 +181,15 @@ class ConstraintInjector(
         fun runIsSubtypeOf(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
-            shouldTryUseDifferentFlexibilityForUpperType: Boolean = false
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean = false,
+            isFromNullabilityConstraint: Boolean = false
         ) {
             fun isSubtypeOf(upperType: KotlinTypeMarker) =
                 AbstractTypeChecker.isSubtypeOf(
                     this@TypeCheckerContext as AbstractTypeCheckerContext,
                     lowerType,
-                    upperType
+                    upperType,
+                    isFromNullabilityConstraint
                 )
 
             if (!isSubtypeOf(upperType)) {
@@ -215,8 +217,11 @@ class ConstraintInjector(
         override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker) =
             addConstraint(typeVariable, superType, UPPER)
 
-        override fun addLowerConstraint(typeVariable: TypeConstructorMarker, subType: KotlinTypeMarker) =
-            addConstraint(typeVariable, subType, LOWER)
+        override fun addLowerConstraint(
+            typeVariable: TypeConstructorMarker,
+            subType: KotlinTypeMarker,
+            isFromNullabilityConstraint: Boolean
+        ) = addConstraint(typeVariable, subType, LOWER, isFromNullabilityConstraint)
 
         private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker) =
             when ((type as? CapturedTypeMarker)?.captureStatus()) {
@@ -226,22 +231,32 @@ class ConstraintInjector(
                     error("Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint())
             }
 
-        private fun addConstraint(typeVariableConstructor: TypeConstructorMarker, type: KotlinTypeMarker, kind: ConstraintKind) {
+        private fun addConstraint(
+            typeVariableConstructor: TypeConstructorMarker,
+            type: KotlinTypeMarker,
+            kind: ConstraintKind,
+            isFromNullabilityConstraint: Boolean = false
+        ) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor]
                 ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
-            addNewIncorporatedConstraint(typeVariable, type, ConstraintContext(kind, emptySet(), isNullabilityConstraint = false))
+            addNewIncorporatedConstraint(
+                typeVariable,
+                type,
+                ConstraintContext(kind, emptySet(), isNullabilityConstraint = isFromNullabilityConstraint)
+            )
         }
 
         // from ConstraintIncorporator.Context
         override fun addNewIncorporatedConstraint(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
-            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean,
+            isFromNullabilityConstraint: Boolean
         ) {
             if (lowerType === upperType) return
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
-                runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType)
+                runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
             }
         }
 

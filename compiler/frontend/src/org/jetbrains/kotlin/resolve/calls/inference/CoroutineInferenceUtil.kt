@@ -259,7 +259,7 @@ class CoroutineInferenceSupport(
         private val allowOnlyTrivialConstraints: Boolean
     ) : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
 
-        override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
+        override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker, isFromNullabilityConstraint: Boolean): Boolean? {
             require(subType is UnwrappedType)
             require(superType is UnwrappedType)
             val typeTemplate = subType as? TypeTemplate ?: superType as? TypeTemplate

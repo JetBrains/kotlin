@@ -31,7 +31,8 @@ class ConstraintIncorporator(
         fun addNewIncorporatedConstraint(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
-            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean,
+            isFromNullabilityConstraint: Boolean = false
         )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
@@ -62,7 +63,7 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.LOWER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible)
+                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible, it.isNullabilityConstraint)
                 }
             }
         }
@@ -231,7 +232,10 @@ class ConstraintIncorporator(
 
         val inputTypePosition = baseConstraint.position.from.safeAs<OnlyInputTypeConstraintPosition>()
 
-        val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val isNewConstraintUsefulForNullability = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val isOtherConstraintUsefulForNullability = otherConstraint.isNullabilityConstraint && otherConstraint.type.isNullableNothing()
+        val isNullabilityConstraint = isNewConstraintUsefulForNullability || isOtherConstraintUsefulForNullability
+
         val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
 
         addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
