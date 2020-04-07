@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.io.File
 import java.net.URLClassLoader
 
-@Ignore("b/148457543")
 @RunWith(ComposeRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
@@ -38,6 +36,37 @@ import java.net.URLClassLoader
     maxSdk = 23
 )
 class KtxCrossModuleTests : AbstractCodegenTest() {
+
+    @Test
+    fun testInlineClassCrossModule(): Unit = ensureSetup {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/I.kt" to """
+                        package x
+                        inline class I(val i: Int)
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/User.kt" to """
+                        package y
+                        import x.I
+                        inline class J(val j: Int)
+                        fun foo(): Int = I(42).i + J(23).j
+                    """.trimIndent()
+                )
+            )
+        ) {
+            // If the output contains getI-impl, the cross-module inline class
+            // was incorrectly compiled and the getter was not removed. This
+            // happens if the relationship between the getter and the corresponding
+            // property is broken by the compiler.
+            assert(!it.contains("getI-impl"))
+            // Check that inline classes where optimized to integers.
+            assert(it.contains("INVOKESTATIC x/I.constructor-impl (I)I"))
+            assert(it.contains("INVOKESTATIC y/J.constructor-impl (I)I"))
+        }
+    }
 
     @Test
     fun testCrossinlineEmittable(): Unit = ensureSetup {
