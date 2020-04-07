@@ -28,6 +28,7 @@ class NpmVersions {
 
     val cssLoader = NpmPackageVersion("css-loader", "3.4.2")
     val styleLoader = NpmPackageVersion("style-loader", "1.1.3")
+    val toStringLoader = NpmPackageVersion("to-string-loader", "1.1.6")
     val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "0.9.0")
 
     val mocha = NpmPackageVersion("mocha", "7.1.1")

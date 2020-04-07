@@ -64,8 +64,7 @@ data class KotlinWebpackConfig(
                 when (rule.mode) {
                     EXTRACT -> it.add(versions.miniCssExtractPlugin)
                     INLINE -> it.add(versions.styleLoader)
-                    IMPORT -> {
-                    }
+                    IMPORT -> it.add(versions.toStringLoader)
                     else -> cssError()
                 }
             }
@@ -285,6 +284,15 @@ data class KotlinWebpackConfig(
             |       
             """.trimMargin()
 
+        val importedCss =
+            """
+            |       use.unshift({
+            |           loader: 'to-string-loader',
+            |           options: {}
+            |       })
+            |       
+            """.trimMargin()
+
         cssSettings.rules.forEach { rule ->
             appendln(
                 """
@@ -305,8 +313,7 @@ data class KotlinWebpackConfig(
             when (rule.mode) {
                 EXTRACT -> appendln(extractedCss)
                 INLINE -> appendln(inlinedCss)
-                IMPORT -> {
-                }
+                IMPORT -> appendln(importedCss)
                 else -> cssError()
             }
 
