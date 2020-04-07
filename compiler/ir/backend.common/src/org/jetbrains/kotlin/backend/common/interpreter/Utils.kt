@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.interpreter
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.stack.*
+import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
@@ -178,8 +178,8 @@ fun IrType.getFqName(): String? {
     return this.classOrNull?.owner?.fqNameForIrSerialization?.asString()
 }
 
-fun IrFunction.getArgsForMethodInvocation(data: Frame): List<Any?> {
-    val argsValues = data.getAll().map {
+fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
+    val argsValues = args.map {
         when (val state = it.state) {
             is ExceptionState -> state.getThisAsCauseForException()
             is Wrapper -> state.value
@@ -191,9 +191,8 @@ fun IrFunction.getArgsForMethodInvocation(data: Frame): List<Any?> {
     // TODO if vararg isn't last parameter
     // must convert vararg array into separated elements for correct invoke
     if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+        val varargValue = argsValues.last()
         argsValues.removeAt(argsValues.size - 1)
-        val varargState = data.getVariableState(this.valueParameters.last().descriptor)
-        val varargValue = (varargState as? Wrapper)?.value ?: (varargState as Primitive<*>).value
         argsValues.addAll(varargValue as Array<out Any?>)
     }
 

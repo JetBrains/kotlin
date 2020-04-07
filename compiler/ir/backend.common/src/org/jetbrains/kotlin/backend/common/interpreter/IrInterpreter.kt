@@ -152,7 +152,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun MethodHandle?.invokeMethod(irFunction: IrFunction, data: Frame): ExecutionResult {
         this ?: return handleIntrinsicMethods(irFunction, data)
-        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data))
+        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data.getAll()))
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
 
         return Next
@@ -165,7 +165,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "arrayOf" -> {
-                val result = irFunction.getArgsForMethodInvocation(data).toTypedArray()
+                val result = irFunction.getArgsForMethodInvocation(data.getAll()).toTypedArray()
                 data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "arrayOfNulls" -> {
