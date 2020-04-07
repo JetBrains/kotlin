@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":idea"))
+    compileOnly(intellijPluginDep("gradle"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-jvm"))
     compile(project(":compiler:frontend"))
