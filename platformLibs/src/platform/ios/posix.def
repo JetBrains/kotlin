@@ -16,7 +16,8 @@ headers = alloca.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcn
 compilerOpts = -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE
 linkerOpts = -ldl -lresolv
 excludedFunctions = acl_valid_link_np add_profil pfctlinput profil unwhiteout zopen getdirentries \
-                    uuid_generate_early_random setgrfile
+                    uuid_generate_early_random setgrfile \
+                    in6addr_linklocal_allv2routers
 excludedFunctions.ios_arm32 = longjmperror
 excludedFunctions.ios_arm64 = longjmperror
 

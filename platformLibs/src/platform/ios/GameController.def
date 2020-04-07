@@ -5,3 +5,5 @@ modules = GameController
 
 compilerOpts = -framework GameController
 linkerOpts = -framework GameController
+
+excludedFunctions = GCCurrentExtendedGamepadSnapshotDataVersion GCCurrentMicroGamepadSnapshotDataVersion

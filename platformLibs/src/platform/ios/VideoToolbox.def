@@ -5,3 +5,12 @@ modules = VideoToolbox
 
 compilerOpts = -framework VideoToolbox
 linkerOpts = -framework VideoToolbox
+
+excludedFunctions = kVTCompressionPropertyKey_UsingGPURegistryID \
+    kVTDecompressionPropertyKey_MaximizePowerEfficiency \
+    kVTDecompressionPropertyKey_UsingGPURegistryID \
+    kVTVideoDecoderSpecification_PreferredDecoderGPURegistryID \
+    kVTVideoDecoderSpecification_RequiredDecoderGPURegistryID \
+    kVTVideoEncoderList_GPURegistryID \
+    kVTVideoEncoderSpecification_PreferredEncoderGPURegistryID \
+    kVTVideoEncoderSpecification_RequiredEncoderGPURegistryID

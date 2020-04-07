@@ -5,3 +5,5 @@ modules = CoreBluetooth
 
 compilerOpts = -framework CoreBluetooth
 linkerOpts = -framework CoreBluetooth
+
+excludedFunctions = CBConnectPeripheralOptionStartDelayKey

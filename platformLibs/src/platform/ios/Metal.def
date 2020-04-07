@@ -5,3 +5,5 @@ modules = Metal
 
 compilerOpts = -framework Metal
 linkerOpts = -framework Metal
+
+excludedFunctions = MTLCommandBufferErrorDomain

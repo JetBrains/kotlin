@@ -5,3 +5,6 @@ modules = Network
 
 compilerOpts = -framework Network
 linkerOpts = -framework Network
+
+excludedFunctions = _nw_data_transfer_report_all_paths
+excludedMacros = NW_ALL_PATHS
