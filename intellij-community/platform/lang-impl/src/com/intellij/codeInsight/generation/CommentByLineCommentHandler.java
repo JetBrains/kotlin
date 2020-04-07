@@ -15,12 +15,7 @@ import com.intellij.lang.LanguageCommenters;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.FoldRegion;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.impl.AbstractFileType;
@@ -40,13 +35,10 @@ import com.intellij.util.DocumentUtil;
 import com.intellij.util.containers.IntArrayList;
 import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.THashMap;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class CommentByLineCommentHandler extends MultiCaretCodeInsightActionHandler {
 
@@ -655,7 +647,11 @@ public class CommentByLineCommentHandler extends MultiCaretCodeInsightActionHand
             document.getCharsSequence().charAt(shiftedStartOffset) != '\n') {
           prefix += ' ';
         }
-        document.insertString(offset, prefix);
+        InjectedLanguageManager injectedLanguageManager = InjectedLanguageManager.getInstance(block.psiFile.getProject());
+        if (!injectedLanguageManager.isInjectedFragment(block.psiFile) ||
+            !injectedLanguageManager.intersectWithAllEditableFragments(block.psiFile, new TextRange(offset, offset)).isEmpty()) {
+          document.insertString(offset, prefix);
+        }
       }
     }
     else {
