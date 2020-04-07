@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -53,14 +52,92 @@ open class StmResolveExtension : SyntheticResolveExtension {
 
         internal fun undoSetterName(name: Name) =
             identifier(name.asString().removePrefix(SET_PREFIX).removeSuffix(SHARABLE_NAME_SUFFIX))
+
+        fun createAndInitFunctionDescriptor(
+            containingDeclaration: DeclarationDescriptor,
+            sourceElement: SourceElement,
+            functionName: Name,
+            dispatchReceiverParameter: ReceiverParameterDescriptor?,
+            extensionReceiverParameter: ReceiverParameterDescriptor?,
+            type: KotlinType,
+            visibility: Visibility,
+            typeParameters: List<TypeParameterDescriptor> = listOf(),
+            valueParametersBuilder: MutableList<ValueParameterDescriptor>.(SimpleFunctionDescriptor) -> Unit
+        ): SimpleFunctionDescriptor {
+            val descriptor = SimpleFunctionDescriptorImpl.create(
+                containingDeclaration,
+                Annotations.EMPTY,
+                functionName,
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                sourceElement
+            )
+
+            val valueParameters = mutableListOf<ValueParameterDescriptor>()
+            valueParameters.valueParametersBuilder(descriptor)
+
+            descriptor.initialize(
+                extensionReceiverParameter,
+                dispatchReceiverParameter,
+                listOf(),
+                valueParameters,
+                type,
+                Modality.FINAL,
+                visibility
+            )
+
+            return descriptor
+        }
+
+        fun createValueParam(
+            sourceElement: SourceElement,
+            containingFunction: FunctionDescriptor,
+            type: KotlinType,
+            name: String,
+            index: Int
+        ) =
+            ValueParameterDescriptorImpl(
+                containingFunction,
+                original = null,
+                index = index,
+                annotations = Annotations.EMPTY,
+                name = identifier(name),
+                outType = type,
+                declaresDefaultValue = false,
+                isCrossinline = false,
+                isNoinline = false,
+                varargElementType = null,
+                source = sourceElement
+            )
+
+        private fun findSTMContextClass(module: ModuleDescriptor) = module.findClassAcrossModuleDependencies(
+            ClassId(
+                STM_PACKAGE,
+                STM_CONTEXT
+            )
+        ) ?: throw StmResolveException("Couldn't find $STM_CONTEXT runtime class in dependencies of module ${module.name}")
+
+        fun createContextValueParam(
+            module: ModuleDescriptor,
+            sourceElement: SourceElement,
+            containingFunction: FunctionDescriptor,
+            index: Int
+        ) =
+            createValueParam(
+                sourceElement,
+                containingFunction,
+                findSTMContextClass(module).defaultType,
+                name = "ctx",
+                index = index
+            )
     }
 
-    override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> {
-        val res = thisDescriptor.unsubstitutedMemberScope.getVariableNames()
-            .filter { thisDescriptor.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_BACKEND).isNotEmpty() }
-            .map { listOf(getterName(it), setterName(it)) }
-            .flatten()
-        return res
+    override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = when {
+        thisDescriptor.annotations.hasAnnotation(SHARED_MUTABLE_ANNOTATION) ->
+            thisDescriptor.unsubstitutedMemberScope.getVariableNames()
+                .filter { thisDescriptor.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_BACKEND).isNotEmpty() }
+                .map { listOf(getterName(it), setterName(it)) }
+                .flatten()
+        else -> listOf()
     }
 
     override fun generateSyntheticMethods(
@@ -79,72 +156,33 @@ open class StmResolveExtension : SyntheticResolveExtension {
             NoLookupLocation.FROM_BACKEND
         ).first()
 
-        val contextClass = thisDescriptor.module.findClassAcrossModuleDependencies(
-            ClassId(
-                STM_PACKAGE,
-                STM_CONTEXT
-            )
-        ) ?: throw StmResolveException("Couldn't find $STM_CONTEXT runtime class in dependencies of module ${thisDescriptor.module.name}")
-
-        fun createAccessorDescriptor(accessorName: Name) = SimpleFunctionDescriptorImpl.create(
-            thisDescriptor,
-            Annotations.EMPTY,
-            accessorName,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            thisDescriptor.source
-        )
-
-        fun createValueParam(containingAccessor: FunctionDescriptor, type: KotlinType, name: String, index: Int) =
-            ValueParameterDescriptorImpl(
-                containingAccessor,
-                original = null,
-                index = index,
-                annotations = Annotations.EMPTY,
-                name = identifier(name),
-                outType = type,
-                declaresDefaultValue = false,
-                isCrossinline = false,
-                isNoinline = false,
-                varargElementType = null,
-                source = thisDescriptor.source
-            )
-
-        fun createContextValueParam(containingAccessor: FunctionDescriptor, index: Int) = createValueParam(
-            containingAccessor,
-            contextClass.defaultType,
-            name = "ctx",
-            index = index
-        )
-
         if (name.asString().startsWith(GET_PREFIX)) {
-            val newGetter = createAccessorDescriptor(getterName(varName))
-
-            newGetter.initialize(
-                null,
-                thisDescriptor.thisAsReceiverParameter,
-                listOf(),
-                listOf(createContextValueParam(newGetter, index = 0)),
-                property.type,
-                Modality.FINAL,
-                property.visibility
-            )
+            val newGetter = createAndInitFunctionDescriptor(
+                containingDeclaration = thisDescriptor,
+                sourceElement = thisDescriptor.source,
+                functionName = getterName(varName),
+                dispatchReceiverParameter = thisDescriptor.thisAsReceiverParameter,
+                extensionReceiverParameter = null,
+                type = property.type,
+                visibility = property.visibility
+            ) { newGetter ->
+                add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newGetter, index = 0))
+            }
 
             result += newGetter
         } else if (name.asString().startsWith(SET_PREFIX)) {
-            val newSetter = createAccessorDescriptor(setterName(varName))
-
-            newSetter.initialize(
-                null,
-                thisDescriptor.thisAsReceiverParameter,
-                listOf(),
-                listOf(
-                    createContextValueParam(newSetter, index = 0),
-                    createValueParam(newSetter, property.type, name = "newValue", index = 1)
-                ),
-                DefaultBuiltIns.Instance.unitType,
-                Modality.FINAL,
-                property.visibility
-            )
+            val newSetter = createAndInitFunctionDescriptor(
+                containingDeclaration = thisDescriptor,
+                sourceElement = thisDescriptor.source,
+                functionName = setterName(varName),
+                dispatchReceiverParameter = thisDescriptor.thisAsReceiverParameter,
+                extensionReceiverParameter = null,
+                type = DefaultBuiltIns.Instance.unitType,
+                visibility = property.visibility
+            ) { newSetter ->
+                add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newSetter, index = 0))
+                add(createValueParam(thisDescriptor.source, newSetter, property.type, name = "newValue", index = 1))
+            }
 
             result += newSetter
         }

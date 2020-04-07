@@ -50,8 +50,8 @@ fun Name.isSTMFieldName() = this.asString().startsWith(STM_FIELD_NAME)
 
 internal val VAR_ACCESS_TEMPORARY_PREFIX = "______var___access__________"
 
-const val GET_PREFIX = "_get_"
-const val SET_PREFIX = "_set_"
+const val GET_PREFIX = "_____get_"
+const val SET_PREFIX = "_set_____"
 
 const val KT_DEFAULT_GET_PREFIX = "<get"
 const val KT_DEFAULT_SET_PREFIX = "<set"

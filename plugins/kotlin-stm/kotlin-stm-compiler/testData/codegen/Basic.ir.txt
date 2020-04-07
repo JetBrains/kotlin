@@ -1,4 +1,4 @@
-final class koko/C$g$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+final class koko/BasicKt$g$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
     private final koko.User $u
 
     void <init>(koko.User $u) {
@@ -19,47 +19,47 @@ final class koko/C$g$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Functi
           LDC (<this>)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-        LINENUMBER (32)
+        LINENUMBER (37)
           ALOAD (0)
           GETFIELD ($u, Lkoko/User;)
         LABEL (L2)
-        LINENUMBER (31)
+        LINENUMBER (36)
           ALOAD (1)
         LABEL (L3)
-        LINENUMBER (32)
-          INVOKEVIRTUAL (koko/User, _get_firstName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
+        LINENUMBER (37)
+          INVOKEVIRTUAL (koko/User, _____get_firstName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
           ASTORE (2)
         LABEL (L4)
-        LINENUMBER (33)
+        LINENUMBER (38)
           ALOAD (0)
           GETFIELD ($u, Lkoko/User;)
         LABEL (L5)
-        LINENUMBER (31)
+        LINENUMBER (36)
           ALOAD (1)
         LABEL (L6)
-        LINENUMBER (33)
+        LINENUMBER (38)
           ALOAD (0)
           GETFIELD ($u, Lkoko/User;)
         LABEL (L7)
-        LINENUMBER (31)
+        LINENUMBER (36)
           ALOAD (1)
         LABEL (L8)
-        LINENUMBER (33)
-          INVOKEVIRTUAL (koko/User, _get_lastName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
-          INVOKEVIRTUAL (koko/User, _set_firstName$_______Sharable____, (Lkotlinx/stm/STMContext;Ljava/lang/String;)V)
+        LINENUMBER (38)
+          INVOKEVIRTUAL (koko/User, _____get_lastName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
+          INVOKEVIRTUAL (koko/User, _set_____firstName$_______Sharable____, (Lkotlinx/stm/STMContext;Ljava/lang/String;)V)
         LABEL (L9)
-        LINENUMBER (34)
+        LINENUMBER (39)
           ALOAD (0)
           GETFIELD ($u, Lkoko/User;)
         LABEL (L10)
-        LINENUMBER (31)
+        LINENUMBER (36)
           ALOAD (1)
         LABEL (L11)
-        LINENUMBER (34)
+        LINENUMBER (39)
           ALOAD (2)
-          INVOKEVIRTUAL (koko/User, _set_lastName$_______Sharable____, (Lkotlinx/stm/STMContext;Ljava/lang/String;)V)
+          INVOKEVIRTUAL (koko/User, _set_____lastName$_______Sharable____, (Lkotlinx/stm/STMContext;Ljava/lang/String;)V)
         LABEL (L12)
-        LINENUMBER (35)
+        LINENUMBER (40)
           RETURN
         LABEL (L13)
     }
@@ -69,47 +69,80 @@ final class koko/C$g$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Functi
           ALOAD (0)
           ALOAD (1)
           CHECKCAST
-          INVOKEVIRTUAL (koko/C$g$1, invoke, (Lkotlinx/stm/STMContext;)V)
+          INVOKEVIRTUAL (koko/BasicKt$g$1, invoke, (Lkotlinx/stm/STMContext;)V)
           GETSTATIC (INSTANCE, Lkotlin/Unit;)
           ARETURN
         LABEL (L1)
     }
 }
 
-public final class koko/C : java/lang/Object {
-    public void <init>() {
+public final class koko/BasicKt : java/lang/Object {
+    public final static void a(koko.User u, kotlinx.stm.STMContext ctx) {
         LABEL (L0)
           ALOAD (0)
+          LDC (u)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW
+          DUP
         LABEL (L1)
-        LINENUMBER (27)
-          INVOKESPECIAL (java/lang/Object, <init>, ()V)
-          RETURN
+        LINENUMBER (30)
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
+          LDC (atomic user is: )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          ALOAD (0)
         LABEL (L2)
+        LINENUMBER (29)
+          ALOAD (1)
+        LABEL (L3)
+        LINENUMBER (30)
+          INVOKEVIRTUAL (koko/User, _____get_firstName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          LDC ( )
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          ALOAD (0)
+        LABEL (L4)
+        LINENUMBER (29)
+          ALOAD (1)
+        LABEL (L5)
+        LINENUMBER (30)
+          INVOKEVIRTUAL (koko/User, _____get_lastName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
+          ASTORE (2)
+          ICONST_0
+          ISTORE (3)
+          GETSTATIC (out, Ljava/io/PrintStream;)
+          ALOAD (2)
+          INVOKEVIRTUAL (java/io/PrintStream, println, (Ljava/lang/Object;)V)
+        LABEL (L6)
+        LINENUMBER (31)
+          RETURN
+        LABEL (L7)
     }
 
-    public final void g() {
+    public final static void g() {
         LABEL (L0)
-        LINENUMBER (29)
+        LINENUMBER (34)
           NEW
           DUP
           LDC (Vadim)
           LDC (Briliantov)
           INVOKESPECIAL (koko/User, <init>, (Ljava/lang/String;Ljava/lang/String;)V)
-          ASTORE (1)
+          ASTORE (0)
         LABEL (L1)
-        LINENUMBER (31)
+        LINENUMBER (36)
           ACONST_NULL
           NEW
           DUP
-          ALOAD (1)
-          INVOKESPECIAL (koko/C$g$1, <init>, (Lkoko/User;)V)
+          ALOAD (0)
+          INVOKESPECIAL (koko/BasicKt$g$1, <init>, (Lkoko/User;)V)
           CHECKCAST
           ICONST_1
           ACONST_NULL
           INVOKESTATIC (kotlinx/stm/STMKt, runAtomically$default, (Lkotlinx/stm/STM;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Object;)
           POP
         LABEL (L2)
-        LINENUMBER (36)
+        LINENUMBER (41)
           RETURN
         LABEL (L3)
     }
@@ -193,69 +226,13 @@ public final class koko/User : java/lang/Object {
         LABEL (L7)
     }
 
-    public final java.lang.String _get_firstName$_______Sharable____(kotlinx.stm.STMContext ctx) {
-        LABEL (L0)
-          ALOAD (1)
-          LDC (ctx)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L1)
-        LINENUMBER (8)
-          ALOAD (0)
-          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
-          ALOAD (1)
-          ALOAD (0)
-          GETFIELD (firstName$_______Sharable____, Lkotlinx/stm/UniversalDelegate;)
-          INVOKEVIRTUAL (kotlinx/stm/STM, getVar, (Lkotlinx/stm/STMContext;Lkotlinx/stm/UniversalDelegate;)Ljava/lang/Object;)
-          CHECKCAST
-          ARETURN
-        LABEL (L2)
-    }
+    public final java.lang.String _____get_firstName$_______Sharable____(kotlinx.stm.STMContext ctx)
 
-    public final java.lang.String _get_lastName$_______Sharable____(kotlinx.stm.STMContext ctx) {
-        LABEL (L0)
-          ALOAD (1)
-          LDC (ctx)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L1)
-        LINENUMBER (8)
-          ALOAD (0)
-          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
-          ALOAD (1)
-          ALOAD (0)
-          GETFIELD (lastName$_______Sharable____, Lkotlinx/stm/UniversalDelegate;)
-          INVOKEVIRTUAL (kotlinx/stm/STM, getVar, (Lkotlinx/stm/STMContext;Lkotlinx/stm/UniversalDelegate;)Ljava/lang/Object;)
-          CHECKCAST
-          ARETURN
-        LABEL (L2)
-    }
+    public final java.lang.String _____get_lastName$_______Sharable____(kotlinx.stm.STMContext ctx)
 
-    public final void _set_firstName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue) {
-        LABEL (L0)
-          ALOAD (1)
-          LDC (ctx)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (2)
-          LDC (newValue)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L1)
-        LINENUMBER (25)
-          RETURN
-        LABEL (L2)
-    }
+    public final void _set_____firstName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue)
 
-    public final void _set_lastName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue) {
-        LABEL (L0)
-          ALOAD (1)
-          LDC (ctx)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (2)
-          LDC (newValue)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-        LABEL (L1)
-        LINENUMBER (25)
-          RETURN
-        LABEL (L2)
-    }
+    public final void _set_____lastName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue)
 
     public final void f() {
         LABEL (L0)

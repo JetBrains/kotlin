@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT <init>, invoke, g, f, _get_firstName$_______Sharable____, _get_lastName$_______Sharable____, _set_firstName$_______Sharable____, _set_lastName$_______Sharable____
+// CURIOUS_ABOUT <init>, invoke, g, f, a, _get_firstName$_______Sharable____, _get_lastName$_______Sharable____, _set_firstName$_______Sharable____, _set_lastName$_______Sharable____
 // WITH_RUNTIME
 
 package koko
@@ -24,15 +24,21 @@ class User(fname: String, lname: String) {
     }
 }
 
-class C {
-    fun g() {
-        val u = User("Vadim", "Briliantov")
 
-        runAtomically {
-            val tmp = u.firstName
-            u.firstName = u.lastName
-            u.lastName = tmp
-        }
+@AtomicFunction
+fun a(u: User) {
+    println("atomic user is: ${u.firstName} ${u.lastName}")
+}
+
+fun g() {
+    val u = User("Vadim", "Briliantov")
+
+    runAtomically {
+        val tmp = u.firstName
+        u.firstName = u.lastName
+        u.lastName = tmp
+
+        a(u)
     }
 }
 
