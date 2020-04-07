@@ -40,20 +40,20 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testInlineClassCrossModule(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/I.kt" to """
-                        package x
-                        inline class I(val i: Int)
-                    """.trimIndent()
+                      package x
+                      inline class I(val i: Int)
+                  """.trimIndent()
                 ),
                 "Main" to mapOf(
                     "y/User.kt" to """
-                        package y
-                        import x.I
-                        inline class J(val j: Int)
-                        fun foo(): Int = I(42).i + J(23).j
-                    """.trimIndent()
+                      package y
+                      import x.I
+                      inline class J(val j: Int)
+                      fun foo(): Int = I(42).i + J(23).j
+                  """.trimIndent()
                 )
             )
         ) {
