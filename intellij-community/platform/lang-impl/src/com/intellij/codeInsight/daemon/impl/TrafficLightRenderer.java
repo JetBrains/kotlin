@@ -659,7 +659,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public void openProblemsView() {
-      ProblemsViewToolWindowFactory.wakeup(getProject(), true, true);
+      ProblemsViewToolWindowFactory.wakeup(getProject(), true);
     }
   }
 
