@@ -9,6 +9,7 @@ import kotlinx.android.parcel.TypeParceler
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension.Companion.createMethod
 import org.jetbrains.kotlin.android.parcel.serializers.*
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
+import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase.Companion.FILE_DESCRIPTOR_FQNAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
@@ -44,11 +45,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import java.io.FileDescriptor
 
 open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodegenExtension {
-
-    companion object {
-        private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
-    }
-
     @Deprecated(
         "@Parcelize is now available in non-experimental setups as well.",
         replaceWith = ReplaceWith("true"),

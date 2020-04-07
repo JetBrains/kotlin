@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.android.synthetic
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.kotlin.android.parcel.ParcelableAnnotationChecker
-import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
-import org.jetbrains.kotlin.android.parcel.ParcelableDeclarationChecker
-import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
+import org.jetbrains.kotlin.android.parcel.*
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidIrExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidOnDestroyClassBuilderInterceptorExtension
@@ -33,6 +30,7 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -107,6 +105,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     companion object {
         fun registerParcelExtensions(project: Project) {
             ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
+            PureIrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
             SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
             ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
         }
