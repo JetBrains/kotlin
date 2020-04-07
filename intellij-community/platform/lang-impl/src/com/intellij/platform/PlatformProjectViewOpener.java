@@ -16,7 +16,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ToolWindowType;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +67,7 @@ public final class PlatformProjectViewOpener implements DirectoryProjectConfigur
     public void toolWindowsRegistered(@NotNull List<String> id) {
       if (id.contains(ToolWindowId.PROJECT_VIEW)) {
         Disposer.dispose(this);
-        activateProjectToolWindow(myProject, ToolWindowManagerEx.getInstanceEx(myProject).getToolWindow(ToolWindowId.PROJECT_VIEW));
+        activateProjectToolWindow(myProject, ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.PROJECT_VIEW));
       }
     }
 

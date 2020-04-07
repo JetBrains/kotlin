@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find;
 
 import com.intellij.icons.AllIcons;
@@ -17,14 +17,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class FindAllAction extends AnAction implements ShortcutProvider, DumbAware {
+public final class FindAllAction extends AnAction implements ShortcutProvider, DumbAware {
   public FindAllAction() {
     super(IdeBundle.messagePointer("show.in.find.window.button.name"), IdeBundle.messagePointer("show.in.find.window.button.description"),
           null);
   }
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     Project project = e.getProject();
     Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
     EditorSearchSession search = e.getData(EditorSearchSession.SESSION_KEY);
@@ -36,7 +36,7 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     Editor editor = e.getRequiredData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
     Project project = e.getRequiredData(CommonDataKeys.PROJECT);
     EditorSearchSession search = e.getRequiredData(EditorSearchSession.SESSION_KEY);
@@ -53,15 +53,13 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
     FindUtil.findAllAndShow(project, file, newModel);
   }
 
-  @Nullable
   @Override
-  public ShortcutSet getShortcut() {
+  public @Nullable ShortcutSet getShortcut() {
     AnAction findUsages = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
     return findUsages != null ? findUsages.getShortcutSet() : null;
   }
 
-  @NotNull
-  private static Icon getIcon(@Nullable Project project) {
+  private static @NotNull Icon getIcon(@Nullable Project project) {
     ToolWindowManagerEx toolWindowManager = project != null ? ToolWindowManagerEx.getInstanceEx(project) : null;
     if (toolWindowManager != null) {
       return toolWindowManager.getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);

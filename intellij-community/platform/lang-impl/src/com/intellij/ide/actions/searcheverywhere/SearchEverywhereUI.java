@@ -86,7 +86,7 @@ import java.util.stream.IntStream;
  * @author Konstantin Bulenkov
  * @author Mikhail.Sokolov
  */
-public class SearchEverywhereUI extends BigPopupUI implements DataProvider, QuickSearchComponent {
+public final class SearchEverywhereUI extends BigPopupUI implements DataProvider, QuickSearchComponent {
   private static final Logger LOG = Logger.getInstance(SearchEverywhereUI.class);
 
   public static final String SEARCH_EVERYWHERE_SEARCH_FILED_KEY = "search-everywhere-textfield"; //only for testing purposes

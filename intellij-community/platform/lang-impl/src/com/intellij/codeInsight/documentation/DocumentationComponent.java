@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.codeInsight.documentation;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -105,7 +104,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class DocumentationComponent extends JPanel implements Disposable, DataProvider, WidthBasedLayout {
-
   private static final Logger LOG = Logger.getInstance(DocumentationComponent.class);
   private static final String DOCUMENTATION_TOPIC_ID = "reference.toolWindows.Documentation";
 
@@ -1780,9 +1778,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       Presentation presentation = e.getPresentation();
       if (myManager == null) {
         presentation.setEnabledAndVisible(false);
-      } else {
-        presentation
-          .setIcon(ToolWindowManagerEx.getInstanceEx(myManager.myProject).getLocationIcon(ToolWindowId.DOCUMENTATION, EmptyIcon.ICON_16));
+      }
+      else {
+        presentation.setIcon(ToolWindowManagerEx.getInstanceEx(myManager.myProject).getLocationIcon(ToolWindowId.DOCUMENTATION, EmptyIcon.ICON_16));
         presentation.setEnabledAndVisible(myToolwindowCallback != null);
       }
     }
