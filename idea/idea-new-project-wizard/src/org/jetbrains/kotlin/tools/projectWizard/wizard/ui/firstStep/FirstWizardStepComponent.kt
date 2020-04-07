@@ -6,6 +6,7 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.JBColor
+import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingC
 import java.awt.Cursor
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 class FirstWizardStepComponent(ideWizard: IdeWizard) : WizardStepComponent(ideWizard.context) {
@@ -35,10 +35,11 @@ class FirstWizardStepComponent(ideWizard: IdeWizard) : WizardStepComponent(ideWi
     private val projectSettingsComponent = ProjectSettingsComponent(ideWizard).asSubComponent()
     private val projectPreviewComponent = ProjectPreviewComponent(context).asSubComponent()
 
-    override val component: JComponent = borderPanel {
-        addToCenter(projectSettingsComponent.component)
-        addToRight(projectPreviewComponent.component)
-    }
+    override val component: JComponent = SmartTwoComponentPanel(
+        projectSettingsComponent.component,
+        projectPreviewComponent.component,
+        sideIsOnTheRight = true
+    )
 }
 
 class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizard.context) {
@@ -62,7 +63,7 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
     ).asSubComponent()
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        panel {
+        val panel = panel {
             row {
                 nameAndLocationComponent.component(growX)
             }
@@ -70,6 +71,9 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
                 buildSystemAdditionalSettingsComponent.component(growX)
             }
         }.addBorder(JBUI.Borders.emptyRight(UIConstants.PADDING))
+        ScrollPaneFactory.createScrollPane(panel, true).apply {
+            viewport.background = JBColor.PanelBackground
+        }
     }
 
     private var locationWasUpdatedByHand: Boolean = false

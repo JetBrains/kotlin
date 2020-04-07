@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIB
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
 import java.awt.BorderLayout
-import java.awt.Dimension
-import javax.swing.Box
-import javax.swing.BoxLayout
-import javax.swing.JPanel
 
 class SecondStepWizardComponent(
     wizard: IdeWizard,
@@ -24,10 +20,11 @@ class SecondStepWizardComponent(
         ProjectStructureEditorComponent(wizard.context, uiEditorUsagesStats, ::onNodeSelected).asSubComponent()
     private val moduleSettingsComponent = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
-    override val component = borderPanel {
-        addToLeft(moduleEditorComponent.component)
-        addToCenter(moduleSettingsComponent.component)
-    }
+    override val component = SmartTwoComponentPanel(
+        moduleSettingsComponent.component,
+        moduleEditorComponent.component,
+        sideIsOnTheRight = false
+    )
 
     override fun navigateTo(error: ValidationResult.ValidationError) {
         moduleEditorComponent.navigateTo(error)
