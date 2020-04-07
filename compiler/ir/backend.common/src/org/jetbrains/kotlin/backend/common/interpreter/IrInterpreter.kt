@@ -105,7 +105,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 else -> TODO("${this.javaClass} not supported")
             }
 
-            return executionResult.getNextLabel(this, data) { runBlocking { this@getNextLabel.interpret(it) } }
+            return executionResult.getNextLabel(this, data) { this@getNextLabel.interpret(it) }
         } catch (e: Throwable) {
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName

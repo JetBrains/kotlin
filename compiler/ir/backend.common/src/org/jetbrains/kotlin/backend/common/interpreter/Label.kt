@@ -20,7 +20,7 @@ enum class ReturnLabel {
 interface ExecutionResult {
     val returnLabel: ReturnLabel
 
-    fun getNextLabel(irElement: IrElement, data: Frame, interpret: IrElement.(Frame) -> ExecutionResult): ExecutionResult
+    suspend fun getNextLabel(irElement: IrElement, data: Frame, interpret: suspend IrElement.(Frame) -> ExecutionResult): ExecutionResult
 }
 
 inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
@@ -38,8 +38,10 @@ inline fun ExecutionResult.checkForReturn(newFrame: Frame, oldFrame: Frame, retu
     return this
 }
 
-open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel): ExecutionResult {
-    override fun getNextLabel(irElement: IrElement, data: Frame, interpret: IrElement.(Frame) -> ExecutionResult): ExecutionResult {
+open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel) : ExecutionResult {
+    override suspend fun getNextLabel(
+        irElement: IrElement, data: Frame, interpret: suspend IrElement.(Frame) -> ExecutionResult
+    ): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> this
             ReturnLabel.BREAK_WHEN -> when (irElement) {
@@ -58,8 +60,10 @@ open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel): Ex
     }
 }
 
-class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: String): ExecutionResultWithoutInfo(returnLabel) {
-    override fun getNextLabel(irElement: IrElement, data: Frame, interpret: IrElement.(Frame) -> ExecutionResult): ExecutionResult {
+class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: String) : ExecutionResultWithoutInfo(returnLabel) {
+    override suspend fun getNextLabel(
+        irElement: IrElement, data: Frame, interpret: suspend IrElement.(Frame) -> ExecutionResult
+    ): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> when (irElement) {
                 is IrCall -> if (info == irElement.symbol.descriptor.toString()) Next else this
