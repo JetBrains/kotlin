@@ -29,6 +29,11 @@ public class ParcelBoxTestGenerated extends AbstractParcelBoxTest {
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
+    @TestMetadata("allPrimitiveTypes.kt")
+    public void testAllPrimitiveTypes() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/allPrimitiveTypes.kt");
+    }
+
     @TestMetadata("arraySimple.kt")
     public void testArraySimple() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/arraySimple.kt");
