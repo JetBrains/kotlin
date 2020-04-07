@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT <init>, invoke, g, f, a, _____get_firstName$_______Sharable____, _____get_lastName$_______Sharable____, _set_____firstName$_______Sharable____, _set_____lastName$_______Sharable____
+// CURIOUS_ABOUT <init>, invoke, g, f, a, _____get_firstName$_______Sharable____, _____get_lastName$_______Sharable____, _set_____firstName$_______Sharable____, _set_____lastName$_______Sharable____, toString, hashCode
 // WITH_RUNTIME
 
 package koko
@@ -19,8 +19,14 @@ class User(fname: String, lname: String) {
 //    fun _set_lastName$SHARABLE(ctx: STMContext, newValue: String) { stm.setVar(ctx, lastName$SHARABLE, newValue) }
 //    fun _get_lastName$SHARABLE(ctx: STMContext): String = stm.getVar(ctx, lastName$SHARABLE)
 
-    fun f() {
-        // return this.stm.runAtomically(null) { }
+    fun f(): String /* = runAtomically*/ {
+        val x = firstName.hashCode()
+        val y = firstName.hashCode()
+        return "$x:$y"
+    }
+
+    override fun toString(): String /* = runAtomically*/ {
+        return "atomic(2) user is: $firstName $lastName"
     }
 }
 
