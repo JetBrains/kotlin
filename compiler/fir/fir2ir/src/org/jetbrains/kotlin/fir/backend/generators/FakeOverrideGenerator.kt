@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrErrorType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 
@@ -61,6 +65,14 @@ internal class FakeOverrideGenerator(
         return this.symbol.callableId.packageName == klass.symbol.classId.packageFqName
     }
 
+    private fun IrType.containsErrorType(): Boolean {
+        return when (this) {
+            is IrErrorType -> true
+            is IrSimpleType -> arguments.any { it is IrTypeProjection && it.type.containsErrorType() }
+            else -> false
+        }
+    }
+
     fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
@@ -99,6 +111,9 @@ internal class FakeOverrideGenerator(
                         val irFunction = declarationStorage.createIrFunction(
                             fakeOverrideFunction, declarationStorage.findIrParent(originalFunction), origin = origin
                         )
+                        if (irFunction.returnType.containsErrorType() || irFunction.valueParameters.any { it.type.containsErrorType() }) {
+                            return@processFunctionsByName
+                        }
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
                         declarations += irFunction.withFunction {
                             overriddenSymbols = listOf(overriddenSymbol)
@@ -136,6 +151,11 @@ internal class FakeOverrideGenerator(
                             if (originalProperty.setter?.allowsToHaveFakeOverride != true) {
                                 setter = null
                             }
+                        }
+                        if (irProperty.backingField?.type?.containsErrorType() == true ||
+                            irProperty.getter?.returnType?.containsErrorType() == true
+                        ) {
+                            return@processPropertiesByName
                         }
                         declarations += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
