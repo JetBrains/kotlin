@@ -958,7 +958,9 @@ class RawFirBuilder(
                         }
                     }
 
-                    status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                    status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL).apply {
+                        isLateInit = hasModifier(LATEINIT_KEYWORD)
+                    }
 
                     val receiver = delegateExpression?.toFirExpression("Incorrect delegate expression")
                     generateAccessorsByDelegate(delegateBuilder, null, baseSession, isExtension = false, stubMode, receiver)
