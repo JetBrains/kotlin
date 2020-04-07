@@ -48,7 +48,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindowId;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
@@ -1780,7 +1780,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         presentation.setEnabledAndVisible(false);
       }
       else {
-        presentation.setIcon(ToolWindowManagerEx.getInstanceEx(myManager.myProject).getLocationIcon(ToolWindowId.DOCUMENTATION, EmptyIcon.ICON_16));
+        presentation.setIcon(ToolWindowManager.getInstance(myManager.myProject).getLocationIcon(ToolWindowId.DOCUMENTATION, EmptyIcon.ICON_16));
         presentation.setEnabledAndVisible(myToolwindowCallback != null);
       }
     }

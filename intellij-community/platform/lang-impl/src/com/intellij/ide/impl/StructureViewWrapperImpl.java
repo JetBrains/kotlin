@@ -38,7 +38,6 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
@@ -56,6 +55,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
@@ -63,7 +64,7 @@ import static com.intellij.openapi.application.ApplicationManager.getApplication
 /**
  * @author Eugene Belyaev
  */
-public class StructureViewWrapperImpl implements StructureViewWrapper, Disposable {
+public final class StructureViewWrapperImpl implements StructureViewWrapper, Disposable {
   public static final Topic<Runnable> STRUCTURE_CHANGED = new Topic<>("structure view changed", Runnable.class);
   private static final Logger LOG = Logger.getInstance(StructureViewWrapperImpl.class);
   private static final DataKey<StructureViewWrapper> WRAPPER_DATA_KEY = DataKey.create("WRAPPER_DATA_KEY");
@@ -71,7 +72,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
   private static final int REBUILD_TIME = 100; // time to wait and merge requests to rebuild a tree model
 
   private final Project myProject;
-  private final ToolWindowEx myToolWindow;
+  private final ToolWindow myToolWindow;
 
   private VirtualFile myFile;
 
@@ -86,7 +87,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
   private boolean myFirstRun = true;
   private int myActivityCount;
 
-  public StructureViewWrapperImpl(@NotNull Project project, @NotNull ToolWindowEx toolWindow) {
+  public StructureViewWrapperImpl(@NotNull Project project, @NotNull ToolWindow toolWindow) {
     myProject = project;
     myToolWindow = toolWindow;
     JComponent component = toolWindow.getComponent();
@@ -400,12 +401,13 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
   }
 
   private void updateHeaderActions(@Nullable StructureView structureView) {
-    AnAction[] titleActions = AnAction.EMPTY_ARRAY;
+    List<AnAction> titleActions = Collections.emptyList();
     if (structureView instanceof StructureViewComponent) {
       JTree tree = ((StructureViewComponent)structureView).getTree();
-      titleActions = new AnAction[]{
-        CommonActionsManager.getInstance().createExpandAllHeaderAction(tree),
-        CommonActionsManager.getInstance().createCollapseAllHeaderAction(tree)};
+      CommonActionsManager commonActionManager = CommonActionsManager.getInstance();
+      titleActions = Arrays.asList(
+        commonActionManager.createExpandAllHeaderAction(tree),
+        commonActionManager.createCollapseAllHeaderAction(tree));
     }
     myToolWindow.setTitleActions(titleActions);
   }

@@ -86,7 +86,7 @@ final class FacetDependentToolWindowManager implements ProjectComponent {
   }
 
   private void ensureToolWindowExists(FacetDependentToolWindow extension) {
-    ToolWindow toolWindow = ToolWindowManagerEx.getInstanceEx(myProject).getToolWindow(extension.id);
+    ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(extension.id);
     if (toolWindow == null) {
       ToolWindowManagerEx.getInstanceEx(myProject).initToolWindow(extension);
     }

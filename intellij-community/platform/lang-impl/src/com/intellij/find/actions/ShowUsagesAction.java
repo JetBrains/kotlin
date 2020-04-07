@@ -44,7 +44,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindowId;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -699,7 +699,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                                  JBPopup @NotNull [] popup,
                                                  @NotNull DefaultActionGroup pinGroup,
                                                  @NotNull Runnable findUsagesRunnable) {
-    Icon icon = ToolWindowManagerEx.getInstanceEx(project).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
+    Icon icon = ToolWindowManager.getInstance(project).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     AnAction pinAction =
       new AnAction(IdeBundle.messagePointer("show.in.find.window.button.name"),
                    IdeBundle.messagePointer("show.in.find.window.button.pin.description"), icon) {
