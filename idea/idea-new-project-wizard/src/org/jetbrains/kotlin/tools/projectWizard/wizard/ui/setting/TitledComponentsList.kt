@@ -80,7 +80,7 @@ open class TitledComponentsList(
         var lastLabel: SpringLayout.Constraints? = null
         var lastComponent: SpringLayout.Constraints? = null
 
-        for (data in componentsWithLabels) {
+        for ((index, data) in componentsWithLabels.withIndex()) {
             val (label, component) = data
             label.x = xPanelPadding.asSpring()
             component.x = label[SpringLayout.EAST] + xGap
@@ -99,7 +99,7 @@ open class TitledComponentsList(
         }
 
         if (stretchY) {
-            constraints()[SpringLayout.SOUTH] = lastComponent!![SpringLayout.SOUTH] + yGap
+            constraints()[SpringLayout.SOUTH] = lastComponent!![SpringLayout.SOUTH]
         }
     }
 

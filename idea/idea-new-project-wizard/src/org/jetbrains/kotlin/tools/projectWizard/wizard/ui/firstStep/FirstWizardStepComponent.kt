@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingC
 import java.awt.Cursor
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 class FirstWizardStepComponent(ideWizard: IdeWizard) : WizardStepComponent(ideWizard.context) {
@@ -200,10 +201,15 @@ private class KotlinRuntimeComponentComponent(ideWizard: IdeWizard) : TitledComp
 @Suppress("SpellCheckingInspection")
 private class HideableSection(text: String, private var component: JComponent) : BorderLayoutPanel() {
     private val titledSeparator = TitledSeparator(text)
+    private val contentPanel = borderPanel {
+        addBorder(JBUI.Borders.emptyLeft(20))
+    }
     private var isExpanded = false
 
     init {
         titledSeparator.label.cursor = Cursor(Cursor.HAND_CURSOR)
+        addToTop(titledSeparator)
+        addToCenter(contentPanel)
         updateComponent(component)
         titledSeparator.addMouseListener(object : MouseAdapter() {
             override fun mouseReleased(e: MouseEvent) = update(!isExpanded)
@@ -217,15 +223,14 @@ private class HideableSection(text: String, private var component: JComponent) :
 
     private fun updateComponent(newComponent: JComponent) {
         component = newComponent
-        removeAll()
-        addToTop(titledSeparator)
-        addToCenter(newComponent)
+        contentPanel.removeAll()
+        contentPanel.addToCenter(newComponent)
         update(isExpanded)
     }
 
     private fun update(isExpanded: Boolean) {
         this.isExpanded = isExpanded
-        component.isVisible = isExpanded
+        contentPanel.isVisible = isExpanded
         titledSeparator.label.icon = if (isExpanded) AllIcons.General.ArrowDown else AllIcons.General.ArrowRight
     }
 }

@@ -38,7 +38,7 @@ class BuildSystemTypeSettingComponent(
     BuildSystemPlugin::type.reference,
     context
 ), Disposable {
-    override val forceLabelCenteringOffset: Int? = 2
+    override val forceLabelCenteringOffset: Int? = 3
     private val buttons by lazy(LazyThreadSafetyMode.NONE) {
         read { setting.type.values.filter { setting.type.filter(this, reference, it) }.map(::BuildSystemChooseButton) }
     }

@@ -56,6 +56,9 @@ class ModulesEditorComponent(
     override fun onInit() {
         super.onInit()
         updateModel()
+        if (editable) {
+            value?.firstOrNull()?.let(tree::selectModule)
+        }
     }
 
     fun updateModel() {
