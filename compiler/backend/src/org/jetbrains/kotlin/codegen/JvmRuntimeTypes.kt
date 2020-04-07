@@ -147,7 +147,7 @@ class JvmRuntimeTypes(
                 ?: referencedFunction.dispatchReceiverParameter?.type,
             anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
             null,
-            referencedFunction.returnType!!,
+            anonymousFunctionDescriptor.returnType!!,
             referencedFunction.isSuspend
         )
 

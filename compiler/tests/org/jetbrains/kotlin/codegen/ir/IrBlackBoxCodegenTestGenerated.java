@@ -2090,6 +2090,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
             }
 
+            @TestMetadata("toString.kt")
+            public void testToString() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/toString.kt");
+            }
+
             @TestMetadata("unboundReferences.kt")
             public void testUnboundReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
@@ -2915,6 +2920,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public static class Serializability extends AbstractIrBlackBoxCodegenTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            @TestMetadata("adaptedReferences.kt")
+            public void testAdaptedReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/serializability/adaptedReferences.kt");
             }
 
             public void testAllFilesPresentInSerializability() throws Exception {

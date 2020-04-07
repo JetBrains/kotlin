@@ -8,6 +8,8 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.reflect.KDeclarationContainer;
 
+import java.io.Serializable;
+
 import static kotlin.jvm.internal.CallableReference.NO_RECEIVER;
 
 /**
@@ -24,7 +26,7 @@ import static kotlin.jvm.internal.CallableReference.NO_RECEIVER;
  */
 @SuppressWarnings({"rawtypes", "WeakerAccess", "unused"})
 @SinceKotlin(version = "1.4")
-public class AdaptedFunctionReference {
+public class AdaptedFunctionReference implements FunctionBase, Serializable {
     protected final Object receiver;
     private final Class owner;
     private final String name;
@@ -45,6 +47,11 @@ public class AdaptedFunctionReference {
         this.isTopLevel = (flags & 1) == 1;
         this.arity = arity;
         this.flags = flags >> 1;
+    }
+
+    @Override
+    public int getArity() {
+        return arity;
     }
 
     public KDeclarationContainer getOwner() {
@@ -76,5 +83,10 @@ public class AdaptedFunctionReference {
         result = result * 31 + arity;
         result = result * 31 + flags;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return Reflection.renderLambdaToString(this);
     }
 }

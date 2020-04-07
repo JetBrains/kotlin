@@ -2090,6 +2090,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
             }
 
+            @TestMetadata("toString.kt")
+            public void testToString() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/toString.kt");
+            }
+
             @TestMetadata("unboundReferences.kt")
             public void testUnboundReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
@@ -2915,6 +2920,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         public static class Serializability extends AbstractFirBlackBoxCodegenTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+            }
+
+            @TestMetadata("adaptedReferences.kt")
+            public void testAdaptedReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/serializability/adaptedReferences.kt");
             }
 
             public void testAllFilesPresentInSerializability() throws Exception {
