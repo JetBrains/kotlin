@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -153,7 +153,8 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         val offset = entireLength - rawLine.length + rawLine.indexOf(atPrefix)
         val highlightEndOffset = offset + (if (lineNumber > 0) line.lastIndex else fileNameEnd)
 
-        val hyperLinkInfo = OpenFileHyperlinkInfo(project, virtualFile, lineNumber, columnNumber)
+        // OpenFileHyperlinkInfo accepts zero-based line number
+        val hyperLinkInfo = OpenFileHyperlinkInfo(project, virtualFile, lineNumber - 1, columnNumber)
         return Filter.Result(offset + fileNameBegin, highlightEndOffset, hyperLinkInfo)
     }
 
