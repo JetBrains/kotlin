@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualForExpected
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -407,9 +408,7 @@ class ExpectedActualDeclarationChecker(
             assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
 
             if (isOptionalAnnotationClass(descriptor)) {
-                with(ExpectedActualResolver) {
-                    return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
-                }
+                return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
             }
 
             return false
