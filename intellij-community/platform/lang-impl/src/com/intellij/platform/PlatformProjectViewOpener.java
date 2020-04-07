@@ -21,6 +21,8 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public final class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
   public PlatformProjectViewOpener() {
     if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isDataGrip()) {
@@ -63,10 +65,10 @@ public final class PlatformProjectViewOpener implements DirectoryProjectConfigur
     }
 
     @Override
-    public void toolWindowRegistered(@NotNull String id) {
-      if (id.equals(ToolWindowId.PROJECT_VIEW)) {
+    public void toolWindowsRegistered(@NotNull List<String> id) {
+      if (id.contains(ToolWindowId.PROJECT_VIEW)) {
         Disposer.dispose(this);
-        activateProjectToolWindow(myProject, ToolWindowManagerEx.getInstanceEx(myProject).getToolWindow(id));
+        activateProjectToolWindow(myProject, ToolWindowManagerEx.getInstanceEx(myProject).getToolWindow(ToolWindowId.PROJECT_VIEW));
       }
     }
 
