@@ -9017,6 +9017,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/javaConstructor.kt");
         }
 
+        @TestMetadata("kt35898.kt")
+        public void testKt35898() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/kt35898.kt");
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/localFun.kt");
