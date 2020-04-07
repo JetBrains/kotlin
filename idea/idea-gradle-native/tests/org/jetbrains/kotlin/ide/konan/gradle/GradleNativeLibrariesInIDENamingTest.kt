@@ -154,7 +154,12 @@ private fun assertValidNativeLibrary(library: Library, projectRoot: String) {
         .relativeTo(File(projectRoot).resolve(DOUBLE_DOT_PATH).normalize())
         .relativeTo(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
 
-    val expectedShortPath = if (platform.isEmpty()) konanCommonLibraryPath(name) else konanPlatformLibraryPath(name, platform)
+    val expectedDirectoryName = if (name == "stdlib") name else "org.jetbrains.kotlin.native.$name"
+    val expectedShortPath = if (platform.isEmpty()) {
+        konanCommonLibraryPath(expectedDirectoryName)
+    } else {
+        konanPlatformLibraryPath(expectedDirectoryName, platform)
+    }
     assertEquals("The short path of $fullName does not match its location", expectedShortPath, actualShortPath)
 }
 
