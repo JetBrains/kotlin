@@ -257,7 +257,8 @@ class SuggestedRefactoringChangeListener(
       val signatureRange = declaration?.let { refactoringSupport.signatureRange(it) }
 
       if (declaration == null || signatureRange == null || strippedWatchedRange != signatureRange.stripWhitespace(chars)) {
-        val range = signatureRange?.union(watchedRange) ?: watchedRange
+        val watchedRangeExtended = watchedRange.extendWithWhitespace(document.charsSequence)
+        val range = signatureRange?.union(watchedRangeExtended) ?: watchedRangeExtended
         if (psiFile.hasErrorElementInRange(range)) {
           if (!editingState.isRefactoringSuppressed) {
             watcher.inconsistentState()
