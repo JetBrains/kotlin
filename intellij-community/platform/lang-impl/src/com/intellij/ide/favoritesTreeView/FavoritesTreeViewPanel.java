@@ -440,7 +440,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     return ArrayUtil.toObjectArray(result);
   }
 
-  public void setupToolWindow(ToolWindowEx window) {
+  public void setupToolWindow(@NotNull ToolWindowEx window) {
     final CollapseAllAction collapseAction = new CollapseAllAction(myTree);
     collapseAction.getTemplatePresentation().setIcon(AllIcons.Actions.Collapseall);
     window.setTitleActions(collapseAction);
