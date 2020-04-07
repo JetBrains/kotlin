@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.resolve.inline.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -56,6 +57,9 @@ class SuspendFunctionGenerationStrategy(
     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
         if (access and Opcodes.ACC_ABSTRACT != 0) return mv
 
+        if (originalSuspendDescriptor.isEffectivelyInlineOnly()) {
+            return SuspendForInlineOnlyMethodVisitor(mv, access, name, desc)
+        }
         val stateMachineBuilder = createStateMachineBuilder(mv, access, name, desc)
         if (originalSuspendDescriptor.isInline) {
             return SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod, keepAccess = false)
@@ -153,6 +157,13 @@ class SuspendFunctionGenerationStrategy(
                 pop() // Otherwise stack-transformation breaks
             })
         }
+    }
+}
+
+private class SuspendForInlineOnlyMethodVisitor(delegate: MethodVisitor, access: Int, name: String, desc: String) :
+    TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        methodNode.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
 }
 
