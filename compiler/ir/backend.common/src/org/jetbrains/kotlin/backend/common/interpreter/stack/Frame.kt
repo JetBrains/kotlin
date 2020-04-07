@@ -8,18 +8,7 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import kotlin.NoSuchElementException
-
-data class Variable(val descriptor: DeclarationDescriptor, val state: State) {
-    override fun toString(): String {
-        val descriptorName = when (descriptor) {
-            is ReceiverParameterDescriptor -> descriptor.containingDeclaration.name.toString() + "::this"
-            else -> descriptor.name
-        }
-        return "Variable(descriptor=$descriptorName, state=$state)"
-    }
-}
 
 interface Frame {
     fun addVar(variable: Variable)
