@@ -50,7 +50,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
                 result
             }
 
-            createRowIcon(withExpectedActual, visibilityIcon)
+            return createRowIcon(withExpectedActual, visibilityIcon)
         }
         return result
     }
