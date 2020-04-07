@@ -46,7 +46,7 @@ class SuggestedRefactoringUndoableAction private constructor(
     val state = SuggestedRefactoringState(
       declaration, refactoringSupport, SuggestedRefactoringState.ErrorLevel.NO_ERRORS,
       oldDeclarationText, oldImportsText, oldSignature, newSignature,
-      refactoringSupport.stateChanges.parameterMarkers(declaration), disappearedParameters
+      refactoringSupport.stateChanges.parameterMarkers(declaration, newSignature), disappearedParameters
     )
 
     SuggestedRefactoringProviderImpl.getInstance(project).undoToState(state, signatureRange)
