@@ -48,7 +48,7 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
     //we need to change the template presentation to show the proper text for the action in Settings | Keymap
     Presentation presentation = getTemplatePresentation();
     String text = GotoClassPresentationUpdater.getActionTitle() + "...";
-    presentation.setText(text);
+    presentation.setText(IdeBundle.message("go.to.class.title.prefix", text));
     presentation.setDescription(IdeBundle.messagePointer("go.to.class.action.description",
                                                   StringUtil.join(GotoClassPresentationUpdater.getElementKinds(), "/")));
     addTextOverride(ActionPlaces.MAIN_MENU, text);
