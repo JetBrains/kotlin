@@ -158,7 +158,7 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
     updateStatusDescription();
   }
 
-  private void selectProblem(@NotNull AnalysisProblem updatedSelectedProblem) {
+  void selectProblem(@NotNull AnalysisProblem updatedSelectedProblem) {
     myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
   }
 
