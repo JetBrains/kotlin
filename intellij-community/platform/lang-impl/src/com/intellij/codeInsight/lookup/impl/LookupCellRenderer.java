@@ -123,10 +123,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     int allowedWidth = list.getWidth() - calcSpacing(myNameComponent, myEmptyIcon) - calcSpacing(myTailComponent, null) - calcSpacing(myTypeLabel, null);
 
-    FontMetrics normalMetrics = getRealFontMetrics(item, false);
-    FontMetrics boldMetrics = getRealFontMetrics(item, true);
-    final LookupElementPresentation presentation = new RealLookupElementPresentation(isSelected ? getMaxWidth() : allowedWidth,
-                                                                                     normalMetrics, boldMetrics, myLookup);
+    LookupElementPresentation presentation = new RealLookupElementPresentation(myLookup.isSelectionTouched());
     ApplicationManager.getApplication().runReadAction(() -> {
       if (item.isValid()) {
         try {
@@ -160,6 +157,8 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     myTailComponent.setFont(font);
     myTypeLabel.setFont(font);
     myNameComponent.setIcon(augmentIcon(myLookup.getTopLevelEditor(), presentation.getIcon(), myEmptyIcon));
+
+    FontMetrics normalMetrics = getRealFontMetrics(item, false);
 
     final Color grayedForeground = getGrayedForeground(isSelected);
     myTypeLabel.clear();
@@ -256,7 +255,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       String trimmed = trimLabelText(fragment.text, allowedWidth, fontMetrics);
       int fragmentStyle = fragment.isItalic() ? style | SimpleTextAttributes.STYLE_ITALIC : style;
       myTailComponent.append(trimmed, new SimpleTextAttributes(fragmentStyle, getTailTextColor(isSelected, fragment, foreground, nonFocusedSelection)));
-      allowedWidth -= RealLookupElementPresentation.getStringWidth(trimmed, fontMetrics);
+      allowedWidth -= getStringWidth(trimmed, fontMetrics);
     }
   }
 
@@ -265,18 +264,18 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       return "";
     }
 
-    final int strWidth = RealLookupElementPresentation.getStringWidth(text, metrics);
+    final int strWidth = getStringWidth(text, metrics);
     if (strWidth <= maxWidth || myIsSelected) {
       return text;
     }
 
-    if (RealLookupElementPresentation.getStringWidth(ELLIPSIS, metrics) > maxWidth) {
+    if (getStringWidth(ELLIPSIS, metrics) > maxWidth) {
       return "";
     }
 
     int insIndex = ObjectUtils.binarySearch(0, text.length(), mid ->{
       final String candidate = text.substring(0, mid) + ELLIPSIS;
-      final int width = RealLookupElementPresentation.getStringWidth(candidate, metrics);
+      final int width = getStringWidth(candidate, metrics);
       return width <= maxWidth ? -1 : 1;
     });
     int i = Math.max(0,-insIndex-2);
@@ -325,7 +324,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     final FontMetrics metrics = getRealFontMetrics(item, bold);
     final String name = trimLabelText(presentation.getItemText(), allowedWidth, metrics);
-    int used = RealLookupElementPresentation.getStringWidth(name, metrics);
+    int used = getStringWidth(name, metrics);
 
     renderItemName(item, foreground, style, name, myNameComponent);
     return used;
@@ -387,7 +386,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     final String givenText = presentation.getTypeText();
     final String labelText = trimLabelText(StringUtil.isEmpty(givenText) ? "" : " " + givenText, allowedWidth, normalMetrics);
 
-    int used = RealLookupElementPresentation.getStringWidth(labelText, normalMetrics);
+    int used = getStringWidth(labelText, normalMetrics);
 
     final Icon icon = presentation.getTypeIcon();
     if (icon != null) {
@@ -512,12 +511,36 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       myNameComponent.setIpad(JBUI.insetsLeft(6));
     }
 
-    return RealLookupElementPresentation.calculateWidth(p, getRealFontMetrics(item, false), getRealFontMetrics(item, true)) +
+    return calculateWidth(p, getRealFontMetrics(item, false), getRealFontMetrics(item, true)) +
            calcSpacing(myTailComponent, null) + calcSpacing(myTypeLabel, null);
   }
 
   int getTextIndent() {
     return myNameComponent.getIpad().left + myEmptyIcon.getIconWidth() + myNameComponent.getIconTextGap();
+  }
+
+  private static int calculateWidth(LookupElementPresentation presentation, FontMetrics normalMetrics, FontMetrics boldMetrics) {
+    int result = 0;
+    result += getStringWidth(presentation.getItemText(), presentation.isItemTextBold() ? boldMetrics : normalMetrics);
+    result += getStringWidth(presentation.getTailText(), normalMetrics);
+    final String typeText = presentation.getTypeText();
+    if (StringUtil.isNotEmpty(typeText)) {
+      result += getStringWidth("W", normalMetrics); // nice tail-type separation
+      result += getStringWidth(typeText, normalMetrics);
+    }
+    result += getStringWidth("W", boldMetrics); //for unforeseen Swing size adjustments
+    final Icon typeIcon = presentation.getTypeIcon();
+    if (typeIcon != null) {
+      result += typeIcon.getIconWidth();
+    }
+    return result;
+  }
+
+  private static int getStringWidth(@Nullable final String text, FontMetrics metrics) {
+    if (text != null) {
+      return metrics.stringWidth(text);
+    }
+    return 0;
   }
 
   private static class MySimpleColoredComponent extends SimpleColoredComponent {
