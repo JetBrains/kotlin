@@ -787,10 +787,11 @@ class Fir2IrDeclarationStorage(
             variable.name.isSpecial -> IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
             else -> IrDeclarationOrigin.DEFINED
         }
+        val isLateInit = if (variable is FirProperty) variable.isLateInit else false
         val irVariable = variable.convertWithOffsets { startOffset, endOffset ->
             declareIrVariable(
                 startOffset, endOffset, origin,
-                variable.name, type, variable.isVar, isConst = false, isLateinit = false
+                variable.name, type, variable.isVar, isConst = false, isLateinit = isLateInit
             )
         }
         irVariable.parent = irParent
