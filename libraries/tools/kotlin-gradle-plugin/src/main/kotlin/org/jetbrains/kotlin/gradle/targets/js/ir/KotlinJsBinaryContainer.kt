@@ -88,8 +88,8 @@ constructor(
     internal fun getIrBinaries(
         type: KotlinJsBinaryType
     ): DomainObjectSet<JsIrBinary> =
-        matching { it.type == type }
-            .withType(JsIrBinary::class.java)
+        withType(JsIrBinary::class.java)
+            .matching { it.type == type }
 
     private fun <T : JsBinary> createBinaries(
         compilation: KotlinJsCompilation,
