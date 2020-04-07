@@ -2646,7 +2646,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
-            v.aconst(null);
+            if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0) {
+                v.anew(Type.getObjectType("kotlin/KotlinNothingValueException"));
+                v.dup();
+                v.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false);
+            } else {
+                v.aconst(null);
+            }
             v.athrow();
         }
     }
