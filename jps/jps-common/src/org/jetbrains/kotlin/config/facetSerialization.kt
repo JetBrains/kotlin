@@ -126,8 +126,15 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         this.targetPlatform = targetPlatform
         readElementsList(element, "implements", "implement")?.let { implementedModuleNames = it }
         readElementsList(element, "dependsOnModuleNames", "dependsOn")?.let { dependsOnModuleNames = it }
-        readElementsList(element, "externalSystemTestTasks", "externalSystemTestTask")?.let {
-            externalSystemTestTasks = it.mapNotNull { ExternalSystemTestTask.fromStringRepresentation(it) }
+        element.getChild("externalSystemTestTasks")?.let {
+            val testRunTasks = it.getChildren("externalSystemTestTask")
+                .mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+                .mapNotNull { ExternalSystemTestRunTask.fromStringRepresentation(it) }
+            val nativeMainRunTasks = it.getChildren("externalSystemNativeMainRunTask")
+                .mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+                .mapNotNull { ExternalSystemNativeMainRunTask.fromStringRepresentation(it) }
+
+            externalSystemRunTasks = testRunTasks + nativeMainRunTasks
         }
 
         element.getChild("sourceSets")?.let {
@@ -318,12 +325,24 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     if (isHmppEnabled) {
         element.setAttribute("isHmppProject", mppVersion.isHmpp.toString())
     }
-    if (externalSystemTestTasks.isNotEmpty()) {
-        saveElementsList(
-            element,
-            externalSystemTestTasks.map { it.toStringRepresentation() },
-            "externalSystemTestTasks",
-            "externalSystemTestTask"
+    if (externalSystemRunTasks.isNotEmpty()) {
+        element.addContent(
+            Element("externalSystemTestTasks").apply {
+                externalSystemRunTasks.forEach { task ->
+                    when(task) {
+                        is ExternalSystemTestRunTask -> {
+                            addContent(
+                                Element("externalSystemTestTask").apply { addContent(task.toStringRepresentation()) }
+                            )
+                        }
+                        is ExternalSystemNativeMainRunTask -> {
+                            addContent(
+                                Element("externalSystemNativeMainRunTask").apply { addContent(task.toStringRepresentation()) }
+                            )
+                        }
+                    }
+                }
+            }
         )
     }
     if (pureKotlinSourceFolders.isNotEmpty()) {
