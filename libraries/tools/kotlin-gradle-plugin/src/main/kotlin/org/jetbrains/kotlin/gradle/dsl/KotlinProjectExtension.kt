@@ -241,7 +241,7 @@ enum class ExplicitApiMode(private val cliOption: String) {
 }
 
 enum class NativeDistributionType(val suffix: String?) {
-    REGULAR(null) {
+    LIGHT(null) {
         override fun isAvailableFor(host: KonanTarget, version: CompilerVersion) = true
     },
     RESTRICTED("restricted") {
