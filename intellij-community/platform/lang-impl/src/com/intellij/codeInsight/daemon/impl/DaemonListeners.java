@@ -5,6 +5,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.LineMarkerProviders;
+import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSettingListener;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.folding.impl.FoldingUtil;
 import com.intellij.codeInsight.hint.TooltipController;
@@ -26,10 +27,7 @@ import com.intellij.lang.LanguageAnnotators;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationListener;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.application.impl.LaterInvocator;
 import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
@@ -371,6 +369,15 @@ public final class DaemonListeners implements Disposable {
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
         removeQuickFixesContributedByPlugin(pluginDescriptor);
       }
+    });
+    connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) -> {
+      WriteAction.run(() -> {
+        PsiFile file = root.getContainingFile();
+        if (file != null) {
+          // force clearing all PSI caches, including those in WholeFileInspectionFactory
+          ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
+        }
+      });
     });
   }
 
