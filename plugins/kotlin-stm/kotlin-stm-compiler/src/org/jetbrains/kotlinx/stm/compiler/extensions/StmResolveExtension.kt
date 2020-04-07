@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.stm.compiler.extensions
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.stm.compiler.*
-import org.jetbrains.kotlinx.stm.compiler.SHARABLE_NAME_SUFFIX
-import org.jetbrains.kotlinx.stm.compiler.STM_CONTEXT
-import org.jetbrains.kotlinx.stm.compiler.STM_PACKAGE
 
 
 open class StmResolveExtension : SyntheticResolveExtension {
@@ -181,7 +177,7 @@ open class StmResolveExtension : SyntheticResolveExtension {
                 functionName = setterName(varName),
                 dispatchReceiverParameter = thisDescriptor.thisAsReceiverParameter,
                 extensionReceiverParameter = null,
-                type = DefaultBuiltIns.Instance.unitType,
+                type = thisDescriptor.module.builtIns.unitType,
                 visibility = property.visibility
             ) { newSetter ->
                 add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newSetter, index = 0, nullable = true))

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -160,6 +161,29 @@ internal fun BackendContext.createTypeTranslator(moduleDescriptor: ModuleDescrip
         constantValueGenerator.typeTranslator = this
     }
 
+private fun isStmContextType(type: IrType?) = type?.classOrNull?.isClassWithFqName(STM_CONTEXT_CLASS.toUnsafe())
+    ?: false
+
+internal fun fetchStmContextOrNull(functionStack: MutableList<IrFunction>): IrGetValue? {
+    val ctx = functionStack.firstNotNullResult {
+        when {
+            isStmContextType(it.dispatchReceiverParameter?.type) -> {
+                it.dispatchReceiverParameter!!
+            }
+            isStmContextType(it.extensionReceiverParameter?.type) -> {
+                it.extensionReceiverParameter!!
+            }
+            isStmContextType(it.valueParameters.lastOrNull()?.type) -> {
+                it.valueParameters.last()
+            }
+            else -> null
+        }
+    }
+        ?: return null
+
+    return IrGetValueImpl(ctx.startOffset, ctx.endOffset, ctx.type, ctx.symbol)
+}
+
 class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExtension {
 
     fun generateSTMField(irClass: IrClass, field: IrField, initMethod: IrFunctionSymbol, stmSearcherClass: ClassDescriptor) =
@@ -168,9 +192,9 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
             irCallOp(initMethod, field.type, obj)
         }
 
-    fun createValueParam(
+    fun createReceiverParam(
         type: IrType,
-        paramDesc: ValueParameterDescriptor,
+        paramDesc: ReceiverParameterDescriptor,
         name: String,
         index: Int
     ): IrValueParameter {
@@ -196,45 +220,66 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
         irFunction: IrSimpleFunction,
         stmField: IrField,
         runAtomically: IrFunctionSymbol,
-        stmContextType: IrType,
-        atomicFunAnnotation: Annotations
+        stmContextType: IrType
     ) {
-        val descriptor = irFunction.descriptor
+        var functionDescriptor = irFunction.descriptor
 
-        irClass.contributeFunction(descriptor) {
+        irClass.contributeFunction(functionDescriptor) {
             val lambdaDescriptor = AnonymousFunctionDescriptor(
-                /*containingDeclaration = */ descriptor,
-                /*annotations = */ atomicFunAnnotation,
+                /*containingDeclaration = */ functionDescriptor,
+                /*annotations = */ Annotations.EMPTY,
                 /*kind = */ CallableMemberDescriptor.Kind.DECLARATION,
-                /*source = */ descriptor.source,
-                /*isSuspend = */ descriptor.isSuspend
+                /*source = */ functionDescriptor.source,
+                /*isSuspend = */ functionDescriptor.isSuspend
             )
 
-            val lambdaParamDescr = WrappedValueParameterDescriptor()
-            val lambdaParam = createValueParam(stmContextType, lambdaParamDescr, "ctx", index = 0)
-            lambdaParamDescr.bind(lambdaParam)
+            val ctxReceiverDescriptor = WrappedReceiverParameterDescriptor()
+            val ctxReceiver = createReceiverParam(stmContextType, ctxReceiverDescriptor, "ctx", index = 0)
+            ctxReceiverDescriptor.bind(ctxReceiver)
 
             lambdaDescriptor.initialize(
-                descriptor.extensionReceiverParameter,
-                descriptor.dispatchReceiverParameter,
-                listOf(),
-                listOf(lambdaParamDescr),
-                descriptor.returnType,
-                descriptor.modality,
-                Visibilities.DEFAULT_VISIBILITY
+                /*extensionReceiver=*/ ctxReceiverDescriptor,
+                /*dispatchReceiver=*/ null,
+                /*typeParameters=*/ listOf(),
+                /*valueParameters=*/ listOf(),
+                /*returnType=*/ functionDescriptor.returnType,
+                /*modality=*/ functionDescriptor.modality,
+                /*visibility=*/ Visibilities.LOCAL
             )
 
             val irLambda = compilerContext.symbolTable.declareSimpleFunction(startOffset, endOffset, STM_PLUGIN_ORIGIN, lambdaDescriptor)
-            irLambda.body = irFunction.body?.deepCopyWithVariables()
+            irLambda.body =
+                DeclarationIrBuilder(compilerContext, irLambda.symbol, irFunction.startOffset, irFunction.endOffset).irBlockBody(
+                    this.startOffset,
+                    this.endOffset
+                ) {
+                    irFunction.body?.deepCopyWithSymbols()?.statements?.forEach { st ->
+                        when (st) {
+                            is IrReturn -> +irReturn(st.value)
+                            else -> +st
+                        }
+                    }
+                }
 
-            irLambda.dispatchReceiverParameter = lambdaParam
-            lambdaParam.parent = irLambda
+            irLambda.extensionReceiverParameter = ctxReceiver
 
             irLambda.returnType = irFunction.returnType
 
             irLambda.patchDeclarationParents(irFunction)
 
-            val lambdaType = runAtomically.descriptor.valueParameters[1].type.toIrType()
+            val funReturnType = (functionDescriptor.returnType
+                ?: functionDescriptor.module.builtIns.unitType).toIrType()
+
+            val lambdaType = IrSimpleTypeBuilder().run {
+
+                classifier = runAtomically.descriptor.valueParameters[1].type.toIrType().classifierOrFail
+                hasQuestionMark = funReturnType.isMarkedNullable()
+
+                arguments = listOf(
+                    makeTypeProjection(funReturnType, Variance.INVARIANT)
+                )
+                buildSimpleType()
+            }
 
             val lambdaExpression = IrFunctionExpressionImpl(
                 irLambda.startOffset, irLambda.endOffset,
@@ -245,14 +290,22 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
 
             val stmFieldExpr = irGetField(irGet(irFunction.dispatchReceiverParameter!!), stmField)
 
+            val functionStack = irFunction.parents.mapNotNull { it as? IrFunction }.toMutableList()
+
+            it.origin = IrDeclarationOrigin.DEFINED
+
             +irReturn(
                 irInvoke(
                     dispatchReceiver = stmFieldExpr,
                     callee = runAtomically,
-                    args = *arrayOf(irNull(), lambdaExpression),
-                    typeHint = irFunction.returnType
+                    args = *arrayOf(
+                        fetchStmContextOrNull(functionStack)
+                            ?: irNull(runAtomically.descriptor.valueParameters[0].type.toIrType()),
+                        lambdaExpression
+                    ),
+                    typeHint = funReturnType
                 ).apply {
-                    putTypeArgument(index = 0, type = irFunction.returnType)
+                    putTypeArgument(index = 0, type = funReturnType)
                 }
             )
         }
@@ -314,7 +367,8 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
         getVar: IrFunctionSymbol
     ): IrFunction? {
         val getterFunDescriptor =
-            irClass.descriptor.findMethods(StmResolveExtension.getterName(propertyName)).firstOrNull() ?: return null
+            irClass.descriptor.findMethods(StmResolveExtension.getterName(propertyName)).firstOrNull()
+                ?: return null
 
         return irClass.contributeFunction(getterFunDescriptor, declareNew = true) { f ->
             val stmFieldExpr = irGetField(irGet(f.dispatchReceiverParameter!!), stmField) // TODO: koshka
@@ -344,7 +398,8 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
         setVar: IrFunctionSymbol
     ): IrFunction? {
         val setterFunDescriptor =
-            irClass.descriptor.findMethods(StmResolveExtension.setterName(propertyName)).firstOrNull() ?: return null
+            irClass.descriptor.findMethods(StmResolveExtension.setterName(propertyName)).firstOrNull()
+                ?: return null
 
         return irClass.contributeFunction(setterFunDescriptor, declareNew = true) { f ->
             val stmFieldExpr = irGetField(irGet(f.dispatchReceiverParameter!!), stmField)
@@ -358,7 +413,7 @@ class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExt
                 dispatchReceiver = stmFieldExpr,
                 callee = setVar,
                 args = *arrayOf(irGet(stmContextParam), delegateFieldExpr, irGet(newValueParameter)),
-                typeHint = setterFunDescriptor.returnType?.toIrType()
+                typeHint = irClass.module.builtIns.unitType.toIrType()
             ).apply {
                 putTypeArgument(index = 0, type = newValueParameter.type)
             }
@@ -410,7 +465,8 @@ open class StmIrGenerator {
                     STM_PACKAGE,
                     className
                 )
-            ) ?: throw StmLoweringException("Couldn't find $className runtime class in dependencies of module ${module.name}")
+            )
+                ?: throw StmLoweringException("Couldn't find $className runtime class in dependencies of module ${module.name}")
 
         private fun findMethodDescriptorOrThrow(
             module: ModuleDescriptor,
@@ -506,10 +562,8 @@ open class StmIrGenerator {
 
             val runAtomically = getRunAtomicallyFun(irClass.module, symbolTable)
 
-            val atomicFunAnnotation = runAtomically.descriptor.valueParameters[1].type.annotations
-
             irClass.functions.forEach { f ->
-                generator.wrapFunctionIntoTransaction(irClass, f, stmField, runAtomically, stmContextType, atomicFunAnnotation)
+                generator.wrapFunctionIntoTransaction(irClass, f, stmField, runAtomically, stmContextType)
             }
 
 
@@ -610,8 +664,6 @@ open class StmIrGenerator {
             return newCall
         }
 
-        private fun isStmContextType(type: IrType?) = type?.classOrNull?.isClassWithFqName(STM_CONTEXT_CLASS.toUnsafe()) ?: false
-
         fun patchFunction(
             oldFunction: IrFunction,
             compilerContext: IrPluginContext,
@@ -638,7 +690,7 @@ open class StmIrGenerator {
                 descriptor = newDescriptor,
                 declareNew = true
             ).apply {
-                body = oldFunction.body?.deepCopyWithVariables()
+                body = oldFunction.body?.deepCopyWithSymbols()
             }
 
             oldFunction.valueParameters.forEachIndexed { i, oldArg ->
@@ -646,26 +698,6 @@ open class StmIrGenerator {
             }
 
             return newFunction
-        }
-
-        private fun fetchStmContextOrNull(functionStack: MutableList<IrFunction>): IrGetValue? {
-            val ctx = functionStack.firstNotNullResult {
-                when {
-                    isStmContextType(it.dispatchReceiverParameter?.type) -> {
-                        it.dispatchReceiverParameter!!
-                    }
-                    isStmContextType(it.extensionReceiverParameter?.type) -> {
-                        it.extensionReceiverParameter!!
-                    }
-                    isStmContextType(it.valueParameters.lastOrNull()?.type) -> {
-                        it.valueParameters.last()
-                    }
-                    else -> null
-                }
-            }
-                ?: return null
-
-            return IrGetValueImpl(ctx.startOffset, ctx.endOffset, ctx.type, ctx.symbol)
         }
 
         private fun fetchStmContext(functionStack: MutableList<IrFunction>, currentFunctionName: Name): IrGetValue =
