@@ -21,7 +21,6 @@ import com.intellij.util.CatchingConsumer;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.PlatformColors;
-import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.UiNotifyConnector;
@@ -494,53 +493,46 @@ public class ManagePackagesDialog extends DialogWrapper {
     return new Action[0];
   }
 
-  private class MyTableRenderer extends DefaultListCellRenderer {
-    private final JLabel myNameLabel = new JLabel();
-    private final JLabel myRepositoryLabel = new JLabel();
+  private class MyTableRenderer implements ListCellRenderer<RepoPackage> {
+    private final SimpleColoredComponent myNameComponent = new SimpleColoredComponent();
+    private final SimpleColoredComponent myRepositoryComponent = new SimpleColoredComponent();
     private final JPanel myPanel = new JPanel(new BorderLayout());
 
     private MyTableRenderer() {
-      myPanel.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 1));
-      // setting border.left on myPanel doesn't prevent from myRepository being painted on left empty area
-      myNameLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
-
-      myRepositoryLabel.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
-      myPanel.add(myNameLabel, BorderLayout.WEST);
-      myPanel.add(myRepositoryLabel, BorderLayout.EAST);
-      myNameLabel.setOpaque(true);
+      myPanel.add(myNameComponent, BorderLayout.WEST);
+      myPanel.add(myRepositoryComponent, BorderLayout.EAST);
     }
 
     @Override
-    public Component getListCellRendererComponent(JList list,
-                                                  Object value,
+    public Component getListCellRendererComponent(JList<? extends RepoPackage> list,
+                                                  RepoPackage repoPackage,
                                                   int index,
                                                   boolean isSelected,
                                                   boolean cellHasFocus) {
-      if (value instanceof RepoPackage) {
-        RepoPackage repoPackage = (RepoPackage) value;
-        String name = repoPackage.getName();
-        if (myCurrentlyInstalling.contains(name)) {
-          final String colorCode = StartupUiUtil.isUnderDarcula() ? "589df6" : "0000FF";
-          name = "<html><body>" + repoPackage.getName() + " <font color=\"#" + colorCode + "\">(installing)</font></body></html>";
-        }
-        myNameLabel.setText(name);
-        myRepositoryLabel.setText(repoPackage.getRepoUrl());
-        Component orig = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        final Color fg = orig.getForeground();
-        myNameLabel.setForeground(myInstalledPackages.contains(name) ? PlatformColors.BLUE : fg);
-      }
-      myRepositoryLabel.setForeground(JBColor.GRAY);
 
-      final Color bg;
+      myNameComponent.clear();
+      myRepositoryComponent.clear();
+
+      String packageName = repoPackage.getName();
+      SimpleTextAttributes blueText = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, PlatformColors.BLUE);
+      Color defaultForeground = isSelected ? list.getSelectionForeground() : list.getForeground();
+      SimpleTextAttributes defaultText = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, defaultForeground);
+      myNameComponent.append(packageName, myInstalledPackages.contains(packageName) ? blueText : defaultText, true);
+      if (myCurrentlyInstalling.contains(packageName)) {
+        myNameComponent.append("(installing)", blueText, false);
+      }
+      String repoUrl = repoPackage.getRepoUrl();
+      if (StringUtil.isNotEmpty(repoUrl)) {
+        myRepositoryComponent.append(repoUrl, SimpleTextAttributes.GRAYED_SMALL_ATTRIBUTES, false);
+      }
+
       if (isSelected) {
-        bg = UIUtil.getListSelectionBackground(true);
+        myPanel.setBackground(list.getSelectionBackground());
       }
       else {
-        bg = index % 2 == 1 ? UIUtil.getListBackground() : UIUtil.getDecoratedRowColor();
+        myPanel.setBackground(index % 2 == 1 ? UIUtil.getListBackground() : UIUtil.getDecoratedRowColor());
       }
-      myPanel.setBackground(bg);
-      myNameLabel.setBackground(bg);
-      myRepositoryLabel.setBackground(bg);
+
       return myPanel;
     }
   }
