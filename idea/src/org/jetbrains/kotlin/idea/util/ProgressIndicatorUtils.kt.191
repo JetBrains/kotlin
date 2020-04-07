@@ -16,12 +16,11 @@ object ProgressIndicatorUtils {
     private val LOG = Logger.getInstance(ProgressIndicatorUtils::class.java)
 
     @JvmStatic
-    fun <T> awaitWithCheckCanceled(future: Future<T>) {
+    fun <T> awaitWithCheckCanceled(future: Future<T>): T {
         while (true) {
             ProgressManager.checkCanceled()
             try {
-                future.get(50, TimeUnit.MILLISECONDS)
-                return
+                return future.get(50, TimeUnit.MILLISECONDS)
             } catch (e: TimeoutException) {
                 // ignore
             } catch (e: Exception) {

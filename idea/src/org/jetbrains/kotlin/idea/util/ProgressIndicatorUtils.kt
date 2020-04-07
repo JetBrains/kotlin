@@ -19,14 +19,12 @@ import java.util.concurrent.TimeoutException
  */
 object ProgressIndicatorUtils {
     @JvmStatic
-    fun <T> awaitWithCheckCanceled(future: Future<T>) {
-        val indicator =
-            ProgressManager.getInstance().progressIndicator
+    fun <T> awaitWithCheckCanceled(future: Future<T>): T {
+        val indicator = ProgressManager.getInstance().progressIndicator
         while (true) {
             checkCancelledEvenWithPCEDisabled(indicator)
             try {
-                future[10, TimeUnit.MILLISECONDS]
-                return
+                return future[10, TimeUnit.MILLISECONDS]
             } catch (ignore: TimeoutException) {
             } catch (e: Throwable) {
                 val cause = e.cause

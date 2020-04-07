@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -204,6 +205,7 @@ class KotlinConstraintSystemCompleter(
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         for (argument in getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             if (canWeAnalyzeIt(c, argument)) {
                 analyze(argument)
                 return true
