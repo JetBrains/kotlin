@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualCompatibilityChecker.Substitutor
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
@@ -58,10 +59,14 @@ object ExpectedActualResolver {
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {
-        val compatibilityChecker = ExpectedActualCompatibilityChecker(platformModule)
+        val packageFragmentProviderWithoutDependencies =
+            (platformModule as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
+        val packageFragmentProviderWithDependencies = platformModule.packageFragmentProvider
+        val compatibilityChecker = ExpectedActualCompatibilityChecker(packageFragmentProviderWithDependencies)
+
         return when (expected) {
             is CallableMemberDescriptor -> {
-                expected.findNamesakesFromModule(platformModule).filter { actual ->
+                expected.findNamesakesFromModule(packageFragmentProviderWithoutDependencies).filter { actual ->
                     expected != actual && !actual.isExpect &&
                             // TODO: use some other way to determine that the declaration is from Kotlin.
                             //       This way behavior differs between fast and PSI-based Java class reading mode
@@ -72,7 +77,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassDescriptor -> {
-                expected.findClassifiersFromModule(platformModule).filter { actual ->
+                expected.findClassifiersFromModule(packageFragmentProviderWithoutDependencies).filter { actual ->
                     expected != actual && !actual.isExpect &&
                             actual.couldHaveASource
                 }.groupBy { actual ->
@@ -87,7 +92,10 @@ object ExpectedActualResolver {
         actual: MemberDescriptor,
         commonModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {
-        val compatibilityChecker = ExpectedActualCompatibilityChecker(actual.module)
+        val commonPackageFragmentProvider =
+            (commonModule as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
+        val packageFragmentProviderWithPlatformDependencies = (actual.module as ModuleDescriptorImpl).packageFragmentProvider
+        val compatibilityChecker = ExpectedActualCompatibilityChecker(packageFragmentProviderWithPlatformDependencies)
 
         return when (actual) {
             is CallableMemberDescriptor -> {
@@ -99,7 +107,7 @@ object ExpectedActualResolver {
                             findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
-                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule)
+                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonPackageFragmentProvider)
                     else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
@@ -117,7 +125,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                actual.findClassifiersFromModule(commonModule).filter { declaration ->
+                actual.findClassifiersFromModule(commonPackageFragmentProvider).filter { declaration ->
                     actual != declaration &&
                             declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->

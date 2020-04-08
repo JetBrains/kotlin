@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,14 +26,14 @@ internal val DeclarationDescriptorWithSource.couldHaveASource: Boolean
                 this is DeserializedClassDescriptor
 
 internal fun CallableMemberDescriptor.findNamesakesFromModule(
-    module: ModuleDescriptor
+    packageFragmentProvider: PackageFragmentProvider
 ): Collection<CallableMemberDescriptor> {
     val scopes = when (val containingDeclaration = containingDeclaration) {
         is PackageFragmentDescriptor -> {
-            listOf(module.getPackageMemberScopeWithoutDependencies(containingDeclaration.fqName))
+            listOf(packageFragmentProvider.getPackageMemberScope(containingDeclaration.fqName))
         }
         is ClassDescriptor -> {
-            val classes = containingDeclaration.findClassifiersFromModule(module)
+            val classes = containingDeclaration.findClassifiersFromModule(packageFragmentProvider)
                 .mapNotNull { if (it is TypeAliasDescriptor) it.classDescriptor else it }
                 .filterIsInstance<ClassDescriptor>()
             if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
@@ -62,8 +61,7 @@ internal fun CallableMemberDescriptor.findNamesakesFromModule(
 }
 
 internal fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
-    module: ModuleDescriptor,
-    includeDependencies: Boolean = false
+    packageFragmentProvider: PackageFragmentProvider
 ): Collection<ClassifierDescriptorWithTypeParameters> {
     val classId = classId ?: return emptyList()
 
@@ -73,10 +71,7 @@ internal fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
 
     val segments = classId.relativeClassName.pathSegments()
 
-    val scope = if (includeDependencies)
-        module.getPackage(classId.packageFqName).memberScope
-    else
-        module.getPackageMemberScopeWithoutDependencies(classId.packageFqName)
+    val scope = packageFragmentProvider.getPackageMemberScope(classId.packageFqName)
 
     var classifiers = scope.getAllClassifiers(segments.first())
 
@@ -101,10 +96,7 @@ internal fun ClassDescriptor.getMembers(name: Name? = null): Collection<MemberDe
 }
 
 
-internal fun ModuleDescriptor.getPackageMemberScopeWithoutDependencies(fqName: FqName): MemberScope {
-    require(this is ModuleDescriptorImpl) { "Unexpected subtype of ModuleDescriptor: ${this::class}" }
-
-    val memberScopes = packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName)
-        .map { it.getMemberScope() }
-    return ChainedMemberScope("Scope of package $fqName in module $this without dependencies", memberScopes)
+internal fun PackageFragmentProvider.getPackageMemberScope(fqName: FqName): MemberScope {
+    val memberScopes = getPackageFragments(fqName).map { it.getMemberScope() }
+    return ChainedMemberScope("Scope of package $fqName from PackageFragmentProvider $this", memberScopes)
 }
