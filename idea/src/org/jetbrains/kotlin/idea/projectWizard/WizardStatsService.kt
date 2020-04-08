@@ -38,18 +38,28 @@ data class UiEditorUsageStats(
 }
 
 private enum class WizardStatsEvent(@NonNls val text: String) {
+    PROJECT_OPEN_BY_HYPERLINK("Wizard opened by hyperlink"),
     PROJECT_CREATED("Project Created"),
     WIZARD_STATE_CHANGE("New Wizard enabled or disable")
 }
 
 object WizardStatsService {
+    fun logWizardOpenByHyperlink(templateId: String?) {
+        val data = mapOf("templateId" to (templateId ?: "None"))
+        log(WizardStatsEvent.PROJECT_OPEN_BY_HYPERLINK, data)
+    }
+
     fun logDataOnProjectGenerated(projectCreationStats: ProjectCreationStats, uiEditorUsageStats: UiEditorUsageStats) {
         val data = projectCreationStats.toMap() + uiEditorUsageStats.toMap()
-        KotlinFUSLogger.log(FUSEventGroups.NewWizard, WizardStatsEvent.PROJECT_CREATED.text, data)
+        log(WizardStatsEvent.PROJECT_CREATED, data)
     }
 
     fun logWizardStatusChanged(isEnabled: Boolean) {
         val data = mapOf("enabled" to isEnabled.toString())
-        KotlinFUSLogger.log(FUSEventGroups.NewWizard, WizardStatsEvent.WIZARD_STATE_CHANGE.text, data)
+        log(WizardStatsEvent.WIZARD_STATE_CHANGE, data)
+    }
+
+    private fun log(event: WizardStatsEvent, data: Map<String, String>) {
+        KotlinFUSLogger.log(FUSEventGroups.NewWizard, event.text, data)
     }
 }

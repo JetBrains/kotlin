@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.openapi.application.JBProtocolCommand
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 
 class OpenNewProjectWizardProtocolCommand : JBProtocolCommand(COMMAND_NAME) {
@@ -19,6 +20,7 @@ class OpenNewProjectWizardProtocolCommand : JBProtocolCommand(COMMAND_NAME) {
         val template = parameters[NEW_PROJECT_TARGET_TEMPLATE_PARAMETER]
             ?.let(ProjectTemplate.Companion::byId)
 
+        WizardStatsService.logWizardOpenByHyperlink(template?.id)
         NewWizardOpener.open(template)
     }
 
