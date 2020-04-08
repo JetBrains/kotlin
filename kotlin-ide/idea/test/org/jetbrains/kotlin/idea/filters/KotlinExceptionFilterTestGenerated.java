@@ -46,6 +46,16 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         runTest("testData/debugger/exceptionFilter/inlineFunCallSiteInInlineLambda/");
     }
 
+    @TestMetadata("inlineFunCallSiteInLambdaInlinedIntoObject")
+    public void testInlineFunCallSiteInLambdaInlinedIntoObject() throws Exception {
+        runTest("testData/debugger/exceptionFilter/inlineFunCallSiteInLambdaInlinedIntoObject/");
+    }
+
+    @TestMetadata("inlineFunCallSiteInRegeneratedObject")
+    public void testInlineFunCallSiteInRegeneratedObject() throws Exception {
+        runTest("testData/debugger/exceptionFilter/inlineFunCallSiteInRegeneratedObject/");
+    }
+
     @TestMetadata("inlineFunFromLibrary")
     public void testInlineFunFromLibrary() throws Exception {
         runTest("testData/debugger/exceptionFilter/inlineFunFromLibrary/");

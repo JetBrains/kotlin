@@ -95,7 +95,7 @@ object SMAPTestUtil {
         if (compiledSmap == null) return
 
         compiledSmap.mapNotNull(SMAPAndFile::smap).forEach { smapString ->
-            val smap = SMAPParser.parse(smapString)
+            val smap = SMAPParser.parseOrNull(smapString) ?: throw AssertionError("bad SMAP: $smapString")
             val conflictingLines = smap.fileMappings.flatMap { fileMapping ->
                 fileMapping.lineMappings.flatMap { lineMapping: RangeMapping ->
                     lineMapping.toRange.keysToMap { lineMapping }.entries
