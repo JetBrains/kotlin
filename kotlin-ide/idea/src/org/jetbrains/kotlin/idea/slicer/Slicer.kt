@@ -96,9 +96,7 @@ abstract class Slicer(
                 }
 
                 else -> {
-                    if (declaration in scope) {
-                        declaration.passToProcessor()
-                    }
+                    declaration.passToProcessor()
                 }
             }
         }
