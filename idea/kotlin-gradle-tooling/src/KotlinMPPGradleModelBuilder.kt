@@ -426,15 +426,20 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun buildNativeMainRunTasks(gradleTarget: Named): Collection<KotlinNativeMainRunTask> {
         val executableBinaries = (gradleTarget::class.java.getMethodOrNull("getBinaries")?.invoke(gradleTarget) as? Collection<Any>)
             ?.filter { it.javaClass.name == "org.jetbrains.kotlin.gradle.plugin.mpp.Executable" } ?: return emptyList()
-        return executableBinaries.map { binary ->
+        return executableBinaries.mapNotNull { binary ->
+            val runTaskName = binary::class.java.getMethod("getRunTaskName").invoke(binary) as String? ?: return@mapNotNull null
+            val entryPoint = binary::class.java.getMethod("getEntryPoint").invoke(binary) as String? ?: return@mapNotNull null
+            val debuggable = binary::class.java.getMethod("getDebuggable").invoke(binary) as Boolean
+
             val compilationName = binary.javaClass.getMethodOrNull("getCompilation")?.invoke(binary)?.let {
                 it.javaClass.getMethodOrNull("getCompilationName")?.invoke(it)?.toString()
             } ?: KotlinCompilation.MAIN_COMPILATION_NAME
+
             KotlinNativeMainRunTaskImpl(
-                binary::class.java.getMethod("getRunTaskName").invoke(binary) as String,
+                runTaskName,
                 compilationName,
-                binary::class.java.getMethod("getEntryPoint").invoke(binary) as String,
-                binary::class.java.getMethod("getDebuggable").invoke(binary) as Boolean
+                entryPoint,
+                debuggable
             )
         }
     }
