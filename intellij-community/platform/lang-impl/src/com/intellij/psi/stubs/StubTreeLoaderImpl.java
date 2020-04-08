@@ -92,8 +92,8 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
       return null;
     }
 
-    final int id = SingleEntryFileBasedIndexExtension.getFileKey(vFile);
-    if (id <= 0) {
+    final int id = FileBasedIndex.getFileId(vFile);
+    if (id == 0) {
       return null;
     }
 
