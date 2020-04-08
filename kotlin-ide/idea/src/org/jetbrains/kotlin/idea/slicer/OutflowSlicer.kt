@@ -9,7 +9,6 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.light.LightMemberReference
-import com.intellij.slicer.JavaSliceUsage
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -19,7 +18,10 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class OutflowSlicer(
@@ -79,7 +81,7 @@ class OutflowSlicer(
                         val parameters = overridingMember.parameterList.parameters
                         val shift = if (callable.receiverTypeReference != null) 1 else 0
                         check(parameters.size == callable.valueParameters.size + shift)
-                        processor.process(JavaSliceUsage.createRootUsage(parameters[parameterIndex + shift], parentUsage.params))
+                        parameters[parameterIndex + shift].passToProcessor()
                     }
 
                     else -> {} // not supported
