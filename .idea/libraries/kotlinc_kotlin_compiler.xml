@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="kotlinc.kotlin-compiler">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-compiler-for-ide-1.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-compiler-for-ide-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

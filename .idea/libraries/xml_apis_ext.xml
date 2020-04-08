@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="xml-apis-ext" type="repository">
+    <properties maven-id="xml-apis:xml-apis-ext:1.3.04" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

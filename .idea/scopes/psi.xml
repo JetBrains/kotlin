@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="psi" pattern="src[intellij.java]:com.intellij.psi..*" />
+</component>

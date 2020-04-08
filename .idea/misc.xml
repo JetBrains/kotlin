@@ -1,86 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ClientPropertiesManager">
+    <properties class="javax.swing.AbstractButton">
+      <property name="hideActionText" class="java.lang.Boolean" />
+    </properties>
+    <properties class="javax.swing.JComponent">
+      <property name="html.disable" class="java.lang.Boolean" />
+    </properties>
+    <properties class="javax.swing.JEditorPane">
+      <property name="JEditorPane.w3cLengthUnits" class="java.lang.Boolean" />
+      <property name="JEditorPane.honorDisplayProperties" class="java.lang.Boolean" />
+      <property name="charset" class="java.lang.String" />
+    </properties>
+    <properties class="javax.swing.JList">
+      <property name="List.isFileList" class="java.lang.Boolean" />
+    </properties>
     <properties class="javax.swing.JPanel">
       <property name="BorderFactoryClass" class="java.lang.String" />
     </properties>
+    <properties class="javax.swing.JPasswordField">
+      <property name="JPasswordField.cutCopyAllowed" class="java.lang.Boolean" />
+    </properties>
+    <properties class="javax.swing.JSlider">
+      <property name="Slider.paintThumbArrowShape" class="java.lang.Boolean" />
+      <property name="JSlider.isFilled" class="java.lang.Boolean" />
+    </properties>
+    <properties class="javax.swing.JTable">
+      <property name="Table.isFileList" class="java.lang.Boolean" />
+      <property name="JTable.autoStartsEdit" class="java.lang.Boolean" />
+      <property name="terminateEditOnFocusLost" class="java.lang.Boolean" />
+    </properties>
+    <properties class="javax.swing.JToolBar">
+      <property name="JToolBar.isRollover" class="java.lang.Boolean" />
+    </properties>
+    <properties class="javax.swing.JTree">
+      <property name="JTree.lineStyle" class="java.lang.String" />
+    </properties>
+    <properties class="javax.swing.text.JTextComponent">
+      <property name="caretAspectRatio" class="java.lang.Double" />
+      <property name="caretWidth" class="java.lang.Integer" />
+    </properties>
+  </component>
+  <component name="DevPartner.ProjectProperties">
+    <option name="dpjConfigurationName" value="idea" />
   </component>
   <component name="EntryPointsManager">
-    <list size="3">
-      <item index="0" class="java.lang.String" itemvalue="javax.inject.Inject" />
-      <item index="1" class="java.lang.String" itemvalue="org.gradle.api.tasks.TaskAction" />
-      <item index="2" class="java.lang.String" itemvalue="org.gradle.api.tasks.options.Option" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="com.intellij.util.xmlb.annotations.MapAnnotation" />
+      <item index="1" class="java.lang.String" itemvalue="com.intellij.util.xmlb.annotations.Tag" />
     </list>
   </component>
-  <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$" />
+  <component name="ExcludeFromValidation">
+    <file url="file://$PROJECT_DIR$/intellij/plugins/groovy/grails-rt/resources/idea-injected-traits.groovy" />
+    <directory url="file://$PROJECT_DIR$/intellij/plugins/groovy/mvc-testdata" includeSubdirectories="true" />
+    <directory url="file://$PROJECT_DIR$/intellij/dbe/database/impl/resources/extensions" includeSubdirectories="true" />
+    <file url="file://$PROJECT_DIR$/intellij/plugins/groovy/resources/IdeaPrintProjectSettings.groovy" />
   </component>
-  <component name="IdProvider" IDEtalkID="71A301FF1940049D6D82F12C40F1E1D5" />
+  <component name="FrameworkDetectionExcludesConfiguration" detection-enabled="false" />
+  <component name="IdProvider" IDEtalkID="4C0175343CDB9AD0E0E8A560C818D963" />
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="JSX" />
+  </component>
   <component name="JavadocGenerationManager">
-    <option name="OTHER_OPTIONS" value="" />
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/intellij/doc" />
+    <option name="OPTION_INDEX" value="false" />
+    <option name="OPTION_SEPARATE_INDEX" value="false" />
+    <option name="HEAP_SIZE" value="256" />
   </component>
-  <component name="NullableNotNullManager">
-    <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
-    <option name="myDefaultNotNull" value="org.jetbrains.annotations.NotNull" />
-    <option name="myNullables">
-      <value>
-        <list size="11">
-          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
-          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
-          <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
-          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
-          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
-          <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
-          <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
-          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
-          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
-          <item index="9" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
-          <item index="10" class="java.lang.String" itemvalue="com.android.annotations.Nullable" />
-        </list>
-      </value>
-    </option>
-    <option name="myNotNulls">
-      <value>
-        <list size="11">
-          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
-          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
-          <item index="2" class="java.lang.String" itemvalue="javax.validation.constraints.NotNull" />
-          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
-          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
-          <item index="5" class="java.lang.String" itemvalue="androidx.annotation.NonNull" />
-          <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
-          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
-          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
-          <item index="9" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNonNull" />
-          <item index="10" class="java.lang.String" itemvalue="com.android.annotations.NonNull" />
-        </list>
-      </value>
-    </option>
+  <component name="JspManager">
+    <option name="searchForPrefixedReferences" value="false" />
+  </component>
+  <component name="LocalVcs" state="0" />
+  <component name="Monitor.Log4jWindowPlugin">
+    <option name="tree.default.font.size" value="10" />
+    <option name="table.default.font.family" value="Agency FB" />
+    <option name="tree.default.font.family" value="Agency FB" />
+    <option name="table.default.font.size" value="10" />
+  </component>
+  <component name="ProjectDetails">
+    <option name="projectName" value="Idea" />
+  </component>
+  <component name="ProjectKey">
+    <option name="state" value="git@git.labs.intellij.net:idea/ultimate" />
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/templates/js/ipywidgets.js" />
+    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/templates/js/lib/marked.min.js" />
+    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/templates/js/main.js" />
   </component>
   <component name="ProjectResources">
-    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+    <resource url="http://jetbrains.org/intellij/schema/application-info" location="$PROJECT_DIR$/intellij/community/platform/platform-resources/src/idea/ApplicationInfo.xsd" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
+    <output url="file://$PROJECT_DIR$/intellij/out/classes" />
   </component>
-  <component name="PsiViewerSettings">
-    <option name="splitDividerLocation" value="35" />
+  <component name="PropertiesSeparatorManager">
+    <file url="file://$PROJECT_DIR$/intellij/community/plugins/InspectionGadgets/InspectionGadgetsAnalysis/resources/messages/InspectionGadgetsBundle" separator="\u005f" />
   </component>
-  <component name="SuppressABINotification">
-    <option name="modulesWithSuppressedNotConfigured">
-      <set>
-        <option value="backend.src" />
-        <option value="kotlin-stdlib-common" />
-        <option value="kotlin-stdlib-js" />
-        <option value="kotlin-test-common" />
-      </set>
-    </option>
+  <component name="TeamCityRootDirectoryHolder">
+    <option name="myRelativeRootDirectory" />
   </component>
-  <component name="WebServicesPlugin" addRequiredLibraries="true" />
-  <component name="com.sixrr.metrics.MetricsReloaded">
-    <option name="selectedProfile" value="" />
+  <component name="WebManager">
+    <option enabled="false" />
+  </component>
+  <component name="com.siyeh.metrics.MetricsReloaded">
+    <option name="selectedProfile" value="Default" />
     <option name="autoscroll" value="false" />
-    <option name="showOnlyWarnings" value="false" />
   </component>
   <component name="intellij-api-watcher-check-current-project">
     <option name="shouldCheckCurrentProject" value="true" />

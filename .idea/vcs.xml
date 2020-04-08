@@ -2,11 +2,34 @@
 <project version="4">
   <component name="CommitMessageInspectionProfile">
     <profile version="1.0">
-      <inspection_tool class="BodyLimit" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
-      <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true" />
+      <inspection_tool class="BodyLimit" enabled="false" enabled_by_default="false" level="WARNING">
+        <option name="RIGHT_MARGIN" value="120" />
+      </inspection_tool>
+      <inspection_tool class="BodyLimit" enabled="false" enabled_by_default="false" level="WARNING">
+        <option name="RIGHT_MARGIN" value="120" />
+      </inspection_tool>
+      <inspection_tool class="GrazieCommit" enabled="true" enabled_by_default="true" level="TYPO" />
+      <inspection_tool class="SubjectBodySeparation" enabled="true" enabled_by_default="true" level="WARNING" />
+      <inspection_tool class="SubjectBodySeparation" enabled="true" enabled_by_default="true" level="WARNING" />
+      <inspection_tool class="SubjectLimit" enabled="true" enabled_by_default="true" level="WARNING">
+        <option name="RIGHT_MARGIN" value="120" />
+      </inspection_tool>
+      <inspection_tool class="SubjectLimit" enabled="true" enabled_by_default="true" level="WARNING">
+        <option name="RIGHT_MARGIN" value="120" />
+      </inspection_tool>
     </profile>
+  </component>
+  <component name="GitSharedSettings">
+    <option name="FORCE_PUSH_PROHIBITED_PATTERNS">
+      <list>
+        <option value="master" />
+        <option value="\d{3}" />
+        <option value="\d{3}.\d+" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubSharedProjectSettings">
+    <option name="pullRequestMergeForbidden" value="true" />
   </component>
   <component name="IssueNavigationConfiguration">
     <option name="links">
@@ -16,21 +39,96 @@
           <option name="linkRegexp" value="http://youtrack.jetbrains.com/issue/$0" />
         </IssueNavigationLink>
         <IssueNavigationLink>
+          <option name="issueRegexp" value="CR\-[A-Z]+\-\d+" />
+          <option name="linkRegexp" value="http://crucible.labs.intellij.net/cru/$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
           <option name="issueRegexp" value="EA\-(\d+)" />
           <option name="linkRegexp" value="http://ea.jetbrains.com/browser/ea_problems/$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="KEEP\-(\d+)" />
-          <option name="linkRegexp" value="https://github.com/Kotlin/KEEP/issues/$1" />
+          <option name="issueRegexp" value="ZD\-(\d+)" />
+          <option name="linkRegexp" value="https://jbs.zendesk.com/agent/tickets/$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="KOTLIN-CR\-\d+" />
-          <option name="linkRegexp" value="https://upsource.jetbrains.com/kotlin/review/$0" />
+          <option name="issueRegexp" value="IDEA-CR-\d+" />
+          <option name="linkRegexp" value="https://upsource.jetbrains.com/intellij/review/$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="cr-IDEA-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/idea/review/$1/timeline" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="IDEA-COMMUNITY-CR-\d+" />
+          <option name="linkRegexp" value="https://upsource.jetbrains.com/idea-community/review/$0" />
         </IssueNavigationLink>
       </list>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/intellij" vcs="Git" />
+  </component>
+  <component name="VcsDirectoryRenames">
+    <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community">
+      <hashesList>
+        <hashes parentHash="66dd597315dd3b2ec2496d9785a55d81add7a2e8" childHash="71c948ab3d4407859d9ba374df7bd99f02c3372d" />
+        <hashes parentHash="7454e15bd1376536bc09e4ad350dbe56470e999f" childHash="c1282bbbefc12c2e8e53699b4c9ed93f43a467cf" />
+        <hashes parentHash="a1a6cb4fcaf948c1e270256c469473325e7a0894" childHash="959e034cb568373269df9fe842764874e2d1ace5" />
+        <hashes parentHash="f9fcd4ba2322747462491b87382fa4ca0538b717" childHash="4c90bf26911ffe52502be0278d61f2106f0277f2" />
+        <hashes parentHash="0919288de7caf32b208b37032148ccc0807fd73d" childHash="0ae55cb2b194f82797bf17c72b96327f2271d714" />
+        <hashes parentHash="280eb2c8a66c1eb55d549aeba58717e6c710a925" childHash="e520da088e9ef94adac0901b1c0ce9f73d7379b3" />
+        <hashes parentHash="2a851b24239fa072bd01bbc5ce721e93b678b73d" childHash="dc37168169d9f3feafd604fe3a765ef80cf363d5" />
+        <hashes parentHash="f0e9ae9c151fe6f554b2f5f72f673f4395a7fa86" childHash="2f299948a739114a343f677e5b4886a2e9924fba" />
+      </hashesList>
+    </rename>
+    <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="CIDR">
+      <hashesList>
+        <hashes parentHash="f7dff4dfe3cb42e8e3e1e0dc63b222f544c2daa6" childHash="71c948ab3d4407859d9ba374df7bd99f02c3372d" />
+        <hashes parentHash="975284046a1fd0940ca7af756dfdae40ac6bccba" childHash="c1282bbbefc12c2e8e53699b4c9ed93f43a467cf" />
+        <hashes parentHash="a39c6ed18b356eae948a536d895def5b25034e07" childHash="959e034cb568373269df9fe842764874e2d1ace5" />
+        <hashes parentHash="975284046a1fd0940ca7af756dfdae40ac6bccba" childHash="4c90bf26911ffe52502be0278d61f2106f0277f2" />
+        <hashes parentHash="49005e1375510427e663f70126360c028012a33f" childHash="0ae55cb2b194f82797bf17c72b96327f2271d714" />
+        <hashes parentHash="46949fef47067dedaa13f7d48eac27f39adb0cfd" childHash="e520da088e9ef94adac0901b1c0ce9f73d7379b3" />
+        <hashes parentHash="d8335f6b71ea8199de74a9ba4793a129afebf8d1" childHash="dc37168169d9f3feafd604fe3a765ef80cf363d5" />
+        <hashes parentHash="38acb722477d7db4df12eb7b0ca379048b9b5456" childHash="2f299948a739114a343f677e5b4886a2e9924fba" />
+      </hashesList>
+    </rename>
+    <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="contrib">
+      <hashesList>
+        <hashes parentHash="8226aaa9e860677b23f621a7c4e259ed2d930469" childHash="71c948ab3d4407859d9ba374df7bd99f02c3372d" />
+        <hashes parentHash="45a5fc9a1dfc4a7e68a8bdaafd427c6b9b8a23ba" childHash="c1282bbbefc12c2e8e53699b4c9ed93f43a467cf" />
+        <hashes parentHash="deb52c37e6303f3ffb7ac8aaf4ea9a58b7eb33f5" childHash="959e034cb568373269df9fe842764874e2d1ace5" />
+        <hashes parentHash="8ed65e1e68bf3147df02bcb19f043ded96cb465f" childHash="4c90bf26911ffe52502be0278d61f2106f0277f2" />
+        <hashes parentHash="12084bca304d8d683ac627c5a9f6eaec16f53d36" childHash="0ae55cb2b194f82797bf17c72b96327f2271d714" />
+        <hashes parentHash="510aeb6374686be495d6df3cc8c203e822a5acb7" childHash="e520da088e9ef94adac0901b1c0ce9f73d7379b3" />
+        <hashes parentHash="7d384b5e4880bcf54b46b06c3417d85ce8454d8d" childHash="dc37168169d9f3feafd604fe3a765ef80cf363d5" />
+        <hashes parentHash="ef61fb55bc7bbaceb73836bec251bd2491ff5903" childHash="2f299948a739114a343f677e5b4886a2e9924fba" />
+      </hashesList>
+    </rename>
+    <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community/android">
+      <hashesList>
+        <hashes parentHash="c533b54bdb4176915698fbd8bf05eb2c26fecee3" childHash="71c948ab3d4407859d9ba374df7bd99f02c3372d" />
+        <hashes parentHash="3761afcc07ebbd4f86c1e7469c2c828f8b0eab5f" childHash="c1282bbbefc12c2e8e53699b4c9ed93f43a467cf" />
+        <hashes parentHash="9855fda72db3086a06f80371e83f68b2e69a1c01" childHash="959e034cb568373269df9fe842764874e2d1ace5" />
+        <hashes parentHash="3761afcc07ebbd4f86c1e7469c2c828f8b0eab5f" childHash="4c90bf26911ffe52502be0278d61f2106f0277f2" />
+        <hashes parentHash="ee1b0a359035bd311e5a5580b268bef43dcd457f" childHash="0ae55cb2b194f82797bf17c72b96327f2271d714" />
+        <hashes parentHash="2d5fe06316fd299fd96d37610d487e32ec140e46" childHash="e520da088e9ef94adac0901b1c0ce9f73d7379b3" />
+        <hashes parentHash="e776b763319f7d597e985cbd5c91cbcdf0ff177d" childHash="dc37168169d9f3feafd604fe3a765ef80cf363d5" />
+        <hashes parentHash="3b44ba2f5488a5803105ae1b2db9d72a06fae868" childHash="2f299948a739114a343f677e5b4886a2e9924fba" />
+      </hashesList>
+    </rename>
+    <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community/android/tools-base">
+      <hashesList>
+        <hashes parentHash="f5f29faa4b07965789522858e373a5fd30b6710e" childHash="71c948ab3d4407859d9ba374df7bd99f02c3372d" />
+        <hashes parentHash="f5f29faa4b07965789522858e373a5fd30b6710e" childHash="c1282bbbefc12c2e8e53699b4c9ed93f43a467cf" />
+        <hashes parentHash="2eb9b1fbb0a2473ccd37712ac3a1ea5b99b0fb91" childHash="959e034cb568373269df9fe842764874e2d1ace5" />
+        <hashes parentHash="f5f29faa4b07965789522858e373a5fd30b6710e" childHash="4c90bf26911ffe52502be0278d61f2106f0277f2" />
+        <hashes parentHash="2eb9b1fbb0a2473ccd37712ac3a1ea5b99b0fb91" childHash="0ae55cb2b194f82797bf17c72b96327f2271d714" />
+        <hashes parentHash="742266befa0c53b896ad27eedb87cf596b7dd94e" childHash="e520da088e9ef94adac0901b1c0ce9f73d7379b3" />
+        <hashes parentHash="70a9f8b3756d917717a04140b858a23eef5e60ca" childHash="dc37168169d9f3feafd604fe3a765ef80cf363d5" />
+        <hashes parentHash="2eb9b1fbb0a2473ccd37712ac3a1ea5b99b0fb91" childHash="2f299948a739114a343f677e5b4886a2e9924fba" />
+      </hashesList>
+    </rename>
   </component>
 </project>

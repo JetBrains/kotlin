@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SharedFileColors">
-    <fileColor scope="IDE" color="Yellow" />
+    <fileColor scope="idea openapi" color="Blue" />
+    <fileColor scope="CIDR" color="Violet" />
   </component>
 </project>
 

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="platform API" pattern="src[intellij.platform.ide]:*..*||src[intellij.platform.lang]:*..*||src[intellij.platform.vcs]:*..*||src[intellij.platform.util]:*..*" />
+</component>

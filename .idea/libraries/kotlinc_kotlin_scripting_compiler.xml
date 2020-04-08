@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlinc.kotlin-scripting-compiler">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-scripting-compiler.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

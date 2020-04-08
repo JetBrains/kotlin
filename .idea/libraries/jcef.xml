@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="jcef" type="repository">
+    <properties maven-id="org.jetbrains.intellij.deps.jcef:jcef:3.3683.1920.g9f41a27-3" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jcef/jcef/3.3683.1920.g9f41a27-3/jcef-3.3683.1920.g9f41a27-3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jcef/jcef/3.3683.1920.g9f41a27-3/jcef-3.3683.1920.g9f41a27-3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

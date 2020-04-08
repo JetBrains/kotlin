@@ -2,5 +2,16 @@
   <settings>
     <option name="PROJECT_PROFILE" value="idea.default" />
     <version value="1.0" />
+    <info color="eb9904">
+      <option name="FOREGROUND" value="0" />
+      <option name="BACKGROUND" value="eb9904" />
+      <option name="ERROR_STRIPE_COLOR" value="eb9904" />
+      <option name="myName" value="Strong Warning" />
+      <option name="myVal" value="50" />
+      <option name="myExternalName" value="Strong Warning" />
+      <option name="myDefaultAttributes">
+        <option name="ERROR_STRIPE_COLOR" value="eb9904" />
+      </option>
+    </info>
   </settings>
 </component>

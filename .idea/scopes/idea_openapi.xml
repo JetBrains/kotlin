@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="idea openapi" pattern="src[intellij.java]:*..*||src[intellij.platform.ide]:*..*||src[intellij.platform.lang]:*..*||src[intellij.platform.vcs]:*..*||src[intellij.platform.util]:*..*||[intellij.tasks]:*..*||file[intellij.php]:*/||file[intellij.diagram]:*/" />
+</component>

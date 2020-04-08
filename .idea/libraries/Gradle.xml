@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle" type="repository">
+    <properties maven-id="org.jetbrains.intellij.deps:gradle-api:6.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-api/6.1/gradle-api-6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-api-impldep/6.1/gradle-api-impldep-6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-wrapper/6.1/gradle-wrapper-6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/gradle-launcher/6.1/gradle-launcher-6.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

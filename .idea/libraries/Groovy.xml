@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Groovy" type="repository">
+    <properties maven-id="org.codehaus.groovy:groovy-all:2.4.17" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/2.4.17/groovy-all-2.4.17.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/2.4.17/groovy-all-2.4.17-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

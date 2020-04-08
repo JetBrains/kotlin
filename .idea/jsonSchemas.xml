@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key=".babelrc-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value=".babelrc-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\.babelrc-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key=".eslintrc-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value=".eslintrc-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\.eslintrc-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key=".stylelintrc-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value=".stylelintrc-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\.stylelintrc-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key=".stylelintrc-schema_old">
+          <value>
+            <SchemaInfo>
+              <option name="name" value=".stylelintrc-schema_old" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\.stylelintrc-schema_old.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="jest-config-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="jest-config-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\com\intellij\javascript\jest\jest-config-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="packageJsonSchema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="packageJsonSchema" />
+              <option name="relativePathToSchema" value="plugins\NodeJS\src\com\jetbrains\nodejs\packageJson\packageJsonSchema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="schema" />
+              <option name="relativePathToSchema" value="community\json\src\jsonSchema\schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="tsconfig-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="tsconfig-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\tsconfig-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="tsd-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="tsd-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\tsd-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="tslint-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="tslint-schema" />
+              <option name="relativePathToSchema" value="contrib\tslint\resources\tslintJsonSchema\tslint-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="typings-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="typings-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\typings-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="webpack-schema">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="webpack-schema" />
+              <option name="relativePathToSchema" value="plugins\JavaScriptLanguage\src\jsonSchemas\webpack-schema.json" />
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Ruby" pattern="file[intellij.ruby*]:*//*&amp;&amp;!file[intellij.ruby]:gemsData//*&amp;&amp;!file[intellij.ruby]:rubystubs//*&amp;&amp;!file[intellij.ruby]:jruby//*" />
+</component>

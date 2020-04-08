@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="XML" pattern="src[intellij.xml*]:*..*" />
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlinc.sam-with-receiver-compiler-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/sam-with-receiver-compiler-plugin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

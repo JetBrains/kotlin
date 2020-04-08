@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="runtime.classes" pattern="src[*.rt]:*..*" />
+</component>

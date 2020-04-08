@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Language Bundles" pattern="file[intellij*]:*//*Bundle.properties||file[android*]:*//*Bundle.properties" />
+</component>

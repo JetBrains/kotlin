@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="AppCode" pattern="(src[intellij.appcode*]:*..*||src[intellij.cidr.cocoaCommon]:*..*)&amp;&amp;!src[*.testFramework]:*..*" />
+</component>

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="CIDR" pattern="(src[intellij.c]:*..*||src[intellij.c.*]:*..*||src[intellij.appcode*]:*..*||src[intellij.clion*]:*..*||src[intellij.cidr*]:*..*||src[intellij.swift*]:*..*)&amp;&amp;!src[*.testFramework]:*..*" />
+</component>

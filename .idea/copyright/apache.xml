@@ -1,7 +1,0 @@
-<component name="CopyrightManager">
-  <copyright>
-    <option name="allowReplaceRegexp" value="JetBrains" />
-    <option name="notice" value="Copyright 2010-&amp;#36;today.year JetBrains s.r.o. and Kotlin Programming Language contributors.&#10;Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file." />
-    <option name="myName" value="apache" />
-  </copyright>
-</component>

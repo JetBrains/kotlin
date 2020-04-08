@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="everywhere except junit4" pattern="!src:com.intellij.rt.junit4..*" />
+</component>

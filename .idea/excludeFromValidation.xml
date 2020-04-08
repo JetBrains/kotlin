@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExcludeFromValidation">
+    <file url="file://$PROJECT_DIR$/intellij/plugins/groovy/grails-rt/resources/idea-injected-traits.groovy" />
+    <directory url="file://$PROJECT_DIR$/intellij/plugins/groovy/mvc-testdata" includeSubdirectories="true" />
+    <directory url="file://$PROJECT_DIR$/intellij/dbe/database/impl/resources/extensions" includeSubdirectories="true" />
+    <file url="file://$PROJECT_DIR$/intellij/plugins/groovy/resources/IdeaPrintProjectSettings.groovy" />
+  </component>
+</project>

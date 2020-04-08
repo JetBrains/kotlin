@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="central-proxy" />
+      <option name="name" value="Maven Central Proxy" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/maven-central" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="exasol-mirror" />
+      <option name="name" value="Exasol repository mirror" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/maven.exasol.com/artifactory/exasol-releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="intellij-third-party-dependencie-mirror" />
+      <option name="name" value="IntelliJ Dependencies on Bintray mirror" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="9a54cf1e-05d8-4b17-9c48-31b93bffe934" />
+      <option name="name" value="9a54cf1e-05d8-4b17-9c48-31b93bffe934" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/dekaf" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jcenter-proxy" />
+      <option name="name" value="JCenter on Bintray proxy" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jcenter.bintray.com" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="3e981f81-9991-429f-bed8-5e9b000571d9" />
+      <option name="name" value="3e981f81-9991-429f-bed8-5e9b000571d9" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="7f55b472-2f92-4c71-b66c-3b1910df5169" />
+      <option name="name" value="7f55b472-2f92-4c71-b66c-3b1910df5169" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/repo.spring.io/milestone" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="cb407173-c6fc-44ad-a393-4754d95a39a7" />
+      <option name="name" value="cb407173-c6fc-44ad-a393-4754d95a39a7" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/repo.jenkins-ci.org/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="test-discovery" />
+      <option name="name" value="Test Discovery on Bintray" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/test-discovery" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="e585af2a-f558-424b-a8e6-3a1365d5b046" />
+      <option name="name" value="e585af2a-f558-424b-a8e6-3a1365d5b046" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="22e78eb4-6e00-4756-926a-f3ec0bc8e712" />
+      <option name="name" value="22e78eb4-6e00-4756-926a-f3ec0bc8e712" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/intellij-go-snapshots/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="groovy-proxy" />
+      <option name="name" value="Groovy Bintray Repository Mirror" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/groovy/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jitpack mirror" />
+      <option name="name" value="jitpack mirror" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jitpack.io" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="7f849d18-5038-490f-a93d-226871e8f98c" />
+      <option name="name" value="7f849d18-5038-490f-a93d-226871e8f98c" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="7d97eea6-67dd-49e1-8280-214d3017c5e8" />
+      <option name="name" value="7d97eea6-67dd-49e1-8280-214d3017c5e8" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/rd-model-snapshots/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="95d1def6-1d1e-4c6e-881f-c852f9c1a616" />
+      <option name="name" value="95d1def6-1d1e-4c6e-881f-c852f9c1a616" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/jediterm" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="7e2b3524-2fe7-4a0c-9f0d-2f81a370c9b7" />
+      <option name="name" value="7e2b3524-2fe7-4a0c-9f0d-2f81a370c9b7" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-terraform" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="36870030-7a21-4052-b93a-010aa4c33366" />
+      <option name="name" value="36870030-7a21-4052-b93a-010aa4c33366" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/download.jetbrains.com/teamcity-repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="b7513459-458a-4892-b2b4-eca932d3c82a" />
+      <option name="name" value="b7513459-458a-4892-b2b4-eca932d3c82a" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-plugin/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven5" />
+      <option name="name" value="maven5" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="75325590-b8e2-483b-bb73-29731a39425f" />
+      <option name="name" value="75325590-b8e2-483b-bb73-29731a39425f" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/clojars.org/repo" />
+    </remote-repository>
+  </component>
+</project>

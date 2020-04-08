@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="DevKit"/>
+    <plugin id="Git4Idea"/>
+    <plugin id="JUnit"/>
+    <plugin id="com.intellij" min-version="192.5728.98"/>
+    <plugin id="com.intellij.copyright"/>
+    <plugin id="com.intellij.java-i18n"/>
+    <plugin id="com.intellij.properties"/>
+    <plugin id="com.intellij.uiDesigner"/>
+    <plugin id="com.jetbrains.intellij.api.watcher" min-version="6.41.0"/>
+    <plugin id="org.intellij.groovy"/>
+    
+  </component>
+</project>

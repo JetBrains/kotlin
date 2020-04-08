@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="php" pattern="test[intellij.php*]:*..*||src[intellij.php*]:*..*" />
+</component>

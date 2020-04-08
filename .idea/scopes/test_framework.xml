@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="test-framework" pattern="src[*testFramework]:*..*" />
+</component>

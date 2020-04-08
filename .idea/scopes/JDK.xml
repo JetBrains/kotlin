@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="JDK" pattern="lib:java..*||lib:javax..*||lib:com.sun..*||lib:apple..*" />
+</component>

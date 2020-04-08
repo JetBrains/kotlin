@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="LombokPlugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/thirdPartyPlugins/lombok/lombok-plugin/lib/lombok-plugin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/thirdPartyPlugins/lombok/lombok-plugin/lib/lombok-plugin.jar!/" />
+    </excluded>
+  </library>
+</component>

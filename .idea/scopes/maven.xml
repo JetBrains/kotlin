@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="maven" pattern="src[intellij.maven*]:org.jetbrains.idea.maven..*||src[intellij.osgi]:org.osmorc.maven..*" />
+</component>

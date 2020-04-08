@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="javax-inject" type="repository">
+    <properties include-transitive-deps="false" maven-id="javax.inject:javax.inject:1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

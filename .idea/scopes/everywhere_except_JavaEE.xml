@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="everywhere except JavaEE" pattern="!src[intellij.javaee*]:*..*&amp;&amp;!src[intellij.spring*]:*..*&amp;&amp;!src[intellij.struts*]:*..*&amp;&amp;!test[intellij.spring*]:*..*&amp;&amp;!test[intellij.struts*]:*..*&amp;&amp;!test[intellij.gwt*]:*..*&amp;&amp;!src[intellij.gwt*]:*..*&amp;&amp;!test:*..*&amp;&amp;!src[intellij.jsr45debug]:*..*&amp;&amp;!src[intellij.hibernate*]:*..*" />
+</component>

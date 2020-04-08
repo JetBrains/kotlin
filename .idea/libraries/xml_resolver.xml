@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="xml-resolver" type="repository">
+    <properties maven-id="xml-resolver:xml-resolver:1.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/xml-resolver/xml-resolver/1.2/xml-resolver-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/xml-resolver/xml-resolver/1.2/xml-resolver-1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

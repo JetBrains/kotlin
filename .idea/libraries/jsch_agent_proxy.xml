@@ -1,0 +1,27 @@
+<component name="libraryTable">
+  <library name="jsch-agent-proxy" type="repository">
+    <properties maven-id="com.jcraft:jsch.agentproxy.connector-factory:0.0.9">
+      <exclude>
+        <dependency maven-id="net.java.dev.jna:jna" />
+        <dependency maven-id="net.java.dev.jna:jna-platform" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.connector-factory/0.0.9/jsch.agentproxy.connector-factory-0.0.9.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.core/0.0.9/jsch.agentproxy.core-0.0.9.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.usocket-jna/0.0.9/jsch.agentproxy.usocket-jna-0.0.9.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.usocket-nc/0.0.9/jsch.agentproxy.usocket-nc-0.0.9.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.sshagent/0.0.9/jsch.agentproxy.sshagent-0.0.9.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.pageant/0.0.9/jsch.agentproxy.pageant-0.0.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.connector-factory/0.0.9/jsch.agentproxy.connector-factory-0.0.9-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.core/0.0.9/jsch.agentproxy.core-0.0.9-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.usocket-jna/0.0.9/jsch.agentproxy.usocket-jna-0.0.9-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.usocket-nc/0.0.9/jsch.agentproxy.usocket-nc-0.0.9-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.sshagent/0.0.9/jsch.agentproxy.sshagent-0.0.9-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch.agentproxy.pageant/0.0.9/jsch.agentproxy.pageant-0.0.9-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

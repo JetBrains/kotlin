@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="JavaEE">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/javaee.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

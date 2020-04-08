@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="LanguageInjectionConfiguration">
+    <injection language="RegExp" injector-id="java">
+      <display-name>XDebuggerTestUtil.assertVariableValueMatches (com.intellij.xdebugger)</display-name>
+      <place><![CDATA[psiParameter().ofMethod(2, psiMethod().withName("assertVariableValueMatches").withParameters("java.util.Collection", "java.lang.String", "java.lang.String").definedInClass("com.intellij.xdebugger.XDebuggerTestUtil"))]]></place>
+    </injection>
+  </component>
+</project>

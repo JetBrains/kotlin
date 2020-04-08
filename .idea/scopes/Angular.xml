@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Angular" pattern="src[intellij.angularJS]:org.angular2..*" />
+</component>

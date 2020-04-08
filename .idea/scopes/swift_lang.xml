@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="swift-lang" pattern="file[intellij.clion.swift]:*/||file[intellij.swift]:*/" />
+</component>

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="perfetto-proto" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.android.tools.base:perfetto-protos:26.6.0.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/perfetto-protos/26.6.0.2/perfetto-protos-26.6.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

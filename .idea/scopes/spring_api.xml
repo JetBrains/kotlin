@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="spring-api" pattern="file[intellij.spring]:gen//*||file[intellij.spring]:src//*||file[intellij.spring.boot]:gen//*||file[intellij.spring.boot]:src//*" />
+</component>

@@ -1,5 +1,9 @@
 <component name="DependencyValidationManager">
   <state>
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
+    <deny_rule from_scope="util-rt" to_scope="util-rt dependencies" is_deny="true" />
+    <deny_rule from_scope="java-decompiler-engine" to_scope="java-decompiler-engine dependencies" is_deny="true" />
+    <deny_rule from_scope="osmorc-not-maven" to_scope="maven" is_deny="true" />
+    <deny_rule from_scope="swift-lang" to_scope="AppCode" is_deny="true" />
   </state>
 </component>

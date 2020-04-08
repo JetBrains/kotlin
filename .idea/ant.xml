@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AntConfiguration">
+    <buildFile url="file://$PROJECT_DIR$/intellij/build/update.xml">
+      <additionalClassPath>
+        <entry path="file://$PROJECT_DIR$/intellij/community/build/lib/jps/antlayout.jar" />
+      </additionalClassPath>
+      <maximumStackSize value="32" />
+      <properties>
+        <property name="work.idea.home" value="$APPLICATION_HOME_DIR$" />
+      </properties>
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/intellij/tools/lexer/build.xml">
+      <additionalClassPath>
+        <entry path="file://$PROJECT_DIR$/intellij/tools/lexer/lib/ant-contrib-1.0b3.jar" />
+        <entry path="file://$MAVEN_REPOSITORY$/org/apache/velocity/velocity/1.7/velocity-1.7.jar" />
+        <entry path="file://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" />
+        <entry path="file://$MAVEN_REPOSITORY$/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar" />
+        <entry path="file://$PROJECT_DIR$/intellij/tools/lexer/lib/vpp.jar" />
+      </additionalClassPath>
+      <maximumStackSize value="32" />
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/intellij/community/plugins/groovy/hotswap/build.xml">
+      <additionalClassPath>
+        <entry path="file://$PROJECT_DIR$/intellij/community/build/lib/jarjar-1.0.jar" />
+      </additionalClassPath>
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/intellij/community/json/src/jsonSchema/build.xml" />
+  </component>
+  <component name="GantSettings">
+    <option name="SDK_HOME" value="$PROJECT_DIR$/intellij/community/build/lib/gant" />
+  </component>
+</project>

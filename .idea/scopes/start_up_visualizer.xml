@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="start-up-visualizer" pattern="file[intellij.platform.builtInServer.impl]:start-up-visualizer//*" />
+</component>

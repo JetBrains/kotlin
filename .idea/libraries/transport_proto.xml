@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="transport-proto" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.android.tools.base:transport_java_proto:26.6.0.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/android/tools/base/transport_java_proto/26.6.0.2/transport_java_proto-26.6.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

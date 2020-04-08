@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/intellij/CIDR-appcode/cocoa/src/com/jetbrains/cidr/documentation/CocoaDocumentationManagerImpl.java" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/exasol" dialect="Exasol" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/maria" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/mysql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/mysqlbase" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/snowflake" dialect="Snowflake" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/sqlite" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/vertica" dialect="Vertica" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/db2" dialect="DB2" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/derby" dialect="Derby" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/h2" dialect="H2" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/hsqldb" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/mysql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/oracle" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/postgres" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/sql92" dialect="SQL92" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/sqlite" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/sql/testData/highlighting/sybase" dialect="Sybase" />
+    <file url="file://$PROJECT_DIR$/intellij/plugins/frameworks/hibernate/hibernate-tests/testData/create-script-for-console-tests.sql" dialect="MySQL" />
+  </component>
+</project>

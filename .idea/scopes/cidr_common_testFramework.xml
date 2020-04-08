@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="cidr-common-testFramework" pattern="file[intellij.cidr.common.testFramework]:*/" />
+</component>

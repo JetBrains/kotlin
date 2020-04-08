@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="osmorc-not-maven" pattern="src[intellij.osgi]:org.osmorc..*&amp;&amp;!src[intellij.osgi]:org.osmorc.maven..*&amp;&amp;!src[intellij.osgi]:org.osmorc.util.MavenIntegrationUtil" />
+</component>

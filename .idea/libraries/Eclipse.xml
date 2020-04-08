@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Eclipse">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/community/lib/ecj-4.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

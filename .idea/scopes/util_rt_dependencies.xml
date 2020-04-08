@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="util-rt dependencies" pattern="(lib:*..*||src:*..*)&amp;&amp;!lib:java..*&amp;&amp;!lib:javax..*&amp;&amp;!src[intellij.platform.util.rt]:*..*&amp;&amp;!lib[jetbrains-annotations-java5]:*..*" />
+</component>

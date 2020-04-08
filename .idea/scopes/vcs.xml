@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="vcs" pattern="file[intellij.platform.diff*]:*//*||file[intellij.platform.lvcs*]:*//*||file[intellij.platform.vcs*]:*//*||file[intellij.vcs*]:*//*" />
+</component>

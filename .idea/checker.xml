@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ConditionCheckManager">
+    <option name="myIsNotNullCheckMethods">
+      <list>
+        <option value="com.intellij.openapi.util.text.StringUtil.isNotEmpty(*java.lang.String s*)" />
+      </list>
+    </option>
+    <option name="myAssertTrueMethods">
+      <list>
+        <option value="com.intellij.openapi.diagnostic.Logger.assertTrue(*boolean value*)" />
+        <option value="com.intellij.openapi.diagnostic.Logger.assertTrue(*boolean value*, java.lang.Object message)" />
+      </list>
+    </option>
+  </component>
+</project>
+

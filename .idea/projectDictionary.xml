@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project relativePaths="false" version="4">
+  <component name="ProjectWordList">
+    <option name="words">
+      <set>
+        <option value="Bool" />
+        <option value="DIRNAME" />
+        <option value="args" />
+        <option value="boolean" />
+        <option value="decl" />
+        <option value="multi" />
+        <option value="param" />
+        <option value="params" />
+        <option value="reparse" />
+        <option value="stmt" />
+        <option value="subreference" />
+      </set>
+    </option>
+  </component>
+</project>
+

@@ -1,21 +1,24 @@
 <component name="CopyrightManager">
   <settings>
     <module2copyright>
-      <element module="Apply copyright" copyright="apache" />
+      <element module="community except testdata" copyright="openapi_short" />
+      <element module="idea openapi" copyright="openapi" />
+      <element module="spring-api" copyright="openapi_short" />
+      <element module="contrib except testdata" copyright="openapi_short" />
     </module2copyright>
-    <LanguageOptions name="Groovy">
-      <option name="fileTypeOverride" value="1" />
-    </LanguageOptions>
     <LanguageOptions name="HTML">
       <option name="fileTypeOverride" value="1" />
-      <option name="prefixLines" value="false" />
     </LanguageOptions>
+    <LanguageOptions name="JAVA" />
     <LanguageOptions name="Properties">
       <option name="fileTypeOverride" value="1" />
     </LanguageOptions>
     <LanguageOptions name="XML">
       <option name="fileTypeOverride" value="1" />
-      <option name="prefixLines" value="false" />
+    </LanguageOptions>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="addBlankAfter" value="false" />
+      <option name="block" value="false" />
     </LanguageOptions>
   </settings>
 </component>

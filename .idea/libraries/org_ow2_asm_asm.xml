@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="org.ow2.asm:asm" type="repository">
+    <properties maven-id="org.ow2.asm:asm:6.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm/6.0/asm-6.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlinc.noarg-compiler-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/noarg-compiler-plugin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

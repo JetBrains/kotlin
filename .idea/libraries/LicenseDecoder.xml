@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="LicenseDecoder">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/ideaLicenseDecoder.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/src/ideaLicenseDecoder-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>
