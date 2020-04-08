@@ -100,7 +100,9 @@ class GradleScriptConfigurationManagerProvider : SpecialScriptConfigurationManag
     }
 }
 
-open class GradleScriptConfigurationManager(project: Project) : AbstractScriptConfigurationManager(project) {
+open class GradleScriptConfigurationManager(project: Project) : ScriptConfigurationManager {
+
+
 
     private val saveLock = ReentrantLock()
 

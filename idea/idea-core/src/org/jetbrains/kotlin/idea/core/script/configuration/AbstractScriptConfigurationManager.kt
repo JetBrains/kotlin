@@ -69,16 +69,9 @@ abstract class AbstractScriptConfigurationManager(
     private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
 
-    private val defaultLoaders: Sequence<ScriptConfigurationLoader>
-        get() = sequence {
-            yield(outsiderLoader)
-            yield(fileAttributeCache)
-        }
+    private val defaultLoaders = listOf(outsiderLoader, fileAttributeCache)
 
-    @Suppress("LeakingThis")
-    protected val cache: ScriptConfigurationCache = createCache()
-
-    private fun createCache() = object : ScriptConfigurationMemoryCache(project) {
+    protected val cache: ScriptConfigurationCache = object : ScriptConfigurationMemoryCache(project) {
         override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
             super.setLoaded(file, configurationSnapshot)
             fileAttributeCache.save(file, configurationSnapshot)
@@ -141,7 +134,7 @@ abstract class AbstractScriptConfigurationManager(
 
     /**
      * Will be called on user action
-     * Load configuration event it is already cached or inputs are up-to-date
+     * Load configuration even it is already cached or inputs are up-to-date
      *
      * @param loader is used to load configuration. Other loaders aren't taken into account.
      */
