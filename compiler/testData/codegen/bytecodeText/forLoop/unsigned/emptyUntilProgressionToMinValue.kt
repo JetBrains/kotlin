@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM_IR
+// WITH_RUNTIME
 fun box(): String {
-    for (i in 2 until Int.MIN_VALUE step 2) {
+    for (i in 2u until UInt.MIN_VALUE step 2) {
     }
 
     return "OK"
@@ -13,8 +14,8 @@ fun box(): String {
 // Expected lowered form of loop (before bytecode optimizations):
 //
 //   // Standard form of loop over progression
-//   var inductionVar = 2
-//   val last = getProgressionLastElement(2, Int.MIN_VALUE - 1, 2)   // `(Int.MIN_VALUE - 1)` underflows to Int.MAX_VALUE
+//   var inductionVar = 2u
+//   val last = getProgressionLastElement(2u, UInt.MIN_VALUE - 1, 2)   // `(UInt.MIN_VALUE - 1)` underflows to UInt.MAX_VALUE
 //   val step = 2
 //   if (false && inductionVar <= last) {   // `false` comes from constant folding of `Int.MIN_VALUE != Int.MIN_VALUE`
 //     // Loop is not empty
@@ -31,7 +32,7 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 INVOKESTATIC kotlin/internal/ProgressionUtilKt.getProgressionLastElement
+// 1 INVOKESTATIC kotlin/internal/UProgressionUtilKt.getProgressionLastElement
 // 0 NEW java/lang/IllegalArgumentException
 // 0 ATHROW
 // 0 IF
