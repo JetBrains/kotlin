@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -72,19 +73,6 @@ private class Configuration(
             )
         }
     }
-
-    private fun computeGradleProjectRoots(project: Project): Set<String> {
-        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        if (gradleSettings.linkedProjectsSettings.isEmpty()) return setOf()
-
-        val projectSettings = gradleSettings.linkedProjectsSettings.filterIsInstance<GradleProjectSettings>().firstOrNull()
-            ?: return setOf()
-
-        return projectSettings.modules.takeIf { it.isNotEmpty() } ?: setOf(projectSettings.externalProjectPath)
-    }
-
-    // todo: remove it, just return sdk
-    fun getAnyLoadedScript() = scripts.firstOrNull()?.key?.let { get(it.toVirtualFile()) }
 }
 
 class GradleScriptingSupport(val project: Project) : ScriptingSupport {
@@ -148,7 +136,9 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport {
         }
     }
 
-    override fun getAnyLoadedScript() = configuration?.getAnyLoadedScript()?.scriptConfiguration
+    override fun getFirstScriptsSdk(): Sdk? = configuration?.sdk
+
+    override fun getScriptSdk(file: VirtualFile): Sdk? = configuration?.sdk
 
     // this is not required for gradle in any way
     // unused symbol inspection should not initiate loading

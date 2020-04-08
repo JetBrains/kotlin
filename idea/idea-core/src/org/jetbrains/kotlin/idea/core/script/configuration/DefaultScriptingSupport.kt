@@ -241,9 +241,6 @@ abstract class DefaultScriptingSupportBase(val project: Project): ScriptingSuppo
     override fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
-    override fun getAnyLoadedScript(): ScriptCompilationConfigurationWrapper? =
-        cache.getAnyLoadedScript()
-
     override fun getOrLoadConfiguration(
         virtualFile: VirtualFile,
         preloadedKtFile: KtFile?
@@ -425,6 +422,10 @@ abstract class DefaultScriptingSupportBase(val project: Project): ScriptingSuppo
 
         return classpathRoots
     }
+
+    override fun getScriptSdk(file: VirtualFile): Sdk? = getActualClasspathRoots(file).getScriptSdk(file)
+
+    override fun getFirstScriptsSdk(): Sdk? = classpathRoots.firstScriptSdk
 
     override fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
         getActualClasspathRoots(file).getScriptDependenciesClassFilesScope(file)

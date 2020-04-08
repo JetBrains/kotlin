@@ -18,12 +18,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
@@ -37,12 +34,12 @@ interface ScriptingSupport {
     fun hasCachedConfiguration(file: KtFile): Boolean
     fun getOrLoadConfiguration(virtualFile: VirtualFile, preloadedKtFile: KtFile? = null): ScriptCompilationConfigurationWrapper?
 
-    fun getAnyLoadedScript(): ScriptCompilationConfigurationWrapper?
-
     val updater: ScriptConfigurationUpdater
 
+    fun getFirstScriptsSdk(): Sdk?
     fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope
 
+    fun getScriptSdk(file: VirtualFile): Sdk?
     fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope
     fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope
     fun getAllScriptsDependenciesClassFiles(): List<VirtualFile>
@@ -83,26 +80,11 @@ class CompositeManager(val project: Project) : ScriptConfigurationManager {
         }
 
     override fun getScriptSdk(file: VirtualFile): Sdk? =
-        getScriptSdk(getOrLoadConfiguration(file))
-
-    // todo: cache
-    private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
-        // workaround for mismatched gradle wrapper and plugin version
-        val javaHome = try {
-            compilationConfiguration?.javaHome?.let { VfsUtil.findFileByIoFile(it, true) }
-        } catch (e: Throwable) {
-            null
-        } ?: return null
-
-        return getAllProjectSdks().find { it.homeDirectory == javaHome }
-    }
+        getRelatedManager(file).getScriptSdk(file)
 
     override fun getFirstScriptsSdk(): Sdk? {
         managers.forEach {
-            val anyLoadedScript = it.getAnyLoadedScript()
-            if (anyLoadedScript != null) {
-                return getScriptSdk(anyLoadedScript)
-            }
+            it.getFirstScriptsSdk()?.let { sdk -> return sdk }
         }
 
         return null
