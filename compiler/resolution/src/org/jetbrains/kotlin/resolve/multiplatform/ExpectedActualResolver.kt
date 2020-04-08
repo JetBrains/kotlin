@@ -50,8 +50,8 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module):
  * Facade for getting information for expect-actual matching.
  *
  * It's work mostly consists of two large parts:
- * - find potentially compatible declarations by quering scopes
- * - compute compatibility of those declarations by quering [ExpectedActualCompatibilityChecker]
+ * - find potentially compatible declarations by querying scopes
+ * - compute compatibility of those declarations by querying[ExpectedActualCompatibilityChecker]
  */
 object ExpectedActualResolver {
     fun findActualForExpected(
