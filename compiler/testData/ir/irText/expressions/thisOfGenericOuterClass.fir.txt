@@ -91,11 +91,11 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                     GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                       receiver: GET_VAR '<this>: <root>.test.<no name provided> declared in <root>.test.<no name provided>.<get-xx>' type=<root>.test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
-              FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.test.<no name provided>) returnType:kotlin.Int [fake_override]
+              FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:kotlin.Int [fake_override]
                 correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
                 overridden:
                   public final fun <get-y> (): kotlin.Int declared in <root>.Outer.Inner
-                $this: VALUE_PARAMETER name:<this> type:<root>.test.<no name provided>
+                $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
                 public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

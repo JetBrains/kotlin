@@ -88,22 +88,22 @@ FILE fqName:<root> fileName:/kt16904.kt
               $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
             other: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:<root>.B [fake_override]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): <root>.B declared in <root>.A
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
-      FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <get-y> (): kotlin.Int declared in <root>.A
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
-      FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:FINAL <> ($this:<root>.Test1, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+      FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

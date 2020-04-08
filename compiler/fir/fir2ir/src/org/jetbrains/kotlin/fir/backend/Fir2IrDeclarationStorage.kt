@@ -371,6 +371,7 @@ class Fir2IrDeclarationStorage(
         function: FirFunction<*>?,
         descriptor: WrappedCallableDescriptor<T>,
         irParent: IrDeclarationParent?,
+        thisReceiverOwner: IrClass? = irParent as? IrClass,
         isStatic: Boolean,
         parentPropertyReceiverType: FirTypeRef? = null
     ): T {
@@ -378,7 +379,7 @@ class Fir2IrDeclarationStorage(
             parent = irParent
         }
         descriptor.bind(this)
-        declareParameters(function, irParent as? IrClass, isStatic, parentPropertyReceiverType)
+        declareParameters(function, thisReceiverOwner, isStatic, parentPropertyReceiverType)
         return this
     }
 
@@ -400,6 +401,7 @@ class Fir2IrDeclarationStorage(
     fun createIrFunction(
         function: FirFunction<*>,
         irParent: IrDeclarationParent?,
+        thisReceiverOwner: IrClass? = irParent as? IrClass,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrSimpleFunction {
         val simpleFunction = function as? FirSimpleFunction
@@ -436,7 +438,7 @@ class Fir2IrDeclarationStorage(
                 }
             }
             result
-        }.bindAndDeclareParameters(function, descriptor, irParent, isStatic = simpleFunction?.isStatic == true)
+        }.bindAndDeclareParameters(function, descriptor, irParent, thisReceiverOwner, isStatic = simpleFunction?.isStatic == true)
 
         leaveScope(created.descriptor)
         if (visibility == Visibilities.LOCAL) {
@@ -506,6 +508,7 @@ class Fir2IrDeclarationStorage(
         correspondingProperty: IrProperty,
         propertyType: IrType,
         irParent: IrDeclarationParent?,
+        thisReceiverOwner: IrClass? = irParent as? IrClass,
         isSetter: Boolean,
         origin: IrDeclarationOrigin,
         startOffset: Int,
@@ -552,7 +555,7 @@ class Fir2IrDeclarationStorage(
                 }
                 enterScope(descriptor)
             }.bindAndDeclareParameters(
-                propertyAccessor, descriptor, irParent, isStatic = irParent !is IrClass,
+                propertyAccessor, descriptor, irParent, thisReceiverOwner, isStatic = irParent !is IrClass,
                 parentPropertyReceiverType = property.receiverTypeRef
             ).apply {
                 leaveScope(descriptor)
@@ -600,6 +603,7 @@ class Fir2IrDeclarationStorage(
     fun createIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
+        thisReceiverOwner: IrClass? = irParent as? IrClass,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrProperty {
         val containerSource = property.containerSource
@@ -660,7 +664,7 @@ class Fir2IrDeclarationStorage(
 
                     }
                     this.getter = createIrPropertyAccessor(
-                        getter, property, this, type, irParent, false,
+                        getter, property, this, type, irParent, thisReceiverOwner, false,
                         when {
                             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                             delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
@@ -671,7 +675,7 @@ class Fir2IrDeclarationStorage(
                     )
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
-                            setter, property, this, type, irParent, true,
+                            setter, property, this, type, irParent, thisReceiverOwner, true,
                             when {
                                 delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                                 setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR

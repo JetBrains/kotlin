@@ -245,38 +245,38 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,val]
-      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:ABSTRACT <> ($this:<root>.IOther) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-x> (): kotlin.String declared in <root>.IOther
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.IOther
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:ABSTRACT [fake_override,var]
-      FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:ABSTRACT <> ($this:<root>.IOther) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-y> (): kotlin.Int declared in <root>.IOther
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-      FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:ABSTRACT <> ($this:<root>.Test2, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IOther
+      FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:ABSTRACT <> ($this:<root>.IOther, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.IOther
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:z1 visibility:public modality:ABSTRACT [fake_override,val]
-      FUN FAKE_OVERRIDE name:<get-z1> visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-z1> visibility:public modality:ABSTRACT <> ($this:<root>.IOther) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:z1 visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-z1> (): kotlin.Int declared in <root>.IOther
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.IOther
     PROPERTY FAKE_OVERRIDE name:z2 visibility:public modality:ABSTRACT [fake_override,var]
-      FUN FAKE_OVERRIDE name:<get-z2> visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-z2> visibility:public modality:ABSTRACT <> ($this:<root>.IOther) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:z2 visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-z2> (): kotlin.Int declared in <root>.IOther
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-      FUN FAKE_OVERRIDE name:<set-z2> visibility:public modality:ABSTRACT <> ($this:<root>.Test2, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IOther
+      FUN FAKE_OVERRIDE name:<set-z2> visibility:public modality:ABSTRACT <> ($this:<root>.IOther, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:z2 visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <set-z2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.IOther
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int

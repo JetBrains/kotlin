@@ -91,8 +91,9 @@ internal class FakeOverrideGenerator(
                         // Substitution case
                         val baseSymbol = functionSymbol.deepestOverriddenSymbol() as FirNamedFunctionSymbol
                         val irFunction = declarationStorage.createIrFunction(
-                            // TODO: parents for functions and properties should be consistent
-                            originalFunction, declarationStorage.findIrParent(baseSymbol.fir), origin = origin
+                            originalFunction, irParent = this,
+                            thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
+                            origin = origin
                         )
                         // In fake overrides, parent logic is a bit specific, because
                         // parent of *original* function (base class) is used for dispatch receiver,
@@ -109,7 +110,9 @@ internal class FakeOverrideGenerator(
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
                         val irFunction = declarationStorage.createIrFunction(
-                            fakeOverrideFunction, declarationStorage.findIrParent(originalFunction), origin = origin
+                            fakeOverrideFunction, irParent = this,
+                            thisReceiverOwner = declarationStorage.findIrParent(originalFunction) as? IrClass,
+                            origin = origin
                         )
                         if (irFunction.returnType.containsErrorType() || irFunction.valueParameters.any { it.type.containsErrorType() }) {
                             return@processFunctionsByName
@@ -129,7 +132,9 @@ internal class FakeOverrideGenerator(
                         // Substitution case
                         val baseSymbol = propertySymbol.deepestOverriddenSymbol() as FirPropertySymbol
                         val irProperty = declarationStorage.createIrProperty(
-                            originalProperty, irParent = this, origin = origin
+                            originalProperty, irParent = this,
+                            thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
+                            origin = origin
                         )
                         declarations += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(originalProperty, firOverriddenSymbol = baseSymbol)
@@ -142,7 +147,9 @@ internal class FakeOverrideGenerator(
                         val fakeOverrideProperty = fakeOverrideSymbol.fir
 
                         val irProperty = declarationStorage.createIrProperty(
-                            fakeOverrideProperty, irParent = this, origin = origin
+                            fakeOverrideProperty, irParent = this,
+                            thisReceiverOwner = declarationStorage.findIrParent(originalProperty) as? IrClass,
+                            origin = origin
                         ).apply {
                             // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
                             if (originalProperty.getter?.allowsToHaveFakeOverride != true) {

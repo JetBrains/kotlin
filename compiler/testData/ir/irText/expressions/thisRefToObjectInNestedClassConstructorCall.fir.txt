@@ -44,11 +44,11 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
             x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base]'
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Host.Derived1) returnType:kotlin.Any [fake_override]
+        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-x> (): kotlin.Any declared in <root>.Base
-          $this: VALUE_PARAMETER name:<this> type:<root>.Host.Derived1
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -70,11 +70,11 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
             x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Base]'
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
-        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Host.Derived2) returnType:kotlin.Any [fake_override]
+        FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-x> (): kotlin.Any declared in <root>.Base
-          $this: VALUE_PARAMETER name:<this> type:<root>.Host.Derived2
+          $this: VALUE_PARAMETER name:<this> type:<root>.Base
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

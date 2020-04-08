@@ -54,25 +54,25 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       VALUE_PARAMETER name:a index:0 type:E of <root>.Test1
       VALUE_PARAMETER name:b index:1 type:B of <root>.Test1.foo
     PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
-      FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <C> ($this:<root>.Test1<E of <root>.Test1>) returnType:kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>? [fake_override]
+      FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <C> ($this:<root>.IBase<A of <root>.IBase>) returnType:kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase
         TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,var]
-      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:ABSTRACT <D> ($this:<root>.Test1<E of <root>.Test1>) returnType:D of <root>.Test1.<get-x>? [fake_override]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:ABSTRACT <D> ($this:<root>.IBase<A of <root>.IBase>) returnType:D of <root>.Test1.<get-x>? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase
         TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
-      FUN FAKE_OVERRIDE name:<set-x> visibility:public modality:ABSTRACT <D> ($this:<root>.Test1<E of <root>.Test1>, <set-?>:D of <root>.Test1.<set-x>?) returnType:kotlin.Unit [fake_override]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
+      FUN FAKE_OVERRIDE name:<set-x> visibility:public modality:ABSTRACT <D> ($this:<root>.IBase<A of <root>.IBase>, <set-?>:D of <root>.Test1.<set-x>?) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
         TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test1.<set-x>?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -121,25 +121,25 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       VALUE_PARAMETER name:a index:0 type:kotlin.String
       VALUE_PARAMETER name:b index:1 type:B of <root>.Test2.foo
     PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
-      FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <C> ($this:<root>.Test2) returnType:kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>? [fake_override]
+      FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <C> ($this:<root>.IBase<A of <root>.IBase>) returnType:kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase
         TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,var]
-      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:ABSTRACT <D> ($this:<root>.Test2) returnType:D of <root>.Test2.<get-x>? [fake_override]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:ABSTRACT <D> ($this:<root>.IBase<A of <root>.IBase>) returnType:D of <root>.Test2.<get-x>? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase
         TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-      FUN FAKE_OVERRIDE name:<set-x> visibility:public modality:ABSTRACT <D> ($this:<root>.Test2, <set-?>:D of <root>.Test2.<set-x>?) returnType:kotlin.Unit [fake_override]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
+      FUN FAKE_OVERRIDE name:<set-x> visibility:public modality:ABSTRACT <D> ($this:<root>.IBase<A of <root>.IBase>, <set-?>:D of <root>.Test2.<set-x>?) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
         TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<A of <root>.IBase>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test2.<set-x>?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
