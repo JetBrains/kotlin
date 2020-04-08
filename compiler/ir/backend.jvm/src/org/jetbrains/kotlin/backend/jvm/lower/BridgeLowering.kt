@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -172,8 +175,10 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             createBridges(declaration, member)
 
             // For lambda classes, we move overrides from the `invoke` function to its bridge. This will allow us to avoid boxing
-            // the return type of `invoke` in codegen for lambdas with primitive return type.
-            if (member.name == OperatorNameConventions.INVOKE && declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+            // the return type of `invoke` in codegen for lambdas with primitive return type. This does not apply to lambdas returning
+            // inline class types erasing to Any, which we need to box.
+            if (member.name == OperatorNameConventions.INVOKE && declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+                && !member.returnType.isInlineClassErasingToAny) {
                 member.overriddenSymbols = listOf()
             }
         }
@@ -354,10 +359,15 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             body = context.createIrBuilder(symbol).run { irExprBody(delegatingCall(this@apply, target)) }
 
-            val redundantOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) {
+            // The generated bridge method overrides all of the symbols which were overridden by its overrides.
+            // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
+            val inheritedOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) { function ->
+                function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
+            }
+            val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
                 it.owner.allOverridden().map { override -> override.symbol }.asIterable()
             }
-            overriddenSymbols = bridge.overriddenSymbols.filter { it !in redundantOverrides }
+            overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
         }
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
@@ -492,3 +502,6 @@ private fun IrSimpleFunction.resolvesToClass(): Boolean {
 
 private fun IrSimpleFunction.overriddenFromClass(): IrSimpleFunction? =
     overriddenSymbols.singleOrNull { !it.owner.parentAsClass.isJvmInterface }?.owner
+
+private val IrType.isInlineClassErasingToAny: Boolean
+    get() = unboxInlineClass().let { unboxed -> unboxed != this && (unboxed.isAny() || unboxed.isNullableAny()) }

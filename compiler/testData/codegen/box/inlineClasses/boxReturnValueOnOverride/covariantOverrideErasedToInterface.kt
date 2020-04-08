@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
 
 interface IFoo {
     fun foo(): String
