@@ -7,6 +7,7 @@
 
 package kotlin.io
 
+import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
@@ -145,6 +146,7 @@ public actual inline fun println() {
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
+@Throws(IOException::class)
 fun readLine(): String? = LineReader.readLine(System.`in`, Charset.defaultCharset())
 
 // Singleton object lazy initializes on the first use, internal for tests
