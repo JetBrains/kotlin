@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.interpreter
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
+import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterMethodNotFoundException
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterTimeOutException
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
@@ -159,8 +160,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             when (val kind = (irFunction.body as? IrSyntheticBody)?.kind) {
                 IrSyntheticBodyKind.ENUM_VALUES -> handleIntrinsicMethods(irFunction, data)
                 IrSyntheticBodyKind.ENUM_VALUEOF -> handleIntrinsicMethods(irFunction, data)
-                null -> irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
-                else -> throw AssertionError("Unsupported IrSyntheticBodyKind $kind")
+                null -> irFunction.body?.interpret(data) ?: throw InterpreterException("Ir function must be with body")
+                else -> throw InterpreterException("Unsupported IrSyntheticBodyKind $kind")
             }
         } finally {
             if (irFunction.fileOrNull != null) stackTrace.removeAt(stackTrace.lastIndex)
@@ -234,10 +235,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 if (irFunction.parentAsClass.isEnumClass) {
                     calculateBuiltIns(irFunction.getLastOverridden() as IrSimpleFunction, data)
                 } else {
-                    throw AssertionError("Hash code function intrinsic is supported only for enum class")
+                    throw InterpreterException("Hash code function intrinsic is supported only for enum class")
                 }
             }
-            else -> throw AssertionError("Unsupported intrinsic ${irFunction.name}")
+            else -> throw InterpreterException("Unsupported intrinsic ${irFunction.name}")
         }
 
         return Next
@@ -249,7 +250,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val instance = receiver.getOriginal()
 
             val functionImplementation = instance.getIrFunction(irFunction.descriptor)
-            if (functionImplementation?.body == null) throw NoSuchMethodException("Method \"${irFunction.name}\" wasn't implemented")
+            if (functionImplementation?.body == null) throw InterpreterMethodNotFoundException("Method \"${irFunction.name}\" wasn't implemented")
             val arguments = functionImplementation.valueParameters.map { Variable(it.descriptor, data.getVariableState(it.descriptor)) }
             val newFrame = InterpreterFrame()
             newFrame.addVar(Variable(functionImplementation.getReceiver()!!, instance))
@@ -297,12 +298,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val result = when (argsType.size) {
             1 -> {
                 val function = unaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in unary map")
+                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in unary map")
                 function.invoke(argsValues.first())
             }
             2 -> {
                 val function = binaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
+                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in binary map")
                 when (methodName) {
                     "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
                     else -> function.invoke(argsValues[0], argsValues[1])
@@ -310,10 +311,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
             3 -> {
                 val function = ternaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in ternary map")
+                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in ternary map")
                 function.invoke(argsValues[0], argsValues[1], argsValues[2])
             }
-            else -> throw UnsupportedOperationException("Unsupported number of arguments")
+            else -> throw InterpreterException("Unsupported number of arguments")
         }
 
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
@@ -501,7 +502,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 "UShort" -> irBuiltIns.shortType
                 "UInt" -> irBuiltIns.intType
                 "ULong" -> irBuiltIns.longType
-                else -> throw AssertionError("")
+                else -> throw InterpreterException("Unsupported unsigned class $unsignedClassName")
             }
         }
 
@@ -676,7 +677,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val executionResult = enumEntry.initializerExpression?.interpret(data)?.check { return it }
         enumSuperCall?.mapValueParameters { null }
         data.pushReturnValue((data.popReturnValue() as Complex))
-        return executionResult ?: throw AssertionError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+        return executionResult ?: throw InterpreterException("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): ExecutionResult {
@@ -773,7 +774,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             is Common -> data.pushReturnValue(ExceptionState(exception, stackTrace))
             is Wrapper -> data.pushReturnValue(ExceptionState(exception, stackTrace))
             is ExceptionState -> data.pushReturnValue(exception)
-            else -> throw AssertionError("${exception::class} cannot be used as exception state")
+            else -> throw InterpreterException("${exception::class} cannot be used as exception state")
         }
         return Exception
     }
@@ -793,7 +794,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                         if (executionResult.returnLabel != ReturnLabel.NEXT) return executionResult
                         (newFrame.popReturnValue() as Primitive<*>).value.toString()
                     }
-                    else -> throw AssertionError("$returnValue cannot be used in StringConcatenation expression")
+                    else -> throw InterpreterException("$returnValue cannot be used in StringConcatenation expression")
                 }
             )
         }

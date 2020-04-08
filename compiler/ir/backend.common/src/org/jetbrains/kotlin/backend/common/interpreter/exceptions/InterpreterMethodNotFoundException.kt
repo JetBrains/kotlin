@@ -5,6 +5,5 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.exceptions
 
-class InterpreterTimeOutException : InterpreterException("Exceeded execution limit of constexpr expression") {
-
+class InterpreterMethodNotFoundException(override val message: String): InterpreterException(message) {
 }
