@@ -79,7 +79,7 @@ FILE: objectInnerClass.kt
             public final fun foo(): R|kotlin/Unit| {
                 this@R|/anonymous|.R|/Case2.Base.baseFun|()
                 lval x: R|B| = this@R|/anonymous|.R|/Case2.Base.property|
-                this@R|/anonymous|.R|/anonymous.zoo|()
+                (this@R|/anonymous|, this@R|/anonymous|).R|/anonymous.zoo|()
                 (this@R|/Case2|, this@R|/anonymous|).R|/Case2.hoo|()
             }
 
@@ -141,7 +141,7 @@ FILE: objectInnerClass.kt
                 public[local] final fun foo(): R|kotlin/Unit| {
                     <Unresolved name: baseFun>#()
                     lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
-                    this@R|/Case3.<anonymous>.Child|.R|/Case3.<anonymous>.Child.zoo|()
+                    <Unresolved name: zoo>#()
                     (this@R|/anonymous|, this@R|/Case3.<anonymous>.Child|).R|/anonymous.hoo|()
                 }
 
@@ -172,7 +172,7 @@ FILE: objectInnerClass.kt
                 lval base: R|Case3.<anonymous>.Base| = R|/Case3.<anonymous>.Base.Base|(R|/B.B|())
                 R|<local>/base|.<Unresolved name: baseFun>#()
                 R|<local>/base|.<Unresolved name: property>#
-                R|<local>/base|.R|/anonymous.hoo|()
+                (this@R|/anonymous|, R|<local>/base|).R|/anonymous.hoo|()
             }
 
             public final fun caseForChild(): R|kotlin/Unit| {
@@ -180,8 +180,8 @@ FILE: objectInnerClass.kt
                 R|<local>/child|.<Unresolved name: baseFun>#()
                 R|<local>/child|.<Unresolved name: property>#
                 R|<local>/child|.<Unresolved name: foo>#()
-                R|<local>/child|.R|/anonymous.hoo|()
-                R|<local>/child|.R|/anonymous.voo|()
+                (this@R|/anonymous|, R|<local>/child|).R|/anonymous.hoo|()
+                (this@R|/anonymous|, R|<local>/child|).R|/anonymous.voo|()
             }
 
         }

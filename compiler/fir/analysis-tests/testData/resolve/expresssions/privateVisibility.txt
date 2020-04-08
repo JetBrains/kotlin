@@ -71,7 +71,7 @@ FILE: first.kt
             private final fun bar(): R|kotlin/Unit|
 
             public[local] final fun baz(): R|kotlin/Unit| {
-                R|/Local.bar|()
+                this@R|/Local|.R|/Local.bar|()
                 this@R|/Local|.R|/Local.Inner.Inner|()
             }
 
@@ -81,7 +81,7 @@ FILE: first.kt
                 }
 
                 public[local] final fun foo(): R|kotlin/Unit| {
-                    R|/Local.bar|()
+                    this@R|/Local|.R|/Local.bar|()
                 }
 
             }

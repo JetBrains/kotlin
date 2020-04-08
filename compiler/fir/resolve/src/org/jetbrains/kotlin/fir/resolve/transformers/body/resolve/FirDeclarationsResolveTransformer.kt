@@ -451,7 +451,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         function: F,
         resolutionMode: ResolutionMode,
     ): CompositeTransformResult<F> {
-        if (function is FirSimpleFunction) {
+        if (function is FirSimpleFunction && context.containerIfAny !is FirClass<*>) {
             context.storeFunction(function)
         }
 

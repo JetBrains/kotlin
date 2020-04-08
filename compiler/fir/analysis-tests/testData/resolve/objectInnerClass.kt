@@ -106,7 +106,7 @@ class Case3() {
             fun foo() {
                 <!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
                 val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
-                zoo()
+                <!UNRESOLVED_REFERENCE!>zoo<!>()
                 hoo()
             }
         }
