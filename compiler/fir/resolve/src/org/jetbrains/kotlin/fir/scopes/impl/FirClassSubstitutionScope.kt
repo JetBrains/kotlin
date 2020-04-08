@@ -130,7 +130,7 @@ class FirClassSubstitutionScope(
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
     private fun createNewTypeParametersAndSubstitutor(
-        member: FirSimpleFunction
+        member: FirCallableMemberDeclaration<*>
     ): Pair<List<FirTypeParameter>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
         val newTypeParameters = member.typeParameters.map { originalParameter ->
@@ -176,17 +176,21 @@ class FirClassSubstitutionScope(
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
 
+        val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(member)
+
         val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
-        val newReceiverType = receiverType?.substitute()
+        val newReceiverType = receiverType?.substitute(newSubstitutor)
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
-        val newReturnType = returnType.substitute()
+        val newReturnType = returnType.substitute(newSubstitutor)
 
-        if (newReceiverType == null && newReturnType == null) {
+        if (newReceiverType == null &&
+            newReturnType == null && newTypeParameters === member.typeParameters
+        ) {
             return original
         }
 
-        return createFakeOverrideProperty(session, member, original, newReceiverType, newReturnType, derivedClassId)
+        return createFakeOverrideProperty(session, member, original, newReceiverType, newReturnType, newTypeParameters, derivedClassId)
     }
 
     private fun createFakeOverrideField(original: FirFieldSymbol): FirFieldSymbol {
@@ -294,6 +298,7 @@ class FirClassSubstitutionScope(
             baseSymbol: FirPropertySymbol,
             newReceiverType: ConeKotlinType? = null,
             newReturnType: ConeKotlinType? = null,
+            newTypeParameters: List<FirTypeParameter>? = null,
             derivedClassId: ClassId? = null
         ): FirPropertySymbol {
             val symbol = FirPropertySymbol(
@@ -312,6 +317,9 @@ class FirClassSubstitutionScope(
                 status = baseProperty.status
                 resolvePhase = baseProperty.resolvePhase
                 annotations += baseProperty.annotations
+                if (newTypeParameters != null) {
+                    typeParameters += newTypeParameters
+                }
             }
             return symbol
         }
