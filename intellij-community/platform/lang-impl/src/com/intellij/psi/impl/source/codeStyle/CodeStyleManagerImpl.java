@@ -184,7 +184,10 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       return;
     }
     ApplicationManager.getApplication().assertWriteAccessAllowed();
-    PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+    Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+    if (document != null) {
+      PsiDocumentManager.getInstance(getProject()).commitDocument(document);
+    }
 
     CheckUtil.checkWritable(file);
     if (!SourceTreeToPsiMap.hasTreeElement(file)) {
