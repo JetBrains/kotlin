@@ -128,16 +128,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
-
-            val exceptionState = when {
-                // this block is used to replace jvm null pointer exception with common one
-                // TODO figure something better
-                irExceptionClass == irBuiltIns.throwableClass.owner && exceptionName == "KotlinNullPointerException" ->
-                    ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }, stackTrace)
-                else -> ExceptionState(e, irExceptionClass, stackTrace)
-            }
-
-            data.pushReturnValue(exceptionState)
+            data.pushReturnValue(ExceptionState(e, irExceptionClass, stackTrace))
             return Exception
         }
     }
