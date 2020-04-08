@@ -42,6 +42,11 @@ class KotlinChangeSignatureProcessor(
     changeInfo: KotlinChangeInfo,
     private val commandName: String
 ) : ChangeSignatureProcessorBase(project, KotlinChangeInfoWrapper(changeInfo)) {
+    init {
+        // we must force collecting references to other parameters now before the signature is changed
+        changeInfo.newParameters.forEach { it.defaultValueParameterReferences }
+    }
+
     val ktChangeInfo
         get() = changeInfo.delegate!!
 
