@@ -1,4 +1,0 @@
-public final class Wine<in T> : R|kotlin/Any| {
-    public constructor<in T>(): R|test/Wine<T>|
-
-}

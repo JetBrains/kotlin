@@ -1,7 +1,0 @@
-package test
-
-public var kotlin.Int.junk: kotlin.Short
-    public fun kotlin.Int.<get-junk>(): kotlin.Short
-    public fun kotlin.Int.<set-junk>(/*0*/ p: kotlin.Short): kotlin.Unit
-public val kotlin.String.junk: kotlin.Int
-    public fun kotlin.String.<get-junk>(): kotlin.Int

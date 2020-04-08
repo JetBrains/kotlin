@@ -1,4 +1,0 @@
-public open class ClassObjectArrayInParam : R|kotlin/Any| {
-    public constructor(): R|test/ClassObjectArrayInParam|
-
-}

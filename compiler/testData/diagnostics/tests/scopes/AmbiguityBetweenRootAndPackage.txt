@@ -1,8 +1,0 @@
-package
-
-public val t: kotlin.String
-public fun testFun(): kotlin.String
-
-package test {
-    public fun testFun(): kotlin.Int
-}

@@ -1,8 +1,0 @@
-package test
-
-public object Obj {
-    /*primary*/ private constructor Obj()
-    public final val v: kotlin.String
-        public final fun <get-v>(): kotlin.String
-    public final fun f(): kotlin.String
-}

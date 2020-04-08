@@ -1,8 +1,0 @@
-package
-
-package kt1001 {
-    public fun doSmth(): kotlin.Unit
-    public fun foo(/*0*/ c: kotlin.Array<kotlin.Int>): kotlin.Unit
-    public fun t1(): kotlin.Int
-    public fun t2(): kotlin.Int
-}

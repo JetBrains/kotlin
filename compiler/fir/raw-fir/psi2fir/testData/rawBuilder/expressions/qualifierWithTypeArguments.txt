@@ -1,4 +1,0 @@
-FILE: qualifierWithTypeArguments.kt
-    public? final? fun test(): R|kotlin/Unit| {
-        <getClass>(Array#<String>)
-    }

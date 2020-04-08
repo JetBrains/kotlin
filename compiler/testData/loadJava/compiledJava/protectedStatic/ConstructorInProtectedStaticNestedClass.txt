@@ -1,9 +1,0 @@
-package test
-
-public open class ConstructorInProtectedStaticNestedClass {
-    public constructor ConstructorInProtectedStaticNestedClass()
-
-    protected/*protected static*/ open class Inner {
-        protected/*protected and package*/ constructor Inner()
-    }
-}

@@ -1,5 +1,0 @@
-package
-
-public fun bar(/*0*/ a: kotlin.Number): kotlin.Int
-public fun foo(/*0*/ a: kotlin.Number): kotlin.Int
-public infix fun kotlin.Int.compareTo(/*0*/ o: kotlin.Int): kotlin.Int

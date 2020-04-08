@@ -1,4 +1,0 @@
-FILE: main.kt
-    public final fun test(): R|kotlin/Unit| {
-        lval key: R|ft<Inv<<error>>, Inv<<error>>?>!| = Q|A|.R|/A.KEY|
-    }

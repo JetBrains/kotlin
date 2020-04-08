@@ -1,3 +1,0 @@
-enableFeaturePreview('GRADLE_METADATA')
-
-include(":mpp-lib", ":jvm-app")

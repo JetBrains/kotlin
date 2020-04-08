@@ -1,5 +1,0 @@
-package test
-
-public var kotlin.Int.ggg: kotlin.Int
-    public fun kotlin.Int.<get-ggg>(): kotlin.Int
-    public fun kotlin.Int.<set-ggg>(/*0*/ p: kotlin.Int): kotlin.Unit

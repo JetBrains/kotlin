@@ -1,4 +1,0 @@
-public open class ConstructorWithoutParams : R|kotlin/Any| {
-    public constructor(): R|test/ConstructorWithoutParams|
-
-}

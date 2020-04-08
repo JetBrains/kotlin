@@ -1,1 +1,0 @@
-fun short() = 1

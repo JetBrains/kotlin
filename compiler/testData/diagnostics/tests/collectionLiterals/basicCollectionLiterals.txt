@@ -1,4 +1,0 @@
-package
-
-public fun check(): kotlin.Unit
-public fun test(): kotlin.Unit

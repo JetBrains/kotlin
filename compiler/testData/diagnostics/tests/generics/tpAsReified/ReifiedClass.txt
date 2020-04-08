@@ -1,9 +1,0 @@
-package
-
-public final class A</*0*/ T1, /*1*/ reified T2, /*2*/ T3, /*3*/ reified T4> {
-    public constructor A</*0*/ T1, /*1*/ reified T2, /*2*/ T3, /*3*/ reified T4>()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun </*0*/ reified R> foo(): T2
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}

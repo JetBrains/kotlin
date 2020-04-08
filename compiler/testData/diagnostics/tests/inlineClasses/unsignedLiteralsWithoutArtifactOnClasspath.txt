@@ -1,5 +1,0 @@
-package
-
-public val u1: [ERROR : Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath]
-public val u2: [ERROR : Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath]
-public val u3: [ERROR : Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath]

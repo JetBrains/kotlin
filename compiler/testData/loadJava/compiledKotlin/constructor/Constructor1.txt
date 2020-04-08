@@ -1,5 +1,0 @@
-package test
-
-public final class ClassWithConstructor1 {
-    /*primary*/ public constructor ClassWithConstructor1(/*0*/ p: kotlin.Int)
-}

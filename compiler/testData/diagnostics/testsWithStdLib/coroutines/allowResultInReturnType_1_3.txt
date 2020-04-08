@@ -1,4 +1,0 @@
-package
-
-public val resultP: kotlin.Result<kotlin.Int>
-public fun result(): kotlin.Result<kotlin.Int>

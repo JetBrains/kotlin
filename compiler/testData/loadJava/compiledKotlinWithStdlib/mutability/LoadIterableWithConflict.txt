@@ -1,6 +1,0 @@
-package test
-
-public interface LoadIterableWithConflict</*0*/ T> {
-    @kotlin.annotations.jvm.ReadOnly @kotlin.annotations.jvm.Mutable public abstract fun getIterable(): kotlin.collections.MutableIterable<T>?
-    public abstract fun setIterable(/*0*/ @kotlin.annotations.jvm.ReadOnly @kotlin.annotations.jvm.Mutable p0: kotlin.collections.MutableIterable<T>?): kotlin.Unit
-}

@@ -1,5 +1,0 @@
-class A {
-    constructor(: Int) {
-
-    }
-}

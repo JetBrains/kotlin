@@ -1,9 +1,0 @@
-package test
-
-public final data class DataClass {
-    /*primary*/ public constructor DataClass(/*0*/ x: kotlin.String)
-    public final val x: kotlin.String
-        public final fun <get-x>(): kotlin.String
-    public final operator /*synthesized*/ fun component1(): kotlin.String
-    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): test.DataClass
-}

@@ -1,5 +1,0 @@
-package test
-
-public open class ConstructorWithAnnotations {
-    public constructor ConstructorWithAnnotations(/*0*/ p0: java.lang.Runnable!, /*1*/ @org.jetbrains.annotations.NotNull p1: kotlin.String)
-}

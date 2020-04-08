@@ -1,6 +1,0 @@
-package test
-
-public open class NotNullMethod {
-    public constructor NotNullMethod()
-    @org.jetbrains.annotations.NotNull public open fun hi(): kotlin.String
-}

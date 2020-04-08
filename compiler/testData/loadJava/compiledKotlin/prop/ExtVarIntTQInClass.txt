@@ -1,8 +1,0 @@
-package test
-
-public final class ExtValInClass</*0*/ P> {
-    /*primary*/ public constructor ExtValInClass</*0*/ P>()
-    public final var kotlin.Int.asas: P?
-        public final fun kotlin.Int.<get-asas>(): P?
-        public final fun kotlin.Int.<set-asas>(/*0*/ p: P?): kotlin.Unit
-}

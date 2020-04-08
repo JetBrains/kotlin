@@ -1,6 +1,0 @@
-<root>
-  <item
-      name='com.intellij.debugger.actions.JvmSmartStepIntoHandler java.util.List&lt;com.intellij.debugger.actions.SmartStepTarget&gt; findSmartStepTargets(com.intellij.debugger.SourcePosition) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-</root>

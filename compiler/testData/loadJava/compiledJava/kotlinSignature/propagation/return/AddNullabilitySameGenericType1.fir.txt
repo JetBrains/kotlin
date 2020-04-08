@@ -1,2 +1,0 @@
-public abstract interface AddNullabilitySameGenericType1 : R|kotlin/Any| {
-}

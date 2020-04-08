@@ -1,2 +1,0 @@
-public abstract interface InheritNotVararg : R|kotlin/Any| {
-}

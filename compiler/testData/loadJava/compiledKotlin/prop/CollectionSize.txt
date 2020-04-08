@@ -1,4 +1,0 @@
-package test
-
-public val kotlin.collections.Collection<*>.anotherSize: kotlin.Int
-    public fun kotlin.collections.Collection<*>.<get-anotherSize>(): kotlin.Int

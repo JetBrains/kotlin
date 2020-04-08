@@ -1,6 +1,0 @@
-apply plugin: 'kotlin'
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.github.yanex:takenoko:0.1'
-}

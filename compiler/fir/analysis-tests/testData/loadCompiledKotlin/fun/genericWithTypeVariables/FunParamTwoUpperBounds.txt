@@ -1,7 +1,0 @@
-public final fun <T : R|test/Foo|, R|test/Bar|> foo(): R|kotlin/Unit|
-
-public abstract interface Bar : R|kotlin/Any| {
-}
-
-public abstract interface Foo : R|kotlin/Any| {
-}

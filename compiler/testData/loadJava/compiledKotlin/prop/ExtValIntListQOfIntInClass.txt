@@ -1,7 +1,0 @@
-package test
-
-public final class ExtValInClass {
-    /*primary*/ public constructor ExtValInClass()
-    public final val kotlin.Int.asas: java.util.List<kotlin.Int>?
-        public final fun kotlin.Int.<get-asas>(): java.util.List<kotlin.Int>?
-}

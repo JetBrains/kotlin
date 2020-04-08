@@ -1,4 +1,0 @@
-package
-
-public val g: [ERROR : Unresolved class]
-public val u: [ERROR : Unresolved class]

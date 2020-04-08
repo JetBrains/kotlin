@@ -1,4 +1,0 @@
-package
-
-public fun div(/*0*/ c: kotlin.String = ..., /*1*/ f: () -> kotlin.Unit): kotlin.Unit
-public fun f(): kotlin.Unit

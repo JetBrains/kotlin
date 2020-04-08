@@ -1,4 +1,0 @@
-package
-
-public fun </*0*/ T> test(/*0*/ t: T): kotlin.String?
-public fun </*0*/ T> T.testThis(): kotlin.String?

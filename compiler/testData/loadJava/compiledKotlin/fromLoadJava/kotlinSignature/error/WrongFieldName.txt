@@ -1,8 +1,0 @@
-package test
-
-public open class WrongFieldName {
-    /*primary*/ public constructor WrongFieldName()
-    public final var foo: kotlin.String?
-        public final fun <get-foo>(): kotlin.String?
-        public final fun <set-foo>(/*0*/ <set-?>: kotlin.String?): kotlin.Unit
-}

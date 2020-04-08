@@ -1,3 +1,0 @@
-package
-
-public fun nonlocals(/*0*/ b: kotlin.Boolean): kotlin.Unit

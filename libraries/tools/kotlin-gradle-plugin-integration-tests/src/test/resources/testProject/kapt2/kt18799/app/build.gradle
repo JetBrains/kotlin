@@ -1,9 +1,0 @@
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    
-    compile 'com.google.dagger:dagger:2.9'
-    kapt 'com.google.dagger:dagger-compiler:2.9'
-}

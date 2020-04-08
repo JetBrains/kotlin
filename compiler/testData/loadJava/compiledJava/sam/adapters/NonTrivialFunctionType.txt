@@ -1,9 +1,0 @@
-package test
-
-public open class NonTrivialFunctionType {
-    public constructor NonTrivialFunctionType()
-    public open fun foo(/*0*/ p0: java.io.FilenameFilter!): kotlin.Unit
-    public open fun foo(/*0*/ p0: java.util.Comparator<kotlin.String!>!): kotlin.Unit
-    public open fun wildcardBound(/*0*/ p0: java.util.Comparator<in kotlin.CharSequence!>!): kotlin.Unit
-    public open fun wildcardUnbound(/*0*/ p0: java.util.Comparator<*>!): kotlin.Unit
-}

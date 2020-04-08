@@ -1,6 +1,0 @@
-package
-
-public fun test1(/*0*/ x: kotlin.Any): kotlin.Boolean
-public fun test2(/*0*/ x: kotlin.Any): S /* = kotlin.String */
-public fun test3(/*0*/ x: kotlin.Any): S? /* = kotlin.String? */
-public typealias S = kotlin.String

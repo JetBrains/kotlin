@@ -1,4 +1,0 @@
-function A() {
-}
-
-var O = {};

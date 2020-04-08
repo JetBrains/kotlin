@@ -1,5 +1,0 @@
-VARIABLES T P E
-
-T <: P
-P <: E
-E <: Int

@@ -1,4 +1,0 @@
-package
-
-public inline fun f(): kotlin.Unit
-public inline fun g(): kotlin.Unit

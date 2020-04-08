@@ -1,4 +1,0 @@
-package
-
-public fun foo(/*0*/ x: kotlin.Int, /*1*/ list: kotlin.collections.List<kotlin.Int>?): kotlin.Unit
-public fun whenWithoutSubject(/*0*/ x: kotlin.Int, /*1*/ list: kotlin.collections.List<kotlin.Int>?): kotlin.Unit

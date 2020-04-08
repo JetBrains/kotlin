@@ -1,3 +1,0 @@
-package
-
-public fun f(/*0*/ c: kotlin.ranges.LongRange): kotlin.Int

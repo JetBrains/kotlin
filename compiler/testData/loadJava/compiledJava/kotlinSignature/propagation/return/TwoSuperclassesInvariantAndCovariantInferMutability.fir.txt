@@ -1,2 +1,0 @@
-public abstract interface TwoSuperclassesInvariantAndCovariantInferMutability : R|kotlin/Any| {
-}

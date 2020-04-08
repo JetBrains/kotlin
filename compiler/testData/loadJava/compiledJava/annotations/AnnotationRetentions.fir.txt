@@ -1,4 +1,0 @@
-public open class AnnotationRetentions : R|kotlin/Any| {
-    public constructor(): R|test/AnnotationRetentions|
-
-}

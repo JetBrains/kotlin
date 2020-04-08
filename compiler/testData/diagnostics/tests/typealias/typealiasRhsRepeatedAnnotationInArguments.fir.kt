@@ -1,6 +1,0 @@
-@Target(AnnotationTarget.TYPE)
-annotation class A
-
-typealias Gen<T> = List<@A T>
-
-typealias Test1 = Gen<@A Int>

@@ -1,9 +1,0 @@
-package test
-
-public final class Outer {
-    /*primary*/ public constructor Outer()
-
-    public final class Nested</*0*/ T> {
-        /*primary*/ public constructor Nested</*0*/ T>()
-    }
-}

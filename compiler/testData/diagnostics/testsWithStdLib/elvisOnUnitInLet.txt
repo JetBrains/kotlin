@@ -1,5 +1,0 @@
-package
-
-public fun foo(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun orElse(): kotlin.Unit
-public fun smth(): kotlin.Unit

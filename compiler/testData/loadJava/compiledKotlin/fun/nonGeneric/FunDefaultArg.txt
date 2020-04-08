@@ -1,3 +1,0 @@
-package test
-
-public fun funDefaultArg(/*0*/ p: kotlin.Int, /*1*/ q: kotlin.Int = ..., /*2*/ r: kotlin.Int = ...): kotlin.Int

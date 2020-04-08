@@ -1,6 +1,0 @@
-package test
-
-public open class AddingNullability {
-    /*primary*/ public constructor AddingNullability()
-    public open fun foo(): kotlin.Int
-}

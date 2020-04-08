@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class Anno : kotlin.Annotation {
-    /*primary*/ public constructor Anno()
-}

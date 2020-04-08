@@ -1,6 +1,0 @@
-package
-
-public fun bar(/*0*/ x: kotlin.Int): kotlin.Unit
-public fun baz(): kotlin.String
-public fun foo(): kotlin.Unit
-public fun main(): kotlin.Unit

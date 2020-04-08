@@ -1,7 +1,0 @@
->>> fun foo() {
-...   object Bar {
-...   }
-... }
-error: named object 'Bar' is a singleton and cannot be local. Try to use anonymous object instead
-object Bar {
-^

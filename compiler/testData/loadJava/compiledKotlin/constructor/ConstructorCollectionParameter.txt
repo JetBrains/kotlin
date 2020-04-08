@@ -1,7 +1,0 @@
-package test
-
-public final class TestingKotlinCollections {
-    /*primary*/ public constructor TestingKotlinCollections(/*0*/ arguments: kotlin.collections.Collection<kotlin.String>)
-    public final val arguments: kotlin.collections.Collection<kotlin.String>
-        public final fun <get-arguments>(): kotlin.collections.Collection<kotlin.String>
-}

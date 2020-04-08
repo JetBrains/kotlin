@@ -1,8 +1,0 @@
-$TESTDATA_DIR$/sourceMap.kt
--source-map
--source-map-prefix
-./
--source-map-embed-sources
-always
--output
-$TEMP_DIR$/out.js

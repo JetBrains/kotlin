@@ -1,5 +1,0 @@
-package
-
-package a {
-    public fun bar(/*0*/ any: kotlin.Any): java.lang.Iterable<kotlin.Int>?
-}

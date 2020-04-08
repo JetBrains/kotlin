@@ -1,2 +1,0 @@
-annotation.java:7:1:compiler.err.annotation.type.not.applicable
-

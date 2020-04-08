@@ -1,3 +1,0 @@
-public final fun foo(/*0*/ p0: dynamic): dynamic
-public final operator fun get(/*0*/ p0: dynamic): dynamic
-public final operator fun get(/*0*/ p0: dynamic): dynamic

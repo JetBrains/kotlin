@@ -1,3 +1,0 @@
-package
-
-public fun indexOfMax(/*0*/ a: kotlin.IntArray): kotlin.Int?

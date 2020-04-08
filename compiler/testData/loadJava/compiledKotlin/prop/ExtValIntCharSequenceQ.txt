@@ -1,4 +1,0 @@
-package test
-
-public val kotlin.Int.ggg: java.lang.CharSequence?
-    public fun kotlin.Int.<get-ggg>(): java.lang.CharSequence?

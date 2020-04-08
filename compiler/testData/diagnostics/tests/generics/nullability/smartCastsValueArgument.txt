@@ -1,6 +1,0 @@
-package
-
-public fun </*0*/ T : kotlin.CharSequence> bar1(/*0*/ x: T): kotlin.Unit
-public fun bar2(/*0*/ x: kotlin.CharSequence): kotlin.Unit
-public fun bar3(/*0*/ x: kotlin.String): kotlin.Unit
-public fun </*0*/ T : kotlin.CharSequence?> foo(/*0*/ x: T): kotlin.Unit

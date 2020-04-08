@@ -1,5 +1,0 @@
-package
-
-package l {
-    public fun test(/*0*/ a: kotlin.Int): kotlin.Unit
-}

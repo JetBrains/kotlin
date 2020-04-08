@@ -1,1 +1,0 @@
-fun foo(arg: Int) = arg

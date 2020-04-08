@@ -1,3 +1,0 @@
-package
-
-public fun firstFun(): kotlin.Unit

@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public interface A
-
-@kotlin.Metadata
-public interface B

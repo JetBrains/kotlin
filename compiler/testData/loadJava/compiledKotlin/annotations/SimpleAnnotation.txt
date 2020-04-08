@@ -1,5 +1,0 @@
-package test
-
-public final annotation class SimpleAnnotation : kotlin.Annotation {
-    /*primary*/ public constructor SimpleAnnotation()
-}

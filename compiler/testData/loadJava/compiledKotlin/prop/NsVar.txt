@@ -1,5 +1,0 @@
-package test
-
-public var nsVal: kotlin.Int
-    public fun <get-nsVal>(): kotlin.Int
-    public fun <set-nsVal>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit

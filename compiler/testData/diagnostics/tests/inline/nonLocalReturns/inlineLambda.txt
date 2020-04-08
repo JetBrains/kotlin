@@ -1,5 +1,0 @@
-package
-
-public inline fun </*0*/ R> inlineFun(/*0*/ p: () -> R): kotlin.Unit
-public inline fun </*0*/ R> inlineFun2(/*0*/ p: () -> R): kotlin.Unit
-public inline fun </*0*/ R> inlineFunWithAnnotation(/*0*/ crossinline p: () -> R): kotlin.Unit

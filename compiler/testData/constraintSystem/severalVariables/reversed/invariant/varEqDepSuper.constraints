@@ -1,4 +1,0 @@
-VARIABLES T P
-
-P >: My<T>
-T := Int

@@ -1,7 +1,0 @@
-package
-
-public val code: kotlin.String = "
-    var s = "hello"
-    + );
-"
-public fun main(): kotlin.Unit

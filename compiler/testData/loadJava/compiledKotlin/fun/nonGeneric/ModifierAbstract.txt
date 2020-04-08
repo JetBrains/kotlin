@@ -1,6 +1,0 @@
-package test
-
-public abstract class ModifierAbstract {
-    /*primary*/ public constructor ModifierAbstract()
-    public abstract fun abs(): kotlin.Int
-}

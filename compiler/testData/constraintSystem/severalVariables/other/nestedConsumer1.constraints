@@ -1,4 +1,0 @@
-VARIABLES T P
-
-Int <: T
-P <: Consumer<Consumer<Consumer<T>>>

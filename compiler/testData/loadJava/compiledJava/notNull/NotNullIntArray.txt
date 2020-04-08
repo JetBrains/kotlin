@@ -1,6 +1,0 @@
-package test
-
-public open class NotNullIntArray {
-    public constructor NotNullIntArray()
-    @org.jetbrains.annotations.NotNull public open fun hi(): kotlin.IntArray
-}

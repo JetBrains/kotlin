@@ -1,5 +1,0 @@
-package test
-
-public fun array(/*0*/ a: kotlin.Array<kotlin.Int>): kotlin.Array<(out) kotlin.Int!>!
-public fun list(): kotlin.collections.(Mutable)List<kotlin.String!>!
-public fun printStream(): java.io.PrintStream!

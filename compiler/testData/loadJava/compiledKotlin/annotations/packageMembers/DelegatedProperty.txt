@@ -1,8 +1,0 @@
-package test
-
-@test.Anno public val x: kotlin.Int
-    public fun <get-x>(): kotlin.Int
-
-public final annotation class Anno : kotlin.Annotation {
-    /*primary*/ public constructor Anno()
-}

@@ -1,5 +1,0 @@
-package
-
-public fun bar(): kotlin.Boolean
-public fun foo(/*0*/ x: kotlin.String?, /*1*/ z: kotlin.String?, /*2*/ w: kotlin.String?): kotlin.Int
-public fun gav(/*0*/ z: kotlin.String, /*1*/ w: kotlin.String, /*2*/ arg: kotlin.Any): kotlin.String

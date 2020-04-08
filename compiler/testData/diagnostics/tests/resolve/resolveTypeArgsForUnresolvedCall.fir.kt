@@ -1,4 +1,0 @@
-fun foo() {
-    <!UNRESOLVED_REFERENCE!>x<!>.<!UNRESOLVED_REFERENCE!>yyy<!><XXX>()
-    <!UNRESOLVED_REFERENCE!>x<!>.<!UNRESOLVED_REFERENCE!>yyy<!><Int>()
-}

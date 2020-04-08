@@ -1,1 +1,0 @@
-FILE fqName:<root> fileName:/fileWithTypeAliasesOnly.kt

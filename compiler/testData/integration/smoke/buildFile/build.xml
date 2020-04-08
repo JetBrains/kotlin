@@ -1,5 +1,0 @@
-<modules>
-  <module name="main" outputDir="$TEMP_DIR$" type="java-production">
-    <sources path="$TESTDATA_DIR$/src"/>
-  </module>
-</modules>

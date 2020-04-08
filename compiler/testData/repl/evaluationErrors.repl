@@ -1,9 +1,0 @@
->>> throw Exception("hi there")
-java.lang.Exception: hi there
->>> fun foo() = 2
->>> foo()
-2
->>> fun bar(): Nothing = throw AssertionError()
->>> bar()
-java.lang.AssertionError
-	at Line_3.bar(Unknown Source)

@@ -1,6 +1,0 @@
-package test
-
-public open class CustomProjectionKind {
-    /*primary*/ public constructor CustomProjectionKind()
-    public open fun foo(): kotlin.collections.MutableList<out kotlin.Number>
-}

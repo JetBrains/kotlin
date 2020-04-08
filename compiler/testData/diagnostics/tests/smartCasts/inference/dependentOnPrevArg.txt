@@ -1,6 +1,0 @@
-package
-
-package a {
-    public fun </*0*/ T> foo(/*0*/ u: T, /*1*/ v: T): T
-    public fun test(/*0*/ s: kotlin.String?): kotlin.Unit
-}

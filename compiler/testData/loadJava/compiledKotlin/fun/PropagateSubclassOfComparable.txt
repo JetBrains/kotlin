@@ -1,6 +1,0 @@
-package test
-
-public final class PropagateSubclassOfComparable : kotlin.Comparable<test.PropagateSubclassOfComparable> {
-    /*primary*/ public constructor PropagateSubclassOfComparable()
-    public open override /*1*/ fun compareTo(/*0*/ other: test.PropagateSubclassOfComparable): kotlin.Int
-}

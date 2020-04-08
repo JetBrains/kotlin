@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:2:25: warning: variable 'some' initializer is redundant
-    var some: String? = null
-                        ^
-OK

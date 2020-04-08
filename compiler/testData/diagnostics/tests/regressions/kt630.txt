@@ -1,5 +1,0 @@
-package
-
-public val s: kotlin.String
-public val x: kotlin.String
-public fun </*0*/ T : kotlin.Any> T?.sure(): T

@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class PlatformTypes {
-    public method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method bothNotNull(): java.util.List
-    public final @org.jetbrains.annotations.Nullable method bothNullable(): java.util.List
-    public final method simplyPlatform(): java.lang.String
-}

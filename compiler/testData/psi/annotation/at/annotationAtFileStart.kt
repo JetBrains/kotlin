@@ -1,1 +1,0 @@
-@ann class A

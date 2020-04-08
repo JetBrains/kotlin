@@ -1,8 +1,0 @@
-package test
-
-public final class ExtPropInClass {
-    /*primary*/ public constructor ExtPropInClass()
-    public final var kotlin.Int.itIs: kotlin.Int
-        public final fun kotlin.Int.<get-itIs>(): kotlin.Int
-        public final fun kotlin.Int.<set-itIs>(/*0*/ p: kotlin.Int): kotlin.Unit
-}

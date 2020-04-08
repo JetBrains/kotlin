@@ -1,3 +1,0 @@
-enableFeaturePreview('GRADLE_METADATA')
-
-include 'app-common', 'app-jvm', 'app-js'

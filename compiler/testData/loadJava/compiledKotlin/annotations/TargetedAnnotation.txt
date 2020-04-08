@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class TargetedAnnotation : kotlin.Annotation {
-    /*primary*/ public constructor TargetedAnnotation()
-}

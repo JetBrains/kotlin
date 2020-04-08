@@ -1,4 +1,0 @@
-package
-
-public val </*0*/ T : [ERROR : Cyclic upper bounds]> prop: [ERROR : No type, no body]
-public fun </*0*/ T : [ERROR : Cyclic upper bounds]> foo(): kotlin.Unit

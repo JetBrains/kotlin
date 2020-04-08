@@ -1,8 +1,0 @@
-package test
-
-public fun kotlin.String.noParam(): kotlin.Unit
-public fun kotlin.String.param(/*0*/ kotlin.String): kotlin.Unit
-
-public/*package*/ open class GenericArray {
-    public/*package*/ constructor GenericArray()
-}

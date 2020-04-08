@@ -1,4 +1,0 @@
-VARIABLES T P
-
-T >: Int
-P >: Consumer<T?>

@@ -1,5 +1,0 @@
-package
-
-public fun test1(/*0*/ i: kotlin.Int): ???
-public fun test2(): ???
-public fun test3(): ???

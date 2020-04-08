@@ -1,3 +1,0 @@
-enableFeaturePreview('GRADLE_METADATA')
-
-rootProject.name = 'native-tests'

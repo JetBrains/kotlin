@@ -1,5 +1,0 @@
-fun test() {
-    when
-
-    bar()
-}

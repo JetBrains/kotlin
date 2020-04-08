@@ -1,5 +1,0 @@
-package
-
-public fun bar(): kotlin.Unit
-public fun foo(): kotlin.Unit
-public fun readLine(): kotlin.String

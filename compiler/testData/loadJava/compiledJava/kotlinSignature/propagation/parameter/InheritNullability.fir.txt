@@ -1,2 +1,0 @@
-public abstract interface InheritNullability : R|kotlin/Any| {
-}

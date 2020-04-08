@@ -1,4 +1,0 @@
-package
-
-public fun testCommasAndWhitespaces(): kotlin.Unit
-public fun todo(): kotlin.Nothing

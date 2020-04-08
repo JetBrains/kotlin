@@ -1,6 +1,0 @@
-package test
-
-public final class MethodWithTypeP {
-    public constructor MethodWithTypeP()
-    public final fun </*0*/ P : kotlin.Any!> f(): kotlin.Unit
-}

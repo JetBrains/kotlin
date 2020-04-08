@@ -1,2 +1,0 @@
-@R|test/AnnotatedAnnotation|() public abstract annotation class AnnotatedAnnotation : R|kotlin/Annotation| {
-}

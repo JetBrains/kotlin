@@ -1,5 +1,0 @@
-package
-
-public fun </*0*/ T> foo(/*0*/ a: kotlin.Array<T>): kotlin.Array<T>
-public fun test(/*0*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
-public fun </*0*/ T> test1(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Unit

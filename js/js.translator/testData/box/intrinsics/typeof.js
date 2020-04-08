@@ -1,1 +1,0 @@
-var definedVariableX = 10;

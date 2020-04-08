@@ -1,1 +1,0 @@
-val p by A()

@@ -1,6 +1,0 @@
-package test
-
-public open class NotNullIntArray {
-    /*primary*/ public constructor NotNullIntArray()
-    public open fun hi(): kotlin.IntArray
-}

@@ -1,4 +1,0 @@
-package test
-
-public val </*0*/ P> P.anotherJavaClass: java.lang.Class<P>
-    public fun P.<get-anotherJavaClass>(): java.lang.Class<P>

@@ -1,5 +1,0 @@
-package test
-
-public final class Wine</*0*/ in T> {
-    /*primary*/ public constructor Wine</*0*/ in T>()
-}

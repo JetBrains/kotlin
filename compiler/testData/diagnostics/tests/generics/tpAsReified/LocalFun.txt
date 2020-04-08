@@ -1,3 +1,0 @@
-package
-
-public inline fun </*0*/ reified T> foo(/*0*/ x: T): kotlin.Unit

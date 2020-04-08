@@ -1,3 +1,0 @@
-package
-
-public fun cloneable(): [ERROR : Cloneable]

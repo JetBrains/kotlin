@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ a: kotlin.Any?, /*1*/ flag: kotlin.Boolean, /*2*/ x: kotlin.Any?): kotlin.Unit

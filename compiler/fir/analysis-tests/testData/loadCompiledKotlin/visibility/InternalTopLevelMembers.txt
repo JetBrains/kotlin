@@ -1,1 +1,0 @@
-internal final fun f(): R|kotlin/Int|

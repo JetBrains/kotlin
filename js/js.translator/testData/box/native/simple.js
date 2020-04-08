@@ -1,3 +1,0 @@
-function returnFalse() {
-    return false;
-}

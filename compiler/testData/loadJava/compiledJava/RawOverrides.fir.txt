@@ -1,4 +1,0 @@
-public open class RawOverrides : R|kotlin/Any| {
-    public constructor(): R|test/RawOverrides|
-
-}

@@ -1,7 +1,0 @@
--- Common --
-Exit code: OK
-Output:
-
--- JS --
-Exit code: OK
-Output:

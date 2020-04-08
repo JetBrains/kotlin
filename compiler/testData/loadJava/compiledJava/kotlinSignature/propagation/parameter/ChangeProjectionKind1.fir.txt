@@ -1,2 +1,0 @@
-public abstract interface ChangeProjectionKind1 : R|kotlin/Any| {
-}

@@ -1,5 +1,0 @@
--Xplugin
-non-existing-file.jar
-$TESTDATA_DIR$/simple.kt
--d
-$TEMP_DIR$

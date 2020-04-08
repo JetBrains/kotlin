@@ -1,5 +1,0 @@
-package test
-
-public open class ClassExtendsTypeParameter</*0*/ T : kotlin.Any!> : T {
-    public constructor ClassExtendsTypeParameter</*0*/ T : kotlin.Any!>()
-}

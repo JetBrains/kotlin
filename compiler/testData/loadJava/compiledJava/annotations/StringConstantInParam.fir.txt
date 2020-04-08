@@ -1,4 +1,0 @@
-public abstract interface StringConstantInParam : R|kotlin/Any| {
-    public final static field HEL: R|ft<kotlin/String, kotlin/String?>!|
-
-}

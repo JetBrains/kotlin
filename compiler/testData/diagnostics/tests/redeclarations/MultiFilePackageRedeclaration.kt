@@ -1,7 +1,0 @@
-// FILE: f.kt
-package a
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!> {}
-// FILE: f.kt
-package a.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!>
-// FILE: f.kt
-package a.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!>

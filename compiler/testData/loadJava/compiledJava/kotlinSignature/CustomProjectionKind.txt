@@ -1,6 +1,0 @@
-package test
-
-public open class CustomProjectionKind {
-    public constructor CustomProjectionKind()
-    public open fun foo(): kotlin.collections.(Mutable)List<kotlin.Number!>!
-}

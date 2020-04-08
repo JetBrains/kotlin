@@ -1,5 +1,0 @@
-package
-
-public fun main(): kotlin.Unit
-public fun main(): kotlin.Unit
-public suspend fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit

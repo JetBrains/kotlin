@@ -1,5 +1,0 @@
-package
-
-package kt2212 {
-    public fun main(): kotlin.Unit
-}

@@ -1,6 +1,0 @@
-package
-
-public fun myAssert(/*0*/ condition: kotlin.Boolean): kotlin.Unit
-    Returns(WILDCARD) -> condition
-
-public fun testWithCatch(/*0*/ x: kotlin.Any?): kotlin.Unit

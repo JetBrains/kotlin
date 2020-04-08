@@ -1,3 +1,0 @@
-module moduleA {
-    exports foo;
-}

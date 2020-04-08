@@ -1,3 +1,0 @@
-package
-
-public fun f(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ vararg d: kotlin.Int /*kotlin.IntArray*/, /*4*/ vararg e: kotlin.Int /*kotlin.IntArray*/, /*5*/ vararg f: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit

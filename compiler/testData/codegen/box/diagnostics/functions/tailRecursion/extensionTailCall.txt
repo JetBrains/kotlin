@@ -1,4 +1,0 @@
-package
-
-public fun box(): kotlin.String
-public tailrec fun kotlin.Int.foo(/*0*/ x: kotlin.Int): kotlin.Unit

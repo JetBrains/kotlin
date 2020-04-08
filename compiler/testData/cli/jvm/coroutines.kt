@@ -1,1 +1,0 @@
-suspend fun simple() = 5

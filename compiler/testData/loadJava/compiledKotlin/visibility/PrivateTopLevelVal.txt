@@ -1,4 +1,0 @@
-package test
-
-private val topLevelVal: kotlin.Int
-    private fun <get-topLevelVal>(): kotlin.Int

@@ -1,6 +1,0 @@
-package test
-
-public interface LoadIterable</*0*/ T> {
-    public abstract fun getIterable(): kotlin.collections.MutableIterable<T>?
-    public abstract fun setIterable(/*0*/ p0: kotlin.collections.Iterable<T>?): kotlin.Unit
-}

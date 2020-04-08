@@ -1,9 +1,0 @@
-package test
-
-public final annotation class Anno : kotlin.Annotation {
-    /*primary*/ public constructor Anno()
-}
-
-@test.Anno public final class X {
-    /*primary*/ public constructor X()
-}

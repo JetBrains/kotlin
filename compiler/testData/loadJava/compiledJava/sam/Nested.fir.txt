@@ -1,2 +1,0 @@
-public abstract interface Nested : R|kotlin/Any| {
-}

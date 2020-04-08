@@ -1,2 +1,0 @@
-public abstract interface InheritedAdapterAndDeclaration : R|kotlin/Any| {
-}

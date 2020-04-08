@@ -1,5 +1,0 @@
-package
-
-package f {
-    public fun test(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Boolean): kotlin.Int
-}

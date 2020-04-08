@@ -1,5 +1,0 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
-fun foo(i: Int) {
-    <!UNRESOLVED_REFERENCE!>i<!>()
-    <!UNRESOLVED_REFERENCE!>1()<!>
-}

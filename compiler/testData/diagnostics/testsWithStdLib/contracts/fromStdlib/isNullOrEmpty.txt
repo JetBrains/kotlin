@@ -1,4 +1,0 @@
-package
-
-public fun testIsNotNullOrEmpty(/*0*/ x: kotlin.String?): kotlin.Unit
-public fun testIsNullOrEmpty(/*0*/ x: kotlin.String?): kotlin.Unit

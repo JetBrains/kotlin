@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ a: kotlin.Any, /*1*/ b: [ERROR : Map]): kotlin.Unit

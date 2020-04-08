@@ -1,5 +1,0 @@
-package test
-
-public interface SelfAsParameter {
-    public abstract fun foo(/*0*/ p0: test.SelfAsParameter!): kotlin.Unit
-}

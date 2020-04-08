@@ -1,2 +1,0 @@
-public final fun sam(/*0*/ p0: dynamic): dynamic
-public final fun sam(/*0*/ name: dynamic, /*1*/ name: dynamic): dynamic

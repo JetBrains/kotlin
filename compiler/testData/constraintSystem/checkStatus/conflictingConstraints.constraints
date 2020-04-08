@@ -1,4 +1,0 @@
-VARIABLES T
-
-T <: Int
-T >: String

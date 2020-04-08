@@ -1,7 +1,0 @@
-package
-
-package d {
-    public val f: () -> kotlin.Int
-    public var g: kotlin.Int
-    public fun test(): kotlin.Unit
-}

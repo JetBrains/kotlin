@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ d: dynamic, /*1*/ b: kotlin.Boolean?): kotlin.Unit

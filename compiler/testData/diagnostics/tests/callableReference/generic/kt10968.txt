@@ -1,5 +1,0 @@
-package
-
-public fun getString(): kotlin.String
-public fun </*0*/ T> getT(): T
-public fun test(): kotlin.Unit

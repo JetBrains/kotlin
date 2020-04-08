@@ -1,5 +1,0 @@
-package test
-
-public final class ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?> {
-    /*primary*/ public constructor ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?>()
-}

@@ -1,8 +1,0 @@
-package
-
-public fun foo(): kotlin.Any
-public fun testDelegatedValInWhenSubject(): kotlin.Unit
-public fun testSimpleValInWhenSubject(): kotlin.Unit
-public fun testValWithoutInitializerWhenSubject(): kotlin.Unit
-public fun testVarInWhenSubject(): kotlin.Unit
-public fun kotlin.String.bar(): kotlin.Any

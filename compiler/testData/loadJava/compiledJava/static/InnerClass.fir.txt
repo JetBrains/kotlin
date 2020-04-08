@@ -1,4 +1,0 @@
-public open class InnerClass : R|kotlin/Any| {
-    public constructor(): R|test/InnerClass|
-
-}

@@ -1,7 +1,0 @@
-package
-
-package d {
-    public fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Comparable<*>, /*1*/ y: T): T?
-    public fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<out T>*/): T?
-    public fun test(): kotlin.Unit
-}

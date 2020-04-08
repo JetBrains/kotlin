@@ -1,9 +1,0 @@
-package test
-
-public final class Outer {
-    /*primary*/ public constructor Outer()
-
-    public final inner class Inner</*0*/ T> {
-        /*primary*/ public constructor Inner</*0*/ T>()
-    }
-}

@@ -1,4 +1,0 @@
-package
-
-public fun </*0*/ T> dynamic(/*0*/ body: dynamic.() -> T): T
-public fun test(): kotlin.Unit

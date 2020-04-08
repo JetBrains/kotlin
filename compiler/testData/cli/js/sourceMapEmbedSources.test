@@ -1,4 +1,0 @@
-// EXISTS: out.js
-// CONTAINS: out.js.map, "./sourceMap.kt"
-// CONTAINS: out.js.map, "var log = \"\"
-// CONTAINS: out.js.map, fun foo(x: String) {

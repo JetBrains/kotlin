@@ -1,5 +1,0 @@
-<root>
-  <item name='com.intellij.codeInsight.hint.HintManager com.intellij.codeInsight.hint.HintManager getInstance()'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-</root>

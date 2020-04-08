@@ -1,5 +1,0 @@
-# Note that this file is also present in idea/src/META-INF/services
-org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm
-org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs
-org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
-org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative

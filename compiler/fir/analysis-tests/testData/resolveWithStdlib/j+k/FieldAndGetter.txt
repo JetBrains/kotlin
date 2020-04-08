@@ -1,4 +1,0 @@
-FILE: test.kt
-    public final fun test(jc: R|JavaClass|): R|kotlin/Unit| {
-        R|<local>/jc|.R|/JavaClass.field|
-    }

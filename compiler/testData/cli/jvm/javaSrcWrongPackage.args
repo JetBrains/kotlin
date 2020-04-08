@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/javaSrcWrongPackage.kt
-$TESTDATA_DIR$/javaSrcWrongPackage
--d
-$TEMP_DIR$

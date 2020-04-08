@@ -1,3 +1,0 @@
-package
-
-@[ERROR : foo] /* annotation class not found */ public fun bar(/*0*/ p: [ERROR : foo]): [ERROR : foo]

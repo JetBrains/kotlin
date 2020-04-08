@@ -1,2 +1,0 @@
-public abstract interface AnnotationInParam : R|kotlin/Any| {
-}

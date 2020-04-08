@@ -1,5 +1,0 @@
-package test
-
-public var </*0*/ P, /*1*/ Q> kotlin.collections.Map<P, Q>.asas: kotlin.Int
-    public fun kotlin.collections.Map<P, Q>.<get-asas>(): kotlin.Int
-    public fun kotlin.collections.Map<P, Q>.<set-asas>(/*0*/ i: kotlin.Int): kotlin.Unit

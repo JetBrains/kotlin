@@ -1,5 +1,0 @@
-apply plugin: 'kotlin-platform-js'
-
-dependencies {
-    expectedBy project(":lib")
-}

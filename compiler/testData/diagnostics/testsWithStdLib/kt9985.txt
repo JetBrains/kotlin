@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ l: kotlin.collections.List<kotlin.String>?): kotlin.Unit

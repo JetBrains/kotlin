@@ -1,5 +1,0 @@
-package
-
-public fun elvis(/*0*/ x: kotlin.Number?): kotlin.Int
-public fun elvisWithRHSTypeInfo(/*0*/ x: kotlin.Number?): kotlin.Any?
-public fun foo(/*0*/ x: kotlin.Int?): kotlin.Int

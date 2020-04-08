@@ -1,4 +1,0 @@
-VARIABLES T
-
-T >: IntegerValueType(1)
-T >: String

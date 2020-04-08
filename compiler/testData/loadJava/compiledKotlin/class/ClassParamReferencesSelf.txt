@@ -1,8 +1,0 @@
-package test
-
-public final class ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>> {
-    /*primary*/ public constructor ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>>()
-}
-
-public interface TraitWithP</*0*/ P> {
-}

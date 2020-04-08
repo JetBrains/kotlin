@@ -1,8 +1,0 @@
-ios-app/Pods
-Podfile.lock
-kotlin-library/kotlin_library.podspec
-ios-app/ios-app.xcodeproj/xcuserdata
-ios-app/ios-app.xcworkspace/xcuserdata
-ios-app/ios-app.xcodeproj/project.xcworkspace/xcuserdata
-ios-app/ios-app.xcworkspace/contents.xcworkspacedata
-ios-app/ios-app.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist

@@ -1,5 +1,0 @@
-package
-
-public expect fun bar(): kotlin.Unit
-public expect fun foo(): kotlin.Unit
-public expect fun foo(): kotlin.Unit

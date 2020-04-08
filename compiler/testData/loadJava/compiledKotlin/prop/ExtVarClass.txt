@@ -1,5 +1,0 @@
-package test
-
-public var </*0*/ P> P.anotherJavaClass: java.lang.Class<P>
-    public fun P.<get-anotherJavaClass>(): java.lang.Class<P>
-    public fun P.<set-anotherJavaClass>(/*0*/ p: java.lang.Class<P>): kotlin.Unit

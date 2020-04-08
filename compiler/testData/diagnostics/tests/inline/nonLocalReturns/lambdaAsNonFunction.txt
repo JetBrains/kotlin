@@ -1,4 +1,0 @@
-package
-
-public fun box(): kotlin.String
-public inline fun test(/*0*/ p: kotlin.Any): kotlin.Unit

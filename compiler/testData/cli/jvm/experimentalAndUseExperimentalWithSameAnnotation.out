@@ -1,2 +1,0 @@
-error: '-Xopt-in=org.test.ExperimentalAPI' has no effect because '-Xexperimental=org.test.ExperimentalAPI' is used
-COMPILATION_ERROR

@@ -1,7 +1,0 @@
-package test
-
-public final class ClassFunGetFoo {
-    /*primary*/ public constructor ClassFunGetFoo()
-    public final fun getFoo(): kotlin.Int
-    public final fun setFoo(/*0*/ p: kotlin.Int): kotlin.Unit
-}

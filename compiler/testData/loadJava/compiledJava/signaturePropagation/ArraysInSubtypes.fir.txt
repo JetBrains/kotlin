@@ -1,2 +1,0 @@
-public abstract interface ArraysInSubtypes : R|kotlin/Any| {
-}

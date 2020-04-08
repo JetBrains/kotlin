@@ -1,4 +1,0 @@
-package
-
-public fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
-public fun r(/*0*/ f: () -> kotlin.Int): kotlin.Unit

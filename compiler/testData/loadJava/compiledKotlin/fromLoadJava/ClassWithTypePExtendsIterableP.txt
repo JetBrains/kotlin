@@ -1,6 +1,0 @@
-package test
-
-public abstract class ClassWithTypePExtendsIterableP</*0*/ P> : kotlin.collections.MutableIterable<P> {
-    /*primary*/ public constructor ClassWithTypePExtendsIterableP</*0*/ P>()
-    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<P>
-}

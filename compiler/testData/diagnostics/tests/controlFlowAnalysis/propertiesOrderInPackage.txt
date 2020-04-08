@@ -1,6 +1,0 @@
-package
-
-package a {
-    public val a: kotlin.Int
-    public val b: kotlin.Int
-}

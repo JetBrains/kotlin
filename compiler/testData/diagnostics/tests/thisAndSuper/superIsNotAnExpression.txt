@@ -1,4 +1,0 @@
-package
-
-public fun any(/*0*/ a: kotlin.Any): kotlin.Unit
-public fun notAnExpression(): kotlin.Unit

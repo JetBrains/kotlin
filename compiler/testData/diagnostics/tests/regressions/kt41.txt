@@ -1,6 +1,0 @@
-package
-
-package kt41 {
-    public fun aaa(): [ERROR : Error function type]
-    public fun bbb(): kotlin.Unit
-}

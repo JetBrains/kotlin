@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/simple2js.kt
--Xir-produce-js
--language-version
-1.3
--output
-$TEMP_DIR$/out.js

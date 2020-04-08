@@ -1,9 +1,0 @@
-package test
-
-public final class ClassWithConstVal {
-    /*primary*/ public constructor ClassWithConstVal()
-    public final val f: kotlin.Int
-        public final fun <get-f>(): kotlin.Int
-    public final val f2: kotlin.Int
-        public final fun <get-f2>(): kotlin.Int
-}

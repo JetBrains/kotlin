@@ -1,6 +1,0 @@
-package
-
-public fun testEquals(/*0*/ x: kotlin.Int): kotlin.Unit
-public fun testEqualsFlipped(/*0*/ x: kotlin.Int): kotlin.Unit
-public fun testNotEquals(/*0*/ x: kotlin.Int): kotlin.Unit
-public fun testNotEqualsFlipped(/*0*/ x: kotlin.Int): kotlin.Unit
