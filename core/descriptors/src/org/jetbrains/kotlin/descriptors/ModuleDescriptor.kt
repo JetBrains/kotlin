@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.PackageViewProvider
 
-interface ModuleDescriptor : DeclarationDescriptor {
+interface ModuleDescriptor : DeclarationDescriptor, PackageViewProvider {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
     val builtIns: KotlinBuiltIns
@@ -40,14 +41,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitModuleDeclaration(this, data)
     }
-
-    fun getPackage(fqName: FqName): PackageViewDescriptor
-
-    fun getPackageWithoutDependencies(fqName: FqName): PackageViewDescriptor
-
-    fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
-
-    fun getSubPackagesOfWithoutDependencies(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
     /**
      * @return dependency modules in the same order in which this module depends on them. Does not include `this`
