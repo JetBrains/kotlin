@@ -63,10 +63,10 @@ internal class KonanSymbols(
 
     private fun unsignedClass(unsignedType: UnsignedType): IrClassSymbol = classById(unsignedType.classId)
 
-    val uByte = unsignedClass(UnsignedType.UBYTE)
-    val uShort = unsignedClass(UnsignedType.USHORT)
-    val uInt = unsignedClass(UnsignedType.UINT)
-    val uLong = unsignedClass(UnsignedType.ULONG)
+    override val uByte = unsignedClass(UnsignedType.UBYTE)
+    override val uShort = unsignedClass(UnsignedType.USHORT)
+    override val uInt = unsignedClass(UnsignedType.UINT)
+    override val uLong = unsignedClass(UnsignedType.ULONG)
 
     val signedIntegerClasses = setOf(byte, short, int, long)
     val unsignedIntegerClasses = setOf(uByte, uShort, uInt, uLong)
