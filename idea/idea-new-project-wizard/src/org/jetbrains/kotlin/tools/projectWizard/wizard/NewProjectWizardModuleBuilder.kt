@@ -104,8 +104,8 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }.isSuccess
         if (success) {
             val projectCreationStats = ProjectCreationStats(
-                wizard.projectTemplate!!.title,
-                wizard.buildSystemType!!.text
+                wizard.projectTemplate!!.id,
+                wizard.buildSystemType!!.id
             )
             WizardStatsService.logDataOnProjectGenerated(
                 projectCreationStats,

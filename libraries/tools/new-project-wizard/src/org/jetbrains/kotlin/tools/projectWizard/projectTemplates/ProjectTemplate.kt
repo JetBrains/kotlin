@@ -19,8 +19,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val description: String
     abstract val suggestedProjectName: String
     abstract val projectKind: ProjectKind
-    open val id: String
-        get() = this::class.simpleName.toString().removeSuffix("Template").removeSuffix("Project")
+    abstract val id: String
 
     private val setsDefaultValues: List<SettingWithValue<*, *>>
         get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
@@ -137,6 +136,7 @@ private fun ModuleType.createDefaultTarget(
 object BackendApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.description")
+    override val id = "backendApplication"
 
     @NonNls
     override val suggestedProjectName = "myKotlinJvmProject"
@@ -153,6 +153,7 @@ object BackendApplicationProjectTemplate : ProjectTemplate() {
 object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.description")
+    override val id = "multiplatformApplication"
 
     @NonNls
     override val suggestedProjectName = "myKotlinMultiplatformProject"
@@ -169,6 +170,7 @@ object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
 object ConsoleApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.description")
+    override val id = "consoleApplication"
 
     @NonNls
     override val suggestedProjectName = "myConsoleApplication"
@@ -190,6 +192,7 @@ object ConsoleApplicationProjectTemplate : ProjectTemplate() {
 object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.description")
+    override val id = "multiplatformLibrary"
 
     @NonNls
     override val suggestedProjectName = "myMultiplatformLibrary"
@@ -216,6 +219,7 @@ object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
 object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
     override val title: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.title")
     override val description: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.description")
+    override val id = "fullStackWebApplication"
 
     @NonNls
     override val suggestedProjectName: String = "myFullStackApplication"
@@ -242,6 +246,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
 object NativeApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.native.console.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.native.console.description")
+    override val id = "nativeApplication"
 
     @NonNls
     override val suggestedProjectName = "myNativeConsoleApp"
@@ -268,6 +273,7 @@ object NativeApplicationProjectTemplate : ProjectTemplate() {
 object FrontendApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
+    override val id = "frontendApplication"
 
     @NonNls
     override val suggestedProjectName = "myKotlinJsApplication"
@@ -292,6 +298,7 @@ object FrontendApplicationProjectTemplate : ProjectTemplate() {
 object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
+    override val id = "multiplatformMobileApplication"
 
     @NonNls
     override val suggestedProjectName = "myIOSApplication"
@@ -343,6 +350,7 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
 object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.description")
+    override val id = "multiplatformMobileLibrary"
 
     @NonNls
     override val suggestedProjectName = "myMppMobileLibrary"

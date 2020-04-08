@@ -122,14 +122,28 @@ data class BuildFileData(
     @NonNls val buildFileName: String
 )
 
-enum class BuildSystemType(@Nls override val text: String, val fullText: String = text) : DisplayableSettingItem {
-    GradleKotlinDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.kotlin")),
-    GradleGroovyDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.groovy")),
-    Jps(
-        KotlinNewProjectWizardBundle.message("buildsystem.type.intellij"),
-        KotlinNewProjectWizardBundle.message("buildsystem.type.intellij.full")
+enum class BuildSystemType(
+    @Nls override val text: String,
+    @NonNls val id: String, // used for FUS, should never be changed
+    val fullText: String = text
+) : DisplayableSettingItem {
+    GradleKotlinDsl(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.kotlin"),
+        id = "gradleKotlin"
     ),
-    Maven(KotlinNewProjectWizardBundle.message("buildsystem.type.maven"))
+    GradleGroovyDsl(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.groovy"),
+        id = "gradleGroovy"
+    ),
+    Jps(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.intellij"),
+        id = "jps",
+        fullText = KotlinNewProjectWizardBundle.message("buildsystem.type.intellij.full")
+    ),
+    Maven(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.maven"),
+        id = "maven"
+    )
 
     ;
 
