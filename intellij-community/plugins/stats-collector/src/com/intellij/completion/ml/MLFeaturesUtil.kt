@@ -34,7 +34,7 @@ object MLFeaturesUtil {
       if (weigherIds.contains(id)) {
         result = result.weigh(object : LookupElementWeigher(id, true, false) {
           override fun weigh(element: LookupElement): Comparable<*>? {
-            val weigh = weigher.weigh(element, location) ?: return null
+            val weigh = weigher.weigh(element, location) ?: return DummyWeigherComparableDelegate.EMPTY
             return DummyWeigherComparableDelegate(weigh)
           }
         })
@@ -44,8 +44,12 @@ object MLFeaturesUtil {
   }
 }
 
-private class DummyWeigherComparableDelegate(private val weigh: Comparable<*>)
+private class DummyWeigherComparableDelegate(private val weigh: Comparable<*>?)
   : Comparable<DummyWeigherComparableDelegate>, ForceableComparable {
+
+  companion object {
+    val EMPTY = DummyWeigherComparableDelegate(null)
+  }
 
   override fun force() {
     if (weigh is ForceableComparable) {
@@ -58,6 +62,6 @@ private class DummyWeigherComparableDelegate(private val weigh: Comparable<*>)
   }
 
   override fun toString(): String {
-    return weigh.toString()
+    return weigh?.toString() ?: ""
   }
 }
