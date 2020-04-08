@@ -10,10 +10,8 @@ import com.intellij.notification.impl.NotificationSettings;
 import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -99,6 +97,10 @@ public class InspectionProblemsView implements PersistentStateComponent<Inspecti
   private void updateCurrentFile() {
     FileEditor editor = FileEditorManager.getInstance(myProject).getSelectedEditor();
     VirtualFile file = editor == null ? null : editor.getFile();
+    if (file == null && editor instanceof TextEditor) {
+      Document document = ((TextEditor)editor).getEditor().getDocument();
+      file = FileDocumentManager.getInstance().getFile(document);
+    }
     setCurrentFile(file);
   }
 
