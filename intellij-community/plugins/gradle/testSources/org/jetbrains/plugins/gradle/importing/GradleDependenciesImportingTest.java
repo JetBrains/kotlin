@@ -1864,6 +1864,32 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
       .allSatisfy(file -> assertEquals("aLib-1.0-SNAPSHOT-1-javadoc.jar", file.getName()));
   }
 
+  @Test
+  public void testModifiedSourceSetClasspathFileCollectionDependencies() throws Exception {
+    importProject(
+      "apply plugin: 'java'\n" +
+      "dependencies {\n" +
+      "  compile 'junit:junit:4.11'\n" +
+      "}\n" +
+      "afterEvaluate {\n" +
+      "    def mainSourceSet = sourceSets['main']\n" +
+      "    def mainClassPath = mainSourceSet.compileClasspath\n" +
+      "    def exclusion = mainClassPath.filter { it.name.contains('junit') }\n" +
+      "    mainSourceSet.compileClasspath = mainClassPath - exclusion\n" +
+      "}"
+    );
+
+    assertModules("project", "project.main", "project.test");
+
+    assertModuleLibDeps("project.main", "Gradle: junit:junit:4.11", "Gradle: org.hamcrest:hamcrest-core:1.3");
+    assertModuleLibDepScope("project.main", "Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.main", "Gradle: junit:junit:4.11", DependencyScope.COMPILE);
+
+    assertModuleLibDeps("project.test", "Gradle: junit:junit:4.11", "Gradle: org.hamcrest:hamcrest-core:1.3");
+    assertModuleLibDepScope("project.test", "Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.test", "Gradle: junit:junit:4.11", DependencyScope.COMPILE);
+  }
+
   @SuppressWarnings("SameParameterValue")
   private LibraryOrderEntry assertSingleLibraryOrderEntry(String moduleName, String depName) {
     List<LibraryOrderEntry> moduleLibDeps = getModuleLibDeps(moduleName, depName);

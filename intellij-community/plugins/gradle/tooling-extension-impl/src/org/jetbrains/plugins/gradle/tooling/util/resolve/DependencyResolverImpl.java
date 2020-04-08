@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.tooling.util.resolve;
 
+import com.intellij.openapi.util.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
@@ -117,7 +118,7 @@ public class DependencyResolverImpl implements DependencyResolver {
   }
 
   @Override
-  public Collection<ExternalDependency> resolveDependencies(@NotNull SourceSet sourceSet) {
+  public Collection<ExternalDependency> resolveDependencies(@NotNull final SourceSet sourceSet) {
     if (!IS_NEW_DEPENDENCY_RESOLUTION_APPLICABLE) {
       //noinspection deprecation
       return new DeprecatedDependencyResolver(myProject, false, myDownloadJavadoc, myDownloadSources, mySourceSetFinder)
@@ -128,10 +129,30 @@ public class DependencyResolverImpl implements DependencyResolver {
 
     // resolve compile dependencies
     FileCollection compileClasspath = sourceSet.getCompileClasspath();
-    Collection<ExternalDependency> compileDependencies = getDependencies(compileClasspath, COMPILE_SCOPE);
+    Collection<? extends ExternalDependency> compileDependencies = resolveDependenciesFromKnownStructures(
+      compileClasspath, COMPILE_SCOPE,
+      new Getter<Collection<? extends ExternalDependency>>() {
+        @Override
+        public Collection<? extends ExternalDependency> get() {
+          String configurationName = sourceSet.getCompileClasspathConfigurationName();
+          Configuration configuration = myProject.getConfigurations().getByName(configurationName);
+          return getDependencies(configuration, COMPILE_SCOPE);
+        }
+      }
+    );
     // resolve runtime dependencies
     FileCollection runtimeClasspath = sourceSet.getRuntimeClasspath();
-    Collection<ExternalDependency> runtimeDependencies = getDependencies(runtimeClasspath, RUNTIME_SCOPE);
+    Collection<? extends ExternalDependency> runtimeDependencies = resolveDependenciesFromKnownStructures(
+      runtimeClasspath, RUNTIME_SCOPE,
+      new Getter<Collection<? extends ExternalDependency>>() {
+        @Override
+        public Collection<? extends ExternalDependency> get() {
+          String configurationName = sourceSet.getRuntimeClasspathConfigurationName();
+          Configuration configuration = myProject.getConfigurations().getByName(configurationName);
+          return getDependencies(configuration, RUNTIME_SCOPE);
+        }
+      }
+    );
 
     filterRuntimeAndMarkCompileOnlyAsProvided(compileDependencies, runtimeDependencies);
     result.addAll(compileDependencies);
@@ -464,8 +485,8 @@ public class DependencyResolverImpl implements DependencyResolver {
     return null;
   }
 
-  private static void filterRuntimeAndMarkCompileOnlyAsProvided(@NotNull Collection<ExternalDependency> compileDependencies,
-                                                                @NotNull Collection<ExternalDependency> runtimeDependencies) {
+  private static void filterRuntimeAndMarkCompileOnlyAsProvided(@NotNull Collection<? extends ExternalDependency> compileDependencies,
+                                                                @NotNull Collection<? extends ExternalDependency> runtimeDependencies) {
     Multimap<Collection<File>, ExternalDependency> filesToRuntimeDependenciesMap = HashMultimap.create();
     for (ExternalDependency runtimeDependency : runtimeDependencies) {
       final Collection<File> resolvedFiles = getFiles(runtimeDependency);
@@ -526,7 +547,20 @@ public class DependencyResolverImpl implements DependencyResolver {
   }
 
   @NotNull
-  private Collection<ExternalDependency> getDependencies(@NotNull FileCollection fileCollection, String scope) {
+  private Collection<? extends ExternalDependency> getDependencies(@NotNull final FileCollection fileCollection, @NotNull String scope) {
+    return resolveDependenciesFromKnownStructures(fileCollection, scope, new Getter<Collection<? extends ExternalDependency>>() {
+      @Override
+      public Collection<? extends ExternalDependency> get() {
+        return singleton(new DefaultFileCollectionDependency(fileCollection.getFiles()));
+      }
+    });
+  }
+
+  @NotNull
+  private Collection<? extends ExternalDependency> resolveDependenciesFromKnownStructures(
+    @NotNull FileCollection fileCollection,
+    @NotNull String scope,
+    @NotNull Getter<Collection<? extends ExternalDependency>> defaultValue) {
     if (fileCollection instanceof ConfigurableFileCollection) {
       return getDependencies(((ConfigurableFileCollection)fileCollection).getFrom(), scope);
     }
@@ -539,10 +573,10 @@ public class DependencyResolverImpl implements DependencyResolver {
     else if (fileCollection instanceof SourceSetOutput) {
       return resolveSourceOutputFileDependencies((SourceSetOutput)fileCollection, scope);
     }
-    return emptySet();
+    return defaultValue.get();
   }
 
-  private Collection<ExternalDependency> getDependencies(@NotNull Iterable<?> fileCollections, String scope) {
+  private Collection<ExternalDependency> getDependencies(@NotNull Iterable<?> fileCollections, @NotNull String scope) {
     Collection<ExternalDependency> result = new ArrayList<ExternalDependency>();
     for (Object fileCollection : fileCollections) {
       if (fileCollection instanceof FileCollection) {
