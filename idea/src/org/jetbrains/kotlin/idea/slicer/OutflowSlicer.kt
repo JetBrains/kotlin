@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.light.LightMemberReference
+import com.intellij.slicer.JavaSliceUsage
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -68,12 +70,21 @@ class OutflowSlicer(
 
             val callable = variable.ownerFunction as? KtCallableDeclaration
             callable?.forEachOverridingElement(scope = analysisScope) { _, overridingMember ->
-                //TODO: Java overriders
-                if (overridingMember is KtCallableDeclaration) {
-                    val parameters = overridingMember.valueParameters
-                    check(parameters.size == callable.valueParameters.size)
-                    val overridingParameter = parameters[variable.parameterIndex()]
-                    overridingParameter.passToProcessor()
+                when (overridingMember) {
+                    is KtCallableDeclaration -> {
+                        val parameters = overridingMember.valueParameters
+                        check(parameters.size == callable.valueParameters.size)
+                        parameters[variable.parameterIndex()].passToProcessor()
+                    }
+
+                    is PsiMethod -> {
+                        val parameters = overridingMember.parameterList.parameters
+                        check(parameters.size == callable.valueParameters.size)
+                        parameters[variable.parameterIndex()].passToProcessor()
+                        processor.process(JavaSliceUsage.createRootUsage(parameters[variable.parameterIndex()], parentUsage.params))
+                    }
+
+                    else -> {} // not supported
                 }
                 true
             }
