@@ -101,6 +101,4 @@ class DebuggerConnection(
     }
 }
 
-fun standaloneCoroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines.standalone")
-
 fun coroutineDebuggerTraceEnabled() = Registry.`is`("kotlin.debugger.coroutines.trace")
