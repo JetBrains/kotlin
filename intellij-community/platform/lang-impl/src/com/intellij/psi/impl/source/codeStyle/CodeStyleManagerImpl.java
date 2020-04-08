@@ -8,7 +8,6 @@ import com.intellij.formatting.*;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.*;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
@@ -183,7 +182,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     if (ranges.isEmpty()) {
       return;
     }
-    ApplicationManager.getApplication().assertWriteAccessAllowed();
     Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     if (document != null) {
       PsiDocumentManager.getInstance(getProject()).commitDocument(document);
