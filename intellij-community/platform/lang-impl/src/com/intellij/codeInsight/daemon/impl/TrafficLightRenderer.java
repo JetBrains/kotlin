@@ -164,6 +164,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     // Used in Rider
     public String reasonWhySuspended;
 
+    private HeavyProcessLatch.Type heavyProcessType;
+
     public DaemonCodeAnalyzerStatus() {
     }
 
@@ -231,7 +233,15 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
 
     if (HeavyProcessLatch.INSTANCE.isRunning()) {
-      status.reasonWhySuspended = StringUtil.defaultIfEmpty(HeavyProcessLatch.INSTANCE.getRunningOperationName(), "Heavy operation is running");
+      Map.Entry<String, HeavyProcessLatch.Type> processEntry = HeavyProcessLatch.INSTANCE.getRunningOperation();
+      if (processEntry != null) {
+        status.reasonWhySuspended = processEntry.getKey();
+        status.heavyProcessType = processEntry.getValue();
+      }
+      else {
+        status.reasonWhySuspended = "Heavy operation is running";
+        status.heavyProcessType = HeavyProcessLatch.Type.Process;
+      }
       status.errorAnalyzingFinished = true;
       return status;
     }
@@ -429,7 +439,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
       if (statusItems.size() > 0) {
         if (!status.errorAnalyzingFinished) {
-          detailsBuilder.append(" found so far");
+          detailsBuilder.append(" ").append(DaemonBundle.message("found.so.far"));
         }
 
         if (mainIcon == null) {
@@ -453,7 +463,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   DaemonBundle.message("analysis.suspended"),
                                   status.reasonWhySuspended, this::createUIController).
-          withStandardStatus(StandardStatus.INDEXING);
+          withExpandedStatus(Collections.singletonList(new StatusItem(status.heavyProcessType != null ?
+                                                                      status.heavyProcessType.toString() :
+                                                                      EditorBundle.message("iw.status.paused"), null)));
       }
       if (status.errorAnalyzingFinished) {
         return new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
