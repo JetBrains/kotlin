@@ -449,7 +449,7 @@ public class BraceHighlightingHandler {
     editor.putUserData(LINE_MARKER_IN_EDITOR_KEY, null);
   }
 
-  public static LineMarkerRenderer createLineMarkerRenderer(boolean matched) {
+  public static @NotNull LineMarkerRenderer createLineMarkerRenderer(boolean matched) {
     final TextAttributesKey key = matched ? CodeInsightColors.MATCHED_BRACE_ATTRIBUTES : CodeInsightColors.UNMATCHED_BRACE_ATTRIBUTES;
     return new DefaultLineMarkerRenderer(key, 1, 0, LineMarkerRendererEx.Position.RIGHT);
   }
