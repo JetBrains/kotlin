@@ -173,7 +173,7 @@ internal class ExpectedActualCompatibilityChecker(private val platformModule: Mo
         return expected is ClassifierDescriptorWithTypeParameters &&
                 expected.isExpect &&
                 actual is ClassifierDescriptorWithTypeParameters &&
-                expected.findClassifiersFromModule(platformModule).any { classifier ->
+                expected.findClassifiersFromModule(platformModule, includeDependencies = true).any { classifier ->
                     // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                     // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
                     // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
