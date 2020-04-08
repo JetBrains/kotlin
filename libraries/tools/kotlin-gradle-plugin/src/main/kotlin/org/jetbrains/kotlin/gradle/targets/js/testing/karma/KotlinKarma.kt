@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ProcessForkOptions
+import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -409,11 +410,52 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
 
+                    private val errorBrowsers: MutableList<String> = mutableListOf()
+
                     override fun printNonTestOutput(text: String) {
                         val value = text.trimEnd()
                         progressLogger.progress(value)
 
+                        parseConsole(value)
+
                         super.printNonTestOutput(text)
+                    }
+
+                    private fun parseConsole(text: String) {
+                        if (KARMA_PROBLEM.matches(text)) {
+                            config.browsers
+                                .filter { it in text }
+                                .filterNot { it in errorBrowsers }
+                                .also {
+                                    errorBrowsers.addAll(it)
+                                }
+                        }
+                    }
+
+                    override fun testFailedMessage(execHandle: ExecHandle, exitValue: Int): String {
+                        if (errorBrowsers.isEmpty()) {
+                            return super.testFailedMessage(execHandle, exitValue)
+                        }
+
+                        val failedBrowsers = errorBrowsers
+                            .joinToString("\n") {
+                                "- $it"
+                            }
+                        return """
+                            |Errors occurred during launch of browser for testing.
+                            |$failedBrowsers
+                            |Please make sure that you have installed browsers.
+                            |Or change it via
+                            |browser {
+                            |    testTask {
+                            |        useKarma {
+                            |            useFirefox()
+                            |            useChrome()
+                            |            useSafari()
+                            |        }
+                            |    }
+                            |}
+                            """.trimMargin()
                     }
 
                     override fun processStackTrace(stackTrace: String): String =
@@ -458,3 +500,5 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         appendln()
     }
 }
+
+private val KARMA_PROBLEM = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN) \\[.*]: (.*)\$".toRegex()

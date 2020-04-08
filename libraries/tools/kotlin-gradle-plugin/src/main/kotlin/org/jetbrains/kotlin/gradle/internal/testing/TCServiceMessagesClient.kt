@@ -13,6 +13,7 @@ import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
 import org.gradle.internal.operations.OperationIdentifier
+import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.slf4j.Logger
@@ -50,6 +51,9 @@ internal open class TCServiceMessagesClient(
     override fun parseException(e: ParseException, text: String) {
         log.error("Failed to parse test process messages: \"$text\"", e)
     }
+
+    internal open fun testFailedMessage(execHandle: ExecHandle, exitValue: Int): String =
+        "$execHandle exited with errors (exit code: $exitValue)"
 
     override fun serviceMessage(message: ServiceMessage) {
 

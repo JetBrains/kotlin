@@ -32,7 +32,7 @@ class TCServiceMessagesTestExecutor(
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreRunFailures: Boolean
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
-    var execHandle: ExecHandle? = null
+    lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
     var shouldStop = false
 
@@ -51,12 +51,12 @@ class TCServiceMessagesTestExecutor(
 
                 lateinit var result: ExecResult
                 client.root(rootOperation) {
-                    execHandle!!.start()
-                    result = execHandle!!.waitForFinish()
+                    execHandle.start()
+                    result = execHandle.waitForFinish()
                 }
 
                 if (spec.checkExitCode && result.exitValue != 0) {
-                    error("$execHandle exited with errors (exit code: ${result.exitValue})")
+                    error(client.testFailedMessage(execHandle, result.exitValue))
                 }
             } catch (e: Throwable) {
                 spec.showSuppressedOutput()
