@@ -76,6 +76,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 irProperty.setter =
                     FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(setter, ktParameter)
             }
+
+            irProperty.linkCorrespondingPropertySymbol()
         }
     }
 
@@ -133,6 +135,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
             irProperty.getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
             irProperty.setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
+
+            irProperty.linkCorrespondingPropertySymbol()
         }
 
     fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty? {
@@ -158,6 +162,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             this.setter = propertyDescriptor.setter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
+            this.linkCorrespondingPropertySymbol()
         }
     }
 
@@ -188,4 +193,11 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 else -> Visibilities.PRIVATE
             }
 }
+
+internal fun IrProperty.linkCorrespondingPropertySymbol() {
+    backingField?.correspondingPropertySymbol = symbol
+    getter?.correspondingPropertySymbol = symbol
+    setter?.correspondingPropertySymbol = symbol
+}
+
 

@@ -275,6 +275,9 @@ class ClassGenerator(
         if (delegatedDescriptor.isVar) {
             irProperty.setter = generateDelegatedFunction(irDelegate, delegatedDescriptor.setter!!, delegateToDescriptor.setter!!)
         }
+
+        irProperty.linkCorrespondingPropertySymbol()
+
         return irProperty
     }
 

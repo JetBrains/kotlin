@@ -86,6 +86,8 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             }
         }
 
+        irProperty.linkCorrespondingPropertySymbol()
+
         return irProperty
     }
 
