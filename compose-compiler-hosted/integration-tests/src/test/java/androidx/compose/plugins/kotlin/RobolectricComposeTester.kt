@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.compose.Composer
 import androidx.compose.Composition
+import androidx.compose.Recomposer
 import androidx.compose.compositionFor
 import androidx.ui.node.UiComposer
 import org.robolectric.Robolectric
@@ -76,7 +77,7 @@ class RobolectricComposeTester internal constructor(
         val root = activity.root
         scheduler.advanceToLastPostedRunnable()
 
-        val composition = compositionFor(root) { slotTable, recomposer ->
+        val composition = compositionFor(root, Recomposer.current()) { slotTable, recomposer ->
             UiComposer(activity, root, slotTable, recomposer)
         }
         val setContentMethod = Composition::class.java.methods.first { it.name == "setContent" }
