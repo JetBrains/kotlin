@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
 // BUNCH 191
-class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
+abstract class RenameKotlinFunctionProcessorCompat : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -64,8 +64,10 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         return DescriptorUtils.getJvmName(descriptor)
     }
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val allReferences = super.findReferences(element)
+    protected fun processFoundReferences(
+        element: PsiElement,
+        allReferences: Collection<PsiReference>
+    ): Collection<PsiReference> {
         return when {
             getJvmName(element) == null -> allReferences
             element is KtElement -> allReferences.filterIsInstance<KtReference>()

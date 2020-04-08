@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 // BUNCH 191
-class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
+abstract class RenameKotlinClassifierProcessorCompat : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is KtClassOrObject || element is KtLightClass || element is KtConstructor<*> || element is KtTypeAlias
     }
@@ -63,11 +63,14 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
+    protected fun processFoundReferences(
+        element: PsiElement,
+        references: Collection<PsiReference>
+    ): Collection<PsiReference> {
         if (element is KtObjectDeclaration && element.isCompanion()) {
-            return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
+            return references.filter { !it.isCompanionObjectClassReference() }
         }
-        return super.findReferences(element)
+        return references
     }
 
     private fun PsiReference.isCompanionObjectClassReference(): Boolean {

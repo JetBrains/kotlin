@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 
 // BUNCH 191
-class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
+abstract class RenameKotlinPropertyProcessorCompat : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         val namedUnwrappedElement = element.namedUnwrappedElement
         return namedUnwrappedElement is KtProperty || (namedUnwrappedElement is KtParameter && namedUnwrappedElement.hasValOrVar())
@@ -89,17 +89,20 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         return getterName to setterName
     }
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val allReferences = super.findReferences(element).filterNot { it is KtDestructuringDeclarationReference }
+    protected fun processFoundReferences(
+        element: PsiElement,
+        allReferences: Collection<PsiReference>
+    ): Collection<PsiReference> {
+        val references = allReferences.filterNot { it is KtDestructuringDeclarationReference }
         val (getterJvmName, setterJvmName) = getJvmNames(element)
         return when {
-            getterJvmName == null && setterJvmName == null -> allReferences
-            element is KtElement -> allReferences.filter {
+            getterJvmName == null && setterJvmName == null -> references
+            element is KtElement -> references.filter {
                 it is KtReference || (getterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != setterJvmName) || (setterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != getterJvmName)
             }
             element is KtLightDeclaration<*, *> -> {
                 val name = element.name
-                if (name == getterJvmName || name == setterJvmName) allReferences.filterNot { it is KtReference } else allReferences
+                if (name == getterJvmName || name == setterJvmName) references.filterNot { it is KtReference } else references
             }
             else -> emptyList()
         }
@@ -343,101 +346,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    private enum class UsageKind {
+    protected enum class UsageKind {
         SIMPLE_PROPERTY_USAGE,
         GETTER_USAGE,
         SETTER_USAGE
-    }
-
-    //TODO: a very long and complicated method, even recursive. mb refactor it somehow? at least split by PsiElement types?
-    override tailrec fun renameElement(
-        element: PsiElement,
-        newName: String,
-        usages: Array<UsageInfo>,
-        listener: RefactoringElementListener?
-    ) {
-        val newNameUnquoted = newName.unquote()
-        if (element is KtLightMethod) {
-            if (element.modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString()) != null) {
-                return super.renameElement(element, newName, usages, listener)
-            }
-
-            val origin = element.kotlinOrigin
-            val newPropertyName = propertyNameByAccessor(newNameUnquoted, element)
-            // Kotlin references to Kotlin property should not use accessor name
-            if (newPropertyName != null && (origin is KtProperty || origin is KtParameter)) {
-                val (ktUsages, otherUsages) = usages.partition { it.reference is KtSimpleNameReference }
-                super.renameElement(element, newName, otherUsages.toTypedArray(), listener)
-                renameElement(origin, newPropertyName.quoteIfNeeded(), ktUsages.toTypedArray(), listener)
-                return
-            }
-        }
-
-        if (element !is KtProperty && element !is KtParameter) {
-            super.renameElement(element, newName, usages, listener)
-            return
-        }
-
-        val name = (element as KtNamedDeclaration).name!!
-        val oldGetterName = JvmAbi.getterName(name)
-        val oldSetterName = JvmAbi.setterName(name)
-
-        if (isEnumCompanionPropertyWithEntryConflict(element, newNameUnquoted)) {
-            for ((i, usage) in usages.withIndex()) {
-                if (usage !is MoveRenameUsageInfo) continue
-                val ref = usage.reference ?: continue
-                // TODO: Enum value can't be accessed from Java in case of conflict with companion member
-                if (ref is KtReference) {
-                    val newRef = (ref.bindToElement(element) as? KtSimpleNameExpression)?.mainReference ?: continue
-                    usages[i] = MoveRenameUsageInfo(newRef, usage.referencedElement)
-                }
-            }
-        }
-
-        val adjustedUsages = if (element is KtParameter) usages.filterNot {
-            val refTarget = it.reference?.resolve()
-            refTarget is KtLightMethod && DataClassDescriptorResolver.isComponentLike(Name.guessByFirstCharacter(refTarget.name))
-        } else usages.toList()
-
-        val refKindUsages = adjustedUsages.groupBy { usage: UsageInfo ->
-            val refElement = usage.reference?.resolve()
-            if (refElement is PsiMethod) {
-                val refElementName = refElement.name
-                val refElementNameToCheck =
-                    (if (usage is MangledJavaRefUsageInfo) demangleInternalName(refElementName) else null) ?: refElementName
-                when (refElementNameToCheck) {
-                    oldGetterName -> UsageKind.GETTER_USAGE
-                    oldSetterName -> UsageKind.SETTER_USAGE
-                    else -> UsageKind.SIMPLE_PROPERTY_USAGE
-                }
-            } else {
-                UsageKind.SIMPLE_PROPERTY_USAGE
-            }
-        }
-
-        super.renameElement(
-            element.copy(), JvmAbi.setterName(newNameUnquoted).quoteIfNeeded(),
-            refKindUsages[UsageKind.SETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
-            null
-        )
-
-        super.renameElement(
-            element.copy(), JvmAbi.getterName(newNameUnquoted).quoteIfNeeded(),
-            refKindUsages[UsageKind.GETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
-            null
-        )
-
-        super.renameElement(
-            element, newName,
-            refKindUsages[UsageKind.SIMPLE_PROPERTY_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
-            null
-        )
-
-        usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }
-
-        dropOverrideKeywordIfNecessary(element)
-
-        listener?.elementRenamed(element)
     }
 
     private fun addRenameElements(
