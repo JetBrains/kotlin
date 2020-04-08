@@ -125,16 +125,20 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
         val valueParameterIndex = proto.valueParameterReference - 1
 
+        val name: String
         val typeRef = if (valueParameterIndex < 0) {
+            name = "this"
             ownerFunction.receiverTypeRef
         } else {
-            ownerFunction.valueParameters.getOrNull(valueParameterIndex)?.returnTypeRef
+            val parameter = ownerFunction.valueParameters.getOrNull(valueParameterIndex) ?: return null
+            name = parameter.name.asString()
+            parameter.returnTypeRef
         } ?: return null
 
         return if (!typeRef.isBoolean)
-            ConeValueParameterReference(valueParameterIndex)
+            ConeValueParameterReference(valueParameterIndex, name)
         else
-            ConeBooleanValueParameterReference(valueParameterIndex)
+            ConeBooleanValueParameterReference(valueParameterIndex, name)
     }
 
     private fun ProtoBuf.Effect.InvocationKind.toDescriptorInvocationKind(): InvocationKind? = when (this) {
