@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Consumer
-import com.intellij.util.SystemProperties
-import org.jetbrains.kotlin.idea.debugger.coroutine.standaloneCoroutineDebuggerEnabled
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtension() {
@@ -24,16 +21,17 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
     }
 
     private fun setupCoroutineAgentForJvmForkedTestTasks(initScriptConsumer: Consumer<String>) {
-        val lines = arrayOf(
-            "gradle.taskGraph.beforeTask { Task task ->",
-            "  if (task instanceof Test) {",
-            "    def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.startsWith(\"kotlinx-coroutines-debug\") }",
-            "    if (kotlinxCoroutinesDebugJar)",
-            "        task.jvmArgs (\"-javaagent:\${kotlinxCoroutinesDebugJar?.absolutePath}\", \"-ea\")",
-            "  }",
-            "}"
-        )
-        val script = StringUtil.join(lines, SystemProperties.getLineSeparator())
+        val script =
+            //language=Gradle
+            """
+            gradle.taskGraph.beforeTask { Task task ->
+              if (task instanceof Test) {
+                def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.startsWith("kotlinx-coroutines-debug") }
+                if (kotlinxCoroutinesDebugJar)
+                    task.jvmArgs ("-javaagent:${'$'}{kotlinxCoroutinesDebugJar?.absolutePath}", "-ea")
+              }
+            }
+            """.trimIndent()
         initScriptConsumer.consume(script)
     }
 }
