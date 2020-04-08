@@ -60,10 +60,9 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
 
             introduceValueParameter(thisAsReceiverParameter)
             prop = generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, desc, irClass)
-            irClass.addMember(prop)
 
             localSerializersFieldsDescriptors.forEach {
-                irClass.addMember(generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, it, irClass))
+                generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, it, irClass)
             }
         }
 
@@ -233,7 +232,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         //  fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): StructureEncoder
         val beginFunc = encoderClass.referenceMethod(CallingConventions.begin) { it.valueParameters.size == 1 }
 
-        val call = irCall(beginFunc, type = beginFunc.descriptor.returnType!!.toIrType()).mapValueParametersIndexed { _, _ ->
+        val call = irCall(beginFunc, type = beginFunc.owner.returnType).mapValueParametersIndexed { _, _ ->
             irGet(localSerialDesc)
         }
         // can it be done in more concise way? e.g. additional builder function?

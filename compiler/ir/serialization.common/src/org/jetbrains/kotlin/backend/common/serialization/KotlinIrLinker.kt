@@ -422,8 +422,7 @@ abstract class KotlinIrLinker(
     }
 
     protected open fun resolveModuleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {
-        return deserializersForModules[moduleDescriptor] ?:
-        error("No module deserializer found for $moduleDescriptor")
+        return deserializersForModules[moduleDescriptor] ?: error("No module deserializer found for $moduleDescriptor")
     }
 
     protected abstract fun createModuleDeserializer(
