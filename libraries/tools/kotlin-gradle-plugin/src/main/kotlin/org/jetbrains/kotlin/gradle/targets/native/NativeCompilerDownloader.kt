@@ -12,9 +12,9 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -41,9 +41,7 @@ class NativeCompilerDownloader(
         get() = project.logger
 
     private val distributionType: NativeDistributionType
-        get() = PropertiesProvider(project).nativeDistributionType?.takeIf {
-            it.isAvailableFor(HostManager.host, compilerVersion)
-        } ?: NativeDistributionType.LIGHT
+        get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
 
     private val simpleOsName: String
         get() = HostManager.simpleOsName()
