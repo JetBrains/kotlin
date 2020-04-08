@@ -16,7 +16,7 @@ sealed class FirSourceElement {
     abstract val endOffset: Int
 }
 
-class FirPsiSourceElement<P : PsiElement>(val psi: P) : FirSourceElement() {
+class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
 

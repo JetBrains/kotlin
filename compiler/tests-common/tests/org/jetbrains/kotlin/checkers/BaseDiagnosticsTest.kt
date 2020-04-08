@@ -54,8 +54,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
@@ -141,7 +141,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         directives: Directives
     ) : KotlinBaseTest.TestFile(fileName, textWithMarkers, directives) {
         val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
-        private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
+        val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
         val actualDiagnostics: MutableList<ActualDiagnostic> = mutableListOf()
         val expectedText: String
         val clearText: String

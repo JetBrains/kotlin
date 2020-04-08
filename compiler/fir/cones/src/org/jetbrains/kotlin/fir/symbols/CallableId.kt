@@ -28,6 +28,10 @@ data class CallableId(val packageName: FqName, val className: FqName?, val calla
     @Deprecated("TODO: Better solution for local callables?")
     constructor(callableName: Name) : this(FqName.topLevel(Name.special("<local>")), null, callableName)
 
+    fun asFqName(): FqName {
+        if (className == null) return packageName.child(callableName)
+        return classId!!.asSingleFqName().child(callableName)
+    }
 
     override fun toString(): String {
         return buildString {

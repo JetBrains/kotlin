@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirLightDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,7 +34,11 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
         for (testFile in testFiles) {
             val firFile = firFiles.firstOrNull { it.name == testFile.name } ?: continue
             val ktFile = testFile.ktFile!!
-            val diagnostics = fileToDiagnostics[firFile] ?: emptyList()
+            val basicDiagnostics = fileToDiagnostics[firFile] ?: emptyList()
+            val debugInfoDiagnostics: List<FirDiagnostic<*>> =
+                collectDebugInfoDiagnostics(firFile, testFile.diagnosedRangesToDiagnosticNames)
+
+            val diagnostics = basicDiagnostics + debugInfoDiagnostics
 
             val actualDiagnostics = diagnostics.groupBy {
                 require(it is FirLightDiagnostic)
@@ -42,7 +47,11 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
 
             val existingDiagnostics = testFile.diagnosedRanges.groupBy {
                 it.start
-            }.mapValues { (_, ranges) -> ranges.flatMap { it.getDiagnostics().map { it.name } }.countEntries() }
+            }.mapValues { (_, ranges) ->
+                ranges.flatMap { diagnosedRange ->
+                    diagnosedRange.getDiagnostics().filterNot { it.name.contains("DEBUG_INFO_") }.map { it.name }
+                }.countEntries()
+            }
 
             for (startOffset in actualDiagnostics.keys + existingDiagnostics.keys) {
                 val expected = existingDiagnostics[startOffset] ?: emptyMap()

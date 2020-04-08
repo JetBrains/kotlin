@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.oldFashionedDescription
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -709,7 +711,7 @@ object CheckerTestUtil {
     }
 }
 
-private enum class TypeOfCall(val nameToRender: String) {
+enum class TypeOfCall(val nameToRender: String) {
     VARIABLE_THROUGH_INVOKE("variable&invoke"),
     PROPERTY_GETTER("variable"),
     FUNCTION("function"),
