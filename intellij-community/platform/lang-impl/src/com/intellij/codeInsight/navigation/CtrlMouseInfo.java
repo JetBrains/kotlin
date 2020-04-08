@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.navigation;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +11,6 @@ import java.util.List;
 public interface CtrlMouseInfo {
 
   boolean isValid();
-
-  @NotNull PsiElement getElementAtPointer();
 
   @NotNull List<@NotNull TextRange> getRanges();
 

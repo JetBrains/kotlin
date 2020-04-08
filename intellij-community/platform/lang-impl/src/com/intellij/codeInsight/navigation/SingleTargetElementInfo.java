@@ -17,32 +17,34 @@ import org.jetbrains.annotations.Nullable;
 @ApiStatus.Internal
 public class SingleTargetElementInfo extends BaseCtrlMouseInfo {
 
+  private final @NotNull PsiElement myElementAtPointer;
   private final @NotNull PsiElement myTargetElement;
 
   public SingleTargetElementInfo(@NotNull PsiElement elementAtPointer, @NotNull PsiElement targetElement) {
     super(elementAtPointer);
+    myElementAtPointer = elementAtPointer;
     myTargetElement = targetElement;
   }
 
   public SingleTargetElementInfo(@NotNull PsiReference reference, @NotNull PsiElement targetElement) {
-    super(reference.getElement(), ReferenceRange.getAbsoluteRanges(reference));
+    super(ReferenceRange.getAbsoluteRanges(reference));
+    myElementAtPointer = reference.getElement();
     myTargetElement = targetElement;
   }
 
   @Override
   public @NotNull CtrlMouseDocInfo getDocInfo() {
-    return isValid() ? generateInfo(myTargetElement, getElementAtPointer(), isNavigatable()) : CtrlMouseDocInfo.EMPTY;
+    return isValid() ? generateInfo(myTargetElement, myElementAtPointer, isNavigatable()) : CtrlMouseDocInfo.EMPTY;
   }
 
   @Override
   public boolean isValid() {
-    return myTargetElement.isValid() && getElementAtPointer().isValid();
+    return myTargetElement.isValid() && myElementAtPointer.isValid();
   }
 
   @Override
   public boolean isNavigatable() {
-    PsiElement elementAtPointer = getElementAtPointer();
-    return myTargetElement != elementAtPointer && myTargetElement != elementAtPointer.getParent();
+    return myTargetElement != myElementAtPointer && myTargetElement != myElementAtPointer.getParent();
   }
 
   @NotNull
@@ -52,7 +54,7 @@ public class SingleTargetElementInfo extends BaseCtrlMouseInfo {
     if (result == null && fallbackToBasicInfo) {
       result = doGenerateInfo(element);
     }
-    return result == null ? CtrlMouseDocInfo.EMPTY : new CtrlMouseDocInfo(result, documentationProvider);
+    return result == null ? CtrlMouseDocInfo.EMPTY : new CtrlMouseDocInfo(result, atPointer, documentationProvider);
   }
 
   @Nullable

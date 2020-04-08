@@ -15,13 +15,13 @@ public class MultipleTargetElementsInfo extends BaseCtrlMouseInfo {
     super(elementAtPointer);
   }
 
-  public MultipleTargetElementsInfo(@NotNull PsiElement elementAtPointer, @NotNull PsiReference reference) {
-    super(elementAtPointer, ReferenceRange.getAbsoluteRanges(reference));
+  public MultipleTargetElementsInfo(@NotNull PsiReference reference) {
+    super(ReferenceRange.getAbsoluteRanges(reference));
   }
 
   @Override
   public @NotNull CtrlMouseDocInfo getDocInfo() {
-    return new CtrlMouseDocInfo(CodeInsightBundle.message("multiple.implementations.tooltip"), null);
+    return new CtrlMouseDocInfo(CodeInsightBundle.message("multiple.implementations.tooltip"), null, null);
   }
 
   @Override

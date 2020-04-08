@@ -14,16 +14,14 @@ import static com.intellij.codeInsight.navigation.CtrlMouseHandler.LOG;
 @ApiStatus.Internal
 public abstract class BaseCtrlMouseInfo implements CtrlMouseInfo {
 
-  private final @NotNull PsiElement myElementAtPointer;
   private final @NotNull List<@NotNull TextRange> myRanges;
 
-  protected BaseCtrlMouseInfo(@NotNull PsiElement elementAtPointer, @NotNull List<@NotNull TextRange> ranges) {
-    myElementAtPointer = elementAtPointer;
+  protected BaseCtrlMouseInfo(@NotNull List<@NotNull TextRange> ranges) {
     myRanges = ranges;
   }
 
   protected BaseCtrlMouseInfo(@NotNull PsiElement elementAtPointer) {
-    this(elementAtPointer, getReferenceRanges(elementAtPointer));
+    this(getReferenceRanges(elementAtPointer));
   }
 
   @NotNull
@@ -39,11 +37,6 @@ public abstract class BaseCtrlMouseInfo implements CtrlMouseInfo {
       textOffset = range.getStartOffset();
     }
     return Collections.singletonList(new TextRange(textOffset, range.getEndOffset()));
-  }
-
-  @Override
-  public final @NotNull PsiElement getElementAtPointer() {
-    return myElementAtPointer;
   }
 
   @Override

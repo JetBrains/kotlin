@@ -241,8 +241,7 @@ public final class CtrlMouseHandler {
   }
 
   private static boolean areSimilar(@NotNull CtrlMouseInfo info1, @NotNull CtrlMouseInfo info2) {
-    return info1.getElementAtPointer().equals(info2.getElementAtPointer())
-           && info1.getRanges().equals(info2.getRanges());
+    return info1.getRanges().equals(info2.getRanges());
   }
 
   private static boolean isValidAndRangesAreCorrect(@NotNull CtrlMouseInfo info, @NotNull Document document) {
@@ -453,9 +452,9 @@ public final class CtrlMouseHandler {
 
       if (highlighterOnly || docInfo.text == null) return;
 
-      HyperlinkListener hyperlinkListener = docInfo.docProvider == null
+      HyperlinkListener hyperlinkListener = docInfo.docProvider == null || docInfo.context == null
                                    ? null
-                                   : new QuickDocHyperlinkListener(docInfo.docProvider, info.getElementAtPointer());
+                                   : new QuickDocHyperlinkListener(docInfo.docProvider, docInfo.context);
       Ref<Consumer<? super String>> newTextConsumerRef = new Ref<>();
       JComponent component = HintUtil.createInformationLabel(docInfo.text, hyperlinkListener, null, newTextConsumerRef);
       component.setBorder(JBUI.Borders.empty(6, 6, 5, 6));

@@ -386,7 +386,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       return new SingleTargetElementInfo(ref, resolvedElements.get(0));
     }
     if (resolvedElements.size() > 1) {
-      return elementAtPointer != null ? new MultipleTargetElementsInfo(elementAtPointer, ref) : null;
+      return elementAtPointer != null ? new MultipleTargetElementsInfo(ref) : null;
     }
 
     final PsiElement element = findElementToShowUsagesOf(editor, offset);
@@ -397,7 +397,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
           @Override
           public @NotNull CtrlMouseDocInfo getDocInfo() {
             String name = UsageViewUtil.getType(element) + " '" + UsageViewUtil.getShortName(element) + "'";
-            return new CtrlMouseDocInfo("Show usages of " + name, null);
+            return new CtrlMouseDocInfo("Show usages of " + name, null, null);
           }
 
           @Override
