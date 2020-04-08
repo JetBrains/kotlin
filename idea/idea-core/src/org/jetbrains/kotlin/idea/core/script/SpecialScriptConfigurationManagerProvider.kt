@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
 import org.jetbrains.kotlin.psi.KtFile
 
 interface SpecialScriptConfigurationManagerProvider {
