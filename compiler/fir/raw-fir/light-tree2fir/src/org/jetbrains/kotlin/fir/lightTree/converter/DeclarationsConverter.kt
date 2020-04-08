@@ -467,13 +467,15 @@ class DeclarationsConverter(
                     //parse data class
                     if (modifiers.isDataClass() && firPrimaryConstructor != null) {
                         val zippedParameters = properties.map { it.source?.lightNode!! to it }
-                        zippedParameters.generateComponentFunctions(
-                            baseSession, this, context.packageFqName, context.className, firPrimaryConstructor
-                        )
-                        zippedParameters.generateCopyFunction(
-                            baseSession, classNode, this, context.packageFqName, context.className, firPrimaryConstructor
-                        )
-                        // TODO: equals, hashCode, toString
+                        DataClassMemberGenerator(
+                            baseSession,
+                            classNode,
+                            this,
+                            firPrimaryConstructor.returnTypeRef,
+                            zippedParameters,
+                            context.packageFqName,
+                            context.className
+                        ).generateMembers()
                     }
 
                     if (modifiers.isEnum()) {

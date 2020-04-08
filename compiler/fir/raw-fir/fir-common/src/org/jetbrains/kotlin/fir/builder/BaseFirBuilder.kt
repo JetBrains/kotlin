@@ -642,104 +642,101 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun List<Pair<T, FirProperty>>.generateComponentFunctions(
-        session: FirSession, firClassBuilder: AbstractFirRegularClassBuilder, packageFqName: FqName, classFqName: FqName,
-        firPrimaryConstructor: FirConstructor,
+    inner class DataClassMemberGenerator(
+        private val session: FirSession,
+        private val source: T,
+        private val classBuilder: AbstractFirRegularClassBuilder,
+        private val classTypeRef: FirTypeRef,
+        private val zippedParameters: List<Pair<T, FirProperty>>,
+        private val packageFqName: FqName,
+        private val classFqName: FqName,
     ) {
-        var componentIndex = 1
-        for ((sourceNode, firProperty) in this) {
-            if (!firProperty.isVal && !firProperty.isVar) continue
-            val name = Name.identifier("component$componentIndex")
-            componentIndex++
-            val parameterSource = sourceNode?.toFirSourceElement()
-            val target = FirFunctionTarget(labelName = null, isLambda = false)
-            val componentFunction = buildSimpleFunction {
-                source = parameterSource
-                this.session = session
-                returnTypeRef = buildImplicitTypeRef {
-                    source = parameterSource
-                }
-                receiverTypeRef = null
-                this.name = name
-                this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
-                this.symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
 
-                val returnExpression = buildReturnExpression {
-                    source = parameterSource
-                    result = buildQualifiedAccessExpression {
-                        source = parameterSource
-                        dispatchReceiver = buildThisReceiverExpression {
-                            calleeReference = buildImplicitThisReference {
-                                boundSymbol = firClassBuilder.symbol
-                            }
-                            typeRef = firPrimaryConstructor.returnTypeRef
-                        }
-                        calleeReference = buildResolvedNamedReference {
-                            source = parameterSource
-                            this.name = firProperty.name
-                            resolvedSymbol = firProperty.symbol
-                        }
-                    }
-                    this.target = target
-                }
-                body = buildSingleExpressionBlock(returnExpression)
-            }.also {
-                target.bind(it)
-            }
-            firClassBuilder.addDeclaration(componentFunction)
+        fun generateMembers() {
+            generateComponentFunctions()
+            generateCopyFunction()
+            // TODO: equals, hashCode, toString
         }
-    }
 
-    private val copyName = Name.identifier("copy")
-
-    fun List<Pair<T, FirProperty>>.generateCopyFunction(
-        session: FirSession,
-        classOrObject: T,
-        classBuilder: AbstractFirRegularClassBuilder,
-        packageFqName: FqName,
-        classFqName: FqName,
-        firPrimaryConstructor: FirConstructor,
-    ) {
-        classBuilder.addDeclaration(
-            buildSimpleFunction {
-                source = classOrObject?.toFirSourceElement()
-                this.session = session
-                returnTypeRef = firPrimaryConstructor.returnTypeRef
-                name = copyName
-                status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
-                symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
-                for ((ktParameter, firProperty) in this@generateCopyFunction) {
-                    val propertyName = firProperty.name
-                    val parameterSource = ktParameter?.toFirSourceElement()
-                    valueParameters += buildValueParameter {
-                        source = parameterSource
-                        this.session = session
-                        returnTypeRef = firProperty.returnTypeRef
-                        name = propertyName
-                        symbol = FirVariableSymbol(propertyName)
-                        defaultValue = buildQualifiedAccessExpression {
-                            source = parameterSource
-                            dispatchReceiver = buildThisReceiverExpression {
-                                calleeReference = buildImplicitThisReference {
-                                    boundSymbol = classBuilder.symbol
-                                }
-                                typeRef = firPrimaryConstructor.returnTypeRef
-                            }
-                            calleeReference = buildResolvedNamedReference {
-                                source = parameterSource
-                                this.name = propertyName
-                                resolvedSymbol = firProperty.symbol
-                            }
-                        }
-                        isCrossinline = false
-                        isNoinline = false
-                        isVararg = false
+        private inline fun generateComponentAccess(parameterSource: FirSourceElement?, firProperty: FirProperty) =
+            buildQualifiedAccessExpression {
+                source = parameterSource
+                dispatchReceiver = buildThisReceiverExpression {
+                    calleeReference = buildImplicitThisReference {
+                        boundSymbol = classBuilder.symbol
                     }
+                    typeRef = classTypeRef
                 }
+                calleeReference = buildResolvedNamedReference {
+                    source = parameterSource
+                    this.name = firProperty.name
+                    resolvedSymbol = firProperty.symbol
+                }
+            }
 
-                body = buildEmptyExpressionBlock()
-            },
-        )
+        private fun generateComponentFunctions() {
+            var componentIndex = 1
+            for ((sourceNode, firProperty) in zippedParameters) {
+                if (!firProperty.isVal && !firProperty.isVar) continue
+                val name = Name.identifier("component$componentIndex")
+                componentIndex++
+                val parameterSource = sourceNode?.toFirSourceElement()
+                val target = FirFunctionTarget(labelName = null, isLambda = false)
+                val componentFunction = buildSimpleFunction {
+                    source = parameterSource
+                    session = this@DataClassMemberGenerator.session
+                    returnTypeRef = buildImplicitTypeRef {
+                        source = parameterSource
+                    }
+                    receiverTypeRef = null
+                    this.name = name
+                    status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
+
+                    val returnExpression = buildReturnExpression {
+                        source = parameterSource
+                        result = generateComponentAccess(parameterSource, firProperty)
+                        this.target = target
+                    }
+                    body = buildSingleExpressionBlock(returnExpression)
+                }.also {
+                    target.bind(it)
+                }
+                classBuilder.addDeclaration(componentFunction)
+            }
+        }
+
+        private val copyName = Name.identifier("copy")
+
+        private fun generateCopyFunction() {
+            classBuilder.addDeclaration(
+                buildSimpleFunction {
+                    source = this@DataClassMemberGenerator.source.toFirSourceElement()
+                    session = this@DataClassMemberGenerator.session
+                    returnTypeRef = classTypeRef
+                    name = copyName
+                    status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
+                    for ((ktParameter, firProperty) in zippedParameters) {
+                        val propertyName = firProperty.name
+                        val parameterSource = ktParameter?.toFirSourceElement()
+                        valueParameters += buildValueParameter {
+                            source = parameterSource
+                            session = this@DataClassMemberGenerator.session
+                            returnTypeRef = firProperty.returnTypeRef
+                            name = propertyName
+                            symbol = FirVariableSymbol(propertyName)
+                            defaultValue = generateComponentAccess(parameterSource, firProperty)
+                            isCrossinline = false
+                            isNoinline = false
+                            isVararg = false
+                        }
+                    }
+
+                    body = buildEmptyExpressionBlock()
+                },
+            )
+        }
     }
 
     private fun FirVariable<*>.toQualifiedAccess(): FirQualifiedAccessExpression = buildQualifiedAccessExpression {
