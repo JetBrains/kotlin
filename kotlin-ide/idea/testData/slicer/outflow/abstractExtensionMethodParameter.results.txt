@@ -1,0 +1,7 @@
+14 1.foo(<bold>s</bold>)
+4 	fun Int.foo(<bold>p: Any</bold>)
+3 		public void foo(int receiver, Object <bold>p</bold>) {
+4 			System.out.println(<bold>p</bold>);
+9 			println(<bold>p</bold>) // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958
+8 		override fun Int.foo(<bold>p: Any</bold>) {
+9 			DUPLICATE: println(<bold>p</bold>) // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958

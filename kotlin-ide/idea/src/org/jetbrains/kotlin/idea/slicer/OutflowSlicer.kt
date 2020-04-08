@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class OutflowSlicer(
@@ -69,19 +66,20 @@ class OutflowSlicer(
             //TODO: expect/actual
 
             val callable = variable.ownerFunction as? KtCallableDeclaration
+            val parameterIndex = variable.parameterIndex()
             callable?.forEachOverridingElement(scope = analysisScope) { _, overridingMember ->
                 when (overridingMember) {
                     is KtCallableDeclaration -> {
                         val parameters = overridingMember.valueParameters
                         check(parameters.size == callable.valueParameters.size)
-                        parameters[variable.parameterIndex()].passToProcessor()
+                        parameters[parameterIndex].passToProcessor()
                     }
 
                     is PsiMethod -> {
                         val parameters = overridingMember.parameterList.parameters
-                        check(parameters.size == callable.valueParameters.size)
-                        parameters[variable.parameterIndex()].passToProcessor()
-                        processor.process(JavaSliceUsage.createRootUsage(parameters[variable.parameterIndex()], parentUsage.params))
+                        val shift = if (callable.receiverTypeReference != null) 1 else 0
+                        check(parameters.size == callable.valueParameters.size + shift)
+                        processor.process(JavaSliceUsage.createRootUsage(parameters[parameterIndex + shift], parentUsage.params))
                     }
 
                     else -> {} // not supported
