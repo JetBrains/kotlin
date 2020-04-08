@@ -7,6 +7,7 @@ import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.lightEdit.LightEditCompatible;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationBundle;
@@ -31,7 +32,7 @@ public class ShowIntentionActionsAction extends BaseCodeInsightAction implements
     Project project = event.getProject();
     Presentation presentation = event.getPresentation();
     if (LightEdit.owns(project)) {
-      presentation.setEnabledAndVisible(true);
+      presentation.setEnabledAndVisible(!ActionPlaces.EDITOR_POPUP.equals(event.getPlace()));
       return;
     }
     super.update(event);
