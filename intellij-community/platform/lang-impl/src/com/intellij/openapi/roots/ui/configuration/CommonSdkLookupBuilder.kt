@@ -57,6 +57,9 @@ internal data class CommonSdkLookupBuilder(
   override fun testSuggestedSdksFirst(sdks: Sequence<Sdk?>) =
     copy(testSdkSequence = testSdkSequence + sdks)
 
+  override fun testSuggestedSdkFirst(sdk: () -> Sdk?) =
+    copy(testSdkSequence = testSdkSequence + generateSequence(sdk) { null })
+
   override fun onBeforeSdkSuggestionStarted(handler: () -> SdkLookupDecision) =
     copy(onBeforeSdkSuggestionStarted = handler)
 

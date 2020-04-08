@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.roots.ui.configuration.SdkLookupBuilderEx
 import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
@@ -35,38 +36,40 @@ fun setupGradleJvm(
     when {
       canUseGradleJavaHomeJdk() -> projectSettings.gradleJvm = USE_GRADLE_JAVA_HOME
       canUseJavaHomeJdk() -> projectSettings.gradleJvm = ExternalSystemJdkUtil.USE_JAVA_HOME
-      else -> getGradleJvmLookupProvider(project, projectSettings)
-        .newLookupBuilder()
-        .testSuggestedSdksFirst(getGradleJdks())
-        .testSuggestedSdkFirst(ExternalSystemJdkUtil.USE_PROJECT_JDK) { getProjectJdk() }
-        .withVersionFilter { isSupported(gradleVersion, it) }
-        .withSdkType(ExternalSystemJdkUtil.getJavaSdkType())
-        .withSdkHomeFilter { ExternalSystemJdkUtil.isValidJdk(it) }
-        .onSdkNameResolved { id, sdk ->
-          /* We have two types of sdk resolving:
-           *  1. Download sdk manually
-           *    a. by download action from SdkComboBox
-           *    b. by sdk downloader
-           *    c. by action that detects incorrect project sdk
-           *  2. Lookup sdk (search in fs, download and etc)
-           *    a. search in fs, search in sdk table and etc
-           *    b. download
-           *
-           * All download actions generates fake (invalid) sdk and puts it to jdk table.
-           * This code allows to avoid some irregular conflicts
-           * For example: strange duplications in SdkComboBox or unexpected modifications of gradleJvm
-           */
-          val fakeSdk = sdk?.let(::findRegisteredSdk)
-          if (fakeSdk != null && projectSettings.gradleJvm == null) {
-            projectSettings.gradleJvm = id ?: fakeSdk.name
+      else -> SdkLookupBuilderEx<String> {
+        getGradleJvmLookupProvider(project, projectSettings)
+          .newLookupBuilder()
+          .testSuggestedSdksFirst(getGradleJdks())
+          .testSuggestedSdkFirst(ExternalSystemJdkUtil.USE_PROJECT_JDK) { getProjectJdk() }
+          .withVersionFilter { isSupported(gradleVersion, it) }
+          .withSdkType(ExternalSystemJdkUtil.getJavaSdkType())
+          .withSdkHomeFilter { ExternalSystemJdkUtil.isValidJdk(it) }
+          .onSdkNameResolved { id, sdk ->
+            /* We have two types of sdk resolving:
+             *  1. Download sdk manually
+             *    a. by download action from SdkComboBox
+             *    b. by sdk downloader
+             *    c. by action that detects incorrect project sdk
+             *  2. Lookup sdk (search in fs, download and etc)
+             *    a. search in fs, search in sdk table and etc
+             *    b. download
+             *
+             * All download actions generates fake (invalid) sdk and puts it to jdk table.
+             * This code allows to avoid some irregular conflicts
+             * For example: strange duplications in SdkComboBox or unexpected modifications of gradleJvm
+             */
+            val fakeSdk = sdk?.let(::findRegisteredSdk)
+            if (fakeSdk != null && projectSettings.gradleJvm == null) {
+              projectSettings.gradleJvm = id ?: fakeSdk.name
+            }
           }
-        }
-        .onSdkResolved { id, sdk ->
-          if (projectSettings.gradleJvm == null) {
-            projectSettings.gradleJvm = id ?: sdk?.name
+          .onSdkResolved { id, sdk ->
+            if (projectSettings.gradleJvm == null) {
+              projectSettings.gradleJvm = id ?: sdk?.name
+            }
           }
-        }
-        .executeLookup()
+          .executeLookup()
+      }
     }
   }
 }

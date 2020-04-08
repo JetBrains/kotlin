@@ -9,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus
 @ApiStatus.Experimental
 interface SdkLookupProvider {
 
-  fun newLookupBuilder(): SdkLookupBuilderEx<String>
+  fun newLookupBuilder(): SdkLookupBuilder
 
   fun getSdkInfo(): SdkInfo
 

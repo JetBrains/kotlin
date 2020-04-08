@@ -11,7 +11,6 @@ import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.concurrency.AsyncPromise
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 
 @ApiStatus.Internal
@@ -20,8 +19,8 @@ class SdkLookupProviderImpl : SdkLookupProvider {
   @Volatile
   private var context: SdkLookupContext? = null
 
-  override fun newLookupBuilder(): SdkLookupBuilderEx<String> {
-    return SdkLookupBuilderExImpl(::setIdentifier, ::getIdentifier, ::lookup)
+  override fun newLookupBuilder(): SdkLookupBuilder {
+    return CommonSdkLookupBuilder(lookup = ::lookup)
   }
 
   @TestOnly
@@ -43,7 +42,7 @@ class SdkLookupProviderImpl : SdkLookupProvider {
     context?.onProgress(progressIndicator)
   }
 
-  private fun lookup(builder: SdkLookupBuilderExImpl<String>) {
+  private fun lookup(builder: CommonSdkLookupBuilder) {
     val context = SdkLookupContext()
     this.context = context
     context.onProgress(builder.progressIndicator)
@@ -62,18 +61,9 @@ class SdkLookupProviderImpl : SdkLookupProvider {
     }
   }
 
-  private fun setIdentifier(id: String?, sdk: Sdk) {
-    context?.setIdentifier(id, sdk)
-  }
-
-  private fun getIdentifier(sdk: Sdk): String? {
-    return context?.getIdentifier(sdk)
-  }
-
   private class SdkLookupContext {
     private val sdk = AsyncPromise<Sdk?>()
     private val sdkInfo = AtomicReference<SdkInfo>(SdkInfo.Unresolved)
-    private val identifiers = ConcurrentHashMap<Sdk, String>()
     val progressIndicator = ProgressIndicatorBase()
 
     @TestOnly
@@ -101,17 +91,6 @@ class SdkLookupProviderImpl : SdkLookupProvider {
         else -> sdkInfo.set(SdkInfo.Resolved(sdk.name, sdk.versionString, sdk.homePath))
       }
       this.sdk.setResult(sdk)
-    }
-
-    fun setIdentifier(id: String?, sdk: Sdk) {
-      when (id) {
-        null -> identifiers.remove(sdk)
-        else -> identifiers[sdk] = id
-      }
-    }
-
-    fun getIdentifier(sdk: Sdk): String? {
-      return identifiers.getOrDefault(sdk, null)
     }
   }
 }

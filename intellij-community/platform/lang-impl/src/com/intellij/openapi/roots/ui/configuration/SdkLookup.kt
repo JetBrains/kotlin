@@ -55,6 +55,9 @@ interface SdkLookupBuilder {
   fun testSuggestedSdksFirst(sdks: Sequence<Sdk?>): SdkLookupBuilder
 
   @Contract(pure = true)
+  fun testSuggestedSdkFirst(sdk: () -> Sdk?): SdkLookupBuilder
+
+  @Contract(pure = true)
   fun withSdkName(name: String): SdkLookupBuilder
 
   @Contract(pure = true)

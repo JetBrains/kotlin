@@ -71,15 +71,15 @@ class GradleProjectSettingsUpdater : ExternalSystemSettingsListenerEx {
       .withVersionFilter { isSupported(gradleVersion, it) }
       .withSdkType(ExternalSystemJdkUtil.getJavaSdkType())
       .withSdkHomeFilter { ExternalSystemJdkUtil.isValidJdk(it) }
-      .onSdkNameResolved { id, sdk ->
+      .onSdkNameResolved { sdk ->
         val fakeSdk = sdk?.let(::findRegisteredSdk)
         if (fakeSdk != null && projectSettings.gradleJvm == null) {
-          projectSettings.gradleJvm = id ?: fakeSdk.name
+          projectSettings.gradleJvm = fakeSdk.name
         }
       }
-      .onSdkResolved { id, sdk ->
+      .onSdkResolved { sdk ->
         if (projectSettings.gradleJvm == null) {
-          projectSettings.gradleJvm = id ?: sdk?.name ?: gradleJvm
+          projectSettings.gradleJvm = sdk?.name ?: gradleJvm
         }
         notifyGradleJvmChangeInfo(project, projectSettings, gradleJvm, sdk)
       }
