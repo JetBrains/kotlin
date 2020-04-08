@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.interpreter
 
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
+import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
+import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterTimeOutException
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.*
 import java.lang.invoke.MethodHandle
 
 private const val MAX_STACK_SIZE = 10_000
+private const val MAX_COMMANDS = 500_000
 
 class IrInterpreter(irModule: IrModuleFragment) {
     private val irBuiltIns = irModule.irBuiltins
@@ -32,6 +35,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val illegalArgumentException = irExceptions.first { it.name.asString() == IllegalArgumentException::class.java.simpleName }
 
     private val stackTrace = mutableListOf<String>()
+    private var commandCount = 0
 
     private val mapOfEnums = mutableMapOf<Pair<IrClass, String>, Complex>()
 
@@ -51,22 +55,33 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
     }
 
+    private fun incrementAndCheckCommands() {
+        commandCount++
+        if (commandCount >= MAX_COMMANDS) throw InterpreterTimeOutException()
+    }
+
     fun interpret(expression: IrExpression): IrExpression {
         val data = InterpreterFrame()
-        return runBlocking {
-            return@runBlocking when (val returnLabel = withContext(this.coroutineContext) { expression.interpret(data).returnLabel }) {
-                ReturnLabel.NEXT -> data.popReturnValue().toIrExpression(expression)
-                ReturnLabel.EXCEPTION -> {
-                    val message = (data.popReturnValue() as ExceptionState).getFullDescription()
-                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
+        return try {
+            runBlocking {
+                return@runBlocking when (val returnLabel = withContext(this.coroutineContext) { expression.interpret(data).returnLabel }) {
+                    ReturnLabel.NEXT -> data.popReturnValue().toIrExpression(expression)
+                    ReturnLabel.EXCEPTION -> {
+                        val message = (data.popReturnValue() as ExceptionState).getFullDescription()
+                        IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
+                    }
+                    else -> TODO("$returnLabel not supported as result of interpretation")
                 }
-                else -> TODO("$returnLabel not supported as result of interpretation")
             }
+        } catch (e: InterpreterException) {
+            // TODO don't handle, throw to lowering
+            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
         }
     }
 
     private suspend fun IrElement.interpret(data: Frame): ExecutionResult {
         try {
+            incrementAndCheckCommands()
             val executionResult = when (this) {
                 is IrFunctionImpl -> interpretFunction(this, data)
                 is IrCall -> interpretCall(this, data)
@@ -106,6 +121,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
 
             return executionResult.getNextLabel(this, data) { this@getNextLabel.interpret(it) }
+        } catch (e: InterpreterException) {
+            throw e
         } catch (e: Throwable) {
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName
