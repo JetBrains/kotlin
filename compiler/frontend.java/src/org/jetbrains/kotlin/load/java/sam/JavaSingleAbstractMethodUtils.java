@@ -195,7 +195,12 @@ public class JavaSingleAbstractMethodUtils {
             @NotNull SamConversionResolver samResolver,
             @NotNull SamConversionOracle samConversionOracle
     ) {
-        TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
+        TypeParameters typeParameters;
+        if (adapter instanceof SamAdapterClassConstructorDescriptor) {
+            typeParameters = new TypeParameters(original.getTypeParameters(), TypeSubstitutor.EMPTY);
+        } else {
+            typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
+        }
 
         KotlinType returnTypeUnsubstituted = original.getReturnType();
         assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
@@ -248,10 +253,6 @@ public class JavaSingleAbstractMethodUtils {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
-        if (newOwner instanceof SamAdapterClassConstructorDescriptor) {
-            return new TypeParameters(originalParameters, TypeSubstitutor.EMPTY);
-        }
-
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
                 JavaResolverUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
         TypeSubstitutor typeParametersSubstitutor = JavaResolverUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);
