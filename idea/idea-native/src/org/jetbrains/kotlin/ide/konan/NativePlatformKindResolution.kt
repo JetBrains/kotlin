@@ -42,7 +42,9 @@ import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.nativeTargets
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms.nativePlatformByTargetNames
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -161,7 +163,7 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
             return capabilities
         }
 
-    override val platform: TargetPlatform
-        // TODO: detect native platform by library
-        get() = NativePlatforms.unspecifiedNativePlatform
+    override val platform: TargetPlatform by lazy {
+        nativePlatformByTargetNames(resolvedKotlinLibrary.safeRead(emptyList()) { nativeTargets })
+    }
 }
