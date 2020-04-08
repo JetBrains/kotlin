@@ -67,7 +67,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> { fqName: FqName ->
-        LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+        LazyPackageViewDescriptorImpl(this, fqName, storageManager, includeDependencies = true)
+    }
+
+    private val packagesWithoutDependencies = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> { fqName: FqName ->
+        LazyPackageViewDescriptorImpl(this, fqName, storageManager, includeDependencies = false)
     }
 
     @Deprecated("This method is not going to be supported. Please do not use it")
@@ -85,9 +89,19 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         return packages(fqName)
     }
 
+    override fun getPackageWithoutDependencies(fqName: FqName): PackageViewDescriptor {
+        assertValid()
+        return packagesWithoutDependencies(fqName)
+    }
+
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         assertValid()
         return packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
+    }
+
+    override fun getSubPackagesOfWithoutDependencies(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        assertValid()
+        return packageFragmentProviderForModuleContentWithoutDependencies.getSubPackagesOf(fqName, nameFilter)
     }
 
     private val packageFragmentProviderForWholeModuleWithDependencies by lazy {
