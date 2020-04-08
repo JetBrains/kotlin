@@ -115,6 +115,11 @@ internal class FirPropertyImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
@@ -126,7 +131,7 @@ internal class FirPropertyImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         typeParameters.transformInplace(transformer, data)
         return this
     }

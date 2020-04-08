@@ -53,5 +53,7 @@ abstract class FirVariable<F : FirVariable<F>> : FirPureAbstractElement(), FirCa
 
     abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariable<F>
+
     abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirVariable<F>
 }

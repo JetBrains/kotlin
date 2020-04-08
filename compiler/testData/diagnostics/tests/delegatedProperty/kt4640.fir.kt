@@ -8,4 +8,4 @@ class ValueWrapper()
     fun setValue(v: Int) { backingValue = v }
 }
 
-val foo by ValueWrapper()
+val foo by <!INAPPLICABLE_CANDIDATE!>ValueWrapper()<!>

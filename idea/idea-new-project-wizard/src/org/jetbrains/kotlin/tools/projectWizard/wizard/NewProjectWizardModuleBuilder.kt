@@ -11,6 +11,7 @@ import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
@@ -77,6 +78,9 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats, wizardContext))
     }
 
+    override fun createProject(name: String?, path: String?) =
+        ProjectManager.getInstance().createProject(wizard.projectName, wizard.projectPath.toString())
+
     override fun commit(
         project: Project,
         model: ModifiableModuleModel?,
@@ -138,8 +142,6 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
     override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
         ModuleNewWizardFirstStep(wizard)
-
-    override fun setModuleFilePath(path: String) = Unit
 }
 
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {

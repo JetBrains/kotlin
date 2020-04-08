@@ -250,7 +250,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
         addArg("-p", outputKind.name.toLowerCase())
 
         if (compilation is KotlinSharedNativeCompilation) {
-            add("-Xklib-mpp")
+            add("-Xexpect-actual-linker")
             add("-Xmetadata-klib")
         }
 

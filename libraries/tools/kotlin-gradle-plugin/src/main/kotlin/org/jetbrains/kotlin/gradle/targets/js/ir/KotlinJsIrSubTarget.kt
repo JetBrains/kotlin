@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -36,6 +38,8 @@ abstract class KotlinJsIrSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
+    protected val taskGroupName = "Kotlin $disambiguationClassifier"
+
     internal fun configure() {
         NpmResolverPlugin.apply(project)
 
@@ -53,8 +57,12 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    internal fun produceExecutable() {
+    private val produceExecutable: Unit by lazy {
         configureMain()
+    }
+
+    internal fun produceExecutable() {
+        produceExecutable
     }
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {
@@ -74,10 +82,10 @@ abstract class KotlinJsIrSubTarget(
     }
 
     protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
-        target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }.all { compilation ->
-            compilation.binaries.executableIrInternal(compilation)
-            configureTestsRun(testRun, compilation)
-        }
+        target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
+            .all { compilation ->
+                configureTestsRun(testRun, compilation)
+            }
     }
 
     private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {
@@ -92,9 +100,9 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            val testExecutableTask = compilation.binaries.getIrBinary(
+            val testExecutableTask = compilation.binaries.getIrBinaries(
                 KotlinJsBinaryType.DEVELOPMENT
-            ).linkTask
+            ).single().linkTask
 
             testJs.inputFileProperty.set(
                 testExecutableTask.map { it.outputFileProperty.get() }
@@ -153,6 +161,15 @@ abstract class KotlinJsIrSubTarget(
     protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
 
     protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
+
+    internal inline fun <reified T : Task> registerSubTargetTask(
+        name: String,
+        noinline body: (T) -> (Unit)
+    ): TaskProvider<T> =
+        project.registerTask(name) {
+            it.group = taskGroupName
+            body(it)
+        }
 
     companion object {
         const val RUN_TASK_NAME = "run"

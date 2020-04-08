@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
-import org.jetbrains.kotlin.codegen.inline.coroutines.SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -18,23 +19,24 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.resolve.inline.isEffectivelyInlineOnly
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-open class SuspendFunctionGenerationStrategy(
+class SuspendFunctionGenerationStrategy(
     state: GenerationState,
-    protected val originalSuspendDescriptor: FunctionDescriptor,
-    protected val declaration: KtFunction,
-    protected val containingClassInternalName: String,
+    private val originalSuspendDescriptor: FunctionDescriptor,
+    private val declaration: KtFunction,
+    private val containingClassInternalName: String,
     private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
-    protected val functionCodegen: FunctionCodegen
+    private val functionCodegen: FunctionCodegen
 ) : FunctionGenerationStrategy.CodegenBased(state) {
 
     private lateinit var codegen: ExpressionCodegen
@@ -55,40 +57,27 @@ open class SuspendFunctionGenerationStrategy(
     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
         if (access and Opcodes.ACC_ABSTRACT != 0) return mv
 
+        if (originalSuspendDescriptor.isEffectivelyInlineOnly()) {
+            return SuspendForInlineOnlyMethodVisitor(mv, access, name, desc)
+        }
         val stateMachineBuilder = createStateMachineBuilder(mv, access, name, desc)
-
-        val forInline = state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true
-        // Both capturing and inline functions share the same suffix, however, inline functions can also be capturing
-        // they are already covered by SuspendInlineFunctionGenerationStrategy, thus, if we generate yet another copy,
-        // we will get name+descriptor clash
-        return if (forInline && !originalSuspendDescriptor.isInline)
-            AddConstructorCallForCoroutineRegeneration(
-                MethodNodeCopyingMethodVisitor(
-                    SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
-                        stateMachineBuilder,
-                        access, name, desc, containingClassInternalName,
-                        isCapturedSuspendLambda = {
-                            isCapturedSuspendLambda(
-                                functionCodegen.closure.sure {
-                                    "Anonymous object should have closure"
-                                },
-                                it.name,
-                                state.bindingContext
-                            )
-                        }
-                    ), access, name, desc,
-                    newMethod = { origin, newAccess, newName, newDesc ->
-                        functionCodegen.newMethod(origin, newAccess, newName, newDesc, null, null)
-                    }
-                ), access, name, desc, null, null, this::classBuilderForCoroutineState,
+        if (originalSuspendDescriptor.isInline) {
+            return SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod, keepAccess = false)
+        }
+        if (state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true) {
+            return AddConstructorCallForCoroutineRegeneration(
+                SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod),
+                access, name, desc, null, null, this::classBuilderForCoroutineState,
                 containingClassInternalName,
                 originalSuspendDescriptor.dispatchReceiverParameter != null,
                 containingClassInternalNameOrNull(),
                 languageVersionSettings
-            ) else stateMachineBuilder
+            )
+        }
+        return stateMachineBuilder
     }
 
-    protected fun createStateMachineBuilder(
+    private fun createStateMachineBuilder(
         mv: MethodVisitor,
         access: Int,
         name: String,
@@ -168,5 +157,37 @@ open class SuspendFunctionGenerationStrategy(
                 pop() // Otherwise stack-transformation breaks
             })
         }
+    }
+}
+
+private class SuspendForInlineOnlyMethodVisitor(delegate: MethodVisitor, access: Int, name: String, desc: String) :
+    TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        methodNode.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+    }
+}
+
+// For named suspend function we generate two methods:
+// 1) to use as noinline function, which have state machine
+// 2) to use from inliner: private one without state machine
+class SuspendForInlineCopyingMethodVisitor(
+    delegate: MethodVisitor, access: Int, name: String, desc: String,
+    private val newMethod: (JvmDeclarationOrigin, Int, String, String, String?, Array<String>?) -> MethodVisitor,
+    private val keepAccess: Boolean = true
+) : TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        val newMethodNode = with(methodNode) {
+            val newAccess = if (keepAccess) access else
+                access or Opcodes.ACC_PRIVATE and Opcodes.ACC_PUBLIC.inv() and Opcodes.ACC_PROTECTED.inv()
+            MethodNode(newAccess, name + FOR_INLINE_SUFFIX, desc, signature, exceptions.toTypedArray())
+        }
+        val newMethodVisitor = with(newMethodNode) {
+            newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, exceptions.toTypedArray())
+        }
+        methodNode.instructions.resetLabels()
+        methodNode.accept(newMethodNode)
+        methodNode.preprocessSuspendMarkers(forInline = false, keepFakeContinuation = false)
+        newMethodNode.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = true)
+        newMethodNode.accept(newMethodVisitor)
     }
 }

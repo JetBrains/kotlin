@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
-import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import javax.inject.Inject
 
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -27,7 +25,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val distribution: Distribution = BrowserDistribution()
+    private val distribution: Distribution = BrowserDistribution(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -62,7 +60,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val commonRunTask = project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
+        val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
         compilation.binaries
             .matching { it is Executable }
@@ -71,7 +69,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 val type = binary.type
 
-                val runTask = project.registerTask<KotlinWebpack>(
+                val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         RUN_TASK_NAME
@@ -117,20 +115,15 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val basePluginConvention = project.convention.plugins["base"] as BasePluginConvention?
-
-        val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
-        distribution.directory = distribution.directory ?: baseDist
-
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
-        val distributeResourcesTask = project.registerTask<Copy>(
+        val distributeResourcesTask = registerSubTargetTask<Copy>(
             disambiguateCamelCased(
                 DISTRIBUTE_RESOURCES_TASK_NAME
             )
         ) {
             it.from(processResourcesTask)
-            it.into(distribution.directory ?: baseDist)
+            it.into(distribution.directory)
         }
 
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
@@ -142,7 +135,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val type = binary.type
-                val webpackTask = project.registerTask<KotlinWebpack>(
+                val webpackTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         WEBPACK_TASK_NAME
@@ -168,14 +161,16 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 if (type == KotlinJsBinaryType.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
-                    val webpackCommonTask = project.registerTask<Task>(
+                    val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
                     ) {
                         it.dependsOn(webpackTask)
                     }
-                    project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                    registerSubTargetTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
                         it.dependsOn(webpackCommonTask)
                         it.dependsOn(distributeResourcesTask)
+
+                        it.outputs.dir(distribution.directory)
                     }
                 }
             }

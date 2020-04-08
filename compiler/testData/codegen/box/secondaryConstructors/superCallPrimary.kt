@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var sideEffects: String = ""
 
 abstract class B protected constructor(val arg: Int) {

@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -43,12 +46,10 @@ class IrInlineCodegen(
     IrCallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        if (info.generateAssertField && (sourceCompiler as IrSourceCompilerForInline).isPrimaryCopy) {
-            codegen.classCodegen.generateAssertFieldIfNeeded()?.run {
-                // Generating <clinit> right now, so no longer can insert the initializer into it.
-                // Instead, ask ExpressionCodegen to generate the code for it directly.
-                accept(codegen, BlockInfo()).discard()
-            }
+        if (info.generateAssertField) {
+            // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
+            // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
+            codegen.classCodegen.generateAssertFieldIfNeeded()?.accept(codegen, BlockInfo())?.discard()
         }
     }
 
@@ -162,7 +163,8 @@ class IrInlineCodegen(
                 function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 false,
                 codegen.typeMapper.typeSystem,
-                false
+                registerLineNumberAfterwards = false,
+                isCallOfFunctionInCorrespondingDefaultDispatch = codegen.irFunction == codegen.context.mapping.defaultArgumentsDispatchFunction[function]
             )
         } finally {
             state.globalInlineContext.exitFromInlining()
@@ -250,7 +252,7 @@ class IrExpressionLambdaImpl(
 
     override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.descriptor
 
-    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
+    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
 }
 

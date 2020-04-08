@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.generators.tests;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.LineSeparator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,21 +69,6 @@ public class GenerateRangesCodegenTestData {
 
     private static final Map<String, String> ELEMENT_TYPE_KNOWN_SUBSTRINGS = new HashMap<>();
     private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
-
-    private static final List<String> FIR_PASSING_LITERAL_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "inexactSteppedDownTo", "inexactSteppedRange",
-                          "oneElementDownTo", "oneElementRange", "openRange",
-                          "reversedBackSequence", "reversedEmptyBackSequence", "reversedEmptyRange",
-                          "reversedInexactSteppedDownTo", "reversedRange", "reversedSimpleSteppedRange",
-                          "simpleDownTo", "simpleRange", "simpleRangeWithNonConstantEnds",
-                          "simpleSteppedDownTo", "simpleSteppedRange");
-    private static final List<String> FIR_PASSING_EXPRESSION_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "inexactSteppedDownTo", "inexactSteppedRange",
-                          "oneElementDownTo", "oneElementRange", "openRange",
-                          "reversedBackSequence", "reversedEmptyBackSequence", "reversedEmptyRange",
-                          "reversedInexactSteppedDownTo", "reversedRange", "reversedSimpleSteppedRange",
-                          "simpleDownTo", "simpleRange", "simpleRangeWithNonConstantEnds",
-                          "simpleSteppedDownTo", "simpleSteppedRange");
 
     private static final List<String> FIR_PASSING_UNSIGNED_LITERAL_TESTS =
             Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
@@ -148,7 +132,7 @@ public class GenerateRangesCodegenTestData {
                 .replace("$LIST", "list" + number)
                 .replace("$RANGE", "range" + number)
                 .replace("$TYPE", elementType)
-                .replace("\n", LineSeparator.getSystemLineSeparator().getSeparatorString());
+                .replace("\n", System.lineSeparator());
     }
 
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {
@@ -248,8 +232,8 @@ public class GenerateRangesCodegenTestData {
                     }
 
                     String fileName = testFunName + ".kt";
-                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, !FIR_PASSING_LITERAL_TESTS.contains(testFunName));
-                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, !FIR_PASSING_EXPRESSION_TESTS.contains(testFunName));
+                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, false);
+                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, false);
                     writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true, !FIR_PASSING_UNSIGNED_LITERAL_TESTS.contains(testFunName));
                     writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true, !FIR_PASSING_UNSIGNED_EXPRESSION_TESTS.contains(testFunName));
                 }

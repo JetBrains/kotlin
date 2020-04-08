@@ -17,7 +17,12 @@ class YarnSimple : YarnBasics() {
         val project = resolvedNpmProject.project
 
         PackageJsonUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
-            yarnExec(project, resolvedNpmProject.npmProject.dir, NpmApi.resolveOperationDescription("yarn for ${project.path}"))
+            yarnExec(
+                project,
+                resolvedNpmProject.npmProject.dir,
+                NpmApi.resolveOperationDescription("yarn for ${project.path}"),
+                emptyList()
+            )
             yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.externalNpmDependencies)
         }
     }
@@ -26,6 +31,6 @@ class YarnSimple : YarnBasics() {
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
-        vararg cliArgs: String
+        cliArgs: List<String>
     ) = Unit
 }

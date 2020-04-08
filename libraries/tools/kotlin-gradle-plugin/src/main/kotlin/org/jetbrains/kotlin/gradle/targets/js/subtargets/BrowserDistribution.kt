@@ -5,9 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
+import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginConvention
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
-class BrowserDistribution : Distribution {
-    override var directory: File? = null
+class BrowserDistribution(private val project: Project) : Distribution {
+
+    private val basePluginConvention: BasePluginConvention
+        get() = project.convention.plugins["base"] as BasePluginConvention
+
+    override var directory: File by property {
+        project.buildDir.resolve(basePluginConvention.distsDirName)
+    }
 }

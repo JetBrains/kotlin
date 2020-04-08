@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
@@ -208,6 +210,14 @@ internal fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDesc
     val classDescriptor = (thisDescriptor.containingDeclaration as? ClassDescriptor) ?: return null
     if (!classDescriptor.shouldHaveGeneratedMethodsInCompanion) return null
     return classDescriptor
+}
+
+internal fun ClassDescriptor.needSerializerFactory(): Boolean {
+    if (this.platform?.isNative() != true) return false
+    val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
+    if (serializableClass.isSerializableObject) return true
+    if (serializableClass.declaredTypeParameters.isEmpty()) return false
+    return true
 }
 
 internal fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescriptor): ClassDescriptor? {

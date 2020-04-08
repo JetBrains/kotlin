@@ -6,19 +6,17 @@ digraph exhaustiveWhenAndDNNType_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Enum<SomeEnum>|>()"];
-        2 [label="Exit function <init>" style="filled" fillcolor=red];
+        2 [label="Delegated constructor call: super<R|kotlin/Enum<SomeEnum>|>()"];
+        1 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-
-    0 -> {1};
-    1 -> {2};
+    0 -> {2};
+    2 -> {1};
 
     subgraph cluster_1 {
         color=red
         3 [label="Enter function values" style="filled" fillcolor=red];
         4 [label="Exit function values" style="filled" fillcolor=red];
     }
-
     3 -> {4};
 
     subgraph cluster_2 {
@@ -26,101 +24,106 @@ digraph exhaustiveWhenAndDNNType_kt {
         5 [label="Enter function valueOf" style="filled" fillcolor=red];
         6 [label="Exit function valueOf" style="filled" fillcolor=red];
     }
-
     5 -> {6};
 
     subgraph cluster_3 {
         color=red
-        7 [label="Enter function <init>" style="filled" fillcolor=red];
-        8 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        9 [label="Exit function <init>" style="filled" fillcolor=red];
+        7 [label="Enter class SomeEnum" style="filled" fillcolor=red];
+        8 [label="Exit class SomeEnum" style="filled" fillcolor=red];
     }
-
-    7 -> {8};
-    8 -> {9};
+    7 -> {8} [color=green];
 
     subgraph cluster_4 {
         color=red
-        10 [label="Enter function takeB" style="filled" fillcolor=red];
-        11 [label="Exit function takeB" style="filled" fillcolor=red];
+        9 [label="Enter function <init>" style="filled" fillcolor=red];
+        11 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        10 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-
-    10 -> {11};
+    9 -> {11};
+    11 -> {10};
 
     subgraph cluster_5 {
         color=red
-        12 [label="Enter function test_1" style="filled" fillcolor=red];
-        13 [label="Access qualifier /SomeEnum"];
-        14 [label="Access variable R|/SomeEnum.A1|"];
-        15 [label="Variable declaration: lval flag: R|SomeEnum|"];
-        subgraph cluster_6 {
+        12 [label="Enter class B" style="filled" fillcolor=red];
+        13 [label="Exit class B" style="filled" fillcolor=red];
+    }
+    12 -> {13} [color=green];
+
+    subgraph cluster_6 {
+        color=red
+        14 [label="Enter function takeB" style="filled" fillcolor=red];
+        15 [label="Exit function takeB" style="filled" fillcolor=red];
+    }
+    14 -> {15};
+
+    subgraph cluster_7 {
+        color=red
+        16 [label="Enter function test_1" style="filled" fillcolor=red];
+        18 [label="Access qualifier /SomeEnum"];
+        19 [label="Access variable R|/SomeEnum.A1|"];
+        20 [label="Variable declaration: lval flag: R|SomeEnum|"];
+        subgraph cluster_8 {
             color=blue
-            16 [label="Enter when"];
-            17 [label="Access variable R|<local>/flag|"];
-            18 [label="Check not null: R|<local>/flag|!!"];
-            subgraph cluster_7 {
-                color=blue
-                19 [label="Enter when branch condition "];
-                20 [label="Access qualifier /SomeEnum"];
-                21 [label="Access variable R|/SomeEnum.A1|"];
-                22 [label="Operator =="];
-                23 [label="Exit when branch condition"];
-            }
-            subgraph cluster_8 {
-                color=blue
-                24 [label="Enter when branch condition "];
-                25 [label="Access qualifier /SomeEnum"];
-                26 [label="Access variable R|/SomeEnum.A2|"];
-                27 [label="Operator =="];
-                28 [label="Exit when branch condition"];
-            }
-            29 [label="Enter when branch result"];
+            21 [label="Enter when"];
+            23 [label="Access variable R|<local>/flag|"];
+            24 [label="Check not null: R|<local>/flag|!!"];
             subgraph cluster_9 {
                 color=blue
-                30 [label="Enter block"];
-                31 [label="Function call: R|/B.B|()"];
-                32 [label="Exit block"];
+                25 [label="Enter when branch condition "];
+                26 [label="Access qualifier /SomeEnum"];
+                27 [label="Access variable R|/SomeEnum.A1|"];
+                28 [label="Operator =="];
+                29 [label="Exit when branch condition"];
             }
-            33 [label="Exit when branch result"];
-            34 [label="Enter when branch result"];
             subgraph cluster_10 {
                 color=blue
-                35 [label="Enter block"];
-                36 [label="Function call: R|/B.B|()"];
-                37 [label="Exit block"];
+                35 [label="Enter when branch condition "];
+                36 [label="Access qualifier /SomeEnum"];
+                37 [label="Access variable R|/SomeEnum.A2|"];
+                38 [label="Operator =="];
+                39 [label="Exit when branch condition"];
             }
-            38 [label="Exit when branch result"];
-            39 [label="Exit when"];
+            40 [label="Enter when branch result"];
+            subgraph cluster_11 {
+                color=blue
+                41 [label="Enter block"];
+                42 [label="Function call: R|/B.B|()"];
+                43 [label="Exit block"];
+            }
+            44 [label="Exit when branch result"];
+            30 [label="Enter when branch result"];
+            subgraph cluster_12 {
+                color=blue
+                31 [label="Enter block"];
+                32 [label="Function call: R|/B.B|()"];
+                33 [label="Exit block"];
+            }
+            34 [label="Exit when branch result"];
+            22 [label="Exit when"];
         }
-        40 [label="Variable declaration: lval b: R|B|"];
-        41 [label="Access variable R|<local>/b|"];
-        42 [label="Function call: R|/takeB|(...)"];
-        43 [label="Exit function test_1" style="filled" fillcolor=red];
+        45 [label="Variable declaration: lval b: R|B|"];
+        46 [label="Access variable R|<local>/b|"];
+        47 [label="Function call: R|/takeB|(...)"];
+        17 [label="Exit function test_1" style="filled" fillcolor=red];
     }
-
-    12 -> {13};
-    13 -> {14};
-    14 -> {15};
-    15 -> {16};
-    16 -> {17};
-    17 -> {18};
+    16 -> {18};
     18 -> {19};
     19 -> {20};
     20 -> {21};
-    21 -> {22};
-    22 -> {23};
-    23 -> {34 24};
+    21 -> {23};
+    22 -> {45};
+    23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {30};
+    29 -> {30 35};
     30 -> {31};
     31 -> {32};
     32 -> {33};
-    33 -> {39};
-    34 -> {35};
+    33 -> {34};
+    34 -> {22};
     35 -> {36};
     36 -> {37};
     37 -> {38};
@@ -129,81 +132,80 @@ digraph exhaustiveWhenAndDNNType_kt {
     40 -> {41};
     41 -> {42};
     42 -> {43};
-
-    subgraph cluster_11 {
-        color=red
-        44 [label="Enter function test_2" style="filled" fillcolor=red];
-        45 [label="Access qualifier /SomeEnum"];
-        46 [label="Access variable R|/SomeEnum.A1|"];
-        47 [label="Variable declaration: lval flag: R|SomeEnum|"];
-        subgraph cluster_12 {
-            color=blue
-            48 [label="Enter when"];
-            49 [label="Access variable R|<local>/flag|"];
-            50 [label="Check not null: R|<local>/flag|!!"];
-            subgraph cluster_13 {
-                color=blue
-                51 [label="Enter when branch condition "];
-                52 [label="Access qualifier /SomeEnum"];
-                53 [label="Access variable R|/SomeEnum.A1|"];
-                54 [label="Operator =="];
-                55 [label="Exit when branch condition"];
-            }
-            subgraph cluster_14 {
-                color=blue
-                56 [label="Enter when branch condition "];
-                57 [label="Access qualifier /SomeEnum"];
-                58 [label="Access variable R|/SomeEnum.A2|"];
-                59 [label="Operator =="];
-                60 [label="Exit when branch condition"];
-            }
-            61 [label="Enter when branch result"];
-            subgraph cluster_15 {
-                color=blue
-                62 [label="Enter block"];
-                63 [label="Function call: R|/B.B|()"];
-                64 [label="Exit block"];
-            }
-            65 [label="Exit when branch result"];
-            66 [label="Enter when branch result"];
-            subgraph cluster_16 {
-                color=blue
-                67 [label="Enter block"];
-                68 [label="Function call: R|/B.B|()"];
-                69 [label="Exit block"];
-            }
-            70 [label="Exit when branch result"];
-            71 [label="Exit when"];
-        }
-        72 [label="Variable declaration: lval b: R|B|"];
-        73 [label="Access variable R|<local>/b|"];
-        74 [label="Function call: R|/takeB|(...)"];
-        75 [label="Exit function test_2" style="filled" fillcolor=red];
-    }
-
-    44 -> {45};
+    43 -> {44};
+    44 -> {22};
     45 -> {46};
     46 -> {47};
-    47 -> {48};
-    48 -> {49};
-    49 -> {50};
+    47 -> {17};
+
+    subgraph cluster_13 {
+        color=red
+        48 [label="Enter function test_2" style="filled" fillcolor=red];
+        50 [label="Access qualifier /SomeEnum"];
+        51 [label="Access variable R|/SomeEnum.A1|"];
+        52 [label="Variable declaration: lval flag: R|SomeEnum|"];
+        subgraph cluster_14 {
+            color=blue
+            53 [label="Enter when"];
+            55 [label="Access variable R|<local>/flag|"];
+            56 [label="Check not null: R|<local>/flag|!!"];
+            subgraph cluster_15 {
+                color=blue
+                57 [label="Enter when branch condition "];
+                58 [label="Access qualifier /SomeEnum"];
+                59 [label="Access variable R|/SomeEnum.A1|"];
+                60 [label="Operator =="];
+                61 [label="Exit when branch condition"];
+            }
+            subgraph cluster_16 {
+                color=blue
+                67 [label="Enter when branch condition "];
+                68 [label="Access qualifier /SomeEnum"];
+                69 [label="Access variable R|/SomeEnum.A2|"];
+                70 [label="Operator =="];
+                71 [label="Exit when branch condition"];
+            }
+            72 [label="Enter when branch result"];
+            subgraph cluster_17 {
+                color=blue
+                73 [label="Enter block"];
+                74 [label="Function call: R|/B.B|()"];
+                75 [label="Exit block"];
+            }
+            76 [label="Exit when branch result"];
+            62 [label="Enter when branch result"];
+            subgraph cluster_18 {
+                color=blue
+                63 [label="Enter block"];
+                64 [label="Function call: R|/B.B|()"];
+                65 [label="Exit block"];
+            }
+            66 [label="Exit when branch result"];
+            54 [label="Exit when"];
+        }
+        77 [label="Variable declaration: lval b: R|B|"];
+        78 [label="Access variable R|<local>/b|"];
+        79 [label="Function call: R|/takeB|(...)"];
+        49 [label="Exit function test_2" style="filled" fillcolor=red];
+    }
+    48 -> {50};
     50 -> {51};
     51 -> {52};
     52 -> {53};
-    53 -> {54};
-    54 -> {55};
-    55 -> {66 56};
+    53 -> {55};
+    54 -> {77};
+    55 -> {56};
     56 -> {57};
     57 -> {58};
     58 -> {59};
     59 -> {60};
     60 -> {61};
-    61 -> {62};
+    61 -> {62 67};
     62 -> {63};
     63 -> {64};
     64 -> {65};
-    65 -> {71};
-    66 -> {67};
+    65 -> {66};
+    66 -> {54};
     67 -> {68};
     68 -> {69};
     69 -> {70};
@@ -212,79 +214,78 @@ digraph exhaustiveWhenAndDNNType_kt {
     72 -> {73};
     73 -> {74};
     74 -> {75};
-
-    subgraph cluster_17 {
-        color=red
-        76 [label="Enter function test_3" style="filled" fillcolor=red];
-        77 [label="Access qualifier /SomeEnum"];
-        78 [label="Access variable R|/SomeEnum.A1|"];
-        79 [label="Variable declaration: lval flag: R|SomeEnum|"];
-        subgraph cluster_18 {
-            color=blue
-            80 [label="Enter when"];
-            81 [label="Access variable R|<local>/flag|"];
-            subgraph cluster_19 {
-                color=blue
-                82 [label="Enter when branch condition "];
-                83 [label="Access qualifier /SomeEnum"];
-                84 [label="Access variable R|/SomeEnum.A1|"];
-                85 [label="Operator =="];
-                86 [label="Exit when branch condition"];
-            }
-            subgraph cluster_20 {
-                color=blue
-                87 [label="Enter when branch condition "];
-                88 [label="Access qualifier /SomeEnum"];
-                89 [label="Access variable R|/SomeEnum.A2|"];
-                90 [label="Operator =="];
-                91 [label="Exit when branch condition"];
-            }
-            92 [label="Enter when branch result"];
-            subgraph cluster_21 {
-                color=blue
-                93 [label="Enter block"];
-                94 [label="Function call: R|/B.B|()"];
-                95 [label="Exit block"];
-            }
-            96 [label="Exit when branch result"];
-            97 [label="Enter when branch result"];
-            subgraph cluster_22 {
-                color=blue
-                98 [label="Enter block"];
-                99 [label="Function call: R|/B.B|()"];
-                100 [label="Exit block"];
-            }
-            101 [label="Exit when branch result"];
-            102 [label="Exit when"];
-        }
-        103 [label="Variable declaration: lval b: R|B|"];
-        104 [label="Access variable R|<local>/b|"];
-        105 [label="Function call: R|/takeB|(...)"];
-        106 [label="Exit function test_3" style="filled" fillcolor=red];
-    }
-
-    76 -> {77};
+    75 -> {76};
+    76 -> {54};
     77 -> {78};
     78 -> {79};
-    79 -> {80};
-    80 -> {81};
-    81 -> {82};
+    79 -> {49};
+
+    subgraph cluster_19 {
+        color=red
+        80 [label="Enter function test_3" style="filled" fillcolor=red];
+        82 [label="Access qualifier /SomeEnum"];
+        83 [label="Access variable R|/SomeEnum.A1|"];
+        84 [label="Variable declaration: lval flag: R|SomeEnum|"];
+        subgraph cluster_20 {
+            color=blue
+            85 [label="Enter when"];
+            87 [label="Access variable R|<local>/flag|"];
+            subgraph cluster_21 {
+                color=blue
+                88 [label="Enter when branch condition "];
+                89 [label="Access qualifier /SomeEnum"];
+                90 [label="Access variable R|/SomeEnum.A1|"];
+                91 [label="Operator =="];
+                92 [label="Exit when branch condition"];
+            }
+            subgraph cluster_22 {
+                color=blue
+                98 [label="Enter when branch condition "];
+                99 [label="Access qualifier /SomeEnum"];
+                100 [label="Access variable R|/SomeEnum.A2|"];
+                101 [label="Operator =="];
+                102 [label="Exit when branch condition"];
+            }
+            103 [label="Enter when branch result"];
+            subgraph cluster_23 {
+                color=blue
+                104 [label="Enter block"];
+                105 [label="Function call: R|/B.B|()"];
+                106 [label="Exit block"];
+            }
+            107 [label="Exit when branch result"];
+            93 [label="Enter when branch result"];
+            subgraph cluster_24 {
+                color=blue
+                94 [label="Enter block"];
+                95 [label="Function call: R|/B.B|()"];
+                96 [label="Exit block"];
+            }
+            97 [label="Exit when branch result"];
+            86 [label="Exit when"];
+        }
+        108 [label="Variable declaration: lval b: R|B|"];
+        109 [label="Access variable R|<local>/b|"];
+        110 [label="Function call: R|/takeB|(...)"];
+        81 [label="Exit function test_3" style="filled" fillcolor=red];
+    }
+    80 -> {82};
     82 -> {83};
     83 -> {84};
     84 -> {85};
-    85 -> {86};
-    86 -> {97 87};
+    85 -> {87};
+    86 -> {108};
     87 -> {88};
     88 -> {89};
     89 -> {90};
     90 -> {91};
     91 -> {92};
-    92 -> {93};
+    92 -> {93 98};
     93 -> {94};
     94 -> {95};
     95 -> {96};
-    96 -> {102};
-    97 -> {98};
+    96 -> {97};
+    97 -> {86};
     98 -> {99};
     99 -> {100};
     100 -> {101};
@@ -293,5 +294,10 @@ digraph exhaustiveWhenAndDNNType_kt {
     103 -> {104};
     104 -> {105};
     105 -> {106};
+    106 -> {107};
+    107 -> {86};
+    108 -> {109};
+    109 -> {110};
+    110 -> {81};
 
 }

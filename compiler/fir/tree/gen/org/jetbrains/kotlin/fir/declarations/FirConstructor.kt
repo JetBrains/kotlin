@@ -50,4 +50,6 @@ abstract class FirConstructor : FirPureAbstractElement(), FirFunction<FirConstru
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstructor
 }

@@ -25,6 +25,7 @@ internal class FirAnnotationCallImpl(
     override var annotationTypeRef: FirTypeRef,
 ) : FirAnnotationCall() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
+    override var resolved: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -33,9 +34,14 @@ internal class FirAnnotationCallImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         argumentList = argumentList.transformSingle(transformer, data)
         annotationTypeRef = annotationTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -43,5 +49,9 @@ internal class FirAnnotationCallImpl(
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
+    }
+
+    override fun replaceResolved(newResolved: Boolean) {
+        resolved = newResolved
     }
 }

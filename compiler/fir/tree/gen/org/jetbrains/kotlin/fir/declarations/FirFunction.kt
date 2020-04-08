@@ -39,6 +39,8 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
 
     fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<F>
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>

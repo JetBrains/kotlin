@@ -8,6 +8,7 @@
  * SPEC VERSION: 0.1-300
  * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-trailing-lambda-expressions -> paragraph 1 -> sentence 2
  * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
+ * overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 1 -> sentence 2
  * NUMBER: 16
  * DESCRIPTION: call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables
  */

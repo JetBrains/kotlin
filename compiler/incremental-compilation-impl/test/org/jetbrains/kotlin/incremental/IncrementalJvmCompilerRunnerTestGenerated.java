@@ -2460,6 +2460,16 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             runTest("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/changeAnnotationInJavaClass/");
         }
 
+        @TestMetadata("inlineFunctionRegeneratedObjectStability")
+        public void testInlineFunctionRegeneratedObjectStability() throws Exception {
+            runTest("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/inlineFunctionRegeneratedObjectStability/");
+        }
+
+        @TestMetadata("inlineFunctionSmapStability")
+        public void testInlineFunctionSmapStability() throws Exception {
+            runTest("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/inlineFunctionSmapStability/");
+        }
+
         @TestMetadata("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/addAnnotationToJavaClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2496,6 +2506,32 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
 
             public void testAllFilesPresentInChangeAnnotationInJavaClass() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/changeAnnotationInJavaClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/inlineFunctionRegeneratedObjectStability")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineFunctionRegeneratedObjectStability extends AbstractIncrementalJvmCompilerRunnerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineFunctionRegeneratedObjectStability() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/inlineFunctionRegeneratedObjectStability"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/inlineFunctionSmapStability")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineFunctionSmapStability extends AbstractIncrementalJvmCompilerRunnerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineFunctionSmapStability() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/incrementalJvmCompilerOnly/inlineFunctionSmapStability"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
             }
         }
     }

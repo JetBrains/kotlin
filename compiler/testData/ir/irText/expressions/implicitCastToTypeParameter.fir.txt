@@ -38,8 +38,9 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
           WHEN type=T of <root>.<get-asT>? origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.<get-asT>
-                ERROR_CALL 'Unresolved reference: this@R|/asT|' type=<root>.Foo<T of <root>.<get-asT>>
-              then: ERROR_CALL 'Unresolved reference: this@R|/asT|' type=T of <root>.<get-asT>
+                GET_VAR '<this>: <root>.Foo<T of <root>.<get-asT>> declared in <root>.<get-asT>' type=<root>.Foo<T of <root>.<get-asT>> origin=null
+              then: TYPE_OP type=T of <root>.<get-asT> origin=IMPLICIT_CAST typeOperand=T of <root>.<get-asT>
+                GET_VAR '<this>: <root>.Foo<T of <root>.<get-asT>> declared in <root>.<get-asT>' type=<root>.Foo<T of <root>.<get-asT>> origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Null type=kotlin.Nothing? value=null

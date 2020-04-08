@@ -159,7 +159,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val typeMappingModeFromAnnotation =
-            typeSystem.extractTypeMappingModeFromAnnotation(declaration.suppressWildcardsMode(), returnType, isAnnotationMethod)
+            typeSystem.extractTypeMappingModeFromAnnotation(
+                declaration.suppressWildcardsMode(), returnType, isAnnotationMethod, mapTypeAliases = false
+            )
         if (typeMappingModeFromAnnotation != null) {
             return typeMapper.mapType(returnType, typeMappingModeFromAnnotation, sw)
         }
@@ -259,7 +261,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val mode = with(typeSystem) {
-            extractTypeMappingModeFromAnnotation(declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false)
+            extractTypeMappingModeFromAnnotation(
+                declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
+            )
                 ?: if (declaration.isMethodWithDeclarationSiteWildcards && type.argumentsCount() != 0) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {

@@ -51,7 +51,7 @@ interface IdePlatformKindResolution {
 
     fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean
 
-    fun createPlatformSpecificPackageFragmentProvider(
+    fun createKlibPackageFragmentProvider(
         moduleInfo: ModuleInfo,
         storageManager: StorageManager,
         languageVersionSettings: LanguageVersionSettings,
@@ -60,9 +60,7 @@ interface IdePlatformKindResolution {
 
     val libraryKind: PersistentLibraryKind<*>?
 
-    fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
-        return listOf(LibraryInfo(project, library))
-    }
+    fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> = listOf(LibraryInfo(project, library))
 
     companion object : ApplicationExtensionDescriptor<IdePlatformKindResolution>(
         "org.jetbrains.kotlin.idePlatformKindResolution", IdePlatformKindResolution::class.java

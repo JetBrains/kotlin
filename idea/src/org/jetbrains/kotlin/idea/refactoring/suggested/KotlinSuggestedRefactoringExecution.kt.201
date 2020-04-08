@@ -71,16 +71,15 @@ class KotlinSuggestedRefactoringExecution(
         val parameters = mutableListOf<KotlinParameterInfo>()
         var newParameterValueIndex = 0
 
-        val receiver: KotlinParameterInfo? = if (data.newSignature.receiverType != null) {
-            val newTypeInfo = KotlinTypeInfo(text = data.newSignature.receiverType, isCovariant = false)
+        val receiver: KotlinParameterInfo? = data.newSignature.receiverType?.let { newReceiverType ->
+            val newTypeInfo = KotlinTypeInfo(text = newReceiverType, isCovariant = false)
             if (data.oldSignature.receiverType != null) {
                 methodDescriptor.receiver!!.apply { currentTypeInfo = newTypeInfo }
             } else {
-                KotlinParameterInfo(descriptor, -1, "", newTypeInfo)
-                    .withDefaultValue(newParameterValues[newParameterValueIndex++])
+                KotlinParameterInfo(descriptor, -1, "", newTypeInfo).apply {
+                    setNewParameterValue(newParameterValues[newParameterValueIndex++])
+                }
             }
-        } else {
-            null
         }
 
         parameters.addIfNotNull(receiver)
@@ -105,7 +104,13 @@ class KotlinSuggestedRefactoringExecution(
                     parameterTypeInfos[index],
                     defaultValueForParameter = defaultValue,
                     modifierList = modifierList
-                ).withDefaultValue(newParameterValues[newParameterValueIndex++])
+                ).apply {
+                    // a few last added parameters may be missing in newParameterValues
+                    // because they have default values and we did not offer to enter value for them
+                    if (newParameterValueIndex < newParameterValues.size) {
+                        setNewParameterValue(newParameterValues[newParameterValueIndex++])
+                    }
+                }
             } else {
                 KotlinParameterInfo(
                     descriptor,
@@ -133,28 +138,11 @@ class KotlinSuggestedRefactoringExecution(
         processor.run()
     }
 
-    //TODO: we can't just set defaultValueForCall due to bug in KotlinParameterInfo
-    private fun KotlinParameterInfo.withDefaultValue(value: NewParameterValue): KotlinParameterInfo {
+    private fun KotlinParameterInfo.setNewParameterValue(value: NewParameterValue) {
         when (value) {
-            is NewParameterValue.AnyVariable -> {
-                isUseAnySingleVariable = true
-                return this
-            }
-
-            is NewParameterValue.Expression -> {
-                val defaultValueForCall = value.expression as KtExpression
-                return KotlinParameterInfo(
-                    callableDescriptor, originalIndex, name, originalTypeInfo,
-                    defaultValueForParameter, defaultValueForCall, valOrVar, modifierList
-                ).apply {
-                    currentTypeInfo = this@withDefaultValue.currentTypeInfo
-                }
-            }
-
-            is NewParameterValue.None -> {
-                defaultValueForCall = null
-                return this
-            }
+            is NewParameterValue.AnyVariable -> isUseAnySingleVariable = true
+            is NewParameterValue.Expression -> defaultValueForCall = value.expression as KtExpression
+            is NewParameterValue.None -> defaultValueForCall = null
         }
     }
 }

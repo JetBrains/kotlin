@@ -313,7 +313,7 @@ KtFile: withoutParameter.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('x')
-  PsiWhiteSpace('\n\n        ')
+  PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')

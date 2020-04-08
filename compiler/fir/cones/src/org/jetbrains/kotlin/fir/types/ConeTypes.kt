@@ -66,6 +66,9 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(),
     final override fun toString(): String {
         return render()
     }
+
+    abstract override fun equals(other: Any?): Boolean
+    abstract override fun hashCode(): Int
 }
 
 sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
@@ -87,6 +90,9 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
 
     override val nullability: ConeNullability
         get() = ConeNullability.UNKNOWN
+
+    override fun equals(other: Any?) = this === other
+    override fun hashCode(): Int = System.identityHashCode(this)
 }
 
 abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
@@ -141,7 +147,7 @@ class ConeCapturedTypeConstructor(
     val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker
 
-class ConeCapturedType(
+data class ConeCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: ConeKotlinType?,
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,
@@ -161,6 +167,29 @@ class ConeCapturedType(
 
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeCapturedType
+
+        if (lowerType != other.lowerType) return false
+        if (constructor != other.constructor) return false
+        if (captureStatus != other.captureStatus) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        result = 31 * result + (lowerType?.hashCode() ?: 0)
+        result = 31 * result + constructor.hashCode()
+        result = 31 * result + captureStatus.hashCode()
+        result = 31 * result + nullability.hashCode()
+        return result
+    }
 }
 
 data class ConeTypeVariableType(
@@ -195,6 +224,25 @@ class ConeIntersectionType(
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
+
+    private var hashCode = 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeIntersectionType
+
+        if (intersectedTypes != other.intersectedTypes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        if (hashCode != 0) return hashCode
+        return intersectedTypes.hashCode().also { hashCode = it }
+    }
+
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
@@ -204,6 +252,25 @@ fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): Con
 class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeStubType
+
+        if (variable != other.variable) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        result = 31 * result + variable.hashCode()
+        result = 31 * result + nullability.hashCode()
+        return result
+    }
 }
 
 open class ConeTypeVariable(name: String) : TypeVariableMarker {

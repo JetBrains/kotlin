@@ -58,5 +58,111 @@
         }
       ]
     }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
   }
 }

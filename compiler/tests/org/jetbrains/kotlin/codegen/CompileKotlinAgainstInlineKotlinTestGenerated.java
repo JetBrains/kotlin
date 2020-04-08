@@ -3265,6 +3265,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/smap/assertion.kt");
         }
 
+        @TestMetadata("classCycle.kt")
+        public void testClassCycle() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/classCycle.kt");
+        }
+
         @TestMetadata("classFromDefaultPackage.kt")
         public void testClassFromDefaultPackage() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
@@ -3308,6 +3313,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("kt35006.kt")
         public void testKt35006() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/kt35006.kt");
+        }
+
+        @TestMetadata("multiFileFacade.kt")
+        public void testMultiFileFacade() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/multiFileFacade.kt");
         }
 
         @TestMetadata("oneFile.kt")
@@ -3898,6 +3908,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/suspend/nestedMethodWith2XParameter.kt");
         }
 
+        @TestMetadata("nonLocalReturn.kt")
+        public void testNonLocalReturn() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/nonLocalReturn.kt");
+        }
+
         @TestMetadata("nonSuspendCrossinline.kt")
         public void testNonSuspendCrossinline_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/nonSuspendCrossinline.kt", "kotlin.coroutines.experimental");
@@ -4038,6 +4053,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("simpleNamed.kt")
             public void testSimpleNamed() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/simpleNamed.kt");
+            }
+
+            @TestMetadata("withCapturedInlineLambda.kt")
+            public void testWithCapturedInlineLambda() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/withCapturedInlineLambda.kt");
+            }
+
+            @TestMetadata("withCapturedInlineLambda2.kt")
+            public void testWithCapturedInlineLambda2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/withCapturedInlineLambda2.kt");
             }
         }
 

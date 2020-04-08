@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -32,10 +33,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -286,22 +284,32 @@ class Fir2IrVisitor(
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
         val boundSymbol = calleeReference.boundSymbol
-        if (calleeReference.labelName == null && boundSymbol is FirClassSymbol) {
-            // Object case
-            val firClass = boundSymbol.fir as FirClass
-            val irClass = classifierStorage.getCachedIrClass(firClass)!!
-            if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
-                if (irClass != conversionScope.lastClass()) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
+        if (calleeReference.labelName == null) {
+            if (boundSymbol is FirClassSymbol) {
+                // Object case
+                val firClass = boundSymbol.fir as FirClass
+                val irClass = classifierStorage.getCachedIrClass(firClass)!!
+                if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
+                    if (irClass != conversionScope.lastClass()) {
+                        return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                            IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
+                        }
                     }
                 }
-            }
 
-            val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
-            if (dispatchReceiver != null) {
-                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                    IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
+                if (dispatchReceiver != null) {
+                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                        IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                    }
+                }
+            } else if (boundSymbol is FirCallableSymbol) {
+                val receiverSymbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
+                val receiver = (receiverSymbol?.owner as? IrSimpleFunction)?.extensionReceiverParameter
+                if (receiver != null) {
+                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                        IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
+                    }
                 }
             }
         }
@@ -332,29 +340,8 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrSetCall(variableAssignment)
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
-        return constExpression.convertWithOffsets { startOffset, endOffset ->
-            @Suppress("UNCHECKED_CAST")
-            val kind = constExpression.getIrConstKind() as IrConstKind<T>
-
-            @Suppress("UNCHECKED_CAST")
-            val value = (constExpression.value as? Long)?.let {
-                when (kind) {
-                    IrConstKind.Byte -> it.toByte()
-                    IrConstKind.Short -> it.toShort()
-                    IrConstKind.Int -> it.toInt()
-                    IrConstKind.Float -> it.toFloat()
-                    IrConstKind.Double -> it.toDouble()
-                    else -> it
-                }
-            } as T ?: constExpression.value
-            IrConstImpl(
-                startOffset, endOffset,
-                constExpression.typeRef.toIrType(),
-                kind, value
-            )
-        }
-    }
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement =
+        constExpression.toIrConst(constExpression.typeRef.toIrType())
 
     // ==================================================================================
 

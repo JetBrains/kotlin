@@ -70,6 +70,11 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
             runTest("compiler/testData/compileKotlinAgainstJava/Class.kt");
         }
 
+        @TestMetadata("ClassDefaultConstructor.kt")
+        public void testClassDefaultConstructor() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstJava/ClassDefaultConstructor.kt");
+        }
+
         @TestMetadata("ClassWithNestedEnum.kt")
         public void testClassWithNestedEnum() throws Exception {
             runTest("compiler/testData/compileKotlinAgainstJava/ClassWithNestedEnum.kt");
@@ -351,6 +356,11 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         @TestMetadata("Class.kt")
         public void testClass() throws Exception {
             runTest("compiler/testData/compileKotlinAgainstJava/Class.kt");
+        }
+
+        @TestMetadata("ClassDefaultConstructor.kt")
+        public void testClassDefaultConstructor() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstJava/ClassDefaultConstructor.kt");
         }
 
         @TestMetadata("ClassWithNestedEnum.kt")

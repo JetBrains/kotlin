@@ -6,27 +6,20 @@
 package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
-
-const val NOINLINE_CALL_MARKER = "NOINLINE_CALL_MARKER"
 
 const val FOR_INLINE_SUFFIX = "\$\$forInline"
 
@@ -34,8 +27,7 @@ class CoroutineTransformer(
     private val inliningContext: InliningContext,
     private val classBuilder: ClassBuilder,
     private val methods: List<MethodNode>,
-    private val superClassName: String,
-    private val capturedParams: List<CapturedParamInfo>
+    private val superClassName: String
 ) {
     private val state = inliningContext.state
     // If we inline into inline function, we should generate both method with state-machine for Java interop and method without
@@ -89,33 +81,22 @@ class CoroutineTransformer(
             )
         ) {
             val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
-            val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
-                node,
-                CoroutineTransformerMethodVisitor(
-                    createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
-                    obtainClassBuilderForCoroutineState = { classBuilder },
-                    reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
-                    // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
-                    lineNumber = sourceCompilerForInline.inlineCallSiteInfo.lineNumber,
-                    sourceFile = sourceCompilerForInline.callsiteFile?.name ?: "",
-                    languageVersionSettings = state.languageVersionSettings,
-                    shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                    containingClassInternalName = classBuilder.thisName,
-                    isForNamedFunction = false,
-                    disableTailCallOptimizationForFunctionReturningUnit = false
-                )
+            val stateMachineBuilder = CoroutineTransformerMethodVisitor(
+                createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
+                obtainClassBuilderForCoroutineState = { classBuilder },
+                reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
+                // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
+                lineNumber = sourceCompilerForInline.inlineCallSiteInfo.lineNumber,
+                sourceFile = sourceCompilerForInline.callsiteFile?.name ?: "",
+                languageVersionSettings = state.languageVersionSettings,
+                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                containingClassInternalName = classBuilder.thisName,
+                isForNamedFunction = false,
+                disableTailCallOptimizationForFunctionReturningUnit = false
             )
 
             if (generateForInline)
-                MethodNodeCopyingMethodVisitor(
-                    delegate = stateMachineBuilder,
-                    access = node.access,
-                    name = name,
-                    desc = node.desc,
-                    newMethod = { origin, newAccess, newName, newDesc ->
-                        classBuilder.newMethod(origin, newAccess, newName, newDesc, null, null)
-                    }
-                )
+                SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, node.access, name, node.desc, classBuilder::newMethod)
             else
                 stateMachineBuilder
         }
@@ -134,65 +115,28 @@ class CoroutineTransformer(
             // If the node already has state-machine, it is safer to generate state-machine.
             val disableTailCallOptimization = methods.find { it.name == name && it.desc == node.desc }?.let { isStateMachine(it) } ?: false
             val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
-            val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
-                node,
-                CoroutineTransformerMethodVisitor(
-                    createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
-                    obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                    reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
-                    lineNumber = sourceCompilerForInline.inlineCallSiteInfo.lineNumber,
-                    sourceFile = sourceCompilerForInline.callsiteFile?.name ?: "",
-                    languageVersionSettings = state.languageVersionSettings,
-                    shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                    containingClassInternalName = classBuilder.thisName,
-                    isForNamedFunction = true,
-                    needDispatchReceiver = true,
-                    internalNameForDispatchReceiver = classBuilder.thisName,
-                    disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
-                    putContinuationParameterToLvt = !state.isIrBackend
-                )
+            val stateMachineBuilder = CoroutineTransformerMethodVisitor(
+                createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
+                obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
+                reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
+                lineNumber = sourceCompilerForInline.inlineCallSiteInfo.lineNumber,
+                sourceFile = sourceCompilerForInline.callsiteFile?.name ?: "",
+                languageVersionSettings = state.languageVersionSettings,
+                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                containingClassInternalName = classBuilder.thisName,
+                isForNamedFunction = true,
+                needDispatchReceiver = true,
+                internalNameForDispatchReceiver = classBuilder.thisName,
+                disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
+                putContinuationParameterToLvt = !state.isIrBackend
             )
 
             if (generateForInline)
-                MethodNodeCopyingMethodVisitor(
-                    stateMachineBuilder, node.access, name, node.desc,
-                    newMethod = { origin, newAccess, newName, newDesc ->
-                        classBuilder.newMethod(origin, newAccess, newName, newDesc, null, null)
-                    }
-                )
+                SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, node.access, name, node.desc, classBuilder::newMethod)
             else
                 stateMachineBuilder
         }
     }
-
-    private fun surroundNoinlineCallsWithMarkers(node: MethodNode, delegate: MethodVisitor): MethodVisitor =
-        SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
-            delegate, node.access, node.name, node.desc, classBuilder.thisName, this::fieldIsCapturedSuspendLambda
-        )
-
-    private fun fieldIsCapturedSuspendLambda(field: FieldInsnNode): Boolean =
-        capturedParams.find { it.newFieldName == field.name }?.let { it.functionalArgument?.isSuspendLambda() == true }
-            ?: isSuspendLambdaCapturedByOuterObjectOrLambda(field)
-
-    // We cannot find the lambda in captured parameters: it came from object outside of the our reach:
-    // this can happen when the lambda capture by non-transformed closure:
-    //   inline fun inlineMe(crossinline c: suspend() -> Unit) = suspend { c() }
-    //   inline fun inlineMe2(crossinline c: suspend() -> Unit) = suspend { inlineMe { c() }() }
-    // Suppose, we inline inlineMe into inlineMe2: the only knowledge we have about inlineMe$1 is captured receiver (this$0)
-    // Thus, transformed lambda from inlineMe, inlineMe3$$inlined$inlineMe2$1 contains the following bytecode
-    //   ALOAD 0
-    //   GETFIELD inlineMe2$1$invokeSuspend$$inlined$inlineMe$1.this$0 : LScratchKt$inlineMe2$1;
-    //   GETFIELD inlineMe2$1.$c : Lkotlin/jvm/functions/Function1;
-    // Since inlineMe2's lambda is outside of reach of the inliner, find crossinline parameter from compilation context:
-    private fun isSuspendLambdaCapturedByOuterObjectOrLambda(field: FieldInsnNode): Boolean {
-        val functionDescriptor = inliningContext.root.sourceCompilerForInline.compilationContextFunctionDescriptor
-        val classDescriptor = functionDescriptor.findContainingClassOrLambda() ?: return false
-        return isCapturedSuspendLambda(classDescriptor, field.name, inliningContext.state.bindingContext)
-    }
-
-    private tailrec fun DeclarationDescriptor.findContainingClassOrLambda(): ClassDescriptor? =
-        if (containingDeclaration is ClassDescriptor) containingDeclaration as ClassDescriptor
-        else containingDeclaration?.findContainingClassOrLambda()
 
     private fun createNewMethodFrom(node: MethodNode, name: String): MethodVisitor {
         return classBuilder.newMethod(
@@ -232,77 +176,71 @@ class CoroutineTransformer(
     }
 }
 
-class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
-    delegate: MethodVisitor, access: Int, name: String, desc: String,
-    private val thisName: String,
-    private val isCapturedSuspendLambda: (FieldInsnNode) -> Boolean
-) : TransformationMethodVisitor(delegate, access, name, desc, null, null) {
-    override fun performTransformations(methodNode: MethodNode) {
-        fun AbstractInsnNode.index() = methodNode.instructions.indexOf(this)
+private const val NOINLINE_CALL_MARKER = "\$\$\$\$\$NOINLINE_CALL_MARKER\$\$\$\$\$"
 
-        FixStackMethodTransformer().transform(thisName, methodNode)
-        val sourceFrames = MethodTransformer.analyze(thisName, methodNode, SourceInterpreter())
-
-        val noinlineInvokes = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
-
-        for (insn in methodNode.instructions.asSequence()) {
-            if (insn.opcode != Opcodes.INVOKEINTERFACE) continue
-            insn as MethodInsnNode
-            if (!isInvokeOnLambda(insn.owner, insn.name)) continue
-            val frame = sourceFrames[insn.index()] ?: continue
-            val receiver = findReceiverOfInvoke(frame, insn).takeIf { it?.isSuspendLambda(insn) == true } as? FieldInsnNode ?: continue
-            val aload = receiver.findPreviousOrNull { it.opcode != Opcodes.GETFIELD } ?: error("GETFIELD cannot be the first instruction")
-            assert(aload.opcode == Opcodes.ALOAD) { "Before GETFIELD there shall be ALOAD" }
-            noinlineInvokes.add(insn to aload)
-        }
-
-        surroundInvokesWithSuspendMarkers(methodNode, noinlineInvokes)
-    }
-
-    private fun AbstractInsnNode.isSuspendLambda(invoke: MethodInsnNode): Boolean {
-        if (opcode != Opcodes.GETFIELD) return false
-        this as FieldInsnNode
-        if (desc != "L${invoke.owner};") return false
-        var current: FieldInsnNode? = this
-        // Unroll the battery of
-        // GETFIELD <outer1>.this$0 L<outer2>;
-        // GETFIELD <outer2>.this$0 L<outer3>;
-        // ...
-        // GETFIELD <outerN>.$action Lkotlin/jvm/functions/FunctionM;
-        while (current != null) {
-            if (current.owner == thisName) break
-            if (current.previous?.opcode != Opcodes.GETFIELD || current.previous.cast<FieldInsnNode>().name != CAPTURED_THIS_FIELD) return false
-            current = current.previous as FieldInsnNode
-        }
-        return isCapturedSuspendLambda(this)
+fun markNoinlineLambdaIfSuspend(mv: MethodVisitor, info: FunctionalArgument?) {
+    when (info) {
+        NonInlineableArgumentForInlineableSuspendParameter ->
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, NOINLINE_CALL_MARKER, "always", "()V", false)
+        NonInlineableArgumentForInlineableParameterCalledInSuspend ->
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, NOINLINE_CALL_MARKER, "conditional", "()V", false)
     }
 }
 
-private fun FunctionalArgument.isSuspendLambda(): Boolean =
-    this is NonInlineableArgumentForInlineableParameterCalledInSuspend || (this is ExpressionLambda && isSuspend)
+private fun Frame<SourceValue>.getSource(offset: Int): AbstractInsnNode? =
+    getStack(stackSize - offset - 1)?.insns?.singleOrNull()
 
-fun surroundInvokesWithSuspendMarkers(
-    methodNode: MethodNode,
-    noinlineInvokes: List<Pair<AbstractInsnNode, AbstractInsnNode>>
-) {
-    for ((invoke, aload) in noinlineInvokes) {
-        // Generate inline markers for stack transformation. It is required for local variables spilling.
-        methodNode.instructions.insertBefore(aload, withInstructionAdapter {
+fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
+    val markers = node.instructions.asSequence().filter {
+        it.opcode == Opcodes.INVOKESTATIC && (it as MethodInsnNode).owner == NOINLINE_CALL_MARKER
+    }.toList()
+    if (markers.isEmpty()) return
+
+    val sourceFrames = MethodTransformer.analyze("fake", node, SourceInterpreter())
+    val loads = markers.map { marker ->
+        val arity = (marker.next as MethodInsnNode).owner.removePrefix(NUMBERED_FUNCTION_PREFIX).toInt()
+        var receiver = sourceFrames[node.instructions.indexOf(marker) + 1].getSource(arity)
+        // Navigate the ALOAD+GETFIELD+... chain to the first instruction. We need to insert a stack
+        // spilling marker before it starts.
+        while (receiver?.opcode == Opcodes.GETFIELD) {
+            receiver = sourceFrames[node.instructions.indexOf(receiver)].getSource(0)
+        }
+        receiver
+    }
+    for ((marker, load) in markers.zip(loads)) {
+        val conditional = (marker as MethodInsnNode).name == "conditional"
+        val invoke = marker.next as MethodInsnNode
+        node.instructions.remove(marker)
+        if (load == null) {
+            continue // dead code, doesn't matter
+        }
+        node.instructions.insertBefore(load, withInstructionAdapter {
             addInlineMarker(this, isStartNotEnd = true)
         })
-        methodNode.instructions.insertBefore(invoke, withInstructionAdapter {
-            addSuspendMarker(this, isStartNotEnd = true)
+        node.instructions.insertBefore(invoke, withInstructionAdapter {
+            addSuspendMarker(this, isStartNotEnd = true, inlinable = conditional)
         })
-        methodNode.instructions.insert(invoke, withInstructionAdapter {
-            addSuspendMarker(this, isStartNotEnd = false)
+        node.instructions.insert(invoke, withInstructionAdapter {
+            addSuspendMarker(this, isStartNotEnd = false, inlinable = conditional)
             addInlineMarker(this, isStartNotEnd = false)
         })
     }
 }
 
-// TODO: What to do if suddenly there are not exactly one receiver?
-fun findReceiverOfInvoke(frame: Frame<SourceValue>, insn: MethodInsnNode): AbstractInsnNode? =
-    frame.getStack(frame.stackSize - insn.owner.removePrefix(NUMBERED_FUNCTION_PREFIX).toInt() - 1)?.insns?.singleOrNull()
-
-fun AbstractInsnNode.isNoinlineCallMarker(): Boolean =
-    opcode == Opcodes.INVOKESTATIC && cast<MethodInsnNode>().let { it.owner == NOINLINE_CALL_MARKER && it.name == NOINLINE_CALL_MARKER }
+// We cannot find the lambda in captured parameters: it came from object outside of the our reach:
+// this can happen when the lambda capture by non-transformed closure:
+//   inline fun inlineMe(crossinline c: suspend() -> Unit) = suspend { c() }
+//   inline fun inlineMe2(crossinline c: suspend() -> Unit) = suspend { inlineMe { c() }() }
+// Suppose, we inline inlineMe into inlineMe2: the only knowledge we have about inlineMe$1 is captured receiver (this$0)
+// Thus, transformed lambda from inlineMe, inlineMe3$$inlined$inlineMe2$1 contains the following bytecode
+//   ALOAD 0
+//   GETFIELD inlineMe2$1$invokeSuspend$$inlined$inlineMe$1.this$0 : LScratchKt$inlineMe2$1;
+//   GETFIELD inlineMe2$1.$c : Lkotlin/jvm/functions/Function1;
+// Since inlineMe2's lambda is outside of reach of the inliner, find crossinline parameter from compilation context:
+fun FieldInsnNode.isSuspendLambdaCapturedByOuterObjectOrLambda(inliningContext: InliningContext): Boolean {
+    var container: DeclarationDescriptor = inliningContext.root.sourceCompilerForInline.compilationContextFunctionDescriptor
+    while (container !is ClassDescriptor) {
+        container = container.containingDeclaration ?: return false
+    }
+    return isCapturedSuspendLambda(container, name, inliningContext.state.bindingContext)
+}

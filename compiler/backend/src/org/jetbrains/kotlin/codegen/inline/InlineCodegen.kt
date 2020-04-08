@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
@@ -133,14 +132,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         inlineDefaultLambdas: Boolean,
         mapDefaultSignature: Boolean,
         typeSystem: TypeSystemCommonBackendContext,
-        registerLineNumberAfterwards: Boolean
+        registerLineNumberAfterwards: Boolean,
+        isCallOfFunctionInCorrespondingDefaultDispatch: Boolean
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = createInlineMethodNode(
                 functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
             )
-            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
+            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas, isCallOfFunctionInCorrespondingDefaultDispatch), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {
@@ -206,9 +206,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 ?: error("No stack value for continuation parameter of suspend function")
     }
 
-    protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
+    protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean, isCallOfFunctionInCorrespondingDefaultDispatch: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
-        defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
+        if (!isCallOfFunctionInCorrespondingDefaultDispatch) defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
             for (lambda in extractDefaultLambdas(node)) {
@@ -270,7 +270,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             addInlineMarker(codegen.v, false)
         }
 
-        defaultSourceMapper.callSiteMarker = null
+        if (!isCallOfFunctionInCorrespondingDefaultDispatch) defaultSourceMapper.callSiteMarker = null
 
         return result
     }
@@ -534,7 +534,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
             if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DescriptorWithContainerSource) {
-                return sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
+                val node = sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
+                node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+                return node
             }
 
             return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)

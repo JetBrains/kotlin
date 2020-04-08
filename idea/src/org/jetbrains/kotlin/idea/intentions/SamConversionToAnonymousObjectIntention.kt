@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,8 @@ import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCallExpression>(
-    KtCallExpression::class.java, KotlinBundle.message("convert.to.anonymous.object")
+    KtCallExpression::class.java, KotlinBundle.lazyMessage("convert.to.anonymous.object")
 ), LowPriorityAction {
-
     override fun applicabilityRange(element: KtCallExpression): TextRange? {
         val callee = element.calleeExpression ?: return null
         val lambda = getLambdaExpression(element) ?: return null
@@ -92,9 +91,13 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             } else {
                 call.calleeExpression?.text
             } ?: return
+
             val typeArguments = call.typeArguments.mapNotNull { it.typeReference }
-            val typeArgumentsText =
-                if (typeArguments.isEmpty()) "" else typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.text }
+            val typeArgumentsText = if (typeArguments.isEmpty())
+                ""
+            else
+                typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.text }
+
             val classDescriptor = functionDescriptor.containingDeclaration as? ClassDescriptor
             val typeParameters = classDescriptor?.declaredTypeParameters?.map { it.name.asString() }?.zip(typeArguments)?.toMap().orEmpty()
             LambdaToAnonymousFunctionIntention.convertLambdaToFunction(lambda, functionDescriptor, functionName, typeParameters) {
@@ -105,9 +108,8 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             }
         }
 
-        fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? {
-            return element.lambdaArguments.firstOrNull()?.getLambdaExpression()
+        fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? =
+            element.lambdaArguments.firstOrNull()?.getLambdaExpression()
                 ?: element.valueArguments.firstOrNull()?.getArgumentExpression() as? KtLambdaExpression
-        }
     }
 }

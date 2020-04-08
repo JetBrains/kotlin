@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
-import org.jetbrains.kotlin.codegen.inline.NameGenerator
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
-import org.jetbrains.kotlin.codegen.inline.SourceMapper
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -47,15 +44,15 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
 
-open class ClassCodegen protected constructor(
+class ClassCodegen private constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
-    private val parentClassCodegen: ClassCodegen? = null,
     private val parentFunction: IrFunction? = null
 ) : InnerClassConsumer {
-    private val innerClasses = mutableListOf<IrClass>()
+    private val parentClassCodegen = (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
     private val withinInline: Boolean = parentClassCodegen?.withinInline == true || parentFunction?.isInline == true
 
     private val state get() = context.state
@@ -82,20 +79,24 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    val visitor: ClassBuilder = createClassBuilder()
-
-    open fun createClassBuilder(): ClassBuilder {
-        return state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo())
-    }
-
-    private var sourceMapper: DefaultSourceMapper? = null
-
-    fun getOrCreateSourceMapper(): DefaultSourceMapper {
-        if (sourceMapper == null) {
-            sourceMapper = context.getSourceMapper(irClass)
+    private val visitor = state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
+        val signature = getSignature(irClass, type, irClass.getSuperClassInfo(typeMapper), typeMapper)
+        // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
+        if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
+            throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
-        return sourceMapper!!
+        defineClass(
+            irClass.descriptor.psiElement,
+            state.classFileVersion,
+            irClass.flags,
+            signature.name,
+            signature.javaGenericSignature,
+            signature.superclassName,
+            signature.interfaces.toTypedArray()
+        )
     }
+
+    internal var writeSourceMap: Boolean = withinInline
 
     private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)
     private val serializer: DescriptorSerializer? =
@@ -106,9 +107,11 @@ open class ClassCodegen protected constructor(
             else -> null
         }
 
+    private var regeneratedObjectNameGenerators = mutableMapOf<String, NameGenerator>()
+
     fun getRegeneratedObjectNameGenerator(function: IrFunction): NameGenerator {
         val name = if (function.name.isSpecial) "special" else function.name.asString()
-        return context.regeneratedObjectNameGenerators.getOrPut(irClass to name) {
+        return regeneratedObjectNameGenerators.getOrPut(name) {
             NameGenerator("${type.internalName}\$$name\$\$inlined")
         }
     }
@@ -116,33 +119,20 @@ open class ClassCodegen protected constructor(
     private var hasAssertField = irClass.hasAssertionsDisabledField(context)
     private var classInitializer = irClass.functions.singleOrNull { it.name.asString() == "<clinit>" }
     private var generatingClInit = false
+    private var generated = false
 
     fun generate(): ReifiedTypeParametersUsages {
-        if (withinInline) {
-            getOrCreateSourceMapper() //initialize default mapping that would be later written in class file
-        }
+        // TODO: reject repeated generate() calls; currently, these can happen for objects in finally
+        //       blocks since they are `accept`ed once per each CFG edge out of the try-finally.
+        if (generated) return reifiedTypeParametersUsages
+        generated = true
 
-        val signature = getSignature(irClass, type, irClass.getSuperClassInfo(typeMapper), typeMapper)
-        // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
-        if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
-            throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
-        }
-
-        visitor.defineClass(
-            irClass.descriptor.psiElement,
-            state.classFileVersion,
-            irClass.flags,
-            signature.name,
-            signature.javaGenericSignature,
-            signature.superclassName,
-            signature.interfaces.toTypedArray()
-        )
-
+        val smap = context.getSourceMapper(irClass)
         for (declaration in irClass.declarations) {
             when (declaration) {
                 is IrClass, classInitializer -> Unit // see below
                 is IrField -> generateField(declaration)
-                is IrFunction -> generateMethod(declaration)
+                is IrFunction -> generateMethod(declaration, smap)
                 else -> throw AssertionError("unexpected class member $declaration at codegen")
             }
         }
@@ -151,14 +141,14 @@ open class ClassCodegen protected constructor(
         // might need to generate the `$assertionsDisabled` field initializer.
         classInitializer?.let {
             generatingClInit = true
-            generateMethod(it)
+            generateMethod(it, smap)
         }
 
         // Generate nested classes at the end, to ensure that when the companion's metadata is serialized
         // everything moved to the outer class has already been recorded in `globalSerializationBindings`.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
-                ClassCodegen(declaration, context, this).generate()
+                getOrCreate(declaration, context).generate()
             }
         }
 
@@ -169,28 +159,17 @@ open class ClassCodegen protected constructor(
         }.genAnnotations(irClass, null, null)
         generateKotlinMetadataAnnotation()
 
-        val fileEntry = context.psiSourceManager.getFileEntry(irClass.fileParent)
-        if (fileEntry != null) {
-            /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
-            val shortName = File(fileEntry.name).name
-            visitor.visitSource(shortName, null)
-        }
-
-        if (irClass.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
-            done()
-        }
-        return reifiedTypeParametersUsages
-    }
-
-    fun done() {
         generateInnerAndOuterClasses()
 
-        sourceMapper?.let {
-            visitor.visitSMAP(it, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        if (writeSourceMap) {
+            visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        } else {
+            visitor.visitSource(smap.sourceInfo.source, null)
         }
 
         visitor.done()
         jvmSignatureClashDetector.reportErrors(classOrigin)
+        return reifiedTypeParametersUsages
     }
 
     fun generateAssertFieldIfNeeded(): IrExpression? {
@@ -304,16 +283,20 @@ open class ClassCodegen protected constructor(
     }
 
     companion object {
-        fun generate(irClass: IrClass, context: JvmBackendContext) {
-            ClassCodegen(irClass, context).generate()
-        }
+        fun getOrCreate(irClass: IrClass, context: JvmBackendContext, parentFunction: IrFunction? = null): ClassCodegen =
+            context.classCodegens.getOrPut(irClass) {
+                ClassCodegen(irClass, context, parentFunction)
+            }.also {
+                assert(parentFunction == null || it.parentFunction == parentFunction) {
+                    "inconsistent parent function for ${irClass.render()}:\n" +
+                            "New: ${parentFunction!!.render()}\n" +
+                            "Old: ${it.parentFunction?.render()}"
+                }
+            }
 
         private fun JvmClassSignature.hasInvalidName() =
             name.splitToSequence('/').any { identifier -> identifier.any { it in JvmSimpleNameBacktickChecker.INVALID_CHARS } }
     }
-
-    fun createLocalClassCodegen(klass: IrClass, parentFunction: IrFunction): ClassCodegen =
-        ClassCodegen(klass, context, this, parentFunction)
 
     private fun generateField(field: IrField) {
         if (field.isFakeOverride) return
@@ -348,28 +331,51 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    private fun generateMethod(method: IrFunction) {
+    private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
+
+    fun generateMethodNode(method: IrFunction): SMAPAndMethodNode {
+        if (!method.isInline && !method.isSuspend) {
+            // Inline methods can be used multiple times by `IrSourceCompilerForInline`, suspend methods
+            // could be used twice if they capture crossinline lambdas, and everything else is only
+            // generated by `generateMethod` below so does not need caching.
+            return FunctionCodegen(method, this).generate()
+        }
+        val (node, smap) = generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
+        val copy = with(node) { MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions.toTypedArray()) }
+        node.instructions.resetLabels()
+        node.accept(copy)
+        return SMAPAndMethodNode(copy, smap)
+    }
+
+    private fun generateMethod(method: IrFunction, classSMAP: DefaultSourceMapper) {
         if (method.isFakeOverride) {
             jvmSignatureClashDetector.trackFakeOverrideMethod(method)
             return
         }
 
-        val node = FunctionCodegen(method, this).generate()
+        val (node, smap) = generateMethodNode(method)
+        node.preprocessSuspendMarkers(
+            method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
+            method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+        )
         val mv = with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
+        val smapCopier = NestedSourceMapper(classSMAP, smap, sameFile = true)
+        val smapCopyingVisitor = object : MethodVisitor(Opcodes.API_VERSION, mv) {
+            override fun visitLineNumber(line: Int, start: Label) =
+                super.visitLineNumber(smapCopier.mapLineNumber(line), start)
+        }
         if (method.hasContinuation() || method.isInvokeSuspendOfLambda()) {
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
-            val continuationClassCodegen = lazy {
-                createLocalClassCodegen(method.continuationClass()!!, method).also { it.generate() }
-            }
-            node.acceptWithStateMachine(method, this, mv) {
+            val continuationClassCodegen = lazy { getOrCreate(method.continuationClass()!!, context, method) }
+            node.acceptWithStateMachine(method, this, smapCopyingVisitor) {
                 if (method.isSuspend) continuationClassCodegen.value.visitor else visitor
             }
             if (continuationClassCodegen.isInitialized() || method.alwaysNeedsContinuation()) {
-                continuationClassCodegen.value.done()
+                continuationClassCodegen.value.generate()
             }
         } else {
-            node.accept(mv)
+            node.accept(smapCopyingVisitor)
         }
         jvmSignatureClashDetector.trackMethod(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
 
@@ -397,10 +403,7 @@ open class ClassCodegen protected constructor(
     private fun generateInnerAndOuterClasses() {
         // JVMS7 (4.7.6): a nested class or interface member will have InnerClasses information
         // for each enclosing class and for each immediate member
-        parentClassCodegen?.innerClasses?.add(irClass)
-        for (innerClass in innerClasses) {
-            writeInnerClass(innerClass, typeMapper, context, visitor)
-        }
+        parentClassCodegen?.let { writeInnerClass(irClass, typeMapper, context, it.visitor) }
         for (codegen in generateSequence(this) { it.parentClassCodegen }.takeWhile { it.parentClassCodegen != null }) {
             writeInnerClass(codegen.irClass, typeMapper, context, visitor)
         }

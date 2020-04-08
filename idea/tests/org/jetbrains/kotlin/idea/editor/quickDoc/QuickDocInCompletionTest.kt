@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -38,7 +38,7 @@ class QuickDocInCompletionTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val lookupElements = myFixture.completeBasic()
         val lookupObject = lookupElements.first().`object`
-        return KotlinQuickDocumentationProvider().getDocumentationElementForLookupItem(
+        return KotlinDocumentationProvider().getDocumentationElementForLookupItem(
             myFixture.psiManager, lookupObject, null
         )
     }

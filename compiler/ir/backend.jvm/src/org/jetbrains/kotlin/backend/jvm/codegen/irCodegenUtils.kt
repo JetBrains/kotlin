@@ -83,11 +83,10 @@ internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): DefaultSourceMapper {
     val sourceManager = this.psiSourceManager
     val fileEntry = sourceManager.getFileEntry(declaration.fileParent)
-    check(fileEntry != null) { "No PSI file entry found for class: ${declaration.dump()}" }
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     // TODO: revise
-    val endLineNumber = fileEntry.getSourceRangeInfo(0, fileEntry.maxOffset).endLineNumber
+    val endLineNumber = fileEntry?.getSourceRangeInfo(0, fileEntry.maxOffset)?.endLineNumber ?: 0
     return DefaultSourceMapper(
         SourceInfo.createInfoForIr(
             endLineNumber + 1,

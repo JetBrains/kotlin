@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -41,10 +42,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.*
@@ -66,6 +64,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.*
@@ -89,7 +88,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val isIrBackend: Boolean = false,
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
     private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
-): KotlinTypeMapperBase() {
+) : KotlinTypeMapperBase() {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
@@ -201,7 +200,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return mapType(returnType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod))
         }
 
-        val typeMappingModeFromAnnotation = extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod)
+        val typeMappingModeFromAnnotation =
+            extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod, mapTypeAliases = false)
         if (typeMappingModeFromAnnotation != null) {
             return mapType(returnType, sw, typeMappingModeFromAnnotation)
         }
@@ -267,10 +267,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         ) { ktType, asmType, typeMappingMode ->
             writeGenericType(ktType, asmType, signatureVisitor, typeMappingMode)
         }
-    }
-
-    private fun mapInlineClassType(kotlinType: KotlinType): Type {
-        return mapInlineClassType(kotlinType, TypeMappingMode.DEFAULT, typeMappingConfiguration)
     }
 
     private fun writeGenericType(
@@ -367,13 +363,36 @@ class KotlinTypeMapper @JvmOverloads constructor(
             ?: functionDescriptor.returnType!!
 
     private fun getActualReturnTypeForSuspendFunctionWithInlineClassReturnTypeHack(functionDescriptor: FunctionDescriptor): KotlinType? {
-        val originalSuspendFunctionForJvmView = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
-        if (originalSuspendFunctionForJvmView === functionDescriptor) return null
-        val originalReturnType = originalSuspendFunctionForJvmView.returnType!!
+        // For each suspend function, we have a corresponding JVM view function that has an extra continuation parameter,
+        // and, more importantly, returns 'kotlin.Any' (so that it can return as a reference value or a special COROUTINE_SUSPENDED object).
+        // This also causes boxing of primitives and inline class values.
+        // If we have a function returning an inline class value that is mapped to a reference type, we want to avoid boxing.
+        // However, we have to do that consistently both on declaration site and on call site in case of covariant overrides.
+
+        if (!functionDescriptor.isSuspend) return null
+
+        val originalSuspendFunction = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
+        val originalReturnType = originalSuspendFunction.returnType!!
         if (!originalReturnType.isInlineClassType()) return null
-        val jvmReturnType = mapType(originalReturnType)
-        return if (AsmUtil.isPrimitive(jvmReturnType)) null else originalReturnType
+
+        if (!originalReturnType.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn()) {
+            return originalSuspendFunction.module.builtIns.nullableAnyType
+        }
+
+        // NB JVM view of a Kotlin function overrides JVM views of corresponding overridden functions
+        val originalOverridden = getAllOverriddenDeclarations(functionDescriptor).map {
+            it.unwrapInitialDescriptorForSuspendFunction().original
+        }
+        if (originalOverridden.any { !it.returnType!!.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn() }) {
+            return originalSuspendFunction.module.builtIns.nullableAnyType
+        }
+
+        return originalReturnType
     }
+
+    private fun KotlinType.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn(): Boolean =
+        isInlineClassType() && !AsmUtil.isPrimitive(mapType(this)) && (!isMarkedNullable || !isNullableUnderlyingType())
+
 
     @JvmOverloads
     fun mapToCallableMethod(
@@ -806,13 +825,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
         } else {
             val directMember = DescriptorUtils.getDirectMember(f)
-            val thisIfNeeded: KotlinType? = when {
-                kind == OwnerKind.DEFAULT_IMPLS -> {
+            val thisIfNeeded: KotlinType? = when (kind) {
+                OwnerKind.DEFAULT_IMPLS -> {
                     val receiverTypeAndTypeParameters = patchTypeParametersForDefaultImplMethod(directMember)
                     writeFormalTypeParameters(receiverTypeAndTypeParameters.typeParameters + directMember.typeParameters, sw)
                     receiverTypeAndTypeParameters.receiverType
                 }
-                kind == OwnerKind.ERASED_INLINE_CLASS -> {
+                OwnerKind.ERASED_INLINE_CLASS -> {
                     writeFormalTypeParameters(directMember.typeParameters, sw)
                     (directMember.containingDeclaration as ClassDescriptor).defaultType
                 }
@@ -936,21 +955,31 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private fun forceBoxedReturnType(descriptor: FunctionDescriptor): Boolean {
         if (isBoxMethodForInlineClass(descriptor)) return true
 
-        return isJvmPrimitive(descriptor.returnType!!) &&
-                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitive(it.returnType!!) }
+        val returnType = descriptor.returnType!!
+
+        // Crude hack to determine whether it is an AnonymousFunctionDescriptor created for callable reference.
+        // Ideally, we should force return type boxing for all anonymous functions returning an inline class value
+        // (so that the result is boxed properly, since technically it is a covariant override of a corresponding generic 'invoke').
+        // But, unfortunately, we can't do so right now, because it'd break binary compatibility for lambdas returning 'Result'.
+        if (descriptor is AnonymousFunctionDescriptor) {
+            val source = descriptor.source
+            if (source is KotlinSourceElement && source.psi is KtCallableReferenceExpression && returnType.isInlineClassType()) {
+                return true
+            }
+        }
+
+        return isJvmPrimitiveOrInlineClass(returnType) &&
+                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitiveOrInlineClass(it.returnType!!) }
     }
+
+    private fun isJvmPrimitiveOrInlineClass(kotlinType: KotlinType) =
+        KotlinBuiltIns.isPrimitiveType(kotlinType) || kotlinType.isInlineClassType()
 
     private fun isBoxMethodForInlineClass(descriptor: FunctionDescriptor): Boolean {
         val containingDeclaration = descriptor.containingDeclaration
         return containingDeclaration.isInlineClass() &&
                 descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
                 descriptor.name == InlineClassDescriptorResolver.BOX_METHOD_NAME
-    }
-
-    private fun isJvmPrimitive(kotlinType: KotlinType): Boolean {
-        if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return true
-
-        return kotlinType.isInlineClassType() && !kotlinType.isError && AsmUtil.isPrimitive(mapInlineClassType(kotlinType))
     }
 
     fun mapFieldSignature(backingFieldType: KotlinType, propertyDescriptor: PropertyDescriptor): String? {
@@ -1011,7 +1040,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         val typeMappingMode =
-            extractTypeMappingModeFromAnnotation(callableDescriptor, type, isForAnnotationParameter = false)
+            extractTypeMappingModeFromAnnotation(callableDescriptor, type, isForAnnotationParameter = false, mapTypeAliases = false)
                 ?: if (callableDescriptor.isMethodWithDeclarationSiteWildcards && type.arguments.isNotEmpty()) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {

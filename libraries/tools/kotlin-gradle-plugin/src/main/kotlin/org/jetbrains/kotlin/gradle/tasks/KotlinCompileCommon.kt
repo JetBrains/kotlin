@@ -60,7 +60,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         args.moduleName = this@KotlinCompileCommon.moduleName
 
         if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true) {
-            args.klibBasedMpp = true
+            args.expectActualLinker = true
         }
 
         if (defaultsOnly) return

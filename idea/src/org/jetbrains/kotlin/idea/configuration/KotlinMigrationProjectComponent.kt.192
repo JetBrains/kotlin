@@ -116,14 +116,13 @@ class KotlinMigrationProjectComponent(val project: Project) {
     }
 
     companion object {
+        fun getInstance(project: Project): KotlinMigrationProjectComponent =
+            project.getComponent(KotlinMigrationProjectComponent::class.java)
+                ?: error("Can't find ${KotlinMigrationProjectComponent::class.qualifiedName} component")
+
         fun getInstanceIfNotDisposed(project: Project): KotlinMigrationProjectComponent? {
             return runReadAction {
-                if (!project.isDisposed) {
-                    project.getComponent(KotlinMigrationProjectComponent::class.java)
-                        ?: error("Can't find ${KotlinMigrationProjectComponent::class.qualifiedName} component")
-                } else {
-                    null
-                }
+                if (!project.isDisposed) getInstance(project) else null
             }
         }
 

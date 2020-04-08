@@ -35,10 +35,15 @@ internal class FirAugmentedArraySetCallImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         assignCall = assignCall.transformSingle(transformer, data)
         setGetBlock = setGetBlock.transformSingle(transformer, data)
         calleeReference = calleeReference.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

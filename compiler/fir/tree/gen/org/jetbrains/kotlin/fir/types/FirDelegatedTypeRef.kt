@@ -23,4 +23,6 @@ abstract class FirDelegatedTypeRef : FirPureAbstractElement(), FirTypeRef {
     abstract val typeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegatedTypeRef(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedTypeRef
 }

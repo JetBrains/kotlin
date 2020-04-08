@@ -25,6 +25,11 @@ internal class FirDynamicTypeRefImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
     }

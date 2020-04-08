@@ -108,15 +108,12 @@ internal class KotlinRootNpmResolver internal constructor(
         }
         val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
-        val hasNodeModulesDependentTasks = projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }
-        if (hasNodeModulesDependentTasks) {
-            nodeJs.packageManager.resolveRootProject(
-                rootProject,
-                allNpmPackages,
-                upToDate,
-                *nodeJs.npmInstallTask.args.toTypedArray()
-            )
-        }
+        nodeJs.packageManager.resolveRootProject(
+            rootProject,
+            allNpmPackages,
+            upToDate,
+            nodeJs.npmInstallTask.args
+        )
 
         nodeJs.rootNodeModulesStateFile.writeText(System.currentTimeMillis().toString())
 

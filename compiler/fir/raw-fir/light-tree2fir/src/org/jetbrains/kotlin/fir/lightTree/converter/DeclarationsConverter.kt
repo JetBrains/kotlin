@@ -429,12 +429,13 @@ class DeclarationsConverter(
 
                 val secondaryConstructors = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR)
                 val classWrapper = ClassWrapper(
-                    className, modifiers, classKind, primaryConstructor != null,
-                    secondaryConstructors.isNotEmpty(),
-                    if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
+                    className, modifiers, classKind, classBuilder,
+                    hasPrimaryConstructor = primaryConstructor != null,
+                    hasSecondaryConstructor = secondaryConstructors.isNotEmpty(),
+                    hasDefaultConstructor = if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
                     else secondaryConstructors.isEmpty() || secondaryConstructors.any { !it.hasValueParameters() },
-                    selfType,
-                    delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef, superTypeCallEntry
+                    delegatedSelfTypeRef = selfType,
+                    delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef, superTypeCallEntry = superTypeCallEntry
                 )
                 //parse primary constructor
                 val primaryConstructorWrapper = convertPrimaryConstructor(primaryConstructor, classWrapper, delegatedConstructorSource)
@@ -517,7 +518,8 @@ class DeclarationsConverter(
                 typeRef = delegatedSelfType
 
                 val classWrapper = ClassWrapper(
-                    SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, hasPrimaryConstructor = false,
+                    SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, this,
+                    hasPrimaryConstructor = false,
                     hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                     hasDefaultConstructor = false,
                     delegatedSelfTypeRef = delegatedSelfType,
@@ -576,7 +578,8 @@ class DeclarationsConverter(
                     symbol = FirAnonymousObjectSymbol()
                     annotations += modifiers.annotations
                     val enumClassWrapper = ClassWrapper(
-                        enumEntryName, modifiers, ClassKind.ENUM_ENTRY, hasPrimaryConstructor = true,
+                        enumEntryName, modifiers, ClassKind.ENUM_ENTRY, this,
+                        hasPrimaryConstructor = true,
                         hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                         hasDefaultConstructor = false,
                         delegatedSelfTypeRef = buildResolvedTypeRef {
@@ -623,7 +626,7 @@ class DeclarationsConverter(
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
                 CLASS -> container += convertClass(node)
                 FUN -> container += convertFunctionDeclaration(node)
-                PROPERTY -> container += convertPropertyDeclaration(node)
+                PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
                 TYPEALIAS -> container += convertTypeAlias(node)
                 OBJECT_DECLARATION -> container += convertClass(node)
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
@@ -820,7 +823,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    fun convertPropertyDeclaration(property: LighterASTNode): FirDeclaration {
+    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration {
         var modifiers = Modifier()
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -877,16 +880,18 @@ class DeclarationsConverter(
                         expression = expressionConverter.getAsFirExpression(it, "Incorrect delegate expression")
                     }
                 }
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL).apply {
+                    isLateInit = modifiers.hasLateinit()
+                }
 
                 val receiver = delegateExpression?.let {
                     expressionConverter.getAsFirExpression<FirExpression>(it, "Incorrect delegate expression")
                 }
                 generateAccessorsByDelegate(
                     delegateBuilder,
+                    classWrapper?.classBuilder,
                     baseSession,
-                    member = false,
-                    extension = false,
+                    isExtension = false,
                     stubMode,
                     receiver
                 )
@@ -916,9 +921,10 @@ class DeclarationsConverter(
                     expressionConverter.getAsFirExpression<FirExpression>(it, "Should have delegate")
                 }
                 generateAccessorsByDelegate(
-                    delegateBuilder, baseSession,
-                    member = parentNode?.tokenType != KT_FILE,
-                    extension = receiverType != null,
+                    delegateBuilder,
+                    classWrapper?.classBuilder,
+                    baseSession,
+                    isExtension = receiverType != null,
                     stubMode,
                     receiver
                 )

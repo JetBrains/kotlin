@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,8 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 class ConvertReferenceToLambdaInspection : IntentionBasedInspection<KtCallableReferenceExpression>(ConvertReferenceToLambdaIntention::class)
 
 class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntention<KtCallableReferenceExpression>(
-    KtCallableReferenceExpression::class.java, KotlinBundle.message("convert.reference.to.lambda")
+    KtCallableReferenceExpression::class.java, KotlinBundle.lazyMessage("convert.reference.to.lambda")
 ) {
-
     override fun applyTo(element: KtCallableReferenceExpression, editor: Editor?) {
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val reference = element.callableReference
@@ -43,6 +42,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val receiverType = receiverExpression?.let {
             (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
         }
+
         val receiverNameAndType = receiverType?.let {
             KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
                 name !in parameterNamesAndTypes.map { pair -> pair.first }

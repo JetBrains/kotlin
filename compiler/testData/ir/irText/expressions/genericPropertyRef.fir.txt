@@ -76,9 +76,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
-            t: ERROR_CALL 'Unresolved reference: this@R|/additionalText|' type=<root>.Value<T of <root>.<get-additionalText>>
-            p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val]' field=null getter='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=null
+            t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
+            p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val]' field=null getter='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: <none>
   PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
@@ -92,9 +92,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
-            t: ERROR_CALL 'Unresolved reference: this@R|/additionalValue|' type=<root>.Value<T of <root>.<get-additionalValue>>
-            p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val]' field=null getter='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=null
+            t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
+            p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val]' field=null getter='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: <none>
   CLASS CLASS name:DVal modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DVal
@@ -171,7 +171,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-bar>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>'
-          ERROR_CALL 'Unresolved reference: this@R|/bar|' type=T of <root>.<get-bar>
+          GET_VAR '<this>: T of <root>.<get-bar> declared in <root>.<get-bar>' type=T of <root>.<get-bar> origin=null
     FUN name:<set-bar> visibility:public modality:FINAL <T> ($receiver:T of <root>.<set-bar>, value:T of <root>.<get-bar>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -179,7 +179,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       VALUE_PARAMETER name:value index:0 type:T of <root>.<get-bar>
       BLOCK_BODY
         CALL 'public final fun <set-recivier> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-          <set-?>: ERROR_CALL 'Unresolved reference: this@R|/bar|' type=T of <root>.<get-bar>
+          <set-?>: GET_VAR '<this>: T of <root>.<set-bar> declared in <root>.<set-bar>' type=T of <root>.<set-bar> origin=null
         CALL 'public final fun <set-value2> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
           <set-?>: GET_VAR 'value: T of <root>.<get-bar> declared in <root>.<set-bar>' type=T of <root>.<get-bar> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val]

@@ -310,6 +310,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/extensionReceiverInference.kt");
         }
 
+        @TestMetadata("genericInReceiver.kt")
+        public void testGenericInReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/genericInReceiver.kt");
+        }
+
         @TestMetadata("ifWithCR.kt")
         public void testIfWithCR() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/ifWithCR.kt");
@@ -688,6 +693,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("RawType.kt")
         public void testRawType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/RawType.kt");
+        }
+
+        @TestMetadata("serializableString.kt")
+        public void testSerializableString() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/serializableString.kt");
         }
 
         @TestMetadata("smartSet.kt")

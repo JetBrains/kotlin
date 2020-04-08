@@ -22,4 +22,6 @@ abstract class FirWhenSubjectExpression : FirExpression() {
     abstract val whenSubject: FirWhenSubject
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenSubjectExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpression
 }

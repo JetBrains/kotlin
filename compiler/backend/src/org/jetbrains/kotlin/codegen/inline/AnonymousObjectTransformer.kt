@@ -144,8 +144,7 @@ class AnonymousObjectTransformer(
             inliningContext,
             classBuilder,
             methodsToTransform,
-            superClassName,
-            allCapturedParamBuilder.listCaptured()
+            superClassName
         )
         loop@ for (next in methodsToTransform) {
             val deferringVisitor =
@@ -526,7 +525,7 @@ class AnonymousObjectTransformer(
                         alreadyAddedParam?.newFieldName ?: getNewFieldName(desc.fieldName, false),
                         alreadyAddedParam != null
                     )
-                    if (info is ExpressionLambda && info.isCapturedSuspend(desc, inliningContext)) {
+                    if (info is ExpressionLambda && info.isCapturedSuspend(desc)) {
                         recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
                     }
                     val composed = StackValue.field(

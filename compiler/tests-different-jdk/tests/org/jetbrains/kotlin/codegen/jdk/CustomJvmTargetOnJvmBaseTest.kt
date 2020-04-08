@@ -81,13 +81,13 @@ class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest() {
 class JvmTarget8OnJvm8 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(SuiteRunnerForCustomJdk::class)
-class JvmTarget6OnJvm9 : CustomJvmTargetOnJvmBaseTest()
+class JvmTarget6OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(SuiteRunnerForCustomJdk::class)
-class JvmTarget8OnJvm9 : CustomJvmTargetOnJvmBaseTest()
+class JvmTarget8OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(SuiteRunnerForCustomJdk::class)
-class JvmTarget9OnJvm9 : CustomJvmTargetOnJvmBaseTest()
+class JvmTarget11OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(SuiteRunnerForCustomJdk::class)
 class JvmTarget6OnJvmLast : CustomJvmTargetOnJvmBaseTest()
@@ -97,3 +97,14 @@ class JvmTarget8OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(SuiteRunnerForCustomJdk::class)
 class JvmTargetLastOnJvmLast : CustomJvmTargetOnJvmBaseTest()
+
+//TODO: delete old tasks
+@RunWith(SuiteRunnerForCustomJdk::class)
+class JvmTarget6OnJvm9 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(SuiteRunnerForCustomJdk::class)
+class JvmTarget8OnJvm9 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(SuiteRunnerForCustomJdk::class)
+class JvmTarget9OnJvm9 : CustomJvmTargetOnJvmBaseTest()
+

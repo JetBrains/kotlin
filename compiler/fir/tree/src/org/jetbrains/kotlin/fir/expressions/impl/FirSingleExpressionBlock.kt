@@ -47,8 +47,13 @@ class FirSingleExpressionBlock(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlock {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlock {
+        annotations.transformInplace(transformer, data)
         return this
     }
 }

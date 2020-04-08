@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 
 class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtPrimaryConstructor>(
     KtPrimaryConstructor::class.java,
-    KotlinBundle.message("convert.to.secondary.constructor")
+    KotlinBundle.lazyMessage("convert.to.secondary.constructor")
 ) {
     override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
         val containingClass = element.containingClassOrObject as? KtClass ?: return false
@@ -38,15 +38,15 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         return element.valueParameters.all { !it.hasValOrVar() || (it.name != null && it.annotationEntries.isEmpty()) }
     }
 
-    private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean {
-        val referencedDescriptor = context[BindingContext.REFERENCE_TARGET, this] ?: return false
-        return when (referencedDescriptor) {
+    private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean =
+        when (val referencedDescriptor = context[BindingContext.REFERENCE_TARGET, this]) {
+            null ->
+                false
             is ValueParameterDescriptor ->
                 (referencedDescriptor.containingDeclaration as? ConstructorDescriptor)?.containingDeclaration != classDescriptor
             else ->
                 classDescriptor !in referencedDescriptor.parents
         }
-    }
 
     private fun KtProperty.isIndependent(klass: KtClass, context: BindingContext): Boolean {
         val propertyInitializer = initializer ?: return true

@@ -34,6 +34,8 @@ constructor(
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
+    // For Groovy DSL
+    @JvmOverloads
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
@@ -83,12 +85,11 @@ constructor(
         }
     )
 
-    internal fun getIrBinary(
+    internal fun getIrBinaries(
         type: KotlinJsBinaryType
-    ): JsIrBinary =
-        matching { it.type == type }
-            .withType(JsIrBinary::class.java)
-            .single()
+    ): DomainObjectSet<JsIrBinary> =
+        withType(JsIrBinary::class.java)
+            .matching { it.type == type }
 
     private fun <T : JsBinary> createBinaries(
         compilation: KotlinJsCompilation,
@@ -96,23 +97,39 @@ constructor(
         jsBinaryType: JsBinaryType,
         create: (compilation: KotlinJsCompilation, name: String, type: KotlinJsBinaryType) -> T
     ) {
-        types.forEach { buildVariantKind ->
-            val name = generateBinaryName(
+        types.forEach {
+            createBinary(
                 compilation,
-                buildVariantKind,
-                jsBinaryType
+                it,
+                jsBinaryType,
+                create
             )
+        }
+    }
 
-            require(name !in binaryNames) {
-                "Cannot create binary $name: binary with such a name already exists"
-            }
+    private fun <T : JsBinary> createBinary(
+        compilation: KotlinJsCompilation,
+        type: KotlinJsBinaryType,
+        jsBinaryType: JsBinaryType,
+        create: (compilation: KotlinJsCompilation, name: String, type: KotlinJsBinaryType) -> T
+    ) {
+        val name = generateBinaryName(
+            compilation,
+            type,
+            jsBinaryType
+        )
 
-            val binary = create(compilation, name, buildVariantKind)
-            add(binary)
-            // Allow accessing binaries as properties of the container in Groovy DSL.
-            if (this is ExtensionAware) {
-                extensions.add(binary.name, binary)
-            }
+        if (name in binaryNames) {
+            return
+        }
+
+        binaryNames.add(name)
+
+        val binary = create(compilation, name, type)
+        add(binary)
+        // Allow accessing binaries as properties of the container in Groovy DSL.
+        if (this is ExtensionAware) {
+            extensions.add(binary.name, binary)
         }
     }
 

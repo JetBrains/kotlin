@@ -107,7 +107,7 @@ abstract class AbstractAnnotationDeserializer(
         }
     }
 
-    private fun resolveValue(
+    fun resolveValue(
         expectedType: FirTypeRef, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver
     ): FirExpression? {
         // TODO: val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)

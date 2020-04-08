@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
@@ -18,6 +16,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.CallGenerator
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
@@ -108,7 +107,7 @@ class ExpressionCodegen(
     val mv: InstructionAdapter,
     val classCodegen: ClassCodegen,
     val inlinedInto: ExpressionCodegen?,
-    val smapOverride: DefaultSourceMapper?
+    val smap: DefaultSourceMapper
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
     var finallyDepth = 0
@@ -223,9 +222,7 @@ class ExpressionCodegen(
     }
 
     private fun generateFakeContinuationConstructorIfNeeded() {
-        if (irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE) return
-        val continuationClass = irFunction.suspendForInlineToOriginal()?.continuationClass()
-            ?: error("could not find continuation for ${irFunction.render()}")
+        val continuationClass = irFunction.continuationClass() ?: return
         val continuationType = typeMapper.mapClass(continuationClass)
         val continuationIndex = frameMap.getIndex(irFunction.continuationParameter()!!.symbol)
         with(mv) {
@@ -378,6 +375,11 @@ class ExpressionCodegen(
         val callable = methodSignatureMapper.mapToCallableMethod(irFunction, expression)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
+        val isSuspensionPoint = expression.isSuspensionPoint()
+
+        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
+            addInlineMarker(mv, isStartNotEnd = true)
+        }
 
         when {
             expression is IrConstructorCall -> {
@@ -406,8 +408,6 @@ class ExpressionCodegen(
             }
             expression.symbol.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            expression.isSuspensionPoint() ->
-                addInlineMarker(mv, isStartNotEnd = true)
         }
 
         expression.dispatchReceiver?.let { receiver ->
@@ -431,9 +431,8 @@ class ExpressionCodegen(
 
         expression.markLineNumber(true)
 
-        // Do not generate redundant markers in continuation class.
-        if (expression.isSuspensionPoint()) {
-            addSuspendMarker(mv, isStartNotEnd = true)
+        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
+            addSuspendMarker(mv, isStartNotEnd = true, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
         }
 
         if (irFunction.isInvokeSuspendOfContinuation()) {
@@ -445,8 +444,8 @@ class ExpressionCodegen(
             callGenerator.genCall(callable, this, expression)
         }
 
-        if (expression.isSuspensionPoint()) {
-            addSuspendMarker(mv, isStartNotEnd = false)
+        if (isSuspensionPoint != SuspensionPointKind.NEVER) {
+            addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
@@ -482,19 +481,16 @@ class ExpressionCodegen(
         }
     }
 
-    private fun IrFunctionAccessExpression.isSuspensionPoint(): Boolean = when {
-        !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() -> false
+    private fun IrFunctionAccessExpression.isSuspensionPoint(): SuspensionPointKind = when {
+        !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() -> SuspensionPointKind.NEVER
         // Copy-pasted bytecode blocks are not suspension points.
         symbol.owner.isInline ->
-            symbol.owner.let {
-                it.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
-                it.getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics")
-            }
+            if (symbol.owner.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
+                symbol.owner.getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics")
+            ) SuspensionPointKind.ALWAYS else SuspensionPointKind.NEVER
         // This includes inline lambdas, but only in functions intended for the inliner; in others, they stay as `f.invoke()`.
-        dispatchReceiver.isReadOfInlineLambda() ->
-            irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE && irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
-                    irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-        else -> true
+        dispatchReceiver.isReadOfInlineLambda() -> SuspensionPointKind.NOT_INLINE
+        else -> SuspensionPointKind.ALWAYS
     }
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
@@ -701,7 +697,7 @@ class ExpressionCodegen(
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
         if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
             closureReifiedMarkers[declaration] =
-                classCodegen.createLocalClassCodegen(declaration, generateSequence(this) { it.inlinedInto }.last().irFunction).generate()
+                ClassCodegen.getOrCreate(declaration, context, generateSequence(this) { it.inlinedInto }.last().irFunction).generate()
         }
         return unitValue
     }

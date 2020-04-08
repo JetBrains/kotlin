@@ -153,6 +153,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             oldDescriptor.isValid = false
             moduleInfoByDescriptor.remove(oldDescriptor)
             resolverByModuleDescriptor.remove(oldDescriptor)
+            projectContext.project.messageBus.syncPublisher(ModuleDescriptorListener.TOPIC).moduleDescriptorInvalidated(oldDescriptor)
         }
 
         val moduleData = createModuleDescriptor(module)

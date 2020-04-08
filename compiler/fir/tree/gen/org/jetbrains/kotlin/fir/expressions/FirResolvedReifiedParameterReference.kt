@@ -22,4 +22,6 @@ abstract class FirResolvedReifiedParameterReference : FirExpression() {
     abstract val symbol: FirTypeParameterSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedReifiedParameterReference(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedReifiedParameterReference
 }

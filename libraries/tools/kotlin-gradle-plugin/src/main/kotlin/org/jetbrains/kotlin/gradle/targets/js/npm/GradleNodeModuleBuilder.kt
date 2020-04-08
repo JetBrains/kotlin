@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
@@ -74,34 +73,3 @@ private fun isKotlinJsRuntimeFile(file: File): Boolean {
     return (name.endsWith(".js") && !name.endsWith(".meta.js"))
             || name.endsWith(".js.map")
 }
-
-fun makeNodeModule(
-    container: File,
-    packageJson: PackageJson,
-    files: (File) -> Unit
-): File {
-    val dir = importedPackageDir(container, packageJson.name, packageJson.version)
-
-    if (dir.exists()) dir.deleteRecursively()
-
-    check(dir.mkdirs()) {
-        "Cannot create directory: $dir"
-    }
-
-    val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .create()
-
-    files(dir)
-
-    dir.resolve("package.json").writer().use {
-        gson.toJson(packageJson, it)
-    }
-
-    return dir
-}
-
-fun importedPackageDir(container: File, name: String, version: String): File =
-    container.resolve(name).resolve(version)
-
-fun GradleNodeModule(dir: File) = GradleNodeModule(dir.parentFile.name, dir.name, dir)

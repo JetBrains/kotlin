@@ -23,6 +23,7 @@
         <lang.parserDefinition language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsParserDefinition"/>
         <lang.syntaxHighlighterFactory language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsSyntaxHighlighterFactory"/>
         <languageInjector implementation="org.jetbrains.kotlin.ide.konan.CLanguageInjector"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeRunConfigurationProducer"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

@@ -27,12 +27,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.16")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
     }
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.1.1"
+    id "com.gradle.enterprise" version "3.2"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)

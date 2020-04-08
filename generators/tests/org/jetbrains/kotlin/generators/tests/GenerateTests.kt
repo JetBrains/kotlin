@@ -476,6 +476,10 @@ fun main(args: Array<String>) {
             model("codeInsight/expressionType")
         }
 
+        testClass<AbstractRenderingKDocTest> {
+            model("codeInsight/renderingKDoc")
+        }
+
         testClass<AbstractBackspaceHandlerTest> {
             model("editor/backspaceHandler")
         }

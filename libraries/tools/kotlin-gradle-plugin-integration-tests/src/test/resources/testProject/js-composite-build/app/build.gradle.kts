@@ -8,9 +8,21 @@ repositories {
     mavenCentral()
 }
 
-kotlin.js {
-    binaries.executable()
-    nodejs()
+kotlin {
+    js {
+        nodejs()
+        binaries.executable()
+    }
+}
+kotlin {
+    js {
+        browser()
+        binaries.executable()
+    }
+}
+
+tasks.named("browserTest") {
+    enabled = false
 }
 
 rootProject.tasks
@@ -31,4 +43,5 @@ dependencies {
     implementation(kotlin("stdlib-js"))
     implementation("com.example:lib2")
     implementation(npm("async", "3.2.0"))
+    testImplementation(kotlin("test-js"))
 }

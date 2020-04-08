@@ -153,75 +153,67 @@ class KotlinConstraintSystemCompleter(
     ): Boolean {
         val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
-        return resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(
-            variableForFixation,
-            postponedArguments,
-            diagnosticsHolder,
-            analyze
-        ) || resolveLambdaWhichIsReturnArgument(postponedArguments, diagnosticsHolder, analyze, fixationFinder)
-    }
-
-    /*
-     * returns true -> analyzed
-     */
-    private fun Context.resolveLambdaWhichIsReturnArgument(
-        postponedArguments: List<PostponedResolvedAtom>,
-        diagnosticsHolder: KotlinDiagnosticsHolder,
-        analyze: (PostponedResolvedAtom) -> Unit,
-        fixationFinder: VariableFixationFinder
-    ): Boolean {
-        val isReturnArgumentOfAnotherLambda = postponedArguments.any {
-            it is LambdaWithTypeVariableAsExpectedTypeAtom && it.isReturnArgumentOfAnotherLambda
-        }
-        val postponedAtom = postponedArguments.firstOrNull() ?: return false
-        val atomExpectedType = postponedAtom.expectedType
-
-        val shouldAnalyzeByPresenceLambdaAsReturnArgument =
-            isReturnArgumentOfAnotherLambda && atomExpectedType != null &&
-                    with(fixationFinder) { variableHasTrivialOrNonProperConstraints(atomExpectedType.constructor) }
-
-        if (!shouldAnalyzeByPresenceLambdaAsReturnArgument)
+        if (postponedArguments.isEmpty())
             return false
 
-        val expectedTypeVariable =
-            atomExpectedType?.constructor?.takeIf { it in allTypeVariables } ?: return false
+        val groupedPostponedArguments = postponedArguments.filterIsInstance<LambdaWithTypeVariableAsExpectedTypeAtom>()
+            .ifEmpty { postponedArguments.filter { it !is LambdaWithTypeVariableAsExpectedTypeAtom } }
 
-        analyze(preparePostponedAtom(expectedTypeVariable, postponedAtom, expectedTypeVariable.builtIns, diagnosticsHolder) ?: return false)
+        if (groupedPostponedArguments.isEmpty())
+            return false
 
-        return true
+        fun shouldAnalyzeLambdaWithTypeVariableAsExpectedType(argument: PostponedResolvedAtom): Boolean {
+            val hasProperAtom = when (argument) {
+                is LambdaWithTypeVariableAsExpectedTypeAtom, is PostponedCallableReferenceAtom ->
+                    argument.expectedType?.constructor == variableForFixation.variable
+                else -> false
+            }
+
+            return hasProperAtom || !variableForFixation.hasProperConstraint || variableForFixation.hasOnlyTrivialProperConstraint
+        }
+
+        fun shouldAnalyzeLambdaWhichIsReturnArgument(argument: PostponedResolvedAtom): Boolean {
+            val isReturnArgumentOfAnotherLambda =
+                argument is LambdaWithTypeVariableAsExpectedTypeAtom && argument.isReturnArgumentOfAnotherLambda
+            val atomExpectedType = argument.expectedType
+
+            return isReturnArgumentOfAnotherLambda && atomExpectedType != null &&
+                    with(fixationFinder) { variableHasTrivialOrNonProperConstraints(atomExpectedType.constructor) }
+        }
+
+        return resolveLambdaByCondition(
+            variableForFixation, groupedPostponedArguments, diagnosticsHolder, analyze, ::shouldAnalyzeLambdaWithTypeVariableAsExpectedType
+        ) || resolveLambdaByCondition(
+            variableForFixation, groupedPostponedArguments, diagnosticsHolder, analyze, ::shouldAnalyzeLambdaWhichIsReturnArgument
+        )
     }
 
     /*
      * returns true -> analyzed
      */
-    private fun Context.resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(
+    private fun Context.resolveLambdaByCondition(
         variableForFixation: VariableFixationFinder.VariableForFixation,
         postponedArguments: List<PostponedResolvedAtom>,
         diagnosticsHolder: KotlinDiagnosticsHolder,
-        analyze: (PostponedResolvedAtom) -> Unit
+        analyze: (PostponedResolvedAtom) -> Unit,
+        shouldAnalyze: (PostponedResolvedAtom) -> Boolean
     ): Boolean {
         val variable = variableForFixation.variable as? TypeConstructor ?: return false
-        val hasProperAtom = postponedArguments.any {
-            when (it) {
-                is LambdaWithTypeVariableAsExpectedTypeAtom,
-                is PostponedCallableReferenceAtom -> it.expectedType?.constructor == variable
-                else -> false
-            }
+
+        return postponedArguments.all { argument ->
+            if (!shouldAnalyze(argument))
+                return@all false
+
+            val expectedTypeVariable = argument.expectedType?.constructor?.takeIf { it in allTypeVariables } ?: variable
+
+            val preparedAtom =
+                preparePostponedAtom(expectedTypeVariable, argument, expectedTypeVariable.builtIns, diagnosticsHolder)
+                    ?: return@all false
+
+            analyze(preparedAtom)
+
+            true
         }
-
-        val postponedAtom = postponedArguments.firstOrNull() ?: return false
-        val expectedTypeAtom = postponedAtom.expectedType
-        val expectedTypeVariable =
-            expectedTypeAtom?.constructor?.takeIf { it in allTypeVariables } ?: variable
-
-        val shouldAnalyze = hasProperAtom || !variableForFixation.hasProperConstraint || variableForFixation.hasOnlyTrivialProperConstraint
-
-        if (!shouldAnalyze)
-            return false
-
-        analyze(preparePostponedAtom(expectedTypeVariable, postponedAtom, variable.builtIns, diagnosticsHolder) ?: return false)
-
-        return true
     }
 
     private fun Context.preparePostponedAtom(

@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.collectCallableNamesFromSupertypes
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.visibility
+import org.jetbrains.kotlin.fir.declarations.allowsToHaveFakeOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -82,7 +81,7 @@ internal class FakeOverrideGenerator(
                         declarations += irFunction.withFunction {
                             overriddenSymbols = listOf(overriddenSymbol)
                         }
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.visibility != Visibilities.PRIVATE) {
+                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.allowsToHaveFakeOverride) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(
                             session, originalFunction, functionSymbol
@@ -112,7 +111,7 @@ internal class FakeOverrideGenerator(
                         declarations += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(originalProperty, firOverriddenSymbol = baseSymbol)
                         }
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.visibility != Visibilities.PRIVATE) {
+                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.allowsToHaveFakeOverride) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideProperty(
                             session, originalProperty, propertySymbol, derivedClassId = klass.symbol.classId
@@ -121,7 +120,15 @@ internal class FakeOverrideGenerator(
 
                         val irProperty = declarationStorage.createIrProperty(
                             fakeOverrideProperty, irParent = this, origin = origin
-                        )
+                        ).apply {
+                            // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
+                            if (originalProperty.getter?.allowsToHaveFakeOverride != true) {
+                                getter = null
+                            }
+                            if (originalProperty.setter?.allowsToHaveFakeOverride != true) {
+                                setter = null
+                            }
+                        }
                         declarations += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
                         }

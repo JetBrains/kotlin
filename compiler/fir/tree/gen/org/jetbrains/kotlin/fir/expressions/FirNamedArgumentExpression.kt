@@ -24,4 +24,6 @@ abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {
     abstract val name: Name
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedArgumentExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression
 }

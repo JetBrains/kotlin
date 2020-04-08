@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
-import org.jetbrains.kotlin.codegen.coroutines.SuspendInlineFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
@@ -68,6 +67,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -80,7 +80,6 @@ import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
 import static org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters;
@@ -124,27 +123,14 @@ public class FunctionCodegen {
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             FunctionGenerationStrategy strategy;
             if (functionDescriptor.isSuspend()) {
-                if (isEffectivelyInlineOnly(functionDescriptor)) {
-                    strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
-                } else if (!functionDescriptor.isInline()) {
-                    strategy = new SuspendFunctionGenerationStrategy(
-                            state,
-                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
-                            function,
-                            v.getThisName(),
-                            state.getConstructorCallNormalizationMode(),
-                            this
-                    );
-                } else {
-                    strategy = new SuspendInlineFunctionGenerationStrategy(
-                            state,
-                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
-                            function,
-                            v.getThisName(),
-                            state.getConstructorCallNormalizationMode(),
-                            this
-                    );
-                }
+                strategy = new SuspendFunctionGenerationStrategy(
+                        state,
+                        CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
+                        function,
+                        v.getThisName(),
+                        state.getConstructorCallNormalizationMode(),
+                        this
+                );
             } else {
                 strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
             }
@@ -1021,7 +1007,7 @@ public class FunctionCodegen {
 
         boolean isSpecial = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) != null;
 
-        Set<Bridge<Method>> bridgesToGenerate;
+        Set<Bridge<Method, DescriptorBasedFunctionHandleForJvm>> bridgesToGenerate;
         if (!isSpecial) {
             bridgesToGenerate =
                     JvmBridgesImplKt.generateBridgesForFunctionDescriptorForJvm(descriptor, typeMapper::mapAsmMethod, state);
@@ -1030,22 +1016,23 @@ public class FunctionCodegen {
                 boolean isSpecialBridge =
                         BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null;
 
-                for (Bridge<Method> bridge : bridgesToGenerate) {
-                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), isSpecialBridge, false);
+                for (Bridge<Method, DescriptorBasedFunctionHandleForJvm> bridge : bridgesToGenerate) {
+                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), getBridgeReturnType(bridge), isSpecialBridge, false);
                 }
             }
         }
         else {
-            Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                    descriptor, typeMapper::mapAsmMethod, state
-            );
+            Set<BridgeForBuiltinSpecial<Method>> specials =
+                    BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(descriptor, typeMapper::mapAsmMethod, state);
 
             if (!specials.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
                 for (BridgeForBuiltinSpecial<Method> bridge : specials) {
                     generateBridge(
                             origin, descriptor, bridge.getFrom(), bridge.getTo(),
-                            bridge.isSpecial(), bridge.isDelegateToSuper());
+                            descriptor.getReturnType(), // TODO
+                            bridge.isSpecial(), bridge.isDelegateToSuper()
+                    );
                 }
             }
 
@@ -1059,6 +1046,35 @@ public class FunctionCodegen {
                     v.newMethod(JvmDeclarationOriginKt.AugmentedBuiltInApi(overridden), flags, method.getName(), method.getDescriptor(), null, null);
                 }
             }
+        }
+    }
+
+    private KotlinType getBridgeReturnType(Bridge<Method, DescriptorBasedFunctionHandleForJvm> bridge) {
+        // Return type for the bridge affects inline class values boxing/unboxing in bridge.
+        // Here we take 1st available return type for the bridge.
+        // In correct cases it doesn't matter what particular return type to use,
+        // since either all return types are inline class itself,
+        // or all return types are supertypes of inline class (and can't be inline classes).
+
+        for (DescriptorBasedFunctionHandleForJvm handle : bridge.getOriginalFunctions()) {
+            KotlinType returnType = handle.getDescriptor().getReturnType();
+            if (returnType != null) {
+                return returnType;
+            }
+        }
+
+        if (state.getClassBuilderMode().mightBeIncorrectCode) {
+            // Don't care, 'Any?' would suffice.
+            return state.getModule().getBuiltIns().getNullableAnyType();
+        } else if (bridge.getOriginalFunctions().isEmpty()) {
+            throw new AssertionError("No overridden functions for the bridge method '" + bridge.getTo() + "'");
+        } else {
+            throw new AssertionError(
+                    "No return type for the bridge method '" + bridge.getTo() + "' found in the following overridden functions:\n" +
+                    bridge.getOriginalFunctions().stream()
+                            .map(handle -> handle.getDescriptor().toString())
+                            .collect(Collectors.joining("\n"))
+            );
         }
     }
 
@@ -1376,6 +1392,7 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor descriptor,
             @NotNull Method bridge,
             @NotNull Method delegateTo,
+            @NotNull KotlinType bridgeReturnType,
             boolean isSpecialBridge,
             boolean isStubDeclarationWithDelegationToSuper
     ) {
@@ -1452,7 +1469,7 @@ public class FunctionCodegen {
         }
 
         KotlinType returnType = descriptor.getReturnType();
-        StackValue.coerce(delegateTo.getReturnType(), returnType, bridge.getReturnType(), returnType, iv);
+        StackValue.coerce(delegateTo.getReturnType(), returnType, bridge.getReturnType(), bridgeReturnType, iv);
         iv.areturn(bridge.getReturnType());
 
         endVisit(mv, "bridge method", origin);

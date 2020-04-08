@@ -26,10 +26,14 @@ import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -92,7 +96,8 @@ fun FirClassifierSymbol<*>.toSymbol(
 fun FirReference.toSymbol(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
-    declarationStorage: Fir2IrDeclarationStorage
+    declarationStorage: Fir2IrDeclarationStorage,
+    conversionScope: Fir2IrConversionScope
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference -> {
@@ -114,6 +119,10 @@ fun FirReference.toSymbol(
             when (val boundSymbol = boundSymbol) {
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
                 is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner.extensionReceiverParameter?.symbol
+                is FirPropertySymbol -> {
+                    val property = declarationStorage.getIrPropertyOrFieldSymbol(boundSymbol).owner as? IrProperty
+                    property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }?.symbol
+                }
                 else -> null
             }
         }
@@ -139,6 +148,30 @@ fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
     }
     else -> kind.toIrConstKind()
+}
+
+fun <T> FirConstExpression<T>.toIrConst(irType: IrType): IrConst<T> {
+    return convertWithOffsets { startOffset, endOffset ->
+        @Suppress("UNCHECKED_CAST")
+        val kind = getIrConstKind() as IrConstKind<T>
+
+        @Suppress("UNCHECKED_CAST")
+        val value = (value as? Long)?.let {
+            when (kind) {
+                IrConstKind.Byte -> it.toByte()
+                IrConstKind.Short -> it.toShort()
+                IrConstKind.Int -> it.toInt()
+                IrConstKind.Float -> it.toFloat()
+                IrConstKind.Double -> it.toDouble()
+                else -> it
+            }
+        } as T ?: value
+        IrConstImpl(
+            startOffset, endOffset,
+            irType,
+            kind, value
+        )
+    }
 }
 
 private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class AddJvmStaticIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
     KtNamedDeclaration::class.java,
-    KotlinBundle.message("add.jvmstatic.annotation")
+    KotlinBundle.lazyMessage("add.jvmstatic.annotation")
 ), LowPriorityAction {
     private val JvmStaticFqName = FqName("kotlin.jvm.JvmStatic")
     private val JvmFieldFqName = FqName("kotlin.jvm.JvmField")

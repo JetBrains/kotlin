@@ -41,7 +41,7 @@ abstract class KotlinBinaryExtension(val fileType: FileType) {
         val EP_NAME: ExtensionPointName<KotlinBinaryExtension> =
             ExtensionPointName.create<KotlinBinaryExtension>("org.jetbrains.kotlin.binaryExtension")
 
-        val kotlinBinaries: List<FileType> by lazy(LazyThreadSafetyMode.NONE) {
+        val kotlinBinaries: List<FileType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
             EP_NAME.extensions.map { it.fileType }
         }
     }

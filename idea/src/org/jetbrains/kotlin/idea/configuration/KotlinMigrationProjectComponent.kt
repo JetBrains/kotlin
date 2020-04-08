@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.runUnderDisposeAwareIndicator
 
 class KotlinMigrationProjectComponent : StartupActivity {
 
     override fun runActivity(project: Project) {
         val connection = project.messageBus.connect(project)
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
-            KotlinMigrationProjectService.getInstanceIfNotDisposed(project)?.onImportFinished()
+            runUnderDisposeAwareIndicator(project) {
+                KotlinMigrationProjectService.getInstance(project).onImportFinished()
+            }
         })
     }
 

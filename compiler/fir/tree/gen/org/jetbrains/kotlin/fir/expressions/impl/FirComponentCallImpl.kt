@@ -57,11 +57,16 @@ internal class FirComponentCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
         argumentList = argumentList.transformSingle(transformer, data)
         transformCalleeReference(transformer, data)
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

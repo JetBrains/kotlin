@@ -94,13 +94,18 @@ internal class FirEnumEntryImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         status = status.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         typeParameters.transformInplace(transformer, data)
         return this
     }

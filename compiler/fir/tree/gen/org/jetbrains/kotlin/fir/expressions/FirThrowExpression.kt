@@ -21,4 +21,6 @@ abstract class FirThrowExpression : FirExpression() {
     abstract val exception: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThrowExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirThrowExpression
 }

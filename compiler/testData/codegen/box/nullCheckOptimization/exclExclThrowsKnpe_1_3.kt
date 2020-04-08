@@ -1,6 +1,5 @@
 // !API_VERSION: 1.3
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 fun box(): String {

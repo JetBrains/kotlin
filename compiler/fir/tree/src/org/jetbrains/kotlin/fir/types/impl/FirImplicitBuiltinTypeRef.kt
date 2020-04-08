@@ -37,6 +37,10 @@ sealed class FirImplicitBuiltinTypeRef(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
     }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
+        return this
+    }
 }
 
 class FirImplicitUnitTypeRef(
@@ -83,3 +87,45 @@ class FirImplicitKPropertyTypeRef(
     source: FirSourceElement?,
     typeArgument: ConeTypeProjection
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty, arrayOf(typeArgument))
+
+class FirImplicitKProperty0TypeRef(
+    source: FirSourceElement?,
+    propertyTypeArgument: ConeTypeProjection
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty0, arrayOf(propertyTypeArgument))
+
+class FirImplicitKMutableProperty0TypeRef(
+    source: FirSourceElement?,
+    propertyTypeArgument: ConeTypeProjection
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KMutableProperty0, arrayOf(propertyTypeArgument))
+
+class FirImplicitKProperty1TypeRef(
+    source: FirSourceElement?,
+    receiverTypeArgument: ConeTypeProjection,
+    propertyTypeArgument: ConeTypeProjection
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty1, arrayOf(receiverTypeArgument, propertyTypeArgument))
+
+class FirImplicitKMutableProperty1TypeRef(
+    source: FirSourceElement?,
+    receiverTypeArgument: ConeTypeProjection,
+    propertyTypeArgument: ConeTypeProjection
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KMutableProperty1, arrayOf(receiverTypeArgument, propertyTypeArgument))
+
+class FirImplicitKProperty2TypeRef(
+    source: FirSourceElement?,
+    dispatchReceiverTypeArgument: ConeTypeProjection,
+    extensionReceiverTypeArgument: ConeTypeProjection,
+    propertyTypeArgument: ConeTypeProjection
+) : FirImplicitBuiltinTypeRef(
+    source, StandardClassIds.KProperty2,
+    arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
+)
+
+class FirImplicitKMutableProperty2TypeRef(
+    source: FirSourceElement?,
+    dispatchReceiverTypeArgument: ConeTypeProjection,
+    extensionReceiverTypeArgument: ConeTypeProjection,
+    propertyTypeArgument: ConeTypeProjection
+) : FirImplicitBuiltinTypeRef(
+    source, StandardClassIds.KMutableProperty2,
+    arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
+)

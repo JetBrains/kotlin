@@ -31,8 +31,13 @@ internal class FirSpreadArgumentExpressionImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSpreadArgumentExpressionImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         expression = expression.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSpreadArgumentExpressionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

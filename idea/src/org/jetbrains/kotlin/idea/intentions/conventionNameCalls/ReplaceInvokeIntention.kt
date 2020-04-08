@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,21 +16,19 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ReplaceInvokeIntention :
-    SelfTargetingRangeIntention<KtDotQualifiedExpression>(
-        KtDotQualifiedExpression::class.java,
-        KotlinBundle.message("replace.invoke.with.direct.call")
-    ),
-    HighPriorityAction {
+class ReplaceInvokeIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
+    KtDotQualifiedExpression::class.java,
+    KotlinBundle.lazyMessage("replace.invoke.with.direct.call")
+), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.INVOKE.asString() || element.callExpression?.typeArgumentList != null) return null
-        return element.callExpression!!.calleeExpression!!.textRange
+        return element.callExpression?.calleeExpression?.textRange
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val receiver = element.receiverExpression
-        val callExpression = element.callExpression!!.copy() as KtCallExpression
-        callExpression.calleeExpression!!.replace(receiver)
+        val callExpression = element.callExpression?.copy() as? KtCallExpression ?: return
+        callExpression.calleeExpression?.replace(receiver)
         element.replace(callExpression)
     }
 }

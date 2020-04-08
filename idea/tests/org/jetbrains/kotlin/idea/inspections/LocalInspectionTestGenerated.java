@@ -8335,6 +8335,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testParenthesized() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/parenthesized.kt");
         }
+
+        @TestMetadata("recursiveCall.kt")
+        public void testRecursiveCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSuspend/recursiveCall.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantUnitExpression")
@@ -9010,6 +9015,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("javaConstructor.kt")
         public void testJavaConstructor() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/javaConstructor.kt");
+        }
+
+        @TestMetadata("kt35898.kt")
+        public void testKt35898() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/kt35898.kt");
         }
 
         @TestMetadata("localFun.kt")

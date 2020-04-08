@@ -116,6 +116,10 @@ class FirSyntheticProperty(
         throw AssertionError("Transformation of synthetic property isn't supported")
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
+        throw AssertionError("Transformation of synthetic property isn't supported")
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }

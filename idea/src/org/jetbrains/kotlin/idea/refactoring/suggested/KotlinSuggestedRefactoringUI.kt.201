@@ -6,6 +6,7 @@ import com.intellij.refactoring.suggested.SuggestedRefactoringExecution.NewParam
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
 import com.intellij.refactoring.suggested.SuggestedRefactoringUI
 import com.intellij.refactoring.suggested.SignaturePresentationBuilder
+import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
@@ -19,7 +20,7 @@ object KotlinSuggestedRefactoringUI : SuggestedRefactoringUI() {
     }
 
     override fun extractNewParameterData(data: SuggestedChangeSignatureData): List<NewParameterData> {
-        val newParameters = mutableListOf<NewParameterData>()
+        val result = mutableListOf<NewParameterData>()
 
         val declaration = data.declaration
         val factory = KtPsiFactory(declaration.project)
@@ -27,16 +28,20 @@ object KotlinSuggestedRefactoringUI : SuggestedRefactoringUI() {
         fun createCodeFragment() = factory.createExpressionCodeFragment("", declaration)
 
         if (data.newSignature.receiverType != null && data.oldSignature.receiverType == null) {
-            newParameters.add(NewParameterData("<receiver>", createCodeFragment(), false/*TODO*/))
+            result.add(NewParameterData("<receiver>", createCodeFragment(), false/*TODO*/))
         }
 
-        for (parameter in data.newSignature.parameters) {
-            if (data.oldSignature.parameterById(parameter.id) == null) {
-                newParameters.add(NewParameterData(parameter.name, createCodeFragment(), false/*TODO*/))
+        fun isNewParameter(parameter: Parameter) = data.oldSignature.parameterById(parameter.id) == null
+
+        val newParameters = data.newSignature.parameters
+        val dropLastN = newParameters.reversed().count { isNewParameter(it) && it.defaultValue != null }
+        for (parameter in newParameters.dropLast(dropLastN)) {
+            if (isNewParameter(parameter)) {
+                result.add(NewParameterData(parameter.name, createCodeFragment(), false/*TODO*/))
             }
         }
 
-        return newParameters
+        return result
     }
 
     override fun extractValue(fragment: PsiCodeFragment): NewParameterValue.Expression? {

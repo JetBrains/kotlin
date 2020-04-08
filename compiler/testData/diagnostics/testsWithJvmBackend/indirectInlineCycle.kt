@@ -1,5 +1,5 @@
 // !RENDER_DIAGNOSTICS_FULL_TEXT
-
+// TARGET_BACKEND: JVM_OLD
 inline fun inlineFun1(crossinline p: () -> Unit) {
     object {
         fun method() { <!INLINE_CALL_CYCLE, INLINE_CALL_CYCLE!>inlineFun2(p)<!> }

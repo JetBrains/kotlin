@@ -31,6 +31,8 @@ interface FirCallableDeclaration<F : FirCallableDeclaration<F>> : FirTypedDeclar
 
     fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableDeclaration<F>
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration<F>
 
     fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration<F>

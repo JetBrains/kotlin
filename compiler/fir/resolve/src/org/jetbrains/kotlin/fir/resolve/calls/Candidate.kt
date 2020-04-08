@@ -43,6 +43,8 @@ data class CallInfo(
     val containingFile: FirFile,
     val implicitReceiverStack: ImplicitReceiverStack,
 
+    val candidateForCommonInvokeReceiver: Candidate? = null,
+
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
@@ -54,11 +56,7 @@ data class CallInfo(
     val argumentCount get() = arguments.size
 
     fun noStubReceiver(): CallInfo =
-        if (stubReceiver == null) this else CallInfo(
-            callKind, name, explicitReceiver, argumentList,
-            isSafeCall, isPotentialQualifierPart, typeArguments, session,
-            containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs, null
-        )
+        if (stubReceiver == null) this else copy(stubReceiver = null)
 
     fun replaceWithVariableAccess(): CallInfo =
         copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)
@@ -125,5 +123,20 @@ class Candidate(
     fun extensionReceiverExpression(): FirExpression = when (explicitReceiverKind) {
         ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> callInfo.explicitReceiver!!
         else -> implicitExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Candidate
+
+        if (symbol != other.symbol) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return symbol.hashCode()
     }
 }

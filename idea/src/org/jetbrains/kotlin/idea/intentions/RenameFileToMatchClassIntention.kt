@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,16 +14,15 @@ import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-class RenameFileToMatchClassIntention :
-    SelfTargetingRangeIntention<KtClassOrObject>(
-        KtClassOrObject::class.java, "",
-        KotlinBundle.message("rename.file.to.match.top.level.class.name")
-    ) {
+class RenameFileToMatchClassIntention : SelfTargetingRangeIntention<KtClassOrObject>(
+    KtClassOrObject::class.java,
+    KotlinBundle.lazyMessage("rename.file.to.match.top.level.class.name")
+) {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (!element.isTopLevel()) return null
         val fileName = element.containingKtFile.name
         if (FileUtil.getNameWithoutExtension(fileName) == element.name) return null
-        text = KotlinBundle.message("rename.file.to.0.1", element.name.toString(), FileUtilRt.getExtension(fileName))
+        setTextGetter(KotlinBundle.lazyMessage("rename.file.to.0.1", element.name.toString(), FileUtilRt.getExtension(fileName)))
         return element.nameIdentifier?.textRange
     }
 

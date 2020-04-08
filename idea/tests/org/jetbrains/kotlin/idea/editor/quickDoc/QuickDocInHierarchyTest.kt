@@ -18,7 +18,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.MapDataContext
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
@@ -43,7 +43,7 @@ class QuickDocInHierarchyTest() : CodeInsightTestCase() {
             HierarchyBrowserBaseEx.SCOPE_PROJECT
         )
         val hierarchyNodeDescriptor = hierarchyTreeStructure.baseDescriptor as TypeHierarchyNodeDescriptor
-        val doc = KotlinQuickDocumentationProvider().generateDoc(hierarchyNodeDescriptor.psiClass as PsiElement, null)!!
+        val doc = KotlinDocumentationProvider().generateDoc(hierarchyNodeDescriptor.psiClass as PsiElement, null)!!
 
         TestCase.assertTrue("Invalid doc\n: $doc", doc.contains("Very special class"))
     }

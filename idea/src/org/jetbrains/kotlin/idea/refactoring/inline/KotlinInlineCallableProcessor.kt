@@ -25,10 +25,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -54,7 +54,8 @@ class KotlinInlineCallableProcessor(
         else -> KotlinBundle.message("text.declaration")
     }
 
-    private val commandName = KotlinBundle.message("text.inlining.0.1",
+    private val commandName = KotlinBundle.message(
+        "text.inlining.0.1",
         kind,
         DescriptiveNameUtil.getDescriptiveName(declaration)
     )
@@ -84,7 +85,8 @@ class KotlinInlineCallableProcessor(
                         CommonRefactoringUtil.showErrorHint(
                             declaration.project,
                             null,
-                            KotlinBundle.message("text.cannot.inline.0.1.usages",
+                            KotlinBundle.message(
+                                "text.cannot.inline.0.1.usages",
                                 usages.size - simpleNameUsages.size,
                                 usages.size
                             ),

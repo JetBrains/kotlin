@@ -250,7 +250,9 @@ class JavaSymbolProvider(
                         }
                     }
 
-                    if (javaClassDeclaredConstructors.isEmpty() && javaClass.classKind == ClassKind.CLASS) {
+                    if (javaClassDeclaredConstructors.isEmpty()
+                        && javaClass.classKind == ClassKind.CLASS
+                        && javaClass.hasDefaultConstructor()) {
                         declarations += prepareJavaConstructor(isPrimary = true).build()
                     }
                     for (javaConstructor in javaClassDeclaredConstructors) {

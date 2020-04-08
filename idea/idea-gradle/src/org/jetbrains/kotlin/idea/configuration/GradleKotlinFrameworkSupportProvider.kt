@@ -222,9 +222,9 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
         buildScriptData.addOther(
             """
                 kotlin {
-                    target {
+                    js {
                         $jsSubTargetName { }
-                        produceExecutable()
+                        binaries.executable()
                     }
                 }
             """.trimIndent()

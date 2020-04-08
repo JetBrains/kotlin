@@ -47,7 +47,7 @@ internal class FirQualifiedAccessExpressionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -57,6 +57,11 @@ internal class FirQualifiedAccessExpressionImpl(
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
         transformCalleeReference(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

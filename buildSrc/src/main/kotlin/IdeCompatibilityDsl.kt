@@ -30,6 +30,8 @@ enum class Platform : CompatibilityPredicate {
 
     val version: Int = name.drop(1).toInt()
 
+    val displayVersion: String = "20${name.drop(1).dropLast(1)}.${name.last()}"
+
     override fun matches(ide: Ide) = ide.platform == this
 
     companion object {
@@ -52,6 +54,11 @@ enum class Ide(val platform: Platform) : CompatibilityPredicate {
 
     val kind = Kind.values().first { it.shortName == name.take(2) }
     val version = name.dropWhile { !it.isDigit() }.toInt()
+
+    val displayVersion: String = when (kind) {
+        Kind.IntelliJ -> "IJ${platform.displayVersion}"
+        Kind.AndroidStudio -> "Studio${name.substringAfter("AS").toCharArray().joinToString(separator = ".")}"
+    }
 
     override fun matches(ide: Ide) = ide == this
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.renderer.render
 
 class RenameClassToContainingFileNameIntention : SelfTargetingRangeIntention<KtClassOrObject>(
-    KtClassOrObject::class.java, KotlinBundle.message("rename.class.to.containing.file.name")
+    KtClassOrObject::class.java, KotlinBundle.lazyMessage("rename.class.to.containing.file.name")
 ) {
     override fun startInWriteAction() = false
 
@@ -29,7 +29,7 @@ class RenameClassToContainingFileNameIntention : SelfTargetingRangeIntention<KtC
             || Name.identifier(fileName).render() != fileName
             || element.containingKtFile.declarations.any { it is KtClassOrObject && it.name == fileName }
         ) return null
-        text = KotlinBundle.message("rename.class.to.0", fileName)
+        setTextGetter(KotlinBundle.lazyMessage("rename.class.to.0", fileName))
         return element.nameIdentifier?.textRange
     }
 

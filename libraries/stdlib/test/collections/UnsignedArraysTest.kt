@@ -987,6 +987,14 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun onEach() {
+        assertEquals(listOf<UInt>(1, 2, 3), mutableListOf<UInt>().apply { uintArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf<UByte>(1, 2, 3), mutableListOf<UByte>().apply { ubyteArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf<UShort>(1, 2, 3), mutableListOf<UShort>().apply { ushortArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf<ULong>(1, 2, 3), mutableListOf<ULong>().apply { ulongArrayOf(1, 2, 3).onEach { add(it) } })
+    }
+
+    @Test
     fun drop() {
         expect(listOf(1.toUByte())) { ubyteArrayOf(1).drop(0) }
         expect(listOf()) { ushortArrayOf().drop(1) }

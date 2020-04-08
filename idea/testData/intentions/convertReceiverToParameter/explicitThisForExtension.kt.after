@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun add(i: Int) {
+    i.run { println(this + 1) }
+}

@@ -21,6 +21,7 @@ dependencies {
     testCompile(project(":kotlin-noarg"))
     testCompile(project(":kotlin-sam-with-receiver"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":native:kotlin-native-utils"))
 
     testCompile(projectRuntimeJar(":kotlin-compiler-embeddable"))
     testCompile(intellijCoreDep()) { includeJars("jdom") }

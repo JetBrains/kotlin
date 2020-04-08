@@ -106,7 +106,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         try {
             val metadataVersion =
                 configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
-            if (arguments.klibBasedMpp) {
+            if (arguments.expectActualLinker) {
                 K2MetadataKlibSerializer(metadataVersion).serialize(environment)
             } else {
                 MetadataSerializer(metadataVersion, true).serialize(environment)

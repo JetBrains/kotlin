@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T of <root>.<get-gk>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): T of <root>.<get-gk> declared in <root>.<get-gk>'
-                  ERROR_CALL 'Unresolved reference: this@R|/gk|' type=T of <root>.<get-gk>
+                  GET_VAR '<this>: T of <root>.<get-gk> declared in <root>.<get-gk>' type=T of <root>.<get-gk> origin=null
   FUN name:testGeneric1 visibility:public modality:FINAL <> (x:kotlin.String) returnType:T of <root>.<get-gk>
     VALUE_PARAMETER name:x index:0 type:kotlin.String
     BLOCK_BODY
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
             FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-kt26531Val>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <no name provided> (): T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>'
-                  ERROR_CALL 'Unresolved reference: this@R|/kt26531Val|' type=T of <root>.<get-kt26531Val>
+                  GET_VAR '<this>: T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>' type=T of <root>.<get-kt26531Val> origin=null
   FUN name:kt26531 visibility:public modality:FINAL <> () returnType:T of <root>.<get-kt26531Val>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): T of <root>.<get-kt26531Val> declared in <root>'

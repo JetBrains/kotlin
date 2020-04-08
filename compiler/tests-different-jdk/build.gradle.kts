@@ -63,14 +63,23 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     }
 }
 
-codegenTest(target = 6, jvm = 9) {}
-
 codegenTest(target = 8, jvm = 8) {}
+
+// Switch TC builds to...
+codegenTest(target = 6, jvm = 11) {}
+
+codegenTest(target = 8, jvm = 11) {}
+
+codegenTest(target = 11, jvm = 11) {}
+
+//...and delete old tasks..
+codegenTest(target = 6, jvm = 9) {}
 
 codegenTest(target = 8, jvm = 9) {}
 
 codegenTest(target = 9, jvm = 9) {}
 
+//..also add this two tasks to build after adding fresh jdks to build agents
 val mostRecentJdk = JdkMajorVersion.values().last().name
 
 codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {

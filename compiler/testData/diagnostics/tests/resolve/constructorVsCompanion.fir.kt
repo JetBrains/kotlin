@@ -20,4 +20,4 @@ val a = A
 val b = B
 val c = C
 val d = D
-val e = <!INAPPLICABLE_CANDIDATE!>E<!>(42)
+val e = E(42)

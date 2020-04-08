@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
@@ -51,7 +53,7 @@ class KotlinConfigurationCheckerStartupActivity : StartupActivity {
 
         notifyKotlinStyleUpdateIfNeeded(project)
 
-        KotlinConfigurationCheckerService.getInstanceIfNotDisposed(project)?.performProjectPostOpenActions()
+        KotlinConfigurationCheckerService.getInstance(project).performProjectPostOpenActions()
     }
 }
 
@@ -101,15 +103,7 @@ class KotlinConfigurationCheckerService(val project: Project) {
     companion object {
         const val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
 
-        fun getInstanceIfNotDisposed(project: Project): KotlinConfigurationCheckerService? {
-            return runReadAction {
-                if (!project.isDisposed) {
-                    project.getService(KotlinConfigurationCheckerService::class.java)
-                        ?: error("Can't find ${KotlinConfigurationCheckerService::class} service")
-                } else {
-                    null
-                }
-            }
-        }
+        fun getInstance(project: Project): KotlinConfigurationCheckerService = project.getServiceSafe()
+
     }
 }

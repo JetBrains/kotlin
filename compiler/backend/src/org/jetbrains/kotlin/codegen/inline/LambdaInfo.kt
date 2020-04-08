@@ -65,7 +65,10 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
         for (info in capturedVars) {
             val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, ""))
                 ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
-            builder.addCapturedParam(field, info.fieldName)
+            val recapturedParamInfo = builder.addCapturedParam(field, info.fieldName)
+            if (this is ExpressionLambda && isCapturedSuspend(info)) {
+                recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
+            }
         }
 
         return builder.buildParameters()
@@ -222,10 +225,11 @@ internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMappe
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         node = sourceCompiler.generateLambdaBody(this)
+        node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
 
     abstract fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor
-    abstract fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean
+    abstract fun isCapturedSuspend(desc: CapturedParamDesc): Boolean
 }
 
 class PsiExpressionLambda(
@@ -340,6 +344,6 @@ class PsiExpressionLambda(
         )
     }
 
-    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
-        isCapturedSuspendLambda(closure, desc.fieldName, inliningContext.state.bindingContext)
+    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
+        isCapturedSuspendLambda(closure, desc.fieldName, typeMapper.bindingContext)
 }

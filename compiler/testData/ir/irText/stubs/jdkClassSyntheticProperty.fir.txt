@@ -6,4 +6,4 @@ FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Array<out java.lang.reflect.Field?>? declared in <root>'
           CALL 'public open fun <get-declaredFields> (): kotlin.Array<out java.lang.reflect.Field?>? declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
-            $this: ERROR_CALL 'Unresolved reference: this@R|/test|' type=java.lang.Class<*>
+            $this: GET_VAR '<this>: java.lang.Class<*> declared in <root>.<get-test>' type=java.lang.Class<*> origin=null

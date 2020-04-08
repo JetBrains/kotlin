@@ -83,8 +83,8 @@ val emptyLoggingContext = object : LoggingContext {
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
 
-private val CompilerConfiguration.klibMpp: Boolean
-    get() = get(CommonConfigurationKeys.KLIB_MPP) ?: false
+private val CompilerConfiguration.expectActualLinker: Boolean
+    get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
@@ -141,7 +141,7 @@ fun generateKLib(
 
     val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
-    if (!configuration.klibMpp) {
+    if (!configuration.expectActualLinker) {
         moduleFragment.acceptVoid(ExpectDeclarationRemover(psi2IrContext.symbolTable, doRemove = false, keepOptionalAnnotations = false))
     }
 
@@ -442,7 +442,7 @@ fun serializeModuleIntoKlib(
             emptyLoggingContext,
             moduleFragment.irBuiltins,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
-            skipExpects = !configuration.klibMpp
+            skipExpects = !configuration.expectActualLinker
         ).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor
@@ -547,5 +547,5 @@ private fun compareMetadataAndGoToNextICRoundIfNeeded(
 private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration) = KlibMetadataIncrementalSerializer(
     languageVersionSettings = configuration.languageVersionSettings,
     metadataVersion = configuration.metadataVersion,
-    skipExpects = !configuration.klibMpp
+    skipExpects = !configuration.expectActualLinker
 )

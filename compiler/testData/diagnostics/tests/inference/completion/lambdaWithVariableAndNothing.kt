@@ -46,7 +46,7 @@ fun testNoSmartCast3(s: String?) {
 fun testNoSmartCast4(s: String?) {
     id(
         if (s != null) ( {""} )
-        else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>noSmartCast4<!>(null) <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>""<!> }<!>
+        else noSmartCast4(null) { "" }
     )
     s<!UNSAFE_CALL!>.<!>length
 }

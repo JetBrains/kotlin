@@ -67,7 +67,3 @@ val KotlinLibrary.packageFqName: String?
 
 val KotlinLibrary.exportForwardDeclarations
     get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)
-        .asSequence()
-        .map { it.trim() }
-        .filter { it.isNotEmpty() }
-        .toList()

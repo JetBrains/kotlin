@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -34,7 +33,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -117,6 +115,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         val text = file.text.substring(offsetDelta)
         val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }
 
+        val locationFqName = if (startOffsets.size == 1) {
+            val fqName = file.namedDeclarationFqName(startOffsets[0] - 1)
+            fqName?.takeIf { it == file.namedDeclarationFqName(endOffsets[0] + 1) }
+        } else null
+
         return listOf(
             BasicKotlinReferenceTransferableData(
                 sourceFileUrl = file.virtualFile.url,
@@ -124,10 +127,16 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 imports = imports,
                 sourceTextOffset = offsetDelta,
                 sourceText = text,
-                textRanges = ranges
+                textRanges = ranges,
+                locationFqName = locationFqName
             )
         )
     }
+
+    private fun KtFile.namedDeclarationFqName(offset: Int): String? =
+        if (offset in 0 until textLength)
+            PsiTreeUtil.getNonStrictParentOfType(this.findElementAt(offset), KtNamedDeclaration::class.java)?.fqName?.asString()
+        else null
 
     private fun collectReferenceData(
         textRanges: List<TextRange>,
@@ -267,7 +276,28 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         val file = PsiDocumentManager.getInstance(project).getPsiFile(document)
         if (file !is KtFile) return
 
+        if (isPastedToTheSameOrigin(file, caretOffset, values)) return
+
         processReferenceData(project, editor, file, bounds.startOffset, values.single())
+    }
+
+    private fun isPastedToTheSameOrigin(
+        file: KtFile,
+        caretOffset: Int,
+        values: List<BasicKotlinReferenceTransferableData>
+    ): Boolean {
+        if (values.size == 1 && values[0].sourceFileUrl == file.virtualFile.url &&
+            values[0].locationFqName != null &&
+            // check locationFqName on position before pasted snippet
+            values[0].locationFqName == file.namedDeclarationFqName(caretOffset - 1)
+        ) {
+            val currentImports = file.importDirectives.map { it.text }.toSet()
+            val originalImports = values.flatMap { it.imports }.toSet()
+            if (currentImports == originalImports) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun processReferenceData(
@@ -432,12 +462,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         // Step 2. Find references to restore in a target file
         return ProgressIndicatorUtils.awaitWithCheckCanceled(
-            nonBlocking<List<ReferenceToRestoreData>> {
-                return@nonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
+            submitNonBlocking(project, indicator) {
+                return@submitNonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
             }
-                .withDocumentsCommitted(project)
-                //.cancelWith(indicator)
-                .submit(AppExecutorUtil.getAppExecutorService())
         )
     }
 

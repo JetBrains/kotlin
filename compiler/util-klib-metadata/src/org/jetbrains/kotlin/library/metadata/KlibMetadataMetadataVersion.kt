@@ -15,7 +15,7 @@ class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = KlibMetadataVersion(1, 0, 0)
+        val INSTANCE = KlibMetadataVersion(1, 4, 0)
 
         @JvmField
         val INVALID_VERSION = KlibMetadataVersion()

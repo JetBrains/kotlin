@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
@@ -494,16 +495,20 @@ interface IrBuilderExtension {
         expression: IrExpression,
         nullableSerializerClass: IrClassSymbol
     ): IrExpression {
-        return if (type.isMarkedNullable)
+        return if (type.isMarkedNullable) {
+            val nullableConstructor =
+                compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first())
+            val resultType = type.makeNotNullable()
             irInvoke(
-                null, compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first()),
-                typeArguments = listOf(type.makeNotNullable().toIrType()),
+                null, nullableConstructor,
+                typeArguments = listOf(resultType.toIrType()),
                 valueArguments = listOf(expression),
-                // Return type should not be different from declared class, otherwise, we will call wrong <init> method on runtime.
-                returnTypeHint = null
+                // Return type should be correctly substituted
+                returnTypeHint = nullableConstructor.descriptor.returnType.replace(listOf(resultType.asTypeProjection())).toIrType()
             )
-        else
+        } else {
             expression
+        }
     }
 
 
@@ -657,8 +662,9 @@ interface IrBuilderExtension {
             } else {
                 compilerContext.symbolTable.referenceConstructor(serializerClass.unsubstitutedPrimaryConstructor!!)
             }
-            // Return type should not be different from declared class, otherwise, we will call wrong <init> method on runtime.
-            return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = null)
+            // Return type should be correctly substituted
+            val substitutedReturnType = ctor.descriptor.returnType.replace(typeArgs.map { it.toKotlinType().asTypeProjection() }).toIrType()
+            return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = substitutedReturnType)
         }
     }
 

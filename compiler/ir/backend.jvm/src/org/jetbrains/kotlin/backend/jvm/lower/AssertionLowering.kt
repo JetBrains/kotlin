@@ -39,7 +39,7 @@ internal val assertionPhase = makeIrFilePhase(
     description = "Lower assert calls depending on the assertions mode",
     // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
     // class that contains it.
-    prerequisite = setOf(callableReferencePhase)
+    prerequisite = setOf(functionReferencePhase)
 )
 
 private class AssertionLowering(private val context: JvmBackendContext) :
@@ -133,7 +133,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
 }
 
 private fun IrBuilderWithScope.getJavaClass(backendContext: JvmBackendContext, irClass: IrClass) =
-    with(CallableReferenceLowering) {
+    with(FunctionReferenceLowering) {
         javaClassReference(irClass.defaultType, backendContext)
     }
 

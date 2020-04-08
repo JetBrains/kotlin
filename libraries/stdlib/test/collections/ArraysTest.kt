@@ -1416,6 +1416,31 @@ class ArraysTest {
         assertArrayNotSameButEquals(arrayOf("3", "2", "1"), (arrayOf("1", "2", "3") as Array<out String>).reversedArray())
     }
 
+    @Test fun onEach() {
+        var count = 0
+        val data = intArrayOf(1, 2, 3)
+        val newData = data.onEach { count += it }
+        assertEquals(6, count)
+        assertSame(newData, data)
+
+        var concat = ""
+        val strings = arrayOf("a", "b", "c")
+        val newStrings = strings.onEach { concat += it }
+        assertEquals("abc", concat)
+        assertSame(newStrings, strings)
+
+        assertEquals(listOf("a", "b", "c"), mutableListOf<String>().apply { arrayOf("a", "b", "c").onEach { add(it) } })
+
+        assertEquals(listOf(1, 2, 3), mutableListOf<Int>().apply { intArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf<Byte>(1, 2, 3), mutableListOf<Byte>().apply { byteArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf<Short>(1, 2, 3), mutableListOf<Short>().apply { shortArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf<Long>(1, 2, 3), mutableListOf<Long>().apply { longArrayOf(1, 2, 3).onEach { add(it) } })
+        assertEquals(listOf(1f, 2f, 3f), mutableListOf<Float>().apply { floatArrayOf(1f, 2f, 3f).onEach { add(it) } })
+        assertEquals(listOf(1.0, 2.0, 3.0), mutableListOf<Double>().apply { doubleArrayOf(1.0, 2.0, 3.0).onEach { add(it) } })
+        assertEquals(listOf(true, false, false), mutableListOf<Boolean>().apply { booleanArrayOf(true, false, false).onEach { add(it) } })
+        assertEquals(listOf('1', '2', '3'), mutableListOf<Char>().apply { charArrayOf('1', '2', '3').onEach { add(it) } })
+    }
+
     @Test fun drop() {
         expect(listOf(1), { intArrayOf(1).drop(0) })
         expect(listOf(), { intArrayOf().drop(1) })

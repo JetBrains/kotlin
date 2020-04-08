@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
-import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -293,6 +290,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                                     source = operatorCall.argument.source
                                     diagnostic = ConeVariableExpectedError()
                                 }
+                            (leftArgument as? FirQualifiedAccess)?.let {
+                                dispatchReceiver = it.dispatchReceiver
+                                extensionReceiver = it.extensionReceiver
+                            }
                         }
                     assignment.transform(transformer, ResolutionMode.ContextIndependent)
                 }
@@ -477,12 +478,19 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
                 val symbol = lhs.symbol
-                symbol?.constructType(
-                    Array((symbol.phasedFir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0) {
-                        ConeStarProjection
-                    },
-                    isNullable = false,
-                ) ?: lhs.resultType.coneTypeUnsafe()
+                val typeRef =
+                    symbol?.constructType(
+                        Array((symbol.phasedFir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0) {
+                            ConeStarProjection
+                        },
+                        isNullable = false,
+                    )
+                if (typeRef != null) {
+                    lhs.replaceTypeRef(buildResolvedTypeRef { type = typeRef })
+                    typeRef
+                } else {
+                    lhs.resultType.coneTypeUnsafe()
+                }
             }
             is FirResolvedReifiedParameterReference -> {
                 val symbol = lhs.symbol
@@ -556,10 +564,12 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        if (annotationCall.resolved) return annotationCall.compose()
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
         return (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
             // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
             it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
+            it.replaceResolved(true)
             dataFlowAnalyzer.exitAnnotationCall(it)
         }.compose()
     }
@@ -590,6 +600,9 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         if (transformer.implicitTypeOnly) return delegatedConstructorCall.compose()
+        when (delegatedConstructorCall.calleeReference) {
+            is FirResolvedNamedReference, is FirErrorNamedReference -> return delegatedConstructorCall.compose()
+        }
         dataFlowAnalyzer.enterCall(delegatedConstructorCall)
         var callCompleted = true
         var result = delegatedConstructorCall

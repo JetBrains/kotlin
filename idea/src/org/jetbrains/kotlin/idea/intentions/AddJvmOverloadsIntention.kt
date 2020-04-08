@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 private val annotationFqName = FqName("kotlin.jvm.JvmOverloads")
 
 class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
-    KtModifierListOwner::class.java, KotlinBundle.message("add.jvmoverloads.annotation")
+    KtModifierListOwner::class.java,
+    KotlinBundle.lazyMessage("add.jvmoverloads.annotation"),
 ), LowPriorityAction {
-
     override fun isApplicableTo(element: KtModifierListOwner, caretOffset: Int): Boolean {
         val (targetName, parameters) = when (element) {
             is KtNamedFunction -> {
@@ -59,7 +59,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
             else -> return false
         }
 
-        text = KotlinBundle.message("add.jvmoverloads.annotation.to.0", targetName)
+        setTextGetter(KotlinBundle.lazyMessage("add.jvmoverloads.annotation.to.0", targetName))
 
         return TargetPlatformDetector.getPlatform(element.containingKtFile).isJvm()
                 && parameters.any { it.hasDefaultValue() }

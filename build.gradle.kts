@@ -27,7 +27,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.16")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
         classpath("com.gradle.publish:plugin-publish-plugin:0.11.0")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
@@ -54,9 +54,7 @@ pill {
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
-val includeStdlibJsIr by extra(
-    findProperty("include.stdlib.js.ir")?.let { it.toString().toBoolean() } ?: isTeamcityBuild
-)
+val includeStdlibJsIr by extra(project.kotlinBuildProperties.includeStdlibJsIr)
 
 val configuredJdks: List<JdkId> =
     getConfiguredJdks().also {
@@ -181,7 +179,7 @@ extra["versions.kotlinx-collections-immutable"] = "0.3.1"
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4-M2-dev-15076"
+    extra["versions.kotlin-native"] = "1.4-M2-dev-15123"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -247,6 +245,7 @@ extra["compilerModules"] = arrayOf(
     ":js:js.translator",
     ":js:js.dce",
     ":native:frontend.native",
+    ":native:kotlin-native-utils",
     ":compiler",
     ":kotlin-build-common",
     ":core:metadata",
@@ -280,6 +279,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib-js-ir".takeIf { includeStdlibJsIr },
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
+    ":kotlin-test:kotlin-test-annotations-common",
     ":kotlin-test:kotlin-test-common",
     ":kotlin-test:kotlin-test-jvm",
     ":kotlin-test:kotlin-test-junit",
@@ -325,7 +325,7 @@ fun Task.listConfigurationContents(configName: String) {
 
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget)
-val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toString()?.toBoolean() ?: project.hasProperty("teamcity"))
+val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 allprojects {
 
@@ -559,6 +559,10 @@ tasks {
 //        dependsOn(":js:js.tests:wasmTest")
     }
 
+    register("nativeCompilerTest") {
+        dependsOn(":native:kotlin-native-utils:test")
+    }
+
     register("firCompilerTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
@@ -600,6 +604,7 @@ tasks {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
         dependsOn("wasmCompilerTest")
+        dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
         dependsOn("scriptingTest")
@@ -612,7 +617,6 @@ tasks {
 
     register("toolsTest") {
         dependsOn(":tools:kotlinp:test")
-        dependsOn(":native:kotlin-native-utils:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
     }
 

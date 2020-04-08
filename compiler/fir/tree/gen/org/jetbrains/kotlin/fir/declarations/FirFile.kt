@@ -29,4 +29,6 @@ abstract class FirFile : FirPureAbstractElement(), FirAnnotationContainer, FirDe
     abstract val packageFqName: FqName
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
 }

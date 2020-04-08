@@ -4956,6 +4956,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/jsModule/externalClassWithDefaults.kt");
         }
 
+        @TestMetadata("externalConstructor.kt")
+        public void testExternalConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/externalConstructor.kt");
+        }
+
         @TestMetadata("externalFunction.kt")
         public void testExternalFunction() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/externalFunction.kt");
@@ -6482,6 +6487,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/propertyAccess/classUsesPackageProperties.kt");
         }
 
+        @TestMetadata("configurable.kt")
+        public void testConfigurable() throws Exception {
+            runTest("js/js.translator/testData/box/propertyAccess/configurable.kt");
+        }
+
         @TestMetadata("customGetter.kt")
         public void testCustomGetter() throws Exception {
             runTest("js/js.translator/testData/box/propertyAccess/customGetter.kt");
@@ -6802,6 +6812,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
 
         public void testAllFilesPresentInRegression() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("companionObjectInExternalInterface.kt")
+        public void testCompanionObjectInExternalInterface() throws Exception {
+            runTest("js/js.translator/testData/box/regression/companionObjectInExternalInterface.kt");
         }
 
         @TestMetadata("enumEntryInitOrder.kt")

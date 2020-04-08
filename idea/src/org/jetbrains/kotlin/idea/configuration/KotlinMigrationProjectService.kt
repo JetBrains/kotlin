@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -28,8 +27,7 @@ import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
 import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 import org.jetbrains.kotlin.idea.migration.applicableMigrationTools
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.util.application.getServiceSafe
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.*
 import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.idea.versions.LibInfo
 import java.io.File
@@ -75,7 +73,7 @@ class KotlinMigrationProjectService(val project: Project) {
             return
         }
 
-        ApplicationManager.getApplication().executeOnPooledThread {
+        executeOnPooledThread {
             var migrationInfo: MigrationInfo? = null
             var hasApplicableTools = false
 
@@ -97,11 +95,11 @@ class KotlinMigrationProjectService(val project: Project) {
                     hasApplicableTools = true
                 }
 
-                if (ApplicationManager.getApplication().isUnitTestMode) {
+                if (isUnitTestMode()) {
                     return@executeOnPooledThread
                 }
 
-                ApplicationManager.getApplication().invokeLater {
+                invokeLater {
                     showMigrationNotification(project, migrationInfo)
                 }
             } finally {
@@ -111,11 +109,7 @@ class KotlinMigrationProjectService(val project: Project) {
     }
 
     companion object {
-        fun getInstanceIfNotDisposed(project: Project): KotlinMigrationProjectService? {
-            return runReadAction {
-                if (!project.isDisposed) project.getServiceSafe() else null
-            }
-        }
+        fun getInstance(project: Project): KotlinMigrationProjectService = project.getServiceSafe()
 
         private fun prepareMigrationInfo(old: MigrationState?, new: MigrationState?): MigrationInfo? {
             if (old == null || new == null) {

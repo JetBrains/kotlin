@@ -39,12 +39,12 @@ class Yarn : NpmApi {
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
-        vararg cliArgs: String
+        cliArgs: List<String>
     ) = getDelegate(rootProject.project)
         .resolveRootProject(
             rootProject,
             subProjects,
             skipExecution,
-            *cliArgs
+            cliArgs
         )
 }

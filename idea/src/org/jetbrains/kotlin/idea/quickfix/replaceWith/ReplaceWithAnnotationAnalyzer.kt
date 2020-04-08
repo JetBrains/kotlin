@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
+import com.intellij.openapi.diagnostic.ControlFlowException
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
@@ -59,6 +60,7 @@ object ReplaceWithAnnotationAnalyzer {
         val expression = try {
             psiFactory.createExpression(annotation.pattern)
         } catch (t: Throwable) {
+            if (t is ControlFlowException) throw t
             return null
         }
 
@@ -82,6 +84,7 @@ object ReplaceWithAnnotationAnalyzer {
         val typeReference = try {
             psiFactory.createType(annotation.pattern)
         } catch (e: Exception) {
+            if (e is ControlFlowException) throw e
             return null
         }
         if (typeReference.typeElement !is KtUserType) return null

@@ -23,6 +23,16 @@ class Fir2IrConversionScope {
 
     fun parentFromStack(): IrDeclarationParent = parentStack.last()
 
+    fun parentAccessorOfPropertyFromStack(property: IrProperty): IrSimpleFunction? {
+        for (parent in parentStack.asReversed()) {
+            when (parent) {
+                property.getter -> return property.getter
+                property.setter -> return property.setter
+            }
+        }
+        return null
+    }
+
     fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T {
         declaration.parent = parentStack.last()
         return declaration

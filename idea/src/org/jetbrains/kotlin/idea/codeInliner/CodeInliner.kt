@@ -217,12 +217,12 @@ class CodeInliner<TCallElement : KtElement>(
                 it[CodeToInline.TYPE_PARAMETER_USAGE_KEY] == parameterName
             }
 
-            val type = resolvedCall.typeArguments[typeParameter]!!
+            val type = resolvedCall.typeArguments[typeParameter] ?: continue
             val typeElement = if (explicitTypeArgs != null) { // we use explicit type arguments if available to avoid shortening
                 val explicitArgTypeElement = explicitTypeArgs[index].typeReference?.typeElement ?: continue
                 explicitArgTypeElement.marked(USER_CODE_KEY)
             } else {
-                psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).typeElement!!
+                psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).typeElement ?: continue
             }
 
             val typeClassifier = type.constructor.declarationDescriptor

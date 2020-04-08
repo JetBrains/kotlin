@@ -98,8 +98,7 @@ class GradleMigrateTest : GradleImportingTestCase() {
         }
 
         val importResult = FutureResult<MigrationTestState?>()
-        val migrationProjectComponent = KotlinMigrationProjectService.getInstanceIfNotDisposed(myProject)
-            ?: error("Disposed project")
+        val migrationProjectComponent = KotlinMigrationProjectService.getInstance(myProject)
 
         migrationProjectComponent.setImportFinishListener { migrationState ->
             importResult.set(migrationState)

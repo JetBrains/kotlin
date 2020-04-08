@@ -31,7 +31,9 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
 
     val gradleVersions by property<List<Version>>(emptyList())
 
-    val gradleProperties by listProperty<Pair<String, String>>()
+    val gradleProperties by listProperty(
+        "kotlin.code.style" to "official"
+    )
 
     val settingsGradleFileIRs by listProperty<BuildSystemIR>()
 
@@ -55,9 +57,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         }
     }
 
-    val localProperties by listProperty(
-        "kotlin.code.style" to "official"
-    )
+    val localProperties by listProperty<Pair<String, String>>()
 
     val createLocalPropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)

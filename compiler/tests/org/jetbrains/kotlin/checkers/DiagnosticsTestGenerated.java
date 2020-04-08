@@ -6982,11 +6982,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/dataClassCopy.kt");
                 }
 
-                @TestMetadata("defaults.kt")
-                public void testDefaults() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/defaults.kt");
-                }
-
                 @TestMetadata("delegationBy.kt")
                 public void testDelegationBy() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/delegationBy.kt");
@@ -23038,6 +23033,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 public void testOnPropertyAccessor() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/onPropertyAccessor.kt");
                 }
+
+                @TestMetadata("onTypeParameter.kt")
+                public void testOnTypeParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/onTypeParameter.kt");
+                }
             }
         }
 
@@ -24108,6 +24108,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("typeAliasInvisibleObject.kt")
             public void testTypeAliasInvisibleObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/typeAliasInvisibleObject.kt");
+            }
+
+            @TestMetadata("typeAliasIsUsedAsATypeArgumentInOtherAlias.kt")
+            public void testTypeAliasIsUsedAsATypeArgumentInOtherAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/typeAliasIsUsedAsATypeArgumentInOtherAlias.kt");
             }
 
             @TestMetadata("typeAliasNotNull.kt")

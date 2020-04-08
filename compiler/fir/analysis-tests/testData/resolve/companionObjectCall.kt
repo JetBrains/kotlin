@@ -8,13 +8,13 @@ fun case1(a: A?) {
 
         Case1.invoke(it)  //resolved to private constructor
 
-        <!INAPPLICABLE_CANDIDATE!>Case1<!>(it) //resolved to private constructor
+        Case1(it) //resolved to private constructor
 
-        <!INAPPLICABLE_CANDIDATE!>Case1<!>(A()) //resolved to private constructor
+        Case1(A()) //resolved to private constructor
     }
 
-    <!INAPPLICABLE_CANDIDATE!>Case1<!>(A()) //resolved to private constructor
-    <!INAPPLICABLE_CANDIDATE!>Case1<!>(a = A()) //resolved to private constructor
+    Case1(A()) //resolved to private constructor
+    Case1(a = A()) //resolved to private constructor
 }
 
 class Case1 private constructor(val a: String) {
@@ -25,8 +25,8 @@ class Case1 private constructor(val a: String) {
 
 // TESTCASE NUMBER: 2
 fun case2(a: A){
-    <!INAPPLICABLE_CANDIDATE!>Case2<!>(a)
-    <!INAPPLICABLE_CANDIDATE!>Case2<!>(a = a)
+    Case2(a)
+    Case2(a = a)
 }
 
 class Case2 {

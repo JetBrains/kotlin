@@ -137,6 +137,15 @@
           "description": "try-expression has to start with a try body",
           "unexpectedBehaviour": false
         }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 2,
+          "description": "try-expression has to start with a try body",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
       ]
     }
   },

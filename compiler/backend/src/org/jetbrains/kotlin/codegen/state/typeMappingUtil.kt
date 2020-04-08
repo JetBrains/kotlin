@@ -93,7 +93,8 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
                 skipDeclarationSiteWildcards = it,
                 isForAnnotationParameter = isForAnnotationParameter,
-                needInlineClassWrapping = needInlineClassWrapping
+                needInlineClassWrapping = needInlineClassWrapping,
+                mapTypeAliases = mapTypeAliases
         )
     }
 
@@ -102,7 +103,8 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
             skipDeclarationSiteWildcards = false,
             isForAnnotationParameter = isForAnnotationParameter,
             fallbackMode = this,
-            needInlineClassWrapping = needInlineClassWrapping
+            needInlineClassWrapping = needInlineClassWrapping,
+            mapTypeAliases = mapTypeAliases
         )
     }
 
@@ -112,16 +114,18 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
 internal fun extractTypeMappingModeFromAnnotation(
     callableDescriptor: CallableDescriptor?,
     outerType: KotlinType,
-    isForAnnotationParameter: Boolean
+    isForAnnotationParameter: Boolean,
+    mapTypeAliases: Boolean
 ): TypeMappingMode? =
     SimpleClassicTypeSystemContext.extractTypeMappingModeFromAnnotation(
-        callableDescriptor?.suppressWildcardsMode(), outerType, isForAnnotationParameter
+        callableDescriptor?.suppressWildcardsMode(), outerType, isForAnnotationParameter, mapTypeAliases
     )
 
 fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
     callableSuppressWildcardsMode: Boolean?,
     outerType: KotlinTypeMarker,
-    isForAnnotationParameter: Boolean
+    isForAnnotationParameter: Boolean,
+    mapTypeAliases: Boolean
 ): TypeMappingMode? {
     val suppressWildcards =
         outerType.suppressWildcardsMode(this) ?: callableSuppressWildcardsMode ?: return null
@@ -131,7 +135,8 @@ fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
     return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
         skipDeclarationSiteWildcards = suppressWildcards,
         isForAnnotationParameter = isForAnnotationParameter,
-        needInlineClassWrapping = !outerType.typeConstructor().isInlineClass()
+        needInlineClassWrapping = !outerType.typeConstructor().isInlineClass(),
+        mapTypeAliases = mapTypeAliases
     )
 }
 

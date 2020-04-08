@@ -60,7 +60,7 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
             return createSetupSdkPanel(myProject, psiFile)
         }
 
-        val configurationChecker = KotlinConfigurationCheckerService.getInstanceIfNotDisposed(module.project) ?: return null
+        val configurationChecker = KotlinConfigurationCheckerService.getInstance(module.project)
 
         if (!configurationChecker.isSyncing &&
             isNotConfiguredNotificationRequired(module.toModuleGroup()) &&

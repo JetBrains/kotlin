@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
@@ -21,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializerCodegen(
@@ -45,7 +33,7 @@ abstract class SerializerCodegen(
             generateSerialDesc()
         val save = generateSaveIfNeeded()
         val load = generateLoadIfNeeded()
-        generateDescriptorGetterIfNeeded()
+        generateMembersFromGeneratedSerializer()
         if (!prop && (save || load))
             generateSerialDesc()
         if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
@@ -55,14 +43,18 @@ abstract class SerializerCodegen(
         }
     }
 
-    private fun generateDescriptorGetterIfNeeded(): Boolean {
-        val function = getMemberToGenerate(
-            serializerDescriptor, SerialEntityNames.GENERATED_DESCRIPTOR_GETTER.identifier,
-            { true }, { true }
-        ) ?: return false
-        generateChildSerializersGetter(function)
-        return true
+    private fun generateMembersFromGeneratedSerializer() {
+        getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier,
+            { true }, { it.isEmpty() }
+        )?.let { generateChildSerializersGetter(it) }
+        getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier,
+            { true }, { it.isEmpty() }
+        )?.takeIf { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }?.let { generateTypeParamsSerializersGetter(it) }
     }
+
+    protected abstract fun generateTypeParamsSerializersGetter(function: FunctionDescriptor)
 
     protected abstract fun generateChildSerializersGetter(function: FunctionDescriptor)
 

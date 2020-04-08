@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -243,6 +244,30 @@ fun createKPropertyType(
     val arguments = if (receiverType != null) listOf(receiverType, rawReturnType) else listOf(rawReturnType)
     val classId = StandardClassIds.reflectByName("K${if (isMutable) "Mutable" else ""}Property${arguments.size - 1}")
     return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), arguments.toTypedArray(), isNullable = false)
+}
+
+fun BodyResolveComponents.buildResolvedQualifierForClass(
+    regularClass: FirClassLikeSymbol<*>,
+    sourceElement: FirSourceElement? = null,
+    // TODO: Clarify if we actually need type arguments for qualifier?
+    typeArgumentsForQualifier: List<FirTypeProjection> = emptyList()
+): FirResolvedQualifier {
+    val classId = regularClass.classId
+    return buildResolvedQualifier {
+        source = sourceElement
+        packageFqName = classId.packageFqName
+        relativeClassFqName = classId.relativeClassName
+        safe = false
+        typeArguments.addAll(typeArgumentsForQualifier)
+        symbol = regularClass
+    }.apply {
+        resultType = if (classId.isLocal) {
+            typeForQualifierByDeclaration(regularClass.fir, resultType, session)
+                ?: session.builtinTypes.unitType
+        } else {
+            typeForQualifier(this)
+        }
+    }
 }
 
 fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifier): FirTypeRef {

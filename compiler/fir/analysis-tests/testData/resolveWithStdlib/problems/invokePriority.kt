@@ -29,6 +29,6 @@ class E {
 }
 
 fun main() {
-    E.f() // Resolves to (2) in old FE (to (1) in FIR with object implicit invoke support)
+    E.f() // Resolves to (2) in old FE (Resolves to (1) in FIR)
     E.f.invoke() // Resolves to (1)
 }

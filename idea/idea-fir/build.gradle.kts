@@ -6,7 +6,8 @@ plugins {
 dependencies {
     testCompileOnly(toolsJar())
     testRuntimeOnly(toolsJar())
-    
+
+    testRuntimeOnly(intellijPluginDep("gradle"))
     testCompile(project(":idea"))
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -17,13 +18,15 @@ dependencies {
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
 
+    if (Ide.AS35.orLower()) {
+        testRuntimeOnly(intellijPluginDep("Groovy"))
+    }
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java"))
         testRuntime(intellijPluginDep("java"))
     }
 
     testRuntime(intellijRuntimeAnnotations())
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-preloader"))

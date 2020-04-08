@@ -31,20 +31,24 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
-        val developmentExecutable = compilation.binaries.getIrBinary(KotlinJsBinaryType.DEVELOPMENT)
+        compilation.binaries.getIrBinaries(KotlinJsBinaryType.DEVELOPMENT)
+            .all { developmentExecutable ->
+                val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
+                    group = taskGroupName
+                    inputFileProperty.set(developmentExecutable.linkTask.map { it.outputFileProperty.get() })
+                }
 
-        val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
-            inputFileProperty.set(developmentExecutable.linkTask.map { it.outputFileProperty.get() })
-        }
-        target.runTask.dependsOn(runTaskHolder)
+                target.runTask.dependsOn(runTaskHolder)
+            }
     }
 
     override fun configureBuild(
         compilation: KotlinJsIrCompilation
     ) {
-        val productionExecutable = compilation.binaries.getIrBinary(KotlinJsBinaryType.PRODUCTION)
-
-        val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(productionExecutable.linkTask)
+        compilation.binaries.getIrBinaries(KotlinJsBinaryType.PRODUCTION)
+            .all { productionExecutable ->
+                val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+                assembleTask.dependsOn(productionExecutable.linkTask)
+            }
     }
 }

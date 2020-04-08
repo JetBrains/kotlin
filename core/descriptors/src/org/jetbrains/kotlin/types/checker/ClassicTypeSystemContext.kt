@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorImpl
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
@@ -434,11 +434,17 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
-        nullable: Boolean
+        nullable: Boolean,
+        isExtensionFunction: Boolean
     ): SimpleTypeMarker {
         require(constructor is TypeConstructor, constructor::errorMessage)
+
+        val annotations = if (isExtensionFunction) {
+            Annotations.create(listOf(BuiltInAnnotationDescriptor(builtIns, FQ_NAMES.extensionFunctionType, emptyMap())))
+        } else Annotations.EMPTY
+
         @Suppress("UNCHECKED_CAST")
-        return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, arguments as List<TypeProjection>, nullable)
+        return KotlinTypeFactory.simpleType(annotations, constructor, arguments as List<TypeProjection>, nullable)
     }
 
     override fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker {
@@ -456,6 +462,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return constructor is NewTypeVariableConstructor ||
                 constructor.declarationDescriptor is TypeParameterDescriptor ||
                 this is NewCapturedType
+    }
+
+    override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
+        require(this is SimpleType, this::errorMessage)
+        return this.hasAnnotation(FQ_NAMES.extensionFunctionType)
     }
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
 internal class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -48,7 +51,7 @@ internal class CallAndReferenceGenerator(
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     fun convertToIrCallableReference(callableReferenceAccess: FirCallableReferenceAccess): IrExpression {
-        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage)
+        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
         val type = callableReferenceAccess.typeRef.toIrType()
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
@@ -59,12 +62,17 @@ internal class CallAndReferenceGenerator(
                         referencedPropertyGetter != null -> null
                         else -> referencedProperty.backingField?.symbol
                     }
+                    val origin = when (callableReferenceAccess.source?.psi?.parent) {
+                        is KtPropertyDelegate -> IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
+                        else -> null
+                    }
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = referencedPropertyGetter?.typeParameters?.size ?: 0,
                         backingFieldSymbol,
                         referencedPropertyGetter?.symbol,
-                        referencedProperty.setter?.symbol
+                        referencedProperty.setter?.symbol,
+                        origin
                     )
                 }
                 is IrConstructorSymbol -> {
@@ -139,7 +147,8 @@ internal class CallAndReferenceGenerator(
         val symbol = qualifiedAccess.calleeReference.toSymbol(
             session,
             classifierStorage,
-            declarationStorage
+            declarationStorage,
+            conversionScope
         )
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             if (qualifiedAccess.calleeReference is FirSuperReference) {
@@ -167,7 +176,10 @@ internal class CallAndReferenceGenerator(
                         )
                     }
                 }
-                is IrFieldSymbol -> IrGetFieldImpl(startOffset, endOffset, symbol, type, origin = IrStatementOrigin.GET_PROPERTY)
+                is IrFieldSymbol -> IrGetFieldImpl(
+                    startOffset, endOffset, symbol, type,
+                    origin = IrStatementOrigin.GET_PROPERTY.takeIf { qualifiedAccess.calleeReference !is FirDelegateFieldReference }
+                )
                 is IrValueSymbol -> IrGetValueImpl(
                     startOffset, endOffset, type, symbol,
                     origin = qualifiedAccess.calleeReference.statementOrigin()
@@ -181,7 +193,7 @@ internal class CallAndReferenceGenerator(
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment): IrExpression {
         val type = irBuiltIns.unitType
         val calleeReference = variableAssignment.calleeReference
-        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage)
+        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
         val origin = IrStatementOrigin.EQ
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
@@ -207,7 +219,7 @@ internal class CallAndReferenceGenerator(
                 is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }.applyReceivers(variableAssignment)
+        }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment)
     }
 
     fun convertToIrConstructorCall(annotationCall: FirAnnotationCall): IrExpression {

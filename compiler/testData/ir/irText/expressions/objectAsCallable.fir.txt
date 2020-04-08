@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun invoke (i: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
-          $receiver: ERROR_CALL 'Unresolved reference: R|/A|' type=IrErrorType
+          $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
           i: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]

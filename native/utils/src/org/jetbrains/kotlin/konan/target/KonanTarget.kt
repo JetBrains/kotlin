@@ -39,8 +39,8 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
 
     companion object {
         // TODO: need a better way to enumerated predefined targets.
-        val predefinedTargets by lazy {
-            setOf(
+        val predefinedTargets: Map<String, KonanTarget> by lazy {
+            listOf(
                 ANDROID_X64, ANDROID_X86, ANDROID_ARM32, ANDROID_ARM64,
                 IOS_ARM32, IOS_ARM64, IOS_X64,
                 WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64,
@@ -50,7 +50,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
                 MACOS_X64,
                 LINUX_ARM64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
                 WASM32
-            )
+            ).associateBy { it.name }
         }
     }
 }

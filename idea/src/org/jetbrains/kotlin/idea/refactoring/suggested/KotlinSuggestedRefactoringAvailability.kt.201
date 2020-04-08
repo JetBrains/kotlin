@@ -4,6 +4,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.parents
 import com.intellij.refactoring.suggested.*
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
@@ -14,8 +15,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
@@ -135,19 +140,67 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
         val oldSignature = state.oldSignature
         val newSignature = state.newSignature
         val updateUsagesData = SuggestedChangeSignatureData.create(state, USAGES)
+        val updateOverridesData = overridesName?.let { updateUsagesData.copy(nameOfStuffToUpdate = it) }
 
+        if (newSignature.parameters.size > oldSignature.parameters.size) {
+            val newParametersAtEndWithDefaults = newSignature.parameters.drop(oldSignature.parameters.size)
+                .all { oldSignature.parameterById(it.id) == null && it.defaultValue != null }
+            // special case if added new parameters with default values to the end
+            // we don't need to update usages if it's the only change
+            if (newParametersAtEndWithDefaults) {
+                val truncatedNewSignature = Signature.create(
+                    newSignature.name,
+                    newSignature.type,
+                    newSignature.parameters.take(oldSignature.parameters.size),
+                    newSignature.additionalData
+                )!!
+                val refactoringData = detectAvailableRefactoring(
+                    oldSignature,
+                    truncatedNewSignature,
+                    updateUsagesData,
+                    updateOverridesData,
+                    declaration,
+                    declaration.valueParameters.take(oldSignature.parameters.size)
+                )
+
+                return when (refactoringData) {
+                    is SuggestedChangeSignatureData -> refactoringData
+                    is SuggestedRenameData -> updateUsagesData
+                    null -> updateOverridesData
+                }
+            }
+        }
+
+        return detectAvailableRefactoring(
+            oldSignature,
+            newSignature,
+            updateUsagesData,
+            updateOverridesData,
+            declaration,
+            declaration.valueParameters
+        )
+    }
+
+    private fun detectAvailableRefactoring(
+        oldSignature: Signature,
+        newSignature: Signature,
+        updateUsagesData: SuggestedChangeSignatureData,
+        updateOverridesData: SuggestedChangeSignatureData?,
+        declaration: PsiNamedElement,
+        parameters: List<KtParameter>
+    ): SuggestedRefactoringData? {
         if (hasParameterAddedRemovedOrReordered(oldSignature, newSignature)) return updateUsagesData
 
         // for non-virtual function we can add or remove receiver for usages but not change its type
         if ((oldSignature.receiverType == null) != (newSignature.receiverType == null)) return updateUsagesData
 
-        val (nameChanges, renameData) = nameChanges(oldSignature, newSignature, declaration, declaration.valueParameters)
+        val (nameChanges, renameData) = nameChanges(oldSignature, newSignature, declaration, parameters)
 
         if (hasTypeChanges(oldSignature, newSignature)) {
             return if (nameChanges > 0)
                 updateUsagesData
             else
-                overridesName?.let { updateUsagesData.copy(nameOfStuffToUpdate = it) }
+                updateOverridesData
         }
 
         return when {
@@ -156,15 +209,22 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
             else -> null
         }
     }
-
+    
     private fun KtCallableDeclaration.overridesName(): String? {
         return when {
             hasModifier(KtTokens.ABSTRACT_KEYWORD) -> IMPLEMENTATIONS
             hasModifier(KtTokens.OPEN_KEYWORD) -> OVERRIDES
             containingClassOrObject?.isInterfaceClass() == true -> if (hasBody()) OVERRIDES else IMPLEMENTATIONS
-            hasModifier(KtTokens.EXPECT_KEYWORD) -> "actual declarations"
+            isExpectDeclaration() -> "actual declarations"
             else -> null
         }
+    }
+
+    private fun KtCallableDeclaration.isExpectDeclaration(): Boolean {
+        return parentsWithSelf
+            .filterIsInstance<KtDeclaration>()
+            .takeWhile { it == this || it is KtClassOrObject }
+            .any { it.hasModifier(KtTokens.EXPECT_KEYWORD) }
     }
 
     override fun hasTypeChanges(oldSignature: Signature, newSignature: Signature): Boolean {

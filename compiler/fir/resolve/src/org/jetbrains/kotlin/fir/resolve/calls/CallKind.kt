@@ -51,6 +51,8 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         DiscriminateSynthetics,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CheckReceivers.Dispatch,
+        CheckReceivers.Extension,
         CheckCallableReferenceExpectedType
     ),
     SyntheticIdForCallableReferencesResolution(
