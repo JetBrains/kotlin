@@ -22,7 +22,6 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinJvmBundle;
@@ -473,7 +472,6 @@ class SplitEditorToolbar extends JPanel implements Disposable {
     }
 
     @Deprecated
-    @ApiStatus.ScheduledForRemoval
     public void addGutterToTrack(@NotNull EditorGutterComponentEx gutterComponentEx) {}
 
     public void refresh() {
@@ -481,7 +479,6 @@ class SplitEditorToolbar extends JPanel implements Disposable {
     }
 
     @Deprecated
-    @ApiStatus.ScheduledForRemoval
     @Override
     public void dispose() {}
 }

@@ -13,8 +13,8 @@ import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExten
 
 // BUNCH: 193
 abstract class AbstractProjectResolverExtensionCompat : AbstractProjectResolverExtension() {
-    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData> {
-        return super.createModule(gradleModule, projectDataNode).also {
+    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? {
+        return super.createModule(gradleModule, projectDataNode)?.also {
             initializeModuleNode(gradleModule, it, projectDataNode)
         }
     }

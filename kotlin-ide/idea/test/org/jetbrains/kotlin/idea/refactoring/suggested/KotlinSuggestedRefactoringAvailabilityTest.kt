@@ -439,6 +439,142 @@ class KotlinSuggestedRefactoringAvailabilityTest : BaseSuggestedRefactoringAvail
         )
     }
 
+    fun testAddOptionalParameter() {
+        doTest(
+            """
+                fun foo(p1: Int<caret>) {
+                }
+                
+                fun bar() {
+                    foo(1)
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(", p2: Int = 2")
+            },
+            expectedAvailability = Availability.Disabled,
+        )
+    }
+
+    fun testAddOptionalParameterWithOverrides() {
+        doTest(
+            """
+                interface I {
+                    fun foo(p1: Int<caret>)
+                }    
+                
+                class C : I {
+                    override fun foo(p1: Int) {
+                    }
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(", p2: Int = 2")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "implementations")),
+        )
+    }
+
+    fun testAddOptionalParameterNotLast() {
+        doTest(
+            """
+                fun foo(<caret>p1: Int) {
+                }
+                
+                fun bar() {
+                    foo(1)
+                }
+            """.trimIndent(),
+            {
+                myFixture.type("p0: Int = 0, ")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "usages")),
+        )
+    }
+
+    fun testAddOptionalParameterAndRenameParameter() {
+        doTest(
+            """
+                fun foo(<caret>p1: Int) {
+                }
+                
+                fun bar() {
+                    foo(1)
+                }
+            """.trimIndent(),
+            {
+                replaceTextAtCaret("p1", "p1New")
+            },
+            {
+                editor.caretModel.moveToOffset(editor.caretModel.offset + "p1New: Int".length)
+                myFixture.type(", p2: Int = 2")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "usages")),
+        )
+    }
+
+    fun testAddTwoParameters() {
+        doTest(
+            """
+                fun foo(p1: Int<caret>) {
+                }
+                
+                fun bar() {
+                    foo(1)
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(", p2: Int, p3: Int = 3")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "usages")),
+        )
+    }
+
+    fun testExpectedFunction() {
+        ignoreErrors = true
+        doTest(
+            """
+                expect fun foo()<caret>
+            """.trimIndent(),
+            {
+                myFixture.type(": Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "actual declarations")),
+        )
+    }
+
+    fun testMemberInsideExpectedClass() {
+        ignoreErrors = true
+        doTest(
+            """
+                expect class C {
+                    fun foo()<caret>
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(": Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "actual declarations")),
+        )
+    }
+
+    fun testMemberDeepInsideExpectedClass() {
+        ignoreErrors = true
+        doTest(
+            """
+                expect class C {
+                    class Nested {
+                        fun foo()<caret>
+                    }   
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(": Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "actual declarations")),
+        )
+    }
+
     private fun addImport(fqName: String) {
         (file as KtFile).importList!!.add(KtPsiFactory(project).createImportDirective(ImportPath.fromString(fqName)))
     }

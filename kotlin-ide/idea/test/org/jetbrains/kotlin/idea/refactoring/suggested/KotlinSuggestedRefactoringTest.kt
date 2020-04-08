@@ -10,10 +10,10 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.refactoring.suggested.SuggestedRefactoringExecution
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringTest
+import com.intellij.refactoring.suggested.SuggestedRefactoringExecution
+import com.intellij.refactoring.suggested.SuggestedRefactoringProviderImpl
 import com.intellij.refactoring.suggested._suggestedChangeSignatureNewParameterValuesForTests
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -1345,7 +1345,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    fun testAddParameterWithDefaultValue() {
+    fun testAddOptionalParameter() {
         doTestChangeSignature(
             """
                 interface I {
@@ -1375,7 +1375,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
                     i.foo(1)
                 }
             """.trimIndent(),
-            "usages",
+            "implementations",
             {
                 myFixture.type(", p2: Int = 10")
             },
@@ -1414,7 +1414,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    fun testReorderParameterWithDefaultValue() {
+    fun testReorderOptionalParameter() {
         doTestChangeSignature(
             """
                 interface I {
@@ -1541,6 +1541,36 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
                   ': '
                   'StringToUnit' (modified)
             """.trimIndent()
+        )
+    }
+
+    fun testNewParameterValueReferencesAnotherParameter() {
+        _suggestedChangeSignatureNewParameterValuesForTests = {
+            val declaration = SuggestedRefactoringProviderImpl.getInstance(project).state!!.declaration
+            val codeFragment = KtPsiFactory(project).createExpressionCodeFragment("p1 * p1", declaration)
+            SuggestedRefactoringExecution.NewParameterValue.Expression(codeFragment.getContentElement()!!)
+        }
+        doTestChangeSignature(
+            """
+                fun foo(p1: Int<caret>) {
+                }
+                
+                fun bar() {
+                    foo(1)
+                    foo(2)
+                }
+            """.trimIndent(),
+            """
+                fun foo(p1: Int, p2: Int<caret>) {
+                }
+                
+                fun bar() {
+                    foo(1, 1 * 1)
+                    foo(2, 2 * 2)
+                }
+            """.trimIndent(),
+            "usages",
+            { myFixture.type(", p2: Int") }
         )
     }
 

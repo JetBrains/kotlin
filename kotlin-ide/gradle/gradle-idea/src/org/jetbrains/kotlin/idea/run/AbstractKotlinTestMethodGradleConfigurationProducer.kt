@@ -19,7 +19,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
-import org.jetbrains.kotlin.idea.facet.externalSystemTestTasks
+import org.jetbrains.kotlin.idea.facet.externalSystemTestRunTasks
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -83,7 +83,7 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
         val availableTargets =
             classes
                 .mapNotNull { psiClass -> psiClass.module }
-                .flatMap { module -> module.externalSystemTestTasks() }
+                .flatMap { module -> module.externalSystemTestRunTasks() }
                 .map { extTask -> extTask.targetName }
                 .distinct()
 

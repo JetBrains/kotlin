@@ -30,15 +30,18 @@ class ShowKotlinBytecodeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        var toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID)
-        if (toolWindow == null) {
-            toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.RIGHT)
-            toolWindow.icon = KotlinIcons.SMALL_LOGO_13
 
-            val contentManager = toolWindow.contentManager
-            val contentFactory = ContentFactory.SERVICE.getInstance()
-            contentManager.addContent(contentFactory.createContent(KotlinBytecodeToolWindow(project, toolWindow), "", false))
-        }
+        val toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID) ?: toolWindowManager.registerToolWindow(
+            TOOLWINDOW_ID,
+            false,
+            ToolWindowAnchor.RIGHT,
+        )
+            .apply {
+                setIcon(KotlinIcons.SMALL_LOGO_13)
+                val contentFactory = ContentFactory.SERVICE.getInstance()
+                contentManager.addContent(contentFactory.createContent(KotlinBytecodeToolWindow(project, this), "", false))
+            }
+
         toolWindow.activate(null)
     }
 

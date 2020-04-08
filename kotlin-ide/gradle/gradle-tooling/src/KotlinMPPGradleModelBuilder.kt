@@ -375,7 +375,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             }
         }
         val jar = buildTargetJar(gradleTarget, project)
-        val testTasks = buildTestTasks(project, gradleTarget)
+        val testRunTasks = buildTestRunTasks(project, gradleTarget)
+        val nativeMainRunTasks =
+            if (platform == KotlinPlatform.NATIVE) buildNativeMainRunTasks(gradleTarget)
+            else emptyList()
         val artifacts = konanArtifacts(gradleTarget)
         val target = KotlinTargetImpl(
             gradleTarget.name,
@@ -383,7 +386,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             disambiguationClassifier,
             platform,
             compilations,
-            testTasks,
+            testRunTasks,
+            nativeMainRunTasks,
             jar,
             artifacts
         )
@@ -419,7 +423,23 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         )
     }
 
-    private fun buildTestTasks(project: Project, gradleTarget: Named): Collection<KotlinTestTask> {
+    private fun buildNativeMainRunTasks(gradleTarget: Named): Collection<KotlinNativeMainRunTask> {
+        val executableBinaries = (gradleTarget::class.java.getMethodOrNull("getBinaries")?.invoke(gradleTarget) as? Collection<Any>)
+            ?.filter { it.javaClass.name == "org.jetbrains.kotlin.gradle.plugin.mpp.Executable" } ?: return emptyList()
+        return executableBinaries.map { binary ->
+            val compilationName = binary.javaClass.getMethodOrNull("getCompilation")?.invoke(binary)?.let {
+                it.javaClass.getMethodOrNull("getCompilationName")?.invoke(it)?.toString()
+            } ?: KotlinCompilation.MAIN_COMPILATION_NAME
+            KotlinNativeMainRunTaskImpl(
+                binary::class.java.getMethod("getRunTaskName").invoke(binary) as String,
+                compilationName,
+                binary::class.java.getMethod("getEntryPoint").invoke(binary) as String,
+                binary::class.java.getMethod("getDebuggable").invoke(binary) as Boolean
+            )
+        }
+    }
+
+    private fun buildTestRunTasks(project: Project, gradleTarget: Named): Collection<KotlinTestRunTask> {
         val getTestRunsMethod = gradleTarget.javaClass.getMethodOrNull("getTestRuns")
         if (getTestRunsMethod != null) {
             val testRuns = getTestRunsMethod?.invoke(gradleTarget) as? Iterable<Any>
@@ -441,7 +461,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                     val compilation = it.javaClass.getMethodOrNull("getCompilation")?.invoke(it)
                     val compilationName = compilation?.javaClass?.getMethodOrNull("getCompilationName")?.invoke(compilation)?.toString()
                         ?: KotlinCompilation.TEST_COMPILATION_NAME
-                    KotlinTestTaskImpl(name, compilationName)
+                    KotlinTestRunTaskImpl(name, compilationName)
                 }.toList()
             }
             return emptyList()
@@ -482,7 +502,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                         testTaskDisambiguationClassifier != null &&
                         testTaskDisambiguationClassifier.startsWith(targetDisambiguationClassifier.orEmpty())
             }
-        }.map { KotlinTestTaskImpl(it, KotlinCompilation.TEST_COMPILATION_NAME) }
+        }.map { KotlinTestRunTaskImpl(it, KotlinCompilation.TEST_COMPILATION_NAME) }
     }
 
     private fun buildTargetJar(gradleTarget: Named, project: Project): KotlinTargetJar? {

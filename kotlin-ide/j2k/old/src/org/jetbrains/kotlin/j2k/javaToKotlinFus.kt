@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 
 enum class ConversionType(val text: String) {
-    FILES("Files"), PSI_EXPRESSION("PSI expression"), TEXT_EXPRESSION("Text expression");
+    FILES("Files"), PSI_EXPRESSION("PSI_expression"), TEXT_EXPRESSION("Text_expression");
 }
 
 fun logJ2kConversionStatistics(
@@ -20,9 +20,9 @@ fun logJ2kConversionStatistics(
     filesCount: Int
 ) {
     val data = mapOf(
-        "Lines count" to linesCount,
-        "Files count" to filesCount,
-        "Is new J2K" to isNewJ2k,
+        "Lines_count" to linesCount,
+        "Files_count" to filesCount,
+        "Is_new_J2K" to isNewJ2k,
         "Time" to conversionTime
     ).map { (key, value) ->
         key to value.toString()

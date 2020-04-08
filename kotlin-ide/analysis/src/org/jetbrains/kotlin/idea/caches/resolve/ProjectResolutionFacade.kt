@@ -47,6 +47,7 @@ internal class ProjectResolutionFacade(
     private val cachedResolverForProject: ResolverForProject<IdeaModuleInfo>
         get() = globalContext.storageManager.compute { cachedValue.value }
 
+    private val analysisResultsLock = ReentrantLock()
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
         {
             val resolverForProject = cachedResolverForProject
@@ -140,8 +141,14 @@ internal class ProjectResolutionFacade(
 
     internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
-        val slruCache = synchronized(analysisResults) {
-            analysisResults.value!!
+
+        val slruCache = run {
+            analysisResultsLock.lock()
+            try {
+                analysisResults.value!!
+            } finally {
+                analysisResultsLock.unlock()
+            }
         }
         val results = elements.map {
             val perFileCache = slruCache[it.containingKtFile]
@@ -158,11 +165,15 @@ internal class ProjectResolutionFacade(
     }
 
     internal fun fetchAnalysisResultsForElement(element: KtElement): AnalysisResult? {
-        val slruCache = synchronized(analysisResults) {
-            analysisResults.upToDateOrNull?.get() ?: return null
-        }
-        val perFileCache = slruCache.getIfCached(element.containingKtFile)
-        return perFileCache?.fetchAnalysisResults(element)
+        val slruCache = if (analysisResultsLock.tryLock()) {
+            try {
+                analysisResults.upToDateOrNull?.get()
+            } finally {
+                analysisResultsLock.unlock()
+            }
+        } else null
+
+        return slruCache?.getIfCached(element.containingKtFile)?.fetchAnalysisResults(element)
     }
 
     override fun toString(): String {

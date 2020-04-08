@@ -53,8 +53,6 @@ private fun _attachGradleProjectAndRefresh(
             ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
         }
     }
-
-    ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project)
     val settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     if (settings.getLinkedProjectSettings(externalProjectPath) == null) {
         settings.linkProject(gradleProjectSettings)

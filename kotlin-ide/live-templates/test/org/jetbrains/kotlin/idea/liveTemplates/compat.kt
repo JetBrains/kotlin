@@ -11,5 +11,5 @@ import com.intellij.openapi.project.Project
 
 // BUNCH: 193
 fun setTemplateTestingCompat(project: Project, disposable: Disposable) {
-    TemplateManagerImpl.setTemplateTesting(project, disposable)
+    TemplateManagerImpl.setTemplateTesting(disposable)
 }

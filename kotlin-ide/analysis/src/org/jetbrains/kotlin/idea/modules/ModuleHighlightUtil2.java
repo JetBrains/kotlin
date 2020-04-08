@@ -64,7 +64,7 @@ public class ModuleHighlightUtil2 {
                     }
                 }
                 else if (root.getFileSystem() instanceof JarFileSystem && "jar".equalsIgnoreCase(root.getExtension())) {
-                    return LightJavaModule.getModule(PsiManager.getInstance(project), root);
+                    return LightJavaModule.findModule(PsiManager.getInstance(project), root);
                 }
             }
             else if ((root = index.getSourceRootForFile(file)) != null) {
