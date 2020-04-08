@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class OutflowSlicer(
@@ -40,8 +42,6 @@ class OutflowSlicer(
     }
 
     private fun processVariable(variable: KtCallableDeclaration) {
-        if (variable is KtParameter && !canProcessParameter(variable)) return
-
         val withDereferences = parentUsage.params.showInstanceDereferences
         val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
 
@@ -58,6 +58,24 @@ class OutflowSlicer(
             }
             if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == Access.Read) {
                 refExpression.passToProcessor()
+            }
+        }
+
+        if (variable is KtParameter) {
+            if (!canProcessParameter(variable)) return //TODO
+
+            //TODO: expect/actual
+
+            val callable = variable.ownerFunction as? KtCallableDeclaration
+            callable?.forEachOverridingElement(scope = analysisScope) { _, overridingMember ->
+                //TODO: Java overriders
+                if (overridingMember is KtCallableDeclaration) {
+                    val parameters = overridingMember.valueParameters
+                    check(parameters.size == callable.valueParameters.size)
+                    val overridingParameter = parameters[variable.parameterIndex()]
+                    overridingParameter.passToProcessor()
+                }
+                true
             }
         }
 
