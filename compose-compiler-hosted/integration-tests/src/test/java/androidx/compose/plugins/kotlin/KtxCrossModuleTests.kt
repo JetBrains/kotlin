@@ -44,7 +44,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 "library module" to mapOf(
                     "x/I.kt" to """
                       package x
-                      inline class I(val i: Int)
+                      inline class I(val i: Int) {
+                        val prop
+                          get() = i + 1
+                      }
                   """.trimIndent()
                 ),
                 "Main" to mapOf(
@@ -52,7 +55,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                       package y
                       import x.I
                       inline class J(val j: Int)
-                      fun foo(): Int = I(42).i + J(23).j
+                      fun foo(): Int = I(42).i + J(23).j + I(1).prop
                   """.trimIndent()
                 )
             )
@@ -65,6 +68,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             // Check that inline classes where optimized to integers.
             assert(it.contains("INVOKESTATIC x/I.constructor-impl (I)I"))
             assert(it.contains("INVOKESTATIC y/J.constructor-impl (I)I"))
+            // Check that the inline class prop getter is correctly mangled.
+            assert(it.contains("INVOKESTATIC x/I.getProp-impl (I)I"))
         }
     }
 

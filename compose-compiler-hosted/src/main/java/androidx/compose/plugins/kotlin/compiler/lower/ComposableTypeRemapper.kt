@@ -21,7 +21,6 @@ import androidx.compose.plugins.kotlin.allUnbound
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -224,26 +223,32 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         // functions won't be traversed by default by the DeepCopyIrTreeWithSymbols so we have to
         // do it ourself here.
         //
-        // When this copying is done for a property getter, it breaks the
-        // correspondence between the getter and the property:
-        //
-        // `getterFun.correspondingPropertySymbol.owner.getter == getterFun`
-        //
-        // That breaks compilation of inline class getters as it uses that correspondence to detect
-        // inline class getters. Since inline class getters cannot be composable, there is no
-        // need for copying and rewriting.
+        // When an external declaration for a property getter/setter is transformed, we need to
+        // also transform the corresponding property so that we maintain the relationship
+        // `getterFun.correspondingPropertySymbol.owner.getter == getterFun`. If we do not
+        // maintain this relationship inline class getters will be incorrectly compiled.
         if (
             ownerFn != null &&
-            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
-            !ownerFn.isInlineClassFieldGetter
+            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
         ) {
-            symbolRemapper.visitSimpleFunction(ownerFn)
-            val newFn = super.visitSimpleFunction(ownerFn).also {
-                it.parent = ownerFn.parent
-                it.correspondingPropertySymbol = ownerFn.correspondingPropertySymbol
-                it.patchDeclarationParents(it.parent)
+            if (ownerFn.correspondingPropertySymbol != null) {
+                val property = ownerFn.correspondingPropertySymbol!!.owner
+                symbolRemapper.visitProperty(property)
+                super.visitProperty(property).also {
+                    it.getter?.correspondingPropertySymbol = it.symbol
+                    it.setter?.correspondingPropertySymbol = it.symbol
+                    it.parent = ownerFn.parent
+                    it.patchDeclarationParents(it.parent)
+                }
+            } else {
+                symbolRemapper.visitSimpleFunction(ownerFn)
+                super.visitSimpleFunction(ownerFn).also {
+                    it.parent = ownerFn.parent
+                    it.correspondingPropertySymbol = ownerFn.correspondingPropertySymbol
+                    it.patchDeclarationParents(it.parent)
+                }
             }
-            val newCallee = symbolRemapper.getReferencedSimpleFunction(newFn.symbol)
+            val newCallee = symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol)
             return shallowCopyCall(expression, newCallee).apply {
                 copyRemappedTypeArgumentsFrom(expression)
                 transformValueArguments(expression)
