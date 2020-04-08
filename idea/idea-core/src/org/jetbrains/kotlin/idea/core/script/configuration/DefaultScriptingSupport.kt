@@ -145,21 +145,6 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
         }
     }
 
-    override fun forceReloadConfiguration(file: KtFile, loader: ScriptConfigurationLoader) {
-        val virtualFile = file.originalFile.virtualFile ?: return
-
-        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
-        val scriptDefinition = file.findScriptDefinition() ?: return
-
-        if (!loader.shouldRunInBackground(scriptDefinition)) {
-            loader.loadDependencies(false, file, scriptDefinition, loadingContext)
-        } else {
-            backgroundExecutor.ensureScheduled(virtualFile) {
-                loader.loadDependencies(false, file, scriptDefinition, loadingContext)
-            }
-        }
-    }
-
     private val loadingContext = object : ScriptConfigurationLoadingContext {
         override fun getCachedConfiguration(file: VirtualFile): ScriptConfigurationSnapshot? =
             getAppliedConfiguration(file)
@@ -281,17 +266,6 @@ abstract class DefaultScriptingSupportBase(val project: Project): ScriptingSuppo
         forceSync: Boolean = false
     )
 
-    /**
-     * Will be called on user action
-     * Load configuration event it is already cached or inputs are up-to-date
-     *
-     * @param loader is used to load configuration. Other loaders aren't taken into account.
-     */
-    protected abstract fun forceReloadConfiguration(
-        file: KtFile,
-        loader: ScriptConfigurationLoader
-    )
-
     fun getCachedConfigurationState(file: VirtualFile?): ScriptConfigurationState? {
         if (file == null) return null
         return cache[file]
@@ -330,10 +304,6 @@ abstract class DefaultScriptingSupportBase(val project: Project): ScriptingSuppo
 
         override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
             return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
-        }
-
-        override fun postponeConfigurationReload(scope: ScriptConfigurationCacheScope) {
-            cache.markOutOfDate(scope)
         }
 
         override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {

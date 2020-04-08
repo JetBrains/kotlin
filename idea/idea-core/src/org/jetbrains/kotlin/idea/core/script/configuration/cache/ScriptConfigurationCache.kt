@@ -30,7 +30,7 @@ interface ScriptConfigurationCache {
 
     fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
     fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
-    fun markOutOfDate(scope: ScriptConfigurationCacheScope)
+    fun markOutOfDate(file: VirtualFile)
 
     fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper>
     fun clear()

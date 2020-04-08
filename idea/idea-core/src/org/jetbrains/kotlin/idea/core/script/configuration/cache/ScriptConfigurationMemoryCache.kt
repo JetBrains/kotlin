@@ -40,29 +40,6 @@ open class ScriptConfigurationMemoryCache(
     }
 
     @Synchronized
-    override fun markOutOfDate(scope: ScriptConfigurationCacheScope) {
-        when (scope) {
-            is ScriptConfigurationCacheScope.File -> {
-                val file = scope.file.originalFile.virtualFile
-                markFileOutOfDate(file)
-            }
-            is ScriptConfigurationCacheScope.Except -> {
-                val file = scope.file.originalFile.virtualFile
-                memoryCache.entrySet().forEach {
-                    if (it.key != file) {
-                        markFileOutOfDate(it.key)
-                    }
-                }
-            }
-            is ScriptConfigurationCacheScope.All ->{
-                memoryCache.entrySet().forEach {
-                    markFileOutOfDate(it.key)
-                }
-            }
-        }
-    }
-
-    @Synchronized
     @Suppress("UNCHECKED_CAST")
     override fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper> {
         val result = hashMapOf<VirtualFile, ScriptCompilationConfigurationWrapper>()
@@ -80,7 +57,7 @@ open class ScriptConfigurationMemoryCache(
     }
 
     @Synchronized
-    private fun markFileOutOfDate(file: VirtualFile) {
+    override fun markOutOfDate(file: VirtualFile) {
         val old = memoryCache[file] ?: return
         memoryCache.put(
             file, old.copy(

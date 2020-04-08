@@ -105,13 +105,6 @@ interface ScriptConfigurationManager {
      */
     fun clearConfigurationCachesAndRehighlight()
 
-    /**
-     * Save configurations into cache.
-     * Start indexing for new class/source roots.
-     * Re-highlight opened scripts with changed configuration.
-     */
-    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptConfigurationSnapshot>>)
-
     ///////////////
     // classpath roots info:
 
