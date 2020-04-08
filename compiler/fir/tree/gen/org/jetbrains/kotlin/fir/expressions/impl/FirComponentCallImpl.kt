@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -30,14 +29,14 @@ internal class FirComponentCallImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
+    override var dispatchReceiver: FirExpression,
+    override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
 ) : FirComponentCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val safe: Boolean get() = false
-    override val dispatchReceiver: FirExpression get() = FirNoReceiverExpression
-    override val extensionReceiver: FirExpression get() = FirNoReceiverExpression
     override var calleeReference: FirNamedReference = FirSimpleNamedReference(source, Name.identifier("component$componentIndex"), null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -62,6 +61,12 @@ internal class FirComponentCallImpl(
         argumentList = argumentList.transformSingle(transformer, data)
         transformCalleeReference(transformer, data)
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
+        if (dispatchReceiver !== explicitReceiver) {
+            dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+        }
+        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+            extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+        }
         return this
     }
 
@@ -76,10 +81,12 @@ internal class FirComponentCallImpl(
     }
 
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         return this
     }
 

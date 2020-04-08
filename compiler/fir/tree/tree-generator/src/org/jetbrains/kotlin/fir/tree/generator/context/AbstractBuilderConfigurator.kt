@@ -23,8 +23,10 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
             types.forEach { builder.usedTypes += it }
         }
 
-        fun defaultNoReceivers() {
-            defaultNull("explicitReceiver")
+        fun defaultNoReceivers(notNullExplicitReceiver: Boolean = false) {
+            if (!notNullExplicitReceiver) {
+                defaultNull("explicitReceiver")
+            }
             default("dispatchReceiver", "FirNoReceiverExpression")
             default("extensionReceiver", "FirNoReceiverExpression")
             useTypes(noReceiverExpressionType)

@@ -125,6 +125,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(componentCall) {
             parents += callBuilder
+            defaultNoReceivers(notNullExplicitReceiver = true)
             default("argumentList") {
                 value = "FirEmptyArgumentList"
             }

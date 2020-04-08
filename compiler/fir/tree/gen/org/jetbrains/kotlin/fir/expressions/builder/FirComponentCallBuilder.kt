@@ -37,6 +37,8 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    var dispatchReceiver: FirExpression = FirNoReceiverExpression
+    var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()
@@ -46,6 +48,8 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
             source,
             annotations,
             typeArguments,
+            dispatchReceiver,
+            extensionReceiver,
             argumentList,
             explicitReceiver,
             componentIndex,
