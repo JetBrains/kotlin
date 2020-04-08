@@ -3,6 +3,7 @@ package com.intellij.codeInsight.documentation.render;
 
 import com.intellij.codeHighlighting.*;
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -93,12 +94,16 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
           text = DocumentationManager.getProviderFromElement(owner).generateRenderedDoc(owner);
         }
       }
-      return text == null ? CodeInsightBundle.message("doc.render.not.available.text") : text;
+      return text == null ? CodeInsightBundle.message("doc.render.not.available.text") : preProcess(text);
     }
     catch (IndexNotReadyException e) {
       LOG.warn(e);
       return CodeInsightBundle.message("doc.render.dumb.mode.text");
     }
+  }
+
+  private static String preProcess(String text) {
+    return DocumentationComponent.addExternalLinksIcon(text);
   }
 
   public static void applyItemsToRender(@NotNull Editor editor,

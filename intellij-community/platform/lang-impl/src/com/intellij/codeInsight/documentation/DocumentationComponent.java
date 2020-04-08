@@ -43,7 +43,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.util.PopupUtil;
 import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -103,6 +102,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class DocumentationComponent extends JPanel implements Disposable, DataProvider, WidthBasedLayout {
 
@@ -118,6 +118,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private static final int PREFERRED_HEIGHT_MAX_EM = 10;
   private static final JBDimension MAX_DEFAULT = new JBDimension(650, 500);
   private static final JBDimension MIN_DEFAULT = new JBDimension(300, Registry.is("editor.new.mouse.hover.popups") ? 36 : 20);
+
+  private static final Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("(<a\\s*href=[\"']http[^>]*>)([^>]*)(</a>)");
+  private static final String EXTERNAL_LINK_REPLACEMENT = "$1$2<icon src='AllIcons.Ide.External_link_arrow'>$3";
+
   private final ExternalDocAction myExternalDocAction;
 
   private DocumentationManager myManager;
@@ -281,21 +285,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     HTMLEditorKit editorKit = new JBHtmlEditorKit(true, true) {
       @Override
       public ViewFactory getViewFactory() {
-        return new JBHtmlFactory() {
+        JBHtmlFactory factory = new JBHtmlFactory() {
           @Override
           public View create(Element elem) {
-            AttributeSet attrs = elem.getAttributes();
-            if ("icon".equals(elem.getName())) {
-              Object src = attrs.getAttribute(HTML.Attribute.SRC);
-              Icon icon = src != null ? IconLoader.findIcon((String)src, false) : null;
-              if (icon == null) {
-                ModuleType<?> id = ModuleTypeManager.getInstance().findByID((String)src);
-                if (id != null) icon = id.getIcon();
-              }
-              if (icon != null) {
-                return new MyIconView(elem, icon);
-              }
-            }
             View view = super.create(elem);
             if (view instanceof ImageView) {
               // we have to work with raw image, apply scaling manually
@@ -304,6 +296,11 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
             return view;
           }
         };
+        factory.setAdditionalIconResolver(src -> {
+          ModuleType<?> id = ModuleTypeManager.getInstance().findByID(src);
+          return id == null ? null : id.getIcon();
+        });
+        return factory;
       }
     };
     prepareCSS(editorKit);
@@ -1085,9 +1082,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     return "<div class='" + (hasContent ? "bottom" : "bottom-no-content") + "'>";
   }
 
-  private static String addExternalLinksIcon(String text) {
-    return text.replaceAll("(<a\\s*href=[\"']http[^>]*>)([^>]*)(</a>)",
-                           "$1$2<icon src='AllIcons.Ide.External_link_arrow'>$3");
+  public static String addExternalLinksIcon(String text) {
+    return EXTERNAL_LINK_PATTERN.matcher(text).replaceAll(EXTERNAL_LINK_REPLACEMENT);
   }
 
   private String getLocationText() {
@@ -1847,63 +1843,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       Graphics2D graphics = image.createGraphics();
       super.paint(graphics, new Rectangle(image.getWidth(), image.getHeight()));
       StartupUiUtil.drawImage(g, ImageUtil.ensureHiDPI(image, ScaleContext.create(myEditorPane)), bounds.x, bounds.y, null);
-    }
-  }
-
-  private static class MyIconView extends View {
-    private final Icon myViewIcon;
-
-    private MyIconView(Element elem, Icon viewIcon) {
-      super(elem);
-      myViewIcon = viewIcon;
-    }
-
-    @Override
-    public float getPreferredSpan(int axis) {
-      switch (axis) {
-        case View.X_AXIS:
-          return myViewIcon.getIconWidth();
-        case View.Y_AXIS:
-          return myViewIcon.getIconHeight();
-        default:
-          throw new IllegalArgumentException("Invalid axis: " + axis);
-      }
-    }
-
-    @Override
-    public String getToolTipText(float x, float y, Shape allocation) {
-      return (String)super.getElement().getAttributes().getAttribute(HTML.Attribute.ALT);
-    }
-
-    @Override
-    public void paint(Graphics g, Shape allocation) {
-      myViewIcon.paintIcon(null, g, allocation.getBounds().x, allocation.getBounds().y - 4);
-    }
-
-    @Override
-    public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
-      int p0 = getStartOffset();
-      int p1 = getEndOffset();
-      if ((pos >= p0) && (pos <= p1)) {
-        Rectangle r = a.getBounds();
-        if (pos == p1) {
-          r.x += r.width;
-        }
-        r.width = 0;
-        return r;
-      }
-      throw new BadLocationException(pos + " not in range " + p0 + "," + p1, pos);
-    }
-
-    @Override
-    public int viewToModel(float x, float y, Shape a, Position.Bias[] bias) {
-      Rectangle alloc = (Rectangle)a;
-      if (x < alloc.x + (alloc.width / 2f)) {
-        bias[0] = Position.Bias.Forward;
-        return getStartOffset();
-      }
-      bias[0] = Position.Bias.Backward;
-      return getEndOffset();
     }
   }
 }
