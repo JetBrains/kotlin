@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -71,7 +72,7 @@ class SamAdapterFunctionsScope(
         }
 
     private val samConstructorForClassifier =
-        storageManager.createMemoizedFunction<ClassDescriptor, SamConstructorDescriptor> { classifier ->
+        storageManager.createMemoizedFunction<JavaClassDescriptor, SamConstructorDescriptor> { classifier ->
             createSamConstructorFunction(classifier.containingDeclaration, classifier, samResolver, samConversionOracle)
         }
 
@@ -257,15 +258,14 @@ class SamAdapterFunctionsScope(
             return getTypeAliasSamConstructor(classifier)
         }
 
-        if (classifier !is ClassDescriptor) return null
-        if (!JavaSingleAbstractMethodUtils.isSamClassDescriptor(classifier)) return null
+        if (classifier !is LazyJavaClassDescriptor || classifier.defaultFunctionTypeForSamInterface == null) return null
 
         return samConstructorForClassifier(classifier)
     }
 
     private fun getTypeAliasSamConstructor(classifier: TypeAliasDescriptor): SamConstructorDescriptor? {
         val classDescriptor = classifier.classDescriptor ?: return null
-        if (!JavaSingleAbstractMethodUtils.isSamClassDescriptor(classDescriptor)) return null
+        if (classDescriptor !is LazyJavaClassDescriptor || classDescriptor.defaultFunctionTypeForSamInterface == null) return null
 
         return createTypeAliasSamConstructorFunction(
             classifier, samConstructorForClassifier(classDescriptor), samResolver, samConversionOracle

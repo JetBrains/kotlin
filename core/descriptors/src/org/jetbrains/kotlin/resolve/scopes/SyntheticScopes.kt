@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsScopeProvider
 import org.jetbrains.kotlin.types.KotlinType
 
 
@@ -96,7 +97,7 @@ interface SyntheticScope {
     }
 }
 
-@DefaultImplementation(impl = SyntheticScopes.Empty::class)
+@DefaultImplementation(impl = FunInterfaceConstructorsScopeProvider::class)
 interface SyntheticScopes {
     val scopes: Collection<SyntheticScope>
 

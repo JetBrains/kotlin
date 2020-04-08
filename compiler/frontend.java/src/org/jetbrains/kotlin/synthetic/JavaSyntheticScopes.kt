@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsSyntheticScope
 import org.jetbrains.kotlin.storage.StorageManager
 
 class JavaSyntheticScopes(
@@ -69,7 +70,10 @@ class JavaSyntheticScopes(
             )
         )
 
-        scopes = listOf(javaSyntheticPropertiesScope, samAdapterFunctionsScope) + scopesFromExtensions
+        val funInterfaceConstructorsScopes =
+            FunInterfaceConstructorsSyntheticScope(storageManager, lookupTracker, samConventionResolver, samConversionOracle)
+
+        scopes = listOf(javaSyntheticPropertiesScope, samAdapterFunctionsScope, funInterfaceConstructorsScopes) + scopesFromExtensions
 
         if (samConversionPerArgumentIsEnabled) {
             val forceEnabledSamAdapterFunctionsScope = SamAdapterFunctionsScope(

@@ -28,6 +28,11 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("funConstructorCallJS.kt")
+    public void testFunConstructorCallJS() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
+    }
+
     @TestMetadata("implementingFunction.kt")
     public void testImplementingFunction() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/implementingFunction.kt");

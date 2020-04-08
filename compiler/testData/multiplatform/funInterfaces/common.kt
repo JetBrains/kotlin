@@ -10,4 +10,5 @@ fun foo(k: KRunnable) = k.invoke()
 
 fun test() {
     foo { "OK" }
+    foo(KRunnable { "OK "})
 }
