@@ -693,13 +693,15 @@ class RawFirBuilder(
                             val zippedParameters = classOrObject.primaryConstructorParameters.zip(
                                 declarations.filterIsInstance<FirProperty>(),
                             )
-                            zippedParameters.generateComponentFunctions(
-                                baseSession, this, context.packageFqName, context.className, firPrimaryConstructor,
-                            )
-                            zippedParameters.generateCopyFunction(
-                                baseSession, classOrObject, this, context.packageFqName, context.className, firPrimaryConstructor,
-                            )
-                            // TODO: equals, hashCode, toString
+                            DataClassMemberGenerator(
+                                baseSession,
+                                classOrObject,
+                                this,
+                                firPrimaryConstructor.returnTypeRef,
+                                zippedParameters,
+                                context.packageFqName,
+                                context.className
+                            ).generateMembers()
                         }
 
                         if (classOrObject.hasModifier(ENUM_KEYWORD)) {
