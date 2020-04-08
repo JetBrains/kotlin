@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.PackageViewProvider
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualCompatibilityChecker.Substitutor
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
@@ -18,30 +19,30 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
  */
 
 // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
-fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
-    ExpectedActualResolver.findActualForExpected(this, platformModule)?.get(Compatible).orEmpty()
+fun MemberDescriptor.findCompatibleActualForExpected(providerOfPlatformDeclarations: PackageViewProvider): List<MemberDescriptor> =
+    ExpectedActualResolver.findActualForExpected(this, providerOfPlatformDeclarations)?.get(Compatible).orEmpty()
 
-fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
-    ExpectedActualResolver.findExpectedForActual(this, commonModule)?.get(Compatible).orEmpty()
+fun MemberDescriptor.findCompatibleExpectedForActual(providerOfCommonDeclarations: PackageViewProvider): List<MemberDescriptor> =
+    ExpectedActualResolver.findExpectedForActual(this, providerOfCommonDeclarations)?.get(Compatible).orEmpty()
 
-fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> {
-    val actualsGroupedByCompatibility = ExpectedActualResolver.findActualForExpected(this, platformModule)
+fun MemberDescriptor.findAnyActualForExpected(providerOfPlatformDeclarations: PackageViewProvider): List<MemberDescriptor> {
+    val actualsGroupedByCompatibility = ExpectedActualResolver.findActualForExpected(this, providerOfPlatformDeclarations)
     return actualsGroupedByCompatibility?.get(Compatible)
         ?: actualsGroupedByCompatibility?.values?.flatten()
         ?: emptyList()
 }
 
-fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
+fun DeclarationDescriptor.findExpects(providerOfCommonDeclarations: PackageViewProvider = this.module): List<MemberDescriptor> {
     return ExpectedActualResolver.findExpectedForActual(
         this as MemberDescriptor,
-        inModule
+        providerOfCommonDeclarations
     )?.get(Compatible).orEmpty()
 }
 
-fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
+fun DeclarationDescriptor.findActuals(providerOfActualDeclarations: PackageViewProvider = this.module): List<MemberDescriptor> {
     return ExpectedActualResolver.findActualForExpected(
         (this as MemberDescriptor),
-        inModule
+        providerOfActualDeclarations
     )?.get(Compatible).orEmpty()
 }
 
@@ -56,12 +57,12 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module):
 object ExpectedActualResolver {
     fun findActualForExpected(
         expected: MemberDescriptor,
-        platformModule: ModuleDescriptor
+        viewProviderForPlatformDeclarations: PackageViewProvider
     ): Map<Compatibility, List<MemberDescriptor>>? {
-        val compatibilityChecker = ExpectedActualCompatibilityChecker(platformModule)
+        val compatibilityChecker = ExpectedActualCompatibilityChecker(viewProviderForPlatformDeclarations)
         return when (expected) {
             is CallableMemberDescriptor -> {
-                expected.findNamesakesFromModule(platformModule).filter { actual ->
+                expected.findNamesakesFromModule(viewProviderForPlatformDeclarations).filter { actual ->
                     expected != actual && !actual.isExpect &&
                             // TODO: use some other way to determine that the declaration is from Kotlin.
                             //       This way behavior differs between fast and PSI-based Java class reading mode
@@ -72,7 +73,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassDescriptor -> {
-                expected.findClassifiersFromModule(platformModule).filter { actual ->
+                expected.findClassifiersFromModule(viewProviderForPlatformDeclarations).filter { actual ->
                     expected != actual && !actual.isExpect &&
                             actual.couldHaveASource
                 }.groupBy { actual ->
@@ -85,7 +86,7 @@ object ExpectedActualResolver {
 
     fun findExpectedForActual(
         actual: MemberDescriptor,
-        commonModule: ModuleDescriptor
+        viewProviderForCommonDeclarations: PackageViewProvider
     ): Map<Compatibility, List<MemberDescriptor>>? {
         val compatibilityChecker = ExpectedActualCompatibilityChecker(actual.module)
 
@@ -96,10 +97,10 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                            findExpectedForActual(container, viewProviderForCommonDeclarations)?.values?.firstOrNull() as? ClassDescriptor
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
-                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule)
+                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(viewProviderForCommonDeclarations)
                     else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
@@ -117,7 +118,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                actual.findClassifiersFromModule(commonModule).filter { declaration ->
+                actual.findClassifiersFromModule(viewProviderForCommonDeclarations).filter { declaration ->
                     actual != declaration &&
                             declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
