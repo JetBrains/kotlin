@@ -9,6 +9,8 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -17,7 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
@@ -35,6 +39,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun String.parseCharacter(): Char? {
     // Strip the quotes
@@ -458,3 +464,32 @@ private val GET_VALUE = Name.identifier("getValue")
 private val SET_VALUE = Name.identifier("setValue")
 private val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 private val DELEGATED_SETTER_PARAM = Name.special("<set-?>")
+
+fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContractDescription?> {
+    if (this == null) return null to null
+    if (!isContractPresentFirCheck()) return this to null
+    val contractCall = replaceFirstStatement(FirStubStatement) as FirFunctionCall
+    return this to buildRawContractDescription {
+        source = contractCall.source
+        this.contractCall = contractCall
+    }
+}
+
+fun FirBlock.isContractPresentFirCheck(): Boolean {
+    val firstStatement = statements.firstOrNull() ?: return false
+    val contractCall = firstStatement as? FirFunctionCall ?: return false
+    if (contractCall.calleeReference.name.asString() != "contract") return false
+    val receiver = contractCall.explicitReceiver as? FirQualifiedAccessExpression ?: return true
+    if (!contractCall.checkReceiver("contracts")) return false
+    if (!receiver.checkReceiver("kotlin")) return false
+    val receiverOfReceiver = receiver.explicitReceiver as? FirQualifiedAccessExpression ?: return false
+    if (receiverOfReceiver.explicitReceiver != null) return false
+    return true
+}
+
+private fun FirExpression.checkReceiver(name: String?): Boolean {
+    if (this !is FirQualifiedAccessExpression) return false
+    val receiver = explicitReceiver as? FirQualifiedAccessExpression ?: return false
+    val receiverName = (receiver.calleeReference as? FirNamedReference)?.name?.asString() ?: return false
+    return receiverName == name
+}

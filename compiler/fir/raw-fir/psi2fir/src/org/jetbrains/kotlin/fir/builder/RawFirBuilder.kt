@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -42,10 +45,24 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import kotlin.collections.MutableList
+import kotlin.collections.any
+import kotlin.collections.contains
+import kotlin.collections.filterIsInstance
+import kotlin.collections.first
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.isNotEmpty
+import kotlin.collections.lastOrNull
+import kotlin.collections.plusAssign
+import kotlin.collections.reverse
+import kotlin.collections.withIndex
+import kotlin.collections.zip
 
 class RawFirBuilder(
     session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
@@ -199,19 +216,20 @@ class RawFirBuilder(
                     FirSingleExpressionBlock(convert())
             }
 
-        private fun KtDeclarationWithBody.buildFirBody(): FirBlock? =
+        private fun KtDeclarationWithBody.buildFirBody(): Pair<FirBlock?, FirContractDescription?> =
             when {
                 !hasBody() ->
-                    null
+                    null to null
                 hasBlockBody() -> if (!stubMode) {
-                    bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
+                    val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
+                    block.extractContractDescriptionIfPossible()
                 } else {
-                    FirSingleExpressionBlock(buildExpressionStub { source = this@buildFirBody.toFirSourceElement() }.toReturn())
+                    FirSingleExpressionBlock(buildExpressionStub { source = this@buildFirBody.toFirSourceElement() }.toReturn()) to null
                 }
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
                     // basePsi is null, because 'return' is synthetic & should not be bound to some PSI
-                    FirSingleExpressionBlock(result.toReturn(baseSource = null))
+                    FirSingleExpressionBlock(result.toReturn(baseSource = null)) to null
                 }
             }
 
@@ -289,7 +307,11 @@ class RawFirBuilder(
                     }
                 }
                 symbol = FirPropertyAccessorSymbol()
-                body = this@toFirPropertyAccessor.buildFirBody()
+                val (body, contractDescription) = this@toFirPropertyAccessor.buildFirBody()
+                this.body = body
+                contractDescription?.let {
+                    this.contractDescription = it
+                }
             }.also {
                 accessorTarget.bind(it)
                 this@RawFirBuilder.context.firFunctionTargets.removeLast()
@@ -824,7 +846,14 @@ class RawFirBuilder(
                 }
                 withCapturedTypeParameters {
                     if (this is FirSimpleFunctionBuilder) addCapturedTypeParameters(this.typeParameters)
-                    body = function.buildFirBody()
+                    val (body, contractDescription) = function.buildFirBody()
+                    this.body = body
+                    contractDescription?.let {
+                        // TODO: add error reporting for contracts on lambdas
+                        if (this is FirSimpleFunctionBuilder) {
+                            this.contractDescription = it
+                        }
+                    }
                 }
                 context.firFunctionTargets.removeLast()
             }.build().also {
@@ -945,7 +974,8 @@ class RawFirBuilder(
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                 extractValueParametersTo(this)
-                body = buildFirBody()
+                val (body, _) = buildFirBody()
+                this.body = body
                 this@RawFirBuilder.context.firFunctionTargets.removeLast()
             }.also {
                 target.bind(it)

@@ -85,3 +85,12 @@ fun <D> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>
         }
     }
 }
+
+fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {
+    require(this is FirBlockImpl) {
+        "replaceFirstStatement should not be called for ${this::class.simpleName}"
+    }
+    val existed = statements[0]
+    statements[0] = statement
+    return existed
+}
