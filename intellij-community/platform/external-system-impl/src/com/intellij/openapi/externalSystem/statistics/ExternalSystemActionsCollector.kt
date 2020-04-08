@@ -7,6 +7,7 @@ import com.intellij.internal.statistic.collectors.fus.actions.persistence.Action
 import com.intellij.internal.statistic.eventLog.EventFields
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.internal.statistic.service.fus.collectors.FeatureUsagesCollector
 import com.intellij.openapi.actionSystem.AnAction
@@ -14,7 +15,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.project.Project
 
-class ExternalSystemActionsCollector : FeatureUsagesCollector() {
+class ExternalSystemActionsCollector : CounterUsagesCollector() {
   enum class ActionId {
     RunExternalSystemTaskAction,
     ExecuteExternalSystemRunConfigurationAction
