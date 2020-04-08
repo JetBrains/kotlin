@@ -198,6 +198,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-Didea.debug.mode=true",
                                     "-Didea.system.path=${sandboxDir.absolutePath}",
                                     "-Didea.config.path=${sandboxDir.absolutePath}/config",
+                                    "-Didea.tooling.debug=true",
                                     "-Dapple.laf.useScreenMenuBar=true",
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
