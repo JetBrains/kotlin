@@ -184,7 +184,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
             // Static "$default" methods should be looked up in each DefaultImpls class, see KT-33430
             if (isStaticDefault) {
-                val defaultImpls = superInterface.classLoader.tryLoadClass(superInterface.name + JvmAbi.DEFAULT_IMPLS_SUFFIX)
+                val defaultImpls = superInterface.safeClassLoader.tryLoadClass(superInterface.name + JvmAbi.DEFAULT_IMPLS_SUFFIX)
                 if (defaultImpls != null) {
                     parameterTypes[0] = superInterface
                     defaultImpls.tryGetMethod(name, parameterTypes, returnType)?.let { return it }
