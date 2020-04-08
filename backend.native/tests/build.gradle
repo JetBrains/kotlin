@@ -3445,6 +3445,11 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/smoke.h"
     }
 
+    createInterop("objcTests") {
+        it.defFile 'interop/objc/objcTests.def'
+        it.headers fileTree("$projectDir/interop/objc/tests") { include '**/*.h' }
+    }
+
     createInterop("objcMisc") {
         it.defFile 'interop/objc_with_initializer/objc_misc.def'
         it.headers "$projectDir/interop/objc_with_initializer/objc_misc.h"
@@ -3475,7 +3480,7 @@ createInterop("withSpaces") {
 /**
  * Creates a task for the interop test. Configures runner and adds library and test build tasks.
  */
-Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
+Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> configureClosure) {
     return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { task ->
         task.configure(configureClosure)
         if (task.enabled) {
@@ -3487,7 +3492,7 @@ Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
                     libraries {
                         artifact lib
                     }
-                    srcFiles task.getSources()
+                    srcFiles multiFile ? fileTree(task.source) { include '**/*.kt' } : task.getSources()
                     baseDir "$testOutputLocal/$name"
                     linkerOpts "-L$buildDir"
                     extraOpts task.flags
@@ -3498,6 +3503,13 @@ Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
     }
 }
 
+Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
+    return interopTestBase(name, false, configureClosure)
+}
+
+Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
+    return interopTestBase(name, true, configureClosure)
+}
 
 standaloneTest("interop_objc_allocException") {
     dependsOnPlatformLibs(it)
@@ -3717,6 +3729,26 @@ if (PlatformInfo.isAppleTarget(project)) {
             copy {
                 from("interop/objc/Localizable.stringsdict")
                 into("$testOutputLocal/$name/$target/en.lproj/")
+            }
+        }
+    }
+
+    interopTestMultifile("interop_objc_tests") {
+        source = "interop/objc/tests/"
+        interop = 'objcTests'
+        flags = ['-tr', '-e', 'main']
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            execKonanClang(project.target) {
+                args fileTree("$projectDir/interop/objc/tests/") { include '**/*.m' }
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjctests.dylib"
+                // Enable ARC optimizations to prevent some objects from leaking in Obj-C code due to exceptions:
+                args '-O2'
+            }
+            if (project.target instanceof KonanTarget.IOS_X64) {
+                UtilsKt.codesign(project, "$buildDir/libobjctests.dylib")
             }
         }
     }
