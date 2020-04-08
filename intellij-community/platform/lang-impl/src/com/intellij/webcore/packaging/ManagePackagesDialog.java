@@ -421,7 +421,7 @@ public class ManagePackagesDialog extends DialogWrapper {
   @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
-    return myFilter;
+    return ((FilterComponent)myFilter).getTextEditor();
   }
 
   private class MyPackageSelectionListener implements ListSelectionListener {
