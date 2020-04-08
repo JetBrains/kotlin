@@ -373,11 +373,13 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (!resolvedCall.getValueArguments().isEmpty()) return true;
 
         KotlinType callableReferenceType = bindingContext.getType(expression);
-        assert callableReferenceType != null : "No type for callable reference: " + expression.getText();
-        KotlinType callableReferenceReturnType = CollectionsKt.last(callableReferenceType.getArguments()).getType();
-        KotlinType functionReturnType = functionDescriptor.getReturnType();
-        assert functionReturnType != null : "No return type for function: " + functionDescriptor;
-        return KotlinBuiltIns.isUnit(callableReferenceReturnType) && !KotlinBuiltIns.isUnit(functionReturnType);
+        if (callableReferenceType != null) {
+            KotlinType callableReferenceReturnType = CollectionsKt.last(callableReferenceType.getArguments()).getType();
+            KotlinType functionReturnType = functionDescriptor.getReturnType();
+            return functionReturnType != null &&
+                   KotlinBuiltIns.isUnit(callableReferenceReturnType) && !KotlinBuiltIns.isUnit(functionReturnType);
+        }
+        return false;
     }
 
     @Override
