@@ -3,12 +3,12 @@ package com.intellij.ide.extensionResources;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
+import com.intellij.ide.plugins.PluginDependency;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.DigestUtil;
-import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +29,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <p> Extensions root type provide a common interface for plugins to access resources that are modifiable by the user. </p>
@@ -205,26 +203,31 @@ public final class ExtensionsRootType extends RootType {
     }
 
     ClassLoader pluginClassLoader = plugin.getPluginClassLoader();
-    final Enumeration<URL> resources = pluginClassLoader.getResources(resourcesPath);
+    Enumeration<URL> resources = pluginClassLoader.getResources(resourcesPath);
     if (resources == null) {
       return ContainerUtil.emptyList();
     }
-
-    if (plugin.getUseIdeaClassLoader()) {
+    else if (plugin.getUseIdeaClassLoader()) {
       return ContainerUtil.toList(resources);
     }
 
-    Set<URL> urls = new LinkedHashSet<>(ContainerUtil.toList(resources));
+    Set<URL> urls = new LinkedHashSet<>();
+    while (resources.hasMoreElements()) {
+      urls.add(resources.nextElement());
+    }
     // exclude parent classloader resources from list
-    List<ClassLoader> dependentPluginClassLoaders = StreamEx.of(plugin.getDependentPluginIds())
-      .map(id -> PluginManagerCore.getPlugin(id))
-      .nonNull()
-      .map(PluginDescriptor::getPluginClassLoader)
-      .without(pluginClassLoader)
-      .collect(Collectors.toList());
-
-    for (ClassLoader classLoader : dependentPluginClassLoaders) {
-      urls.removeAll(ContainerUtil.toList(classLoader.getResources(resourcesPath)));
+    for (PluginDependency it : plugin.getPluginDependencies()) {
+      IdeaPluginDescriptor descriptor = PluginManagerCore.getPlugin(it.id);
+      if (descriptor == null) {
+        continue;
+      }
+      ClassLoader loader = descriptor.getPluginClassLoader();
+      if (loader != pluginClassLoader) {
+        Enumeration<URL> pluginResources = loader.getResources(resourcesPath);
+        while (pluginResources.hasMoreElements()) {
+          urls.remove(pluginResources.nextElement());
+        }
+      }
     }
     return new ArrayList<>(urls);
   }

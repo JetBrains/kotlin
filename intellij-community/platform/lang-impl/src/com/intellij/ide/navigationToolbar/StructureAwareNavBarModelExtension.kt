@@ -113,8 +113,8 @@ abstract class StructureAwareNavBarModelExtension : AbstractNavBarModelExtension
   }
 
   private fun childrenFromNodeAndProviders(parent: StructureViewTreeElement): List<TreeElement> {
-    val children = if (parent is PsiTreeElementBase<*>) parent.childrenWithoutCustomRegions else parent.children
-    return children.toList() + applicableNodeProviders.flatMap { it.provideNodes(parent) }
+    val children = if (parent is PsiTreeElementBase<*>) parent.childrenWithoutCustomRegions else parent.children.toList()
+    return children + applicableNodeProviders.flatMap { it.provideNodes(parent) }
   }
 
   override fun normalizeChildren() = false

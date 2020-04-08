@@ -5,17 +5,20 @@ import com.intellij.ide.impl.StructureViewWrapperImpl;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
+import com.intellij.openapi.extensions.impl.ExtensionProcessingHelper;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ReflectionUtil;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.MultiMap;
-import gnu.trove.THashMap;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -26,6 +29,8 @@ import java.util.*;
   @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
 })
 public final class StructureViewFactoryImpl extends StructureViewFactoryEx implements PersistentStateComponent<StructureViewFactoryImpl.State> {
+  private static final ExtensionPointName<StructureViewExtension> EXTENSION_POINT_NAME = new ExtensionPointName<>("com.intellij.lang.structureViewExtension");
+
   public static final class State {
     @SuppressWarnings({"WeakerAccess"}) public boolean AUTOSCROLL_MODE = true;
     @SuppressWarnings({"WeakerAccess"}) public boolean AUTOSCROLL_FROM_SOURCE = false;
@@ -37,11 +42,11 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
   private State myState = new State();
   private Runnable myRunWhenInitialized = null;
 
-  private final MultiMap<Class<? extends PsiElement>, StructureViewExtension> myImplExtensions = MultiMap.createConcurrentSet();
+  private final Map<Class<? extends PsiElement>, Collection<StructureViewExtension>> myImplExtensions = ContainerUtil.newConcurrentMap();
 
   public StructureViewFactoryImpl(@NotNull Project project) {
     myProject = project;
-    StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener(() -> {
+    EXTENSION_POINT_NAME.addExtensionPointListener(() -> {
       myImplExtensions.clear();
       if (myStructureViewWrapperImpl != null) {
         myStructureViewWrapperImpl.rebuild();
@@ -75,22 +80,22 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
   @Override
   public @NotNull Collection<StructureViewExtension> getAllExtensions(@NotNull Class<? extends PsiElement> type) {
     Collection<StructureViewExtension> result = myImplExtensions.get(type);
-    if (!result.isEmpty()) {
+    if (result != null) {
       return result;
     }
 
-    ExtensionManager extensionManager = ApplicationManager.getApplication().getService(ExtensionManager.class);
-    assert extensionManager != null;
-    Map<Class<? extends PsiElement>, List<StructureViewExtension>> map = extensionManager.extensions.getValue();
-    for (Class<? extends PsiElement> registeredType : map.keySet()) {
-      if (ReflectionUtil.isAssignable(registeredType, type)) {
-        for (StructureViewExtension extension : map.get(registeredType)) {
-          myImplExtensions.putValue(type, extension);
-        }
+    ExtensionPointImpl<StructureViewExtension> point = (ExtensionPointImpl<StructureViewExtension>)EXTENSION_POINT_NAME.getPoint(null);
+    Set<Class<? extends PsiElement>> visitedTypes = new HashSet<>();
+    result = new ArrayList<>();
+    for (StructureViewExtension extension : point.getExtensionList()) {
+      Class<? extends PsiElement> registeredType = extension.getType();
+      if (ReflectionUtil.isAssignable(registeredType, type) && visitedTypes.add(registeredType)) {
+        result.addAll(ExtensionProcessingHelper.getByGroupingKey(point, registeredType, StructureViewExtension::getType));
       }
     }
-    result = myImplExtensions.get(type);
-    return result;
+
+    Collection<StructureViewExtension> oldValue = myImplExtensions.putIfAbsent(type, result);
+    return oldValue == null ? result : oldValue;
   }
 
   @Override
@@ -147,25 +152,5 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
   public void cleanupForNextTest() {
     assert ApplicationManager.getApplication().isUnitTestMode();
     myState = new State();
-  }
-}
-
-@Service
-final class ExtensionManager {
-  final ClearableLazyValue<Map<Class<? extends PsiElement>, List<StructureViewExtension>>> extensions = ClearableLazyValue.create(() -> {
-    Map<Class<? extends PsiElement>, List<StructureViewExtension>> map = new THashMap<>();
-    for (StructureViewExtension extension : StructureViewExtension.EXTENSION_POINT_NAME.getExtensionList()) {
-      List<StructureViewExtension> list = map.get(extension.getType());
-      if (list == null) {
-        list = new SmartList<>();
-        map.put(extension.getType(), list);
-      }
-      list.add(extension);
-    }
-    return map;
-  });
-
-  ExtensionManager() {
-    StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener(extensions::drop, null);
   }
 }

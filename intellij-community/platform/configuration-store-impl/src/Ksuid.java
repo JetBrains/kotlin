@@ -1,24 +1,23 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore;
+
+import com.intellij.util.io.DigestUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 // https://github.com/akhawaja/ksuid/blob/feature/portable-ksuid/LICENSE.md
-// do not use Secure Random
 public final class Ksuid {
   private static final int EPOCH = 1400000000;
   private static final int TIMESTAMP_LENGTH = 4;
   private static final int PAYLOAD_LENGTH = 16;
   private static final int MAX_ENCODED_LENGTH = 27;
 
-  private static final SecureRandom random = new SecureRandom();
-
-  public static String generate() {
+  public static @NotNull String generate() {
     ByteBuffer byteBuffer = ByteBuffer.allocate(TIMESTAMP_LENGTH + PAYLOAD_LENGTH);
 
     long utc = ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() / 1000;
@@ -26,7 +25,7 @@ public final class Ksuid {
     byteBuffer.putInt(timestamp);
 
     byte[] bytes = new byte[PAYLOAD_LENGTH];
-    random.nextBytes(bytes);
+    DigestUtil.getRandom().nextBytes(bytes);
     byteBuffer.put(bytes);
 
     String uid = new String(Base62.encode(byteBuffer.array()), StandardCharsets.UTF_8);
@@ -80,9 +79,8 @@ public final class Ksuid {
      * @param encoded a sequence of Base62-encoded bytes.
      * @return a byte sequence.
      */
-    public byte[] decode(final byte[] encoded) {
-      final byte[] prepared = translate(encoded, lookup);
-
+    public static byte[] decode(final byte[] encoded) {
+      byte[] prepared = translate(encoded, lookup);
       return convert(prepared, TARGET_BASE, STANDARD_BASE);
     }
 

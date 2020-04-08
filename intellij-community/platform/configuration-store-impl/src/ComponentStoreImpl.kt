@@ -117,16 +117,17 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
   }
 
-  override fun unloadComponent(component: Any) {
-    @Suppress("DEPRECATION") val name = when (component) {
+  final override fun unloadComponent(component: Any) {
+    @Suppress("DEPRECATION")
+    val name = when (component) {
       is PersistentStateComponent<*> -> getStateSpec(component).name
       is com.intellij.openapi.util.JDOMExternalizable -> getComponentName(component)
-      else -> null
+      else -> return
     }
-    name?.let { removeComponent(it) }
+    removeComponent(name)
   }
 
-  override fun initPersistencePlainComponent(component: Any, key: String) {
+  final override fun initPersistencePlainComponent(component: Any, key: String) {
     initPersistenceStateComponent(PersistenceStateAdapter(component),
                                   StateAnnotation(key, FileStorageAnnotation(StoragePathMacros.WORKSPACE_FILE, false)),
                                   serviceDescriptor = null)
