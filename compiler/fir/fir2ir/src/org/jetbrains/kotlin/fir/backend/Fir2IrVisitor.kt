@@ -265,7 +265,8 @@ class Fir2IrVisitor(
         } else {
             functionCall
         }
-        return callGenerator.convertToIrCall(convertibleCall, convertibleCall.typeRef)
+        val explicitReceiverExpression = convertToIrReceiverExpression(functionCall.explicitReceiver)
+        return callGenerator.convertToIrCall(convertibleCall, convertibleCall.typeRef, explicitReceiverExpression)
     }
 
     private fun FirFunctionCall.resolvedNamedFunctionSymbol(): FirNamedFunctionSymbol? {
@@ -278,7 +279,8 @@ class Fir2IrVisitor(
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
-        return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef)
+        val explicitReceiverExpression = convertToIrReceiverExpression(qualifiedAccessExpression.explicitReceiver)
+        return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
@@ -333,11 +335,15 @@ class Fir2IrVisitor(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
-        return callGenerator.convertToIrCallableReference(callableReferenceAccess)
+        val explicitReceiverExpression = convertToIrReceiverExpression(
+            callableReferenceAccess.explicitReceiver, callableReferenceMode = true
+        )
+        return callGenerator.convertToIrCallableReference(callableReferenceAccess, explicitReceiverExpression)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {
-        return callGenerator.convertToIrSetCall(variableAssignment)
+        val explicitReceiverExpression = convertToIrReceiverExpression(variableAssignment.explicitReceiver)
+        return callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
     }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement =
@@ -362,6 +368,14 @@ class Fir2IrVisitor(
                 )
             }
             else -> expression.accept(this, null) as IrExpression
+        }
+    }
+
+    private fun convertToIrReceiverExpression(expression: FirExpression?, callableReferenceMode: Boolean = false): IrExpression? {
+        return when (expression) {
+            null -> null
+            is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceMode)
+            else -> convertToIrExpression(expression)
         }
     }
 
