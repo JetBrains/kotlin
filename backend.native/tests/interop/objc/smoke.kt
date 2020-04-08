@@ -596,7 +596,14 @@ fun testObjCWeakRef0(deallocListener: DeallocListener) = withWorker {
     obj.freeze()
 
     runInWorker {
-        assertFalse(deallocListener.deallocExecutorIsNil())
+        // [deallocListener.deallocExecutorIsNil()] calls deallocExecutor getter, which retains [obj] and either
+        // puts it to autoreleasepool or releases it immediately (Obj-C ARC optimization).
+        // Wrap the call to autoreleasepool to ensure [obj] will be released:
+        autoreleasepool {
+            assertFalse(deallocListener.deallocExecutorIsNil())
+        }
+        // Process release of Kotlin reference to [obj] in any case:
+        kotlin.native.internal.GC.collect()
     }
 }
 
