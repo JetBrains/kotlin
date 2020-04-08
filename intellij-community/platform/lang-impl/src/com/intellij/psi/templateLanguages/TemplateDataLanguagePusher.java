@@ -109,8 +109,4 @@ public class TemplateDataLanguagePusher implements FilePropertyPusher<Language> 
       PushedFilePropertiesUpdater.getInstance(project).filePropertiesChanged(fileOrDir, this::acceptsFile);
     }
   }
-
-  @Override
-  public void afterRootsChanged(@NotNull Project project) {
-  }
 }
