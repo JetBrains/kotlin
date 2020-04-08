@@ -13,10 +13,10 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType.LIGHT
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -64,10 +64,8 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             logger.info("User-provided Kotlin/Native distribution: $konanHome")
         }
 
-        val distributionType = PropertiesProvider(project).nativeDistributionType
-        if (konanVersion.isAtLeast(1, 4, 0) &&
-            (distributionType == null || distributionType == LIGHT)
-        ) {
+        val distributionType = NativeDistributionTypeProvider(project).getDistributionType(konanVersion)
+        if (distributionType.mustGeneratePlatformLibs) {
             PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
         }
     }
