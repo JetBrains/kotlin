@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -58,6 +57,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
         }
 
         private fun collectSharedVariables() {
+            val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
             irBody.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
                 val relevantVars = HashSet<IrVariable>()
                 val relevantVals = HashSet<IrVariable>()
@@ -82,15 +82,18 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                             // may be it's their fault?
                             && !param.isCrossinline
                             && arg is IrFunctionExpression
-                        )
+                        ) {
+                            skippedFunctionsParents[arg.function] = data!!
                             arg.function.acceptChildren(this, data)
-                        else
+                            skippedFunctionsParents.remove(arg.function)
+                        } else
                             arg.accept(this, data)
                     }
                 }
 
-                override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) =
+                override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) {
                     super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+                }
 
                 override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
                     declaration.acceptChildren(this, data)
@@ -110,7 +113,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                     expression.acceptChildren(this, data)
 
                     val value = expression.symbol.owner
-                    if (value in relevantVars && (value as IrVariable).parent != data) {
+                    if (value in relevantVars && getRealParent(value as IrVariable) != data) {
                         sharedVariables.add(value)
                     }
                 }
@@ -119,10 +122,14 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                     super.visitSetVariable(expression, data)
 
                     val variable = expression.symbol.owner
-                    if (variable.initializer == null && variable.parent != data && variable in relevantVals) {
+                    if (variable.initializer == null && getRealParent(variable) != data && variable in relevantVals) {
                         sharedVariables.add(variable)
                     }
                 }
+
+                private fun getRealParent(variable: IrVariable) =
+                    variable.parent.let { skippedFunctionsParents[it] ?: it }
+
             }, irDeclaration as? IrDeclarationParent ?: irDeclaration.parent)
         }
 
