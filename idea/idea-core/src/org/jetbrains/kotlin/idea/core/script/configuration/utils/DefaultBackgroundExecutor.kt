@@ -30,7 +30,7 @@ import java.util.*
  * - silent and under progress          x                 x
  * - under progress                                       x
  */
-internal class DefaultBackgroundExecutor(
+class DefaultBackgroundExecutor(
     val project: Project,
     val rootsManager: ScriptClassRootsIndexer
 ) : BackgroundExecutor {

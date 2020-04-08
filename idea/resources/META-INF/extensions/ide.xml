@@ -68,8 +68,8 @@
                         interface="org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.notificationFactory"
-                        interface="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationNotificationFactory"
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.specialScriptConfigurationManagerProvider"
+                        interface="org.jetbrains.kotlin.idea.core.script.SpecialScriptConfigurationManagerProvider"
                         area="IDEA_PROJECT"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.additionalExtractableAnalyser"
@@ -106,7 +106,7 @@
                                    implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
 
         <scripting.idea.notificationFactory
-            implementation="org.jetbrains.kotlin.idea.core.script.DefaultScriptConfigurationNotificationFactory"
+            implementation="org.jetbrains.kotlin.idea.core.script.LoadScriptConfigurationNotificationFactory"
             order="last"
         />
 

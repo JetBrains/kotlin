@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.ProjectTopics
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
@@ -18,27 +19,33 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.ui.EditorNotifications
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationState
+import org.jetbrains.kotlin.idea.core.script.SpecialScriptConfigurationManagerProvider.Companion.SPECIAL_SCRIPT_CONFIGURATION_MANAGER_PROVIDER
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.script.experimental.api.ScriptDiagnostic
 
 /**
  * Abstract [ScriptConfigurationManager] implementation based on [cache] and [reloadOutOfDateConfiguration].
@@ -54,15 +61,29 @@ import kotlin.concurrent.withLock
  * Some internal state changes in [cache] may also invalidate [classpathRoots] by calling [clearClassRootsCaches]
  * (for example, when cache loaded from FS to memory)
  */
-internal abstract class AbstractScriptConfigurationManager(
+abstract class AbstractScriptConfigurationManager(
     protected val project: Project
 ) : ScriptConfigurationManager {
     protected val rootsIndexer = ScriptClassRootsIndexer(project)
 
+    private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
+    private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
+
+    private val defaultLoaders: Sequence<ScriptConfigurationLoader>
+        get() = sequence {
+            yield(outsiderLoader)
+            yield(fileAttributeCache)
+        }
+
     @Suppress("LeakingThis")
     protected val cache: ScriptConfigurationCache = createCache()
 
-    protected abstract fun createCache(): ScriptConfigurationCache
+    private fun createCache() = object : ScriptConfigurationMemoryCache(project) {
+        override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
+            super.setLoaded(file, configurationSnapshot)
+            fileAttributeCache.save(file, configurationSnapshot)
+        }
+    }
 
     /**
      * Will be called on [cache] miss or when [file] is changed.
@@ -79,11 +100,44 @@ internal abstract class AbstractScriptConfigurationManager(
      */
     protected abstract fun reloadOutOfDateConfiguration(
         file: KtFile,
+        virtualFile: VirtualFile,
+        definition: ScriptDefinition,
+        forceSync: Boolean, /* test only */
+        postponeLoading: Boolean
+    )
+
+    protected abstract val loadingContext: ScriptConfigurationLoadingContext
+
+    private fun reloadOutOfDateConfiguration(
+        file: KtFile,
         isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
         loadEvenWillNotBeApplied: Boolean = false,
         forceSync: Boolean = false,
         isPostponedLoad: Boolean = false
-    )
+    ) {
+        val virtualFile = file.originalFile.virtualFile ?: return
+
+        val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
+        val shouldLoad = isFirstLoad || loadEvenWillNotBeApplied || autoReloadEnabled
+        if (!shouldLoad) return
+
+        val postponeLoading = isPostponedLoad && !autoReloadEnabled && !isFirstLoad
+
+        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
+        val scriptDefinition = file.findScriptDefinition() ?: return
+
+        val syncLoader = defaultLoaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
+        if (syncLoader == null) {
+            val specialManager = SPECIAL_SCRIPT_CONFIGURATION_MANAGER_PROVIDER.getPoint(project).extensionList.firstNotNullResult {
+                it.getSpecialScriptConfigurationManager(file)
+            }
+            if (specialManager != null) {
+                specialManager.reloadOutOfDateConfiguration(file, isFirstLoad, loadEvenWillNotBeApplied, forceSync, isPostponedLoad)
+            } else {
+                reloadOutOfDateConfiguration(file, virtualFile, scriptDefinition, forceSync, postponeLoading)
+            }
+        }
+    }
 
     /**
      * Will be called on user action
@@ -232,6 +286,28 @@ internal abstract class AbstractScriptConfigurationManager(
         configurationSnapshot: ScriptConfigurationSnapshot
     ) {
         cache.setLoaded(file, configurationSnapshot)
+    }
+
+    protected fun saveReports(
+        file: VirtualFile,
+        newReports: List<ScriptDiagnostic>
+    ) {
+        val oldReports = IdeScriptReportSink.getReports(file)
+        if (oldReports != newReports) {
+            debug(file) { "new script reports = $newReports" }
+
+            ServiceManager.getService(project, ScriptReportSink::class.java).attachReports(file, newReports)
+
+            GlobalScope.launch(EDT(project)) {
+                if (project.isDisposed) return@launch
+
+                val ktFile = PsiManager.getInstance(project).findFile(file)
+                if (ktFile != null) {
+                    DaemonCodeAnalyzer.getInstance(project).restart(ktFile)
+                }
+                EditorNotifications.getInstance(project).updateAllNotifications()
+            }
+        }
     }
 
     private fun hasNotCachedRoots(configuration: ScriptCompilationConfigurationWrapper): Boolean {

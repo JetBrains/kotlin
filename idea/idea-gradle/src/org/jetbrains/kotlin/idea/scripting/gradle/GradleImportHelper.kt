@@ -23,7 +23,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 
 fun runPartialGradleImport(project: Project) {
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    val projectSettings = gradleSettings.getLinkedProjectsSettings()
+    val projectSettings = gradleSettings.linkedProjectsSettings
         .filterIsInstance<GradleProjectSettings>()
         .firstOrNull() ?: return
 
@@ -34,15 +34,14 @@ fun runPartialGradleImport(project: Project) {
     )
 }
 
-private val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
+private const val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
 private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))
 
 
-fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
+fun showNotificationForProjectImport(project: Project) {
     val existingPanel = project.notificationPanel
     if (existingPanel != null) {
-        existingPanel.update(callback)
         return
     }
 
@@ -53,7 +52,7 @@ fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
         )
     }
 
-    val notification = ScriptConfigurationChangedNotification(project, callback)
+    val notification = ScriptConfigurationChangedNotification(project)
     project.notificationPanel = notification
     notification.notify(project)
 }
@@ -64,7 +63,7 @@ fun hideNotificationForProjectImport(project: Project): Boolean {
     return true
 }
 
-private class ScriptConfigurationChangedNotification(val project: Project, onClick: () -> Unit) :
+private class ScriptConfigurationChangedNotification(val project: Project) :
     Notification(
         kotlinDslNotificationGroupId,
         KotlinIcons.LOAD_SCRIPT_CONFIGURATION,
@@ -76,9 +75,7 @@ private class ScriptConfigurationChangedNotification(val project: Project, onCli
     ) {
 
     init {
-        //NotificationGroup.findRegisteredGroup(s) ?: NotificationGroup.balloonGroup(s)
-
-        addAction(LoadConfigurationAction(onClick))
+        addAction(LoadConfigurationAction())
         addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.enable.auto.import")) {
             val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
             val projectSettings = gradleSettings.getLinkedProjectsSettings()
@@ -87,11 +84,8 @@ private class ScriptConfigurationChangedNotification(val project: Project, onCli
             if (projectSettings != null) {
                 projectSettings.isUseAutoImport = true
             }
+            runPartialGradleImport(project)
         })
-    }
-
-    fun update(onClick: () -> Unit) {
-        actions.filterIsInstance<LoadConfigurationAction>().forEach { it.onClick = onClick }
     }
 
     override fun expire() {
@@ -100,9 +94,10 @@ private class ScriptConfigurationChangedNotification(val project: Project, onCli
         project.notificationPanel = null
     }
 
-    private class LoadConfigurationAction(var onClick: () -> Unit) : AnAction(KotlinIdeaGradleBundle.message("action.label.import.project")) {
+    private class LoadConfigurationAction : AnAction(KotlinIdeaGradleBundle.message("action.label.import.project")) {
         override fun actionPerformed(e: AnActionEvent) {
-            onClick()
+            val project = e.project ?: return
+            runPartialGradleImport(project)
         }
     }
 }

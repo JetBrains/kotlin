@@ -48,7 +48,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         return true
     }
 
-    protected fun getConfigurationThroughScriptingApi(
+    fun getConfigurationThroughScriptingApi(
         file: KtFile,
         vFile: VirtualFile,
         scriptDefinition: ScriptDefinition

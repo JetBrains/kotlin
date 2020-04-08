@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Utility for postponing indexing of new roots to the end of some bulk operation.
  */
-internal class ScriptClassRootsIndexer(val project: Project) {
+class ScriptClassRootsIndexer(val project: Project) {
     private var newRootsPresent: Boolean = false
     private val concurrentTransactions = AtomicInteger()
 

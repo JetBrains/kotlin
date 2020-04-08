@@ -9,7 +9,7 @@ import com.intellij.openapi.application.impl.LaterInvocator
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.HashSetQueue
 
-class TestingBackgroundExecutor internal constructor(
+class TestingBackgroundExecutor(
     private val rootsManager: ScriptClassRootsIndexer
 ) : BackgroundExecutor {
     val backgroundQueue = HashSetQueue<BackgroundTask>()

@@ -20,11 +20,11 @@ var Application.isScriptChangesNotifierDisabled by NotNullableUserDataProperty(
 
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.script")
 
-internal fun debug(file: KtFile, message: () -> String) {
+fun debug(file: KtFile, message: () -> String) {
     debug(file.originalFile.virtualFile, message)
 }
 
-internal fun debug(file: VirtualFile? = null, message: () -> String) {
+fun debug(file: VirtualFile? = null, message: () -> String) {
     if (LOG.isDebugEnabled) {
         LOG.debug("[KOTLIN SCRIPT] ${file?.let { file.path + " "} ?: ""}" + message())
     }

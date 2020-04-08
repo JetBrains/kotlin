@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
@@ -15,28 +14,17 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.HyperlinkLabel
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
 
-interface ScriptConfigurationNotificationFactory {
-    fun showNotification(file: VirtualFile, project: Project, onClick: () -> Unit): Boolean
-    fun hideNotification(file: VirtualFile, project: Project): Boolean
-
-    companion object {
-        val NOTIFICATION_FACTORY: ExtensionPointName<ScriptConfigurationNotificationFactory> =
-            ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.notificationFactory")
-    }
-}
-
-class DefaultScriptConfigurationNotificationFactory : ScriptConfigurationNotificationFactory {
-    override fun showNotification(file: VirtualFile, project: Project, onClick: () -> Unit): Boolean {
+object LoadScriptConfigurationNotificationFactory {
+    fun showNotification(file: VirtualFile, project: Project, onClick: () -> Unit): Boolean {
         file.addLoadConfigurationNotificationPanel(project, onClick)
         return true
     }
 
-    override fun hideNotification(file: VirtualFile, project: Project): Boolean {
+    fun hideNotification(file: VirtualFile, project: Project): Boolean {
         file.removeLoadConfigurationNotificationPanel(project)
         return true
     }
