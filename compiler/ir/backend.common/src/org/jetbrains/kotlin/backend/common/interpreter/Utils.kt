@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -32,15 +32,15 @@ fun IrMemberAccessExpression.getThisAsReceiver(): DeclarationDescriptor {
     return (this.symbol.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
 }
 
-fun IrFunctionSymbol.getDispatchReceiver(): DeclarationDescriptor? {
-    return (this.descriptor.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
+fun IrFunction.getDispatchReceiver(): DeclarationDescriptor? {
+    return (this.symbol.descriptor.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
 }
 
-fun IrFunctionSymbol.getExtensionReceiver(): DeclarationDescriptor? {
-    return this.owner.extensionReceiverParameter?.descriptor
+fun IrFunction.getExtensionReceiver(): DeclarationDescriptor? {
+    return this.extensionReceiverParameter?.descriptor
 }
 
-fun IrFunctionSymbol.getReceiver(): DeclarationDescriptor? {
+fun IrFunction.getReceiver(): DeclarationDescriptor? {
     return this.getDispatchReceiver() ?: this.getExtensionReceiver()
 }
 
@@ -74,7 +74,7 @@ private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boo
 
 private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
     return (this is VariableDescriptor && other is VariableDescriptor && this.name == other.name) ||
-            (this is FunctionDescriptor && other is FunctionDescriptor &&
+            (this is FunctionDescriptor && other is FunctionDescriptor && //this == other
                     this.valueParameters.map { it.type.toString() } == other.valueParameters.map { it.type.toString() } &&
                     this.name == other.name)
 }
@@ -220,5 +220,17 @@ fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
         "kotlin.DoubleArray" -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
         "kotlin.BooleanArray" -> Primitive(BooleanArray(size) { i -> this[i].toString().toBoolean() }, type)
         else -> Primitive<Array<*>>(this.toTypedArray(), type)
+    }
+}
+
+fun State?.getFunctionReceiver(superIrClass: IrClass?): State? {
+    return when {
+        superIrClass == null -> this
+        superIrClass.isInterface -> {
+            val interfaceState = Common(superIrClass)
+            (this!!.copy() as Complex).setSuperClassInstance(interfaceState)
+            interfaceState
+        }
+        else -> (this as Complex).superClass
     }
 }

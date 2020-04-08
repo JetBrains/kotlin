@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.interpreter.state
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -40,9 +39,8 @@ abstract class Complex(
     fun setStatesFrom(state: Complex) = state.fields.forEach { setState(it) }
 
     override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
-        if (descriptor is PropertyGetterDescriptor)
-            return irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }.single { it.descriptor.equalTo(descriptor) }
-
-        return irClass.declarations.filterIsInstance<IrFunction>().singleOrNull { it.descriptor.equalTo(descriptor) }
+        val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
+        val functions = irClass.declarations.filterIsInstance<IrFunction>()
+        return (propertyGetters + functions).singleOrNull { it.descriptor.equalTo(descriptor) }
     }
 }

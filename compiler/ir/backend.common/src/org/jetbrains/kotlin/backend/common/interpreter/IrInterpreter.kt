@@ -228,14 +228,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun calculateAbstract(irFunction: IrFunction, data: Frame): ExecutionResult {
         if (irFunction.body == null) {
-            val receiver = data.getVariableState(irFunction.symbol.getReceiver()!!) as Complex
+            val receiver = data.getVariableState(irFunction.getReceiver()!!) as Complex
             val instance = receiver.getOriginal()
 
             val functionImplementation = instance.getIrFunction(irFunction.descriptor)
             if (functionImplementation?.body == null) throw NoSuchMethodException("Method \"${irFunction.name}\" wasn't implemented")
             val arguments = functionImplementation.valueParameters.map { Variable(it.descriptor, data.getVariableState(it.descriptor)) }
             val newFrame = InterpreterFrame()
-            newFrame.addVar(Variable(functionImplementation.symbol.getReceiver()!!, instance))
+            newFrame.addVar(Variable(functionImplementation.getReceiver()!!, instance))
             newFrame.addAll(arguments)
             return functionImplementation.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
         }
@@ -243,7 +243,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun calculateOverridden(owner: IrSimpleFunction, data: Frame): ExecutionResult {
-        val variableDescriptor = owner.symbol.getReceiver()!!
+        val variableDescriptor = owner.getReceiver()!!
         val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superClass
         if (superQualifier == null) {
             // superQualifier is null for exception state => find method in builtins
@@ -251,7 +251,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
         val overridden = owner.overriddenSymbols.single()
 
-        val newStates = InterpreterFrame(mutableListOf(Variable(overridden.getReceiver()!!, superQualifier)))
+        val newStates = InterpreterFrame(mutableListOf(Variable(overridden.owner.getReceiver()!!, superQualifier)))
         owner.valueParameters.zip(overridden.owner.valueParameters)
             .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
             .forEach { newStates.addVar(it) }
@@ -323,7 +323,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     ): ExecutionResult {
         // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
         val receiverAsFirstArgument = when (expression.dispatchReceiver?.type?.isFunction()) {
-            true -> listOfNotNull(irFunction.symbol.getExtensionReceiver())
+            true -> listOfNotNull(irFunction.getExtensionReceiver())
             else -> listOf()
         }
         val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
@@ -349,24 +349,18 @@ class IrInterpreter(irModule: IrModuleFragment) {
         rawDispatchReceiver?.interpret(data)?.check { return it }
         val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
 
-        val superQualifier = expression.superQualifierSymbol
-        val irFunctionReceiver = when {
-            superQualifier == null -> dispatchReceiver
-            superQualifier.owner.isInterface -> null
-            else -> (dispatchReceiver as Complex).superClass
-        }
-        // it is important firstly to add receiver, then arguments; this order is used in builtin method call
-        val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
-        irFunctionReceiver?.let { receiverState ->
-            // dispatch receiver is null if irFunction is lambda and so there is no need to add it as variable in frame
-            irFunction.symbol.getDispatchReceiver()?.let { newFrame.addVar(Variable(it, receiverState)) }
-        }
-
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
         rawExtensionReceiver?.interpret(data)?.check { return it }
         val extensionReceiver = rawExtensionReceiver?.let { data.popReturnValue() }
-        extensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, it)) }
+
+        // find correct ir function
+        val functionReceiver = dispatchReceiver?.getFunctionReceiver(expression.superQualifierSymbol?.owner)
+        val irFunction = functionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
+
+        // it is important firstly to add receiver, then arguments; this order is used in builtin method call
+        irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> newFrame.addVar(Variable(it, receiver)) } }
+        irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> newFrame.addVar(Variable(it, receiver)) } }
 
         interpretValueParameters(expression, irFunction, data, newFrame).check { return it }
 
@@ -777,7 +771,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     is Wrapper -> returnValue.value.toString()
                     is Common -> {
                         val toStringFun = returnValue.getToStringFunction()
-                        val newFrame = InterpreterFrame(mutableListOf(Variable(toStringFun.symbol.getReceiver()!!, returnValue)))
+                        val newFrame = InterpreterFrame(mutableListOf(Variable(toStringFun.getReceiver()!!, returnValue)))
                         val executionResult = toStringFun.body?.let { toStringFun.interpret(newFrame) } ?: calculateOverridden(toStringFun, newFrame)
                         if (executionResult.returnLabel != ReturnLabel.NEXT) return executionResult
                         (newFrame.popReturnValue() as Primitive<*>).value.toString()
