@@ -209,7 +209,7 @@ public final class HighlightManagerImpl extends HighlightManager {
                                       @NotNull TextAttributes attributes,
                                       boolean hideByTextChange,
                                       Collection<? super RangeHighlighter> outHighlighters) {
-    if (elements.length == 0) return;
+    if (elements.length == 0 || editor instanceof ImaginaryEditor) return;
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {
       flags |= HIDE_BY_TEXT_CHANGE;
