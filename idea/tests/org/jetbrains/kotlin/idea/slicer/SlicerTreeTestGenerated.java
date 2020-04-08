@@ -348,6 +348,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         runTest("idea/testData/slicer/inflow/whenExpression.kt");
     }
 
+    @TestMetadata("outflow/abstractExtensionMethodParameter.kt")
+    public void testOutflow_AbstractExtensionMethodParameter() throws Exception {
+        runTest("idea/testData/slicer/outflow/abstractExtensionMethodParameter.kt");
+    }
+
     @TestMetadata("outflow/abstractMethodParameter1.kt")
     public void testOutflow_AbstractMethodParameter1() throws Exception {
         runTest("idea/testData/slicer/outflow/abstractMethodParameter1.kt");
