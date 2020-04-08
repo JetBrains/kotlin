@@ -348,6 +348,16 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         runTest("idea/testData/slicer/inflow/whenExpression.kt");
     }
 
+    @TestMetadata("outflow/abstractMethodParameter1.kt")
+    public void testOutflow_AbstractMethodParameter1() throws Exception {
+        runTest("idea/testData/slicer/outflow/abstractMethodParameter1.kt");
+    }
+
+    @TestMetadata("outflow/abstractMethodParameter2.kt")
+    public void testOutflow_AbstractMethodParameter2() throws Exception {
+        runTest("idea/testData/slicer/outflow/abstractMethodParameter2.kt");
+    }
+
     @TestMetadata("outflow/anonymousFunBodyExpression.kt")
     public void testOutflow_AnonymousFunBodyExpression() throws Exception {
         runTest("idea/testData/slicer/outflow/anonymousFunBodyExpression.kt");
@@ -531,6 +541,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     @TestMetadata("outflow/notNullAssertion.kt")
     public void testOutflow_NotNullAssertion() throws Exception {
         runTest("idea/testData/slicer/outflow/notNullAssertion.kt");
+    }
+
+    @TestMetadata("outflow/openMethodParameter.kt")
+    public void testOutflow_OpenMethodParameter() throws Exception {
+        runTest("idea/testData/slicer/outflow/openMethodParameter.kt");
     }
 
     @TestMetadata("outflow/operatorCallDereferences.kt")

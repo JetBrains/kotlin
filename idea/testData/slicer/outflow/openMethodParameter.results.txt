@@ -1,0 +1,4 @@
+4 open fun foo(<bold>p: Any</bold>) {
+5 	println(<bold>p</bold>)
+10 	override fun foo(<bold>p: Any</bold>) {
+11 		println(<bold>p</bold> + 1)

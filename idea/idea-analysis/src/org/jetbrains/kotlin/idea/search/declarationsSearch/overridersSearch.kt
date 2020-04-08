@@ -153,7 +153,7 @@ private fun forEachKotlinOverride(
 
 fun KtNamedDeclaration.forEachOverridingElement(
     scope: SearchScope = runReadAction { useScope },
-    processor: (PsiElement, PsiElement) -> Boolean
+    processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean
 ): Boolean {
     val ktClass = runReadAction { containingClassOrObject as? KtClass } ?: return true
 

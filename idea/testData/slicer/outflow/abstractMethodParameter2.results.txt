@@ -1,0 +1,4 @@
+14 i.foo(<bold>s</bold>)
+4 	fun foo(<bold>p: Any</bold>)
+8 		override fun foo(<bold>p: Any</bold>) {
+9 			println(<bold>p</bold>)
