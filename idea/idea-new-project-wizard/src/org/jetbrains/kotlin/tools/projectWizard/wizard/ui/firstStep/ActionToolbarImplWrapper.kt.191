@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.keymap.ex.KeymapManagerEx
 
@@ -14,4 +16,11 @@ abstract class ActionToolbarImplWrapper(
     place: String,
     actionGroup: ActionGroup,
     horizontal: Boolean
-) : ActionToolbarImpl(place, actionGroup, horizontal, KeymapManagerEx.getInstanceEx())
+) : ActionToolbarImpl(
+    place,
+    actionGroup,
+    horizontal,
+    DataManager.getInstance(),
+    ActionManagerEx.getInstanceEx(),
+    KeymapManagerEx.getInstanceEx()
+)
