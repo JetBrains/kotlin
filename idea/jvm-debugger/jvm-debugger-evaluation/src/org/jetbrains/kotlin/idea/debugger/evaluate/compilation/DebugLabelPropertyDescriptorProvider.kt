@@ -176,10 +176,16 @@ private object DebugLabelModuleDescriptor : DeclarationDescriptorImpl(Annotation
         }
     }
 
+    override fun getPackageWithoutDependencies(fqName: FqName): PackageViewDescriptor = getPackage(fqName)
+
     override val platform: TargetPlatform?
         get() = JvmPlatforms.unspecifiedJvmPlatform
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        return emptyList()
+    }
+
+    override fun getSubPackagesOfWithoutDependencies(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return emptyList()
     }
 

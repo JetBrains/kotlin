@@ -28,25 +28,39 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
+open class SubpackagesScope @JvmOverloads constructor(
+    private val moduleDescriptor: ModuleDescriptor,
+    private val fqName: FqName,
+    private val includeDependencies: Boolean = true
+) : MemberScopeImpl() {
 
     protected fun getPackage(name: Name): PackageViewDescriptor? {
         if (name.isSpecial) {
             return null
         }
-        val packageViewDescriptor = moduleDescriptor.getPackage(fqName.child(name))
+        val packageViewDescriptor = if (includeDependencies)
+            moduleDescriptor.getPackage(fqName.child(name))
+        else
+            moduleDescriptor.getPackageWithoutDependencies(fqName.child(name))
+
         if (packageViewDescriptor.isEmpty()) {
             return null
         }
         return packageViewDescriptor
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
         if (fqName.isRoot && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
 
-        val subFqNames = moduleDescriptor.getSubPackagesOf(fqName, nameFilter)
+        val subFqNames = if (includeDependencies)
+            moduleDescriptor.getSubPackagesOf(fqName, nameFilter)
+        else
+            moduleDescriptor.getSubPackagesOfWithoutDependencies(fqName, nameFilter)
+
         val result = ArrayList<DeclarationDescriptor>(subFqNames.size)
         for (subFqName in subFqNames) {
             val shortName = subFqName.shortName()

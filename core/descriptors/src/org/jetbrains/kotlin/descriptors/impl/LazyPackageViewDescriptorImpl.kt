@@ -30,11 +30,15 @@ import org.jetbrains.kotlin.storage.getValue
 class LazyPackageViewDescriptorImpl(
         override val module: ModuleDescriptorImpl,
         override val fqName: FqName,
-        storageManager: StorageManager
+        storageManager: StorageManager,
+        private val includeDependencies: Boolean
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageViewDescriptor {
 
     override val fragments: List<PackageFragmentDescriptor> by storageManager.createLazyValue {
-        module.packageFragmentProvider.getPackageFragments(fqName)
+        if (includeDependencies)
+            module.packageFragmentProvider.getPackageFragments(fqName)
+        else
+            module.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName)
     }
 
     override val memberScope: MemberScope = LazyScopeAdapter(storageManager.createLazyValue {
@@ -43,7 +47,7 @@ class LazyPackageViewDescriptorImpl(
         }
         else {
             // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
-            val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
+            val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName, includeDependencies)
             ChainedMemberScope("package view scope for $fqName in ${module.name}", scopes)
         }
     })

@@ -73,6 +73,12 @@ public class ErrorUtils {
 
             @NotNull
             @Override
+            public Collection<FqName> getSubPackagesOfWithoutDependencies(@NotNull FqName fqName, @NotNull Function1<? super Name, Boolean> nameFilter) {
+                return emptyList();
+            }
+
+            @NotNull
+            @Override
             public Name getName() {
                 return Name.special("<ERROR MODULE>");
             }
@@ -92,6 +98,12 @@ public class ErrorUtils {
             @NotNull
             @Override
             public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
+                throw new IllegalStateException("Should not be called!");
+            }
+
+            @NotNull
+            @Override
+            public PackageViewDescriptor getPackageWithoutDependencies(@NotNull FqName fqName) {
                 throw new IllegalStateException("Should not be called!");
             }
 

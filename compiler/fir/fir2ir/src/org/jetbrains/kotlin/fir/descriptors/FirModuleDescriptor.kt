@@ -37,6 +37,14 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         TODO("Missing package reporting")
     }
 
+    override fun getPackageWithoutDependencies(fqName: FqName): PackageViewDescriptor {
+        TODO("Not yet implemented")
+    }
+
+    override fun getSubPackagesOfWithoutDependencies(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        TODO("Not yet implemented")
+    }
+
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         TODO("not implemented")
     }
