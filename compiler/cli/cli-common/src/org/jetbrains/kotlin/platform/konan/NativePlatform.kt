@@ -52,6 +52,9 @@ object NativePlatforms {
         }
     }
 
+    fun nativePlatformByTargetNames(targets: Collection<String>): TargetPlatform =
+        nativePlatformByTargets(targets.mapNotNull { KonanTarget.predefinedTargets[it] })
+
     @Deprecated(
         message = "Should be accessed only by compatibility layer, other clients should use 'unspecifiedNativePlatform'",
         level = DeprecationLevel.ERROR

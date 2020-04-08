@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
@@ -111,10 +110,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                             val jvmTarget = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
                             JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget).componentPlatforms
                         }
-                        is NativeIdePlatformKind -> {
-                            val nativeTargets = moduleData.konanTargets.mapNotNull { KonanTarget.predefinedTargets[it] }
-                            NativePlatforms.nativePlatformByTargets(nativeTargets)
-                        }
+                        is NativeIdePlatformKind -> NativePlatforms.nativePlatformByTargetNames(moduleData.konanTargets)
                         else -> platformKind.defaultPlatform.componentPlatforms
                     }
                 }
