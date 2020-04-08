@@ -193,7 +193,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   ): ProjectData? {
     val projectData = projectDataMap.action(id)
     if (projectData == null) {
-      LOG.warn(String.format("Project isn't registered by id=%s", id))
+      LOG.warn(String.format("Project isn't registered by id=%s", id), Throwable())
     }
     return projectData
   }
