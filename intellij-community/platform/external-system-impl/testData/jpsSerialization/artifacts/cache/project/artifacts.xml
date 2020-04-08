@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  
+  <artifact __external-system-id="test" name="import">
+    <root id="archive" name="a.jar" />
+  </artifact>
+</component>
