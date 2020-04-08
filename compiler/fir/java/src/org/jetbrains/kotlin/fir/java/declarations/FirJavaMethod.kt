@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -63,6 +64,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     body,
     status,
     containerSource,
+    contractDescription = FirEmptyContractDescription,
     name,
     symbol,
     annotations,

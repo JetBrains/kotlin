@@ -122,6 +122,8 @@ import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 
 /*
  * This file was generated automatically
@@ -595,6 +597,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(contractDescription)
     }
 
+    open fun visitRawContractDescription(rawContractDescription: FirRawContractDescription) {
+        visitElement(rawContractDescription)
+    }
+
+    open fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription) {
+        visitElement(resolvedContractDescription)
+    }
+
     final override fun visitElement(element: FirElement, data: Nothing?) {
         visitElement(element)
     }
@@ -1061,6 +1071,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitContractDescription(contractDescription: FirContractDescription, data: Nothing?) {
         visitContractDescription(contractDescription)
+    }
+
+    final override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: Nothing?) {
+        visitRawContractDescription(rawContractDescription)
+    }
+
+    final override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription, data: Nothing?) {
+        visitResolvedContractDescription(resolvedContractDescription)
     }
 
 }

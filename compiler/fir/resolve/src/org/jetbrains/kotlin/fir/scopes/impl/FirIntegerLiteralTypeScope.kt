@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -113,6 +114,7 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     body = null,
     status,
     containerSource = null,
+    contractDescription = FirEmptyContractDescription,
     kind.operatorName,
     symbol,
     annotations = mutableListOf(),

@@ -42,6 +42,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override lateinit var returnTypeRef: FirTypeRef
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
+    var contractDescription: FirContractDescription = FirEmptyContractDescription
     lateinit var symbol: FirPropertyAccessorSymbol
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var status: FirDeclarationStatus
@@ -57,6 +58,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             returnTypeRef,
             valueParameters,
             body,
+            contractDescription,
             symbol,
             isGetter,
             status,

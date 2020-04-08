@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInline
@@ -62,7 +63,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
         val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall.compose()
         val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall.compose()
 
-        val callsEffects = function.contractDescription.effects.filterIsInstance<ConeCallsEffectDeclaration>()
+        val callsEffects = function.contractDescription.effects?.filterIsInstance<ConeCallsEffectDeclaration>() ?: emptyList()
 
         val isInline = function.isInline
         if (callsEffects.isEmpty() && !isInline) {

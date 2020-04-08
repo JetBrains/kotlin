@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.contracts
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -15,8 +14,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirContractDescription : FirPureAbstractElement(), FirElement {
+abstract class FirRawContractDescription : FirContractDescription() {
     abstract override val source: FirSourceElement?
+    abstract val contractCall: FirFunctionCall
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContractDescription(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRawContractDescription(this, data)
 }

@@ -576,7 +576,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field(varianceType)
         }
 
-        contractDescription.configure {
+        rawContractDescription.configure {
+            +field("contractCall", functionCall)
+        }
+
+        resolvedContractDescription.configure {
             +fieldList("effects", effectDeclarationType)
         }
     }

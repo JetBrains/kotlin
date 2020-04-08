@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -40,13 +39,13 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
     override var body: FirBlock?,
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
+    override var contractDescription: FirContractDescription,
     override val name: Name,
     override val symbol: FirFunctionSymbol<FirSimpleFunction>,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirSimpleFunction() {
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
-    override var contractDescription: FirContractDescription = FirEmptyContractDescription
 
     init {
         symbol.bind(this)

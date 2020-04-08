@@ -122,6 +122,8 @@ import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 
 /*
  * This file was generated automatically
@@ -362,5 +364,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef, data: D): R  = visitElement(composedSuperTypeRef, data)
 
     open fun visitContractDescription(contractDescription: FirContractDescription, data: D): R  = visitElement(contractDescription, data)
+
+    open fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: D): R  = visitElement(rawContractDescription, data)
+
+    open fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription, data: D): R  = visitElement(resolvedContractDescription, data)
 
 }

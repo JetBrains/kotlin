@@ -144,4 +144,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val composedSuperTypeRef = element("ComposedSuperTypeRef", TypeRef, typeRef)
 
     val contractDescription = element("ContractDescription", Contracts)
+    val rawContractDescription = element("RawContractDescription", Contracts, contractDescription)
+    val resolvedContractDescription = element("ResolvedContractDescription", Contracts, contractDescription)
 }

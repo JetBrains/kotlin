@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -36,6 +35,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
+    override var contractDescription: FirContractDescription,
     override val symbol: FirPropertyAccessorSymbol,
     override val isGetter: Boolean,
     override var status: FirDeclarationStatus,
@@ -44,7 +44,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
 ) : FirPropertyAccessor() {
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
-    override var contractDescription: FirContractDescription = FirEmptyContractDescription
     override val isSetter: Boolean get() = !isGetter
 
     init {

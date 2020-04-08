@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
@@ -671,7 +672,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun processConditionalContract(functionCall: FirFunctionCall) {
-        val contractDescription = (functionCall.symbol as? FirNamedFunctionSymbol)?.fir?.contractDescription ?: return
+        val contractDescription = (functionCall.symbol as? FirNamedFunctionSymbol)
+            ?.fir
+            ?.contractDescription as? FirResolvedContractDescription
+            ?: return
         val conditionalEffects = contractDescription.effects.filterIsInstance<ConeConditionalEffectDeclaration>()
         if (conditionalEffects.isEmpty()) return
         val argumentsMapping = createArgumentsMapping(functionCall) ?: return

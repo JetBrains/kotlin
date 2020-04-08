@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirContractDeserializer(private val c: FirDeserializationContext) {
     fun loadContract(proto: ProtoBuf.Contract, owner: FirContractDescriptionOwner): FirContractDescription? {
         val effects = proto.effectList.map { loadPossiblyConditionalEffect(it, owner) ?: return null }
-        return buildContractDescription {
+        return buildResolvedContractDescription {
             this.effects += effects
         }
     }
