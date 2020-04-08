@@ -21,8 +21,6 @@ import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.ide.util.treeView.smartTree.*;
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsEventLogGroup;
 import com.intellij.internal.statistic.eventLog.EventFields;
-import com.intellij.internal.statistic.utils.PluginInfo;
-import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
 import com.intellij.navigation.LocationPresentation;
 import com.intellij.openapi.Disposable;
@@ -810,7 +808,6 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
   }
 
   private void logFileStructureCheckboxClick(TreeAction action) {
-    PluginInfo pluginInfo = PluginInfoDetectorKt.getPluginInfo(action.getClass());
     Language language = null;
     FileType fileType = myFileEditor.getFile().getFileType();
     if (fileType instanceof LanguageFileType) {
@@ -818,7 +815,7 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
     }
 
     ActionsEventLogGroup.ACTION_INVOKED.log(
-      EventFields.Project.with(myProject),
+      myProject,
       EventFields.PluginInfoFromInstance.with(action),
       EventFields.ActionPlace.with(ActionPlaces.FILE_STRUCTURE_POPUP),
       EventFields.CurrentFile.with(language),
