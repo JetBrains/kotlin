@@ -55,6 +55,10 @@ open class KotlinProjectExtension : KotlinSourceSetContainer {
         explicitApi = ExplicitApiMode.Strict
     }
 
+    fun explicitApiWarning() {
+        explicitApi = ExplicitApiMode.Warning
+    }
+
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         @Suppress("UNCHECKED_CAST")
         get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<KotlinSourceSet>
