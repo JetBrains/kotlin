@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 // FILE: utils.kt
 
@@ -21,13 +22,13 @@ fun foo(): Boolean = true
 fun labeled(): ULong? {
     val u = ULong(0)
     return run {
-        if (foo()) return@run u
+        if (foo()) return@run u // box
         u // box
     }
 }
 
 // @TestKt.class:
-// 2 INVOKESTATIC ULong\.box
+// 3 INVOKESTATIC ULong\.box
 // 0 INVOKEVIRTUAL ULong.unbox
 
 // 0 valueOf
