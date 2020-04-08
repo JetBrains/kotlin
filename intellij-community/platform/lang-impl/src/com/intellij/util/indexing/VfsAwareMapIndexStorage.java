@@ -30,7 +30,6 @@ import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ConcurrentIntObjectMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.MapIndexStorage;
-import com.intellij.util.indexing.impl.UpdatableValueContainer;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import gnu.trove.TIntHashSet;
@@ -63,17 +62,6 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   ) throws IOException {
     super(storageFile, keyDescriptor, valueExternalizer, cacheSize, false, true, readOnly, null);
     myBuildKeyHashToVirtualFileMapping = false;
-  }
-
-  public VfsAwareMapIndexStorage(@NotNull File storageFile,
-                                 @NotNull KeyDescriptor<Key> keyDescriptor,
-                                 @NotNull DataExternalizer<Value> valueExternalizer,
-                                 final int cacheSize,
-                                 boolean keyIsUniqueForIndexedFile,
-                                 boolean buildKeyHashToVirtualFileMapping) throws IOException {
-    super(storageFile.toPath(), keyDescriptor, valueExternalizer, cacheSize, keyIsUniqueForIndexedFile, false, false, null);
-    myBuildKeyHashToVirtualFileMapping = buildKeyHashToVirtualFileMapping;
-    initMapAndCache();
   }
 
   public VfsAwareMapIndexStorage(@NotNull Path storageFile,

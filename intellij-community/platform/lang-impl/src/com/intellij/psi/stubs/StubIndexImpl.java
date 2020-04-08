@@ -38,6 +38,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
 import com.intellij.util.indexing.impl.RemovedKeyProcessor;
+import com.intellij.util.indexing.memory.InMemoryIndexStorage;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import gnu.trove.*;
@@ -210,7 +211,9 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
     for (int attempt = 0; attempt < 2; attempt++) {
       try {
-        final VfsAwareMapIndexStorage<K, Void> storage = new VfsAwareMapIndexStorage<>(
+        final VfsAwareIndexStorage<K, Void> storage = FileBasedIndex.USE_IN_MEMORY_INDEX
+                                                      ? new InMemoryIndexStorage<>()
+                                                      : new VfsAwareMapIndexStorage<>(
           IndexInfrastructure.getStorageFile(indexKey).toPath(),
           wrappedExtension.getKeyDescriptor(),
           wrappedExtension.getValueExternalizer(),
@@ -218,7 +221,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
           wrappedExtension.keyIsUniqueForIndexedFile(),
           wrappedExtension.traceKeyHashToVirtualFileMapping()
         );
-        final MemoryIndexStorage<K, Void> memStorage = new MemoryIndexStorage<>(storage, indexKey);
+        final TransientChangesIndexStorage<K, Void> memStorage = new TransientChangesIndexStorage<>(storage, indexKey);
         UpdatableIndex<K, Void, FileContent> index = new VfsAwareMapReduceIndex<>(wrappedExtension, memStorage, null, null, null, lock);
 
         for (FileBasedIndexInfrastructureExtension infrastructureExtension : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensionList()) {

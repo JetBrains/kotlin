@@ -33,7 +33,7 @@ import java.util.*;
  *
  * @author Eugene Zhuravlev
  */
-public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key, Value> {
+public class TransientChangesIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key, Value> {
   private final Map<Key, ChangeTrackingValueContainer<Value>> myMap = new HashMap<>();
   @NotNull
   private final VfsAwareIndexStorage<Key, Value> myBackendStorage;
@@ -48,7 +48,7 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     void memoryStorageCleared();
   }
 
-  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend, @NotNull ID<?, ?> indexId) {
+  public TransientChangesIndexStorage(@NotNull IndexStorage<Key, Value> backend, @NotNull ID<?, ?> indexId) {
     myBackendStorage = (VfsAwareIndexStorage<Key, Value>)backend;
     myIndexId = indexId;
   }

@@ -108,6 +108,7 @@ public class IndexingStamp {
   }
   
   public static synchronized void rewriteVersion(@NotNull ID<?,?> indexId, final int version) throws IOException {
+    if (FileBasedIndex.USE_IN_MEMORY_INDEX) return;
     File file = IndexInfrastructure.getVersionFile(indexId);
     if (FileBasedIndexImpl.LOG.isDebugEnabled()) {
       FileBasedIndexImpl.LOG.debug("Rewriting " + file + "," + version);

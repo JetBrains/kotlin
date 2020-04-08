@@ -48,6 +48,7 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.caches.CachedFileContent;
+import com.intellij.util.indexing.memory.InMemoryIndexStorage;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
@@ -381,9 +382,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           contentHashesEnumeratorOk = true;
         }
 
-        storage = createPersistentStorage(extension);
+        storage = createIndexStorage(extension);
 
-        UpdatableIndex<K, V, FileContent> index = createIndex(extension, new MemoryIndexStorage<>(storage, name));
+        UpdatableIndex<K, V, FileContent> index = createIndex(extension, new TransientChangesIndexStorage<>(storage, name));
 
         for (FileBasedIndexInfrastructureExtension infrastructureExtension : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensionList()) {
           UpdatableIndex<K, V, FileContent> intermediateIndex = infrastructureExtension.combineIndex(extension, index);
@@ -423,7 +424,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @NotNull
-  private static <K, V> VfsAwareIndexStorage<K, V> createPersistentStorage(FileBasedIndexExtension<K, V> extension) throws IOException {
+  private static <K, V> VfsAwareIndexStorage<K, V> createIndexStorage(FileBasedIndexExtension<K, V> extension) throws IOException {
+    if (USE_IN_MEMORY_INDEX) {
+      return new InMemoryIndexStorage<>();
+    }
     boolean createSnapshotStorage = VfsAwareMapReduceIndex.hasSnapshotMapping(extension) && extension instanceof SingleEntryFileBasedIndexExtension;
     return createSnapshotStorage ? new SnapshotSingleValueIndexStorage<>() : new VfsAwareMapIndexStorage<>(
       IndexInfrastructure.getStorageFile(extension.getName()).toPath(),
@@ -437,7 +441,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
   @NotNull
   private static <K, V> UpdatableIndex<K, V, FileContent> createIndex(@NotNull final FileBasedIndexExtension<K, V> extension,
-                                                                      @NotNull final MemoryIndexStorage<K, V> storage)
+                                                                      @NotNull final TransientChangesIndexStorage<K, V> storage)
     throws StorageException, IOException {
     return extension instanceof CustomImplementationFileBasedIndexExtension
            ? ((CustomImplementationFileBasedIndexExtension<K, V>)extension).createIndexImplementation(extension, storage)

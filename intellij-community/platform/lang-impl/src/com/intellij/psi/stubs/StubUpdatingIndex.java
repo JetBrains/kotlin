@@ -276,9 +276,10 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
                                                                                             @NotNull IndexStorage<Integer, SerializedStubTree> storage)
     throws StorageException, IOException {
     ((StubIndexImpl)StubIndex.getInstance()).initializeStubIndexes();
-    if (storage instanceof MemoryIndexStorage) {
-      final MemoryIndexStorage<Integer, SerializedStubTree> memStorage = (MemoryIndexStorage<Integer, SerializedStubTree>)storage;
-      memStorage.addBufferingStateListener(new MemoryIndexStorage.BufferingStateListener() {
+    if (storage instanceof TransientChangesIndexStorage) {
+      final TransientChangesIndexStorage<Integer, SerializedStubTree>
+        memStorage = (TransientChangesIndexStorage<Integer, SerializedStubTree>)storage;
+      memStorage.addBufferingStateListener(new TransientChangesIndexStorage.BufferingStateListener() {
         @Override
         public void bufferingStateChanged(final boolean newState) {
           ((StubIndexImpl)StubIndex.getInstance()).setDataBufferingEnabled(newState);
@@ -303,8 +304,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
   private static class MyIndex extends VfsAwareMapReduceIndex<Integer, SerializedStubTree> {
     private StubIndexImpl myStubIndex;
-    @NotNull
-    private final CompositeBinaryBuilderMap myCompositeBinaryBuilderMap = new CompositeBinaryBuilderMap();
+    @Nullable
+    private final CompositeBinaryBuilderMap myCompositeBinaryBuilderMap = FileBasedIndex.USE_IN_MEMORY_INDEX ? null : new CompositeBinaryBuilderMap();
 
     MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
       throws IOException {
@@ -414,15 +415,19 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     public void setIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
       super.setIndexedStateForFile(fileId, file);
 
-      try {
-        myCompositeBinaryBuilderMap.persistState(fileId, file.getFile());
-      } catch (IOException e) {
-        LOG.error(e);
+      if (myCompositeBinaryBuilderMap != null) {
+        try {
+          myCompositeBinaryBuilderMap.persistState(fileId, file.getFile());
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
       }
     }
 
     @Override
     protected boolean isIndexConfigurationUpToDate(int fileId, @NotNull IndexedFile file) {
+      if (myCompositeBinaryBuilderMap == null) return true;
       try {
         return myCompositeBinaryBuilderMap.isUpToDateState(fileId, file.getFile());
       } catch (IOException e) {

@@ -95,7 +95,10 @@ public class IndexInfrastructure {
       if (relativePath.length() > 0) relativePath = File.separator + relativePath;
       indexDir = new File(PathManager.getIndexRoot() + relativePath, indexName);
     }
-    indexDir.mkdirs();
+    if (!FileBasedIndex.USE_IN_MEMORY_INDEX) {
+      // TODO should be created automatically with storages
+      indexDir.mkdirs();
+    }
     return indexDir;
   }
 
