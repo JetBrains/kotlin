@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoCache
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
@@ -25,7 +26,7 @@ class CoroutineDebugProbesProxy(val suspendContext: SuspendContextImpl) {
         val coroutineInfoCache = CoroutineInfoCache()
         try {
             val executionContext = suspendContext.executionContext() ?: return coroutineInfoCache.fail()
-            val libraryAgentProxy = findProvider(executionContext)
+            val libraryAgentProxy = findProvider(executionContext) ?: return coroutineInfoCache.ok()
             val infoList = libraryAgentProxy.dumpCoroutinesInfo()
             coroutineInfoCache.ok(infoList)
         } catch (e: Throwable) {
@@ -35,8 +36,16 @@ class CoroutineDebugProbesProxy(val suspendContext: SuspendContextImpl) {
         return coroutineInfoCache
     }
 
-    private fun findProvider(executionContext: DefaultExecutionContext) =
-        CoroutineLibraryAgent2Proxy.instance(executionContext) ?: CoroutineNoLibraryProxy(executionContext)
+    private fun findProvider(executionContext: DefaultExecutionContext): CoroutineInfoProvider? {
+        val agentProxy = CoroutineLibraryAgent2Proxy.instance(executionContext)
+        if (agentProxy != null)
+            return agentProxy
+        if (standaloneCoroutineDebuggerEnabled())
+            return CoroutineNoLibraryProxy(executionContext)
+        return null
+    }
 
     fun frameBuilder() = CoroutineBuilder(suspendContext)
 }
+
+fun standaloneCoroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines.standalone")
