@@ -2,6 +2,9 @@
 .idea/shelf
 .idea/workspace.xml
 
+# IntelliJ sources
+/intellij
+
 # Compiler output
 /out
 
