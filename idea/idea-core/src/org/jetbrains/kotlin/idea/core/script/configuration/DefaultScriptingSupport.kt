@@ -67,44 +67,6 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
         }
     }
 
-    /**
-     * Will be called on [cache] miss to initiate loading of [file]'s script configuration.
-     *
-     * ## Concurrency
-     *
-     * Each files may be in on of the states described below:
-     * - scriptDefinition is not ready. `ScriptDefinitionsManager.getInstance(project).isReady() == false`.
-     * [clearConfigurationCachesAndRehighlight] will be called when [ScriptDefinitionsManager] will be ready
-     * which will call [reloadOutOfDateConfiguration] for opened editors.
-     * - unknown. When [isFirstLoad] true (`cache[file] == null`).
-     * - up-to-date. `cache[file]?.upToDate == true`.
-     * - invalid, in queue. `cache[file]?.upToDate == false && file in backgroundExecutor`.
-     * - invalid, loading. `cache[file]?.upToDate == false && file !in backgroundExecutor`.
-     * - invalid, waiting for apply. `cache[file]?.upToDate == false && file !in backgroundExecutor` and has notification panel?
-     * - invalid, waiting for update. `cache[file]?.upToDate == false` and has notification panel
-     *
-     * Async:
-     * - up-to-date: [reloadOutOfDateConfiguration] will not be called.
-     * - `unknown` and `invalid, in queue`:
-     *   Concurrent async loading will be guarded by `backgroundExecutor.ensureScheduled`
-     *   (only one task per file will be scheduled at same time)
-     * - `invalid, loading`
-     *   Loading should be removed from `backgroundExecutor`, and will be rescheduled on change
-     *   and file will be up-to-date checked again. This will happen after current loading,
-     *   because only `backgroundExecutor` execute tasks in one thread.
-     * - `invalid, waiting for apply`:
-     *   Loading will not be queued, since we are marking file as up-to-date with
-     *   not yet applied configuration.
-     * - `invalid, waiting for update`:
-     *   Loading wasn't started, only notification is shown
-     *
-     * Sync:
-     * - up-to-date:
-     *   [reloadOutOfDateConfiguration] will not be called.
-     * - all other states, i.e: `unknown`, `invalid, in queue`, `invalid, loading` and `invalid, ready for apply`:
-     *   everything will be computed just in place, possible concurrently.
-     *   [suggestOrSaveConfiguration] calls will be serialized by the [saveLock]
-     */
     override fun reloadOutOfDateConfiguration(
         file: KtFile,
         isFirstLoad: Boolean,

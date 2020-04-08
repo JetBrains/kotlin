@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 data class KotlinDslScriptModel(
     val file: String,
-    val inputsTimeStamp: Long,
     val classPath: List<String>,
     val sourcePath: List<String>,
     val imports: List<String>,

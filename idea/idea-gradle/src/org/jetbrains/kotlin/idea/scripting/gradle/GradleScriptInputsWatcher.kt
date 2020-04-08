@@ -20,34 +20,6 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent<GradleScriptInputsWatcher.Storage> {
     private var storage = Storage()
 
-    private var cachedGradleProjectsRoots: Set<String>? = null
-
-    fun getGradleProjectsRoots(): Set<String> {
-        if (cachedGradleProjectsRoots == null) {
-            cachedGradleProjectsRoots = computeGradleProjectRoots(project)
-        }
-        return cachedGradleProjectsRoots ?: emptySet()
-    }
-
-    fun saveGradleProjectRootsAfterImport(roots: Set<String>) {
-        val oldRoots = cachedGradleProjectsRoots
-        if (oldRoots != null && oldRoots.isNotEmpty()) {
-            cachedGradleProjectsRoots = oldRoots + roots
-        } else {
-            cachedGradleProjectsRoots = roots
-        }
-    }
-
-    private fun computeGradleProjectRoots(project: Project): Set<String> {
-        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return setOf()
-
-        val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
-            ?: return setOf()
-
-        return projectSettings.modules.takeIf { it.isNotEmpty() } ?: setOf(projectSettings.externalProjectPath)
-    }
-
     fun startWatching() {
         addVfsListener(this)
     }

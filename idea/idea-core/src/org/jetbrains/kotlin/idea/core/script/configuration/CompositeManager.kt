@@ -78,11 +78,6 @@ class CompositeManager(val project: Project) : ScriptConfigurationManager {
                     manager.updater.ensureConfigurationUpToDate(files)
                 }
 
-            override fun postponeConfigurationReload(scope: ScriptConfigurationCacheScope) {
-                // This seems to be Gradle only and should be removed
-                TODO("Not yet implemented")
-            }
-
             override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) =
                 getRelatedManager(file).updater.suggestToUpdateConfigurationIfOutOfDate(file)
         }
@@ -134,11 +129,6 @@ class CompositeManager(val project: Project) : ScriptConfigurationManager {
 
     override fun forceReloadConfiguration(file: VirtualFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper? {
         // This seems to be Gradle only and should be named reloadOutOfProjectScriptConfiguration
-        TODO("Not yet implemented")
-    }
-
-    override fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptConfigurationSnapshot>>) {
-        // This seems to be Gradle only and should be removed
         TODO("Not yet implemented")
     }
 
