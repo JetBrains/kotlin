@@ -1,6 +1,7 @@
-const val M = Int.MIN_VALUE
+// WITH_RUNTIME
+const val M = ULong.MIN_VALUE
 
-fun f(a: Int): Int {
+fun f(a: ULong): Int {
     var n = 0
     for (i in a until M) {
         n++
@@ -23,4 +24,4 @@ fun f(a: Int): Int {
 
 // JVM_IR_TEMPLATES
 // 0 IF
-// 0 LINENUMBER 6
+// 0 LINENUMBER 7
