@@ -161,4 +161,20 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedStdout = "a, b, 4, 2\n"
         )
     }
+
+    fun testLegacyAssert() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/legacyAssertDisabled.kt", "-Xassertions=legacy", "-d", tmpdir.path
+        )
+
+        runProcess("kotlin", "LegacyAssertDisabledKt", "-J-da:kotlin._Assertions", workDirectory = tmpdir)
+
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/legacyAssertEnabled.kt", "-Xassertions=legacy", "-d", tmpdir.path
+        )
+
+        runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
+    }
 }

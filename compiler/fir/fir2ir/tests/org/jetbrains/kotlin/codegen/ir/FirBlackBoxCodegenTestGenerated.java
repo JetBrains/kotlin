@@ -896,11 +896,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/assert/alwaysEnable.kt");
         }
 
-        @TestMetadata("legacy.kt")
-        public void testLegacy() throws Exception {
-            runTest("compiler/testData/codegen/box/assert/legacy.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/assert/jvm")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
