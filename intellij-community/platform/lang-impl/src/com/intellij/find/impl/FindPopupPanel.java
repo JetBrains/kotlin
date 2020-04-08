@@ -39,6 +39,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil;
@@ -82,6 +83,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -711,16 +713,11 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       if (Disposer.isDisposed(myDisposable)) return;
       int[] selectedRows = myResultsPreviewTable.getSelectedRows();
       final List<UsageInfo> selection = new SmartList<>();
-      VirtualFile file = null;
+      String file = null;
       for (int row : selectedRows) {
         Object value = myResultsPreviewTable.getModel().getValueAt(row, 0);
-        UsageInfo usageInfo = FindInProjectExecutor.Companion.getInstance().getUsageInfo(value);
-        if (usageInfo != null) {
-          selection.add(usageInfo);
-          continue;
-        }
-        UsageInfo2UsageAdapter adapter = (UsageInfo2UsageAdapter) value;
-        file = adapter.getFile();
+        UsageInfoAdapter adapter = (UsageInfoAdapter) value;
+        file = adapter.getPath();
         if (adapter.isValid()) {
           selection.addAll(Arrays.asList(adapter.getMergedInfos()));
         }
@@ -730,15 +727,18 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       myUsagePreviewPanel.updateLayout(selection);
       myUsagePreviewTitle.clear();
       if (myUsagePreviewPanel.getCannotPreviewMessage(selection) == null && file != null) {
-        myUsagePreviewTitle.append(file.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-        VirtualFile location = file.getParent();
-        if (location != null) {
-          String locationPath = VfsUtilCore.isAncestor(myProject.getBaseDir(), location, true)
-                                ? VfsUtilCore.getRelativeLocation(location, myProject.getBaseDir())
-                                : FileUtil.getLocationRelativeToUserHome(location.getPath());
-          if (locationPath != null) {
-            myUsagePreviewTitle.append(spaceAndThinSpace() + StringUtil.trimMiddle(locationPath, 120),
-                                       new SimpleTextAttributes(STYLE_PLAIN, UIUtil.getContextHelpForeground()));
+        myUsagePreviewTitle.append(PathUtil.getFileName(file), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+        VirtualFile virtualFile = VfsUtil.findFileByIoFile(new File(file), true);
+        if (virtualFile != null) {
+          VirtualFile location = virtualFile.getParent();
+          if (location != null) {
+            String locationPath = VfsUtilCore.isAncestor(myProject.getBaseDir(), location, true)
+                                  ? VfsUtilCore.getRelativeLocation(location, myProject.getBaseDir())
+                                  : FileUtil.getLocationRelativeToUserHome(location.getPath());
+            if (locationPath != null) {
+              myUsagePreviewTitle.append(spaceAndThinSpace() + StringUtil.trimMiddle(locationPath, 120),
+                                         new SimpleTextAttributes(STYLE_PLAIN, UIUtil.getContextHelpForeground()));
+            }
           }
         }
       }
@@ -858,24 +858,21 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private DefaultTableModel createTableModel() {
-    DefaultTableModel customModel = FindInProjectExecutor.Companion.getInstance().createTableModel();
-    if (customModel != null) return customModel;
-
     final DefaultTableModel model = new DefaultTableModel() {
       private String firstResultPath;
 
-      private final Comparator<Vector<UsageInfo2UsageAdapter>> COMPARATOR = (v1, v2) -> {
-        UsageInfo2UsageAdapter u1 = v1.get(0);
-        UsageInfo2UsageAdapter u2 = v2.get(0);
-        String u2Path = u2.getFile().getPath();
-        final String u1Path = u1.getFile().getPath();
+      private final Comparator<Vector<UsageInfoAdapter>> COMPARATOR = (v1, v2) -> {
+        UsageInfoAdapter u1 = v1.get(0);
+        UsageInfoAdapter u2 = v2.get(0);
+        String u2Path = u2.getPath();
+        final String u1Path = u1.getPath();
         if (u1Path.equals(firstResultPath) && !u2Path.equals(firstResultPath)) return -1; // first result is always sorted first
         if (!u1Path.equals(firstResultPath) && u2Path.equals(firstResultPath)) return 1;
         int c = u1Path.compareTo(u2Path);
         if (c != 0) return c;
         c = Integer.compare(u1.getLine(), u2.getLine());
         if (c != 0) return c;
-        return Integer.compare(u1.getUsageInfo().getNavigationOffset(), u2.getUsageInfo().getNavigationOffset());
+        return Integer.compare(u1.getNavigationOffset(), u2.getNavigationOffset());
       };
 
       @Override
@@ -891,14 +888,14 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
           dataVector.clear();
           fireTableDataChanged();
         }
-        final Vector<UsageInfo2UsageAdapter> v = (Vector)convertToVector(rowData);
+        final Vector<UsageInfoAdapter> v = (Vector)convertToVector(rowData);
         if (dataVector.isEmpty()) {
           addRow(v);
           myResultsPreviewTable.getSelectionModel().setSelectionInterval(0, 0);
-          firstResultPath = v.get(0).getFile().getPath();
+          firstResultPath = v.get(0).getPath();
         }
         else {
-          final int p = Collections.binarySearch((Vector<Vector<UsageInfo2UsageAdapter>>)((Vector)dataVector), v, COMPARATOR);
+          final int p = Collections.binarySearch((Vector<Vector<UsageInfoAdapter>>)dataVector, v, COMPARATOR);
           assert p < 0 : "duplicate result found";
           int row = -(p + 1);
           insertRow(row, v);
@@ -1215,9 +1212,10 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       return;
     }
 
+    FindInProjectExecutor projectExecutor = FindInProjectExecutor.Companion.getInstance();
     GlobalSearchScope scope = GlobalSearchScopeUtil.toGlobalSearchScope(
       FindInProjectUtil.getScopeFromModel(myProject, myHelper.myPreviousModel), myProject);
-    TableCellRenderer renderer = FindInProjectExecutor.Companion.getInstance().createTableCellRenderer();
+    TableCellRenderer renderer = projectExecutor.createTableCellRenderer();
     if (renderer == null) renderer = new UsageTableCellRenderer(scope);
     myResultsPreviewTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
 
@@ -1225,41 +1223,31 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     final AtomicInteger resultsFilesCount = new AtomicInteger();
     FindInProjectUtil.setupViewPresentation(myUsageViewPresentation, findModel);
 
-    if (FindInProjectExecutor.Companion.getInstance().startSearch(myResultsPreviewSearchProgress, myResultsPreviewTableModel, findModel, myProject)) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        myCodePreviewComponent.setVisible(true);
-      });
-      return;
-    }
-
     ProgressIndicatorUtils.scheduleWithWriteActionPriority(myResultsPreviewSearchProgress, new ReadTask() {
       @Override
       public Continuation performInReadAction(@NotNull ProgressIndicator indicator) {
 
         final FindUsagesProcessPresentation processPresentation =
           FindInProjectUtil.setupProcessPresentation(myProject, myUsageViewPresentation);
-        ThreadLocal<VirtualFile> lastUsageFileRef = new ThreadLocal<>();
+        ThreadLocal<String> lastUsageFileRef = new ThreadLocal<>();
         ThreadLocal<Reference<Usage>> recentUsageRef = new ThreadLocal<>();
 
-        FindInProjectUtil.findUsages(findModel, myProject, processPresentation, filesToScanInitially, info -> {
+        projectExecutor.findUsages(myProject, myResultsPreviewSearchProgress, processPresentation, findModel, filesToScanInitially, usage -> {
           if(isCancelled()) {
             onStop(hash);
             return false;
           }
-          final Usage usage = UsageInfo2UsageAdapter.CONVERTER.fun(info);
-          usage.getPresentation().getIcon(); // cache icon
 
-          VirtualFile file = lastUsageFileRef.get();
-          VirtualFile usageFile = info.getVirtualFile();
+          String file = lastUsageFileRef.get();
+          String usageFile = PathUtil.toSystemIndependentName(usage.getPath());
           if (file == null || !file.equals(usageFile)) {
             resultsFilesCount.incrementAndGet();
             lastUsageFileRef.set(usageFile);
           }
+
           Usage recent = SoftReference.dereference(recentUsageRef.get());
-          UsageInfo2UsageAdapter recentAdapter =
-            recent instanceof UsageInfo2UsageAdapter ? (UsageInfo2UsageAdapter)recent : null;
-          UsageInfo2UsageAdapter currentAdapter = usage instanceof UsageInfo2UsageAdapter ? (UsageInfo2UsageAdapter)usage : null;
-          final boolean merged = !myHelper.isReplaceState() && currentAdapter != null && recentAdapter != null && recentAdapter.merge(currentAdapter);
+          UsageInfoAdapter recentAdapter = recent instanceof UsageInfoAdapter ? (UsageInfoAdapter)recent : null;
+          final boolean merged = !myHelper.isReplaceState() && recentAdapter != null && recentAdapter.merge(usage);
           if (!merged) {
             recentUsageRef.set(new WeakReference<>(usage));
           }

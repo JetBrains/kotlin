@@ -3,9 +3,11 @@ package com.intellij.find.impl
 import com.intellij.find.FindModel
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
-import com.intellij.usageView.UsageInfo
-import javax.swing.table.DefaultTableModel
+import com.intellij.usages.FindUsagesProcessPresentation
+import com.intellij.usages.UsageInfo2UsageAdapter
+import com.intellij.usages.UsageInfoAdapter
 import javax.swing.table.TableCellRenderer
 
 open class FindInProjectExecutor {
@@ -16,24 +18,23 @@ open class FindInProjectExecutor {
         }
     }
 
-    open fun createTableModel(): DefaultTableModel? {
-        return null
-    }
-
     open fun createTableCellRenderer(): TableCellRenderer? {
         return null
     }
 
-    open fun getUsageInfo(value: Any): UsageInfo? {
-        return null
-    }
-
-    open fun startSearch(
+    open fun findUsages(
+        project: Project,
         progressIndicator: ProgressIndicatorEx,
-        model: DefaultTableModel,
+        presentation: FindUsagesProcessPresentation,
         findModel: FindModel,
-        project: Project
-    ): Boolean {
-        return false
+        filesToScanInitially: Set<VirtualFile>,
+        onResult: (UsageInfoAdapter) -> Boolean
+    ) {
+        FindInProjectUtil.findUsages(findModel, project, presentation, filesToScanInitially) { info ->
+            val usage = UsageInfo2UsageAdapter.CONVERTER.`fun`(info) as UsageInfoAdapter
+            usage.presentation.icon // cache icon
+
+            onResult(usage)
+        }
     }
 }
