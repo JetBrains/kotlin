@@ -5,18 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
@@ -183,6 +189,37 @@ class ScopeTowerLevel(
             else -> true
         }
 
+    private fun dispatchReceiverValue(scope: FirScope, candidate: FirCallableSymbol<*>): ReceiverValue? {
+        val holderId = candidate.callableId.classId
+        if (holderId != null && scope is FirExplicitSimpleImportingScope) {
+            val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(holderId)
+            if (symbol is FirRegularClassSymbol &&
+                symbol.fir.classKind.let { it == ClassKind.OBJECT || it == ClassKind.ENUM_ENTRY }
+            ) {
+                val resolvedQualifier = buildResolvedQualifier {
+                    packageFqName = holderId.packageFqName
+                    relativeClassFqName = holderId.relativeClassName
+                    safe = false
+                    this.symbol = symbol
+                }.apply {
+                    resultType = bodyResolveComponents.typeForQualifier(this)
+                }
+                return ExpressionReceiverValue(resolvedQualifier)
+            }
+        }
+        return when {
+            candidate !is FirBackingFieldSymbol -> null
+            candidate.callableId.classId != null -> {
+                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
+                    implicitReceiverValue.type.classId == holderId
+                }
+            }
+            else -> {
+                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
+            }
+        }
+    }
+
     override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
@@ -194,19 +231,7 @@ class ScopeTowerLevel(
             TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
                 empty = false
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
-                    val dispatchReceiverValue =
-                        when {
-                            candidate !is FirBackingFieldSymbol -> null
-                            candidate.callableId.classId != null -> {
-                                val propertyHolderId = candidate.callableId.classId
-                                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
-                                    implicitReceiverValue.type.classId == propertyHolderId
-                                }
-                            }
-                            else -> {
-                                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
-                            }
-                        }
+                    val dispatchReceiverValue = dispatchReceiverValue(scope, candidate)
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue,
                         implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
@@ -221,8 +246,9 @@ class ScopeTowerLevel(
             ) { candidate ->
                 empty = false
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
+                    val dispatchReceiverValue = dispatchReceiverValue(scope, candidate)
                     processor.consumeCandidate(
-                        candidate as T, dispatchReceiverValue = null,
+                        candidate as T, dispatchReceiverValue,
                         implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
                     )
                 }

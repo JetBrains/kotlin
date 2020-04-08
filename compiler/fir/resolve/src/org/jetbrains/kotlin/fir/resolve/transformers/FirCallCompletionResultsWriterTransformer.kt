@@ -126,7 +126,9 @@ class FirCallCompletionResultsWriterTransformer(
                 resolvedSymbol = calleeReference.candidateSymbol
                 inferredTypeArguments.addAll(computeTypeArgumentTypes(calleeReference.candidate))
             },
-        ).compose()
+        ).transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
+            .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression())
+            .compose()
     }
 
     override fun transformVariableAssignment(

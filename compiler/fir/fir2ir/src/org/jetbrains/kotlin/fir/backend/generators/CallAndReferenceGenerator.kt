@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.convertWithOffsets
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -19,7 +15,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -37,7 +32,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
 internal class CallAndReferenceGenerator(
@@ -372,20 +366,6 @@ internal class CallAndReferenceGenerator(
                     return convertToGetObject(it, callableReferenceMode = this is FirCallableReferenceAccess)
                 }
                 visitor.convertToIrExpression(it)
-            }
-            ?: run {
-                // Object case
-                val callableReference = calleeReference as? FirResolvedNamedReference
-                val ownerClassId = (callableReference?.resolvedSymbol as? FirCallableSymbol<*>)?.callableId?.classId
-                val ownerClassSymbol =
-                    ownerClassId?.takeUnless { it.isLocal }?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
-                val firClass = (ownerClassSymbol?.fir as? FirClass)?.takeIf {
-                    it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
-                }
-                firClass?.convertWithOffsets { startOffset, endOffset ->
-                    val irClass = classifierStorage.getCachedIrClass(firClass)!!
-                    IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
-                }
             }
             ?: run {
                 if (this is FirCallableReferenceAccess) return null

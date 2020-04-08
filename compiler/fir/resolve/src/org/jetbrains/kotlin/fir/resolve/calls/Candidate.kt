@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
@@ -116,13 +117,16 @@ class Candidate(
     val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
 
     fun dispatchReceiverExpression(): FirExpression = when (explicitReceiverKind) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> callInfo.explicitReceiver!!
+        ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
+            callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
         else -> dispatchReceiverValue?.receiverExpression ?: FirNoReceiverExpression
     }
 
     fun extensionReceiverExpression(): FirExpression = when (explicitReceiverKind) {
-        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> callInfo.explicitReceiver!!
-        else -> implicitExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression
+        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
+            callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+        else ->
+            implicitExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression
     }
 
     override fun equals(other: Any?): Boolean {

@@ -26,10 +26,10 @@ FILE: importedReceiver.kt
     public final fun test(): R|kotlin/Unit| {
         Int(42).R|/foo|<R|kotlin/Int|>()
         String().R|/foo|<R|kotlin/String|>()
-        Int(42).R|/My.bar|<R|kotlin/Int|>()
-        String().R|/My.bar|<R|kotlin/String|>()
-        R|/My.baz|()
-        Boolean(true).R|/My.gau|()
+        (Q|My|, Int(42)).R|/My.bar|<R|kotlin/Int|>()
+        (Q|My|, String()).R|/My.bar|<R|kotlin/String|>()
+        Q|My|.R|/My.baz|()
+        (Q|My|, Boolean(true)).R|/My.gau|()
         R|/Your.wat|()
-        Boolean(false).R|FakeOverride</My.watwat: R|kotlin/Unit|>|<R|kotlin/Boolean|>()
+        (Q|My|, Boolean(false)).R|FakeOverride</My.watwat: R|kotlin/Unit|>|<R|kotlin/Boolean|>()
     }
