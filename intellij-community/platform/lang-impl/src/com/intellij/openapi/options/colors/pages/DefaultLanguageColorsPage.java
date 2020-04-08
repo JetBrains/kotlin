@@ -1,10 +1,11 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.options.colors.pages;
 
+import com.intellij.application.options.colors.highlighting.RendererWrapper;
 import com.intellij.codeHighlighting.RainbowHighlighter;
+import com.intellij.codeInsight.documentation.render.DocRenderItem;
 import com.intellij.lang.Language;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
-import com.intellij.openapi.editor.HighlighterColors;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.fileTypes.PlainSyntaxHighlighter;
@@ -12,7 +13,10 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.OptionsBundle;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
+import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.openapi.options.colors.RainbowColorSettingsPage;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.DisplayPriority;
 import com.intellij.psi.codeStyle.DisplayPrioritySortable;
 import org.jetbrains.annotations.NonNls;
@@ -20,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +33,7 @@ import java.util.Map;
  *
  * @author Rustam Vishnyakov
  */
-public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, DisplayPrioritySortable {
+public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, DisplayPrioritySortable, ColorSettingsPage.PreviewCustomizer {
   @NonNls private static final Map<String, TextAttributesKey> TAG_HIGHLIGHTING_MAP = RainbowHighlighter.createRainbowHLM();
 
   private final static TextAttributesKey FAKE_BAD_CHAR =
@@ -298,5 +303,34 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
   @Override
   public Language getLanguage() {
     return null;
+  }
+
+  @Override
+  public @Nullable PreviewCustomizer getPreviewEditorCustomizer() {
+    return this;
+  }
+
+  @Override
+  public void removeCustomizations(@NotNull Editor editor) {
+    editor.getInlayModel().getBlockElementsInRange(0, editor.getDocument().getTextLength()).forEach(Disposer::dispose);
+  }
+
+  @Override
+  public @Nullable TextRange addCustomizations(@NotNull Editor editor, @Nullable String selectedKeyName) {
+    boolean ourKey = DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE.getExternalName().equals(selectedKeyName) ||
+                     DefaultLanguageHighlighterColors.DOC_COMMENT_LINK.getExternalName().equals(selectedKeyName);
+    int offset = editor.getDocument().getText().indexOf("/**");
+    editor.getInlayModel().addBlockElement(offset, false, true, 0,
+                                           new RendererWrapper(DocRenderItem.createDemoRenderer(editor), ourKey));
+    return ourKey ? new TextRange(offset - 1, offset) : null;
+  }
+
+  @Override
+  public @Nullable String getCustomizationAt(@NotNull Editor editor, @NotNull Point location) {
+    Inlay inlay = editor.getInlayModel().getElementAt(location);
+    return inlay != null && inlay.getPlacement() == Inlay.Placement.ABOVE_LINE
+           ? location.x < 20 ? DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE.getExternalName()
+                             : DefaultLanguageHighlighterColors.DOC_COMMENT_LINK.getExternalName()
+           : null;
   }
 }

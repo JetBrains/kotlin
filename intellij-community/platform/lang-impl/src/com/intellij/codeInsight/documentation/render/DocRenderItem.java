@@ -228,10 +228,14 @@ public class DocRenderItem {
     }
   }
 
+  public static EditorCustomElementRenderer createDemoRenderer(@NotNull Editor editor) {
+    DocRenderItem item = new DocRenderItem(editor, new TextRange(0, 0), "Rendered documentation with <a href='''>link</a>");
+    return new DocRenderer(item);
+  }
+
   private DocRenderItem(@NotNull Editor editor, @NotNull TextRange textRange, @Nullable String textToRender) {
     this.editor = editor;
     this.textToRender = textToRender;
-    assert editor.getProject() != null;
     highlighter = editor.getMarkupModel()
       .addRangeHighlighter(textRange.getStartOffset(), textRange.getEndOffset(), 0, null, HighlighterTargetArea.EXACT_RANGE);
     updateIcon();
