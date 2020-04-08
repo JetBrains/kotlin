@@ -14,9 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 final class IntentionsOptionsTopHitProvider implements OptionsTopHitProvider.ApplicationLevelProvider {
-  @NotNull
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return "intentions";
   }
 
@@ -26,9 +25,8 @@ final class IntentionsOptionsTopHitProvider implements OptionsTopHitProvider.App
     return !(application instanceof ApplicationImpl) || ((ApplicationImpl)application).isLightEditMode();
   }
 
-  @NotNull
   @Override
-  public Collection<OptionDescription> getOptions() {
+  public @NotNull Collection<OptionDescription> getOptions() {
     IntentionManagerSettings settings = IntentionManagerSettings.getInstance();
     Collection<BooleanOptionDescription> options = new ArrayList<>();
     for (IntentionActionMetaData data : settings.getMetaData()) {
