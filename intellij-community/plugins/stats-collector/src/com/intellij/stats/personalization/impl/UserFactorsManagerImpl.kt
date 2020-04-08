@@ -17,7 +17,7 @@
 package com.intellij.stats.personalization.impl
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.completion.sorting.PrefixMatchingType
+import com.intellij.completion.ml.common.PrefixMatchingUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.stats.personalization.UserFactor
 import com.intellij.stats.personalization.UserFactorsManager
@@ -61,7 +61,7 @@ class UserFactorsManagerImpl : UserFactorsManager {
 
         register(MnemonicsRatio())
 
-        for (type in PrefixMatchingType.values())
+        for (type in PrefixMatchingUtil.PrefixMatchingType.values())
             register(PrefixMatchingTypeRatio(type))
     }
 

@@ -4,7 +4,7 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.sorting.PrefixMatchingType
+import com.intellij.completion.ml.common.PrefixMatchingUtil
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.storage.factors.MutableLookupStorage
@@ -51,7 +51,7 @@ class LookupCompletedTracker : LookupFinishListener() {
             }
 
             val storage = MutableLookupStorage.get(lookup)?.getItemStorage(element.idString())
-            val type = storage?.getLastUsedFactors()?.get("prefix_matching_type") as? PrefixMatchingType
+            val type = storage?.getLastUsedFactors()?.get("prefix_matching_type") as? PrefixMatchingUtil.PrefixMatchingType
             if (type != null) {
                 UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.PREFIX_MATCHING_TYPE) { updater ->
                     updater.fireCompletionPerformed(type)

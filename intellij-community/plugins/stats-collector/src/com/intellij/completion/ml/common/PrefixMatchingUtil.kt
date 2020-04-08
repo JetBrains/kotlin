@@ -2,10 +2,9 @@
 package com.intellij.completion.ml.common
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.completion.sorting.PrefixMatchingType
 import com.intellij.psi.codeStyle.NameUtil
 
-internal object PrefixMatchingUtil {
+object PrefixMatchingUtil {
   const val baseName = "prefix_matching"
 
   fun calculateFeatures(element: LookupElement, prefix: String, features: MutableMap<String, Any>) {
@@ -141,6 +140,25 @@ internal object PrefixMatchingUtil {
         if (word == wordsCount - 1) lastWord++
       }
     }
+  }
+
+  /**
+   * Matching prefixes for *isEmptyString* lookup element as example:
+   *  - `isempt` -> [START]
+   *  - `isEmpt` -> [START]
+   *  - `ies` -> [FIRST_CHARS]
+   *  - `iES` -> [FIRST_CHARS]
+   *  - `isEmpSt` -> [SYMBOLS_WITH_CASE]
+   *  - `EmpSt` -> [SYMBOLS_WITH_CASE]
+   *  - `isempst` -> [SYMBOLS]
+   *  - `Emstr` -> [SYMBOLS]
+   */
+  enum class PrefixMatchingType {
+    START,
+    FIRST_CHARS,
+    SYMBOLS_WITH_CASE,
+    SYMBOLS,
+    UNKNOWN
   }
 
   private fun<T> MutableMap<String, T>.addFeature(name: String, value: T, defaultValue: T) {

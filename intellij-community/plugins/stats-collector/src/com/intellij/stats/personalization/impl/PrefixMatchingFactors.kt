@@ -1,23 +1,23 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.personalization.impl
 
-import com.intellij.completion.sorting.PrefixMatchingType
+import com.intellij.completion.ml.common.PrefixMatchingUtil
 import com.intellij.stats.personalization.*
 
 class PrefixMatchingTypeReader(private val factor: DailyAggregatedDoubleFactor) : FactorReader {
-  fun getCompletionCountByType(type: PrefixMatchingType): Double =
+  fun getCompletionCountByType(type: PrefixMatchingUtil.PrefixMatchingType): Double =
     factor.aggregateSum().getOrDefault(type.toString(), 0.0)
 
   fun getTotalCompletionCount(): Double = factor.aggregateSum().values.sum()
 }
 
 class PrefixMatchingTypeUpdater(private val factor: MutableDoubleFactor) : FactorUpdater {
-  fun fireCompletionPerformed(type: PrefixMatchingType) {
+  fun fireCompletionPerformed(type: PrefixMatchingUtil.PrefixMatchingType) {
     factor.incrementOnToday(type.toString())
   }
 }
 
-class PrefixMatchingTypeRatio(private val type: PrefixMatchingType) : UserFactor {
+class PrefixMatchingTypeRatio(private val type: PrefixMatchingUtil.PrefixMatchingType) : UserFactor {
 
   override val id: String = "PrefixMatchingTypeRatioOf$type"
   override fun compute(storage: UserFactorStorage): String? {
