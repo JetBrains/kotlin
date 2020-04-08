@@ -208,7 +208,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean, isCallOfFunctionInCorrespondingDefaultDispatch: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
-        if (!isCallOfFunctionInCorrespondingDefaultDispatch) defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
+        if (!isCallOfFunctionInCorrespondingDefaultDispatch) defaultSourceMapper.callSiteMarker = codegen.lastLineNumber
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
             for (lambda in extractDefaultLambdas(node)) {

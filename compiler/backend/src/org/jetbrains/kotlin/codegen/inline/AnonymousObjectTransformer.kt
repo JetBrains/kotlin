@@ -114,12 +114,10 @@ class AnonymousObjectTransformer(
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
 
-        // When regenerating objects in lambdas, we have to pass the SMAP straight through and keep
-        // the original line numbers because SMAPParser does not parse call site markers.
+        // When regenerating objects in inline lambdas, keep the old SMAP and don't remap the line numbers to
+        // save time. The result is effectively the same anyway.
         val debugInfoToParse = if (inliningContext.isInliningLambda) null else debugInfo
         sourceMap = SMAPParser.parseOrCreateDefault(debugInfoToParse, sourceInfo, oldObjectType.internalName, 1, 65535)
-        // TODO source info should be for the file into which the function is being inlined, else we cannot
-        //      generate correct call site markers for lambdas inlined into the object
         sourceMapper = SourceMapper(sourceMap.sourceInfo.takeIf { debugInfoToParse?.isEmpty() == false })
 
         val allCapturedParamBuilder = ParametersBuilder.newBuilder()
