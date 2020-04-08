@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 inline class X(val x: String?)
 
 fun useX(x: X): String = x.x ?: "fail: $x"

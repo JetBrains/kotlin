@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 inline class X(val x: Int?)
 
 fun useX(x: X): String = if (x.x == null) "OK" else "fail: $x"

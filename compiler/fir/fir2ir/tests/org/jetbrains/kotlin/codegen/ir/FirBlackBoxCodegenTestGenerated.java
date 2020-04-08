@@ -12919,6 +12919,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("covariantOverrideChainErasedToAny.kt")
+            public void testCovariantOverrideChainErasedToAny() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt");
+            }
+
+            @TestMetadata("covariantOverrideChainErasedToNullableAny.kt")
+            public void testCovariantOverrideChainErasedToNullableAny() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAny.kt");
+            }
+
             @TestMetadata("covariantOverrideErasedToAny.kt")
             public void testCovariantOverrideErasedToAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAny.kt");
@@ -12977,6 +12987,36 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("kt35234a.kt")
             public void testKt35234a() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234a.kt");
+            }
+
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt")
+            public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAny() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt");
+            }
+
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt")
+            public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt");
+            }
+
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt")
+            public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt");
+            }
+
+            @TestMetadata("overrideNullableInlineClassWithNonNullAny.kt")
+            public void testOverrideNullableInlineClassWithNonNullAny() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAny.kt");
+            }
+
+            @TestMetadata("overrideNullableInlineClassWithNonNullNullableAny.kt")
+            public void testOverrideNullableInlineClassWithNonNullNullableAny() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAny.kt");
+            }
+
+            @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNull.kt")
+            public void testOverrideNullableInlineClassWithNonNullNullableAnyNull() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNull.kt");
             }
 
             @TestMetadata("relatedReturnTypes1a.kt")
