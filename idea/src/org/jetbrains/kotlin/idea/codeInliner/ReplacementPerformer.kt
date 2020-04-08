@@ -67,8 +67,11 @@ internal class AnnotationEntryReplacementPerformer(
         assert(range.first == range.last)
         assert(range.first is KtAnnotationEntry)
         val annotationEntry = range.first as KtAnnotationEntry
-        val text = "@${useSiteTargetText}${annotationEntry.valueArguments.single().getArgumentExpression()!!.text}"
-        val newAnnotationEntry = if (isFileUseSiteTarget) psiFactory.createFileAnnotation(text) else psiFactory.createAnnotationEntry(text)
+        val text = annotationEntry.valueArguments.single().getArgumentExpression()!!.text
+        val newAnnotationEntry = if (isFileUseSiteTarget)
+            psiFactory.createFileAnnotation(text)
+        else
+            psiFactory.createAnnotationEntry("@$useSiteTargetText$text")
         return annotationEntry.replaced(newAnnotationEntry)
     }
 }
