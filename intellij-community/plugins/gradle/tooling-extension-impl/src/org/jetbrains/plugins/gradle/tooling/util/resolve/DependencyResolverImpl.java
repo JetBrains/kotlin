@@ -129,7 +129,7 @@ public class DependencyResolverImpl implements DependencyResolver {
 
     // resolve compile dependencies
     FileCollection compileClasspath = sourceSet.getCompileClasspath();
-    Collection<? extends ExternalDependency> compileDependencies = resolveDependenciesFromKnownStructures(
+    Collection<? extends ExternalDependency> compileDependencies = resolveDependenciesWithDefault(
       compileClasspath, COMPILE_SCOPE,
       new Getter<Collection<? extends ExternalDependency>>() {
         @Override
@@ -142,7 +142,7 @@ public class DependencyResolverImpl implements DependencyResolver {
     );
     // resolve runtime dependencies
     FileCollection runtimeClasspath = sourceSet.getRuntimeClasspath();
-    Collection<? extends ExternalDependency> runtimeDependencies = resolveDependenciesFromKnownStructures(
+    Collection<? extends ExternalDependency> runtimeDependencies = resolveDependenciesWithDefault(
       runtimeClasspath, RUNTIME_SCOPE,
       new Getter<Collection<? extends ExternalDependency>>() {
         @Override
@@ -548,7 +548,7 @@ public class DependencyResolverImpl implements DependencyResolver {
 
   @NotNull
   private Collection<? extends ExternalDependency> getDependencies(@NotNull final FileCollection fileCollection, @NotNull String scope) {
-    return resolveDependenciesFromKnownStructures(fileCollection, scope, new Getter<Collection<? extends ExternalDependency>>() {
+    return resolveDependenciesWithDefault(fileCollection, scope, new Getter<Collection<? extends ExternalDependency>>() {
       @Override
       public Collection<? extends ExternalDependency> get() {
         return singleton(new DefaultFileCollectionDependency(fileCollection.getFiles()));
@@ -557,10 +557,10 @@ public class DependencyResolverImpl implements DependencyResolver {
   }
 
   @NotNull
-  private Collection<? extends ExternalDependency> resolveDependenciesFromKnownStructures(
+  private Collection<? extends ExternalDependency> resolveDependenciesWithDefault(
     @NotNull FileCollection fileCollection,
     @NotNull String scope,
-    @NotNull Getter<Collection<? extends ExternalDependency>> defaultValue) {
+    @NotNull Getter<Collection<? extends ExternalDependency>> defaultValueProvider) {
     if (fileCollection instanceof ConfigurableFileCollection) {
       return getDependencies(((ConfigurableFileCollection)fileCollection).getFrom(), scope);
     }
@@ -573,7 +573,7 @@ public class DependencyResolverImpl implements DependencyResolver {
     else if (fileCollection instanceof SourceSetOutput) {
       return resolveSourceOutputFileDependencies((SourceSetOutput)fileCollection, scope);
     }
-    return defaultValue.get();
+    return defaultValueProvider.get();
   }
 
   private Collection<ExternalDependency> getDependencies(@NotNull Iterable<?> fileCollections, @NotNull String scope) {
