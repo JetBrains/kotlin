@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 
 internal class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -304,11 +306,30 @@ internal class CallAndReferenceGenerator(
                                 ((call.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
                             val valueParameters = function?.valueParameters
                             if (valueParameters != null) {
-                                for ((argument, parameter) in argumentMapping) {
-                                    val argumentExpression = visitor.convertToIrExpression(argument)
-                                    putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
+                                if (needArgumentReordering(argumentMapping.values, valueParameters)) {
+                                    return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
+                                        for ((argument, parameter) in argumentMapping) {
+                                            val parameterIndex = valueParameters.indexOf(parameter)
+                                            val irArgument = visitor.convertToIrExpression(argument)
+                                            if (irArgument.hasNoSideEffects()) {
+                                                putValueArgument(parameterIndex, irArgument)
+                                            } else {
+                                                val tempVar = declarationStorage.declareTemporaryVariable(irArgument, parameter.name.asString()).apply {
+                                                    parent = conversionScope.parentFromStack()
+                                                }
+                                                this.statements.add(tempVar)
+                                                putValueArgument(parameterIndex, IrGetValueImpl(startOffset, endOffset, tempVar.symbol, null))
+                                            }
+                                        }
+                                        this.statements.add(this@applyCallArguments)
+                                    }
+                                } else {
+                                    for ((argument, parameter) in argumentMapping) {
+                                        val argumentExpression = visitor.convertToIrExpression(argument)
+                                        putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
+                                    }
+                                    return this
                                 }
-                                return this
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
@@ -337,6 +358,18 @@ internal class CallAndReferenceGenerator(
         }
     }
 
+    private fun needArgumentReordering(parametersInActualOrder: Collection<FirValueParameter>, valueParameters: List<FirValueParameter>): Boolean {
+        var lastValueParameterIndex = -1
+        for (parameter in parametersInActualOrder) {
+            val index = valueParameters.indexOf(parameter)
+            if (index < lastValueParameterIndex) {
+                return true
+            }
+            lastValueParameterIndex = index
+        }
+        return false
+    }
+
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
             is IrMemberAccessExpressionBase -> {
@@ -354,6 +387,14 @@ internal class CallAndReferenceGenerator(
                         startOffset, endOffset, type,
                         "Cannot bind $argumentsCount type arguments to $name call with $typeArgumentsCount type parameters"
                     )
+                }
+            }
+            is IrBlockImpl -> apply {
+                if (statements.isNotEmpty()) {
+                    val lastStatement = statements.last()
+                    if (lastStatement is IrExpression) {
+                        statements[statements.size - 1] = lastStatement.applyTypeArguments(access)
+                    }
                 }
             }
             else -> this
@@ -417,6 +458,14 @@ internal class CallAndReferenceGenerator(
                     receiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }
                 this
+            }
+            is IrBlockImpl -> apply {
+                if (statements.isNotEmpty()) {
+                    val lastStatement = statements.last()
+                    if (lastStatement is IrExpression) {
+                        statements[statements.size - 1] = lastStatement.applyReceivers(qualifiedAccess, explicitReceiverExpression)
+                    }
+                }
             }
             else -> this
         }
