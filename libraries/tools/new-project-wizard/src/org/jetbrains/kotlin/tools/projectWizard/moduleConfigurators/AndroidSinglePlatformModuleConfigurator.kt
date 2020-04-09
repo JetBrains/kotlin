@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
@@ -57,13 +58,13 @@ object AndroidSinglePlatformModuleConfigurator :
 
         +ArtifactBasedLibraryDependencyIR(
             MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),
-            version = Version.fromString("1.1.0"),
+            version = Versions.ANDROID.ANDROIDX_APPCOMPAT,
             dependencyType = DependencyType.MAIN
         )
 
         +ArtifactBasedLibraryDependencyIR(
             MavenArtifact(DefaultRepository.GOOGLE, "androidx.constraintlayout", "constraintlayout"),
-            version = Version.fromString("1.1.3"),
+            version = Versions.ANDROID.ANDROIDX_CONSTRAINTLAYOUT,
             dependencyType = DependencyType.MAIN
         )
     }
