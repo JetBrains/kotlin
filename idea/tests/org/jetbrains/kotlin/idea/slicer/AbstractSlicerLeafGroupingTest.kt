@@ -11,7 +11,7 @@ import java.io.File
 
 abstract class AbstractSlicerLeafGroupingTest : AbstractSlicerTest() {
     override fun doTest(path: String, sliceProvider: KotlinSliceProvider, rootNode: SliceRootNode) {
-        val treeStructure = SliceTreeStructure(rootNode)
+        val treeStructure = TestSliceTreeStructure(rootNode)
         val analyzer = sliceProvider.leafAnalyzer
         val possibleElementsByNode = analyzer.createMap()
         val leafExpressions = analyzer.calcLeafExpressions(rootNode, treeStructure, possibleElementsByNode)

@@ -1,0 +1,6 @@
+7 val x = <bold>""</bold>.extensionProp
+3 	val <bold>String</bold>.extensionProp: Any
+4 		get() = <bold>this</bold>
+4 			<bold>get() = this</bold>
+7 				val x = "".<bold>extensionProp</bold>
+7 					val <bold>x = "".extensionProp</bold>

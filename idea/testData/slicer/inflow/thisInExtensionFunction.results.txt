@@ -1,0 +1,6 @@
+8 val <bold>x = "".extensionFun()</bold>
+8 	val x = <bold>"".extensionFun()</bold>
+3 		fun Any.<bold>extensionFun(): Any {</bold>
+4 			return <bold>this</bold>
+3 				fun <bold>Any</bold>.extensionFun(): Any {
+8 					val x = <bold>""</bold>.extensionFun()

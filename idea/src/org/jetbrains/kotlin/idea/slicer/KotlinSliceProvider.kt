@@ -20,6 +20,7 @@ import com.intellij.codeInsight.Nullability
 import com.intellij.ide.util.treeView.AbstractTreeStructure
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import com.intellij.slicer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
@@ -73,24 +75,32 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
         return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
     }
 
-    override fun getExpressionAtCaret(atCaret: PsiElement, dataFlowToThis: Boolean): KtExpression? {
-        val element =
-            atCaret.parentsWithSelf
-                .firstOrNull {
-                    it is KtProperty ||
-                            it is KtParameter ||
-                            it is KtDeclarationWithBody ||
-                            (it is KtClass && !it.hasExplicitPrimaryConstructor()) ||
-                            (it is KtExpression && it !is KtDeclaration)
-                }
-                ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null
+    override fun getExpressionAtCaret(atCaret: PsiElement, dataFlowToThis: Boolean): KtElement? {
+        val element = atCaret.parentsWithSelf
+            .filterIsInstance<KtElement>()
+            .firstOrNull(::isSliceElement)
+            ?.deparenthesize() ?: return null
+
         if (dataFlowToThis) {
             if (element is KtConstantExpression) return null
             if (element is KtStringTemplateExpression && element.isPlainWithEscapes()) return null
             if (element is KtClassLiteralExpression) return null
             if (element is KtCallableReferenceExpression) return null
         }
+
         return element
+    }
+
+    private fun isSliceElement(element: KtElement): Boolean {
+        return when {
+            element is KtProperty -> true
+            element is KtParameter -> true
+            element is KtDeclarationWithBody -> true
+            element is KtClass && !element.hasExplicitPrimaryConstructor() -> true
+            element is KtExpression && element !is KtDeclaration && element.parentOfType<KtTypeReference>() == null -> true
+            element is KtTypeReference && element == (element.parent as? KtCallableDeclaration)?.receiverTypeReference -> true
+            else -> false
+        }
     }
 
     override fun getElementForDescription(element: PsiElement): PsiElement {

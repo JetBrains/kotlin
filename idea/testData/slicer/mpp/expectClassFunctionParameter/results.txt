@@ -1,0 +1,4 @@
+10 c.foo(<bold>1</bold>)
+6 	fun foo(<bold>p: Any</bold>)
+4 		actual fun foo(<bold>p: Any</bold>) {
+5 			println(<bold>p</bold>)

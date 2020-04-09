@@ -1,0 +1,3 @@
+13 val x = <bold>""</bold>.extensionFun()
+4 	fun <bold>String</bold>.extensionFun(): Any {
+7 		println(<bold>this@extensionFun</bold>.length)

@@ -1,0 +1,3 @@
+3 var <bold>Any</bold>.property: Int
+8 	println(<bold>"a"</bold>.property)
+9 	<bold>"b"</bold>.property = 2

@@ -12,7 +12,7 @@ import java.io.File
 
 abstract class AbstractSlicerNullnessGroupingTest : AbstractSlicerTest() {
     override fun doTest(path: String, sliceProvider: KotlinSliceProvider, rootNode: SliceRootNode) {
-        val treeStructure = SliceTreeStructure(rootNode)
+        val treeStructure = TestSliceTreeStructure(rootNode)
         val analyzer = sliceProvider.nullnessAnalyzer
         val nullnessByNode = SliceNullnessAnalyzerBase.createMap()
         val nullness = analyzer.calcNullableLeaves(rootNode, treeStructure, nullnessByNode)

@@ -1,0 +1,8 @@
+6 val result = foo(<bold>1</bold>)
+3 	expect fun foo(<bold>p: Any</bold>): Any
+1 		actual fun foo(<bold>p: Any</bold>): Any {
+2 			return <bold>p</bold>
+1 				actual fun <bold>foo(p: Any): Any {</bold>
+6 					val result = <bold>foo(1)</bold>
+6 						val <bold>result = foo(1)</bold>
+7 							println(<bold>result</bold>)

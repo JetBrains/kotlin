@@ -1,0 +1,7 @@
+[NotNull Values]
+9 	<bold>1</bold>.extensionFun()
+4 		open fun <bold>Int</bold>.extensionFun() {
+9 			<bold>1</bold>.extensionFun()
+18 	<bold>2</bold>.extensionFun()
+4 		open fun <bold>Int</bold>.extensionFun() {
+18 			<bold>2</bold>.extensionFun()
