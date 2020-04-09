@@ -7,6 +7,7 @@ import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.QuickDocUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.ide.ui.AntialiasingType;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -138,7 +139,7 @@ class DocRenderer implements EditorCustomElementRenderer {
       JComponent component = getRendererComponent(inlay, componentWidth, componentHeight);
       component.setBackground(bgColor);
       Graphics dg = g.create(startX + scale(LEFT_INSET), filledStartY + topBottomInset, componentWidth, componentHeight);
-      GraphicsUtil.setupAntialiasing(dg);
+      UISettings.setupAntialiasing(dg);
       component.paint(dg);
       dg.dispose();
     }

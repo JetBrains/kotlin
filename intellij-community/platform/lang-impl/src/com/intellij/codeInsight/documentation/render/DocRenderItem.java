@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.documentation.DocFontSizePopup;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.HelpTooltip;
+import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -143,6 +144,7 @@ public class DocRenderItem {
         MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
         connection.setDefaultHandler((event, params) -> updateInlays(editor));
         connection.subscribe(EditorColorsManager.TOPIC);
+        connection.subscribe(LafManagerListener.TOPIC);
         EditorFactory.getInstance().addEditorFactoryListener(new EditorFactoryListener() {
           @Override
           public void editorReleased(@NotNull EditorFactoryEvent event) {
