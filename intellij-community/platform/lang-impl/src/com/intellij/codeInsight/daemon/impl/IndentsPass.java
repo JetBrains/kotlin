@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.editor.impl.EditorImpl;
+import com.intellij.openapi.editor.impl.view.EditorPainter;
 import com.intellij.openapi.editor.impl.view.VisualLinesIterator;
 import com.intellij.openapi.editor.markup.CustomHighlighterRenderer;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
@@ -122,6 +123,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
     if (start.y >= maxY) return;
 
+    int targetX = Math.max(0, start.x + EditorPainter.getIndentGuideShift(editor));
     final EditorColorsScheme scheme = editor.getColorsScheme();
     g.setColor(scheme.getColor(selected ? EditorColors.SELECTED_INDENT_GUIDE_COLOR : EditorColors.INDENT_GUIDE_COLOR));
 
@@ -141,7 +143,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     //     2. Show indent as is if it doesn't intersect with soft wrap-introduced text;
     List<? extends SoftWrap> softWraps = ((EditorEx)editor).getSoftWrapModel().getRegisteredSoftWraps();
     if (selected || softWraps.isEmpty()) {
-      LinePainter2D.paint((Graphics2D)g, start.x + 2, start.y, start.x + 2, maxY - 1);
+      LinePainter2D.paint((Graphics2D)g, targetX, start.y, targetX, maxY - 1);
     }
     else {
       int startY = start.y;
@@ -159,7 +161,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
             SoftWrap softWrap = softWraps.get(it.getStartOrPrevWrapIndex());
             if (softWrap.getIndentInColumns() < indentColumn) {
               if (startY < currY) {
-                LinePainter2D.paint((Graphics2D)g, start.x + 2, startY, start.x + 2, currY - 1);
+                LinePainter2D.paint((Graphics2D)g, targetX, startY, targetX, currY - 1);
               }
               startY = currY + lineHeight;
             }
@@ -168,7 +170,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
         it.advance();
       }
       if (startY < maxY) {
-        LinePainter2D.paint((Graphics2D)g, start.x + 2, startY, start.x + 2, maxY - 1);
+        LinePainter2D.paint((Graphics2D)g, targetX, startY, targetX, maxY - 1);
       }
     }
   };
