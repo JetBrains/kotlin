@@ -31,8 +31,8 @@ public class GradleRunner {
 
     public GradleRunner(PathManager pathManager) {
         listOfCommands = new ArrayList<>();
-        String cmdName = SystemInfo.isWindows ? "gradle.bat" : "gradle";
-        listOfCommands.add(pathManager.getGradleBinFolder() + "/" + cmdName);
+        String cmdName = SystemInfo.isWindows ? "gradlew.bat" : "gradlew";
+        listOfCommands.add(pathManager.getTmpFolder() + "/" + cmdName);
         listOfCommands.add("--no-daemon");
         listOfCommands.add("--build-file");
         listOfCommands.add(pathManager.getTmpFolder() + "/build.gradle");

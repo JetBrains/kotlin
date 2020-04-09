@@ -1,3 +1,4 @@
+import TaskUtils.useAndroidEmulator
 
 plugins {
     kotlin("jvm")
@@ -59,6 +60,7 @@ projectTest {
     }
 
     workingDir = rootDir
+    useAndroidEmulator(this)
 }
 
 val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")

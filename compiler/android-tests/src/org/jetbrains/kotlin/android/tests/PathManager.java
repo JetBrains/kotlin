@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android.tests;
 
-import org.jetbrains.kotlin.android.tests.download.SDKDownloader;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 
@@ -35,7 +35,7 @@ public class PathManager {
     }
 
     public String getAndroidAvdRoot() {
-        String androidEmulatorRoot = getAndroidSdkRoot() + "/emulatoravd";
+        String androidEmulatorRoot = getAndroidSdkRoot() + "/compiler_box_test_avd";
         new File(androidEmulatorRoot).mkdirs();
         return androidEmulatorRoot;
     }
@@ -50,10 +50,6 @@ public class PathManager {
 
     public String getEmulatorFolderInAndroidSdk() {
         return getAndroidSdkRoot() + "/emulator";
-    }
-
-    public String getBuildToolsFolderInAndroidSdk() {
-        return getAndroidSdkRoot() + "/build-tools";
     }
 
     public String getOutputForCompiledFiles(int index) {
@@ -73,19 +69,7 @@ public class PathManager {
     }
 
     public String getAndroidSdkRoot() {
-        return getDependenciesRoot() + "/android-sdk";
-    }
-
-    public String getDependenciesRoot() {
-        return rootFolder + "/dependencies/android.tests.dependencies";
-    }
-
-    public String getGradleBinFolder() {
-        return getDependenciesRoot() + "/gradle-" + SDKDownloader.GRADLE_VERSION + "/bin";
-    }
-
-    public String getRootForDownload() {
-        return getDependenciesRoot() + "/download";
+        return KotlinTestUtils.getAndroidSdkSystemIndependentPath();
     }
 
     public String getAndroidModuleRoot() {

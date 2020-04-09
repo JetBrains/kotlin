@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.android.tests
 
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
@@ -48,18 +49,47 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         ) + "/" + testClassName + "$index.java"
     }
 
-    private fun prepareAndroidModuleAndGenerateTests() {
-        prepareAndroidModule()
+    private fun prepareAndroidModuleAndGenerateTests(skipSdkDirWriting: Boolean) {
+        prepareAndroidModule(skipSdkDirWriting)
         generateTestsAndFlavourSuites()
     }
 
-    private fun prepareAndroidModule() {
+    private fun prepareAndroidModule(skipSdkDirWriting: Boolean) {
         FileUtil.copyDir(File(pathManager.androidModuleRoot), File(pathManager.tmpFolder))
-        writeAndroidSkdToLocalProperties(pathManager)
+        if (!skipSdkDirWriting) {
+            writeAndroidSkdToLocalProperties(pathManager)
+        }
 
         println("Copying kotlin-stdlib.jar and kotlin-reflect.jar in android module...")
         copyKotlinRuntimeJars()
+        copyGradleWrapperAndPatch()
     }
+
+    private fun copyGradleWrapperAndPatch() {
+        val projectRoot = File(pathManager.tmpFolder)
+        val target = File(projectRoot, "gradle/wrapper")
+        File("./gradle/wrapper/").copyRecursively(target)
+        val gradlew = File(projectRoot, "gradlew")
+        File("./gradlew").copyTo(gradlew).also {
+            if (!SystemInfo.isWindows) {
+                it.setExecutable(true)
+            }
+        }
+        File("./gradlew.bat").copyTo(File(projectRoot, "gradlew.bat"));
+        val file = File(target, "gradle-wrapper.properties")
+        file.readLines().map {
+            if (it.startsWith("distributionUrl"))
+                "distributionUrl=https\\://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
+            else it
+        }.let { lines ->
+            FileWriter(file).use { fw ->
+                lines.forEach { line ->
+                    fw.write("$line\n")
+                }
+            }
+        }
+    }
+
 
     private fun copyKotlinRuntimeJars() {
         FileUtil.copy(
@@ -250,6 +280,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         )
 
     companion object {
+        const val GRADLE_VERSION = "5.6.4"
         const val testClassPackage = "org.jetbrains.kotlin.android.tests"
         const val testClassName = "CodegenTestCaseOnAndroid"
         const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"
@@ -257,10 +288,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         const val generatorName = "CodegenTestsOnAndroidGenerator"
 
 
+        @JvmOverloads
         @JvmStatic
         @Throws(Throwable::class)
-        fun generate(pathManager: PathManager) {
-            CodegenTestsOnAndroidGenerator(pathManager).prepareAndroidModuleAndGenerateTests()
+        fun generate(pathManager: PathManager, skipSdkDirWriting: Boolean = false) {
+            CodegenTestsOnAndroidGenerator(pathManager).prepareAndroidModuleAndGenerateTests(skipSdkDirWriting)
         }
 
         private fun hasBoxMethod(text: String): Boolean {
@@ -269,7 +301,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         @Throws(IOException::class)
         internal fun writeAndroidSkdToLocalProperties(pathManager: PathManager) {
-            val sdkRoot = File(pathManager.androidSdkRoot).invariantSeparatorsPath
+            val sdkRoot = KotlinTestUtils.getAndroidSdkSystemIndependentPath()
             println("Writing android sdk to local.properties: $sdkRoot")
             val file = File(pathManager.tmpFolder + "/local.properties")
             FileWriter(file).use { fw -> fw.write("sdk.dir=$sdkRoot") }
@@ -281,7 +313,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             println("Created temporary folder for android tests: " + tmpFolder.absolutePath)
             val rootFolder = File("")
             val pathManager = PathManager(rootFolder.absolutePath, tmpFolder.absolutePath)
-            generate(pathManager)
+            generate(pathManager, true)
         }
     }
 }

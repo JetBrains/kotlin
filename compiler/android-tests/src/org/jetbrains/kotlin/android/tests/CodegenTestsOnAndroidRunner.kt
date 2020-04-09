@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.android.tests
 import com.intellij.util.PlatformUtils
 import junit.framework.TestCase
 import junit.framework.TestSuite
-import org.jetbrains.kotlin.android.tests.download.SDKDownloader
 import org.jetbrains.kotlin.android.tests.emulator.Emulator
 import org.jetbrains.kotlin.android.tests.gradle.GradleRunner
-import org.jetbrains.kotlin.android.tests.run.PermissionManager
 import org.junit.Assert
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
@@ -38,8 +36,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
     private fun runTestsInEmulator(): TestSuite {
         val rootSuite = TestSuite("Root")
-
-        downloadDependencies()
 
         val emulatorType = if (isTeamcity) Emulator.ARM else Emulator.X86
         println("Using $emulatorType emulator!")
@@ -132,18 +128,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             }
         }
 
-    }
-
-    private fun downloadDependencies() {
-        val rootForAndroidDependencies = File(pathManager.dependenciesRoot)
-        if (!rootForAndroidDependencies.exists()) {
-            rootForAndroidDependencies.mkdirs()
-        }
-
-        val downloader = SDKDownloader(pathManager)
-        downloader.downloadAll()
-        downloader.unzipAll()
-        PermissionManager.setPermissions(pathManager)
     }
 
     companion object {
