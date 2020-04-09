@@ -37,7 +37,7 @@ private val toolTipHandler = Function<PsiElement, String> {
 
 fun collectHighlightingColorsMarkers(
     ktClass: KtClass,
-    result: MutableCollection<LineMarkerInfo<*>>
+    result: MutableCollection<in LineMarkerInfo<*>>
 ) {
     if (!KotlinLineMarkerOptions.dslOption.isEnabled) return
 

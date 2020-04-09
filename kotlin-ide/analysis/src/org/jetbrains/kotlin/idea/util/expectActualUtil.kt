@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
-internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
+fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
 
 // TODO: Sort out the cases with multiple expected descriptors
 fun MemberDescriptor.expectedDescriptor() = expectedDescriptors().firstOrNull()

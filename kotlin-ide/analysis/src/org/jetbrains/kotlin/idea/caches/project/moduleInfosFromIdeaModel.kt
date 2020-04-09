@@ -92,4 +92,4 @@ private fun mergePlatformModules(
     return rest + platformModules
 }
 
-internal fun getAllProjectSdks(): Array<Sdk> = getProjectJdkTableSafe().allJdks
+fun getAllProjectSdks(): Array<Sdk> = getProjectJdkTableSafe().allJdks

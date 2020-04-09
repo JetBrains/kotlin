@@ -11,7 +11,6 @@ import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.extensions.Extensions
-import io.ktor.util.findAllSupertypes
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull

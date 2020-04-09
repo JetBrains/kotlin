@@ -30,7 +30,7 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
         super.setUp()
 
         val pomModelImpl = PomModelImpl(project)
-        val treeAspect = TreeAspect(pomModelImpl)
+        val treeAspect = TreeAspect.getInstance(project)
 
         val mockProject = project as MockProject
         createAndRegisterKotlinCodeBlockModificationListener(mockProject, pomModelImpl, treeAspect)
