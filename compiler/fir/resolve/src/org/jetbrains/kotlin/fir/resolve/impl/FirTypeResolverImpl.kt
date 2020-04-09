@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol

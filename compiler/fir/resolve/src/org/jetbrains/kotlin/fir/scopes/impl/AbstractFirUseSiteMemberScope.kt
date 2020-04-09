@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -118,12 +119,8 @@ abstract class AbstractFirUseSiteMemberScope(
             isVararg = parameter.isVararg
         }
 
-
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) {
-        declaredMemberScope.processClassifiersByName(name, processor)
-        superTypesScope.processClassifiersByName(name, processor)
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+        superTypesScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 }

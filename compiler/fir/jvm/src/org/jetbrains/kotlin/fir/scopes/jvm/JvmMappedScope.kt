@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -39,8 +40,8 @@ class JvmMappedScope(
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
-        declaredMemberScope.processClassifiersByName(name, processor)
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     companion object {

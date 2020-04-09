@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -214,7 +215,7 @@ class FirSuperTypeScope private constructor(
         return result
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         if (name in absentClassifiers) {
             return
         }
@@ -222,11 +223,11 @@ class FirSuperTypeScope private constructor(
         val pending = mutableListOf<FirClassifierSymbol<*>>()
         var empty = true
         for (scope in scopes) {
-            scope.processClassifiersByName(name) {
+            scope.processClassifiersByNameWithSubstitution(name) { symbol, substitution ->
                 empty = false
-                if (it !in accepted) {
-                    pending += it
-                    processor(it)
+                if (symbol !in accepted) {
+                    pending += symbol
+                    processor(symbol, substitution)
                 }
             }
             accepted += pending
@@ -235,7 +236,7 @@ class FirSuperTypeScope private constructor(
         if (empty) {
             absentClassifiers += name
         }
-        super.processClassifiersByName(name, processor)
+        super.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     companion object {

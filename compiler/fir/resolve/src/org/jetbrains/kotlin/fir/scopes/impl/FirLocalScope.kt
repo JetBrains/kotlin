@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.NAME_FOR_BACKING_FIELD
 import org.jetbrains.kotlin.fir.resolve.PersistentMultimap
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -62,10 +63,10 @@ class FirLocalScope(
         }
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val klass = classes[name]
         if (klass != null) {
-            processor(klass)
+            processor(klass, ConeSubstitutor.Empty)
         }
     }
 }

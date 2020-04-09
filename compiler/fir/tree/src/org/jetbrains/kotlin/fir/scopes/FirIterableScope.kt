@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -13,12 +14,12 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirIterableScope : FirScope() {
     abstract val scopes: Iterable<FirScope>
 
-    override fun processClassifiersByName(
+    override fun processClassifiersByNameWithSubstitution(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         for (scope in scopes) {
-            scope.processClassifiersByName(name, processor)
+            scope.processClassifiersByNameWithSubstitution(name, processor)
         }
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -62,8 +63,8 @@ class FirClassDeclaredMemberScope(
         }
     }
 
-    override fun processClassifiersByName(
+    override fun processClassifiersByNameWithSubstitution(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) = nestedClassifierScope.processClassifiersByName(name, processor)
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
+    ) = nestedClassifierScope.processClassifiersByNameWithSubstitution(name, processor)
 }

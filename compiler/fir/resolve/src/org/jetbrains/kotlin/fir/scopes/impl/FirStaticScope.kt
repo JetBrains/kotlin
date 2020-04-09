@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -16,10 +17,8 @@ import org.jetbrains.kotlin.name.Name
 
 class FirStaticScope(private val delegateScope: FirScope) : FirScope() {
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
-        delegateScope.processClassifiersByName(name) {
-            processor(it)
-        }
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        delegateScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     override fun processFunctionsByName(

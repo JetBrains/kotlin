@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.*
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -76,8 +77,8 @@ class JavaClassEnhancementScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
-        useSiteMemberScope.processClassifiersByName(name, processor)
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        useSiteMemberScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     private fun enhance(

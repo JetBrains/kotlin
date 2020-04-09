@@ -135,6 +135,12 @@ data class ChainedSubstitutor(private val first: ConeSubstitutor, private val se
     }
 }
 
+fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
+    if (this == ConeSubstitutor.Empty) return other
+    if (other == ConeSubstitutor.Empty) return this
+    return ChainedSubstitutor(this, other)
+}
+
 data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null

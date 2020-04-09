@@ -81,9 +81,6 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         resolvePhase = FirResolvePhase.BODY_RESOLVE
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
-
-    }
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val symbol = BINARY_OPERATOR_SYMBOLS[name]

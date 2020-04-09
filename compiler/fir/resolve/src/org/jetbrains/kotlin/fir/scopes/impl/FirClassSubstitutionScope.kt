@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -82,8 +83,10 @@ class FirClassSubstitutionScope(
         }
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
-        useSiteMemberScope.processClassifiersByName(name, processor)
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        useSiteMemberScope.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
+            processor(symbol, substitutor.chain(this.substitutor))
+        }
     }
 
     private val typeCalculator =

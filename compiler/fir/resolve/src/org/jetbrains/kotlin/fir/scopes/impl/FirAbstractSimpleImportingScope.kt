@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerScopeLevel
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -22,10 +23,7 @@ abstract class FirAbstractSimpleImportingScope(
 
     protected abstract val simpleImports: Map<Name, List<FirResolvedImport>>
 
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) {
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val imports = simpleImports[name] ?: return
         if (imports.isEmpty()) return
         val provider = FirSymbolProvider.getInstance(session)
@@ -35,7 +33,7 @@ abstract class FirAbstractSimpleImportingScope(
                 import.resolvedClassId?.createNestedClassId(importedName)
                     ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
-            processor(symbol)
+            processor(symbol, ConeSubstitutor.Empty)
         }
     }
 
