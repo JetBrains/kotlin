@@ -1,6 +1,6 @@
 ---
 name: Please use YouTrack
-about: Please use YouTrack: https://kotl.in/issue
+about: "Please use YouTrack: https://kotl.in/issue"
 title: Please use YouTrack
 labels: ''
 assignees: ''
