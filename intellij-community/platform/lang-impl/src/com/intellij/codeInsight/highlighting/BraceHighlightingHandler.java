@@ -49,6 +49,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -306,9 +307,8 @@ public class BraceHighlightingHandler {
     }
 
     FileEditorManager fileEditorManager = FileEditorManager.getInstance(myProject); // null in default project
-    if (fileEditorManager == null || !myEditor.equals(fileEditorManager.getSelectedTextEditor())) {
-      return;
-    }
+    if (fileEditorManager == null) return;
+    if (Arrays.stream(fileEditorManager.getSelectedTextEditorWithRemotes()).noneMatch(e -> e.equals(myEditor))) return;
 
     if (lBrace != null && rBrace !=null) {
       final int startLine = myEditor.offsetToLogicalPosition(lBrace.getStartOffset()).line;
