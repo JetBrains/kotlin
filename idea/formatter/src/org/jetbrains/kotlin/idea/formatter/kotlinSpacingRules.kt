@@ -240,6 +240,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 else
                     null
             }
+
+            inPosition(parent = LONG_STRING_TEMPLATE_ENTRY, right = LONG_TEMPLATE_ENTRY_END).lineBreakIfLineBreakInParent(0)
+            inPosition(parent = LONG_STRING_TEMPLATE_ENTRY, left = LONG_TEMPLATE_ENTRY_START).lineBreakIfLineBreakInParent(0)
         }
 
         simple {
@@ -395,9 +398,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
             betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
             betweenInside(LOOP_RANGE, RPAR, FOR).spaces(0)
-
-            after(LONG_TEMPLATE_ENTRY_START).spaces(0)
-            before(LONG_TEMPLATE_ENTRY_END).spaces(0)
 
             afterInside(ANNOTATION_ENTRY, ANNOTATED_EXPRESSION).spaces(1)
 
