@@ -63,11 +63,12 @@ internal class AnnotationEntryReplacementPerformer(
     codeToInline: MutableCodeToInline,
     elementToBeReplaced: KtAnnotationEntry
 ) : AbstractSimpleReplacementPerformer<KtAnnotationEntry>(codeToInline, elementToBeReplaced) {
+    private val useSiteTarget = elementToBeReplaced.useSiteTarget?.getAnnotationUseSiteTarget()
+
     override fun createDummyElement(mainExpression: KtExpression): KtAnnotationEntry =
         createByPattern("@Dummy($0)", mainExpression) { psiFactory.createAnnotationEntry(it) }
 
     override fun rangeToElement(range: PsiChildRange): KtAnnotationEntry {
-        val useSiteTarget = elementToBeReplaced.useSiteTarget?.getAnnotationUseSiteTarget()
         val useSiteTargetText = useSiteTarget?.renderName?.let { "$it:" } ?: ""
         val isFileUseSiteTarget = useSiteTarget == AnnotationUseSiteTarget.FILE
 
