@@ -5,13 +5,13 @@
 
 'use strict';
 
-import {tcEscape} from "./src/teamcity-format"
+import {formatMessage, SIMPLE_MESSAGE} from "./src/teamcity-format"
 
 const consoleLog = console.log.bind(console);
 
 function consoleAppender(layout, timezoneOffset) {
     return (loggingEvent) => {
-        consoleLog(tcEscape(layout(loggingEvent, timezoneOffset)));
+        consoleLog(formatMessage(SIMPLE_MESSAGE, layout(loggingEvent, timezoneOffset)));
     };
 }
 
