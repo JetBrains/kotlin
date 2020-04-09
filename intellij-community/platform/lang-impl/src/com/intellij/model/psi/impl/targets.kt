@@ -56,8 +56,7 @@ private fun fromTargetEvaluator(file: PsiFile, offset: Int): Collection<Symbol> 
 }
 
 private fun mockEditor(project: Project, document: Document): Editor {
-  return object : ImaginaryEditor(document) {
-    override fun getProject(): Project? = project
+  return object : ImaginaryEditor(project, document) {
     override fun toString(): String = "API compatibility editor"
   }
 }

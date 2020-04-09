@@ -5,7 +5,7 @@ import com.intellij.openapi.editor.impl.ImaginaryEditor
 import com.intellij.psi.PsiFile
 
 internal class IntentionPreviewEditor(psiFileCopy: PsiFile, caretOffset: Int)
-  : ImaginaryEditor(psiFileCopy.viewProvider.document!!) {
+  : ImaginaryEditor(psiFileCopy.project, psiFileCopy.viewProvider.document!!) {
 
   init {
     caretModel.moveToOffset(caretOffset)
