@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -86,6 +87,7 @@ class JavaElementFinder(
         if (qualifiedName.shortName().asString() != JvmAbi.DEFAULT_IMPLS_CLASS_NAME) return
 
         for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
             if (classOrObject is KtClass && classOrObject.isInterface()) {
                 val interfaceClass = classOrObject.toLightClass() ?: continue

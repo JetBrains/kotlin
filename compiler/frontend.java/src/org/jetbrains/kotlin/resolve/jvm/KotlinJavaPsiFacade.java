@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -119,6 +120,7 @@ public class KotlinJavaPsiFacade {
         }
 
         for (KotlinPsiElementFinderWrapper finder : finders()) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             if (finder instanceof CliFinder) {
                 JavaClass aClass = ((CliFinder) finder).findClass(request, scope);
                 if (aClass != null) return aClass;
