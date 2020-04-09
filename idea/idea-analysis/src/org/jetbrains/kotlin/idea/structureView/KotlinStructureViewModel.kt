@@ -10,21 +10,25 @@ import com.intellij.ide.structureView.StructureViewModelBase
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.util.treeView.smartTree.*
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
     StructureViewModelBase(ktFile, editor, KotlinStructureViewElement(ktFile, false)),
     StructureViewModel.ElementInfoProvider {
 
     init {
-        withSuitableClasses(KtDeclaration::class.java)
         withSorters(Sorter.ALPHA_SORTER)
     }
+
+    override fun isSuitable(element: PsiElement?): Boolean = element is KtDeclaration &&
+            element !is KtPropertyAccessor &&
+            element !is KtFunctionLiteral &&
+            !(element is KtProperty && element.containingClassOrObject !is KtNamedDeclaration) &&
+            !(element is KtFunction && element.containingClassOrObject !is KtNamedDeclaration)
 
     override fun getNodeProviders() = NODE_PROVIDERS
 
