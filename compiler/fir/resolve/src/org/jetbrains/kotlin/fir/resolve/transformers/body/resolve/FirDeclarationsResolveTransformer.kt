@@ -369,9 +369,11 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
         dataFlowAnalyzer.enterClass()
         val type = anonymousObject.defaultType()
-        anonymousObject.resultType = buildResolvedTypeRef {
-            source = anonymousObject.source
-            this.type = type
+        if (anonymousObject.typeRef !is FirResolvedTypeRef) {
+            anonymousObject.resultType = buildResolvedTypeRef {
+                source = anonymousObject.source
+                this.type = type
+            }
         }
         var result = withLabelAndReceiverType(null, anonymousObject, type) {
             transformDeclarationContent(anonymousObject, data).single as FirAnonymousObject

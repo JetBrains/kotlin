@@ -200,11 +200,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is FirTypeParameterSymbol,
-            is FirAnonymousObjectSymbol,
             is ConeCapturedTypeConstructor,
             is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntersectionType -> 0
+            is FirAnonymousObjectSymbol -> fir.typeParameters.size
             is FirRegularClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             is ConeIntegerLiteralType -> 0
@@ -216,6 +216,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is FirTypeParameterSymbol -> error("?!:11")
+            is FirAnonymousObjectSymbol -> fir.typeParameters[index].symbol
             is FirRegularClassSymbol -> fir.typeParameters[index].symbol
             is FirTypeAliasSymbol -> fir.typeParameters[index].symbol
             else -> error("?!:12")
