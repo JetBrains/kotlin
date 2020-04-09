@@ -13,12 +13,12 @@ repositories {
 kotlin {
     js("nodeJs") {
         nodejs {
-
+            binaries.executable()
         }
     }
     js("browser") {
         browser {
-
+            binaries.executable()
         }
     }
     sourceSets {

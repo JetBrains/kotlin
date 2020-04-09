@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.rawIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -48,7 +49,12 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
         module: Module
     ): List<BuildSystemIR> = buildList {
         +RawGradleIR {
-            +"kotlin.target.browser { }"
+            sectionCall("kotlin", needIndent = true) {
+                sectionCall("js", needIndent = true) {
+                    +"browser {}"; nlIndented()
+                    +"binaries.executable()"
+                }
+            }
         }
     }
 }

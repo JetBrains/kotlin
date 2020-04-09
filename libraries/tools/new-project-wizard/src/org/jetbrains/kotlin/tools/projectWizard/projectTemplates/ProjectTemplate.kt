@@ -203,7 +203,9 @@ object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
                     listOf(
                         ModuleType.common.createDefaultTarget(),
                         ModuleType.jvm.createDefaultTarget(),
-                        ModuleType.js.createDefaultTarget(),
+                        ModuleType.js.createDefaultTarget().withConfiguratorSettings(JsBrowserTargetConfigurator) {
+                            JsTargetConfigurator.kind withValue JsTargetKind.LIBRARY
+                        },
                         ModuleType.native.createDefaultTarget()
                     )
                 )

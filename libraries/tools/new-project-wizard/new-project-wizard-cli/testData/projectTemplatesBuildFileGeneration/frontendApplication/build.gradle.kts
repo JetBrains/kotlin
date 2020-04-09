@@ -27,4 +27,9 @@ dependencies {
     implementation(npm("styled-components","5.0.0"))
     implementation(npm("inline-style-prefixer","5.1.0"))
 }
-kotlin.target.browser { }
+kotlin {
+    js {
+        browser {}
+        binaries.executable()
+    }
+}

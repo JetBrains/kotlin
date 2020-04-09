@@ -173,6 +173,9 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
             }
         }
     }
+
+    fun <V : Any, T : SettingType<V>> Reader.settingsValue(module: Module, setting: ModuleConfiguratorSetting<V, T>): V =
+        withSettingsOf(module) { setting.reference.settingValue }
 }
 
 val ModuleConfigurator.settings
