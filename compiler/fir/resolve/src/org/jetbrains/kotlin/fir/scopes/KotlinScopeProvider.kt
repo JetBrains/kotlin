@@ -95,7 +95,7 @@ internal fun FirClass<*>.scope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     skipPrivateMembers: Boolean,
-    classId: ClassId? = null
+    classId: ClassId? = this.classId
 ): FirScope {
     val basicScope = scopeProvider.getUseSiteMemberScope(
         this, useSiteSession, scopeSession
