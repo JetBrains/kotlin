@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetTy
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
 class KtorServerTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.title")
@@ -51,6 +54,10 @@ class KtorServerTemplate : Template() {
         +RepositoryIR(Repositories.KTOR_BINTRAY)
         +RepositoryIR(DefaultRepository.JCENTER)
         +runTaskIrs(mainClass = "ServerKt")
+    }
+
+    override fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
+        +WizardGradleRunConfiguration("Run", "run", emptyList())
     }
 
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
