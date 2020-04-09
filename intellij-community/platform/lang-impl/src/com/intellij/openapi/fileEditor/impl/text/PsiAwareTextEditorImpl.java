@@ -24,8 +24,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Segment;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -56,7 +54,6 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
 
     List<? extends Segment> focusZones = FocusModePassFactory.calcFocusZones(psiFile);
 
-    migrateDocRenderSettingIfNeeded();
     DocRenderPassFactory.Items items =
       document != null && psiFile != null && EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled()
       ? DocRenderPassFactory.calculateItemsToRender(document, psiFile)
@@ -85,14 +82,6 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
         DaemonCodeAnalyzer.getInstance(myProject).restart(psiFile);
       }
     };
-  }
-
-  private static void migrateDocRenderSettingIfNeeded() {
-    RegistryValue value = Registry.get("editor.render.doc.comments");
-    if (value.asBoolean()) {
-      value.setValue(false);
-      EditorSettingsExternalizable.getInstance().setDocCommentRenderingEnabled(true);
-    }
   }
 
   @NotNull
