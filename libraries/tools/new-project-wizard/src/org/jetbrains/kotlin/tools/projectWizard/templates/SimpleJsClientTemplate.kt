@@ -90,7 +90,7 @@ class SimpleJsClientTemplate : Template() {
     }
 
 
-    override fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> =
+    override fun Reader.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> =
         withSettingsOf(module.originalModule) {
             buildList {
                 val hasKtorServNeighbourTarget = module.safeAs<MultiplatformModuleIR>()
@@ -116,6 +116,9 @@ class SimpleJsClientTemplate : Template() {
             }
         }
 
+    override fun Reader.getAdditionalSettings(module: Module): Map<String, Any> = withSettingsOf(module) {
+        mapOf("useStyledComponents" to (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED))
+    }
 
     override fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = buildList {
         +interceptTemplate(KtorServerTemplate()) {
