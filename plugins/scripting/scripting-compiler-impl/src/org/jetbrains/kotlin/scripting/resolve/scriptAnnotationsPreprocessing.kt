@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.resolve
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -27,7 +28,13 @@ internal fun String?.orAnonymous(kind: String = ""): String =
         this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
 internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>, project: Project): Annotation {
-    val module = ModuleDescriptorImpl(Name.special("<script-annotations-preprocessing>"), LockBasedStorageManager("scriptAnnotationsPreprocessing"), DefaultBuiltIns.Instance)
+    val module = ModuleDescriptorImpl(
+        Name.special("<script-annotations-preprocessing>"),
+        LockBasedStorageManager("scriptAnnotationsPreprocessing") {
+            ProgressManager.checkCanceled()
+        },
+        DefaultBuiltIns.Instance
+    )
     val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT, project)
     val trace = BindingTraceContext()
 

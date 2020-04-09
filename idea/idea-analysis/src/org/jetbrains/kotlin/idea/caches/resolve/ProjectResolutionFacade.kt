@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationList
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
+import org.jetbrains.kotlin.storage.CancellableSimpleLock
+import org.jetbrains.kotlin.storage.guarded
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.concurrent.locks.ReentrantLock
 
@@ -48,6 +51,10 @@ internal class ProjectResolutionFacade(
         get() = globalContext.storageManager.compute { cachedValue.value }
 
     private val analysisResultsLock = ReentrantLock()
+    private val analysisResultsSimpleLock = CancellableSimpleLock(analysisResultsLock) {
+        ProgressManager.checkCanceled()
+    }
+
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
         {
             val resolverForProject = cachedResolverForProject
@@ -142,13 +149,8 @@ internal class ProjectResolutionFacade(
     internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
 
-        val slruCache = run {
-            analysisResultsLock.lock()
-            try {
-                analysisResults.value!!
-            } finally {
-                analysisResultsLock.unlock()
-            }
+        val slruCache = analysisResultsSimpleLock.guarded {
+            analysisResults.value!!
         }
         val results = elements.map {
             val perFileCache = slruCache[it.containingKtFile]

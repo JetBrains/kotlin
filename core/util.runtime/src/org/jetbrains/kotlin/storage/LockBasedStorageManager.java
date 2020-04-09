@@ -29,8 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class LockBasedStorageManager implements StorageManager {
     private static final String PACKAGE_NAME = StringsKt.substringBeforeLast(LockBasedStorageManager.class.getCanonicalName(), ".", "");
@@ -55,7 +53,7 @@ public class LockBasedStorageManager implements StorageManager {
         RuntimeException handleException(@NotNull Throwable throwable);
     }
 
-    public static final StorageManager NO_LOCKS = new LockBasedStorageManager("NO_LOCKS", ExceptionHandlingStrategy.THROW, NoLock.INSTANCE) {
+    public static final StorageManager NO_LOCKS = new LockBasedStorageManager("NO_LOCKS", ExceptionHandlingStrategy.THROW, EmptySimpleLock.INSTANCE) {
         @NotNull
         @Override
         protected <T> RecursionDetectedResult<T> recursionDetectedDefault() {
@@ -64,18 +62,31 @@ public class LockBasedStorageManager implements StorageManager {
     };
 
     @NotNull
-    public static LockBasedStorageManager createWithExceptionHandling(@NotNull String debugText, @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
-        return new LockBasedStorageManager(debugText, exceptionHandlingStrategy, new ReentrantLock());
+    public static LockBasedStorageManager createWithExceptionHandling(
+            @NotNull String debugText,
+            @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy
+    ) {
+        return createWithExceptionHandling(debugText, exceptionHandlingStrategy, null);
     }
 
-    protected final Lock lock;
+    @NotNull
+    public static LockBasedStorageManager createWithExceptionHandling(
+            @NotNull String debugText,
+            @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy,
+            @Nullable Runnable checkCancelled
+    ) {
+        return new LockBasedStorageManager(debugText, exceptionHandlingStrategy,
+                                           SimpleLock.Companion.simpleLock(checkCancelled));
+    }
+
+    protected final SimpleLock lock;
     private final ExceptionHandlingStrategy exceptionHandlingStrategy;
     private final String debugText;
 
     private LockBasedStorageManager(
             @NotNull String debugText,
             @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy,
-            @NotNull Lock lock
+            @NotNull SimpleLock lock
     ) {
         this.lock = lock;
         this.exceptionHandlingStrategy = exceptionHandlingStrategy;
@@ -83,7 +94,11 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     public LockBasedStorageManager(String debugText) {
-        this(debugText, ExceptionHandlingStrategy.THROW, new ReentrantLock());
+        this(debugText, null);
+    }
+
+    public LockBasedStorageManager(String debugText, @Nullable Runnable checkCancelled) {
+        this(debugText, ExceptionHandlingStrategy.THROW, SimpleLock.Companion.simpleLock(checkCancelled));
     }
 
     @Override

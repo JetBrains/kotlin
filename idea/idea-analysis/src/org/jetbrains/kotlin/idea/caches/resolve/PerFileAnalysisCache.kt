@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsElementsCache
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.storage.CancellableSimpleLock
+import org.jetbrains.kotlin.storage.guarded
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -54,6 +56,9 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
     private val cache = HashMap<PsiElement, AnalysisResult>()
     private var fileResult: AnalysisResult? = null
     private val lock = ReentrantLock()
+    private val guardLock = CancellableSimpleLock(lock) {
+        ProgressIndicatorProvider.checkCanceled()
+    }
 
     internal fun fetchAnalysisResults(element: KtElement): AnalysisResult? {
         assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
@@ -75,28 +80,23 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 
-        lock.lock()
-        try {
-            ProgressIndicatorProvider.checkCanceled()
-
+        return guardLock.guarded {
             // step 1: perform incremental analysis IF it is applicable
-            getIncrementalAnalysisResult()?.let { return it }
+            getIncrementalAnalysisResult()?.let { return@guarded it }
 
             // cache does not contain AnalysisResult per each kt/psi element
             // instead it looks up analysis for its parents - see lookUp(analyzableElement)
 
             // step 2: return result if it is cached
             lookUp(analyzableParent)?.let {
-                return it
+                return@guarded it
             }
 
             // step 3: perform analyze of analyzableParent as nothing has been cached yet
             val result = analyze(analyzableParent)
             cache[analyzableParent] = result
 
-            return result
-        } finally {
-            lock.unlock()
+            return@guarded result
         }
     }
 
