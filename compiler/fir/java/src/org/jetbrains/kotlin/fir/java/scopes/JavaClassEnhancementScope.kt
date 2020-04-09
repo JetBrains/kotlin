@@ -82,9 +82,9 @@ class JavaClassEnhancementScope(
     }
 
     private fun enhance(
-        original: FirCallableSymbol<*>,
+        original: FirVariableSymbol<*>,
         name: Name
-    ): FirCallableSymbol<*> {
+    ): FirVariableSymbol<*> {
         when (val firElement = original.fir) {
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
@@ -139,7 +139,7 @@ class JavaClassEnhancementScope(
 
     private fun enhance(
         original: FirFunctionSymbol<*>,
-        name: Name
+        name: Name?
     ): FirFunctionSymbol<*> {
         val firMethod = original.fir
 
@@ -152,7 +152,7 @@ class JavaClassEnhancementScope(
     private fun enhanceMethod(
         firMethod: FirFunction<*>,
         methodId: CallableId,
-        name: Name
+        name: Name?
     ): FirFunctionSymbol<*> {
         val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
@@ -241,7 +241,7 @@ class JavaClassEnhancementScope(
                     session = this@JavaClassEnhancementScope.session
                     returnTypeRef = newReturnTypeRef
                     receiverTypeRef = newReceiverTypeRef
-                    this.name = name
+                    this.name = name!!
                     status = firMethod.status
                     symbol = FirNamedFunctionSymbol(methodId)
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -400,6 +400,15 @@ class JavaClassEnhancementScope(
             ),
             containerApplicabilityType
         )
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+
+        useSiteMemberScope.processDeclaredConstructors process@{ original ->
+
+            val function = enhancements.getOrPut(original) { enhance(original, name = null) }
+            processor(function as FirConstructorSymbol)
+        }
     }
 
 }

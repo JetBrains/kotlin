@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScope(
@@ -33,7 +30,7 @@ class FirClassDeclaredMemberScope(
             when (declaration) {
                 is FirCallableMemberDeclaration<*> -> {
                     val name = when (declaration) {
-                        is FirConstructor -> if (klass is FirRegularClass) klass.name else continue@loop
+                        is FirConstructor -> Name.special("<init>")
                         is FirVariable<*> -> declaration.name
                         is FirSimpleFunction -> declaration.name
                         else -> continue@loop
@@ -49,6 +46,15 @@ class FirClassDeclaredMemberScope(
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is FirFunctionSymbol<*>) {
+                processor(symbol)
+            }
+        }
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        val symbols = callablesIndex[Name.special("<init>")] ?: return
+        for (symbol in symbols) {
+            if (symbol is FirConstructorSymbol) {
                 processor(symbol)
             }
         }

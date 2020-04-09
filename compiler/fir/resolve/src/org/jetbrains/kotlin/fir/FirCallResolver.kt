@@ -308,12 +308,10 @@ class FirCallResolver(
         val candidateFactory = CandidateFactory(this, callInfo)
         val candidates = mutableListOf<Candidate>()
 
-        scope.processFunctionsByName(className) {
-            if (it is FirConstructorSymbol) {
-                val candidate = candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
-                candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
-                candidates += candidate
-            }
+        scope.processDeclaredConstructors {
+            val candidate = candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+            candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
+            candidates += candidate
         }
         return callResolver.selectDelegatingConstructorCall(delegatedConstructorCall, className, candidates)
     }

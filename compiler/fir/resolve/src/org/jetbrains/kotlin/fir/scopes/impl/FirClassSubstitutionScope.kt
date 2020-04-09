@@ -40,6 +40,7 @@ class FirClassSubstitutionScope(
 ) : FirScope() {
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
+    private val fakeOverrideConstructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
     private val fakeOverrideProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
     private val fakeOverrideFields = mutableMapOf<FirFieldSymbol, FirFieldSymbol>()
     private val fakeOverrideAccessors = mutableMapOf<FirAccessorSymbol, FirAccessorSymbol>()
@@ -127,35 +128,66 @@ class FirClassSubstitutionScope(
         }
 
         return createFakeOverrideFunction(
-            session, member, original, newReceiverType, newReturnType, newParameterTypes, newTypeParameters, derivedClassId
+            session,
+            member,
+            original,
+            newReceiverType,
+            newReturnType,
+            newParameterTypes,
+            newTypeParameters as List<FirTypeParameter>,
+            derivedClassId
         )
+    }
+
+    private fun createFakeOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
+        if (substitutor == ConeSubstitutor.Empty) return original
+        val constructor = original.fir
+        val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(constructor)
+
+
+        val returnType = constructor.returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+        val newReturnType = returnType.substitute(newSubstitutor)
+
+        val newParameterTypes = constructor.valueParameters.map {
+            it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute(newSubstitutor)
+        }
+
+        if (newReturnType == null && newParameterTypes.all { it == null } && newTypeParameters === constructor.typeParameters) {
+            return original
+        }
+        return createFakeOverrideConstructor(FirConstructorSymbol(original.callableId, overriddenSymbol = original), session, constructor, null, newReturnType, newParameterTypes, newTypeParameters).symbol
     }
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
     private fun createNewTypeParametersAndSubstitutor(
-        member: FirCallableMemberDeclaration<*>
-    ): Pair<List<FirTypeParameter>, ConeSubstitutor> {
+        member: FirTypeParameterRefsOwner
+    ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
-        val newTypeParameters = member.typeParameters.map { originalParameter ->
+        val newTypeParameters = member.typeParameters.map { typeParameter ->
+            if (typeParameter !is FirTypeParameter) return@map null
             FirTypeParameterBuilder().apply {
-                source = originalParameter.source
-                session = originalParameter.session
-                name = originalParameter.name
+                source = typeParameter.source
+                session = typeParameter.session
+                name = typeParameter.name
                 symbol = FirTypeParameterSymbol()
-                variance = originalParameter.variance
-                isReified = originalParameter.isReified
-                annotations += originalParameter.annotations
+                variance = typeParameter.variance
+                isReified = typeParameter.isReified
+                annotations += typeParameter.annotations
             }
         }
 
-        val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).map {
-            Pair(it.first.symbol, ConeTypeParameterTypeImpl(it.second.symbol.toLookupTag(), isNullable = false))
+        val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).mapNotNull { (original, new) ->
+            if (new != null)
+                Pair(original.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isNullable = false))
+            else null
         }.toMap()
 
         val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters)
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {
-            for (boundTypeRef in oldTypeParameter.bounds) {
+            if (newTypeParameter == null) continue
+            val original = oldTypeParameter as FirTypeParameter
+            for (boundTypeRef in original.bounds) {
                 val typeForBound = boundTypeRef.coneTypeUnsafe<ConeKotlinType>()
                 val substitutedBound = typeForBound.substitute()
                 newTypeParameter.bounds +=
@@ -171,7 +203,10 @@ class FirClassSubstitutionScope(
         // While common Ir contracts expect them to be different
         // if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
 
-        return Pair(newTypeParameters.map { it.build() }, ChainedSubstitutor(substitutor, additionalSubstitutor))
+        return Pair(
+            newTypeParameters.mapIndexed { index, builder -> builder?.build() ?: member.typeParameters[index] },
+            ChainedSubstitutor(substitutor, additionalSubstitutor)
+        )
     }
 
     private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
@@ -193,7 +228,16 @@ class FirClassSubstitutionScope(
             return original
         }
 
-        return createFakeOverrideProperty(session, member, original, newReceiverType, newReturnType, newTypeParameters, derivedClassId)
+        @Suppress("UNCHECKED_CAST")
+        return createFakeOverrideProperty(
+            session,
+            member,
+            original,
+            newReceiverType,
+            newReturnType,
+            newTypeParameters as List<FirTypeParameter>,
+            derivedClassId
+        )
     }
 
     private fun createFakeOverrideField(original: FirFieldSymbol): FirFieldSymbol {
@@ -368,6 +412,61 @@ class FirClassSubstitutionScope(
                 symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
                 delegateGetter = function
             }.symbol
+        }
+
+        private fun createFakeOverrideConstructor(
+            fakeOverrideSymbol: FirConstructorSymbol,
+            session: FirSession,
+            baseConstructor: FirConstructor,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null,
+            newTypeParameters: List<FirTypeParameterRef>? = null
+        ): FirConstructor {
+            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
+            // As second alternative, we can invent some light-weight kind of FirRegularClass
+            return buildConstructor {
+                source = baseConstructor.source
+                this.session = session
+                returnTypeRef = baseConstructor.returnTypeRef.withReplacedReturnType(newReturnType)
+                receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(newReceiverType)
+                status = baseConstructor.status
+                symbol = fakeOverrideSymbol
+                annotations += baseConstructor.annotations
+                resolvePhase = baseConstructor.resolvePhase
+                valueParameters += baseConstructor.valueParameters.zip(
+                    newParameterTypes ?: List(baseConstructor.valueParameters.size) { null }
+                ) { valueParameter, newType ->
+                    buildValueParameter {
+                        source = valueParameter.source
+                        this.session = session
+                        returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
+                        name = valueParameter.name
+                        symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                        defaultValue = valueParameter.defaultValue
+                        isCrossinline = valueParameter.isCrossinline
+                        isNoinline = valueParameter.isNoinline
+                        isVararg = valueParameter.isVararg
+                    }
+                }
+
+                // TODO: Fix the hack for org.jetbrains.kotlin.fir.backend.Fir2IrVisitor.addFakeOverrides
+                // We might have added baseFunction.typeParameters in case new ones are null
+                // But it fails at org.jetbrains.kotlin.ir.AbstractIrTextTestCase.IrVerifier.elementsAreUniqueChecker
+                // because it shares the same declarations of type parameters between two different two functions
+                if (newTypeParameters != null) {
+                    typeParameters += newTypeParameters
+                }
+            }
+
+        }
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        useSiteMemberScope.processDeclaredConstructors process@{ original ->
+
+            val constructor = fakeOverrideConstructors.getOrPut(original) { createFakeOverrideConstructor(original) }
+            processor(constructor)
         }
     }
 }

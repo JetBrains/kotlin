@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
@@ -25,6 +26,10 @@ abstract class FirScope {
     open fun processPropertiesByName(
         name: Name,
         processor: (FirVariableSymbol<*>) -> Unit
+    ) {}
+
+    open fun processDeclaredConstructors(
+        processor: (FirConstructorSymbol) -> Unit
     ) {}
 }
 

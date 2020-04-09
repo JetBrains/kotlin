@@ -190,7 +190,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                         for (declaration in javaClass.declarations) {
                             if (declaration in renderedDeclarations) continue
                             when (declaration) {
-                                is FirJavaConstructor -> enhancementScope.processFunctionsByName(javaClass.name) { symbol ->
+                                is FirJavaConstructor -> enhancementScope.processDeclaredConstructors { symbol ->
                                     val enhanced = symbol.fir
                                     if (enhanced !in renderedDeclarations) {
                                         enhanced.accept(renderer, null)
