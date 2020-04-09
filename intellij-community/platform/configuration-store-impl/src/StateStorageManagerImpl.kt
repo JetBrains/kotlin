@@ -99,6 +99,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
 
   /**
    * @param expansion System-independent
+   * @return `false` if the [key] was updated, `true` if the new key was attached
    */
   fun addMacro(key: String, expansion: String): Boolean {
     LOG.assertTrue(key.isNotEmpty())
