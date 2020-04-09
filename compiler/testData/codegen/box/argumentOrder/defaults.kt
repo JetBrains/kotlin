@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var invokeOrder: String = ""
 
 fun test(x: Double = { invokeOrder += "x"; 1.0 }(), a: String, y: Long = { invokeOrder += "y"; 1 }(), b: String): String {
