@@ -411,8 +411,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                 object : JSServiceMessagesClient(
                     testResultProcessor,
                     clientSettings,
-                    log,
-                    suppressedOutput
+                    log
                 ) {
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
@@ -424,10 +423,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         progressLogger.progress(value)
 
                         parseConsole(value)
-
-                        if (log.isDebugEnabled) {
-                            super.printNonTestOutput(text)
-                        }
+                        super.printNonTestOutput(text)
                     }
 
                     private fun parseConsole(text: String) {

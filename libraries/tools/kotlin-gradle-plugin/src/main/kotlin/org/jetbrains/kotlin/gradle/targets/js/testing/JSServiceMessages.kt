@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,18 +23,11 @@ internal open class JSServiceMessagesTestExecutionSpec(
     checkExitCode,
     clientSettings
 ) {
-    protected val suppressedOutput = StringBuilder()
-
-    override fun showSuppressedOutput() {
-        println(suppressedOutput)
-    }
-
     override fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient {
         return JSServiceMessagesClient(
             results = testResultProcessor,
             settings = clientSettings,
-            log = log,
-            suppressedOutput = suppressedOutput
+            log = log
         )
     }
 }
@@ -42,10 +35,11 @@ internal open class JSServiceMessagesTestExecutionSpec(
 internal open class JSServiceMessagesClient(
     results: TestResultProcessor,
     settings: TCServiceMessagesClientSettings,
-    log: Logger,
-    private val suppressedOutput: StringBuilder
+    log: Logger
 ) : TCServiceMessagesClient(results, settings, log) {
     override fun printNonTestOutput(text: String) {
-        suppressedOutput.appendln(text)
+        if (log.isDebugEnabled) {
+            log.debug(text)
+        }
     }
 }
