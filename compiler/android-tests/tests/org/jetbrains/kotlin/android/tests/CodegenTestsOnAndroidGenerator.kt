@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.android.tests
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
@@ -22,15 +23,14 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.*
 import org.junit.Assert
-import org.junit.Ignore
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import kotlin.test.assertTrue
 
 data class ConfigurationKey(val kind: ConfigurationKind, val jdkKind: TestJdkKind, val configuration: String)
 
-@Ignore
-class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) : CodegenTestCase() {
+class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) {
     private var writtenFilesCount = 0
 
     private var currentModuleIndex = 1
@@ -143,7 +143,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
 
         fun writeFilesOnDisk() {
-            val disposable = TestDisposable()
+            //don't convert to sam (identity lose)
+            @Suppress("ObjectLiteralToLambda")
+            val disposable = object : Disposable {
+                override fun dispose() {}
+            }
 
             val environment = KotlinCoreEnvironment.createForTests(
                 disposable,
@@ -173,7 +177,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             writtenFilesCount += filesToCompile.size
             val index = writtenFilesCount / 2500
             val outputDir = File(pathManager.getOutputForCompiledFiles(index))
-            assertTrue("Add flavors for ktest$index", index < 3)
+            assertTrue("Add flavors for ktest$index") { index < 3 }
 
             println("Generating ${filesToCompile.size} files into ${outputDir.name}, configuration: '${environment.configuration}'...")
 
@@ -248,16 +252,16 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
                 if (hasBoxMethod(fullFileText)) {
                     val testFiles = createTestFiles(file, fullFileText)
-                    val kind = extractConfigurationKind(testFiles)
-                    val jdkKind = getTestJdkKind(testFiles)
+                    val kind = KotlinBaseTest.extractConfigurationKind(testFiles)
+                    val jdkKind = KotlinBaseTest.getTestJdkKind(testFiles)
                     val keyConfiguration = CompilerConfiguration()
-                    updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
+                    CodegenTestCase.updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val filesHolder = holders.getOrPut(key) {
                         FilesWriter(KotlinTestUtils.newConfiguration(kind, jdkKind, KotlinTestUtils.getAnnotationsJar()).apply {
                             println("Creating new configuration by $key")
-                            updateConfigurationByDirectivesInTestFiles(testFiles, this)
+                            CodegenTestCase.updateConfigurationByDirectivesInTestFiles(testFiles, this)
                         })
                     }
 
@@ -267,13 +271,13 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
-    private fun createTestFiles(file: File, expectedText: String): List<TestFile> =
+    private fun createTestFiles(file: File, expectedText: String): List<KotlinBaseTest.TestFile> =
         TestFiles.createTestFiles(
             file.name,
             expectedText,
-            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Directives): TestFile {
-                    return TestFile(fileName, text, directives)
+            object : TestFiles.TestFileFactoryNoModules<KotlinBaseTest.TestFile>() {
+                override fun create(fileName: String, text: String, directives: Directives): KotlinBaseTest.TestFile {
+                    return KotlinBaseTest.TestFile(fileName, text, directives)
                 }
             }, false,
             "kotlin.coroutines"

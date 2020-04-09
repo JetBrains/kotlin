@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
-import java.util.*
 
 abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() {
 
@@ -56,17 +55,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
     protected open fun extractConfigurationKind(files: List<F>): ConfigurationKind {
-        var addRuntime = false
-        var addReflect = false
-        for (file in files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
-                addRuntime = true
-            }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
-                addReflect = true
-            }
-        }
-        return if (addReflect) ConfigurationKind.ALL else if (addRuntime) ConfigurationKind.NO_KOTLIN_REFLECT else ConfigurationKind.JDK_ONLY
+        return Companion.extractConfigurationKind(files)
     }
 
 
@@ -105,5 +94,30 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
 
         override fun toString(): String = name
+    }
+
+    companion object {
+        fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
+            var addRuntime = false
+            var addReflect = false
+            for (file in files) {
+                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                    addRuntime = true
+                }
+                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
+                    addReflect = true
+                }
+            }
+            return if (addReflect) ConfigurationKind.ALL else if (addRuntime) ConfigurationKind.NO_KOTLIN_REFLECT else ConfigurationKind.JDK_ONLY
+        }
+
+        fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
+            for (file in files) {
+                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
+                    return TestJdkKind.FULL_JDK
+                }
+            }
+            return TestJdkKind.MOCK_JDK
+        }
     }
 }
