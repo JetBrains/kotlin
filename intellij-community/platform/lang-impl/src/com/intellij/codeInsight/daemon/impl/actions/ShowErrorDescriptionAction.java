@@ -23,12 +23,9 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.ShowErrorDescriptionHandler;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ui.accessibility.ScreenReader;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.event.KeyEvent;
 
 public class ShowErrorDescriptionAction extends BaseCodeInsightAction implements DumbAware {
-  private static int width;
-  private static boolean shouldShowDescription = false;
-  private static boolean descriptionShown = true;
   private boolean myRequestFocus = false;
 
   public ShowErrorDescriptionAction() {
@@ -48,7 +42,7 @@ public class ShowErrorDescriptionAction extends BaseCodeInsightAction implements
   @NotNull
   @Override
   protected CodeInsightActionHandler getHandler() {
-    return new ShowErrorDescriptionHandler(shouldShowDescription ? width : 0, myRequestFocus);
+    return new ShowErrorDescriptionHandler(myRequestFocus);
   }
 
   @Override
@@ -68,21 +62,5 @@ public class ShowErrorDescriptionAction extends BaseCodeInsightAction implements
     super.beforeActionPerformedUpdate(e);
     // The tooltip gets the focus if using a screen reader and invocation through a keyboard shortcut.
     myRequestFocus = ScreenReader.isActive() && (e.getInputEvent() instanceof KeyEvent);
-    changeState();
   }
-
-  private static void changeState() {
-    if (Comparing.strEqual(ActionManagerEx.getInstanceEx().getPrevPreformedActionId(), IdeActions.ACTION_SHOW_ERROR_DESCRIPTION)) {
-      shouldShowDescription = descriptionShown;
-    } else {
-      shouldShowDescription = false;
-      descriptionShown = true;
-    }
-  }
-
-  public static void rememberCurrentWidth(int currentWidth) {
-    width = currentWidth;
-    descriptionShown = !shouldShowDescription;
-  }
-
 }

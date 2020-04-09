@@ -196,15 +196,6 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     }
   }
 
-  /**
-   * @return {@code true} if quick doc control is configured to not prevent user-IDE interaction (e.g. should be closed if
-   * the user presses a key);
-   * {@code false} otherwise
-   */
-  boolean isCloseOnSneeze() {
-    return myCloseOnSneeze;
-  }
-
   @Override
   protected void installComponentActions(@NotNull ToolWindow toolWindow, DocumentationComponent component) {
     ((ToolWindowEx)toolWindow).setTitleActions(component.getActions());

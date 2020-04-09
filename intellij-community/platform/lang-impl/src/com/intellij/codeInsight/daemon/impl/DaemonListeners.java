@@ -6,16 +6,12 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.LineMarkerProviders;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSettingListener;
-import com.intellij.codeInsight.documentation.DocumentationManager;
-import com.intellij.codeInsight.folding.impl.FoldingUtil;
-import com.intellij.codeInsight.hint.TooltipController;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.ide.AppLifecycleListener;
-import com.intellij.ide.IdeTooltipManager;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -33,14 +29,15 @@ import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
-import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
-import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -162,8 +159,6 @@ public final class DaemonListeners implements Disposable {
         }
       }
     }, this);
-    eventMulticaster.addEditorMouseMotionListener(new MyEditorMouseMotionListener(), this);
-    eventMulticaster.addEditorMouseListener(new MyEditorMouseListener(TooltipController.getInstance()), this);
 
     connection.subscribe(EditorTrackerListener.TOPIC, activeEditors -> {
       if (myActiveEditors.equals(activeEditors)) {
@@ -574,67 +569,6 @@ public final class DaemonListeners implements Disposable {
         return;
       }
       stopDaemon(true, "Editor typing");
-    }
-  }
-
-  private static class MyEditorMouseListener implements EditorMouseListener {
-    @NotNull
-    private final TooltipController myTooltipController;
-
-    MyEditorMouseListener(@NotNull TooltipController tooltipController) {
-      myTooltipController = tooltipController;
-    }
-
-    @Override
-    public void mouseExited(@NotNull EditorMouseEvent e) {
-      if (Registry.is("editor.new.mouse.hover.popups")) return;
-      if (!myTooltipController.shouldSurvive(e.getMouseEvent())) {
-        DaemonTooltipUtil.cancelTooltips();
-      }
-    }
-  }
-
-  private class MyEditorMouseMotionListener implements EditorMouseMotionListener {
-    @Override
-    public void mouseMoved(@NotNull EditorMouseEvent e) {
-      if (Registry.is("ide.disable.editor.tooltips") || Registry.is("editor.new.mouse.hover.popups")) {
-        return;
-      }
-      Editor editor = e.getEditor();
-      if (myProject != editor.getProject()) return;
-      if (EditorMouseHoverPopupControl.arePopupsDisabled(editor)) return;
-
-      boolean shown = false;
-      try {
-        if (e.getArea() == EditorMouseEventArea.EDITING_AREA &&
-            !UIUtil.isControlKeyDown(e.getMouseEvent()) &&
-            DocumentationManager.getInstance(myProject).getDocInfoHint() == null &&
-            EditorUtil.isPointOverText(editor, e.getMouseEvent().getPoint())) {
-          LogicalPosition logical = editor.xyToLogicalPosition(e.getMouseEvent().getPoint());
-          int offset = editor.logicalPositionToOffset(logical);
-          HighlightInfo info = myDaemonCodeAnalyzer.findHighlightByOffset(editor.getDocument(), offset, false);
-          if (info == null || info.getDescription() == null ||
-              info.getHighlighter() != null && FoldingUtil.isHighlighterFolded(editor, info.getHighlighter())) {
-            IdeTooltipManager.getInstance().hideCurrent(e.getMouseEvent());
-            return;
-          }
-          DaemonTooltipUtil.showInfoTooltip(info, editor, offset);
-          shown = true;
-        }
-      }
-      finally {
-        if (!shown && !TooltipController.getInstance().shouldSurvive(e.getMouseEvent())) {
-          DaemonTooltipUtil.cancelTooltips();
-        }
-      }
-    }
-
-    @Override
-    public void mouseDragged(@NotNull EditorMouseEvent e) {
-      if (Registry.is("editor.new.mouse.hover.popups")) {
-        return;
-      }
-      TooltipController.getInstance().cancelTooltips();
     }
   }
 

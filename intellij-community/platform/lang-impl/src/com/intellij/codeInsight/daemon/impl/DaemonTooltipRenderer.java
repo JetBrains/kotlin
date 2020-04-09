@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeInsight.daemon.DaemonBundle;
-import com.intellij.codeInsight.daemon.impl.actions.ShowErrorDescriptionAction;
 import com.intellij.codeInsight.hint.LineTooltipRenderer;
 import com.intellij.codeInsight.hint.TooltipLinkHandlerEP;
 import com.intellij.codeInspection.ui.InspectionNodeInfo;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
@@ -31,11 +29,6 @@ class DaemonTooltipRenderer extends LineTooltipRenderer {
 
   DaemonTooltipRenderer(final String text, final int width, Object[] comparable) {
     super(text, width, comparable);
-  }
-
-  @Override
-  protected void onHide(@NotNull JComponent contentComponent) {
-    ShowErrorDescriptionAction.rememberCurrentWidth(contentComponent.getWidth());
   }
 
   @NotNull

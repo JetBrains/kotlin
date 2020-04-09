@@ -52,7 +52,7 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
             HighlightInfo fullInfo = ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project))
               .findHighlightByOffset(editor.getDocument(), editor.getCaretModel().getOffset(), false);
             DaemonTooltipUtil.showInfoTooltip(fullInfo != null ? fullInfo : infoToGo,
-                                              editor, editor.getCaretModel().getOffset(), 0, false, true);
+                                              editor, editor.getCaretModel().getOffset(), false, true);
           }
         });
         return;

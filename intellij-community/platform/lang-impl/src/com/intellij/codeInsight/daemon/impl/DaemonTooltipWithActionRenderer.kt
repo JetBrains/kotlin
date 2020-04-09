@@ -94,11 +94,10 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                           alignToRight: Boolean,
                           group: TooltipGroup,
                           hintHint: HintHint,
-                          newLayout: Boolean,
                           highlightActions: Boolean,
                           limitWidthToScreen: Boolean,
                           tooltipReloader: TooltipReloader?): LightweightHint? {
-    return super.createHint(editor, p, alignToRight, group, hintHint, newLayout,
+    return super.createHint(editor, p, alignToRight, group, hintHint,
                             highlightActions || !(isShowActions() && tooltipAction != null && hintHint.isAwtTooltip),
                             limitWidthToScreen, tooltipReloader)
   }
@@ -109,21 +108,20 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                          hintHint: HintHint,
                          actions: MutableList<in AnAction>,
                          tooltipReloader: TooltipReloader,
-                         newLayout: Boolean,
                          highlightActions: Boolean) {
-    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader, newLayout, highlightActions)
+    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader, highlightActions)
     val hasMore = LineTooltipRenderer.isActiveHtml(myText!!)
     if (tooltipAction == null && !hasMore) return
 
-    val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore, newLayout)
+    val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore)
 
     val settingsConstraints = GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                                                 JBUI.insets(if (newLayout) 7 else 4, 7, if (newLayout) 0 else 4, if (newLayout) 2 else 4),
+                                                 JBUI.insets(7, 7, 0, 2),
                                                  0, 0)
     grid.add(settingsComponent, settingsConstraints)
 
     if (isShowActions()) {
-      addActionsRow(hintHint, hint, editor, actions, grid, newLayout, highlightActions)
+      addActionsRow(hintHint, hint, editor, actions, grid, highlightActions)
     }
   }
 
@@ -132,7 +130,6 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                             editor: Editor,
                             actions: MutableList<in AnAction>,
                             grid: JComponent,
-                            newLayout: Boolean,
                             highlightActions: Boolean) {
     if (tooltipAction == null || !hintHint.isAwtTooltip) return
 
@@ -157,11 +154,11 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
       .anchor(GridBagConstraints.WEST)
 
     val topInset = 5
-    val bottomInset = if (newLayout) (if (highlightActions) 4 else 10) else 5
+    val bottomInset = (if (highlightActions) 4 else 10)
     buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground),
-                gridBag.next().insets(topInset, if (newLayout) 10 else 8, bottomInset, 4))
+                gridBag.next().insets(topInset, 10, bottomInset, 4))
     buttons.add(createKeymapHint(shortcutRunActionText),
-                gridBag.next().insets(if (newLayout) topInset else 0, 4, if (newLayout) bottomInset else 0, 12))
+                gridBag.next().insets(topInset, 4, bottomInset, 12))
 
     val showAllFixes = { _: InputEvent? ->
       hint.hide()
@@ -171,7 +168,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     buttons.add(createActionLabel("More actions...", showAllFixes, hintHint.textBackground),
                 gridBag.next().insets(topInset, 12, bottomInset, 4))
     buttons.add(createKeymapHint(shortcutShowAllActionsText),
-                gridBag.next().fillCellHorizontally().insets(if (newLayout) topInset else 0, 4, if (newLayout) bottomInset else 0, 20))
+                gridBag.next().fillCellHorizontally().insets(topInset, 4, bottomInset, 20))
 
     actions.add(object : AnAction() {
       override fun actionPerformed(e: AnActionEvent) {
@@ -287,8 +284,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
 
   private fun createSettingsComponent(hintHint: HintHint,
                                       reloader: TooltipReloader,
-                                      hasMore: Boolean,
-                                      newLayout: Boolean): JComponent {
+                                      hasMore: Boolean): JComponent {
     val presentation = Presentation()
     presentation.icon = AllIcons.Actions.More
     presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
@@ -297,7 +293,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     val docAction = ShowDocAction(reloader, hasMore)
     actions.add(docAction)
     val actionGroup = SettingsActionGroup(actions)
-    val buttonSize = if (newLayout) 20 else 18
+    val buttonSize = 20
     val settingsButton = ActionButton(actionGroup, presentation, ActionPlaces.UNKNOWN, Dimension(buttonSize, buttonSize))
     settingsButton.setNoIconsInPopup(true)
     settingsButton.border = JBUI.Borders.empty()

@@ -107,7 +107,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private static final Logger LOG = Logger.getInstance(DocumentationComponent.class);
   private static final String DOCUMENTATION_TOPIC_ID = "reference.toolWindows.Documentation";
 
-  private static final JBColor BORDER_COLOR = new JBColor(new Color(0xadadad), new Color(0x616366));
   public static final ColorKey COLOR_KEY = EditorColors.DOCUMENTATION_COLOR;
   public static final Color SECTION_COLOR = Gray.get(0x90);
 
@@ -115,7 +114,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private static final int PREFERRED_HEIGHT_MAX_EM = 10;
   private static final JBDimension MAX_DEFAULT = new JBDimension(650, 500);
-  private static final JBDimension MIN_DEFAULT = new JBDimension(300, Registry.is("editor.new.mouse.hover.popups") ? 36 : 20);
+  private static final JBDimension MIN_DEFAULT = new JBDimension(300, 36);
 
   private static final Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("(<a\\s*href=[\"']http[^>]*>)([^>]*)(</a>)");
   private static final String EXTERNAL_LINK_REPLACEMENT = "$1$2<icon src='AllIcons.Ide.External_link_arrow'>$3";
@@ -263,7 +262,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         }
       }
     };
-    boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
     DataProvider helpDataProvider = dataId -> PlatformDataKeys.HELP_ID.is(dataId) ? DOCUMENTATION_TOPIC_ID : null;
     myEditorPane.putClientProperty(DataManager.CLIENT_PROPERTY_DATA_PROVIDER, helpDataProvider);
     myText = "";
@@ -275,9 +273,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     }
     else {
       myEditorPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
-      if (newLayout) {
-        UIUtil.doNotScrollToCaret(myEditorPane);
-      }
+      UIUtil.doNotScrollToCaret(myEditorPane);
     }
     myEditorPane.setBackground(EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
     HTMLEditorKit editorKit = new JBHtmlEditorKit(true, true) {
@@ -419,7 +415,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
           }
           else {
             Dimension d = component.getPreferredSize();
-            component.setBounds(r.width - d.width - 2, r.height - d.height - (newLayout ? 7 : 3), d.width, d.height);
+            component.setBounds(r.width - d.width - 2, r.height - d.height - 7, d.width, d.height);
           }
         }
       }
@@ -464,8 +460,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     add(layeredPane, BorderLayout.CENTER);
 
     myControlPanel = myToolBar.getComponent();
-    myControlPanel.setBorder(IdeBorderFactory.createBorder(newLayout ? UIUtil.getTooltipSeparatorColor() : JBColor.border(),
-                                                           SideBorder.BOTTOM));
+    myControlPanel.setBorder(IdeBorderFactory.createBorder(UIUtil.getTooltipSeparatorColor(), SideBorder.BOTTOM));
     myControlPanelVisible = false;
 
     HyperlinkListener hyperlinkListener = new HyperlinkListener() {
@@ -500,10 +495,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   @Override
   public void setBackground(Color color) {
     super.setBackground(color);
-    if (Registry.is("editor.new.mouse.hover.popups")) {
-      if (myEditorPane != null) myEditorPane.setBackground(color);
-      if (myControlPanel != null) myControlPanel.setBackground(color);
-    }
+    if (myEditorPane != null) myEditorPane.setBackground(color);
+    if (myControlPanel != null) myControlPanel.setBackground(color);
   }
 
   public AnAction[] getActions() {
@@ -554,26 +547,21 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   private static void prepareCSS(@NotNull HTMLEditorKit editorKit) {
-    boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
-    Color documentationColor = EditorColorsManager.getInstance().getSchemeForCurrentUITheme().getColor(COLOR_KEY);
-    Color borderColor = newLayout ? UIUtil.getTooltipSeparatorColor() : ColorUtil.mix(documentationColor, BORDER_COLOR, 0.5);
-    int leftPadding = newLayout ? 8 : 7;
-    int definitionTopPadding = newLayout ? 4 : 3;
-    int htmlBottomPadding = newLayout ? 8 : 5;
+    Color borderColor = UIUtil.getTooltipSeparatorColor();
+    int leftPadding = 8;
+    int definitionTopPadding = 4;
     String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
     editorKit.getStyleSheet().addRule("tt {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule(".pre {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule("html { padding-bottom: " + htmlBottomPadding + "px; }");
+    editorKit.getStyleSheet().addRule("html { padding-bottom: 8px; }");
     editorKit.getStyleSheet().addRule("h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }");
     editorKit.getStyleSheet().addRule("a { color: #" + ColorUtil.toHex(getLinkColor()) + "; text-decoration: none;}");
     editorKit.getStyleSheet().addRule(".definition { padding: " + definitionTopPadding + "px 17px 1px " + leftPadding +
                                       "px; border-bottom: thin solid #" + ColorUtil.toHex(borderColor) + "; }");
     editorKit.getStyleSheet().addRule(".definition-only { padding: " + definitionTopPadding + "px 17px 0 " + leftPadding + "px; }");
-    if (newLayout) {
-      editorKit.getStyleSheet().addRule(".definition-only pre { margin-bottom: 0 }");
-    }
+    editorKit.getStyleSheet().addRule(".definition-only pre { margin-bottom: 0 }");
     editorKit.getStyleSheet().addRule(".content { padding: 5px 16px 0 " + leftPadding + "px; max-width: 100% }");
     editorKit.getStyleSheet().addRule(".content-only { padding: 8px 16px 0 " + leftPadding + "px; max-width: 100% }");
     editorKit.getStyleSheet().addRule(".bottom { padding: 3px 16px 0 " + leftPadding + "px; }");
@@ -588,13 +576,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     // sections table
     editorKit.getStyleSheet().addRule(".sections { padding: 0 16px 0 " + leftPadding + "px; border-spacing: 0; }");
     editorKit.getStyleSheet().addRule("tr { margin: 0 0 0 0; padding: 0 0 0 0; }");
-    if (newLayout) {
-      editorKit.getStyleSheet().addRule("table p { padding-bottom: 0}");
-      editorKit.getStyleSheet().addRule("td { margin: 4px 0 0 0; padding: 0 0 0 0; }");
-    }
-    else {
-      editorKit.getStyleSheet().addRule("td { margin: 2px 0 3.5px 0; padding: 0 0 0 0; }");
-    }
+    editorKit.getStyleSheet().addRule("table p { padding-bottom: 0}");
+    editorKit.getStyleSheet().addRule("td { margin: 4px 0 0 0; padding: 0 0 0 0; }");
     editorKit.getStyleSheet().addRule("th { text-align: left; }");
     editorKit.getStyleSheet().addRule(".section { color: " + ColorUtil.toHtmlColor(SECTION_COLOR) + "; padding-right: 4px; white-space:nowrap;}");
   }
@@ -956,7 +939,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         text = StringUtil.replaceIgnoreCase(text, DocumentationMarkup.DEFINITION_START, "<div class='definition-only'><pre>");
       }
     }
-    if (Registry.is("editor.new.mouse.hover.popups") && !text.contains(DocumentationMarkup.DEFINITION_START)) {
+    if (!text.contains(DocumentationMarkup.DEFINITION_START)) {
       text = text.replace("class='content'", "class='content-only'");
     }
     String location = getLocationText();
@@ -1520,7 +1503,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
           highlighter.changeHighlight(myHighlightingTag, startOffset, endOffset);
         }
         myEditorPane.setCaretPosition(startOffset);
-        if (Registry.is("editor.new.mouse.hover.popups") && !ScreenReader.isActive()) {
+        if (!ScreenReader.isActive()) {
           // scrolling to target location explicitly, as we've disabled auto-scrolling to caret
           myEditorPane.scrollRectToVisible(myEditorPane.modelToView(startOffset));
         }
