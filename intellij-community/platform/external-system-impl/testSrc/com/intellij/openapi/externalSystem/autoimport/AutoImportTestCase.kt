@@ -5,6 +5,7 @@ import com.intellij.core.CoreBundle
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.editor.Document
@@ -19,9 +20,12 @@ import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
+import org.jetbrains.concurrency.AsyncPromise
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 abstract class AutoImportTestCase : ExternalSystemTestCase() {
   override fun getTestsTempDir() = "tmp${System.currentTimeMillis()}"
@@ -180,6 +184,11 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   private fun loadState(state: AutoImportProjectTracker.State) = projectTracker.loadState(state)
 
+
+  protected fun enableAsyncExecution() {
+    projectTracker.isAsyncChangesProcessing = true
+  }
+
   protected fun enableAutoReloadExternalChanges() {
     projectTracker.isAutoReloadExternalChanges = true
   }
@@ -282,6 +291,8 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   protected inner class SimpleTestBench(private val projectAware: MockProjectAware) {
 
+    fun forceRefreshProject() = forceRefreshProject(projectAware.projectId)
+
     fun registerProjectAware() = register(projectAware)
 
     fun removeProjectAware() = remove(projectAware.projectId)
@@ -315,6 +326,21 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       when (notified) {
         true -> assertNotificationAware(projectAware.projectId, event = event)
         else -> assertNotificationAware(event = event)
+      }
+    }
+
+    fun waitForProjectRefresh(action: () -> Unit) {
+      Disposer.newDisposable().use {
+        val promise = AsyncPromise<ExternalSystemRefreshStatus>()
+        projectAware.subscribe(object : ExternalSystemProjectRefreshListener {
+          override fun afterProjectRefresh(status: ExternalSystemRefreshStatus) {
+            promise.setResult(status)
+          }
+        }, it)
+        action()
+        invokeAndWaitIfNeeded {
+          PlatformTestUtil.waitForPromise(promise, TimeUnit.SECONDS.toMillis(10))
+        }
       }
     }
   }

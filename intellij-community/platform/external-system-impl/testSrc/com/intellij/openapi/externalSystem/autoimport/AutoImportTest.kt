@@ -1,7 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.util.Parallel.Companion.parallel
+import com.sun.media.jfxmedia.logging.Logger.setLevel
+import org.apache.log4j.Level
 import org.junit.Test
 import java.io.File
 
@@ -586,5 +590,28 @@ class AutoImportTest : AutoImportTestCase() {
     assertProjectAware(projectAware2, refresh = 1, event = "refresh project")
     assertNotificationAware(event = "refresh project")
     assertActivationStatus(projectId1, projectId2, event = "refresh project")
+  }
+
+  @Test
+  fun `test merging of refreshes with different nature`() {
+    Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport").setLevel(Level.DEBUG)
+    simpleTest("settings.groovy") { settingsFile ->
+      assertState(1, notified = false, event = "register project without cache")
+
+      enableAsyncExecution()
+
+      waitForProjectRefresh {
+        parallel {
+          thread {
+            settingsFile.replaceContentInIoFile("println 'hello'")
+          }
+          thread {
+            forceRefreshProject()
+          }
+        }
+      }
+
+      assertState(refresh = 2, notified = false, event = "modification")
+    }
   }
 }
