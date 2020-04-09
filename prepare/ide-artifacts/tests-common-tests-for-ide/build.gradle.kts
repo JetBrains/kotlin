@@ -1,0 +1,1 @@
+publishTestJar(":compiler:tests-common")

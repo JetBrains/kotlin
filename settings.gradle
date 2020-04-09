@@ -306,6 +306,20 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded",
         ":kotlin-serialization:plugin-marker"
 
+include ":prepare:ide-artifacts:android-extensions-compiler-plugin-for-ide",
+        ":prepare:ide-artifacts:allopen-compiler-plugin-for-ide",
+        ":prepare:ide-artifacts:allopen-compiler-plugin-tests-for-ide",
+        ":prepare:ide-artifacts:incremental-compilation-impl-tests-for-ide",
+        ":prepare:ide-artifacts:kotlin-build-common-tests-for-ide",
+        ":prepare:ide-artifacts:kotlin-compiler-for-ide",
+        ":prepare:ide-artifacts:kotlin-dist-for-ide",
+        ":prepare:ide-artifacts:kotlin-gradle-statistics-for-ide",
+        ":prepare:ide-artifacts:kotlinx-serialization-compiler-plugin-for-ide",
+        ":prepare:ide-artifacts:noarg-compiler-plugin-for-ide",
+        ":prepare:ide-artifacts:sam-with-receiver-compiler-plugin-for-ide",
+        ":prepare:ide-artifacts:tests-common-tests-for-ide",
+        ":prepare:ide-artifacts:compiler-components-for-jps"
+
 if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR modules in settings.gradle")
     include ":kotlin-ultimate:ide:cidr-gradle-tooling",
@@ -404,6 +418,19 @@ project(':kotlinx-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" 
 project(':kotlinx-metadata-jvm').projectDir = "$rootDir/libraries/kotlinx-metadata/jvm" as File
 project(':kotlinx-metadata-klib').projectDir = "$rootDir/libraries/kotlinx-metadata/klib" as File
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
+project(':prepare:ide-artifacts:android-extensions-compiler-plugin-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/android-extensions-compiler-plugin-for-ide" as File
+project(':prepare:ide-artifacts:allopen-compiler-plugin-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/allopen-compiler-plugin-for-ide" as File
+project(':prepare:ide-artifacts:allopen-compiler-plugin-tests-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/allopen-compiler-plugin-tests-for-ide" as File
+project(':prepare:ide-artifacts:incremental-compilation-impl-tests-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/incremental-compilation-impl-tests-for-ide" as File
+project(':prepare:ide-artifacts:kotlin-build-common-tests-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/kotlin-build-common-tests-for-ide" as File
+project(':prepare:ide-artifacts:kotlin-compiler-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/kotlin-compiler-for-ide" as File
+project(':prepare:ide-artifacts:kotlin-dist-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/kotlin-dist-for-ide" as File
+project(':prepare:ide-artifacts:kotlin-gradle-statistics-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/kotlin-gradle-statistics-for-ide" as File
+project(':prepare:ide-artifacts:kotlinx-serialization-compiler-plugin-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/kotlinx-serialization-compiler-plugin-for-ide" as File
+project(':prepare:ide-artifacts:noarg-compiler-plugin-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/noarg-compiler-plugin-for-ide" as File
+project(':prepare:ide-artifacts:sam-with-receiver-compiler-plugin-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/sam-with-receiver-compiler-plugin-for-ide" as File
+project(':prepare:ide-artifacts:tests-common-tests-for-ide').projectDir = "$rootDir/prepare/ide-artifacts/tests-common-tests-for-ide" as File
+project(':prepare:ide-artifacts:compiler-components-for-jps').projectDir = "$rootDir/prepare/ide-artifacts/compiler-components-for-jps" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File

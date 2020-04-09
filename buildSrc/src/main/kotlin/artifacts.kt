@@ -9,10 +9,12 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
 
 
@@ -153,6 +155,74 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     return (tasks.getByName("uploadArchives") as Upload).apply {
         body()
     }
+}
+
+fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+    apply<JavaPlugin>()
+
+    val fatJarContents by configurations.creating
+
+    dependencies {
+        for (projectName in projects) {
+            fatJarContents(project(projectName)) { isTransitive = false }
+        }
+
+        for (libraryDependency in libraryDependencies) {
+            fatJarContents(libraryDependency)
+        }
+    }
+
+    publish()
+
+    val jar: Jar by tasks
+
+    jar.apply {
+        dependsOn(fatJarContents)
+
+        from {
+            fatJarContents.map(::zipTree)
+        }
+    }
+
+    sourcesJar {
+        from {
+            projects.map {
+                project(it).mainSourceSet.allSource
+            }
+        }
+    }
+
+    javadocJar()
+}
+
+fun Project.publishTestJar(projectName: String) {
+    apply<JavaPlugin>()
+
+    val fatJarContents by configurations.creating
+
+    dependencies {
+        fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+    }
+
+    publish()
+
+    val jar: Jar by tasks
+
+    jar.apply {
+        dependsOn(fatJarContents)
+
+        from {
+            fatJarContents.map(::zipTree)
+        }
+    }
+
+    sourcesJar {
+        from {
+            project(projectName).testSourceSet.allSource
+        }
+    }
+
+    javadocJar()
 }
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)

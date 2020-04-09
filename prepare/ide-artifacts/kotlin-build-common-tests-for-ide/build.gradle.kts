@@ -1,0 +1,1 @@
+publishTestJar(":kotlin-build-common")

@@ -1,0 +1,1 @@
+publishProjectJars(listOf(":kotlin-allopen-compiler-plugin"))
