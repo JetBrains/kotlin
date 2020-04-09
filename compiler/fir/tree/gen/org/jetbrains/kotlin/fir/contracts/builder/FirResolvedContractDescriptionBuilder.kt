@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.impl.FirResolvedContractDescriptionImpl
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -22,11 +23,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirResolvedContractDescriptionBuilder {
     var source: FirSourceElement? = null
     val effects: MutableList<ConeEffectDeclaration> = mutableListOf()
+    val unresolvedEffects: MutableList<FirStatement> = mutableListOf()
 
     fun build(): FirResolvedContractDescription {
         return FirResolvedContractDescriptionImpl(
             source,
             effects,
+            unresolvedEffects,
         )
     }
 

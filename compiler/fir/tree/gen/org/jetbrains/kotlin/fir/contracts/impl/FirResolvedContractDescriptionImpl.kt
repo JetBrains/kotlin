@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.contracts.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -18,10 +19,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedContractDescriptionImpl(
     override val source: FirSourceElement?,
     override val effects: MutableList<ConeEffectDeclaration>,
+    override val unresolvedEffects: MutableList<FirStatement>,
 ) : FirResolvedContractDescription() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        unresolvedEffects.forEach { it.accept(visitor, data) }
+    }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedContractDescriptionImpl {
+        unresolvedEffects.transformInplace(transformer, data)
         return this
     }
 }
