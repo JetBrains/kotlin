@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.ShutDownTracker;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
@@ -84,6 +85,26 @@ public class IndexedHashesSupport {
       LOG.assertTrue(hash != null);
     }
     return hash;
+  }
+
+  /**
+   * Calculates hash for this virtual file. Does not load full file content into memory.
+   *
+   * Result is the same as if invoking:
+   * 1) fc = FileContentImpl(virtualFile)
+   * 2) getOrInitIndexedHash(fc, fromDocument = false)
+   */
+  @ApiStatus.Experimental
+  @ApiStatus.Internal
+  public static byte @NotNull [] calculateHashForPhysicalVirtualFileNotCached(@NotNull VirtualFile virtualFile) {
+    boolean binary = virtualFile.getFileType().isBinary();
+
+    byte[] contentHash = ((PersistentFSImpl)PersistentFS.getInstance()).getContentHashIfStored(virtualFile);
+    if (contentHash == null) {
+      contentHash = DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, virtualFile);
+    }
+
+    return mergeIndexedHash(contentHash, binary ? null : virtualFile.getCharset());
   }
 
   private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content, boolean binary) {
