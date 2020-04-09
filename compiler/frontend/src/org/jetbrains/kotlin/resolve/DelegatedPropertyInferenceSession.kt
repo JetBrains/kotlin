@@ -92,7 +92,15 @@ class DelegatedPropertyInferenceSession(
 
 object InferenceSessionForExistingCandidates : InferenceSession {
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
-        return !ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)
+        if (ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)) return false
+
+        val builder = candidate.getSystem().getBuilder()
+        for ((_, variable) in builder.currentStorage().notFixedTypeVariables) {
+            val hasProperConstraint = variable.constraints.any { candidate.getSystem().getBuilder().isProperType(it.type) }
+            if (hasProperConstraint) return true
+        }
+
+        return false
     }
 
     override fun addPartialCallInfo(callInfo: PartialCallInfo) {}
@@ -110,5 +118,22 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean {
         return !ErrorUtils.isError(resolvedCallAtom.candidateDescriptor)
+    }
+
+    override fun computeCompletionMode(
+        candidate: KotlinResolutionCandidate
+    ): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode? {
+        // this is a hack to mitigate questionable behavior in delegated properties design, namely:
+        // see test DelegatedProperty.ProvideDelegate#testHostAndReceiver2
+
+        // Normally, provideDelegate should be analyzed in INDEPENDENT mode, but now in OI there is one corner case, which
+        // doesn't fit into this design
+        val builder = candidate.getSystem().getBuilder()
+        for ((_, variable) in builder.currentStorage().notFixedTypeVariables) {
+            val hasProperConstraint = variable.constraints.any { candidate.getSystem().getBuilder().isProperType(it.type) }
+            if (hasProperConstraint) return null
+        }
+
+        return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
     }
 }

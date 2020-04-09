@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -28,6 +28,9 @@ interface InferenceSession {
             override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
             override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
             override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
+            override fun computeCompletionMode(
+                candidate: KotlinResolutionCandidate
+            ): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode? = null
         }
     }
 
@@ -45,6 +48,7 @@ interface InferenceSession {
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
     fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean
+    fun computeCompletionMode(candidate: KotlinResolutionCandidate): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode?
 }
 
 interface PartialCallInfo {

@@ -406,7 +406,7 @@ class DelegatedPropertyResolver(
     ): ExpressionTypingContext {
         return ExpressionTypingContext.newContext(
             trace, scopeForDelegate, dataFlowInfo,
-            NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE,
+            NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT, StatementFilter.NONE,
             languageVersionSettings, dataFlowValueFactory, inferenceExtension
         )
     }

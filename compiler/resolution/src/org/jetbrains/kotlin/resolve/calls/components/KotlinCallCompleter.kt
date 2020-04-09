@@ -47,7 +47,9 @@ class KotlinCallCompleter(
         candidate.checkSamWithVararg(diagnosticHolder)
 
         val completionMode =
-            CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle)
+            CompletionModeCalculator.computeCompletionMode(
+                candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle, resolutionCallbacks.inferenceSession
+            )
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {

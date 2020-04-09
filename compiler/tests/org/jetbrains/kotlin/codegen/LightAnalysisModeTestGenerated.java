@@ -10551,6 +10551,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("delegatedPropertyWithIdProvideDelegate.kt")
+            public void testDelegatedPropertyWithIdProvideDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/delegatedPropertyWithIdProvideDelegate.kt");
+            }
+
             @TestMetadata("differentReceivers.kt")
             public void testDifferentReceivers() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/differentReceivers.kt");
@@ -24850,13 +24855,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MethodsFromAny extends AbstractLightAnalysisModeTest {
-            @TestMetadata("adaptedCallableReferencesNotEqualToCallablesFromAPI.kt")
-            public void ignoreAdaptedCallableReferencesNotEqualToCallablesFromAPI() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/adaptedCallableReferencesNotEqualToCallablesFromAPI.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            @TestMetadata("adaptedCallableReferencesNotEqualToCallablesFromAPI.kt")
+            public void testAdaptedCallableReferencesNotEqualToCallablesFromAPI() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/adaptedCallableReferencesNotEqualToCallablesFromAPI.kt");
             }
 
             public void testAllFilesPresentInMethodsFromAny() throws Exception {
