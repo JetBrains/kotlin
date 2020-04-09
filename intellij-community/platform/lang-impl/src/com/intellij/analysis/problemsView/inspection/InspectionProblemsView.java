@@ -256,12 +256,17 @@ public class InspectionProblemsView implements PersistentStateComponent<Inspecti
     return "Problems View";
   }
 
-  public void selectProblem(@NotNull HighlightInfo highlightInfo) {
-    VirtualFile file = getCurrentFile();
-    InspectionProblemsViewPanel panel = getProblemsViewPanel();
-    if (file != null && panel != null) {
-      HighlightingProblem problem = new HighlightingProblem(myProject, file, highlightInfo);
-      panel.selectProblem(problem);
+  public static void selectProblemIfVisible(@NotNull Project project, @NotNull HighlightInfo highlightInfo) {
+    // take care to not instantiate InspectionProblemsView/panel if the toolwindow is not visible because otherwise toolwindow spring into view unexpectedly
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(getToolWindowId());
+    if (toolWindow != null && toolWindow.isVisible()) {
+      InspectionProblemsView view = getInstance(project);
+      InspectionProblemsViewPanel panel = view.getProblemsViewPanel();
+      if (panel != null) {
+        VirtualFile file = view.getCurrentFile();
+        HighlightingProblem problem = new HighlightingProblem(project, file, highlightInfo);
+        panel.selectProblem(problem);
+      }
     }
   }
 }

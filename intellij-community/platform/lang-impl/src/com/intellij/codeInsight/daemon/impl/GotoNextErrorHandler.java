@@ -139,7 +139,7 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
     );
 
     IdeDocumentHistory.getInstance(project).includeCurrentCommandAsNavigation();
-    InspectionProblemsView.getInstance(project).selectProblem(info);
+    InspectionProblemsView.selectProblemIfVisible(project, info);
   }
 
   private static int getNavigationPositionFor(HighlightInfo info, Document document) {
