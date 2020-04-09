@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.references.getImportAlias
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinMethodReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.ArrayList
 import kotlin.collections.*
@@ -56,12 +56,26 @@ abstract class RenameKotlinPsiProcessorCompat : RenamePsiElementProcessor() {
     protected fun findReferences(
         element: PsiElement,
         searchParameters: KotlinReferencesSearchParameters
-    ): MutableSet<PsiReference> {
+    ): Collection<PsiReference> {
         val references = ReferencesSearch.search(searchParameters).toMutableSet()
         if (element is KtNamedFunction || (element is KtProperty && !element.isLocal) || (element is KtParameter && element.hasValOrVar())) {
-            element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
+            element.toLightMethods().flatMapTo(references) { method ->
+                MethodReferencesSearch.search(
+                    KotlinMethodReferencesSearchParameters(
+                        method,
+                        kotlinOptions = KotlinReferencesSearchOptions(
+                            acceptImportAlias = false
+                        )
+                    )
+                )
+            }
         }
-        return references
+        return references.filter {
+            // have to filter so far as
+            // - text-matched reference could be named as imported alias and found in ReferencesSearch
+            // - MethodUsagesSearcher could create its own MethodReferencesSearchParameters regardless provided one
+            it.element.getNonStrictParentOfType<KtImportDirective>() != null || it.getImportAlias() == null
+        }
     }
 
     override fun createUsageInfo(element: PsiElement, ref: PsiReference, referenceElement: PsiElement): UsageInfo {
