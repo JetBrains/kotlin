@@ -26,8 +26,11 @@ class CompletionModeCalculator {
             candidate: KotlinResolutionCandidate,
             expectedType: UnwrappedType?,
             returnType: UnwrappedType?,
-            trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+            trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+            inferenceSession: InferenceSession
         ): ConstraintSystemCompletionMode = with(candidate) {
+            inferenceSession.computeCompletionMode(candidate)?.let { return it }
+
             val csCompleterContext = getSystem().asConstraintSystemCompleterContext()
 
             // Presence of expected type means that we are trying to complete outermost call => completion mode should be full

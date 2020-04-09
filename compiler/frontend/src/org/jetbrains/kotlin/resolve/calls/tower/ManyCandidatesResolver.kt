@@ -156,6 +156,8 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         return allCandidates
     }
 
+    override fun computeCompletionMode(candidate: KotlinResolutionCandidate) = null
+
     private fun PartialCallInfo.asCallResolutionResult(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
         commonSystem: NewConstraintSystem
