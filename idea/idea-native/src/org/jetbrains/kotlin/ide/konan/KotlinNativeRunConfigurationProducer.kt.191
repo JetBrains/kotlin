@@ -12,7 +12,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.facet.externalSystemNativeMainRunTasks
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
@@ -34,7 +34,7 @@ class KotlinNativeRunConfigurationProducer :
     override fun isConfigurationFromContext(configuration: GradleRunConfiguration, context: ConfigurationContext): Boolean {
         val module = context.module.asNativeModule() ?: return false
         val location = context.location ?: return false
-        val function = location.psiElement.parentOfType<KtFunction>() ?: return false
+        val function = PsiTreeUtil.getParentOfType(location.psiElement, KtFunction::class.java) ?: return false
 
         val mainRunTasks = getDebugMainRunTasks(function)
         if (mainRunTasks.isEmpty()) return false
@@ -49,7 +49,7 @@ class KotlinNativeRunConfigurationProducer :
         sourceElement: Ref<PsiElement>
     ): Boolean {
         val module = context.module.asNativeModule() ?: return false
-        val function = sourceElement.get()?.parentOfType<KtFunction>() ?: return false
+        val function = PsiTreeUtil.getParentOfType(sourceElement.get(), KtFunction::class.java) ?: return false
 
         val mainRunTasks = getDebugMainRunTasks(function)
         if (mainRunTasks.isEmpty()) return false
