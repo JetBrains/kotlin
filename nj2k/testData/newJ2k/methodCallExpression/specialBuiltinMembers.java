@@ -76,7 +76,7 @@ class A {
         double d5 = Double.NaN;
     }
 
-    void kt35595() {
+    void kt35593() {
         Number number = 1;
         byte b = number.byteValue();
         double d = number.doubleValue();
