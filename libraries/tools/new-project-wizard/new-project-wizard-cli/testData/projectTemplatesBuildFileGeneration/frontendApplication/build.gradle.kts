@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js") version "1.3.70"
+    kotlin("js") version "KOTLIN_VERSION"
 }
 group = "me.user"
 version = "1.0-SNAPSHOT"
@@ -7,6 +7,9 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
+    }
     maven {
         url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
     }

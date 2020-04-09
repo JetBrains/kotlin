@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.tools.projectWizard.wizard.services
+package org.jetbrains.kotlin.tools.projectWizard.cli
 
-import org.jetbrains.kotlin.tools.projectWizard.Versions
-import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 class KotlinVersionProviderTestWizardService : KotlinVersionProviderService, TestWizardService {
-    override fun getKotlinVersion(): Version = Versions.KOTLIN
+    override fun getKotlinVersion(): Version = TEST_KOTLIN_VERSION
+
+    companion object {
+        val TEST_KOTLIN_VERSION = Version("1.4.0-dev-5730")
+    }
 }

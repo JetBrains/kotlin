@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -44,7 +45,13 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
         compareFilesAndGenerateMissing(
             expectedDirectory.allBuildFiles(buildSystem), expectedDirectory,
             tempDirectory.allBuildFiles(buildSystem), tempDirectory
-        )
+        ) { path ->
+            val fileContent = path.readFile()
+            fileContent.replace(
+                KotlinVersionProviderTestWizardService.TEST_KOTLIN_VERSION.toString(),
+                KOTLIN_VERSION_PLACEHOLDER
+            )
+        }
     }
 
     private fun Path.allBuildFiles(buildSystem: BuildSystem) =
@@ -55,5 +62,6 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
 
     companion object {
         private const val EXPECTED_DIRECTORY_NAME = "expected"
+        private const val KOTLIN_VERSION_PLACEHOLDER = "KOTLIN_VERSION"
     }
 }
