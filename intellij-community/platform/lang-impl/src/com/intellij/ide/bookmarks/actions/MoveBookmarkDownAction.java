@@ -2,6 +2,7 @@
 package com.intellij.ide.bookmarks.actions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.bookmarks.BookmarkItem;
 import com.intellij.ide.bookmarks.BookmarkManager;
 import com.intellij.ide.ui.UISettings;
@@ -19,7 +20,7 @@ class MoveBookmarkDownAction extends DumbAwareAction {
   private final JList<BookmarkItem> myList;
 
   MoveBookmarkDownAction(Project project, JList<BookmarkItem> list) {
-    super("Down", "Move current bookmark down", AllIcons.Actions.NextOccurence);
+    super(IdeBundle.message("action.bookmark.move.down"), null, AllIcons.Actions.MoveDown);
     setEnabledInModalContext(true);
     myProject = project;
     myList = list;

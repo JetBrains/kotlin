@@ -16,6 +16,7 @@
 package com.intellij.ide.bookmarks.actions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.bookmarks.BookmarkItem;
 import com.intellij.ide.bookmarks.BookmarkManager;
 import com.intellij.ide.ui.UISettings;
@@ -33,7 +34,7 @@ class MoveBookmarkUpAction extends DumbAwareAction {
   private final JList<BookmarkItem> myList;
 
   MoveBookmarkUpAction(Project project, JList<BookmarkItem> list) {
-    super("Up", "Move current bookmark up", AllIcons.Actions.PreviousOccurence);
+    super(IdeBundle.message("action.bookmark.move.up"), null, AllIcons.Actions.MoveUp);
     setEnabledInModalContext(true);
     myProject = project;
     myList = list;

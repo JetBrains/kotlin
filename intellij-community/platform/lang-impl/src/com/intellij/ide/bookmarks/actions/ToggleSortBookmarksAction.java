@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 class ToggleSortBookmarksAction extends ToggleAction {
   ToggleSortBookmarksAction() {
-    super(null, IdeBundle.message("action.bookmark.toggle.sort"), AllIcons.ObjectBrowser.Sorted);
+    super(IdeBundle.message("action.bookmark.toggle.sort"), null, AllIcons.ObjectBrowser.Sorted);
     setEnabledInModalContext(true);
   }
 
