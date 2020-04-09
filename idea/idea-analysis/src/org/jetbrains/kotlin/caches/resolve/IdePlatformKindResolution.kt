@@ -60,7 +60,7 @@ interface IdePlatformKindResolution {
 
     val libraryKind: PersistentLibraryKind<*>?
 
-    fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> = listOf(LibraryInfo(project, library))
+    fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo>
 
     companion object : ApplicationExtensionDescriptor<IdePlatformKindResolution>(
         "org.jetbrains.kotlin.idePlatformKindResolution", IdePlatformKindResolution::class.java
