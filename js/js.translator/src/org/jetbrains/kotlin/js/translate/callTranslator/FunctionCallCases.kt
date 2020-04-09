@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
@@ -184,7 +185,7 @@ object InvokeIntrinsic : FunctionCallCase() {
 
 object ConstructorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
-        return callInfo.callableDescriptor is ConstructorDescriptor
+        return callInfo.callableDescriptor is ConstructorDescriptor || callInfo.callableDescriptor is SamConstructorDescriptor
     }
 
     override fun FunctionCallInfo.noReceivers() = doTranslate { translateArguments }
@@ -197,6 +198,11 @@ object ConstructorCallCase : FunctionCallCase() {
             getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
     ): JsExpression {
         val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
+
+        if (callableDescriptor is SamConstructorDescriptor) {
+            return JsNew(functionRef, argumentsInfo.getArguments())
+        }
+
         val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ClassConstructorDescriptor
