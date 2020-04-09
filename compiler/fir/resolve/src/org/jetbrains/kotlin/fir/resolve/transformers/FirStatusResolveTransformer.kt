@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-@Deprecated("Should be used just once from createTransformerByPhase", level = DeprecationLevel.WARNING)
+@AdapterForResolvePhase
 class FirStatusResolveTransformerAdapter : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         error("Should not be called for ${element::class}, only for files")

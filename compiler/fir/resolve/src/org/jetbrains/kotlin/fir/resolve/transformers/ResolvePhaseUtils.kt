@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTyp
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 // TODO: add FirSession parameter
+@OptIn(AdapterForResolvePhase::class)
 fun FirResolvePhase.createTransformerByPhase(scopeSession: ScopeSession): FirTransformer<Nothing?> {
     return when (this) {
         RAW_FIR -> throw AssertionError("Raw FIR building phase does not have a transformer")
@@ -25,3 +26,6 @@ fun FirResolvePhase.createTransformerByPhase(scopeSession: ScopeSession): FirTra
         BODY_RESOLVE -> FirBodyResolveTransformerAdapter(scopeSession)
     }
 }
+
+@RequiresOptIn(message = "Should be used just once from createTransformerByPhase")
+annotation class AdapterForResolvePhase

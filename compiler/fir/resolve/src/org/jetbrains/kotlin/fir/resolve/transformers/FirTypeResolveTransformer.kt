@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-@Deprecated("Should be used just once from createTransformerByPhase", level = DeprecationLevel.WARNING)
+@AdapterForResolvePhase
 class FirTypeResolveTransformerAdapter(
     private val scopeSession: ScopeSession
 ) : FirTransformer<Nothing?>() {
