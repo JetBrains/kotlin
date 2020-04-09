@@ -204,8 +204,9 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
     Object tooltip = highlighter.getErrorStripeTooltip();
     if (tooltip instanceof HighlightInfo) {
       HighlightInfo info = (HighlightInfo)tooltip;
-      if (info.getDescription() != null) {
-        HighlightingProblem problem = new HighlightingProblem(myProject, myPresentationHelper.getCurrentFile(), info);
+      VirtualFile currentFile = myPresentationHelper.getCurrentFile();
+      if (info.getDescription() != null && currentFile != null) {
+        HighlightingProblem problem = new HighlightingProblem(myProject, currentFile, info);
         getModel().removeRows(p -> p.equals(problem));
         updateStatusDescription();
       }
@@ -216,8 +217,9 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
     Object tooltip = highlighter.getErrorStripeTooltip();
     if (tooltip instanceof HighlightInfo) {
       HighlightInfo info = (HighlightInfo)tooltip;
-      if (info.getDescription() != null) {
-        HighlightingProblem problem = new HighlightingProblem(myProject, myPresentationHelper.getCurrentFile(), info);
+      VirtualFile currentFile = myPresentationHelper.getCurrentFile();
+      if (info.getDescription() != null && currentFile != null) {
+        HighlightingProblem problem = new HighlightingProblem(myProject, currentFile, info);
         addProblem(problem);
       }
     }
