@@ -93,7 +93,7 @@ open class PodspecTask : DefaultTask() {
                 |            :shell_path => '/bin/sh',
                 |            :script => <<-SCRIPT
                 |                set -ev
-                |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/../"
+                |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/"
                 |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
                 |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
                 |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
