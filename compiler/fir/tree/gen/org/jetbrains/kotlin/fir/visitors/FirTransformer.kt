@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
@@ -199,8 +201,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(callableDeclaration, data)
     }
 
+    open fun transformTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): CompositeTransformResult<FirTypeParameterRef> {
+        return transformElement(typeParameterRef, data)
+    }
+
     open fun transformTypeParameter(typeParameter: FirTypeParameter, data: D): CompositeTransformResult<FirDeclaration> {
         return transformElement(typeParameter, data)
+    }
+
+    open fun transformTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): CompositeTransformResult<FirTypeParameterRefsOwner> {
+        return transformElement(typeParameterRefsOwner, data)
     }
 
     open fun transformTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): CompositeTransformResult<FirTypeParametersOwner> {
@@ -659,8 +669,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformCallableDeclaration(callableDeclaration, data)
     }
 
+    final override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): CompositeTransformResult<FirTypeParameterRef> {
+        return transformTypeParameterRef(typeParameterRef, data)
+    }
+
     final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): CompositeTransformResult<FirDeclaration> {
         return transformTypeParameter(typeParameter, data)
+    }
+
+    final override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): CompositeTransformResult<FirTypeParameterRefsOwner> {
+        return transformTypeParameterRefsOwner(typeParameterRefsOwner, data)
     }
 
     final override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): CompositeTransformResult<FirTypeParametersOwner> {

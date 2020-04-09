@@ -97,10 +97,13 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 }
             }
 
+
             element.allFields.filter { it.type.contains("Symbol") && it !is FieldList }
                 .takeIf {
                     it.isNotEmpty() && !isInterface && !isAbstract &&
-                            !element.type.contains("Reference") && !element.type.contains("ResolvedQualifier")
+                            !element.type.contains("Reference")
+                            && !element.type.contains("ResolvedQualifier")
+                            && !element.type.endsWith("Ref")
                 }
                 ?.let { symbolFields ->
                     println("init {")

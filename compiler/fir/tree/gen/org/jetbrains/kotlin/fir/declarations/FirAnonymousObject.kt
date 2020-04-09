@@ -25,6 +25,7 @@ abstract class FirAnonymousObject : FirClass<FirAnonymousObject>, FirExpression(
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract override val declarations: List<FirDeclaration>

@@ -40,13 +40,13 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var returnTypeRef: FirTypeRef
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     lateinit var symbol: FirPropertyAccessorSymbol
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var status: FirDeclarationStatus
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessor {
@@ -55,13 +55,13 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             session,
             resolvePhase,
             returnTypeRef,
-            typeParameters,
             valueParameters,
             body,
             symbol,
             isGetter,
             status,
             annotations,
+            typeParameters,
         )
     }
 

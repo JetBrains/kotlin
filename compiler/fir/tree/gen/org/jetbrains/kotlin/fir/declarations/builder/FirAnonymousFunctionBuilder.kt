@@ -40,7 +40,6 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
@@ -49,6 +48,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var label: FirLabel? = null
     var invocationKind: InvocationKind? = null
     var isLambda: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
@@ -57,7 +57,6 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             annotations,
             returnTypeRef,
             receiverTypeRef,
-            typeParameters,
             controlFlowGraphReference,
             valueParameters,
             body,
@@ -66,6 +65,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             label,
             invocationKind,
             isLambda,
+            typeParameters,
         )
     }
 

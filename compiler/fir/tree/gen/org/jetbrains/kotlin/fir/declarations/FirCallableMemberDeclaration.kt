@@ -26,7 +26,7 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
     override val symbol: FirCallableSymbol<F>
-    override val typeParameters: List<FirTypeParameter>
+    override val typeParameters: List<FirTypeParameterRef>
     override val status: FirDeclarationStatus
     val containerSource: DeserializedContainerSource?
 

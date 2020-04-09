@@ -22,14 +22,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpression() {
+abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpression(), FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val typeParameters: List<FirTypeParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
@@ -38,6 +37,7 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract val label: FirLabel?
     abstract val invocationKind: InvocationKind?
     abstract val isLambda: Boolean
+    abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 

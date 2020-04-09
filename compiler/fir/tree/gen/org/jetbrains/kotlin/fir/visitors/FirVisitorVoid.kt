@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
@@ -197,8 +199,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(callableDeclaration)
     }
 
+    open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
+        visitElement(typeParameterRef)
+    }
+
     open fun visitTypeParameter(typeParameter: FirTypeParameter) {
         visitElement(typeParameter)
+    }
+
+    open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner) {
+        visitElement(typeParameterRefsOwner)
     }
 
     open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner) {
@@ -657,8 +667,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCallableDeclaration(callableDeclaration)
     }
 
+    final override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: Nothing?) {
+        visitTypeParameterRef(typeParameterRef)
+    }
+
     final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
         visitTypeParameter(typeParameter)
+    }
+
+    final override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: Nothing?) {
+        visitTypeParameterRefsOwner(typeParameterRefsOwner)
     }
 
     final override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: Nothing?) {

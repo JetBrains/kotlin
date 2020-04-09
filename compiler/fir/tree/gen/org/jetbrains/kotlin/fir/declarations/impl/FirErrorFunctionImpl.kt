@@ -31,10 +31,10 @@ internal class FirErrorFunctionImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val annotations: MutableList<FirAnnotationCall>,
-    override val typeParameters: MutableList<FirTypeParameter>,
     override val valueParameters: MutableList<FirValueParameter>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
+    override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirErrorFunction() {
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
@@ -48,17 +48,17 @@ internal class FirErrorFunctionImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
+        typeParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         transformAnnotations(transformer, data)
         transformReturnTypeRef(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 

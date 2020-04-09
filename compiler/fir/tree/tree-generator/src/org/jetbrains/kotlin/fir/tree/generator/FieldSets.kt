@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.declarationStatus
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.expression
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.reference
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameter
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameterRef
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeProjection
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.valueParameter
@@ -59,7 +60,9 @@ object FieldSets {
 
     val valueParameters = fieldList(valueParameter)
 
-    val typeParameters = fieldList(typeParameter)
+    val typeParameters = fieldList("typeParameters", typeParameter)
+
+    val typeParameterRefs = fieldList("typeParameters", typeParameterRef)
 
     val name = field(nameType)
 

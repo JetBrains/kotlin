@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirField : FirVariable<FirField>(), FirCallableMemberDeclaration<FirField> {
+abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCallableMemberDeclaration<FirField> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase

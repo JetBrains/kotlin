@@ -36,10 +36,10 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorFunctionSymbol
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     override fun build(): FirErrorFunction {
         return FirErrorFunctionImpl(
@@ -47,10 +47,10 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             annotations,
-            typeParameters,
             valueParameters,
             diagnostic,
             symbol,
+            typeParameters,
         )
     }
 

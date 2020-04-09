@@ -21,7 +21,7 @@ interface FirMemberDeclaration : FirDeclaration, FirAnnotationContainer {
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val annotations: List<FirAnnotationCall>
-    val typeParameters: List<FirTypeParameter>
+    val typeParameters: List<FirTypeParameterRef>
     val status: FirDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)

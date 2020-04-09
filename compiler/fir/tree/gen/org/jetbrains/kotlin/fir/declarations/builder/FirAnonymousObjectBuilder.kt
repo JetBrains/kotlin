@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -36,6 +37,7 @@ class FirAnonymousObjectBuilder : FirClassBuilder, FirAnnotationContainerBuilder
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
@@ -49,6 +51,7 @@ class FirAnonymousObjectBuilder : FirClassBuilder, FirAnnotationContainerBuilder
             source,
             session,
             resolvePhase,
+            typeParameters,
             classKind,
             superTypeRefs,
             declarations,

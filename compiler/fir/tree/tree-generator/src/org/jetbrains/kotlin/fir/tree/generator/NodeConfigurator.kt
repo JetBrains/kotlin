@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.superTypeRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbol
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbolWithPackage
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeArguments
+import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameterRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameters
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeRefField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.valueParameters
@@ -48,8 +49,16 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbolWithPackage("fir.symbols", "AbstractFirBasedSymbol", "E")
         }
 
+        typeParameterRef.configure {
+            +symbol(typeParameterSymbolType.type)
+        }
+
         typeParametersOwner.configure {
             +typeParameters
+        }
+
+        typeParameterRefsOwner.configure {
+            +typeParameterRefs
         }
 
         resolvable.configure {
@@ -94,10 +103,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         errorFunction.configure {
             parentArg(function, "F", errorFunction)
             +symbol("FirErrorFunctionSymbol")
+            +typeParameters
         }
 
         memberDeclaration.configure {
-            +typeParameters
+            +typeParameterRefs
             +status.withTransform()
         }
 
@@ -245,6 +255,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeAlias.configure {
+            +typeParameters
             parentArg(classLikeDeclaration, "F", typeAlias)
             +name
             +symbol("FirTypeAliasSymbol")
@@ -260,6 +271,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 isMutable = true
             }
             +booleanField("isLambda")
+            +typeParameters
         }
 
         typeParameter.configure {
@@ -278,6 +290,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +symbol("FirFunctionSymbol<FirSimpleFunction>")
             +annotations
+            +typeParameters
         }
 
         contractDescriptionOwner.configure {
@@ -302,6 +315,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isSetter")
             +status.withTransform()
             +annotations
+            +typeParameters
         }
 
         declarationStatus.configure {

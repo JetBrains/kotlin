@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -40,7 +40,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var symbol: FirVariableSymbol<FirEnumEntry>
     var initializer: FirExpression? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
     var containerSource: DeserializedContainerSource? = null
 

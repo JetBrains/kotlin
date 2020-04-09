@@ -32,8 +32,8 @@ class FirTypeAliasBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContaine
     override var source: FirSourceElement? = null
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     lateinit var status: FirDeclarationStatus
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     lateinit var name: Name
     lateinit var symbol: FirTypeAliasSymbol
     lateinit var expandedTypeRef: FirTypeRef
@@ -44,8 +44,8 @@ class FirTypeAliasBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContaine
             source,
             session,
             resolvePhase,
-            typeParameters,
             status,
+            typeParameters,
             name,
             symbol,
             expandedTypeRef,

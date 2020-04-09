@@ -26,6 +26,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from typeParametersOwner
         }
 
+        val typeParameterRefsOwnerBuilder by builder {
+            fields from typeParameterRefsOwner
+        }
+
         val classBuilder by builder {
             parents += annotationContainerBuilder
             fields from klass without listOf("symbol", "resolvePhase")
@@ -33,7 +37,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val regularClassBuilder by builder("AbstractFirRegularClassBuilder") {
             parents += classBuilder
-            parents += typeParametersOwnerBuilder
+            parents += typeParameterRefsOwnerBuilder
             fields from regularClass
         }
 
@@ -51,7 +55,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val functionBuilder by builder {
             parents += annotationContainerBuilder
-            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef")
+            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters")
         }
 
         val loopJumpBuilder by builder {
