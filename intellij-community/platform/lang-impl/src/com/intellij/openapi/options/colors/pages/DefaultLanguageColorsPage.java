@@ -82,6 +82,7 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
     TAG_HIGHLIGHTING_MAP.put("entity", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     TAG_HIGHLIGHTING_MAP.put("reassigned_parameter", DefaultLanguageHighlighterColors.REASSIGNED_PARAMETER);
     TAG_HIGHLIGHTING_MAP.put("reassigned_local", DefaultLanguageHighlighterColors.REASSIGNED_LOCAL_VARIABLE);
+    TAG_HIGHLIGHTING_MAP.put("highlighted_reference", DefaultLanguageHighlighterColors.HIGHLIGHTED_REFERENCE);
   }
 
   @NonNls private static final Map<String, TextAttributesKey> INLINE_ELEMENTS = new HashMap<>();
@@ -187,7 +188,10 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
       DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT_HIGHLIGHTED),
     new AttributesDescriptor(
       OptionsBundle.message("options.java.attribute.descriptor.inline.parameter.hint.current"), 
-      DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT_CURRENT)
+      DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT_CURRENT),
+
+    new AttributesDescriptor(
+      OptionsBundle.message("options.language.defaults.highlighted.reference"), DefaultLanguageHighlighterColors.HIGHLIGHTED_REFERENCE),
   };
 
   private static final ColorDescriptor[] COLOR_DESCRIPTORS = {
@@ -253,6 +257,8 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
       "    instance <inst_field>field</inst_field>\n" +
       "    static <static_method>method</static_method>\n" +
       "    static <static_field>field</static_field>\n" +
+      "\n" +
+      "<func_call>function</func_call>(<string>\"</string><highlighted_reference>/highlighted/reference/{param}</highlighted_reference><string>\"</string>)\n" +
       "\n" +
       "<tag><keyword>@TAG</keyword> <attribute>attribute</attribute>=<string>Value</string></tag>\n" +
       "    Entity: <entity>&amp;</entity>\n" +
@@ -327,7 +333,7 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
 
   @Override
   public @Nullable String getCustomizationAt(@NotNull Editor editor, @NotNull Point location) {
-    Inlay inlay = editor.getInlayModel().getElementAt(location);
+    Inlay<?> inlay = editor.getInlayModel().getElementAt(location);
     return inlay != null && inlay.getPlacement() == Inlay.Placement.ABOVE_LINE
            ? location.x < 20 ? DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE.getExternalName()
                              : DefaultLanguageHighlighterColors.DOC_COMMENT_LINK.getExternalName()
