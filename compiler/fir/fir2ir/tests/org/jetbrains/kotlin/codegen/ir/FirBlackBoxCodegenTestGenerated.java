@@ -2090,9 +2090,9 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
             }
 
-            @TestMetadata("toString.kt")
-            public void testToString() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/toString.kt");
+            @TestMetadata("toStringNoReflect.kt")
+            public void testToStringNoReflect() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/toStringNoReflect.kt");
             }
 
             @TestMetadata("unboundReferences.kt")
