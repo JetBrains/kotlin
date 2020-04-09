@@ -26,7 +26,7 @@ fun CompatibilityPredicate.or(other: CompatibilityPredicate): CompatibilityPredi
 }
 
 enum class Platform : CompatibilityPredicate {
-    P183, P191, P192, P193, P201;
+    P183, P191, P192, P193, P201, P202;
 
     val version: Int = name.drop(1).toInt()
 
@@ -47,6 +47,7 @@ enum class Ide(val platform: Platform) : CompatibilityPredicate {
     IJ192(Platform.P192),
     IJ193(Platform.P193),
     IJ201(Platform.P201),
+    IJ202(Platform.P202),
 
     AS35(Platform.P183),
     AS36(Platform.P192),
