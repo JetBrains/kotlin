@@ -23,7 +23,10 @@ fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
     if (containingFile.isCompiled) return emptyList()
 
     val offset = textOffset // we have to use same offset as in `org.jetbrains.konan.resolve.symbols.KtSymbolUtilKt.getOffset`
-    return containingClassOrObject?.findMemberSymbols(offset, kind) ?: findGlobalSymbols(containingFile, offset, kind)
+    if (this !is KtClassOrObject) {
+        containingClassOrObject?.findMemberSymbols(offset, kind)?.let { return it }
+    }
+    return findGlobalSymbols(containingFile, offset, kind)
 }
 
 private fun KtClassOrObject.findMemberSymbols(startOffset: Int, kind: OCLanguageKind): List<OCSymbol> =
