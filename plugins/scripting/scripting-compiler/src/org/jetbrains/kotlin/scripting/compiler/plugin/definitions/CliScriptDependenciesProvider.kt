@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
@@ -15,11 +14,9 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
-import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
-import kotlin.script.experimental.api.ResultWithDiagnostics
 
 class CliScriptDependenciesProvider(project: Project) : ScriptDependenciesProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
@@ -30,7 +27,7 @@ class CliScriptDependenciesProvider(project: Project) : ScriptDependenciesProvid
     }
 
     private fun calculateRefinedConfiguration(file: KtFile): ScriptCompilationConfigurationResult? {
-        val path = file.virtualFilePath
+        val path = requireNotNull(file.virtualFilePath)
         val cached = cache[path]
         return if (cached != null) cached
         else {

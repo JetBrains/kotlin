@@ -56,7 +56,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
     private fun KtFile.findCorrespondingFileInTestDir(containingRoot: VirtualFile, testDir: File): File {
         val tempRootPath = Paths.get(containingRoot.path)
         val tempProjectDirPath = tempRootPath.parent
-        val tempSourcePath = Paths.get(this.virtualFilePath)
+        val tempSourcePath = Paths.get(checkNotNull(virtualFilePath))
 
         val relativeToProjectRootPath = tempProjectDirPath.relativize(tempSourcePath)
 

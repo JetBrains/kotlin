@@ -54,10 +54,10 @@ class IrSourceCompilerForInline(
                 get() {
                     val ktFile = codegen.classCodegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
                         ?.takeUnless { it.doNotAnalyze != null } ?: return null
+                    val filePath = checkNotNull(ktFile.virtualFilePath)
 
                     return object : LocationInfo {
-                        override val filePath = ktFile.virtualFilePath
-
+                        override val filePath: String = filePath
                         override val position: Position
                             get() = DiagnosticUtils.getLineAndColumnInPsiFile(
                                 ktFile,

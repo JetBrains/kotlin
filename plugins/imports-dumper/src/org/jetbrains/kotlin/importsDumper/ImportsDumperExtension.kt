@@ -33,7 +33,7 @@ class ImportsDumperExtension(destinationPath: String) : AnalysisHandlerExtension
         val filePathToImports: MutableMap<String, List<String>> = mutableMapOf()
 
         for (file in files) {
-            filePathToImports[file.virtualFilePath] = file.importDirectives.map { it.text }
+            filePathToImports[requireNotNull(file.virtualFilePath)] = file.importDirectives.map { it.text }
         }
 
         val serializer = (StringSerializer to StringSerializer.list).map
