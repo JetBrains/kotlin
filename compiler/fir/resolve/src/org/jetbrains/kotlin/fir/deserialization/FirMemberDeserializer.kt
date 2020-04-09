@@ -284,7 +284,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             this.symbol = symbol
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            this.typeParameters += typeParameters
+            this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { this.symbol = it.symbol } }
             valueParameters += local.memberDeserializer.valueParameters(
                 proto.valueParameterList, addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
             )
