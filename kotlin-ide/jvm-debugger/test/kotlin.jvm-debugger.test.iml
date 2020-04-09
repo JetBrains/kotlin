@@ -42,7 +42,6 @@
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.debugger.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.debugger.streams" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>

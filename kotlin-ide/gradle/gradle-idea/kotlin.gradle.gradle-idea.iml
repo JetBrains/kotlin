@@ -55,7 +55,6 @@
     <orderEntry type="module" module-name="intellij.java.ui" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" />
-    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.groovy.psi" />
     <orderEntry type="module" module-name="intellij.junit" />
     <orderEntry type="module" module-name="intellij.testng" />

@@ -69,7 +69,6 @@
     <orderEntry type="module" module-name="intellij.java.ui" />
     <orderEntry type="module" module-name="intellij.java.execution" />
     <orderEntry type="module" module-name="intellij.java.compiler" />
-    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.junit" scope="TEST" />
     <orderEntry type="module" module-name="intellij.groovy.psi" scope="TEST" />
