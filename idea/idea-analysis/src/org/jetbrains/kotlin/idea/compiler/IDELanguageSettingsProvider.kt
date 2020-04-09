@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
-import org.jetbrains.kotlin.platform.subplatformOfType
+import org.jetbrains.kotlin.platform.subplatformsOfType
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.Jsr305State
 
@@ -77,7 +77,7 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
     // TODO(dsavvinov): get rid of this method; instead store proper instance of TargetPlatformVersion in platform-instance
     override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion =
         when (moduleInfo) {
-            is ModuleSourceInfo -> (moduleInfo.module.platform?.subplatformOfType<JdkPlatform>())?.targetVersion
+            is ModuleSourceInfo -> moduleInfo.module.platform?.subplatformsOfType<JdkPlatform>()?.firstOrNull()?.targetVersion
                 ?: TargetPlatformVersion.NoVersion
             is ScriptModuleInfo -> getLanguageSettingsForScripts(project, moduleInfo.scriptDefinition).targetPlatformVersion
             is ScriptDependenciesInfo.ForFile -> getLanguageSettingsForScripts(project, moduleInfo.scriptDefinition).targetPlatformVersion

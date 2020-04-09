@@ -363,7 +363,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @SuppressWarnings("unchecked")
     private void fillJvmVersionList() {
         for (TargetPlatform jvm : JvmIdePlatformKind.INSTANCE.getPlatforms()) {
-            jvmVersionComboBox.addItem(PlatformUtilKt.subplatformOfType(jvm, JdkPlatform.class).getTargetVersion().getDescription());
+            jvmVersionComboBox.addItem(PlatformUtilKt.subplatformsOfType(jvm, JdkPlatform.class).get(0).getTargetVersion().getDescription());
         }
     }
 
