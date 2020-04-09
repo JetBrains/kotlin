@@ -34,7 +34,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val isPrimary: Boolean,
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override val annotations: MutableList<FirAnnotationCall>,
     override var status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,

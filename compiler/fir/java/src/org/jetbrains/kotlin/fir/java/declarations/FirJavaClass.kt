@@ -43,7 +43,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
     override val superTypeRefs: MutableList<FirTypeRef>,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaTypeParameterStack: JavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>
 ) : FirRegularClass() {
@@ -114,7 +114,7 @@ internal class FirJavaClassBuilder : AbstractFirRegularClassBuilder, FirAnnotati
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var name: Name
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
     override lateinit var classKind: ClassKind
     override val declarations: MutableList<FirDeclaration> = mutableListOf()

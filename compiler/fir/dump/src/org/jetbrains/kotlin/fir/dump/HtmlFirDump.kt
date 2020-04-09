@@ -925,21 +925,33 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generateTypeParameters(typeParameterContainer: FirTypeParametersOwner) {
+    private fun FlowContent.generateTypeParameters(typeParameterContainer: FirTypeParameterRefsOwner, describe: Boolean = false) {
         if (typeParameterContainer.typeParameters.isEmpty()) return
         +"<"
-        generateList(typeParameterContainer.typeParameters) {
-            generate(it.variance)
-            if (it.isReified) {
+        fun generateTypeParameter(typeParameter: FirTypeParameter, describe: Boolean) {
+            generate(typeParameter.variance)
+            if (typeParameter.isReified) {
                 keyword("reified ")
             }
-            symbolAnchor(it.symbol) {
-                simpleName(it.name)
-            }
-            if (it.bounds.isNotEmpty()) {
+            if (describe)
+                simpleName(typeParameter.name)
+            else
+                symbolAnchor(typeParameter.symbol) {
+                    simpleName(typeParameter.name)
+                }
+            if (typeParameter.bounds.isNotEmpty()) {
                 +": "
-                generateList(it.bounds) { bound ->
+                generateList(typeParameter.bounds) { bound ->
                     generate(bound)
+                }
+            }
+        }
+        generateList(typeParameterContainer.typeParameters) {
+            if (it is FirTypeParameter) {
+                generateTypeParameter(it, describe)
+            } else {
+                symbolRef(it.symbol) {
+                    generateTypeParameter(it.symbol.fir, describe = true)
                 }
             }
         }
@@ -1129,26 +1141,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(fir.returnTypeRef)
     }
 
-    private fun FlowContent.describeTypeParameters(typeParameterContainer: FirTypeParametersOwner) {
-        if (typeParameterContainer.typeParameters.isEmpty()) return
-        +"<"
-        generateList(typeParameterContainer.typeParameters) {
-            generate(it.variance)
-            if (it.isReified) {
-                keyword("reified ")
-            }
-
-            simpleName(it.name)
-
-            if (it.bounds.isNotEmpty()) {
-                +": "
-                generateList(it.bounds) { bound ->
-                    generate(bound)
-                }
-            }
-        }
-        +"> "
-    }
+    private fun FlowContent.describeTypeParameters(typeParameterContainer: FirTypeParameterRefsOwner) =
+        generateTypeParameters(typeParameterContainer, describe = true)
 
     private fun FlowContent.describeVerbose(symbol: FirBasedSymbol<*>) {
         when (symbol) {

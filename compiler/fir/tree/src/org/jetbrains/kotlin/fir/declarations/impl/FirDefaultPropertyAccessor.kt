@@ -36,13 +36,13 @@ abstract class FirDefaultPropertyAccessor(
     session,
     resolvePhase = FirResolvePhase.RAW_FIR,
     propertyTypeRef,
-    typeParameters = mutableListOf(),
     valueParameters,
     body = null,
     symbol,
     isGetter,
     FirDeclarationStatusImpl(visibility, Modality.FINAL),
     annotations = mutableListOf(),
+    typeParameters = mutableListOf(),
 ) {
     override var resolvePhase = FirResolvePhase.BODY_RESOLVE
 

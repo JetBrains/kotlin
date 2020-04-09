@@ -366,6 +366,12 @@ class RawFirBuilder(
             extractAnnotationsTo(container.annotations)
         }
 
+        private fun KtTypeParameterListOwner.extractTypeParametersTo(container: FirTypeParameterRefsOwnerBuilder) {
+            for (typeParameter in typeParameters) {
+                container.typeParameters += typeParameter.convert<FirTypeParameter>()
+            }
+        }
+
         private fun KtTypeParameterListOwner.extractTypeParametersTo(container: FirTypeParametersOwnerBuilder) {
             for (typeParameter in typeParameters) {
                 container.typeParameters += typeParameter.convert<FirTypeParameter>()

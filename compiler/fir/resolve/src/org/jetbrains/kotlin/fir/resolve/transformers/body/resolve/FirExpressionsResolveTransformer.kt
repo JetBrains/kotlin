@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -314,7 +315,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             type is ConeTypeParameterType ||
             baseTypeArguments?.isEmpty() != false ||
             (type is ConeClassLikeType &&
-                    (type.lookupTag.toSymbol(session)?.fir as? FirTypeParametersOwner)?.typeParameters?.isEmpty() == true)
+                    (type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters?.isEmpty() == true)
         ) {
             this
         } else {
@@ -480,7 +481,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 val symbol = lhs.symbol
                 val typeRef =
                     symbol?.constructType(
-                        Array((symbol.phasedFir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0) {
+                        Array((symbol.phasedFir as? FirTypeParameterRefsOwner)?.typeParameters?.size ?: 0) {
                             ConeStarProjection
                         },
                         isNullable = false,
@@ -636,7 +637,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     val expandedSupertype = supertype.fullyExpandedType(session)
                     val symbol =
                         expandedSupertype.lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
-                    val classTypeParametersCount = (symbol.fir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0
+                    val classTypeParametersCount =
+                        (symbol.fir as? FirTypeParameterRefsOwner)?.typeParameters?.count { it is FirTypeParameter } ?: 0
                     typeArguments = expandedSupertype.typeArguments
                         .takeLast(classTypeParametersCount) // Hack for KT-37525
                         .takeIf { it.isNotEmpty() }

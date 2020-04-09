@@ -120,14 +120,15 @@ class FirSamResolverImpl(
         )
 
         val newTypeParameters = firRegularClass.typeParameters.map { typeParameter ->
+            val declaredTypeParameter = typeParameter.symbol.fir // TODO: or really declared?
             FirTypeParameterBuilder().apply {
-                source = typeParameter.source
+                source = declaredTypeParameter.source
                 session = firSession
-                name = typeParameter.name
+                name = declaredTypeParameter.name
                 this.symbol = FirTypeParameterSymbol()
                 variance = Variance.INVARIANT
                 isReified = false
-                annotations += typeParameter.annotations
+                annotations += declaredTypeParameter.annotations
             }
         }
 
@@ -142,7 +143,8 @@ class FirSamResolverImpl(
         )
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
-            newTypeParameter.bounds += oldTypeParameter.bounds.mapNotNull { typeRef ->
+            val declared = oldTypeParameter.symbol.fir // TODO: or really declared?
+            newTypeParameter.bounds += declared.bounds.mapNotNull { typeRef ->
                 buildResolvedTypeRef {
                     source = typeRef.source
                     type = substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null)

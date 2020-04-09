@@ -59,7 +59,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
     resolvePhase,
     returnTypeRef,
     receiverTypeRef,
-    typeParameters,
     valueParameters,
     body,
     status,
@@ -67,6 +66,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     name,
     symbol,
     annotations,
+    typeParameters,
 )
 
 private val ALL_JAVA_OPERATION_NAMES =

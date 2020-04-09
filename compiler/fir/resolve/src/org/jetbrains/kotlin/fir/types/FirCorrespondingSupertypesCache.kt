@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -58,7 +59,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
         val subtypeFirClass: FirClassLikeDeclaration<*> = subtypeClassSymbol.fir
 
         val defaultType = subtypeClassSymbol.toLookupTag().constructClassType(
-            (subtypeFirClass as? FirTypeParametersOwner)?.typeParameters?.map {
+            (subtypeFirClass as? FirTypeParameterRefsOwner)?.typeParameters?.map {
                 it.symbol.toLookupTag().constructType(emptyArray(), isNullable = false)
             }?.toTypedArray().orEmpty(),
             isNullable = false

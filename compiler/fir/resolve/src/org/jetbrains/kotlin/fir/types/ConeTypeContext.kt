@@ -522,7 +522,7 @@ class ConeTypeCheckerContext(
             else -> null
         }
 
-        val substitutor = if (declaration is FirTypeParametersOwner) {
+        val substitutor = if (declaration is FirTypeParameterRefsOwner) {
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type

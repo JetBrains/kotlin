@@ -318,7 +318,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 private fun FirRegularClass.createRawArguments(
     defaultArgs: List<ConeStarProjection>,
     position: TypeComponentPosition
-) = typeParameters.map { typeParameter ->
+) = typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
     val erasedUpperBound = typeParameter.getErasedUpperBound {
         defaultType().withArguments(defaultArgs.toTypedArray())
     }

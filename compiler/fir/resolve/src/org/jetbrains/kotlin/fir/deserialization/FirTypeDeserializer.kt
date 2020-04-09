@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
@@ -118,7 +119,7 @@ class FirTypeDeserializer(
 
 
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
-        (fir as? FirTypeParametersOwner)?.typeParameters?.map { it.symbol }.orEmpty()
+        (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
     fun simpleType(proto: ProtoBuf.Type): ConeLookupTagBasedType? {
 
@@ -179,7 +180,7 @@ class FirTypeDeserializer(
         isNullable: Boolean
     ): ConeClassLikeType {
         val result =
-            when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParametersOwner>().typeParameters.size - arguments.size) {
+            when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
                 0 -> createSuspendFunctionTypeForBasicCase(/* annotations, */ functionTypeConstructor, arguments, isNullable)
 //                 This case for types written by eap compiler 1.1
                 1 -> {

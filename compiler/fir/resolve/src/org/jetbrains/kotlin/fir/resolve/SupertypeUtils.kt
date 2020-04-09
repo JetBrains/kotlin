@@ -57,7 +57,7 @@ fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: Sco
 
 /* TODO REMOVE */
 fun createSubstitution(
-    typeParameters: List<FirTypeParameter>,
+    typeParameters: List<FirTypeParameterRef>, // TODO: or really declared?
     typeArguments: Array<out ConeTypeProjection>,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
@@ -86,7 +86,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
-        val typeParameters = (declaration as? FirTypeParametersOwner)?.typeParameters.orEmpty()
+        val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
         val originalSubstitution = createSubstitution(typeParameters, typeArguments, session)
         val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(declaration.symbol.classId.asSingleFqName().toUnsafe())
         val javaClass = javaClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it)?.fir } as? FirRegularClass

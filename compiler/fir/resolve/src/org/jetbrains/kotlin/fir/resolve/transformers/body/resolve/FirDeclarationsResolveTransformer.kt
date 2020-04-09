@@ -70,7 +70,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         if (declaration.typeParameters.isEmpty()) return l()
 
         for (typeParameter in declaration.typeParameters) {
-            typeParameter.replaceResolvePhase(FirResolvePhase.STATUS)
+            (typeParameter as? FirTypeParameter)?.replaceResolvePhase(FirResolvePhase.STATUS)
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
 

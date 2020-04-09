@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -56,7 +57,7 @@ private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotl
 class ClassDispatchReceiverValue(klassSymbol: FirClassSymbol<*>) : ReceiverValue {
     override val type: ConeKotlinType = ConeClassLikeTypeImpl(
         klassSymbol.toLookupTag(),
-        (klassSymbol.fir as? FirTypeParametersOwner)?.typeParameters?.map { ConeStarProjection }?.toTypedArray().orEmpty(),
+        (klassSymbol.fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { ConeStarProjection }?.toTypedArray().orEmpty(),
         isNullable = false
     )
 

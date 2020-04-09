@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
@@ -28,10 +25,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             val fullyExpandedType = fullyExpandedType(useSiteSession)
             val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass<*> ?: return null
 
-            val substitution = when (fir) {
-                is FirTypeParametersOwner -> createSubstitution(fir.typeParameters, fullyExpandedType.typeArguments, useSiteSession)
-                else -> emptyMap()
-            }
+            val substitution = createSubstitution(fir.typeParameters, fullyExpandedType.typeArguments, useSiteSession)
 
             fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession, skipPrivateMembers = false)
         }

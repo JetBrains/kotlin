@@ -78,23 +78,25 @@ class Fir2IrClassifierStorage(
         symbolTable.leaveScope(descriptor)
     }
 
-    internal fun preCacheTypeParameters(owner: FirTypeParametersOwner) {
-        owner.typeParameters.mapIndexed { index, typeParameter ->
-            getCachedIrTypeParameter(typeParameter, index)
-                ?: createIrTypeParameterWithoutBounds(typeParameter, index)
+    internal fun preCacheTypeParameters(owner: FirTypeParameterRefsOwner) {
+        for ((index, typeParameter) in owner.typeParameters.withIndex()) {
+            val original = typeParameter.symbol.fir
+            getCachedIrTypeParameter(original, index)
+                ?: createIrTypeParameterWithoutBounds(original, index)
             if (owner is FirProperty && owner.isVar) {
                 val context = ConversionTypeContext.DEFAULT.inSetter()
-                getCachedIrTypeParameter(typeParameter, index, context)
-                    ?: createIrTypeParameterWithoutBounds(typeParameter, index, context)
+                getCachedIrTypeParameter(original, index, context)
+                    ?: createIrTypeParameterWithoutBounds(original, index, context)
             }
         }
     }
 
     internal fun IrTypeParametersContainer.setTypeParameters(
-        owner: FirTypeParametersOwner,
+        owner: FirTypeParameterRefsOwner,
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ) {
-        typeParameters = owner.typeParameters.mapIndexed { index, typeParameter ->
+        typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
+            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
             getIrTypeParameter(typeParameter, index, typeContext).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
