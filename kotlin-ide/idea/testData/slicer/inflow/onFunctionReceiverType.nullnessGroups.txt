@@ -1,0 +1,13 @@
+[NotNull Values]
+11 	<bold>""</bold>.extensionFun()
+7 		fun <bold>Any</bold>.extensionFun() {
+11 			<bold>""</bold>.extensionFun()
+12 	<bold>1</bold>.extensionFun()
+7 		fun <bold>Any</bold>.extensionFun() {
+12 			<bold>1</bold>.extensionFun()
+
+[Other Values]
+3 	KotlinUtil.extensionFun(<bold>"x"</bold>);
+7 		fun <bold>Any</bold>.extensionFun() {
+3 			KotlinUtil.extensionFun(<bold>"x"</bold>);
+

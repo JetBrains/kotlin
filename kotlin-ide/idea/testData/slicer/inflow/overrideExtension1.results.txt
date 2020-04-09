@@ -1,0 +1,3 @@
+5 println(<bold>this</bold>)
+4 	open fun <bold>Int</bold>.extensionFun() {
+9 		<bold>1</bold>.extensionFun()

@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
@@ -30,6 +32,8 @@ import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -45,23 +49,34 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class InflowSlicer(
-    element: KtExpression,
+    element: KtElement,
     processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 
     override fun processChildren() {
         if (parentUsage.forcedExpressionMode) {
-            processExpression(element)
+            (element as? KtExpression)?.let { processExpression(it) }
             return
         }
 
         when (element) {
             is KtProperty -> processProperty(element)
-            // for parameter, we include overriders only when the feature is invoked on parameter itself
+
+            // include overriders only when invoked on the parameter declaration
             is KtParameter -> processParameter(parameter = element, includeOverriders = parentUsage.parent == null)
+
             is KtDeclarationWithBody -> element.processBody()
-            else -> processExpression(element)
+
+            is KtTypeReference -> {
+                val parent = element.parent
+                require(parent is KtCallableDeclaration)
+                require(element == parent.receiverTypeReference)
+                // include overriders only when invoked on receiver type in the declaration
+                processExtensionReceiver(parent, includeOverriders = parentUsage.parent == null)
+            }
+
+            is KtExpression -> processExpression(element)
         }
     }
 
@@ -135,8 +150,9 @@ class InflowSlicer(
             }
 
             fun processCall(usageInfo: UsageInfo) {
-                val refElement = usageInfo.element ?: return
-                extractArgumentExpression(refElement)?.passToProcessorAsValue()
+                usageInfo.element?.let {
+                    extractArgumentExpression(it)?.passToProcessorAsValue()
+                }
             }
 
             processCalls(function, analysisScope, includeOverriders, ::processCall)
@@ -145,6 +161,31 @@ class InflowSlicer(
         if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
             processAssignments(parameter, analysisScope)
         }
+    }
+
+    private fun processExtensionReceiver(declaration: KtCallableDeclaration, includeOverriders: Boolean) {
+        fun extractReceiverExpression(refElement: PsiElement): PsiElement? {
+            return when (refElement) {
+                is KtExpression -> {
+                    val resolvedCall = refElement.resolveToCall() ?: return null
+                    //TODO: implicit receiver
+                    val expressionReceiver = resolvedCall.extensionReceiver as? ExpressionReceiver ?: return null
+                    return expressionReceiver.expression
+                }
+                
+                else -> {
+                    (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0)
+                }
+            }
+        }
+
+        fun processCall(usageInfo: UsageInfo) {
+            usageInfo.element?.let {
+                extractReceiverExpression(it)?.passToProcessorAsValue()
+            }
+        }
+
+        processCalls(declaration, analysisScope, includeOverriders, ::processCall)
     }
 
     private fun processExpression(expression: KtExpression) {
@@ -171,18 +212,30 @@ class InflowSlicer(
                     }
                     return
                 }
+
                 val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
-                val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return
-                if (accessedDescriptor is SyntheticFieldDescriptor) {
-                    val property = accessedDeclaration as? KtProperty ?: return
-                    if (accessedDescriptor.propertyDescriptor.setter?.isDefault != false) {
-                        property.processPropertyAssignments()
-                    } else {
-                        property.setter?.processBackingFieldAssignments()
+                val accessedDeclaration = accessedDescriptor.originalSource.getPsi()
+                when (accessedDescriptor) {
+                    is SyntheticFieldDescriptor -> {
+                        val property = accessedDeclaration as? KtProperty ?: return
+                        if (accessedDescriptor.propertyDescriptor.setter?.isDefault != false) {
+                            property.processPropertyAssignments()
+                        } else {
+                            property.setter?.processBackingFieldAssignments()
+                        }
                     }
-                    return
+
+                    is ReceiverParameterDescriptor -> {
+                        val callable = accessedDescriptor.containingDeclaration as? CallableDescriptor ?: return
+                        val callableDeclaration = callable.originalSource.getPsi() as? KtCallableDeclaration ?: return
+                        //TODO: what about non-extensions?
+                        callableDeclaration.receiverTypeReference?.passToProcessor()
+                    }
+
+                    else -> {
+                        accessedDeclaration?.passDeclarationToProcessorWithOverriders()
+                    }
                 }
-                accessedDeclaration.passDeclarationToProcessorWithOverriders()
             }
 
             is MergeInstruction -> createdAt.passInputsToProcessor()
@@ -287,8 +340,17 @@ class InflowSlicer(
 
     private fun PsiElement.passDeclarationToProcessorWithOverriders() {
         passToProcessor()
+
         HierarchySearchRequest(this, analysisScope)
             .searchOverriders()
             .forEach { it.namedUnwrappedElement?.passToProcessor() }
+
+        if (this is KtCallableDeclaration && isExpectDeclaration()) {
+            resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                ?.actualsForExpected()
+                ?.forEach {
+                    (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor()
+                }
+        }
     }
 }

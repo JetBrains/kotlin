@@ -118,6 +118,7 @@ import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingT
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptDefinitionsOrderTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
+import org.jetbrains.kotlin.idea.slicer.AbstractSlicerMultiplatformTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
@@ -849,7 +850,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractSlicerTreeTest> {
-            model("slicer", singleClass = true)
+            model("slicer", excludeDirs = listOf("mpp"))
         }
 
         testClass<AbstractSlicerLeafGroupingTest> {
@@ -858,6 +859,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSlicerNullnessGroupingTest> {
             model("slicer/inflow", singleClass = true)
+        }
+
+        testClass<AbstractSlicerMultiplatformTest> {
+            model("slicer/mpp", recursive = false, extension = null)
         }
     }
 

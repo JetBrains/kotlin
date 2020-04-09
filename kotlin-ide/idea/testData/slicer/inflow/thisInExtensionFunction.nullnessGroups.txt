@@ -1,0 +1,3 @@
+[NotNull Values]
+8 	val <bold>x = "".extensionFun()</bold>
+8 		val <bold>x = "".extensionFun()</bold>

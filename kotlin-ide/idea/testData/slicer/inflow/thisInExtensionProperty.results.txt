@@ -1,0 +1,6 @@
+7 val <bold>x = "".extensionProp</bold>
+7 	val x = <bold>"".extensionProp</bold>
+3 		val Any.<bold>extensionProp: Any</bold>
+4 			get() = <bold>this</bold>
+3 				val <bold>Any</bold>.extensionProp: Any
+7 					val x = <bold>""</bold>.extensionProp

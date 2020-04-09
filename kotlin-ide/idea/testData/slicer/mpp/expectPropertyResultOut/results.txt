@@ -1,0 +1,8 @@
+6 val result = <bold>1</bold>.property
+3 	expect val <bold>Int</bold>.property: Any
+1 		actual val <bold>Int</bold>.property: Any
+2 			get() = <bold>this</bold>
+2 				<bold>get() = this</bold>
+6 					val result = 1.<bold>property</bold>
+6 						val <bold>result = 1.property</bold>
+7 							println(<bold>result</bold>)

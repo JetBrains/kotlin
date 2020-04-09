@@ -12,33 +12,77 @@ import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class OutflowSlicer(
-    element: KtExpression,
+    element: KtElement,
     processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 
     override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) return processExpression(element)
+        if (parentUsage.forcedExpressionMode) {
+            (element as? KtExpression)?.let { processExpression(it) }
+            return
+        }
 
         when (element) {
             is KtProperty -> processVariable(element)
+
             is KtParameter -> processVariable(element)
+
             is KtFunction -> processFunction(element)
-            is KtPropertyAccessor -> if (element.isGetter) processVariable(element.property)
-            else -> processExpression(element)
+
+            is KtPropertyAccessor -> {
+                if (element.isGetter) {
+                    processVariable(element.property)
+                }
+            }
+
+            is KtTypeReference -> {
+                val declaration = element.parent
+                require(declaration is KtCallableDeclaration)
+                require(element == declaration.receiverTypeReference)
+
+                if (declaration.isExpectDeclaration()) {
+                    declaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                        ?.actualsForExpected()
+                        ?.forEach {
+                            val actualDeclaration = (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
+                            (actualDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
+                        }
+                }
+
+                when (declaration) {
+                    is KtFunction -> {
+                        processExtensionReceiver(declaration, declaration)
+                    }
+                    
+                    is KtProperty -> {
+                        //TODO: process only one of them or both depending on the usage type
+                        declaration.getter?.let { processExtensionReceiver(declaration, it) }
+                        declaration.setter?.let { processExtensionReceiver(declaration, it) }
+                    }
+                }
+            }
+
+            is KtExpression -> processExpression(element)
         }
     }
 
@@ -65,28 +109,37 @@ class OutflowSlicer(
         if (variable is KtParameter) {
             if (!canProcessParameter(variable)) return //TODO
 
-            //TODO: expect/actual
-
             val callable = variable.ownerFunction as? KtCallableDeclaration
-            val parameterIndex = variable.parameterIndex()
-            callable?.forEachOverridingElement(scope = analysisScope) { _, overridingMember ->
-                when (overridingMember) {
-                    is KtCallableDeclaration -> {
-                        val parameters = overridingMember.valueParameters
-                        check(parameters.size == callable.valueParameters.size)
-                        parameters[parameterIndex].passToProcessor()
-                    }
 
-                    is PsiMethod -> {
-                        val parameters = overridingMember.parameterList.parameters
-                        val shift = if (callable.receiverTypeReference != null) 1 else 0
-                        check(parameters.size == callable.valueParameters.size + shift)
-                        parameters[parameterIndex + shift].passToProcessor()
-                    }
-
-                    else -> {} // not supported
+            if (callable != null) {
+                if (callable.isExpectDeclaration()) {
+                    variable.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                        ?.actualsForExpected()
+                        ?.forEach {
+                            (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor()
+                        }
                 }
-                true
+
+                val parameterIndex = variable.parameterIndex()
+                callable.forEachOverridingElement(scope = analysisScope) { _, overridingMember ->
+                    when (overridingMember) {
+                        is KtCallableDeclaration -> {
+                            val parameters = overridingMember.valueParameters
+                            check(parameters.size == callable.valueParameters.size)
+                            parameters[parameterIndex].passToProcessor()
+                        }
+
+                        is PsiMethod -> {
+                            val parameters = overridingMember.parameterList.parameters
+                            val shift = if (callable.receiverTypeReference != null) 1 else 0
+                            check(parameters.size == callable.valueParameters.size + shift)
+                            parameters[parameterIndex + shift].passToProcessor()
+                        }
+
+                        else -> {} // not supported
+                    }
+                    true
+                }
             }
         }
 
@@ -113,29 +166,79 @@ class OutflowSlicer(
             is KtNamedFunction -> function
             else -> null
         } ?: return
-        funExpression as PsiElement
         funExpression.passToProcessor(parentUsage.lambdaLevel + 1, true)
     }
 
+    private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
+        //TODO: overriders
+        //TODO: implicit receivers
+        val resolutionFacade = declaration.getResolutionFacade()
+        val callableDescriptor = declaration.resolveToDescriptorIfAny(resolutionFacade) as? CallableDescriptor ?: return
+        val extensionReceiver = callableDescriptor.extensionReceiverParameter ?: return
+        declarationWithBody.bodyExpression?.forEachDescendantOfType<KtThisExpression> { thisExpression ->
+            val receiverDescriptor = thisExpression.resolveToCall(resolutionFacade)?.resultingDescriptor
+            if (receiverDescriptor == extensionReceiver) {
+                thisExpression.passToProcessor()
+            }
+        }
+    }
+
     private fun processExpression(expression: KtExpression) {
-        expression.processPseudocodeUsages { pseudoValue, instr ->
-            when (instr) {
-                is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
-                is CallInstruction -> {
-                    if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
-                        instr.element.passToProcessor(parentUsage.lambdaLevel - 1)
-                    } else {
-                        instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
+        expression.processPseudocodeUsages { pseudoValue, instruction ->
+            when (instruction) {
+                is WriteValueInstruction -> {
+                    if (!processIfReceiverValue(instruction, pseudoValue)) {
+                        instruction.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                     }
                 }
-                is ReturnValueInstruction -> instr.subroutine.passToProcessor()
-                is MagicInstruction -> when (instr.kind) {
-                    MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> instr.outputValue.element?.passToProcessor()
-                    else -> {
+
+                is ReadValueInstruction -> {
+                    processIfReceiverValue(instruction, pseudoValue)
+                }
+
+                is CallInstruction -> {
+                    if (!processIfReceiverValue(instruction, pseudoValue)) {
+                        instruction.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
+                    }
+                }
+
+                is ReturnValueInstruction -> {
+                    instruction.subroutine.passToProcessor()
+                }
+
+                is MagicInstruction -> {
+                    when (instruction.kind) {
+                        MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> instruction.outputValue.element?.passToProcessor()
+                        else -> {
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun processIfReceiverValue(instruction: KtElementInstruction, pseudoValue: PseudoValue): Boolean {
+        val receiverValue = (instruction as? InstructionWithReceivers)?.receiverValues?.get(pseudoValue) ?: return false
+        val resolvedCall = instruction.element.resolveToCall() ?: return true
+        when (resolvedCall.call.callType) {
+            Call.CallType.DEFAULT -> {
+                if (receiverValue == resolvedCall.extensionReceiver) {
+                    val targetDeclaration = resolvedCall.resultingDescriptor.originalSource.getPsi()
+                    (targetDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
+                }
+            }
+
+            Call.CallType.INVOKE -> {
+                if (parentUsage.lambdaLevel > 0 && receiverValue == resolvedCall.dispatchReceiver) {
+                    instruction.element.passToProcessor(parentUsage.lambdaLevel - 1)
+                }
+            }
+
+            else -> {
+                //TODO
+            }
+        }
+        return true
     }
 
     private fun PsiElement.getCallElementForExactCallee(): PsiElement? {

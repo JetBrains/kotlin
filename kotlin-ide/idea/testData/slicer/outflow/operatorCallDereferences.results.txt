@@ -5,5 +5,18 @@
 22 	DEREFERENCE: <bold>x</bold> += 1
 23 	DEREFERENCE: <bold>x</bold> *= 1
 25 	-<bold>x</bold>
+12 		operator fun <bold>A</bold>.unaryMinus() = this
+12 			operator fun A.unaryMinus() = <bold>this</bold>
+12 				operator fun A.<bold>unaryMinus() = this</bold>
+25 					<bold>-x</bold>
 26 	<bold>x</bold> - 1
+11 		operator fun <bold>A</bold>.minus(n: Int) = this
+11 			operator fun A.minus(n: Int) = <bold>this</bold>
+11 				operator fun A.<bold>minus(n: Int) = this</bold>
+26 					<bold>x - 1</bold>
+28 					<bold>x -= 1</bold>
+17 						DUPLICATE: var <bold>x = A()</bold>
 29 	<bold>x</bold> /= 1
+14 		operator fun <bold>A</bold>.divAssign(n: Int) = this
+14 			operator fun A.divAssign(n: Int) = <bold>this</bold>
+14 				operator fun A.<bold>divAssign(n: Int) = this</bold>

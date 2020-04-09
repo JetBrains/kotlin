@@ -10,6 +10,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.JavaSliceUsage
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -17,21 +18,22 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
+import org.jetbrains.kotlin.idea.util.expectedDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
 abstract class Slicer(
-    protected val element: KtExpression,
+    protected val element: KtElement,
     protected val processor: SliceUsageProcessor,
     protected val parentUsage: KotlinSliceUsage
 ) {
@@ -62,22 +64,43 @@ abstract class Slicer(
     }
 
     protected fun processCalls(
-        function: KtFunction,
+        callable: KtCallableDeclaration,
         scope: SearchScope,
         includeOverriders: Boolean,
         usageProcessor: (UsageInfo) -> Unit
     ) {
-        val options = KotlinFunctionFindUsagesOptions(project).apply {
-            isSearchForTextOccurrences = false
-            isSkipImportStatements = true
-            searchScope = scope
+        val options = when (callable) {
+            is KtFunction -> {
+                KotlinFunctionFindUsagesOptions(project).apply {
+                    isSearchForTextOccurrences = false
+                    isSkipImportStatements = true
+                    searchScope = scope
+                }
+            }
+
+            is KtProperty -> {
+                KotlinPropertyFindUsagesOptions(project).apply {
+                    isSearchForTextOccurrences = false
+                    isSkipImportStatements = true
+                    searchScope = scope
+                }
+            }
+
+            else -> return
         }
 
-        val descriptor = function.unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
-        val superDescriptors = if (includeOverriders)
+        val descriptor = callable.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableMemberDescriptor ?: return
+        val superDescriptors = if (includeOverriders) {
             descriptor.getDeepestSuperDeclarations()
-        else
-            listOf(descriptor) + DescriptorUtils.getAllOverriddenDeclarations(descriptor)
+        } else {
+            mutableListOf<CallableMemberDescriptor>().apply {
+                add(descriptor)
+                addAll(DescriptorUtils.getAllOverriddenDeclarations(descriptor))
+                if (descriptor.isActual) {
+                    addIfNotNull(descriptor.expectedDescriptor() as CallableMemberDescriptor?)
+                }
+            }
+        }
 
         for (superDescriptor in superDescriptors) {
             val declaration = superDescriptor.originalSource.getPsi() ?: continue
@@ -123,11 +146,17 @@ abstract class Slicer(
         }
 
         val allDeclarations = mutableListOf(declaration)
-        val descriptor = declaration.unsafeResolveToDescriptor()
+        val descriptor = declaration.resolveToDescriptorIfAny()
         if (descriptor is CallableMemberDescriptor) {
-            DescriptorUtils.getAllOverriddenDeclarations(descriptor).mapNotNullTo(allDeclarations) {
+            val additionalDescriptors = if (descriptor.isActual) {
+                listOfNotNull(descriptor.expectedDescriptor() as? CallableMemberDescriptor)
+            } else {
+                DescriptorUtils.getAllOverriddenDeclarations(descriptor)
+            }
+            additionalDescriptors.mapNotNullTo(allDeclarations) {
                 it.originalSource.getPsi() as? KtCallableDeclaration
             }
+
         }
 
         allDeclarations.forEach { it.processAllExactUsages(options, usageProcessor) }

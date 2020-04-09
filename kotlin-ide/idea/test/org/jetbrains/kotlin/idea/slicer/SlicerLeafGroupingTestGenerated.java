@@ -228,6 +228,16 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
     }
 
+    @TestMetadata("onFunctionReceiverType.kt")
+    public void testOnFunctionReceiverType() throws Exception {
+        runTest("idea/testData/slicer/inflow/onFunctionReceiverType.kt");
+    }
+
+    @TestMetadata("onPropertyReceiverType.kt")
+    public void testOnPropertyReceiverType() throws Exception {
+        runTest("idea/testData/slicer/inflow/onPropertyReceiverType.kt");
+    }
+
     @TestMetadata("openFun.kt")
     public void testOpenFun() throws Exception {
         runTest("idea/testData/slicer/inflow/openFun.kt");
@@ -236,6 +246,16 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("openFunInvokeOnParameter.kt")
     public void testOpenFunInvokeOnParameter() throws Exception {
         runTest("idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
+    }
+
+    @TestMetadata("overrideExtension1.kt")
+    public void testOverrideExtension1() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideExtension1.kt");
+    }
+
+    @TestMetadata("overrideExtension2.kt")
+    public void testOverrideExtension2() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideExtension2.kt");
     }
 
     @TestMetadata("overrideFun.kt")
@@ -321,6 +341,16 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("settersViaJavaDelegate.kt")
     public void testSettersViaJavaDelegate() throws Exception {
         runTest("idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
+    }
+
+    @TestMetadata("thisInExtensionFunction.kt")
+    public void testThisInExtensionFunction() throws Exception {
+        runTest("idea/testData/slicer/inflow/thisInExtensionFunction.kt");
+    }
+
+    @TestMetadata("thisInExtensionProperty.kt")
+    public void testThisInExtensionProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/thisInExtensionProperty.kt");
     }
 
     @TestMetadata("topLevelVal.kt")
