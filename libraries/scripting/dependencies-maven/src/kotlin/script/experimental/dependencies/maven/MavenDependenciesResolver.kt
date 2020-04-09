@@ -5,12 +5,11 @@
 
 package kotlin.script.experimental.dependencies.maven
 
-import com.jcabi.aether.Aether
-import org.sonatype.aether.repository.Authentication
-import org.sonatype.aether.repository.RemoteRepository
-import org.sonatype.aether.resolution.DependencyResolutionException
-import org.sonatype.aether.util.artifact.DefaultArtifact
-import org.sonatype.aether.util.artifact.JavaScopes
+import org.eclipse.aether.artifact.DefaultArtifact
+import org.eclipse.aether.repository.RemoteRepository
+import org.eclipse.aether.resolution.DependencyResolutionException
+import org.eclipse.aether.util.artifact.JavaScopes
+import org.eclipse.aether.util.repository.AuthenticationBuilder
 import java.io.File
 import java.util.*
 import kotlin.script.experimental.api.ResultWithDiagnostics
@@ -18,8 +17,9 @@ import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
+import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
+import kotlin.script.experimental.dependencies.maven.impl.mavenCentral
 
-val mavenCentral = RemoteRepository("maven-central", "default", "https://repo.maven.apache.org/maven2/")
 
 class MavenRepositoryCoordinates(
     url: String,
@@ -45,7 +45,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
 
-    private fun allRepositories() = remoteRepositories().map { it.url!!.toString() } + localRepo.toString()
+    private fun allRepositories() = remoteRepositories() + localRepo
 
     private fun String.toMavenArtifact(): DefaultArtifact? =
         if (this.isNotBlank() && this.count { it == ':' } == 2) DefaultArtifact(this)
@@ -56,11 +56,11 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         val artifactId = artifactCoordinates.toMavenArtifact()!!
 
         try {
-            val deps = Aether(remoteRepositories(), localRepo).resolve(artifactId, JavaScopes.RUNTIME)
+            val deps = AetherResolveSession(localRepo, remoteRepositories()).resolve(artifactId, JavaScopes.RUNTIME)
             if (deps != null)
                 return ResultWithDiagnostics.Success(deps.map { it.file })
         } catch (e: DependencyResolutionException) {
-
+            return makeResolveFailureResult(e.message ?: "unknown error")
         }
         return makeResolveFailureResult(allRepositories().map { "$it: $artifactId not found" })
     }
@@ -72,7 +72,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
     override fun addRepository(repositoryCoordinates: RepositoryCoordinates) {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: throw IllegalArgumentException("Invalid Maven repository URL: ${repositoryCoordinates}")
-        val repo = RemoteRepository(
+        val repo = RemoteRepository.Builder(
             repositoryCoordinates.string,
             "default",
             url.toString()
@@ -80,8 +80,16 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         if (repositoryCoordinates is MavenRepositoryCoordinates) {
             val username = repositoryCoordinates.username?.let(::tryResolveEnvironmentVariable)
             val password = repositoryCoordinates.password?.let(::tryResolveEnvironmentVariable)
-            repo.authentication = Authentication(username, password, repositoryCoordinates.privateKeyFile, repositoryCoordinates.passPhrase)
+            if (username != null) {
+                val auth = AuthenticationBuilder().apply {
+                    addUsername(username)
+                    if (password != null) {
+                        addPassword(password)
+                    }
+                }
+                repo.setAuthentication(auth.build())
+            }
         }
-        repos.add(repo)
+        repos.add(repo.build())
     }
 }
