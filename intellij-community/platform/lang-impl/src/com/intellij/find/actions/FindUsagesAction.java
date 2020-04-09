@@ -15,6 +15,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorActivityManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.registry.Registry;
@@ -118,7 +119,7 @@ public class FindUsagesAction extends AnAction {
       );
       if (!chosen) {
         ApplicationManager.getApplication().invokeLater(() -> {
-          if (editor.isDisposed() || !editor.getComponent().isShowing()) return;
+          if (editor.isDisposed() || !EditorActivityManager.getInstance().isVisible(editor)) return;
           HintManager.getInstance().showErrorHint(editor, FindBundle.message("find.no.usages.at.cursor.error"));
         }, project.getDisposed());
       }

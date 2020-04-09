@@ -13,6 +13,7 @@ import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorActivityManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -172,7 +173,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
     final HintManagerImpl hintManager = HintManagerImpl.getInstanceImpl();
     final Pair<Point, Short> pos = ParameterInfoController.chooseBestHintPosition(editor, null, hint, HintManager.DEFAULT, true);
     ApplicationManager.getApplication().invokeLater(() -> {
-      if (!editor.getComponent().isShowing()) return;
+      if (!EditorActivityManager.getInstance().isVisible(editor)) return;
       hintManager.showEditorHint(hint, editor, pos.getFirst(),
                                  HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_LOOKUP_ITEM_CHANGE | HintManager.UPDATE_BY_SCROLLING,
                                  0, false, pos.getSecond());

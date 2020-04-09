@@ -17,10 +17,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
@@ -419,7 +416,7 @@ public final class CtrlMouseHandler {
 
     private boolean isTaskOutdated(@NotNull Editor editor) {
       return myDisposed || myProject.isDisposed() || editor.isDisposed() ||
-             !ApplicationManager.getApplication().isUnitTestMode() && !editor.getComponent().isShowing();
+             !ApplicationManager.getApplication().isUnitTestMode() && !EditorActivityManager.getInstance().isVisible(editor);
     }
 
     private int getOffset(@NotNull Editor editor) {

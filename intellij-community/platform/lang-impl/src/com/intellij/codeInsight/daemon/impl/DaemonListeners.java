@@ -29,10 +29,7 @@ import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
@@ -145,13 +142,12 @@ public final class DaemonListeners implements Disposable {
       @Override
       public void caretPositionChanged(@NotNull CaretEvent e) {
         final Editor editor = e.getEditor();
-        Application app = ApplicationManager.getApplication();
-        if ((editor.getComponent().isShowing() || app.isHeadlessEnvironment()) &&
+        if (EditorActivityManager.getInstance().isVisible(editor) &&
             worthBothering(editor.getDocument(), editor.getProject())) {
 
-          if (!app.isUnitTestMode()) {
+          if (!ApplicationManager.getApplication().isUnitTestMode()) {
             ApplicationManager.getApplication().invokeLater(() -> {
-              if ((editor.getComponent().isShowing() || app.isHeadlessEnvironment()) && !myProject.isDisposed()) {
+              if ((EditorActivityManager.getInstance().isVisible(editor)) && !myProject.isDisposed()) {
                 IntentionsUI.getInstance(myProject).invalidate();
               }
             }, ModalityState.current());
@@ -187,7 +183,7 @@ public final class DaemonListeners implements Disposable {
         Project editorProject = editor.getProject();
         // worthBothering() checks for getCachedPsiFile, so call getPsiFile here
         PsiFile file = editorProject == null ? null : PsiDocumentManager.getInstance(editorProject).getPsiFile(document);
-        boolean showing = editor.getComponent().isShowing();
+        boolean showing = EditorActivityManager.getInstance().isVisible(editor);
         boolean worthBothering = worthBothering(document, editorProject);
         if (!showing || !worthBothering) {
           LOG.debug("Not worth bothering about editor created for : " + file + " because editor isShowing(): " +

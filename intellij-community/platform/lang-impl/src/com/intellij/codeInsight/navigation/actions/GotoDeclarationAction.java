@@ -19,6 +19,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorActivityManager;
 import com.intellij.openapi.editor.EditorGutter;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -151,7 +152,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
                                             int offset,
                                             PsiElement[] elements,
                                             PsiFile currentFile) {
-    if (!editor.getComponent().isShowing()) return;
+    if (!EditorActivityManager.getInstance().isVisible(editor)) return;
     PsiElementProcessor<PsiElement> navigateProcessor = element -> {
       gotoTargetElement(element, editor, currentFile);
       return true;

@@ -8,6 +8,7 @@ import com.intellij.lang.LanguageImportStatements;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorActivityManager;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -135,7 +136,7 @@ public class OptimizeImportsAction extends AnAction {
           LayoutCodeInfoCollector collector = optimizer.getInfoCollector();
           if (collector != null) {
             String info = collector.getOptimizeImportsNotification();
-            if (!editor.isDisposed() && editor.getComponent().isShowing()) {
+            if (!editor.isDisposed() && EditorActivityManager.getInstance().isVisible(editor)) {
               String message = info != null ? info : NO_IMPORTS_OPTIMIZED;
               FileInEditorProcessor.showHint(editor, StringUtil.capitalize(message), null);
             }

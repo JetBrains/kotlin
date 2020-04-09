@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorActivityManager;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.editor.actions.EditorActionUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -145,7 +146,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     }
     if (showExpanded) {
       ApplicationManager.getApplication().invokeLater(() -> {
-        if (!editor.isDisposed() && editor.getComponent().isShowing()) {
+        if (!editor.isDisposed() && EditorActivityManager.getInstance().isVisible(editor)) {
           component.showPopup(false);
         }
       }, project.getDisposed());
