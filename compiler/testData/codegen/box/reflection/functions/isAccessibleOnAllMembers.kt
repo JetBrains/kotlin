@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
+// SKIP_JDK6
 
 import kotlin.reflect.jvm.isAccessible
 
