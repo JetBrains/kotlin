@@ -3,7 +3,6 @@ package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
@@ -27,8 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.*;
 
-@Service
-public final class EditorTracker implements Disposable {
+public class EditorTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(EditorTracker.class);
 
   private final Project myProject;
@@ -215,6 +213,10 @@ public final class EditorTracker implements Disposable {
     final PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
     if (psiFile == null) return;
 
+    createEditorImpl(editor);
+  }
+
+  protected void createEditorImpl(@NotNull Editor editor) {
     final JComponent component = editor.getComponent();
     final JComponent contentComponent = editor.getContentComponent();
 
@@ -253,7 +255,7 @@ public final class EditorTracker implements Disposable {
     };
     contentComponent.addFocusListener(focusListener);
 
-    myExecuteOnEditorRelease.put(event.getEditor(), () -> {
+    myExecuteOnEditorRelease.put(editor, () -> {
       component.removePropertyChangeListener("ancestor", propertyChangeListener);
       contentComponent.removeFocusListener(focusListener);
     });
@@ -262,6 +264,11 @@ public final class EditorTracker implements Disposable {
   private void editorReleased(@NotNull EditorFactoryEvent event) {
     final Editor editor = event.getEditor();
     if (editor.getProject() != null && editor.getProject() != myProject) return;
+
+    editorReleasedImpl(editor);
+  }
+
+  protected void editorReleasedImpl(@NotNull Editor editor) {
     unregisterEditor(editor);
     executeOnRelease(editor);
   }
