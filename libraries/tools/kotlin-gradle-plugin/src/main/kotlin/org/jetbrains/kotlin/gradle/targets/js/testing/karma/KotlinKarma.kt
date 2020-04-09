@@ -77,11 +77,14 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             it.appendln(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('karma-*'); // default
                 config.plugins.push('kotlin-test-js-runner/karma-kotlin-reporter.js');
                 
-                config.loggers = config.loggers || [];
-                config.loggers.push({type: 'kotlin-test-js-runner/tc-log-appender.js'});
+                config.loggers = [
+                    {
+                        type: 'kotlin-test-js-runner/tc-log-appender.js',
+                        layout: { type: 'pattern', pattern: '%[%d{DATE}:%p [%c]: %]%m' }
+                    }
+                ]
             """.trimIndent()
             )
         }
@@ -448,11 +451,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                                 DEBUG -> log.debug(nonColoredMessage)
                             }
                         }
-
-                        // To provide additional information from Karma
-                        if (SET_ENV_VAR.matches(text.trim())) {
-                            log.error(text)
-                        }
                     }
 
                     private fun processFailedBrowsers(text: String) {
@@ -539,7 +537,5 @@ private const val INFO = "INFO"
 private const val DEBUG = "DEBUG"
 private const val LOG = "LOG"
 
-private val KARMA_MESSAGE = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:($ERROR|$WARN|$INFO|$DEBUG|$LOG) \\[.*]: (.*)\$"
+private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
     .toRegex()
-
-private val SET_ENV_VAR = "Please, set \"\\w+\" env variable.".toRegex()
