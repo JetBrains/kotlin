@@ -305,7 +305,7 @@ class Fir2IrDeclarationStorage(
         parentPropertyReceiverType: FirTypeRef?
     ) {
         val parent = this
-        if (function is FirSimpleFunction) {
+        if (function is FirSimpleFunction || function is FirConstructor) {
             with(classifierStorage) {
                 setTypeParameters(function)
             }

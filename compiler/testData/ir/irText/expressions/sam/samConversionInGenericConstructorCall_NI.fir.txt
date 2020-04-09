@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
-  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<kotlin.Int?>
+  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<kotlin.Int?, kotlin.String?>
     VALUE_PARAMETER name:f1 index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     VALUE_PARAMETER name:f2 index:1 type:kotlin.Function1<kotlin.Int, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<kotlin.Int?> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (jxy: <root>.J<X of <root>.C?, Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<kotlin.Int?> origin=null
+      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<kotlin.Int?, kotlin.String?> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (jxy: <root>.J<X of <root>.C?, Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<kotlin.Int?, kotlin.String?> origin=null
           <class: Y>: kotlin.Int?
           $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String?> origin=null
             <class: X>: kotlin.String?
@@ -90,10 +90,17 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGenericJavaCtor1 (f: kotlin.Function1<kotlin.String, kotlin.Int>): <root>.G<kotlin.String?> declared in <root>'
-        ERROR_EXPR 'Cannot bind 2 type arguments to ??? call with 1 type parameters' type=<root>.G<kotlin.String?>
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String?> origin=null
+          <class: TClass>: kotlin.String?
+          <TCtor>: kotlin.Int?
+          x: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.Int> declared in <root>.testGenericJavaCtor1' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
   FUN name:testGenericJavaCtor2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.Int> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.Int>
         GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null
-      ERROR_EXPR 'Cannot bind 2 type arguments to ??? call with 1 type parameters' type=<root>.G<kotlin.String?>
+      CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String?> origin=null
+        <class: TClass>: kotlin.String?
+        <TCtor>: kotlin.Int?
+        x: TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.Int> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.Int>
+          GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null
