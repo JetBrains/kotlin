@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.clearAnsiColor
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
@@ -410,7 +411,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
 
-                    private val errorBrowsers: MutableList<String> = mutableListOf()
+                    private val failedBrowsers: MutableList<String> = mutableListOf()
 
                     override fun printNonTestOutput(text: String) {
                         val value = text.trimEnd()
@@ -418,26 +419,54 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                         parseConsole(value)
 
-                        super.printNonTestOutput(text)
+                        if (log.isDebugEnabled) {
+                            super.printNonTestOutput(text)
+                        }
                     }
 
                     private fun parseConsole(text: String) {
-                        if (KARMA_PROBLEM.matches(text)) {
-                            config.browsers
-                                .filter { it in text }
-                                .filterNot { it in errorBrowsers }
-                                .also {
-                                    errorBrowsers.addAll(it)
+                        val result = KARMA_MESSAGE.matchEntire(text)
+                        if (result != null) {
+
+                            val (logLevel, message) = result.destructured
+
+                            val nonColoredMessage = message.clearAnsiColor()
+
+                            when (logLevel) {
+                                WARN -> {
+                                    processFailedBrowsers(text)
+                                    log.warn(nonColoredMessage)
                                 }
+                                ERROR -> {
+                                    processFailedBrowsers(text)
+                                    log.error(nonColoredMessage)
+                                }
+                                INFO, LOG -> log.info(nonColoredMessage)
+                                DEBUG -> log.debug(nonColoredMessage)
+                            }
+                        }
+
+                        // To provide additional information from Karma
+                        if (SET_ENV_VAR.matches(text.trim())) {
+                            log.error(text)
                         }
                     }
 
+                    private fun processFailedBrowsers(text: String) {
+                        config.browsers
+                            .filter { it in text }
+                            .filterNot { it in failedBrowsers }
+                            .also {
+                                failedBrowsers.addAll(it)
+                            }
+                    }
+
                     override fun testFailedMessage(execHandle: ExecHandle, exitValue: Int): String {
-                        if (errorBrowsers.isEmpty()) {
+                        if (failedBrowsers.isEmpty()) {
                             return super.testFailedMessage(execHandle, exitValue)
                         }
 
-                        val failedBrowsers = errorBrowsers
+                        val failedBrowsers = failedBrowsers
                             .joinToString("\n") {
                                 "- $it"
                             }
@@ -501,4 +530,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 }
 
-private val KARMA_PROBLEM = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN) \\[.*]: (.*)\$".toRegex()
+private const val ERROR = "ERROR"
+private const val WARN = "WARN"
+private const val INFO = "INFO"
+private const val DEBUG = "DEBUG"
+private const val LOG = "LOG"
+
+private val KARMA_MESSAGE = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:($ERROR|$WARN|$INFO|$DEBUG|$LOG) \\[.*]: (.*)\$"
+    .toRegex()
+
+private val SET_ENV_VAR = "Please, set \"\\w+\" env variable.".toRegex()
