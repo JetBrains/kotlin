@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.newvfs.FileAttribute
 import org.jetbrains.kotlin.idea.core.util.readString
+import org.jetbrains.kotlin.idea.core.util.writeString
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -24,43 +25,46 @@ object KotlinDslScriptModels {
             writeValue(it, models)
         }
     }
+}
 
-    fun writeValue(output: DataOutputStream, value: List<KotlinDslScriptModel>) {
-        val strings = StringsPool()
-        value.forEach {
-            strings.getStringId(it.file)
-            strings.addStrings(it.classPath)
-            strings.addStrings(it.sourcePath)
-            strings.addStrings(it.imports)
-        }
-        strings.freeze()
-        strings.writeStrings(output)
-        value.forEach {
-            strings.writeStringId(it.file, output)
-            strings.writeStringIds(it.classPath, output)
-            strings.writeStringIds(it.sourcePath, output)
-            strings.writeStringIds(it.imports, output)
-        }
+fun writeValue(output: DataOutputStream, value: List<KotlinDslScriptModel>) {
+    val strings = StringsPool()
+    value.forEach {
+        strings.getStringId(it.file)
+        strings.addStrings(it.classPath)
+        strings.addStrings(it.sourcePath)
+        strings.addStrings(it.imports)
     }
+    strings.freeze()
+    strings.writeStrings(output)
+    value.forEach {
+        strings.writeStringId(it.file, output)
+        output.writeString(it.inputs.sections)
+        output.writeLong(it.inputs.inputsTS)
+        strings.writeStringIds(it.classPath, output)
+        strings.writeStringIds(it.sourcePath, output)
+        strings.writeStringIds(it.imports, output)
+    }
+}
 
-    fun readValue(input: DataInputStream): List<KotlinDslScriptModel> {
-        val strings = StringsPool()
-        strings.readStrings(input)
-        val n = input.readInt()
-        val result = mutableListOf<KotlinDslScriptModel>()
-        repeat(n) {
-            result.add(
-                KotlinDslScriptModel(
-                    strings.readStringId(input),
-                    strings.readStringIds(input),
-                    strings.readStringIds(input),
-                    strings.readStringIds(input),
-                    listOf()
-                )
+fun readValue(input: DataInputStream): List<KotlinDslScriptModel> {
+    val strings = StringsPool()
+    strings.readStrings(input)
+    val n = input.readInt()
+    val result = mutableListOf<KotlinDslScriptModel>()
+    repeat(n) {
+        result.add(
+            KotlinDslScriptModel(
+                strings.readStringId(input),
+                GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
+                strings.readStringIds(input),
+                strings.readStringIds(input),
+                strings.readStringIds(input),
+                listOf()
             )
-        }
-        return result
+        )
     }
+    return result
 }
 
 private class StringsPool {

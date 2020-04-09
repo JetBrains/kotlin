@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUMap
-import com.jetbrains.rd.util.firstOrNull
 import org.jetbrains.kotlin.codegen.inline.getOrPut
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
@@ -54,10 +55,12 @@ private class Configuration(
 
     val scripts = models.associateBy { it.file }
 
-    val classFiles = models.flatMapTo(mutableSetOf()) { it.classPath }.toVirtualFiles()
+    val classFilePath = models.flatMapTo(mutableSetOf()) { it.classPath }
+    val classFiles = classFilePath.toVirtualFiles()
     val classFilesScope = NonClasspathDirectoriesScope.compose(classFiles)
 
-    val sources = models.flatMapTo(mutableSetOf()) { it.sourcePath }.toVirtualFiles()
+    val sourcePath = models.flatMapTo(mutableSetOf()) { it.sourcePath }
+    val sources = sourcePath.toVirtualFiles()
     val sourcesScope = NonClasspathDirectoriesScope.compose(sources)
 
     operator fun get(key: VirtualFile): Fat? {
@@ -81,13 +84,37 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport {
 
     val file = File("myStorage")
 
+    private fun Sdk.isAlreadyIndexed(): Boolean {
+        return ModuleManager.getInstance(project).modules.any { ModuleRootManager.getInstance(it).sdk == this }
+    }
+
     fun replace(context: GradleKtsContext, models: List<KotlinDslScriptModel>) {
         KotlinDslScriptModels.write(project, models)
 
-        configuration = Configuration(context, models)
+        val old = configuration
+        val newConfiguration = Configuration(context, models)
+        configuration = newConfiguration
+
+        // update roots
+        if (shouldReindex(old, newConfiguration)) {
+            // do index
+        }
 
         // todo: update unindexed roots
         // todo: remove notification, etc..
+    }
+
+    private fun shouldReindex(
+        old: Configuration?,
+        new: Configuration
+    ): Boolean {
+        if (old == null) return true
+        if (new.sdk?.isAlreadyIndexed() == false) return true
+
+        if (!new.classFilePath.any { it !in old.classFilePath }) return true
+        if (!new.sourcePath.any { it !in old.sourcePath }) return true
+
+        return false
     }
 
     fun load() {
@@ -106,6 +133,16 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport {
         load()
         // todo: update unindexed roots
         // todo: remove notification, etc..
+    }
+
+    fun updateNotification(file: VirtualFile) {
+        val scriptModel = configuration?.scripts[file.path] ?: return
+
+        if (scriptModel.inputs.isUpToDate(project, file)) {
+            // hide notification
+        } else {
+            // show notification
+        }
     }
 
     override fun isRelated(file: VirtualFile): Boolean {
