@@ -242,6 +242,9 @@ public class BookmarksAction extends AnAction implements DumbAware, MasterDetail
 
       BookmarkManager bookmarkManager = BookmarkManager.getInstance(myProject);
       Editor editor = CommonDataKeys.EDITOR.getData(myDataContext);
+      if (editor == null) {
+        editor = CommonDataKeys.EDITOR_EVEN_IF_INACTIVE.getData(myDataContext);
+      }
       if (editor != null && !editor.isOneLineMode()) {
         Document document = editor.getDocument();
         myFile = FileDocumentManager.getInstance().getFile(document);
