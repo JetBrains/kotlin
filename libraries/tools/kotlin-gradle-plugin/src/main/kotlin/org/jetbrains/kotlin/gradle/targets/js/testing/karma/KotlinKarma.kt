@@ -79,6 +79,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                 config.plugins = config.plugins || [];
                 config.plugins.push('karma-*'); // default
                 config.plugins.push('kotlin-test-js-runner/karma-kotlin-reporter.js');
+                
+                config.loggers = config.loggers || [];
+                config.loggers.push({type: 'kotlin-test-js-runner/tc-log-appender.js'});
             """.trimIndent()
             )
         }
