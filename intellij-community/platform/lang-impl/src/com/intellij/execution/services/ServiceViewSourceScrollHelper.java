@@ -85,7 +85,7 @@ class ServiceViewSourceScrollHelper {
 
     @Override
     protected void setAutoScrollEnabled(boolean enabled) {
-      PropertiesComponent.getInstance(myProject).setValue(AUTO_SCROLL_FROM_SOURCE_PROPERTY, enabled);
+      PropertiesComponent.getInstance(myProject).setValue(AUTO_SCROLL_FROM_SOURCE_PROPERTY, enabled, PlatformUtils.isDataGrip());
     }
 
     @Override
