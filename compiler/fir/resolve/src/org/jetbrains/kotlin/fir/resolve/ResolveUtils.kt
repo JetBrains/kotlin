@@ -185,7 +185,7 @@ fun FirClassifierSymbol<*>.constructType(
         }
 
 
-private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> = flatMap {
+private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> = asReversed().flatMap {
     it.typeArguments.map { typeArgument ->
         when (typeArgument) {
             is FirStarProjection -> ConeStarProjection
