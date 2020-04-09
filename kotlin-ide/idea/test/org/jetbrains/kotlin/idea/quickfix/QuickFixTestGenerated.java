@@ -8629,6 +8629,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/modifiers/suspend/createCoroutine.kt");
             }
 
+            @TestMetadata("inLambda.kt")
+            public void testInLambda() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/inLambda.kt");
+            }
+
+            @TestMetadata("inLambda2.kt")
+            public void testInLambda2() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/inLambda2.kt");
+            }
+
+            @TestMetadata("inLambda3.kt")
+            public void testInLambda3() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/inLambda3.kt");
+            }
+
             @TestMetadata("init.kt")
             public void testInit() throws Exception {
                 runTest("testData/quickfix/modifiers/suspend/init.kt");
