@@ -764,7 +764,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     showHint();
 
-    //noinspection SSBasedInspection
     SwingUtilities.invokeLater(() -> {
       myEditorPane.scrollRectToVisible(viewRectToUse); // if ref is defined but is not found in document, this provides a default location
       if (refToUse != null) {

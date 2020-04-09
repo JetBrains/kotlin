@@ -57,7 +57,6 @@ import com.intellij.psi.search.scope.packageSet.PackageSetBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.reference.SoftReference;
-import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.ui.*;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.popup.AbstractPopup;
@@ -216,15 +215,6 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
   public static DocumentationManager getInstance(@NotNull Project project) {
     return project.getService(DocumentationManager.class);
-  }
-
-  /**
-   * @deprecated Use {@link #DocumentationManager(Project)}
-   */
-  @NonInjectable
-  @Deprecated
-  public DocumentationManager(Project project, ActionManager manager, TargetElementUtil targetElementUtil) {
-   this(project);
   }
 
   public DocumentationManager(@NotNull Project project) {
@@ -604,12 +594,6 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     }, component);
   }
 
-  static String getTitle(@NotNull PsiElement element, boolean isShort) {
-    String title = SymbolPresentationUtil.getSymbolPresentableText(element);
-    return isShort ? title != null ? title : element.getText()
-                   : CodeInsightBundle.message("javadoc.info.title", title != null ? title : element.getText());
-  }
-
   public static void storeOriginalElement(Project project, PsiElement originalElement, PsiElement element) {
     if (element == null) return;
     try {
@@ -779,7 +763,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   void updateToolWindowTabName(@NotNull PsiElement element) {
     if (myToolWindow != null) {
       Content content = myToolWindow.getContentManager().getSelectedContent();
-      if (content != null) content.setDisplayName(getTitle(element, true));
+      if (content != null) content.setDisplayName(getTitle(element));
     }
   }
 
@@ -1121,7 +1105,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
   @Override
   protected String getTitle(PsiElement element) {
-    return getTitle(element, true);
+    String title = SymbolPresentationUtil.getSymbolPresentableText(element);
+    return title != null ? title : element.getText();
   }
 
   @Nullable
