@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.codegen.inline.isInlineOrInsideInline
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class AddSuspendModifierFix(
@@ -41,11 +43,25 @@ class AddSuspendModifierFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = diagnostic.psiElement
-            val function = (element as? KtElement)?.containingDeclarationForPseudocode as? KtNamedFunction ?: return null
+            val element = diagnostic.psiElement as? KtElement ?: return null
+            val function = element.containingFunction() ?: return null
             val functionName = function.name ?: return null
 
             return AddSuspendModifierFix(function, functionName)
+        }
+
+        private fun KtElement.containingFunction(): KtNamedFunction? {
+            val containingDeclaration = containingDeclarationForPseudocode
+            return if (containingDeclaration is KtFunctionLiteral) {
+                val call = containingDeclaration.getStrictParentOfType<KtCallExpression>()
+                if (call?.resolveToCall()?.resultingDescriptor?.isInlineOrInsideInline() == true) {
+                    containingDeclaration.containingFunction()
+                } else {
+                    null
+                }
+            } else {
+                containingDeclaration as? KtNamedFunction
+            }
         }
     }
 

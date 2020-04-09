@@ -1,0 +1,11 @@
+// "Make test suspend" "true"
+suspend fun foo() {}
+
+inline fun bar(f: () -> Unit) {
+}
+
+suspend fun test() {
+    bar {
+        foo()
+    }
+}
