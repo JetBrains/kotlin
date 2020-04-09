@@ -264,6 +264,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     }
 
     myCellRenderer.updateLookupWidth(item, presentation);
+    myCellRenderer.scheduleExpensiveRendering(item);
     LookupArranger arranger = myArranger;
     arranger.registerMatcher(item, matcher);
     arranger.addElement(item, presentation);

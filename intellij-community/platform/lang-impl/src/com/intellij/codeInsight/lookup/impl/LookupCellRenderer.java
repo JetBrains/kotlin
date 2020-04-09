@@ -75,6 +75,8 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private volatile int myLookupTextWidth = 50;
   private final Object myWidthLock = ObjectUtils.sentinel("lookup width lock");
 
+  private final AsyncRendering myAsyncRendering;
+
   public LookupCellRenderer(LookupImpl lookup) {
     EditorColorsScheme scheme = lookup.getTopLevelEditor().getColorsScheme();
     myNormalFont = scheme.getFont(EditorFontType.PLAIN);
@@ -101,6 +103,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     myNormalMetrics = myLookup.getTopLevelEditor().getComponent().getFontMetrics(myNormalFont);
     myBoldMetrics = myLookup.getTopLevelEditor().getComponent().getFontMetrics(myBoldFont);
+    myAsyncRendering = new AsyncRendering(myLookup);
   }
 
   private boolean myIsSelected = false;
@@ -123,26 +126,11 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     int allowedWidth = list.getWidth() - calcSpacing(myNameComponent, myEmptyIcon) - calcSpacing(myTailComponent, null) - calcSpacing(myTypeLabel, null);
 
-    LookupElementPresentation presentation = new RealLookupElementPresentation(myLookup.isSelectionTouched());
-    ApplicationManager.getApplication().runReadAction(() -> {
-      if (item.isValid()) {
-        try {
-          item.renderElement(presentation);
-        }
-        catch (ProcessCanceledException e) {
-          LOG.info(e);
-          presentation.setItemTextForeground(JBColor.RED);
-          presentation.setItemText("Error occurred, see the log in Help | Show Log");
-        }
-        catch (Exception | Error e) {
-          LOG.error(e);
-        }
-      }
-      else {
-        presentation.setItemTextForeground(JBColor.RED);
-        presentation.setItemText("Invalid");
-      }
-    });
+    LookupElementPresentation presentation = myAsyncRendering.getLastComputed(item);
+    if (presentation == null) {
+      presentation = new RealLookupElementPresentation(myLookup.isSelectionTouched());
+      renderLookupElement(item, presentation);
+    }
 
     myNameComponent.clear();
     myNameComponent.setBackground(background);
@@ -206,6 +194,28 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     AccessibleContextUtil.setCombinedName(myPanel, myNameComponent, "", myTailComponent, " - ", myTypeLabel);
     AccessibleContextUtil.setCombinedDescription(myPanel, myNameComponent, "", myTailComponent, " - ", myTypeLabel);
     return myPanel;
+  }
+
+  private static void renderLookupElement(LookupElement item, LookupElementPresentation presentation) {
+    ApplicationManager.getApplication().runReadAction(() -> {
+      if (item.isValid()) {
+        try {
+          item.renderElement(presentation);
+        }
+        catch (ProcessCanceledException e) {
+          LOG.info(e);
+          presentation.setItemTextForeground(JBColor.RED);
+          presentation.setItemText("Error occurred, see the log in Help | Show Log");
+        }
+        catch (Exception | Error e) {
+          LOG.error(e);
+        }
+      }
+      else {
+        presentation.setItemTextForeground(JBColor.RED);
+        presentation.setItemText("Invalid");
+      }
+    });
   }
 
   @VisibleForTesting
@@ -487,14 +497,25 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     return font == null ? null : bold ? font.deriveFont(Font.BOLD) : font;
   }
 
-  void updateLookupWidth(LookupElement item, LookupElementPresentation presentation) {
+  boolean updateLookupWidth(LookupElement item, LookupElementPresentation presentation) {
     final Font customFont = getFontAbleToDisplay(presentation);
     if (customFont != null) {
       item.putUserData(CUSTOM_FONT_KEY, customFont);
     }
     int maxWidth = updateMaximumWidth(presentation, item);
     synchronized (myWidthLock) {
-      myLookupTextWidth = Math.max(maxWidth, myLookupTextWidth);
+      if (maxWidth > myLookupTextWidth) {
+        myLookupTextWidth = maxWidth;
+        return true;
+      }
+      return false;
+    }
+  }
+
+  void scheduleExpensiveRendering(@NotNull LookupElement element) {
+    LookupElementRenderer<? extends LookupElement> renderer = element.getExpensiveRenderer();
+    if (renderer != null) {
+      myAsyncRendering.scheduleRendering(element, renderer);
     }
   }
 

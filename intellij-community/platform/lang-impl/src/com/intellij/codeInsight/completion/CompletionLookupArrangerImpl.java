@@ -4,9 +4,11 @@ package com.intellij.codeInsight.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.impl.AsyncRendering;
 import com.intellij.codeInsight.template.impl.LiveTemplateLookupElement;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +56,11 @@ public class CompletionLookupArrangerImpl extends BaseCompletionLookupArranger {
     return exactMatches;
   }
 
+  @Override
+  protected void removeItem(@NotNull LookupElement element, @NotNull ProcessingContext context) {
+    super.removeItem(element, context);
+    AsyncRendering.cancelRendering(element);
+  }
 
   private static boolean isSuddenLiveTemplate(LookupElement element) {
     return element instanceof LiveTemplateLookupElement && ((LiveTemplateLookupElement)element).sudden;
