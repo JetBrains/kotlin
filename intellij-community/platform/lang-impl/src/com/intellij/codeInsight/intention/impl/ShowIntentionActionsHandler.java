@@ -161,9 +161,6 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       return false;
     }
     catch (IntentionPreviewUnsupportedOperationException e) {
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        throw e;
-      }
       //check action availability can be invoked on a mock editor and may produce exceptions
       return false;
     }
