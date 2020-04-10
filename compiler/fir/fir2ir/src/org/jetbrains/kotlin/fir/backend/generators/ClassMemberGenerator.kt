@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -238,10 +239,22 @@ internal class ClassMemberGenerator(
                     constructedIrType,
                     irConstructorSymbol
                 )
-            }.apply {
-                for ((index, argument) in arguments.withIndex()) {
-                    val argumentExpression = visitor.convertToIrExpression(argument)
-                    putValueArgument(index, argumentExpression)
+            }.let {
+                val argumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
+                val valueParameters = constructorSymbol.fir.valueParameters
+                for (argument in arguments) {
+                    if (argument is FirNamedArgumentExpression) {
+                        valueParameters.firstOrNull { it.name == argument.name }?.let { argumentMapping[argument] = it }
+                    }
+                }
+                if (argumentMapping.size == valueParameters.size) {
+                    it.applyArgumentsWithReordering(argumentMapping, valueParameters, visitor, conversionScope, declarationStorage)
+                } else {
+                    for ((index, argument) in arguments.withIndex()) {
+                        val argumentExpression = visitor.convertToIrExpression(argument)
+                        it.putValueArgument(index, argumentExpression)
+                    }
+                    it
                 }
             }
         }

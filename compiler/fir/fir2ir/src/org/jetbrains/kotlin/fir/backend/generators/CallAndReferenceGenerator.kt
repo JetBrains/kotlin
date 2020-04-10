@@ -305,31 +305,11 @@ internal class CallAndReferenceGenerator(
                             val function =
                                 ((call.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
                             val valueParameters = function?.valueParameters
+
                             if (valueParameters != null) {
-                                if (needArgumentReordering(argumentMapping.values, valueParameters)) {
-                                    return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
-                                        for ((argument, parameter) in argumentMapping) {
-                                            val parameterIndex = valueParameters.indexOf(parameter)
-                                            val irArgument = visitor.convertToIrExpression(argument)
-                                            if (irArgument.hasNoSideEffects()) {
-                                                putValueArgument(parameterIndex, irArgument)
-                                            } else {
-                                                val tempVar = declarationStorage.declareTemporaryVariable(irArgument, parameter.name.asString()).apply {
-                                                    parent = conversionScope.parentFromStack()
-                                                }
-                                                this.statements.add(tempVar)
-                                                putValueArgument(parameterIndex, IrGetValueImpl(startOffset, endOffset, tempVar.symbol, null))
-                                            }
-                                        }
-                                        this.statements.add(this@applyCallArguments)
-                                    }
-                                } else {
-                                    for ((argument, parameter) in argumentMapping) {
-                                        val argumentExpression = visitor.convertToIrExpression(argument)
-                                        putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
-                                    }
-                                    return this
-                                }
+                                return applyArgumentsWithReordering(
+                                    argumentMapping, valueParameters, visitor, conversionScope, declarationStorage
+                                )
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
@@ -358,17 +338,6 @@ internal class CallAndReferenceGenerator(
         }
     }
 
-    private fun needArgumentReordering(parametersInActualOrder: Collection<FirValueParameter>, valueParameters: List<FirValueParameter>): Boolean {
-        var lastValueParameterIndex = -1
-        for (parameter in parametersInActualOrder) {
-            val index = valueParameters.indexOf(parameter)
-            if (index < lastValueParameterIndex) {
-                return true
-            }
-            lastValueParameterIndex = index
-        }
-        return false
-    }
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
@@ -498,4 +467,52 @@ internal class CallAndReferenceGenerator(
             "Unresolved reference: ${calleeReference.render()}"
         )
     }
+}
+
+internal fun IrCallWithIndexedArgumentsBase.applyArgumentsWithReordering(
+    argumentMapping: Map<FirExpression, FirValueParameter>,
+    valueParameters: List<FirValueParameter>,
+    visitor: Fir2IrVisitor,
+    conversionScope: Fir2IrConversionScope,
+    declarationStorage: Fir2IrDeclarationStorage
+): IrExpressionBase {
+    if (needArgumentReordering(argumentMapping.values, valueParameters)) {
+        return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
+            for ((argument, parameter) in argumentMapping) {
+                val parameterIndex = valueParameters.indexOf(parameter)
+                val irArgument = visitor.convertToIrExpression(argument)
+                if (irArgument.hasNoSideEffects()) {
+                    putValueArgument(parameterIndex, irArgument)
+                } else {
+                    val tempVar = declarationStorage.declareTemporaryVariable(irArgument, parameter.name.asString()).apply {
+                        parent = conversionScope.parentFromStack()
+                    }
+                    this.statements.add(tempVar)
+                    putValueArgument(parameterIndex, IrGetValueImpl(startOffset, endOffset, tempVar.symbol, null))
+                }
+            }
+            this.statements.add(this@applyArgumentsWithReordering)
+        }
+    } else {
+        for ((argument, parameter) in argumentMapping) {
+            val argumentExpression = visitor.convertToIrExpression(argument)
+            putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
+        }
+        return this
+    }
+}
+
+private fun needArgumentReordering(
+    parametersInActualOrder: Collection<FirValueParameter>,
+    valueParameters: List<FirValueParameter>
+): Boolean {
+    var lastValueParameterIndex = -1
+    for (parameter in parametersInActualOrder) {
+        val index = valueParameters.indexOf(parameter)
+        if (index < lastValueParameterIndex) {
+            return true
+        }
+        lastValueParameterIndex = index
+    }
+    return false
 }
