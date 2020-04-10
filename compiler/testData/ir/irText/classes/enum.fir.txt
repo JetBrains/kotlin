@@ -790,9 +790,14 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum6.TEST
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum6.TEST [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.TestEnum6'
-              x: CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-              y: CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            BLOCK type=<root>.TestEnum6 origin=ARGUMENTS_REORDERING_FOR_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.TestEnum6'
+                x: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.TestEnum6.TEST.<init>' type=kotlin.Int origin=null
+                y: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.TestEnum6.TEST.<init>' type=kotlin.Int origin=null
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:private superTypes:[<root>.TestEnum6]'
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum6) returnType:kotlin.Int [fake_override]
