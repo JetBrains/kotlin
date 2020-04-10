@@ -8,7 +8,9 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.ClassContext
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -247,56 +249,88 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(
     }
 }
 
+internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
+    expressionCodegen: ExpressionCodegen, codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
+    iv: InstructionAdapter?,
+    genericIndex: Int? = null,
+    genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+): Boolean {
+    return stackValueSerializerInstance(
+        expressionCodegen,codegen.typeMapper,
+        module,
+        kType,
+        maybeSerializer,
+        iv,
+        genericIndex,
+        false,
+        genericSerializerFieldGetter
+    )
+}
+
 // returns false is cannot not use serializer
 // use iv == null to check only (do not emit serializer onto stack)
-internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCodegen: ExpressionCodegen, classCodegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
-                                                                  iv: InstructionAdapter?,
-                                                                  genericIndex: Int? = null,
-                                                                  genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
+    expressionCodegen: ExpressionCodegen?, typeMapper: KotlinTypeMapper, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
+    iv: InstructionAdapter?,
+    genericIndex: Int? = null,
+    insertExceptionOnNoSerializer: Boolean = false,
+    genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null,
 ): Boolean {
     if (maybeSerializer == null && genericIndex != null) {
         // get field from serializer object
         iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex, kType) }
         return true
     }
-    val serializer = maybeSerializer ?: return false
+    val serializer = maybeSerializer ?: run {
+        if (insertExceptionOnNoSerializer) iv?.apply {
+            aconst(kType.getJetTypeFqName(false))
+            invokestatic(
+                "kotlinx/serialization/SerializersKt",
+                "noCompiledSerializer",
+                "(Ljava/lang/String;)Lkotlinx/serialization/KSerializer;",
+                false
+            )
+        }
+        return false
+    }
     if (serializer.kind == ClassKind.OBJECT) {
         // singleton serializer -- just get it
         if (iv != null)
-            StackValue.singleton(serializer, classCodegen.typeMapper).put(kSerializerType, iv)
+            StackValue.singleton(serializer, typeMapper).put(kSerializerType, iv)
         return true
     }
     // serializer is not singleton object and shall be instantiated
     val argSerializers = kType.arguments.map { projection ->
-        // bail out from stackValueSerializerInstance if any type argument is not serializable
+        // check if any type argument is not serializable
         val argType = projection.type
-        val argSerializer = if (argType.isTypeParameter()) null else {
-            findTypeSerializerOrContext(module, argType, sourceElement = classCodegen.descriptor.findPsi())
-                ?: return false
-        }
+        val argSerializer =
+            if (argType.isTypeParameter()) null else findTypeSerializerOrContextUnchecked(module, argType)
         // check if it can be properly serialized with its args recursively
         if (!stackValueSerializerInstance(
                 expressionCodegen,
-                classCodegen,
+                typeMapper,
                 module,
                 argType,
                 argSerializer,
                 null,
                 argType.genericIndex,
+                insertExceptionOnNoSerializer = false,
                 genericSerializerFieldGetter
             )
-        )
-            return false
+        ) {
+            // bail out only if we do not need to insert exception
+            if (!insertExceptionOnNoSerializer) return false
+        }
         Pair(argType, argSerializer)
     }
     // new serializer if needed
     iv?.apply {
-        val serializerType = classCodegen.typeMapper.mapClass(serializer)
+        val serializerType = typeMapper.mapClass(serializer)
         val classDescriptor = kType.toClassDescriptor!!
         if (serializer.classId == enumSerializerId && !classDescriptor.useGeneratedEnumSerializer) {
             // runtime contains enum serializer factory functions
             val javaEnumArray = Type.getType("[Ljava/lang/Enum;")
-            val enumJavaType = classCodegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT)
+            val enumJavaType = typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT)
             val serialName = classDescriptor.serialName()
 
             if (classDescriptor.isEnumWithSerialInfoAnnotation()) {
@@ -323,7 +357,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
                     } else {
                         fillArray(annotationType, annotations) { _, annotation ->
                             val (annotationClass, args, consParams) = annotation
-                            expressionCodegen.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
+                            expressionCodegen?.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
                         }
                     }
                 }
@@ -361,14 +395,15 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
             assert(
                 stackValueSerializerInstance(
                     expressionCodegen,
-                    classCodegen,
+                    typeMapper,
                     module,
                     argType,
                     argSerializer,
                     this,
                     argType.genericIndex,
+                    insertExceptionOnNoSerializer,
                     genericSerializerFieldGetter
-                )
+                ) || insertExceptionOnNoSerializer
             )
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
@@ -381,16 +416,16 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
                 // support legacy serializer instantiation by constructor for old runtimes
                 aconst(serialName)
                 signature.append("Ljava/lang/String;")
-                val enumJavaType = classCodegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT)
+                val enumJavaType = typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT)
                 val javaEnumArray = Type.getType("[Ljava/lang/Enum;")
-                invokestatic(enumJavaType.internalName, "values","()[${enumJavaType.descriptor}", false)
+                invokestatic(enumJavaType.internalName, "values", "()[${enumJavaType.descriptor}", false)
                 checkcast(javaEnumArray)
                 signature.append(javaEnumArray.descriptor)
             }
             contextSerializerId, polymorphicSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
                 // GENERIC_ARGUMENT forces boxing in order to obtain KClass
-                aconst(classCodegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
+                aconst(typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
                 AsmUtil.wrapJavaClassIntoKClass(this)
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                 if (serializer.classId == contextSerializerId && serializer.constructors.any { it.valueParameters.size == 3 }) {
@@ -410,7 +445,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
             }
             referenceArraySerializerId -> {
                 // a special way to instantiate reference array serializer -- need an element KClass reference
-                aconst(classCodegen.typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
+                aconst(typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
                 AsmUtil.wrapJavaClassIntoKClass(this)
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                 // Reference array serializer still needs serializer for its argument type
@@ -419,13 +454,13 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
             sealedSerializerId -> {
                 aconst(serialName)
                 signature.append("Ljava/lang/String;")
-                aconst(classCodegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
+                aconst(typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
                 AsmUtil.wrapJavaClassIntoKClass(this)
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                 val (subClasses, subSerializers) = allSealedSerializableSubclassesFor(kType.toClassDescriptor!!, module)
                 // KClasses vararg
                 fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { _, type ->
-                    aconst(classCodegen.typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
+                    aconst(typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                 }
                 signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
@@ -435,7 +470,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
                     assert(
                         stackValueSerializerInstance(
                             expressionCodegen,
-                            classCodegen,
+                            typeMapper,
                             module,
                             argType,
                             argSerializer,
@@ -446,11 +481,12 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
                             assert(
                                 stackValueSerializerInstance(
                                     expressionCodegen,
-                                    classCodegen,
+                                    typeMapper,
                                     module,
                                     (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound,
                                     module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
-                                    this
+                                    this,
+                                    insertExceptionOnNoSerializer = insertExceptionOnNoSerializer
                                 )
                             )
                         }
@@ -462,7 +498,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
             objectSerializerId -> {
                 aconst(serialName)
                 signature.append("Ljava/lang/String;")
-                StackValue.singleton(kType.toClassDescriptor!!, classCodegen.typeMapper).put(Type.getType("Ljava/lang/Object;"), iv)
+                StackValue.singleton(kType.toClassDescriptor!!, typeMapper).put(Type.getType("Ljava/lang/Object;"), iv)
                 signature.append("Ljava/lang/Object;")
             }
             // all serializers get arguments with serializers of their generic types
