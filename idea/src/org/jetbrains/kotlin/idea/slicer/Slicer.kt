@@ -68,29 +68,18 @@ abstract class Slicer(
         passToProcessor(behaviour, forcedExpressionMode = true)
     }
 
-    protected fun processFunctionLiteralCalls(
-        functionLiteral: KtFunctionLiteral,
-        sliceTransformer: KotlinSliceUsageTransformer,
-    ) {
-        (functionLiteral.parent as KtLambdaExpression).passToProcessorAsValue(LambdaCallsBehaviour(sliceTransformer, behaviour))
-    }
-
-    protected fun processAnonymousFunctionCalls(
-        function: KtNamedFunction,
-        sliceTransformer: KotlinSliceUsageTransformer,
-    ) {
-        require(function.name == null)
-        function.passToProcessorAsValue(LambdaCallsBehaviour(sliceTransformer, behaviour))
-    }
-
     protected fun processCalls(
         callable: KtCallableDeclaration,
-        scope: SearchScope,
         includeOverriders: Boolean,
-        usageProcessor: (UsageInfo) -> Unit
+        sliceProducer: SliceProducer
     ) {
         if (callable is KtFunctionLiteral) {
-            //TODO
+            (callable.parent as KtLambdaExpression).passToProcessorAsValue(LambdaCallsBehaviour(sliceProducer, behaviour))
+            return
+        }
+
+        if (callable is KtFunction && callable.name == null) {
+            callable.passToProcessorAsValue(LambdaCallsBehaviour(sliceProducer, behaviour))
             return
         }
 
@@ -99,7 +88,7 @@ abstract class Slicer(
                 KotlinFunctionFindUsagesOptions(project).apply {
                     isSearchForTextOccurrences = false
                     isSkipImportStatements = true
-                    searchScope = scope
+                    searchScope = analysisScope
                 }
             }
 
@@ -107,7 +96,7 @@ abstract class Slicer(
                 KotlinPropertyFindUsagesOptions(project).apply {
                     isSearchForTextOccurrences = false
                     isSkipImportStatements = true
-                    searchScope = scope
+                    searchScope = analysisScope
                 }
             }
 
@@ -131,6 +120,11 @@ abstract class Slicer(
             val declaration = superDescriptor.originalSource.getPsi() ?: continue
             when (declaration) {
                 is KtDeclaration -> {
+                    val usageProcessor: (UsageInfo) -> Unit = processor@ { usageInfo ->
+                        val element = usageInfo.element ?: return@processor
+                        val sliceUsage = KotlinSliceUsage(element, parentUsage, behaviour, false)
+                        sliceProducer.produceAndProcess(sliceUsage, behaviour, parentUsage, processor)
+                    }
                     if (includeOverriders) {
                         declaration.processAllUsages(options, usageProcessor)
                     } else {
@@ -139,12 +133,13 @@ abstract class Slicer(
                 }
 
                 is PsiMethod -> {
-                    // todo: work around the bug in JavaSliceProvider.transform()
-                    processor.process(JavaSliceUsage.createRootUsage(declaration, parentUsage.params))
+                    val sliceUsage = JavaSliceUsage.createRootUsage(declaration, parentUsage.params)
+                    sliceProducer.produceAndProcess(sliceUsage, behaviour, parentUsage, processor)
                 }
 
                 else -> {
-                    declaration.passToProcessor()
+                    val sliceUsage = KotlinSliceUsage(declaration, parentUsage, behaviour, false)
+                    sliceProducer.produceAndProcess(sliceUsage, behaviour, parentUsage, processor)
                 }
             }
         }
@@ -189,12 +184,14 @@ abstract class Slicer(
 
     protected fun canProcessParameter(parameter: KtParameter) = !parameter.isVarArg
 
-    protected val DeclarationDescriptorWithSource.originalSource: SourceElement
-        get() {
-            var descriptor = this
-            while (descriptor.original != descriptor) {
-                descriptor = descriptor.original
+    protected companion object {
+        val DeclarationDescriptorWithSource.originalSource: SourceElement
+            get() {
+                var descriptor = this
+                while (descriptor.original != descriptor) {
+                    descriptor = descriptor.original
+                }
+                return descriptor.source
             }
-            return descriptor.source
-        }
+    }
 }

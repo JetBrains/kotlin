@@ -11,17 +11,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-
-interface KotlinSliceUsageTransformer {
-    fun transform(usage: KotlinSliceUsage): SliceUsage?
-
-    override fun equals(other: Any?): Boolean
-    override fun hashCode(): Int
-}
 
 data class LambdaCallsBehaviour(
-    val usageTransformer: KotlinSliceUsageTransformer,
+    val sliceProducer: SliceProducer,
     override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
 ) : KotlinSliceUsage.SpecialBehaviour {
 
@@ -32,7 +24,7 @@ data class LambdaCallsBehaviour(
                     val sliceElement = sliceUsage.element ?: return true
                     val resolvedCall = (sliceElement as? KtElement)?.resolveToCall()
                     if (resolvedCall?.call?.callType == Call.CallType.INVOKE) {
-                        return usageTransformer.transform(sliceUsage)?.let { uniqueProcessor.process(it) } ?: true
+                        return sliceProducer.produceAndProcess(sliceUsage, originalBehaviour, parent, uniqueProcessor)
                     }
                 }
                 return uniqueProcessor.process(sliceUsage)

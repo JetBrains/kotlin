@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.psi.PsiCall
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchReques
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -129,25 +129,7 @@ class InflowSlicer(
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         if (function is KtFunction) {
-            val sliceTransformer = ArgumentExpressionTransformer(parameterDescriptor)
-
-            when {
-                function is KtFunctionLiteral -> {
-                    processFunctionLiteralCalls(function, sliceTransformer)
-                }
-
-                function is KtNamedFunction && function.name == null -> {
-                    processAnonymousFunctionCalls(function, sliceTransformer)
-                }
-
-                else -> {
-                    processCalls(function, analysisScope, includeOverriders) { usageInfo ->
-                        usageInfo.element?.let {
-                            sliceTransformer.extractArgumentExpression(it)?.passToProcessorAsValue()
-                        }
-                    }
-                }
-            }
+            processCalls(function, includeOverriders, ArgumentSliceProducer(parameterDescriptor))
         }
 
         if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
@@ -156,33 +138,7 @@ class InflowSlicer(
     }
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, includeOverriders: Boolean) {
-        fun processReceiver(refElement: PsiElement) {
-            when (refElement) {
-                is KtExpression -> {
-                    val resolvedCall = refElement.resolveToCall() ?: return
-                    when (val receiver = resolvedCall.extensionReceiver) {
-                        is ExpressionReceiver -> {
-                            receiver.expression.passToProcessorAsValue()
-                        }
-
-                        is ImplicitReceiver -> {
-                            val callableDeclaration = (receiver.declarationDescriptor as? CallableDescriptor)?.originalSource?.getPsi()
-                            (callableDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
-                        }
-                    }
-                }
-
-                else -> {
-                    (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0)?.passToProcessorAsValue()
-                }
-            }
-        }
-
-        processCalls(declaration, analysisScope, includeOverriders) { usageInfo ->
-            usageInfo.element?.let {
-                processReceiver(it)
-            }
-        }
+        processCalls(declaration, includeOverriders, ReceiverSliceProducer)
     }
 
     private fun processExpression(expression: KtExpression) {
@@ -234,8 +190,8 @@ class InflowSlicer(
                             val anonymousFunction = accessedDescriptor.containingDeclaration as? AnonymousFunctionDescriptor
                             if (anonymousFunction != null && accessedDescriptor.name.asString() == "it") {
                                 val functionLiteral = anonymousFunction.source.getPsi() as KtFunctionLiteral
-                                val sliceTransformer = ArgumentExpressionTransformer(anonymousFunction.valueParameters.first())
-                                processFunctionLiteralCalls(functionLiteral, sliceTransformer)
+                                val sliceTransformer = ArgumentSliceProducer(anonymousFunction.valueParameters.first())
+                                processCalls(functionLiteral, false, sliceTransformer)
                             }
                         } else {
                             accessedDeclaration.passDeclarationToProcessorWithOverriders()
@@ -366,23 +322,27 @@ class InflowSlicer(
     }
 
     @Suppress("DataClassPrivateConstructor") // we have modifier data to get equals&hashCode only
-    private data class ArgumentExpressionTransformer private constructor(
+    private data class ArgumentSliceProducer private constructor(
         private val parameterIndex: Int,
         private val isExtension: Boolean
-    ) : KotlinSliceUsageTransformer
+    ) : SliceProducer
     {
         constructor(parameterDescriptor: ValueParameterDescriptor) : this(
             parameterDescriptor.index,
             parameterDescriptor.containingDeclaration.isExtension
         )
 
-        override fun transform(usage: KotlinSliceUsage): SliceUsage? {
-            val element = usage.element ?: return null
-            val argumentExpression = extractArgumentExpression(element) ?: return null
-            return KotlinSliceUsage(argumentExpression, usage.parent, usage.behaviour?.originalBehaviour, forcedExpressionMode = true)
+        override fun produce(
+            usage: UsageInfo,
+            behaviour: KotlinSliceUsage.SpecialBehaviour?,
+            parent: SliceUsage
+        ): Collection<SliceUsage>? {
+            val element = usage.element ?: return emptyList()
+            val argumentExpression = extractArgumentExpression(element) ?: return emptyList()
+            return listOf(KotlinSliceUsage(argumentExpression, parent, behaviour, forcedExpressionMode = true))
         }
 
-        fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
+        private fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
             val refParent = refElement.parent
             return when {
                 refElement is KtExpression -> {
@@ -404,8 +364,47 @@ class InflowSlicer(
 
                 refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameterIndex + (if (isExtension) 1 else 0))
 
+                refElement is PsiMethod -> refElement.parameterList.parameters.getOrNull(parameterIndex + (if (isExtension) 1 else 0))
+
                 else -> null
             }
         }
+    }
+
+    private object ReceiverSliceProducer : SliceProducer {
+        override fun produce(
+            usage: UsageInfo,
+            behaviour: KotlinSliceUsage.SpecialBehaviour?,
+            parent: SliceUsage
+        ): Collection<SliceUsage>? {
+            val refElement = usage.element ?: return emptyList()
+            when (refElement) {
+                is KtExpression -> {
+                    val resolvedCall = refElement.resolveToCall() ?: return emptyList()
+                    when (val receiver = resolvedCall.extensionReceiver) {
+                        is ExpressionReceiver -> {
+                            return listOf(KotlinSliceUsage(receiver.expression, parent, behaviour, true))
+                        }
+
+                        is ImplicitReceiver -> {
+                            val callableDeclaration = (receiver.declarationDescriptor as? CallableDescriptor)?.originalSource?.getPsi()
+                            val receiverTypeReference = (callableDeclaration as? KtCallableDeclaration)?.receiverTypeReference
+                                ?: return emptyList()
+                            return listOf(KotlinSliceUsage(receiverTypeReference, parent, behaviour, false))
+                        }
+
+                        else -> return emptyList()
+                    }
+                }
+
+                else -> {
+                    val argument = (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0) ?: return emptyList()
+                    return listOf(KotlinSliceUsage(argument, parent, behaviour, true))
+                }
+            }
+        }
+
+        override fun equals(other: Any?) = other === this
+        override fun hashCode() = 0
     }
 }
