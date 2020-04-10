@@ -174,7 +174,8 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
       @Override
       public void afterVfsChange() {
         superApplier.afterVfsChange();
-        if (myManager.getRegisteredIndexes().isInitialized()) ensureUpToDateAsync();
+        RegisteredIndexes registeredIndexes = myManager.getRegisteredIndexes();
+        if (registeredIndexes != null && registeredIndexes.isInitialized()) ensureUpToDateAsync();
       }
     };
   }
