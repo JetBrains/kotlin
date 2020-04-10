@@ -36,7 +36,7 @@ internal object MapTypeArguments : ResolutionStage() {
 
         val owner = candidate.symbol.fir as FirTypeParameterRefsOwner
 
-        if (typeArguments.size == owner.typeParameters.size) {
+        if (typeArguments.size == owner.typeParameters.size || callInfo.callKind == CallKind.DelegatingConstructorCall) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
         } else {
             sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)

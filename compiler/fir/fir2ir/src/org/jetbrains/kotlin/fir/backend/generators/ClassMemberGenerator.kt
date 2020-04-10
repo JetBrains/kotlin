@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -247,6 +248,7 @@ internal class ClassMemberGenerator(
                     startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
                 )
             }
+        val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             if (constructorSymbol.fir.isFromEnumClass || constructorSymbol.fir.returnTypeRef.isEnum) {
@@ -268,6 +270,9 @@ internal class ClassMemberGenerator(
                     irConstructorSymbol
                 )
             }.let {
+                if (firDispatchReceiver !is FirNoReceiverExpression) {
+                    it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
+                }
                 with(callGenerator) {
                     it.applyCallArguments(this@toIrDelegatingConstructorCall)
                 }

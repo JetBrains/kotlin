@@ -28,10 +28,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 private operator fun <T> Pair<T, *>?.component1() = this?.first
 private operator fun <T> Pair<*, T>?.component2() = this?.second
 
-internal fun FirScope.processFunctionsAndConstructorsByName(
+internal fun FirScope.processConstructorsByName(
     name: Name,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
+    noSyntheticConstructors: Boolean,
     noInnerConstructors: Boolean = false,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
@@ -40,7 +41,6 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     if (classifierInfo != null) {
         val (matchedClassifierSymbol, substitutor) = classifierInfo
         val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*>
-
 
         processConstructors(
             matchedClassSymbol,
@@ -51,12 +51,31 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
             noInnerConstructors
         )
 
+        if (noSyntheticConstructors) {
+            return
+        }
+
         processSyntheticConstructors(
             matchedClassSymbol,
             processor,
             bodyResolveComponents
         )
     }
+}
+
+internal fun FirScope.processFunctionsAndConstructorsByName(
+    name: Name,
+    session: FirSession,
+    bodyResolveComponents: BodyResolveComponents,
+    noInnerConstructors: Boolean = false,
+    processor: (FirCallableSymbol<*>) -> Unit
+) {
+    processConstructorsByName(
+        name, session, bodyResolveComponents,
+        noSyntheticConstructors = false,
+        noInnerConstructors = noInnerConstructors,
+        processor = processor
+    )
 
     processFunctionsByName(name) {
         processor(it)

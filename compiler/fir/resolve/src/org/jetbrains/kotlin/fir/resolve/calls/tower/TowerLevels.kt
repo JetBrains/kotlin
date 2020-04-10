@@ -37,8 +37,8 @@ interface TowerScopeLevel {
 
     sealed class Token<out T : AbstractFirBasedSymbol<*>> {
         object Properties : Token<FirVariableSymbol<*>>()
-
         object Functions : Token<FirFunctionSymbol<*>>()
+        object Constructors : Token<FirConstructorSymbol>()
         object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
@@ -82,6 +82,7 @@ class MemberScopeTowerLevel(
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
+        forInnerConstructors: Boolean = false,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessorAction {
         var empty = true
@@ -92,7 +93,11 @@ class MemberScopeTowerLevel(
                 (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
             ) {
                 val fir = candidate.fir
-                if ((fir as? FirCallableMemberDeclaration<*>)?.isStatic == true || (fir as? FirConstructor)?.isInner == false) {
+                if (forInnerConstructors) {
+                    if (candidate !is FirConstructorSymbol || !candidate.fir.isInner) {
+                        return@processScopeMembers
+                    }
+                } else if ((fir as? FirCallableMemberDeclaration<*>)?.isStatic == true || (fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
                 }
                 val dispatchReceiverValue = NotNullableReceiverValue(dispatchReceiver)
@@ -114,10 +119,12 @@ class MemberScopeTowerLevel(
             }
         }
 
-        val withSynthetic = FirSyntheticPropertiesScope(session, scope)
-        withSynthetic.processScopeMembers { symbol ->
-            empty = false
-            output.consumeCandidate(symbol, NotNullableReceiverValue(dispatchReceiver), extensionReceiver as? ImplicitReceiverValue<*>)
+        if (!forInnerConstructors) {
+            val withSynthetic = FirSyntheticPropertiesScope(session, scope)
+            withSynthetic.processScopeMembers { symbol ->
+                empty = false
+                output.consumeCandidate(symbol, NotNullableReceiverValue(dispatchReceiver), extensionReceiver as? ImplicitReceiverValue<*>)
+            }
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
     }
@@ -156,6 +163,17 @@ class MemberScopeTowerLevel(
                     @Suppress("UNCHECKED_CAST")
                     consumer(it as T)
                 }
+            }
+            TowerScopeLevel.Token.Constructors -> processMembers(processor, forInnerConstructors = true) { consumer ->
+                this.processConstructorsByName(
+                    name, session, bodyResolveComponents,
+                    noSyntheticConstructors = true,
+                    noInnerConstructors = false,
+                    processor = {
+                        @Suppress("UNCHECKED_CAST")
+                        consumer(it as T)
+                    }
+                )
             }
         }
     }
@@ -260,6 +278,15 @@ class ScopeTowerLevel(
                     it as T, dispatchReceiverValue = null,
                     implicitExtensionReceiverValue = null
                 )
+            }
+            TowerScopeLevel.Token.Constructors -> scope.processDeclaredConstructors { candidate ->
+                // NB: here we cannot resolve inner constructors, because they should have dispatch receiver
+                if (!candidate.fir.isInner) {
+                    processor.consumeCandidate(
+                        candidate as T, dispatchReceiverValue(scope, candidate),
+                        implicitExtensionReceiverValue = null
+                    )
+                }
             }
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT

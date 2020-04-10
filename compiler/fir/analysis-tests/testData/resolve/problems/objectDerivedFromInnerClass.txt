@@ -1,0 +1,23 @@
+FILE: objectDerivedFromInnerClass.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|anonymous| = object : R|Outer.Inner| {
+            private constructor(): R|anonymous| {
+                super<R|Outer.Inner|>()
+            }
+
+        }
+
+    }

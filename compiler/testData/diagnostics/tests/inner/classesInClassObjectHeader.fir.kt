@@ -1,6 +1,6 @@
 class Test {
     @`InnerAnnotation` @InnerAnnotation
-    companion object : StaticClass(), InnerClass() {
+    companion object : StaticClass(), <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
 
     }
 

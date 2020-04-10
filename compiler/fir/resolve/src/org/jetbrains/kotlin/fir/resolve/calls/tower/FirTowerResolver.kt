@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 class FirTowerResolver(
     private val components: BodyResolveComponents,
@@ -25,6 +27,20 @@ class FirTowerResolver(
 
         val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager, candidateFactoriesAndCollectors)
         towerResolverSession.runResolution(info)
+
+        manager.runTasks()
+        return collector
+    }
+
+    fun runResolverForDelegatingConstructor(
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+        info: CallInfo,
+        constructorClassSymbol: FirClassSymbol<*>,
+    ): CandidateCollector {
+        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
+
+        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager, candidateFactoriesAndCollectors)
+        towerResolverSession.runResolutionForDelegatingConstructor(info, constructorClassSymbol)
 
         manager.runTasks()
         return collector

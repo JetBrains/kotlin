@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
@@ -25,6 +26,7 @@ internal class FirDelegatedConstructorCallImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override var argumentList: FirArgumentList,
     override var constructedTypeRef: FirTypeRef,
+    override var dispatchReceiver: FirExpression,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
     override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, null, constructedTypeRef)
@@ -52,6 +54,11 @@ internal class FirDelegatedConstructorCallImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
+        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
         return this
     }
 

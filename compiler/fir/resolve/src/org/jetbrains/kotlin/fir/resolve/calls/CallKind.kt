@@ -40,6 +40,7 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckVisibility,
         MapArguments,
         CheckExplicitReceiverConsistency,
+        MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,

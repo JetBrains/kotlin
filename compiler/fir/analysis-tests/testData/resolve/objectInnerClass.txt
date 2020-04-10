@@ -6,7 +6,7 @@ FILE: objectInnerClass.kt
 
         local final inner class Child : R|<anonymous>.Base| {
             public[local] constructor(property: R|B|): R|<anonymous>.Child| {
-                super<R|<anonymous>.Base|>(R|<local>/property|)
+                this@R|/anonymous|.super<R|<anonymous>.Base|>(R|<local>/property|)
             }
 
             public[local] final fun R|<anonymous>.Base|.zoo(): R|kotlin/Unit| {
@@ -69,7 +69,7 @@ FILE: objectInnerClass.kt
 
         public final val x: R|anonymous| = object : R|Case2.Base| {
             private constructor(): R|anonymous| {
-                super<R|Case2.Base|>(R|/B.B|())
+                this@R|/Case2|.super<R|Case2.Base|>(R|/B.B|())
             }
 
             public[local] final fun R|Case2.Base|.zoo(): R|kotlin/Unit| {
@@ -131,7 +131,7 @@ FILE: objectInnerClass.kt
 
             local final inner class Child : R|Case3.<anonymous>.Base| {
                 public[local] constructor(property: R|B|): R|Case3.<anonymous>.Child| {
-                    super<R|Case3.<anonymous>.Base|>(R|<local>/property|)
+                    this@R|/anonymous|.super<R|Case3.<anonymous>.Base|>(R|<local>/property|)
                 }
 
                 public[local] final fun R|Case3.<anonymous>.Base|.zoo(): R|kotlin/Unit| {

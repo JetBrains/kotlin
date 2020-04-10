@@ -644,7 +644,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 context.implicitReceiverStack.add(name, lastDispatchReceiver)
             }
             val typeArguments: List<FirTypeProjection>
-            val symbol: FirClassSymbol<*> = when (val reference = delegatedConstructorCall.calleeReference) {
+            val reference = delegatedConstructorCall.calleeReference
+            val symbol: FirClassSymbol<*> = when (reference) {
                 is FirThisReference -> {
                     typeArguments = emptyList()
                     if (reference.boundSymbol == null) {
@@ -674,7 +675,11 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
             val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, symbol, typeArguments)
                 ?: return delegatedConstructorCall.compose()
-
+            if (reference is FirThisReference && reference.boundSymbol == null) {
+                resolvedCall.dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
+                    reference.replaceBoundSymbol(it)
+                }
+            }
 
             val completionResult = callCompleter.completeCall(resolvedCall, noExpectedType)
             result = completionResult.result
