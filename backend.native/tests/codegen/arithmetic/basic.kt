@@ -88,3 +88,9 @@ fun compareIntToFloat() {
     assertEquals(1, 0.compareTo(-0.0f))
     assertEquals(0, 0.compareTo(+0.0f))
 }
+
+@Test
+fun testKt37412() {
+    val two = 2.0
+    assertEquals(2, two.toInt())
+}
