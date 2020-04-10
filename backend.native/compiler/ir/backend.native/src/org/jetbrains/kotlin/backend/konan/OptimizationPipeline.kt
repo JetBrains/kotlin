@@ -5,6 +5,8 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.makeVisibilityHiddenLikeLlvmInternalizePass
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.ZephyrConfigurables
@@ -175,6 +177,12 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
             // Since we are in a "closed world" internalization can be safely used
             // to reduce size of a bitcode with global dce.
             LLVMAddInternalizePass(modulePasses, 0)
+        } else if (context.config.produce == CompilerOutputKind.STATIC_CACHE) {
+            // Hidden visibility makes symbols internal when linking the binary.
+            // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
+            // similar to DCE enabled by internalize but later:
+            makeVisibilityHiddenLikeLlvmInternalizePass(llvmModule)
+            // Important for binary size, workarounds references to undefined symbols from interop libraries.
         }
         LLVMAddGlobalDCEPass(modulePasses)
 

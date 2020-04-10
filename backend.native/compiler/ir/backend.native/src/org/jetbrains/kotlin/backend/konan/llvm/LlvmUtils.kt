@@ -419,6 +419,18 @@ internal fun node(vararg it:LLVMValueRef) = LLVMMDNodeInContext(llvmContext, it.
 
 internal fun LLVMValueRef.setUnaligned() = apply { LLVMSetAlignment(this, 1) }
 
+internal fun getOperands(value: LLVMValueRef) =
+        (0 until LLVMGetNumOperands(value)).map { LLVMGetOperand(value, it)!! }
+
+internal fun getGlobalAliases(module: LLVMModuleRef) =
+        generateSequence(LLVMGetFirstGlobalAlias(module), { LLVMGetNextGlobalAlias(it) })
+
+internal fun getFunctions(module: LLVMModuleRef) =
+        generateSequence(LLVMGetFirstFunction(module), { LLVMGetNextFunction(it) })
+
+internal fun getGlobals(module: LLVMModuleRef) =
+        generateSequence(LLVMGetFirstGlobal(module), { LLVMGetNextGlobal(it) })
+
 fun LLVMTypeRef.isFloatingPoint(): Boolean = when (llvm.LLVMGetTypeKind(this)) {
     LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind -> true
     else -> false
