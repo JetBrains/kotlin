@@ -59,7 +59,7 @@ object PrefixMatchingUtil {
 
       fun build(prefix: String, lookupString: String): PrefixMatchingScores {
         if (prefix.isEmpty()) return EMPTY_PREFIX_MATCHING_SCORE
-        val words = NameUtil.nameToWords(lookupString)
+        val words = NameUtil.nameToWords(lookupString).filter { it.all { it.isLetterOrDigit() } }
         startMatchingCount = lookupString.commonPrefixWith(prefix, true).length
         exact = lookupString == prefix
         wordsCount = words.size
@@ -140,25 +140,6 @@ object PrefixMatchingUtil {
         if (word == wordsCount - 1) lastWord++
       }
     }
-  }
-
-  /**
-   * Matching prefixes for *isEmptyString* lookup element as example:
-   *  - `isempt` -> [START]
-   *  - `isEmpt` -> [START]
-   *  - `ies` -> [FIRST_CHARS]
-   *  - `iES` -> [FIRST_CHARS]
-   *  - `isEmpSt` -> [SYMBOLS_WITH_CASE]
-   *  - `EmpSt` -> [SYMBOLS_WITH_CASE]
-   *  - `isempst` -> [SYMBOLS]
-   *  - `Emstr` -> [SYMBOLS]
-   */
-  enum class PrefixMatchingType {
-    START,
-    FIRST_CHARS,
-    SYMBOLS_WITH_CASE,
-    SYMBOLS,
-    UNKNOWN
   }
 
   private fun<T> MutableMap<String, T>.addFeature(name: String, value: T, defaultValue: T) {
