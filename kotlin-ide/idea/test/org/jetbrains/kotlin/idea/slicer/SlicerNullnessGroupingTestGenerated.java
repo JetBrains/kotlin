@@ -103,6 +103,16 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
         runTest("idea/testData/slicer/inflow/doubleLambdaResult.kt");
     }
 
+    @TestMetadata("extensionLambdaImplicitParameter.kt")
+    public void testExtensionLambdaImplicitParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/extensionLambdaImplicitParameter.kt");
+    }
+
+    @TestMetadata("extensionLambdaParameter.kt")
+    public void testExtensionLambdaParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/extensionLambdaParameter.kt");
+    }
+
     @TestMetadata("funParamerer.kt")
     public void testFunParamerer() throws Exception {
         runTest("idea/testData/slicer/inflow/funParamerer.kt");
@@ -156,6 +166,16 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
     @TestMetadata("ifExpression.kt")
     public void testIfExpression() throws Exception {
         runTest("idea/testData/slicer/inflow/ifExpression.kt");
+    }
+
+    @TestMetadata("lambdaImplicitParameter.kt")
+    public void testLambdaImplicitParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/lambdaImplicitParameter.kt");
+    }
+
+    @TestMetadata("lambdaParameter.kt")
+    public void testLambdaParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/lambdaParameter.kt");
     }
 
     @TestMetadata("lambdaResult.kt")

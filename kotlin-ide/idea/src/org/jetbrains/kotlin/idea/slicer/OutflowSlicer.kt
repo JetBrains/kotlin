@@ -232,8 +232,13 @@ class OutflowSlicer(
             }
 
             Call.CallType.INVOKE -> {
-                if (receiverValue == resolvedCall.dispatchReceiver && behaviour is LambdaResultOutflowBehaviour) {
-                    instruction.element.passToProcessor(behaviour.originalBehaviour)
+                if (receiverValue == resolvedCall.dispatchReceiver) {
+                    if (behaviour is LambdaResultOutflowBehaviour) {
+                        instruction.element.passToProcessor(behaviour.originalBehaviour)
+                    }
+                    else if (behaviour is LambdaCallsBehaviour) {
+                        instruction.element.passToProcessor(behaviour)
+                    }
                 }
             }
 

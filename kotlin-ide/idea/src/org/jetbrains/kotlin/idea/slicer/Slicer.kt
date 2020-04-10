@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.JavaSliceUsage
+import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -68,12 +69,24 @@ abstract class Slicer(
         passToProcessor(behaviour, forcedExpressionMode = true)
     }
 
+    protected fun processFunctionLiteralCalls(
+        callable: KtFunctionLiteral,
+        sliceTransformer: KotlinSliceUsageTransformer,
+    ) {
+        (callable.parent as KtLambdaExpression).passToProcessorAsValue(LambdaCallsBehaviour(sliceTransformer, behaviour))
+    }
+
     protected fun processCalls(
         callable: KtCallableDeclaration,
         scope: SearchScope,
         includeOverriders: Boolean,
         usageProcessor: (UsageInfo) -> Unit
     ) {
+        if (callable is KtFunctionLiteral) {
+            //TODO
+            return
+        }
+
         val options = when (callable) {
             is KtFunction -> {
                 KotlinFunctionFindUsagesOptions(project).apply {

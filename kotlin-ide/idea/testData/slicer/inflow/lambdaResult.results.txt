@@ -7,3 +7,6 @@
 8 						[LAMBDA] val x = foo <bold>{ it }</bold>
 8 							val x = foo <bold>{ it }</bold>
 8 								val x = foo { <bold>it</bold> }
+8 									[LAMBDA CALLS] val x = foo <bold>{ it }</bold>
+3 										[LAMBDA CALLS] fun foo(<bold>f: (Int) -> Int</bold>): Int {
+4 											return f(<bold>1</bold>)
