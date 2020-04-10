@@ -1,3 +1,6 @@
+# v1.3.72 (April 2020)
+  * Fix ios_x64 platform libs cache for iOS 11 and 12 (GH-4071)
+
 # v1.3.71 (March 2020)
   * Fix `lazy {}` memory leak regression ([`KT-37232`](https://youtrack.jetbrains.com/issue/KT-37232), GH-3944)
   * Fix using cached Kotlin subclasses of Objective-C classes (GH-3986)
