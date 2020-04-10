@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
@@ -18,10 +19,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
@@ -34,15 +33,16 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchReques
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -129,30 +129,15 @@ class InflowSlicer(
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         if (function is KtFunction) {
-            fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
-                val refParent = refElement.parent
-                return when {
-                    refElement is KtExpression -> {
-                        val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
-                        val resolvedCall = callElement.resolveToCall() ?: return null
-                        val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
-                        val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return null
-                        when (resolvedArgument) {
-                            is DefaultValueArgument -> parameter.defaultValue
-                            is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
-                            else -> null
-                        }
+            val sliceTransformer = ArgumentExpressionTransformer(parameterDescriptor)
+
+            if (function is KtFunctionLiteral) {
+                processFunctionLiteralCalls(function, sliceTransformer)
+            } else {
+                processCalls(function, analysisScope, includeOverriders) { usageInfo ->
+                    usageInfo.element?.let {
+                        sliceTransformer.extractArgumentExpression(it)?.passToProcessorAsValue()
                     }
-
-                    refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameter.parameterIndex())
-
-                    else -> null
-                }
-            }
-
-            processCalls(function, analysisScope, includeOverriders) { usageInfo ->
-                usageInfo.element?.let {
-                    extractArgumentExpression(it)?.passToProcessorAsValue()
                 }
             }
         }
@@ -178,7 +163,7 @@ class InflowSlicer(
                         }
                     }
                 }
-                
+
                 else -> {
                     (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0)?.passToProcessorAsValue()
                 }
@@ -234,6 +219,19 @@ class InflowSlicer(
                         val callableDeclaration = callable.originalSource.getPsi() as? KtCallableDeclaration ?: return
                         //TODO: what about non-extensions?
                         callableDeclaration.receiverTypeReference?.passToProcessor()
+                    }
+
+                    is ValueParameterDescriptor -> {
+                        if (accessedDeclaration == null) {
+                            val anonymousFunction = accessedDescriptor.containingDeclaration as? AnonymousFunctionDescriptor
+                            if (anonymousFunction != null && accessedDescriptor.name.asString() == "it") {
+                                val functionLiteral = anonymousFunction.source.getPsi() as KtFunctionLiteral
+                                val sliceTransformer = ArgumentExpressionTransformer(anonymousFunction.valueParameters.first())
+                                processFunctionLiteralCalls(functionLiteral, sliceTransformer)
+                            }
+                        } else {
+                            accessedDeclaration.passDeclarationToProcessorWithOverriders()
+                        }
                     }
 
                     else -> {
@@ -356,6 +354,50 @@ class InflowSlicer(
                 ?.forEach {
                     (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor()
                 }
+        }
+    }
+
+    @Suppress("DataClassPrivateConstructor") // we have modifier data to get equals&hashCode only
+    private data class ArgumentExpressionTransformer private constructor(
+        private val parameterIndex: Int,
+        private val isExtension: Boolean
+    ) : KotlinSliceUsageTransformer
+    {
+        constructor(parameterDescriptor: ValueParameterDescriptor) : this(
+            parameterDescriptor.index,
+            parameterDescriptor.containingDeclaration.isExtension
+        )
+
+        override fun transform(usage: KotlinSliceUsage): SliceUsage? {
+            val element = usage.element ?: return null
+            val argumentExpression = extractArgumentExpression(element) ?: return null
+            return KotlinSliceUsage(argumentExpression, usage.parent, usage.behaviour?.originalBehaviour, forcedExpressionMode = true)
+        }
+
+        fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
+            val refParent = refElement.parent
+            return when {
+                refElement is KtExpression -> {
+                    val callElement = refElement as? KtCallElement
+                        ?: refElement.getParentOfTypeAndBranch { calleeExpression }
+                        ?: return null
+                    val resolvedCall = callElement.resolveToCall() ?: return null
+                    val resultingDescriptor = resolvedCall.resultingDescriptor
+                    val parameterIndexToUse = parameterIndex +
+                            (if (isExtension && resultingDescriptor.extensionReceiverParameter == null) 1 else 0)
+                    val parameterDescriptor = resultingDescriptor.valueParameters[parameterIndexToUse]
+                    val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return null
+                    when (resolvedArgument) {
+                        is DefaultValueArgument -> (parameterDescriptor.source.getPsi() as? KtParameter)?.defaultValue
+                        is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
+                        else -> null
+                    }
+                }
+
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameterIndex + (if (isExtension) 1 else 0))
+
+                else -> null
+            }
         }
     }
 }
