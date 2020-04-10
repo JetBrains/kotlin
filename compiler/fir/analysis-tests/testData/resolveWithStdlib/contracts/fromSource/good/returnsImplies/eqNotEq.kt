@@ -1,0 +1,31 @@
+import kotlin.contracts.*
+
+fun checkNotNull(x: Any?) {
+    contract {
+        returns(true) implies (x != null)
+        returns(false) implies (x == null)
+    }
+    return x != null
+}
+
+fun trickyRequireNotNull(x: Any?) {
+    contract {
+        returns() implies (!(x == null))
+    }
+    if (x == null) {
+        throw IllegalStateException()
+    }
+}
+
+fun test_1(x: String?) {
+    if (checkNotNull(x)) {
+        x.length // OK
+    } else {
+        x.<!INAPPLICABLE_CANDIDATE!>length<!> // Error
+    }
+}
+
+fun test_2(x: String?) {
+    trickyRequireNotNull(x)
+    x.length
+}

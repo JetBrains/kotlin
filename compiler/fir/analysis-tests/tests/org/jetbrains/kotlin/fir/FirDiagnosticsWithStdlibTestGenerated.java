@@ -513,6 +513,98 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/notIsNullOrEmpty.kt");
             }
         }
+
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromSource extends AbstractFirDiagnosticsWithStdlibTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInFromSource() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Good extends AbstractFirDiagnosticsWithStdlibTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInGood() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class CallsInPlace extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInCallsInPlace() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("atLeastOnce.kt")
+                    public void testAtLeastOnce() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/atLeastOnce.kt");
+                    }
+
+                    @TestMetadata("atMostOnce.kt")
+                    public void testAtMostOnce() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/atMostOnce.kt");
+                    }
+
+                    @TestMetadata("exactlyOnce.kt")
+                    public void testExactlyOnce() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/exactlyOnce.kt");
+                    }
+
+                    @TestMetadata("unknown.kt")
+                    public void testUnknown() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/unknown.kt");
+                    }
+                }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ReturnsImplies extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInReturnsImplies() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("booleanOperators.kt")
+                    public void testBooleanOperators() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/booleanOperators.kt");
+                    }
+
+                    @TestMetadata("eqNotEq.kt")
+                    public void testEqNotEq() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/eqNotEq.kt");
+                    }
+
+                    @TestMetadata("receivers.kt")
+                    public void testReceivers() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/receivers.kt");
+                    }
+
+                    @TestMetadata("typePredicate.kt")
+                    public void testTypePredicate() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/typePredicate.kt");
+                    }
+                }
+            }
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates")
