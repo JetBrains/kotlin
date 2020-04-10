@@ -16,7 +16,7 @@ export const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%
 export const BLOCK_OPENED = `##teamcity[blockOpened name='%s' flowId='%s']`
 export const BLOCK_CLOSED = `##teamcity[blockClosed name='%s' flowId='%s']`
 
-export const SIMPLE_MESSAGE = `##teamcity[message text='%s']`
+export const MESSAGE = `##teamcity[message text='%s']`
 
 /**
  * from teamcity-service-messages

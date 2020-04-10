@@ -5,13 +5,13 @@
 
 'use strict';
 
-import {formatMessage, SIMPLE_MESSAGE} from "./src/teamcity-format"
+import {formatMessage, MESSAGE} from "./src/teamcity-format"
 
 const consoleLog = console.log.bind(console);
 
 function consoleAppender(layout, timezoneOffset) {
     return (loggingEvent) => {
-        consoleLog(formatMessage(SIMPLE_MESSAGE, layout(loggingEvent, timezoneOffset)));
+        consoleLog(formatMessage(MESSAGE, layout(loggingEvent, timezoneOffset)));
     };
 }
 
