@@ -62,15 +62,19 @@ android {
     flavorDimensions "box"
 
     productFlavors {
-        ktest0 {
+        common0 {
             dimension "box"
         }
 
-        ktest1 {
+        common1 {
             dimension "box"
         }
 
-        ktest2 {
+        common2 {
+            dimension "box"
+        }
+
+        reflect0 {
             dimension "box"
         }
     }
@@ -80,9 +84,9 @@ android {
 task jarTestFolders() {
     println "Jar folders..."
     new File("${projectDir}/libs/").listFiles().each { File file ->
-        if (file.isDirectory() && !file.name.equals("test")) {
+        if (file.isDirectory()) {
             println "Jar '${file.name}' folder..."
-            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/test/" +  file.name  + ".jar")
+            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/" +  file.name  + ".jar")
         }
     }
 }
@@ -92,11 +96,18 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['kotlin-test.jar', 'kotlin-stdlib.jar'])
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
-    ktest0Implementation fileTree(dir: 'libs/test', include: ['libtest0.jar'])
-    ktest1Implementation fileTree(dir: 'libs/test', include: ['libtest1.jar'])
-    ktest2Implementation fileTree(dir: 'libs/test', include: ['libtest2.jar'])
+    android.applicationVariants.all { variant ->
+        variant.productFlavors.each {
+            def configuration = configurations.getByName(it.name + 'Implementation').name
+            add(configuration, project.fileTree(dir: 'libs', include: [it.name + ".jar"]))
+
+            if (it.name.startsWith("reflect")) {
+                add(configuration, project.fileTree(dir: 'libs', include: ['kotlin-reflect.jar']))
+            }
+        }
+    }
 }

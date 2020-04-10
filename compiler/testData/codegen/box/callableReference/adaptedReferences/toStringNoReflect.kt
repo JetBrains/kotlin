@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+package test
 
 import kotlin.test.assertEquals
 
@@ -18,10 +19,10 @@ fun defaultAndVararg(f: (A) -> CharSequence): Any = f
 fun allOfTheAbove(f: (A) -> Unit): Any = f
 
 fun box(): String {
-    check("Function3<A, java.lang.String, long[], kotlin.Unit>", coercionToUnit(A::foo))
-    check("Function4<A, java.lang.String, java.lang.Long, java.lang.Long, java.lang.CharSequence>", varargToElement(A::foo))
-    check("Function1<A, java.lang.CharSequence>", defaultAndVararg(A::foo))
-    check("Function1<A, kotlin.Unit>", allOfTheAbove(A::foo))
+    check("Function3<test.A, java.lang.String, long[], kotlin.Unit>", coercionToUnit(A::foo))
+    check("Function4<test.A, java.lang.String, java.lang.Long, java.lang.Long, java.lang.CharSequence>", varargToElement(A::foo))
+    check("Function1<test.A, java.lang.CharSequence>", defaultAndVararg(A::foo))
+    check("Function1<test.A, kotlin.Unit>", allOfTheAbove(A::foo))
 
     return "OK"
 }

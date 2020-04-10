@@ -52,8 +52,8 @@ public class PathManager {
         return getAndroidSdkRoot() + "/emulator";
     }
 
-    public String getOutputForCompiledFiles(int index) {
-        return tmpFolder + "/libs/libtest" + index;
+    public String getOutputForCompiledFiles(String flavor) {
+        return tmpFolder + "/libs/" + flavor;
     }
 
     public String getLibsFolderInAndroidTmpFolder() {

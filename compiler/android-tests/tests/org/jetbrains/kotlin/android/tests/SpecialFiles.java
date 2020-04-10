@@ -40,13 +40,6 @@ public class SpecialFiles {
         excludedFiles.add("nativePropertyAccessors.kt");
         excludedFiles.add("topLevel.kt");
 
-        //Test with no reflection at runtime
-        excludedFiles.add("noReflectAtRuntime");
-        excludedFiles.add("noReflect");
-        excludedFiles.add("functionNtoStringNoReflect.kt");
-        excludedFiles.add("getDelegateWithoutReflection.kt");
-        excludedFiles.add("toStringNoReflect.kt");
-
         // "IOOBE: Invalid index 4, size is 4" for java.lang.reflect.ParameterizedType on Android
         excludedFiles.add("innerGenericTypeArgument.kt");
 
