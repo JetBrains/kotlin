@@ -36,6 +36,28 @@ public interface EnterHandlerDelegate {
   }
 
   /**
+   * Called before the actual Enter processing is done for the caret inside indent space.
+   * <b>Important Note: A document associated with the editor may have modifications which are not reflected yet in the PSI file. If any
+   * operations with PSI are needed including a search for PSI elements, the document must be committed first to update the PSI.
+   * For example:</b>
+   * <code><pre>
+   *   PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument);
+   * </pre></code>
+   *
+   * @param newLineCharOffset The end offset of the previous line;
+   *                          <code>newLineCharOffset < 0</code> for the indent space in the top line of the document.
+   * @param editor            The editor.
+   * @param dataContext       The data context passed to the Enter handler.
+   * @return <code>true</code> if the handler is responsible for Enter processing inside the indent space,
+   *         <code>false</code> invokes the default Enter processing procedure inside the indent space.
+   */
+  default boolean invokeInsideIndent(int newLineCharOffset,
+                                     @NotNull Editor editor,
+                                     @NotNull final DataContext dataContext) {
+    return false;
+  }
+
+  /**
    * Called before the actual Enter processing is done.
    * <b>Important Note: A document associated with the editor may have modifications which are not reflected yet in the PSI file. If any
    * operations with PSI are needed including a search for PSI elements, the document must be committed first to update the PSI.

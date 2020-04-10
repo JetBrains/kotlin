@@ -6,7 +6,6 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateInsideIndent;
 import com.intellij.codeStyle.CodeStyleFacade;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.*;
@@ -96,9 +95,9 @@ public class EnterHandler extends BaseEnterHandler {
       if (offset1 < 0 || text.charAt(offset1) == '\n') {
         boolean fastProcessEnterInsideIndent = true;
         for(EnterHandlerDelegate delegate: EnterHandlerDelegate.EP_NAME.getExtensionList()) {
-          if (delegate instanceof EnterHandlerDelegateInsideIndent
-              && ((EnterHandlerDelegateInsideIndent)delegate).needCustomPreprocessingInsideIndent(offset1, editor, dataContext)) {
+          if (delegate.invokeInsideIndent(offset1, editor, dataContext)) {
             fastProcessEnterInsideIndent = false;
+            break;
           }
         }
         if (fastProcessEnterInsideIndent) {
