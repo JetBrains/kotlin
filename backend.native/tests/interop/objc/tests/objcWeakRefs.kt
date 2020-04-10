@@ -7,7 +7,12 @@ import objcTests.*
     val deallocListener = DeallocListener()
     assertFalse(deallocListener.deallocated)
 
-    testObjCWeakRef0(deallocListener)
+    // [deallocListener.deallocExecutorIsNil()] calls deallocExecutor getter, which retains the result and either
+    // puts it to autoreleasepool or releases it immediately (Obj-C ARC optimization). It seems to depend on the platform.
+    // Wrap the call to autoreleasepool to ensure the object will be released:
+    autoreleasepool {
+        testObjCWeakRef0(deallocListener)
+    }
 
     kotlin.native.internal.GC.collect()
     assertTrue(deallocListener.deallocated)
