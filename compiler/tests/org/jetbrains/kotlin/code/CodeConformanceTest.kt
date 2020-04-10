@@ -59,6 +59,8 @@ class CodeConformanceTest : TestCase() {
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
             "build",
             "buildSrc/prepare-deps/build",
+            "compiler/ir/serialization.js/build/fullRuntime",
+            "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "dependencies",
             "dependencies/android-sdk/build",
@@ -84,6 +86,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlin-test-js-runner/.gradle",
             "libraries/tools/kotlin-test-js-runner/lib",
             "libraries/tools/kotlin-test-js-runner/node_modules",
+            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
+            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
             "out"
         )
     }
