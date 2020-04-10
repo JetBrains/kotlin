@@ -317,7 +317,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             if (shouldRemoveOriginalStatements) {
                 logicStatements -= originalVariable
             }
-            logicStatements = logicStatements.put(newVariable, newStatements)
+            logicStatements = logicStatements.put(newVariable, logicStatements[newVariable]?.let { it + newStatements } ?: newStatements)
         }
     }
 
