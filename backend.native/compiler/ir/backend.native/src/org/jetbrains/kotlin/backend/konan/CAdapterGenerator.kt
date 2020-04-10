@@ -635,7 +635,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
 
     private val seenPackageFragments = mutableSetOf<PackageFragmentDescriptor>()
     private var currentPackageFragments: List<PackageFragmentDescriptor> = emptyList()
-    private val packageScopes = mutableMapOf<String, ExportedElementScope>()
+    private val packageScopes = mutableMapOf<FqName, ExportedElementScope>()
 
     override fun visitModuleDeclaration(descriptor: ModuleDescriptor, ignored: Void?): Boolean {
         TODO("Shall not be called directly")
@@ -648,8 +648,8 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
         val fqName = descriptor.fqName
-        val name = if (fqName.isRoot) "root" else translateName(fqName.shortName().asString())
-        val packageScope = packageScopes.getOrPut(name) {
+        val packageScope = packageScopes.getOrPut(fqName) {
+            val name = if (fqName.isRoot) "root" else translateName(fqName.shortName().asString())
             val scope = ExportedElementScope(ScopeKind.PACKAGE, name)
             scopes.last().scopes += scope
             scope
