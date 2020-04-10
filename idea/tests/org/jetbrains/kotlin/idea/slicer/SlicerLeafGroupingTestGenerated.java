@@ -38,6 +38,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         runTest("idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
     }
 
+    @TestMetadata("anonymousFunctionParameter.kt")
+    public void testAnonymousFunctionParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/anonymousFunctionParameter.kt");
+    }
+
     @TestMetadata("anonymousFunReturnExpression.kt")
     public void testAnonymousFunReturnExpression() throws Exception {
         runTest("idea/testData/slicer/inflow/anonymousFunReturnExpression.kt");
