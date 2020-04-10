@@ -33,7 +33,7 @@ public class IndexedHashesSupport {
 
   private static final Logger LOG = Logger.getInstance(IndexedHashesSupport.class);
 
-  private static final MessageDigest CONTENT_HASH_WITH_FILE_TYPE_DIGEST = DigestUtil.sha1();
+  private static final MessageDigest TEXT_CONTENT_HASH_DIGEST = DigestUtil.sha1();
 
   private static volatile ContentHashEnumerator ourTextContentHashes;
 
@@ -101,7 +101,7 @@ public class IndexedHashesSupport {
 
     byte[] contentHash = ((PersistentFSImpl)PersistentFS.getInstance()).getContentHashIfStored(virtualFile);
     if (contentHash == null) {
-      contentHash = DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, virtualFile);
+      contentHash = DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, virtualFile);
     }
 
     return mergeIndexedHash(contentHash, binary ? null : virtualFile.getCharset());
@@ -122,7 +122,7 @@ public class IndexedHashesSupport {
   }
 
   private static byte[] calculateContentHash(@NotNull FileContent content) {
-    return DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, content.getContent());
+    return DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, content.getContent());
   }
 
   private static byte @Nullable [] calculateIndexedHashForDocument(@NotNull FileContentImpl content) {
@@ -135,7 +135,7 @@ public class IndexedHashesSupport {
 
         if (file != null) {
           Charset charset = content.getCharset();
-          return mergeIndexedHash(DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, file.getText().getBytes(charset)), charset);
+          return mergeIndexedHash(DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, file.getText().getBytes(charset)), charset);
         }
       }
     }
@@ -147,6 +147,6 @@ public class IndexedHashesSupport {
     byte[] charsetBytes = charsetOrNullForBinary != null
                           ? charsetOrNullForBinary.name().getBytes(StandardCharsets.UTF_8)
                           : ArrayUtilRt.EMPTY_BYTE_ARRAY;
-    return DigestUtil.calculateMergedHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, new byte[][]{binaryContentHash, charsetBytes});
+    return DigestUtil.calculateMergedHash(TEXT_CONTENT_HASH_DIGEST, new byte[][]{binaryContentHash, charsetBytes});
   }
 }
