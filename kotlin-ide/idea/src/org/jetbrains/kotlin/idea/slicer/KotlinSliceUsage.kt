@@ -20,49 +20,112 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
 
 open class KotlinSliceUsage : SliceUsage {
-    class UsageInfoLambdaWrapper(element: PsiElement) : UsageInfo(element)
+    interface SpecialBehaviour {
+        val originalBehaviour: SpecialBehaviour?
+        fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor)
 
-    val lambdaLevel: Int
+        val slicePresentationPrefix: String
+        val testPresentationPrefix: String
+
+        override fun equals(other: Any?): Boolean
+        override fun hashCode(): Int
+    }
+
+    val behaviour: SpecialBehaviour?
     val forcedExpressionMode: Boolean
 
-    constructor(element: PsiElement, parent: SliceUsage, lambdaLevel: Int, forcedExpressionMode: Boolean) : super(element, parent) {
-        this.lambdaLevel = lambdaLevel
+    constructor(
+        element: PsiElement,
+        parent: SliceUsage,
+        behaviour: SpecialBehaviour?,
+        forcedExpressionMode: Boolean,
+    ) : super(element, parent) {
+        this.behaviour = behaviour
         this.forcedExpressionMode = forcedExpressionMode
     }
 
     constructor(element: PsiElement, params: SliceAnalysisParams) : super(element, params) {
-        this.lambdaLevel = 0
+        this.behaviour = null
         this.forcedExpressionMode = false
     }
 
     override fun copy(): KotlinSliceUsage {
         val element = usageInfo.element!!
-        if (parent == null) return KotlinSliceUsage(element, params)
-        return KotlinSliceUsage(element, parent, lambdaLevel, forcedExpressionMode)
+        return if (parent == null)
+            KotlinSliceUsage(element, params)
+        else
+            KotlinSliceUsage(element, parent, behaviour, forcedExpressionMode)
     }
 
     override fun getUsageInfo(): UsageInfo {
         val originalInfo = super.getUsageInfo()
-        if (lambdaLevel > 0 && forcedExpressionMode) {
+        if (behaviour != null) {
             val element = originalInfo.element ?: return originalInfo
             // Do not let IDEA consider usages of the same anonymous function as duplicates when their levels differ
-            return UsageInfoLambdaWrapper(element)
+            return UsageInfoWrapper(element, behaviour)
         }
         return originalInfo
     }
 
-    override fun canBeLeaf() = element != null && lambdaLevel == 0
+    override fun canBeLeaf() = element != null && behaviour == null
 
     public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
-        InflowSlicer(element as? KtElement ?: return, uniqueProcessor, this).processChildren()
+        val ktElement = element as? KtElement ?: return
+        if (behaviour != null) {
+            behaviour.processUsages(ktElement, this, uniqueProcessor)
+        } else {
+            InflowSlicer(ktElement, uniqueProcessor, this).processChildren(forcedExpressionMode)
+        }
     }
 
     public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
-        OutflowSlicer(element as? KtElement ?: return, uniqueProcessor, this).processChildren()
+        val ktElement = element as? KtElement ?: return
+        if (behaviour != null) {
+            behaviour.processUsages(ktElement, this, uniqueProcessor)
+        } else {
+            OutflowSlicer(ktElement, uniqueProcessor, this).processChildren(forcedExpressionMode)
+        }
     }
+
+    @Suppress("EqualsOrHashCode")
+    private class UsageInfoWrapper(element: PsiElement, private val behaviour: SpecialBehaviour) : UsageInfo(element) {
+        override fun equals(other: Any?): Boolean {
+            return other is UsageInfoWrapper && super.equals(other) && behaviour == other.behaviour
+        }
+    }
+}
+
+data class LambdaResultOutflowBehaviour(
+    override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
+) : KotlinSliceUsage.SpecialBehaviour {
+
+    override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
+        OutflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
+    }
+
+    override val slicePresentationPrefix: String
+        get() = KotlinBundle.message("slicer.text.tracking.enclosing.lambda")
+
+    override val testPresentationPrefix: String
+        get() = "[LAMBDA] "
+}
+
+data class LambdaResultInflowBehaviour(
+    override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
+) : KotlinSliceUsage.SpecialBehaviour {
+
+    override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
+        InflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
+    }
+
+    override val slicePresentationPrefix: String
+        get() = KotlinBundle.message("slicer.text.tracking.enclosing.lambda")
+
+    override val testPresentationPrefix: String
+        get() = "[LAMBDA] "
 }

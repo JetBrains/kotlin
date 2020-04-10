@@ -43,10 +43,11 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
         }
 
-        append(
-            KotlinBundle.message("slicer.text.tracking.enclosing.lambda").repeat(sliceUsage.lambdaLevel),
-            SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES
-        )
+        var behaviour = sliceUsage.behaviour
+        while (behaviour != null) {
+            append(behaviour.slicePresentationPrefix, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+            behaviour = behaviour.originalBehaviour
+        }
 
         val declaration = sliceUsage.element?.parents?.firstOrNull {
             it is KtClass ||

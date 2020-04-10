@@ -55,8 +55,8 @@ class InflowSlicer(
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 
-    override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) {
+    override fun processChildren(forcedExpressionMode: Boolean) {
+        if (forcedExpressionMode) {
             (element as? KtExpression)?.let { processExpression(it) }
             return
         }
@@ -199,8 +199,8 @@ class InflowSlicer(
             else -> null
         }
         if (lambda != null) {
-            if (parentUsage.lambdaLevel > 0) {
-                lambda.passToProcessor(parentUsage.lambdaLevel - 1)
+            if (behaviour is LambdaResultInflowBehaviour) {
+                lambda.passToProcessor(behaviour.originalBehaviour)
             }
             return
         }
@@ -253,7 +253,9 @@ class InflowSlicer(
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
                     val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
                         ?: return
-                    referencedDeclaration.passToProcessor(parentUsage.lambdaLevel - 1)
+                    if (behaviour is LambdaResultInflowBehaviour) {
+                        referencedDeclaration.passToProcessor(behaviour.originalBehaviour)
+                    }
                 }
 
                 else -> return
@@ -263,7 +265,8 @@ class InflowSlicer(
                 val resolvedCall = createdAt.resolvedCall
                 val resultingDescriptor = resolvedCall.resultingDescriptor
                 if (resultingDescriptor is FunctionInvokeDescriptor) {
-                    (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
+                    (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression
+                        ?.passToProcessorAsValue(LambdaResultInflowBehaviour(behaviour))
                 } else {
                     resultingDescriptor.originalSource.getPsi()?.passDeclarationToProcessorWithOverriders()
                 }
@@ -339,8 +342,6 @@ class InflowSlicer(
             }
         }
     }
-
-    private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
     private fun PsiElement.passDeclarationToProcessorWithOverriders() {
         passToProcessor()

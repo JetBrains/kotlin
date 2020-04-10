@@ -62,7 +62,11 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
                         append("DEREFERENCE: ")
                     }
                     if (usage is KotlinSliceUsage) {
-                        append("[LAMBDA] ".repeat(usage.lambdaLevel))
+                        var behaviour = usage.behaviour
+                        while (behaviour != null) {
+                            append(behaviour.testPresentationPrefix)
+                            behaviour = behaviour.originalBehaviour
+                        }
                     }
                     chunks.slice(1 until chunks.size).joinTo(
                         this,
