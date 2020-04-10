@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.contracts.description.InvocationKind
  *  - if [effect] wasn't observed, we *can't* reason that [condition] is false
  *  - if [condition] is true, we *can't* reason that [effect] will be observed.
  */
-class ConeConditionalEffectDeclaration(val effect: ConeEffectDeclaration, val condition: ConeBooleanExpression) : ConeEffectDeclaration {
+class ConeConditionalEffectDeclaration(val effect: ConeEffectDeclaration, val condition: ConeBooleanExpression) : ConeEffectDeclaration() {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitConditionalEffectDeclaration(this, data)
 }
@@ -30,7 +30,7 @@ class ConeConditionalEffectDeclaration(val effect: ConeEffectDeclaration, val co
 /**
  * Effect which specifies that subroutine returns some particular value
  */
-class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffectDeclaration {
+class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffectDeclaration() {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsEffectDeclaration(this, data)
 
@@ -41,7 +41,7 @@ class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffec
  * Effect which specifies, that during execution of subroutine, callable [valueParameterReference] will be invoked
  * [kind] amount of times, and will never be invoked after subroutine call is finished.
  */
-class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: InvocationKind) : ConeEffectDeclaration {
+class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: InvocationKind) : ConeEffectDeclaration() {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
