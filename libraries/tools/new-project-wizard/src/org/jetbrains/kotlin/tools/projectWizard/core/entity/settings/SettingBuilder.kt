@@ -23,7 +23,7 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     var isRequired: Boolean? = null
 
     fun value(value: V) = SettingDefaultValue.Value(value)
-    fun dynamic(getter: Reader.(SettingReference<V, SettingType<V>>) -> V) =
+    fun dynamic(getter: Reader.(SettingReference<V, SettingType<V>>) -> V?) =
         SettingDefaultValue.Dynamic(getter)
 
     protected var validator =

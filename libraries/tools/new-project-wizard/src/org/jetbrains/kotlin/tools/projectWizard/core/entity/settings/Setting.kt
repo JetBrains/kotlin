@@ -58,7 +58,7 @@ class TemplateSetting<out V : Any, out T : SettingType<V>>(
 sealed class SettingDefaultValue<out V : Any> {
     data class Value<V : Any>(val value: V) : SettingDefaultValue<V>()
     data class Dynamic<V : Any>(
-        val getter: Reader.(SettingReference<V, SettingType<V>>) -> V
+        val getter: Reader.(SettingReference<V, SettingType<V>>) -> V?
     ) : SettingDefaultValue<V>()
 }
 

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdl
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModulePath
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import java.nio.file.Path
@@ -53,6 +52,12 @@ fun <T> withSettingsOf(
     configurator: ModuleConfigurator = module.configurator,
     function: ModuleConfiguratorSettingsEnvironment.() -> T
 ): T = function(ModuleBasedConfiguratorSettingsEnvironment(configurator, module))
+
+
+fun <V : Any, T : SettingType<V>> Reader.settingValue(module: Module, setting: ModuleConfiguratorSetting<V, T>): V? =
+    withSettingsOf(module) {
+        setting.reference.notRequiredSettingValue
+    }
 
 
 abstract class ModuleConfiguratorSettings : SettingsOwner {
