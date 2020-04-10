@@ -160,6 +160,9 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       return false;
     }
     catch (IntentionPreviewUnsupportedOperationException e) {
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        throw e;
+      }
       //check action availability can be invoked on a mock editor and may produce exceptions
       return false;
     }
@@ -192,6 +195,9 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       return Pair.create(fileToApply, editorToApply);
     }
     catch (IntentionPreviewUnsupportedOperationException e) {
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        throw e;
+      }
       return null;
     }
   }
