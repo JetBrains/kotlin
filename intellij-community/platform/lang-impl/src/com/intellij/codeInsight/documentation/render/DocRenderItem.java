@@ -19,6 +19,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.editor.impl.FontInfo;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
@@ -36,6 +37,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.LayeredIcon;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -46,14 +48,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.*;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class DocRenderItem {
   private static final Key<DocRenderItem> OUR_ITEM = Key.create("doc.render.item");
   private static final Key<Collection<DocRenderItem>> OUR_ITEMS = Key.create("doc.render.items");
-  private static final Key<VisibleAreaListener> VISIBLE_AREA_LISTENER = Key.create("doc.render.visible.area.listener");
   private static final Key<Disposable> LISTENERS_DISPOSABLE = Key.create("doc.render.listeners.disposable");
 
   final Editor editor;
@@ -123,11 +126,6 @@ public class DocRenderItem {
 
   private static void setupListeners(@NotNull Editor editor, boolean disable) {
     if (disable) {
-      VisibleAreaListener visibleAreaListener = editor.getUserData(VISIBLE_AREA_LISTENER);
-      if (visibleAreaListener != null) {
-        editor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener);
-        editor.putUserData(VISIBLE_AREA_LISTENER, null);
-      }
       Disposable listenersDisposable = editor.getUserData(LISTENERS_DISPOSABLE);
       if (listenersDisposable != null) {
         Disposer.dispose(listenersDisposable);
@@ -135,11 +133,6 @@ public class DocRenderItem {
       }
     }
     else {
-      if (editor.getUserData(VISIBLE_AREA_LISTENER) == null) {
-        VisibleAreaListener visibleAreaListener = new MyVisibleAreaListener(editor);
-        editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
-        editor.putUserData(VISIBLE_AREA_LISTENER, visibleAreaListener);
-      }
       if (editor.getUserData(LISTENERS_DISPOSABLE) == null) {
         MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
         connection.setDefaultHandler((event, params) -> updateInlays(editor));
@@ -159,6 +152,18 @@ public class DocRenderItem {
         DocRenderMouseEventBridge mouseEventBridge = new DocRenderMouseEventBridge();
         editor.addEditorMouseListener(mouseEventBridge, connection);
         editor.addEditorMouseMotionListener(mouseEventBridge, connection);
+        IconVisibilityController iconVisibilityController = new IconVisibilityController();
+        editor.addEditorMouseListener(iconVisibilityController, connection);
+        editor.addEditorMouseMotionListener(iconVisibilityController, connection);
+        editor.getScrollingModel().addVisibleAreaListener(iconVisibilityController);
+        Disposer.register(connection, iconVisibilityController);
+
+        VisibleAreaListener visibleAreaListener = new MyVisibleAreaListener(editor);
+        editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
+        Disposer.register(connection, () -> {
+          editor.getScrollingModel().removeVisibleAreaListener(iconVisibilityController);
+          editor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener);
+        });
 
         editor.putUserData(LISTENERS_DISPOSABLE, connection);
       }
@@ -380,7 +385,7 @@ public class DocRenderItem {
     boolean iconExists = highlighter.getGutterIconRenderer() != null;
     if (iconEnabled != iconExists) {
       if (iconEnabled) {
-        highlighter.setGutterIconRenderer(new MyGutterIconRenderer(AllIcons.Gutter.JavadocRead));
+        highlighter.setGutterIconRenderer(new MyGutterIconRenderer(AllIcons.Gutter.JavadocRead, false));
       }
       else {
         highlighter.setGutterIconRenderer(null);
@@ -391,6 +396,30 @@ public class DocRenderItem {
 
   AnAction createToggleAction() {
     return new ToggleRenderingAction(this);
+  }
+
+  private void setIconVisible(boolean visible) {
+    MyGutterIconRenderer iconRenderer = (MyGutterIconRenderer)highlighter.getGutterIconRenderer();
+    if (iconRenderer != null) {
+      iconRenderer.setIconVisible(visible);
+      int y = editor.visualLineToY(((EditorImpl)editor).offsetToVisualLine(highlighter.getStartOffset()));
+      repaintGutter(y);
+    }
+    if (inlay != null) {
+      MyGutterIconRenderer inlayIconRenderer = (MyGutterIconRenderer)inlay.getGutterIconRenderer();
+      if (inlayIconRenderer != null) {
+        inlayIconRenderer.setIconVisible(visible);
+        Rectangle bounds = inlay.getBounds();
+        if (bounds != null) {
+          repaintGutter(bounds.y);
+        }
+      }
+    }
+  }
+
+  private void repaintGutter(int startY) {
+    JComponent gutter = (JComponent)editor.getGutter();
+    gutter.repaint(0, startY, gutter.getWidth(), startY + editor.getLineHeight());
   }
 
   private static class MyCaretListener implements CaretListener {
@@ -444,10 +473,19 @@ public class DocRenderItem {
   }
 
   class MyGutterIconRenderer extends GutterIconRenderer implements DumbAware {
-    private final Icon icon;
+    private final LayeredIcon icon;
 
-    MyGutterIconRenderer(Icon icon) {
-      this.icon = icon;
+    MyGutterIconRenderer(Icon icon, boolean iconVisible) {
+      this.icon = new LayeredIcon(icon);
+      setIconVisible(iconVisible);
+    }
+
+    boolean isIconVisible() {
+      return icon.isLayerEnabled(0);
+    }
+
+    void setIconVisible(boolean visible) {
+      icon.setLayerEnabled(0, visible);
     }
 
     @Override
@@ -526,6 +564,104 @@ public class DocRenderItem {
       if (editor != null) {
         DocFontSizePopup.show(() -> updateInlays(editor), editor.getContentComponent());
       }
+    }
+  }
+
+  private static class IconVisibilityController
+    implements EditorMouseListener, EditorMouseMotionListener, VisibleAreaListener, Runnable, Disposable {
+    private DocRenderItem myCurrentItem;
+    private Editor myQueuedEditor;
+
+    @Override
+    public void mouseMoved(@NotNull EditorMouseEvent e) {
+      queueUpdate(e.getEditor());
+    }
+
+    @Override
+    public void mouseExited(@NotNull EditorMouseEvent e) {
+      queueUpdate(e.getEditor());
+    }
+
+    @Override
+    public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
+      Editor editor = e.getEditor();
+      if (((EditorImpl)editor).isCursorHidden()) return;
+      queueUpdate(editor);
+    }
+
+    private void queueUpdate(Editor editor) {
+      if (myQueuedEditor == null) {
+        myQueuedEditor = editor;
+        // delay update: multiple visible area updates within same EDT event will cause only one icon update,
+        // and we'll not observe the item in inconsistent state during toggling
+        SwingUtilities.invokeLater(this);
+      }
+    }
+
+    @Override
+    public void run() {
+      Editor editor = myQueuedEditor;
+      myQueuedEditor = null;
+      if (editor != null && !editor.isDisposed()) {
+        PointerInfo info = MouseInfo.getPointerInfo();
+        if (info != null) {
+          Point screenPoint = info.getLocation();
+          JComponent component = editor.getComponent();
+
+          Point componentPoint = new Point(screenPoint);
+          SwingUtilities.convertPointFromScreen(componentPoint, component);
+
+          DocRenderItem item = null;
+          if (new Rectangle(component.getSize()).contains(componentPoint)) {
+            Point editorPoint = new Point(screenPoint);
+            SwingUtilities.convertPointFromScreen(editorPoint, editor.getContentComponent());
+            item = findItem(editor, editorPoint.y);
+          }
+
+          if (item != myCurrentItem) {
+            if (myCurrentItem != null) myCurrentItem.setIconVisible(false);
+            myCurrentItem = item;
+            if (myCurrentItem != null) myCurrentItem.setIconVisible(true);
+          }
+        }
+      }
+    }
+
+    private static DocRenderItem findItem(Editor editor, int y) {
+      Document document = editor.getDocument();
+      int offset = editor.visualPositionToOffset(new VisualPosition(editor.yToVisualLine(y), 0));
+      int lineNumber = document.getLineNumber(offset);
+      int searchStartOffset = document.getLineStartOffset(Math.max(0, lineNumber - 1));
+      int searchEndOffset = document.getLineEndOffset(lineNumber);
+      Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
+      assert items != null;
+      for (DocRenderItem item : items) {
+        RangeHighlighter highlighter = item.highlighter;
+        if (highlighter.isValid() && highlighter.getStartOffset() <= searchEndOffset && highlighter.getEndOffset() >= searchStartOffset) {
+          int itemStartY = 0;
+          int itemEndY = 0;
+          if (item.inlay == null) {
+            itemStartY = editor.visualLineToY(((EditorImpl)editor).offsetToVisualLine(highlighter.getStartOffset()));
+            itemEndY = editor.visualLineToY(((EditorImpl)editor).offsetToVisualLine(highlighter.getEndOffset())) + editor.getLineHeight();
+          }
+          else {
+            Rectangle bounds = item.inlay.getBounds();
+            if (bounds != null) {
+              itemStartY = bounds.y;
+              itemEndY = bounds.y + bounds.height;
+            }
+          }
+          if (y >= itemStartY && y < itemEndY) return item;
+          break;
+        }
+      }
+      return null;
+    }
+
+    @Override
+    public void dispose() {
+      myCurrentItem = null;
+      myQueuedEditor = null;
     }
   }
 }
