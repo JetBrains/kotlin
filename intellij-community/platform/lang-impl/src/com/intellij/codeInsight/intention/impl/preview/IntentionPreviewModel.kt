@@ -51,7 +51,7 @@ internal class IntentionPreviewModel {
       return ComparisonManager.getInstance().compareLines(originalFile.text, fileText,
                                                           ComparisonPolicy.TRIM_WHITESPACES, DumbProgressIndicator.INSTANCE)
         .mapNotNull {
-          val start = StringUtil.lineColToOffset(fileText, it.startLine2, 0)
+          val start = StringUtil.lineColToOffset(fileText, it.startLine2, 0).let { pos -> if (pos == -1) fileText.length else pos }
           val end = StringUtil.lineColToOffset(fileText, it.endLine2, 0).let { pos -> if (pos == -1) fileText.length else pos }
 
           if (start >= end) return@mapNotNull null
