@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -164,24 +165,31 @@ class InflowSlicer(
     }
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, includeOverriders: Boolean) {
-        fun extractReceiverExpression(refElement: PsiElement): PsiElement? {
-            return when (refElement) {
+        fun processReceiver(refElement: PsiElement) {
+            when (refElement) {
                 is KtExpression -> {
-                    val resolvedCall = refElement.resolveToCall() ?: return null
-                    //TODO: implicit receiver
-                    val expressionReceiver = resolvedCall.extensionReceiver as? ExpressionReceiver ?: return null
-                    return expressionReceiver.expression
+                    val resolvedCall = refElement.resolveToCall() ?: return
+                    when (val receiver = resolvedCall.extensionReceiver) {
+                        is ExpressionReceiver -> {
+                            receiver.expression.passToProcessorAsValue()
+                        }
+
+                        is ImplicitReceiver -> {
+                            val callableDeclaration = (receiver.declarationDescriptor as? CallableDescriptor)?.originalSource?.getPsi()
+                            (callableDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
+                        }
+                    }
                 }
                 
                 else -> {
-                    (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0)
+                    (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0)?.passToProcessorAsValue()
                 }
             }
         }
 
         fun processCall(usageInfo: UsageInfo) {
             usageInfo.element?.let {
-                extractReceiverExpression(it)?.passToProcessorAsValue()
+                processReceiver(it)
             }
         }
 
