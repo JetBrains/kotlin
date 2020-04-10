@@ -150,13 +150,11 @@ class InflowSlicer(
                 }
             }
 
-            fun processCall(usageInfo: UsageInfo) {
+            processCalls(function, analysisScope, includeOverriders) { usageInfo ->
                 usageInfo.element?.let {
                     extractArgumentExpression(it)?.passToProcessorAsValue()
                 }
             }
-
-            processCalls(function, analysisScope, includeOverriders, ::processCall)
         }
 
         if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
@@ -187,13 +185,11 @@ class InflowSlicer(
             }
         }
 
-        fun processCall(usageInfo: UsageInfo) {
+        processCalls(declaration, analysisScope, includeOverriders) { usageInfo ->
             usageInfo.element?.let {
                 processReceiver(it)
             }
         }
-
-        processCalls(declaration, analysisScope, includeOverriders, ::processCall)
     }
 
     private fun processExpression(expression: KtExpression) {
