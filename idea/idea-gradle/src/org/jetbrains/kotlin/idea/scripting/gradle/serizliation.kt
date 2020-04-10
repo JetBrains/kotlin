@@ -17,118 +17,117 @@ object KotlinDslScriptModels {
     private val attribute = FileAttribute("kotlin-script-dependencies", 1, false)
 
     fun read(project: Project): List<KotlinDslScriptModel>? {
-        return attribute.readAttribute(project.projectFile ?: return null)?.use { readValue(it) }
+        return attribute.readAttribute(project.projectFile ?: return null)?.use { readKotlinDslScriptModels(it) }
     }
 
     fun write(project: Project, models: List<KotlinDslScriptModel>) {
         attribute.writeAttribute(project.projectFile ?: return).use {
-            writeValue(it, models)
+            writeKotlinDslScriptModels(it, models)
         }
     }
 }
 
-fun writeValue(output: DataOutputStream, value: List<KotlinDslScriptModel>) {
-    val strings = StringsPool()
+fun writeKotlinDslScriptModels(output: DataOutputStream, value: List<KotlinDslScriptModel>) {
+    val strings = StringsPool.writer(output)
     value.forEach {
-        strings.getStringId(it.file)
+        strings.addString(it.file)
         strings.addStrings(it.classPath)
         strings.addStrings(it.sourcePath)
         strings.addStrings(it.imports)
     }
-    strings.freeze()
-    strings.writeStrings(output)
-    value.forEach {
-        strings.writeStringId(it.file, output)
+    strings.writeHeader()
+    output.writeList(value) {
+        strings.writeStringId(it.file)
         output.writeString(it.inputs.sections)
         output.writeLong(it.inputs.inputsTS)
-        strings.writeStringIds(it.classPath, output)
-        strings.writeStringIds(it.sourcePath, output)
-        strings.writeStringIds(it.imports, output)
+        strings.writeStringIds(it.classPath)
+        strings.writeStringIds(it.sourcePath)
+        strings.writeStringIds(it.imports)
     }
 }
 
-fun readValue(input: DataInputStream): List<KotlinDslScriptModel> {
-    val strings = StringsPool()
-    strings.readStrings(input)
-    val n = input.readInt()
-    val result = mutableListOf<KotlinDslScriptModel>()
-    repeat(n) {
-        result.add(
-            KotlinDslScriptModel(
-                strings.readStringId(input),
-                GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
-                strings.readStringIds(input),
-                strings.readStringIds(input),
-                strings.readStringIds(input),
-                listOf()
-            )
+fun readKotlinDslScriptModels(input: DataInputStream): List<KotlinDslScriptModel> {
+    val strings = StringsPool.reader(input)
+    return input.readList {
+        KotlinDslScriptModel(
+            strings.readString(),
+            GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
+            strings.readStrings(),
+            strings.readStrings(),
+            strings.readStrings(),
+            listOf()
         )
     }
-    return result
 }
 
-private class StringsPool {
-    var freeze = false
-    val strings = mutableListOf<String>()
-    val ids = mutableMapOf<String, Int>()
+private object StringsPool {
+    fun writer(output: DataOutputStream) = Writer(output)
 
-    fun getString(id: Int) = strings[id]
+    class Writer(val output: DataOutputStream) {
+        var freeze = false
+        val ids = mutableMapOf<String, Int>()
 
-    fun getStringId(string: String): Int = ids.getOrPut(string) {
-        check(!freeze)
-        val id = strings.size
-        strings.add(string)
-        id
-    }
-
-    fun addString(string: String) {
-        getStringId(string)
-    }
-
-    fun addStrings(list: List<String>) {
-        list.forEach { getStringId(it) }
-    }
-
-    fun freeze() {
-        // sort for optimal performance and compression
-        strings.sort()
-        strings.forEachIndexed { index, s ->
-            ids[s] = index
+        fun getStringId(string: String) = ids.getOrPut(string) {
+            check(!freeze)
+            ids.size
         }
 
-        freeze = true
-    }
+        fun addString(string: String) {
+            getStringId(string)
+        }
 
-    fun writeStringIds(strings: List<String>, output: DataOutputStream) {
-        output.writeInt(strings.size)
-        strings.forEach {
-            writeStringId(it, output)
+        fun addStrings(list: List<String>) {
+            list.forEach { addString(it) }
+        }
+
+        fun writeHeader() {
+            freeze = true
+
+            output.writeInt(ids.size)
+
+            // sort for optimal performance and compression
+            ids.keys.sorted().forEachIndexed { index, s ->
+                ids[s] = index
+                output.writeString(s)
+            }
+        }
+
+        fun writeStringId(it: String) {
+            output.writeInt(getStringId(it))
+        }
+
+        fun writeStringIds(strings: List<String>) {
+            output.writeInt(strings.size)
+            strings.forEach {
+                writeStringId(it)
+            }
         }
     }
 
-    fun writeStringId(it: String, output: DataOutputStream) {
-        output.writeInt(getStringId(it))
+    fun reader(input: DataInputStream): Reader {
+        val strings = input.readList { input.readString() }
+        return Reader(input, strings)
     }
 
-    fun readStringIds(input: DataInputStream): List<String> {
-        val n = input.readInt()
-        val result = ArrayList<String>(n)
-        repeat(n) {
-            result.add(readStringId(input))
-        }
-        return result
-    }
+    class Reader(val input: DataInputStream, val strings: List<String>) {
+        fun getString(id: Int) = strings[id]
 
-    fun readStringId(input: DataInputStream) = getString(input.readInt())
+        fun readString() = getString(input.readInt())
 
-    fun writeStrings(output: DataOutputStream) {
-        output.writeInt(ids.size)
-        ids.keys.forEach { output.writeChars(it) }
+        fun readStrings(): List<String> = input.readList { readString() }
     }
+}
 
-    fun readStrings(input: DataInputStream) {
-        repeat(input.readInt()) {
-            ids[input.readString()] = ids.size
-        }
+private inline fun <T> DataOutputStream.writeList(list: List<T>, write: (T) -> Unit) {
+    writeInt(list.size)
+    list.forEach { write(it) }
+}
+
+private inline fun <T> DataInputStream.readList(read: () -> T): List<T> {
+    val n = readInt()
+    val result = ArrayList<T>(n)
+    repeat(n) {
+        result.add(read())
     }
+    return result
 }
