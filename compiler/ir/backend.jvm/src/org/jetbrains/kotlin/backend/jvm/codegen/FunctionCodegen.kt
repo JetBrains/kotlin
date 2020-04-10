@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
@@ -168,7 +169,7 @@ class FunctionCodegen(
         ) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
-        val exceptionClasses = function.getAnnotation(FqName("kotlin.jvm.Throws"))?.getValueArgument(0) ?: return null
+        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.getValueArgument(0) ?: return null
         return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
             context.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
         }

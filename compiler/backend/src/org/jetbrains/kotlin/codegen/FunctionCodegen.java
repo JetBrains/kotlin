@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -1118,7 +1118,7 @@ public class FunctionCodegen {
             return Collections.emptyList();
         }
 
-        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));
+        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(AnnotationUtilKt.JVM_THROWS_ANNOTATION_FQ_NAME);
         if (annotation == null) return Collections.emptyList();
 
         Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();

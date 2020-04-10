@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -64,7 +65,7 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
         if (annotationEntry == null || annotationEntry.valueArguments.isEmpty()) {
             annotationEntry?.delete()
             val whiteSpaceText = if (containingDeclaration is KtPropertyAccessor) " " else "\n"
-            containingDeclaration.addAnnotation(throwsAnnotationFqName, annotationArgumentText, whiteSpaceText)
+            containingDeclaration.addAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME, annotationArgumentText, whiteSpaceText)
         } else {
             val factory = KtPsiFactory(element)
             val argument = annotationEntry.valueArguments.firstOrNull()
@@ -91,8 +92,6 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
     }
 }
 
-private val throwsAnnotationFqName = FqName("kotlin.jvm.Throws")
-
 private fun KtThrowExpression.getContainingDeclaration(): KtDeclaration? {
     val parent = getParentOfTypesAndPredicate(
         true,
@@ -110,7 +109,7 @@ private fun KtDeclaration.findThrowsAnnotation(context: BindingContext): KtAnnot
     val annotationEntries = this.annotationEntries + (parent as? KtProperty)?.annotationEntries.orEmpty()
     return annotationEntries.find {
         val typeReference = it.typeReference ?: return@find false
-        context[BindingContext.TYPE, typeReference]?.constructor?.declarationDescriptor?.fqNameSafe == throwsAnnotationFqName
+        context[BindingContext.TYPE, typeReference]?.constructor?.declarationDescriptor?.fqNameSafe == JVM_THROWS_ANNOTATION_FQ_NAME
     }
 }
 
