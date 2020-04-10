@@ -18,6 +18,7 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -85,6 +86,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -484,6 +487,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private static final Comparator<AbstractProjectViewPane> PANE_WEIGHT_COMPARATOR = Comparator.comparingInt(AbstractProjectViewPane::getWeight);
   private final MyPanel myDataProvider;
   private final SplitterProportionsData splitterProportions = new SplitterProportionsDataImpl();
+  private final PropertyChangeSupport myPropertySupport = new PropertyChangeSupport(this);
   private final Map<String, Element> myUninitializedPaneState = new THashMap<>();
   private final Map<String, SelectInTarget> mySelectInTargets = new LinkedHashMap<>();
   private ContentManager myContentManager;
@@ -812,6 +816,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
     }
     myAutoScrollToSourceHandler.onMouseClicked(newPane.myTree);
+    myPropertySupport.firePropertyChange("currentProjectViewPane", currentPane, newPane);
   }
 
   // public for tests
@@ -2068,6 +2073,22 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
     }
   }
+
+
+  /**
+   * Adds a listener for a specific property.
+   * The following properties are supported:
+   * "currentProjectViewPane".
+   *
+   * @param property the name of the property to listen on
+   * @param listener the {@link PropertyChangeListener} to be added
+   * @param parent   a disposable object to remove the specified listener
+   */
+  public void addPropertyChangeListener(@NotNull String property, @NotNull PropertyChangeListener listener, @NotNull Disposable parent) {
+    myPropertySupport.addPropertyChangeListener(property, listener);
+    Disposer.register(parent, () -> myPropertySupport.removePropertyChangeListener(property, listener));
+  }
+
 
   abstract class Option implements ToggleOptionAction.Option {
     @Override
