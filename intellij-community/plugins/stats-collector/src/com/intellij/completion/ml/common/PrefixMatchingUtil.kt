@@ -5,36 +5,49 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.codeStyle.NameUtil
 
 object PrefixMatchingUtil {
-  const val baseName = "prefix_matching"
+  const val baseName = "prefix"
 
   fun calculateFeatures(element: LookupElement, prefix: String, features: MutableMap<String, Any>) {
     if (prefix.isEmpty() || element.lookupString.isEmpty()) return
     val prefixMatchingScores = PrefixMatchingScores.Builder().build(prefix, element.lookupString)
-    features.addFeature("start_length", prefixMatchingScores.start, 0)
-    features.addFeature("symbols_length", prefixMatchingScores.symbols, 0.0)
-    features.addFeature("symbols_with_case_length", prefixMatchingScores.symbolsWithCase, 0.0)
-    features.addFeature("words_length", prefixMatchingScores.words, 0.0)
-    features.addFeature("words_relative", prefixMatchingScores.wordsRelative, 0.0)
-    features.addFeature("words_with_case_length", prefixMatchingScores.wordsWithCase, 0.0)
-    features.addFeature("words_with_case_relative", prefixMatchingScores.wordsWithCaseRelative, 0.0)
+    // how many chars of the prefix are matched with the beginning of the lookup string
+    features.addFeature("same_start_count", prefixMatchingScores.start, 0)
+    // greedy matcher tries to match chars of the prefix with a word in the lookup string
+    // when chars are not matched, it goes on to the next word
+    // if it skips words, the score is increased not by 1, but 1/(skipped words count + 1)
+    features.addFeature("greedy_score", prefixMatchingScores.greedy, 0.0)
+    // case sensitive version of the previous feature
+    features.addFeature("greedy_with_case_score", prefixMatchingScores.greedyWithCase, 0.0)
+    // number of words matched by greedy matcher; score is calculated in the same way
+    features.addFeature("matched_words_score", prefixMatchingScores.words, 0.0)
+    // value of the previous feature in relation to words count in the lookup string
+    features.addFeature("matched_words_relative", prefixMatchingScores.wordsRelative, 0.0)
+    // case sensitive version of the matched_words_score feature
+    features.addFeature("matched_words_with_case_score", prefixMatchingScores.wordsWithCase, 0.0)
+    // case sensitive version of matched_words_relative feature
+    features.addFeature("matched_words_with_case_relative", prefixMatchingScores.wordsWithCaseRelative, 0.0)
+    // number of skipped words by the greedy matcher
     features.addFeature("skipped_words", prefixMatchingScores.skippedWords, 0)
-    features.addFeature("type", prefixMatchingScores.type, PrefixMatchingType.UNKNOWN)
+    // the most suitable matching type for prefix and lookup string
+    features.addFeature("matching_type", prefixMatchingScores.type, PrefixMatchingType.UNKNOWN)
+    // are the prefix and lookup string the same
     features.addFeature("exact", prefixMatchingScores.exact, false)
-    features.addFeature("exact_final", prefixMatchingScores.exactFinal, false)
+    // did the last word of the lookup string match the end of the prefix
+    features.addFeature("matched_last_word", prefixMatchingScores.exactFinal, false)
   }
 
   data class PrefixMatchingScores internal constructor(
-      val exact: Boolean,
-      val exactFinal: Boolean,
-      val start: Int,
-      val symbols: Double,
-      val symbolsWithCase: Double,
-      val words: Double,
-      val wordsRelative: Double,
-      val wordsWithCase: Double,
-      val wordsWithCaseRelative: Double,
-      val skippedWords: Int,
-      val type: PrefixMatchingType) {
+    val exact: Boolean,
+    val exactFinal: Boolean,
+    val start: Int,
+    val greedy: Double,
+    val greedyWithCase: Double,
+    val words: Double,
+    val wordsRelative: Double,
+    val wordsWithCase: Double,
+    val wordsWithCaseRelative: Double,
+    val skippedWords: Int,
+    val type: PrefixMatchingType) {
 
     companion object {
       private val EMPTY_PREFIX_MATCHING_SCORE =
@@ -44,13 +57,13 @@ object PrefixMatchingUtil {
     class Builder {
       private var startMatchingCount = 0
       private var exact = false
-      private var wordsMatchingMeasure = 0.0
-      private var wordsMatchingWithCaseMeasure = 0.0
+      private var wordsMatchingScore = 0.0
+      private var wordsMatchingWithCaseScore = 0.0
       private var wordsMatchingCount = 0
-      private var symbolsMatchingMeasure = 0.0
-      private var symbolsMatchingCount = 0
-      private var symbolsMatchingWithCaseMeasure = 0.0
-      private var symbolsMatchingWithCaseCount = 0
+      private var greedyMatchingScore = 0.0
+      private var greedyMatchingCount = 0
+      private var greedyMatchingWithCaseScore = 0.0
+      private var greedyMatchingWithCaseCount = 0
       private var skippedWords = 0
       private var lastWord = 0
       private var lastWordSize = 0
@@ -81,12 +94,12 @@ object PrefixMatchingUtil {
           exact,
           lastWord == lastWordSize,
           startMatchingCount,
-          symbolsMatchingMeasure,
-          symbolsMatchingWithCaseMeasure,
-          wordsMatchingMeasure,
-          if (wordsCount == 0) 0.0 else wordsMatchingMeasure / wordsCount,
-          wordsMatchingWithCaseMeasure,
-          if (wordsCount == 0) 0.0 else wordsMatchingWithCaseMeasure / wordsCount,
+          greedyMatchingScore,
+          greedyMatchingWithCaseScore,
+          wordsMatchingScore,
+          if (wordsCount == 0) 0.0 else wordsMatchingScore / wordsCount,
+          wordsMatchingWithCaseScore,
+          if (wordsCount == 0) 0.0 else wordsMatchingWithCaseScore / wordsCount,
           skippedWords,
           resolveMatchingType(prefix)
         )
@@ -94,10 +107,10 @@ object PrefixMatchingUtil {
 
       private fun resolveMatchingType(prefix: String): PrefixMatchingType =
         when (prefix.length) {
-          startMatchingCount -> PrefixMatchingType.START
-          wordsMatchingCount -> PrefixMatchingType.FIRST_CHARS
-          symbolsMatchingWithCaseCount -> PrefixMatchingType.SYMBOLS_WITH_CASE
-          symbolsMatchingCount -> PrefixMatchingType.SYMBOLS
+          startMatchingCount -> PrefixMatchingType.START_WITH
+          wordsMatchingCount -> PrefixMatchingType.WORDS_FIRST_CHAR
+          greedyMatchingWithCaseCount -> PrefixMatchingType.GREEDY_WITH_CASE
+          greedyMatchingCount -> PrefixMatchingType.GREEDY
           else -> PrefixMatchingType.UNKNOWN
         }
 
@@ -124,19 +137,19 @@ object PrefixMatchingUtil {
           skippedWords += wordsDif - 1
           val step = 1.0 / wordsDif
           curWord = word
-          wordsMatchingMeasure += step
-          symbolsMatchingMeasure += step
+          wordsMatchingScore += step
+          greedyMatchingScore += step
           wordsMatchingCount++
           if (withCase) {
-            symbolsMatchingWithCaseMeasure += step
-            wordsMatchingWithCaseMeasure += step
+            greedyMatchingWithCaseScore += step
+            wordsMatchingWithCaseScore += step
           }
         } else {
-          symbolsMatchingMeasure++
-          if (withCase) symbolsMatchingWithCaseMeasure++
+          greedyMatchingScore++
+          if (withCase) greedyMatchingWithCaseScore++
         }
-        symbolsMatchingCount++
-        if (withCase) symbolsMatchingWithCaseCount++
+        greedyMatchingCount++
+        if (withCase) greedyMatchingWithCaseCount++
         if (word == wordsCount - 1) lastWord++
       }
     }

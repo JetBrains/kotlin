@@ -14,11 +14,11 @@ class PrefixMatchingUtilTest {
     val prefix = "isempt"
     val checks = listOf(
       ScoreCheck(6, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(6.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
-      ScoreCheck(5.0, PrefixMatchingUtil.PrefixMatchingScores::symbolsWithCase),
+      ScoreCheck(6.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
+      ScoreCheck(5.0, PrefixMatchingUtil.PrefixMatchingScores::greedyWithCase),
       ScoreCheck(2.0, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(1.0, PrefixMatchingUtil.PrefixMatchingScores::wordsWithCase),
-      ScoreCheck(PrefixMatchingType.START, PrefixMatchingUtil.PrefixMatchingScores::type))
+      ScoreCheck(PrefixMatchingType.START_WITH, PrefixMatchingUtil.PrefixMatchingScores::type))
 
     checkScores(prefix, camelCaseLookupString, checks)
   }
@@ -28,11 +28,11 @@ class PrefixMatchingUtilTest {
     val prefix = "isEmpt"
     val checks = listOf(
       ScoreCheck(6, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(6.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
-      ScoreCheck(6.0, PrefixMatchingUtil.PrefixMatchingScores::symbolsWithCase),
+      ScoreCheck(6.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
+      ScoreCheck(6.0, PrefixMatchingUtil.PrefixMatchingScores::greedyWithCase),
       ScoreCheck(2.0, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(2.0, PrefixMatchingUtil.PrefixMatchingScores::wordsWithCase),
-      ScoreCheck(PrefixMatchingType.START, PrefixMatchingUtil.PrefixMatchingScores::type))
+      ScoreCheck(PrefixMatchingType.START_WITH, PrefixMatchingUtil.PrefixMatchingScores::type))
 
     checkScores(prefix, camelCaseLookupString, checks)
   }
@@ -42,9 +42,9 @@ class PrefixMatchingUtilTest {
     val prefix = "ies"
     val checks = listOf(
       ScoreCheck(1, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
+      ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::words),
-      ScoreCheck(PrefixMatchingType.FIRST_CHARS, PrefixMatchingUtil.PrefixMatchingScores::type))
+      ScoreCheck(PrefixMatchingType.WORDS_FIRST_CHAR, PrefixMatchingUtil.PrefixMatchingScores::type))
 
     checkScores(prefix, camelCaseLookupString, checks)
     checkScores(prefix, capitalizedLookupString, checks)
@@ -56,11 +56,11 @@ class PrefixMatchingUtilTest {
     val prefix = "iES"
     val checks = listOf(
       ScoreCheck(1, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
-      ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::symbolsWithCase),
+      ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
+      ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::greedyWithCase),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::wordsWithCase),
-      ScoreCheck(PrefixMatchingType.FIRST_CHARS, PrefixMatchingUtil.PrefixMatchingScores::type))
+      ScoreCheck(PrefixMatchingType.WORDS_FIRST_CHAR, PrefixMatchingUtil.PrefixMatchingScores::type))
 
     checkScores(prefix, camelCaseLookupString, checks)
   }
@@ -70,11 +70,11 @@ class PrefixMatchingUtilTest {
     val prefix = "isEmpSt"
     val checks = listOf(
       ScoreCheck(5, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
-      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::symbolsWithCase),
+      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
+      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::greedyWithCase),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::wordsWithCase),
-      ScoreCheck(PrefixMatchingType.SYMBOLS_WITH_CASE, PrefixMatchingUtil.PrefixMatchingScores::type))
+      ScoreCheck(PrefixMatchingType.GREEDY_WITH_CASE, PrefixMatchingUtil.PrefixMatchingScores::type))
 
     checkScores(prefix, camelCaseLookupString, checks)
   }
@@ -84,11 +84,11 @@ class PrefixMatchingUtilTest {
     val prefix = "isempst"
     val checks = listOf(
       ScoreCheck(5, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
-      ScoreCheck(5.0, PrefixMatchingUtil.PrefixMatchingScores::symbolsWithCase),
+      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
+      ScoreCheck(5.0, PrefixMatchingUtil.PrefixMatchingScores::greedyWithCase),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(1.0, PrefixMatchingUtil.PrefixMatchingScores::wordsWithCase),
-      ScoreCheck(PrefixMatchingType.SYMBOLS, PrefixMatchingUtil.PrefixMatchingScores::type))
+      ScoreCheck(PrefixMatchingType.GREEDY, PrefixMatchingUtil.PrefixMatchingScores::type))
 
     checkScores(prefix, camelCaseLookupString, checks)
   }
@@ -97,7 +97,7 @@ class PrefixMatchingUtilTest {
   fun testSymbolsMatchingConsistency() {
     val prefix = "isempst"
     val checks = listOf(
-      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
+      ScoreCheck(7.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::words))
 
     checkScores(prefix, camelCaseLookupString, checks)
@@ -109,7 +109,7 @@ class PrefixMatchingUtilTest {
   fun testSkippedWords() {
     val prefix = "isstr"
     val checks = listOf(
-      ScoreCheck(4.5, PrefixMatchingUtil.PrefixMatchingScores::symbols),
+      ScoreCheck(4.5, PrefixMatchingUtil.PrefixMatchingScores::greedy),
       ScoreCheck(1.5, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(1, PrefixMatchingUtil.PrefixMatchingScores::skippedWords))
 
@@ -123,7 +123,7 @@ class PrefixMatchingUtilTest {
   fun testFinalMatching() {
     val prefix = "iemstring"
     val checks = listOf(
-      ScoreCheck(9.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
+      ScoreCheck(9.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
       ScoreCheck(3.0, PrefixMatchingUtil.PrefixMatchingScores::words),
       ScoreCheck(true, PrefixMatchingUtil.PrefixMatchingScores::exactFinal))
 
@@ -144,7 +144,7 @@ class PrefixMatchingUtilTest {
     val prefix = ""
     val checks = listOf(
       ScoreCheck(0, PrefixMatchingUtil.PrefixMatchingScores::start),
-      ScoreCheck(0.0, PrefixMatchingUtil.PrefixMatchingScores::symbols),
+      ScoreCheck(0.0, PrefixMatchingUtil.PrefixMatchingScores::greedy),
       ScoreCheck(0.0, PrefixMatchingUtil.PrefixMatchingScores::words))
 
     checkScores(prefix, camelCaseLookupString, checks)

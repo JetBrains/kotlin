@@ -3,19 +3,19 @@ package com.intellij.completion.ml.common
 
 /**
  * Matching prefixes for *isEmptyString* lookup element as example:
- *  - `isempt` -> [START]
- *  - `isEmpt` -> [START]
- *  - `ies` -> [FIRST_CHARS]
- *  - `iES` -> [FIRST_CHARS]
- *  - `isEmpSt` -> [SYMBOLS_WITH_CASE]
- *  - `EmpSt` -> [SYMBOLS_WITH_CASE]
- *  - `isempst` -> [SYMBOLS]
- *  - `Emstr` -> [SYMBOLS]
+ *  - `isempt` -> [START_WITH]
+ *  - `isEmpt` -> [START_WITH]
+ *  - `ies` -> [WORDS_FIRST_CHAR]
+ *  - `iES` -> [WORDS_FIRST_CHAR]
+ *  - `isEmpSt` -> [GREEDY_WITH_CASE]
+ *  - `EmpSt` -> [GREEDY_WITH_CASE]
+ *  - `isempst` -> [GREEDY]
+ *  - `Emstr` -> [GREEDY]
  */
 enum class PrefixMatchingType {
-  START,
-  FIRST_CHARS,
-  SYMBOLS_WITH_CASE,
-  SYMBOLS,
+  START_WITH,
+  WORDS_FIRST_CHAR,
+  GREEDY_WITH_CASE,
+  GREEDY,
   UNKNOWN
 }
