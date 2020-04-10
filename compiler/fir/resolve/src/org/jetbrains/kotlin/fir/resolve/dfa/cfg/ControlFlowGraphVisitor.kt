@@ -269,6 +269,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitContractDescriptionEnterNode(node: ContractDescriptionEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: D): R {
         return visitNode(node, data)
     }

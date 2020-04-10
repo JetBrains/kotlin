@@ -520,6 +520,13 @@ class StubNode(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<FirStub>(
     }
 }
 
+class ContractDescriptionEnterNode(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<FirStub>(owner, level, id) {
+    override val fir: FirStub = FirStub
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitContractDescriptionEnterNode(this, data)
+    }
+}
+
 class VariableDeclarationNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNode<FirProperty>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitVariableDeclarationNode(this, data)

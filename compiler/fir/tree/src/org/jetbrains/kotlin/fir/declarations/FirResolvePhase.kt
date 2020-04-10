@@ -12,6 +12,7 @@ enum class FirResolvePhase {
     SEALED_CLASS_INHERITORS,
     TYPES,
     STATUS,
+    CONTRACTS,
     IMPLICIT_TYPES_BODY_RESOLVE,
     BODY_RESOLVE;
 

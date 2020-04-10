@@ -38,7 +38,7 @@ open class FirBodyResolveTransformer(
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 
     private val expressionsTransformer = FirExpressionsResolveTransformer(this)
-    private val declarationsTransformer = FirDeclarationsResolveTransformer(this)
+    protected open val declarationsTransformer = FirDeclarationsResolveTransformer(this)
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {

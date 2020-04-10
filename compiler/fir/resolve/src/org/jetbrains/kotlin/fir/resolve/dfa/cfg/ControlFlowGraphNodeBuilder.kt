@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.fir.expressions.*
 
 fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(graph, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createContractDescriptionEnterNode(): ContractDescriptionEnterNode =
+    ContractDescriptionEnterNode(graph, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createLoopExitNode(fir: FirLoop): LoopExitNode = LoopExitNode(graph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopEnterNode(fir: FirLoop): LoopEnterNode = LoopEnterNode(graph, fir, levelCounter, createId())

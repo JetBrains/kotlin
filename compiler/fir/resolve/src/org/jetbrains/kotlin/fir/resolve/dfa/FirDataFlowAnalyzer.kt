@@ -953,6 +953,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return controlFlowGraph
     }
 
+    // ----------------------------------- Contract description -----------------------------------
+
+    fun enterContractDescription() {
+        graphBuilder.enterContractDescription().mergeIncomingFlow()
+    }
+
+    fun exitContractDescription() {
+        graphBuilder.exitContractDescription()
+    }
+
     // ------------------------------------------------------ Utils ------------------------------------------------------
 
     private var CFGNode<*>.flow: FLOW

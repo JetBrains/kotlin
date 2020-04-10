@@ -870,6 +870,22 @@ class ControlFlowGraphBuilder {
         }
     }
 
+    // ----------------------------------- Contract description -----------------------------------
+
+    fun enterContractDescription(): CFGNode<*> {
+        graphs.push(ControlFlowGraph(null, "contract description", ControlFlowGraph.Kind.TopLevel))
+        val node = createContractDescriptionEnterNode().also {
+            graph.enterNode = it
+        }
+        lexicalScopes.push(stackOf(node))
+        return node
+    }
+
+    fun exitContractDescription() {
+        lexicalScopes.pop()
+        graphs.pop()
+    }
+
     // -------------------------------------------------------------------------------------------------------------------------
 
     private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Simple) {

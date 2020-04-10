@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -18,10 +19,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCallBuilder
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 fun FirFunctionCall.copy(
@@ -97,6 +96,15 @@ fun FirTypeRef.resolvedTypeFromPrototype(
         source = this@resolvedTypeFromPrototype.source
         this.type = type
         annotations += this@resolvedTypeFromPrototype.annotations
+    }
+}
+
+fun FirTypeRef.errorTypeFromPrototype(
+    diagnostic: ConeDiagnostic
+): FirErrorTypeRef {
+    return buildErrorTypeRef {
+        source = this@errorTypeFromPrototype.source
+        this.diagnostic = diagnostic
     }
 }
 

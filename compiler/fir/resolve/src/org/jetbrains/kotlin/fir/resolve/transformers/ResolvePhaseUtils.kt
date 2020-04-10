@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformerAdapter
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveTransformerAdapter
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformerAdapter
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 // TODO: add FirSession parameter
@@ -22,6 +23,7 @@ fun FirResolvePhase.createTransformerByPhase(scopeSession: ScopeSession): FirTra
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsTransformer()
         TYPES -> FirTypeResolveTransformerAdapter(scopeSession)
         STATUS -> FirStatusResolveTransformerAdapter()
+        CONTRACTS -> FirContractResolveTransformerAdapter(scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveTransformerAdapter(scopeSession)
         BODY_RESOLVE -> FirBodyResolveTransformerAdapter(scopeSession)
     }

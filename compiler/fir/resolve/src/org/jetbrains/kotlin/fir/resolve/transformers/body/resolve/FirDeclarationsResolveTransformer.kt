@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
+open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private var primaryConstructorParametersScope: FirLocalScope? = null
 
     private var containingClass: FirRegularClass? = null
@@ -66,7 +66,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    private inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
+    protected inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
         if (declaration.typeParameters.isEmpty()) return l()
 
         for (typeParameter in declaration.typeParameters) {
@@ -670,7 +670,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return this
     }
 
-    private inline fun <T> withLabelAndReceiverType(
+    protected inline fun <T> withLabelAndReceiverType(
         labelName: Name?,
         owner: FirDeclaration,
         type: ConeKotlinType?,
