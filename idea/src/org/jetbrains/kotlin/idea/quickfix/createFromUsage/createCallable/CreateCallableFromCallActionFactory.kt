@@ -67,7 +67,8 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
             Errors.NO_VALUE_FOR_PARAMETER,
             Errors.TOO_MANY_ARGUMENTS,
-            Errors.NONE_APPLICABLE -> diagElement.getNonStrictParentOfType<KtCallExpression>()
+            Errors.NONE_APPLICABLE ->
+                if (diagElement is KtOperationReferenceExpression) null else diagElement.getNonStrictParentOfType<KtCallExpression>()
 
             Errors.TYPE_MISMATCH -> (diagElement.parent as? KtValueArgument)?.getStrictParentOfType<KtCallExpression>()
 
