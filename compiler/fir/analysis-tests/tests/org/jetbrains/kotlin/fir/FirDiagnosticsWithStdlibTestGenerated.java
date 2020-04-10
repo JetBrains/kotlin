@@ -486,19 +486,32 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("callsInPlace.kt")
-        public void testCallsInPlace() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/callsInPlace.kt");
-        }
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromLibrary extends AbstractFirDiagnosticsWithStdlibTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
 
-        @TestMetadata("conditionalEffects.kt")
-        public void testConditionalEffects() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/conditionalEffects.kt");
-        }
+            public void testAllFilesPresentInFromLibrary() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
 
-        @TestMetadata("notIsNullOrEmpty.kt")
-        public void testNotIsNullOrEmpty() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/notIsNullOrEmpty.kt");
+            @TestMetadata("callsInPlace.kt")
+            public void testCallsInPlace() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/callsInPlace.kt");
+            }
+
+            @TestMetadata("conditionalEffects.kt")
+            public void testConditionalEffects() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/conditionalEffects.kt");
+            }
+
+            @TestMetadata("notIsNullOrEmpty.kt")
+            public void testNotIsNullOrEmpty() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/notIsNullOrEmpty.kt");
+            }
         }
     }
 
