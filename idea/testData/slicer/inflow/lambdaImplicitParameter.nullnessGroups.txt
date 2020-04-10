@@ -1,3 +1,4 @@
 [NotNull Values]
-9 	println(<bold>it</bold>)
-9 		println(<bold>it</bold>)
+9 	val v = <bold>it</bold>
+9 		val v = <bold>it</bold>
+

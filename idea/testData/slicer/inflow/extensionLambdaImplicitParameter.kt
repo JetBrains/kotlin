@@ -12,7 +12,7 @@ fun foo(f: String.(Int) -> Unit) {
 
 fun test() {
     foo {
-        println(<caret>it)
+        val v = <caret>it
     }
 }
 

@@ -1,13 +1,13 @@
 // FLOW: OUT
 
 open class C {
-    open fun foo(<caret>p: Any) {
-        println(p)
+    open fun foo(<caret>p: String) {
+        val v = p
     }
 }
 
 class D : C() {
-    override fun foo(p: Any) {
-        println(p + 1)
+    override fun foo(p: String) {
+        val v = p + 1
     }
 }

@@ -1,4 +1,5 @@
 // FLOW: IN
+// WITH_RUNTIME
 
 @file: JvmName("KotlinUtil")
 

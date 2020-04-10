@@ -6,6 +6,6 @@ interface I {
 
 class C : I {
     override fun foo(p: Any) {
-        println(p)
+        val v = p
     }
 }

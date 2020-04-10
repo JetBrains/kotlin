@@ -1,4 +1,5 @@
 // FLOW: OUT
+// WITH_RUNTIME
 
 val <caret>x = 1
 
@@ -9,7 +10,7 @@ fun test() {
 
     val z: Int
 
-    init {
+    run {
         z = x
 
         bar(x)

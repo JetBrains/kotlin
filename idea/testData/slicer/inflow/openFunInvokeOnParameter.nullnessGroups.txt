@@ -1,3 +1,4 @@
 [NotNull Values]
-11 	fun bar(<bold>p: Int</bold>) {
-11 		fun bar(<bold>p: Int</bold>) {
+12 	open fun bar(<bold>p: Int</bold>) {
+12 		open fun bar(<bold>p: Int</bold>) {
+

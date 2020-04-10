@@ -2,6 +2,7 @@
 4 	fun foo(<bold>p: Any</bold>)
 2 		public void foo(Object <bold>p</bold>) {
 3 			System.out.println(<bold>p</bold>);
-9 			println(<bold>p</bold>) // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958
+9 			val v = <bold>p</bold> // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958
+9 				val <bold>v = p // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958</bold>
 8 		override fun foo(<bold>p: Any</bold>) {
-9 			DUPLICATE: println(<bold>p</bold>) // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958
+9 			DUPLICATE: val v = <bold>p</bold> // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958

@@ -2,10 +2,10 @@ import kotlin.reflect.KProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class D {
+class D {
     private String _value = "";
 
-    int getValue(@Nullable Object thisRef, @NotNull KProperty<?> property) {
+    String getValue(@Nullable Object thisRef, @NotNull KProperty<?> property) {
         return _value;
     }
 

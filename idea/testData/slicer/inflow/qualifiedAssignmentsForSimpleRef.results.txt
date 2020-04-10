@@ -1,4 +1,4 @@
-8 println("And now my name is '$<bold>name</bold>'")
+8 val v = "And now my name is '$<bold>name</bold>'"
 4 	var <bold>name : String = name1</bold>
 4 		var name : String = <bold>name1</bold>
 3 			class AClass(<bold>name1: String</bold>){

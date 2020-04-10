@@ -4,3 +4,4 @@
 6 			private String _value = <bold>""</bold>;
 13 			_value = <bold>value</bold>;
 12 				void setValue(@Nullable Object thisRef, @NotNull KProperty<?> property, @NotNull String <bold>value</bold>) {
+5 					var name <bold>by D()</bold>

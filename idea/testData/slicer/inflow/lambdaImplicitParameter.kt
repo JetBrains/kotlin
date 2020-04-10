@@ -1,11 +1,11 @@
 // FLOW: IN
 
-fun foo(f: (Int) -> Unit): Int {
-    return f(1)
+fun foo(f: (Int) -> Unit) {
+    f(1)
 }
 
 fun test() {
     foo {
-        println(<caret>it)
+        val v = <caret>it
     }
 }

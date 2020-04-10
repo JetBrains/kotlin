@@ -26,9 +26,15 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
         }!!
 
         myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${rootDir.path}"
-        
-        extraFiles.forEach { myFixture.configureByFile(it.name) }
+
+        val extraPsiFiles = extraFiles.map { myFixture.configureByFile(it.name) }
         val file = myFixture.configureByFile(mainFile.name) as KtFile
+
+        // check correctness of test data
+        extraPsiFiles.forEach {
+            myFixture.testHighlighting(false, false, false, it.virtualFile)
+        }
+        myFixture.testHighlighting(false, false, false, file.virtualFile)
 
         testSliceFromOffset(file, editor.caretModel.offset) { sliceProvider, rootNode ->
             doTest(path, sliceProvider, rootNode)

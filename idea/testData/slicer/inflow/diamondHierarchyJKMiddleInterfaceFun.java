@@ -2,7 +2,7 @@ interface A {
     public int foo();
 }
 
-class B extends A {
+class B implements A {
     public int foo() {
         return 2;
     }
