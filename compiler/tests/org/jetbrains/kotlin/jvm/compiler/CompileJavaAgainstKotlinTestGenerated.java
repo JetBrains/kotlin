@@ -479,6 +479,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                     runTest("compiler/testData/compileJavaAgainstKotlin/method/throws/GenericSubstitution.kt");
                 }
 
+                @TestMetadata("KotlinThrows.kt")
+                public void testKotlinThrows() throws Exception {
+                    runTest("compiler/testData/compileJavaAgainstKotlin/method/throws/KotlinThrows.kt");
+                }
+
                 @TestMetadata("TopLevel.kt")
                 public void testTopLevel() throws Exception {
                     runTest("compiler/testData/compileJavaAgainstKotlin/method/throws/TopLevel.kt");
@@ -1135,6 +1140,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("GenericSubstitution.kt")
                 public void testGenericSubstitution() throws Exception {
                     runTest("compiler/testData/compileJavaAgainstKotlin/method/throws/GenericSubstitution.kt");
+                }
+
+                @TestMetadata("KotlinThrows.kt")
+                public void testKotlinThrows() throws Exception {
+                    runTest("compiler/testData/compileJavaAgainstKotlin/method/throws/KotlinThrows.kt");
                 }
 
                 @TestMetadata("TopLevel.kt")
