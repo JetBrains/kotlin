@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,7 +42,7 @@ class PsiInlineCodegen(
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
-        typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn), codegen.typeSystem,
+        typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn, codegen.typeSystem), codegen.typeSystem,
         state.languageVersionSettings, state.unifiedNullChecks
     ),
 ), CallGenerator {

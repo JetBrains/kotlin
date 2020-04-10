@@ -234,10 +234,11 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codeg
 
 // returns false is cannot not use serializer
 // use iv == null to check only (do not emit serializer onto stack)
-internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
-                                                                  iv: InstructionAdapter?,
-                                                                  genericIndex: Int? = null,
-                                                                  genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
+    codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
+    iv: InstructionAdapter?,
+    genericIndex: Int? = null,
+    genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
 ): Boolean {
     if (maybeSerializer == null && genericIndex != null) {
         // get field from serializer object
