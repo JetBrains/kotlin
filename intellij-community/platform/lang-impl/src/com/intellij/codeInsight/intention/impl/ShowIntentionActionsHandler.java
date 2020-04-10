@@ -14,6 +14,7 @@ import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewEditor;
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewUnsupportedOperationException;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -179,7 +180,8 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       PsiFile fileToApply = null;
 
       Editor injectedEditor = null;
-      if (injectedFile != null) {
+      // TODO: support intention preview in injections
+      if (injectedFile != null && !(hostEditor instanceof IntentionPreviewEditor)) {
         injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
         if (predicate.process(injectedFile, injectedEditor)) {
           editorToApply = injectedEditor;
