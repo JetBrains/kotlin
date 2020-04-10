@@ -38,7 +38,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
         return buildBinaryLogicExpression {
             leftOperand = leftExpression
             rightOperand = rightExpression
-            binaryLogicExpression.kind
+            kind = binaryLogicExpression.kind
         }
     }
 
