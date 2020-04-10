@@ -1,3 +1,4 @@
 [NotNull Values]
-5 	println(<bold>this</bold>)
-5 		println(<bold>this</bold>)
+5 	val v = <bold>this</bold>
+5 		val v = <bold>this</bold>
+

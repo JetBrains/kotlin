@@ -5,6 +5,6 @@ var <caret>Any.property: Int
     set(value) { }
 
 fun foo() {
-    println("a".property)
+    val v = "a".property
     "b".property = 2
 }

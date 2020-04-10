@@ -1,11 +1,11 @@
 class A {
-    int foo() {
+    public int foo() {
         return 1;
     }
 }
 
 class C extends B {
-    int foo() {
+    public int foo() {
         return 3;
     }
 }

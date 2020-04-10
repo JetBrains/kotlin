@@ -2,6 +2,7 @@
 3 	var <bold>Any</bold>.property: Int
 9 		<bold>"b"</bold>.property = 2
 
-8 println(<bold>"a"</bold>.property)
+8 val v = <bold>"a"</bold>.property
 3 	var <bold>Any</bold>.property: Int
-8 		println(<bold>"a"</bold>.property)
+8 		val v = <bold>"a"</bold>.property
+

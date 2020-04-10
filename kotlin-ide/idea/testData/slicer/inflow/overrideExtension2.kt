@@ -2,7 +2,7 @@
 
 open class Base {
     open fun <caret>Int.extensionFun() {
-        println(this)
+        val v = this
     }
 
     fun baseF() {

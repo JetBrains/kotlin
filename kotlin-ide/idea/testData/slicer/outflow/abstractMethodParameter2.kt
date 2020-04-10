@@ -6,7 +6,7 @@ interface I {
 
 class C : I {
     override fun foo(p: Any) {
-        println(p) // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958
+        val v = p // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958
     }
 }
 

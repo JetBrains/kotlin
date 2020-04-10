@@ -1,4 +1,5 @@
-4 open fun foo(<bold>p: Any</bold>) {
-5 	println(<bold>p</bold>)
-10 	override fun foo(<bold>p: Any</bold>) {
-11 		println(<bold>p</bold> + 1)
+4 open fun foo(<bold>p: String</bold>) {
+5 	val v = <bold>p</bold>
+5 		val <bold>v = p</bold>
+10 	override fun foo(<bold>p: String</bold>) {
+11 		val v = <bold>p</bold> + 1

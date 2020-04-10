@@ -1,3 +1,4 @@
 [NotNull Values]
-15 	println("Now my name is '${a.<bold>name</bold>}'")
-15 		println("Now my name is '${a.<bold>name</bold>}'")
+15 	val v = "Now my name is '${a.<bold>name</bold>}'"
+15 		val v = "Now my name is '${a.<bold>name</bold>}'"
+

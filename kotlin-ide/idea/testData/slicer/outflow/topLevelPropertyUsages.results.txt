@@ -1,10 +1,10 @@
-3 val <bold>x = 1</bold>
-5 	val y = <bold>x</bold>
-5 		val <bold>y = x</bold>
+4 val <bold>x = 1</bold>
 3 	int x = TopLevelPropertyUsagesKt.<bold>getX</bold>();
-8 	val y = <bold>x</bold>
-8 		val <bold>y = x</bold>
-13 	z = <bold>x</bold>
-10 		val <bold>z: Int</bold>
-15 	bar(<bold>x</bold>)
-19 		fun bar(<bold>m: Int</bold>) {
+6 	val y = <bold>x</bold>
+6 		val <bold>y = x</bold>
+9 	val y = <bold>x</bold>
+9 		val <bold>y = x</bold>
+14 	z = <bold>x</bold>
+11 		val <bold>z: Int</bold>
+16 	bar(<bold>x</bold>)
+20 		fun bar(<bold>m: Int</bold>) {

@@ -1,4 +1,4 @@
-15 println(<bold>i</bold>)
+15 val v = <bold>i</bold>
 14 	foo { <bold>i</bold> ->
 14 		[LAMBDA CALLS] foo <bold>{ i -></bold>
 3 			[LAMBDA CALLS] fun foo(<bold>f: String.(Int) -> Unit</bold>) {

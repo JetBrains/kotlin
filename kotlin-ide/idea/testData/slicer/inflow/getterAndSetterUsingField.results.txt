@@ -1,5 +1,6 @@
 11 val x = <bold>foo</bold>
-4 	var <bold>foo: Int</bold>
+4 	var <bold>foo: Int = -1</bold>
+4 		var foo: Int = <bold>-1</bold>
 5 		get() = <bold>if (b) field else 0</bold>
 5 			get() = if (b) <bold>field</bold> else 0
 7 				field = <bold>if (b) value else 0</bold>

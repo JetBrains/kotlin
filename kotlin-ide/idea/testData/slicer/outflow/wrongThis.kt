@@ -1,4 +1,5 @@
 // FLOW: OUT
+// WITH_RUNTIME
 
 class C {
     fun String.extensionFun(): Any {
@@ -12,8 +13,4 @@ class C {
     fun foo() {
         val x = <caret>"".extensionFun()
     }
-}
-
-inline fun <T, R> with(receiver: T, block: T.() -> R): R {
-    return receiver.block()
 }

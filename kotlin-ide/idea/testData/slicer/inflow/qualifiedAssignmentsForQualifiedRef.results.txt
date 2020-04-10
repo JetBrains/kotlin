@@ -1,4 +1,4 @@
-15 println("Now my name is '${a.<bold>name</bold>}'")
+15 val v = "Now my name is '${a.<bold>name</bold>}'"
 4 	var <bold>name : String = name1</bold>
 4 		var name : String = <bold>name1</bold>
 3 			class AClass(<bold>name1: String</bold>){
