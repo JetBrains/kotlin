@@ -39,7 +39,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-jdk7"))
-                implementation("androidx.core:core-ktx:1.1.0")
+                implementation("androidx.core:core-ktx:1.2.0")
             }
         }
         val androidTest by getting
