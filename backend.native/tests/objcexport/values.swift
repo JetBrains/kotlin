@@ -1291,7 +1291,7 @@ func testMapsExport() throws {
     try assertEquals(actual: ValuesKt.mapUShort2Byte()[0x8000], expected: 1)
     try assertEquals(actual: ValuesKt.mapUInt2Long()[0x7FFFFFFF], expected: 7)
     // the following samples require explicit cast to KotlinUInt or KotlinULong
-    try assertEquals(actual: ValuesKt.mapUInt2Long()[KotlinUInt(0x8000_0000)], expected: 8)
+    try assertEquals(actual: ValuesKt.mapUInt2Long()[KotlinUInt(-0x8000_0000)], expected: 8)
     _ = ValuesKt.mapULong2Long() as! [KotlinULong: KotlinLong] // test cast
     var u64: UInt64 = 0x8000_0000_0000_0000
     try assertEquals(actual: ValuesKt.mapULong2Long()[KotlinULong(value: u64)], expected: 8)
