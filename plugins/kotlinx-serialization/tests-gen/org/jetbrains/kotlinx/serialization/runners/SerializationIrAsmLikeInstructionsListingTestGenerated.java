@@ -38,6 +38,12 @@ public class SerializationIrAsmLikeInstructionsListingTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("Intrinsics.kt")
+    public void testIntrinsics() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");
+    }
+
+    @Test
     @TestMetadata("Sealed.kt")
     public void testSealed() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");
