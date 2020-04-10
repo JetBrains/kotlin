@@ -728,8 +728,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 else -> throw IllegalArgumentException("Unsupported constant reference: $value")
             }
         }
-        graphBuilder.exitContract(functionCall).mergeIncomingFlow()
-        contractDescriptionVisitingMode = true
+        graphBuilder.exitContract(functionCall).mergeIncomingFlow(updateReceivers = true)
+        contractDescriptionVisitingMode = false
     }
 
     fun exitConstExpresion(constExpression: FirConstExpression<*>) {

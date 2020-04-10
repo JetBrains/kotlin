@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa.contracts
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -89,10 +88,8 @@ fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, 
 fun createArgumentsMapping(functionCall: FirFunctionCall): Map<Int, FirExpression>? {
     val function = functionCall.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return null
     val argumentsMapping = mutableMapOf<Int, FirExpression>()
-    // TODO: process implicit receiver
-    // TODO: change to mapping from candidate
-    //  problem: we have already resolved reference without candidate
-    functionCall.explicitReceiver?.let { argumentsMapping[-1] = it }
+    functionCall.extensionReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
+        ?: functionCall.dispatchReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
 
 
     val nameToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter.name to index }.toMap()
