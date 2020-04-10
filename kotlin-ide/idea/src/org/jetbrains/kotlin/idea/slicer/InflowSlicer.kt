@@ -131,12 +131,20 @@ class InflowSlicer(
         if (function is KtFunction) {
             val sliceTransformer = ArgumentExpressionTransformer(parameterDescriptor)
 
-            if (function is KtFunctionLiteral) {
-                processFunctionLiteralCalls(function, sliceTransformer)
-            } else {
-                processCalls(function, analysisScope, includeOverriders) { usageInfo ->
-                    usageInfo.element?.let {
-                        sliceTransformer.extractArgumentExpression(it)?.passToProcessorAsValue()
+            when {
+                function is KtFunctionLiteral -> {
+                    processFunctionLiteralCalls(function, sliceTransformer)
+                }
+
+                function is KtNamedFunction && function.name == null -> {
+                    processAnonymousFunctionCalls(function, sliceTransformer)
+                }
+
+                else -> {
+                    processCalls(function, analysisScope, includeOverriders) { usageInfo ->
+                        usageInfo.element?.let {
+                            sliceTransformer.extractArgumentExpression(it)?.passToProcessorAsValue()
+                        }
                     }
                 }
             }

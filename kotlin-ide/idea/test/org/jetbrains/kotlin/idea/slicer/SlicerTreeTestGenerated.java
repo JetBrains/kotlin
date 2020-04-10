@@ -55,6 +55,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/inflow/anonymousFunReturnExpression.kt");
         }
 
+        @TestMetadata("anonymousFunctionParameter.kt")
+        public void testAnonymousFunctionParameter() throws Exception {
+            runTest("idea/testData/slicer/inflow/anonymousFunctionParameter.kt");
+        }
+
         @TestMetadata("cast.kt")
         public void testCast() throws Exception {
             runTest("idea/testData/slicer/inflow/cast.kt");

@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.JavaSliceUsage
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -70,10 +69,18 @@ abstract class Slicer(
     }
 
     protected fun processFunctionLiteralCalls(
-        callable: KtFunctionLiteral,
+        functionLiteral: KtFunctionLiteral,
         sliceTransformer: KotlinSliceUsageTransformer,
     ) {
-        (callable.parent as KtLambdaExpression).passToProcessorAsValue(LambdaCallsBehaviour(sliceTransformer, behaviour))
+        (functionLiteral.parent as KtLambdaExpression).passToProcessorAsValue(LambdaCallsBehaviour(sliceTransformer, behaviour))
+    }
+
+    protected fun processAnonymousFunctionCalls(
+        function: KtNamedFunction,
+        sliceTransformer: KotlinSliceUsageTransformer,
+    ) {
+        require(function.name == null)
+        function.passToProcessorAsValue(LambdaCallsBehaviour(sliceTransformer, behaviour))
     }
 
     protected fun processCalls(
