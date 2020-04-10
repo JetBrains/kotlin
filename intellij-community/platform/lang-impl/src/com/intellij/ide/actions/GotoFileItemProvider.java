@@ -249,8 +249,8 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
     }
 
     if (group.size() > 1) {
-      group.sort(Comparator.<PsiFileSystemItem, Integer>comparing(nesting::get).
-        thenComparing(getPathProximityComparator()).
+      group.sort(getPathProximityComparator().
+        thenComparing(nesting::get).
         thenComparing(myModel::getFullName));
     }
     return ContainerUtil.map(group, item -> new FoundItemDescriptor<>(item, matchDegrees.get(item)));
