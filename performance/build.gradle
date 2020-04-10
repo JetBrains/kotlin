@@ -37,10 +37,26 @@ task clean {
 
 defaultTasks 'konanRun'
 
+private static String getAnalyzerTargetName() {
+    // Copy-pasted from tools/benchmarksAnalyzer/build.gradle.
+    String target = System.getProperty("os.name")
+    if (target == 'Linux') return 'linux'
+    if (target.startsWith('Windows')) return 'windows'
+    if (target.startsWith('Mac')) return 'macos'
+    return 'unknown'
+}
+
+private String findAnalyzerBinary() {
+    String result = "${rootProject.projectDir}/${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
+            "${analyzerTool}ReleaseExecutable/${analyzerTool}${MPPTools.getNativeProgramExtension()}"
+
+    if (file(result).exists()) return result
+    else return null
+}
+
 // Produce and send slack report.
 task slackReport(type: RegressionsReporter) {
-    def analyzerBinary = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
-            "${rootBuildDirectory}/${analyzerToolDirectory}")
+    def analyzerBinary = findAnalyzerBinary()
     def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
     if (teamcityConfig && analyzerBinary != null) {
         // Create folder for report (root Kotlin project settings make create report in separate folder).
@@ -143,8 +159,7 @@ task registerExternalBenchmarks {
 }
 
 task registerBuild(type: BuildRegister) {
-    def analyzerBinary = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
-            "${rootBuildDirectory}/${analyzerToolDirectory}")
+    def analyzerBinary = findAnalyzerBinary()
     if (analyzerBinary != null) {
         onlyBranch = project.findProperty('kotlin.register.branch')
         // Get bundle size.
@@ -194,8 +209,7 @@ subprojects.each {
 }
 
 task teamCityStat(type:Exec) {
-    def extension = MPPTools.getNativeProgramExtension()
-    def analyzer = MPPTools.findFile("${analyzerTool}${extension}", "${rootBuildDirectory}/${analyzerToolDirectory}")
+    def analyzer = findAnalyzerBinary()
     if (analyzer != null) {
         commandLine "${analyzer}", "-r", "teamcity", "${buildDir.absolutePath}/${nativeJson}"
     } else {

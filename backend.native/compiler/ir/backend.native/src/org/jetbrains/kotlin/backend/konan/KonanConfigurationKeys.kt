@@ -52,7 +52,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("library file paths")
         val LIBRARY_VERSION: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("library version")
-        val LIGHT_DEBUG: CompilerConfigurationKey<Boolean>
+        val LIGHT_DEBUG: CompilerConfigurationKey<Boolean?>
                 = CompilerConfigurationKey.create("add light debug information")
         val LINKER_ARGS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("additional linker arguments")

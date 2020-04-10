@@ -9,21 +9,21 @@ symbolication turns machine code addresses into human-readable source locations.
 The document below describes some specific details of symbolicating crash reports
 from iOS applications using Kotlin.
 
-## Enable .dSYM for release Kotlin binaries
+## Producing .dSYM for release Kotlin binaries
 
 To symbolicate addresses in Kotlin code (e.g. for stack trace elements
 corresponding to Kotlin code) `.dSYM` bundle for Kotlin code is required.
 
-By default Kotlin/Native compiler doesn't produce `.dSYM` for release
-(i.e. optimized) binaries. This can be changed with `-Xg0` experimental
-compiler flag: it enables debug info and `.dSYM` bundle generation for produced
-release binaries. To enable it in Gradle, use
+By default Kotlin/Native compiler produces `.dSYM` for release
+(i.e. optimized) binaries on Darwin platforms. This can be disabled with `-Xadd-light-debug=disable`
+compiler flag. At the same time this option is disabled by default for other platforms, to enable it use `-Xadd-light-debug=enable`.
+To control option in Gradle, use
 
 ```kotlin
 kotlin {
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
         binaries.all {
-            freeCompilerArgs += "-Xg0"
+            freeCompilerArgs += "-Xadd-light-debug={enable|disable}"
         }
     }
 }
