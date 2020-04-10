@@ -66,8 +66,8 @@ data class GradleConfigureTaskIR(
     constructor(
         taskAccess: GradleTaskAccessIR,
         dependsOn: List<BuildSystemIR> = emptyList(),
-        createIrs: MutableList<BuildSystemIR>.() -> Unit = {}
-    ) : this(taskAccess, dependsOn, mutableListOf<BuildSystemIR>().apply(createIrs))
+        createIrs: IRsListBuilderFunction
+    ) : this(taskAccess, dependsOn, createIrs.build())
 
     override fun GradlePrinter.renderGradle() {
         taskAccess.render(this)

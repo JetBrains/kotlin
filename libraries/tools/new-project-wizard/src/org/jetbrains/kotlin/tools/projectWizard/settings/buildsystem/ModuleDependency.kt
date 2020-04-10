@@ -81,51 +81,33 @@ sealed class ModuleDependencyType(
                 module.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType?.isIOS == true
             }?.name ?: return Failure(InvalidModuleDependencyError(from, to, "Module ${to.name} should contain at least one iOS target"))
 
-            val packForXcodeTask = GradleConfigureTaskIR(GradleByClassTasksCreateIR("packForXcode", "Sync")) {
-                add(GradleAssignmentIR("group", GradleStringConstIR("build")))
-                add(
-                    CreateGradleValueIR(
-                        "mode",
-                        GradleBinaryExpressionIR(
-                            RawGradleIR { +"System.getenv("; +"CONFIGURATION".quotified; +")" },
-                            "?:",
-                            GradleStringConstIR("DEBUG")
-                        )
+
+            return irsList {
+                +GradleConfigureTaskIR(GradleByClassTasksCreateIR("packForXcode", "Sync")) {
+                    "group" assign const("build")
+                    "mode" createValue GradleBinaryExpressionIR(
+                        raw { +"System.getenv("; +"CONFIGURATION".quotified; +")" },
+                        "?:",
+                        const("DEBUG")
                     )
-                )
-
-                add(
-                    CreateGradleValueIR(
-                        "framework",
-                        RawGradleIR {
-                            +"kotlin.targets."
-                            when (dsl) {
-                                GradlePrinter.GradleDsl.KOTLIN -> +"""getByName<KotlinNativeTarget>("$iosTargetName")"""
-                                GradlePrinter.GradleDsl.GROOVY -> +iosTargetName
-                            }
-                            +".binaries.getFramework(mode)"
-
+                    "framework" createValue raw {
+                        +"kotlin.targets."
+                        when (dsl) {
+                            GradlePrinter.GradleDsl.KOTLIN -> +"""getByName<KotlinNativeTarget>("$iosTargetName")"""
+                            GradlePrinter.GradleDsl.GROOVY -> +iosTargetName
                         }
-                    )
-                )
-                addRawIR { "inputs.property(${"mode".quotified}, mode)" }
-                addRawIR { "dependsOn(framework.linkTask)" }
-                add(
-                    CreateGradleValueIR(
-                        "targetDir",
-                        GradleCallIr("File", rawIR("buildDir"), GradleStringConstIR("xcode-frameworks"), isConstructorCall = true)
-                    )
-                )
-                addRawIR { "from({ framework.outputDirectory })" }
-                addRawIR { "into(targetDir)" }
-            }
+                        +".binaries.getFramework(mode)"
+                    };
 
-            val dependency = rawIR { """tasks.getByName("build").dependsOn(packForXcode)""" }
+                    addRaw { +"inputs.property(${"mode".quotified}, mode)" }
+                    addRaw("dependsOn(framework.linkTask)")
+                    "targetDir" createValue new("File", raw("buildDir"), const("xcode-frameworks"))
+                    addRaw("from({ framework.outputDirectory })")
+                    addRaw("into(targetDir)")
+                }
+                addRaw { +"""tasks.getByName(${"build".quotified}).dependsOn(packForXcode)""" }
+                import("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget")
 
-            return buildList {
-                add(packForXcodeTask)
-                add(dependency)
-                add(GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget"))
             }.asSuccess()
         }
     }

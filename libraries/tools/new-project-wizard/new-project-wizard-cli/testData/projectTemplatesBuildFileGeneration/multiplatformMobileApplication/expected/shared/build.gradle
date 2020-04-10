@@ -79,4 +79,4 @@ task(packForXcode, type: Sync) {
     from({ framework.outputDirectory })
     into(targetDir)
 }
-tasks.getByName("build").dependsOn(packForXcode)
+tasks.getByName('build').dependsOn(packForXcode)
