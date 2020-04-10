@@ -249,7 +249,7 @@ class InflowSlicer(
 
                 MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
                     val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
-                    val bindingContext = expression.analyze()
+                    val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
                     val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
                         ?: return
