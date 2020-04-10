@@ -423,7 +423,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         progressLogger.progress(value)
 
                         parseConsole(value)
-                        super.printNonTestOutput(text)
                     }
 
                     private fun parseConsole(text: String) {
@@ -446,6 +445,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                                 INFO, LOG -> log.info(nonColoredMessage)
                                 DEBUG -> log.debug(nonColoredMessage)
                             }
+                        } else {
+                            super.printNonTestOutput(text)
                         }
                     }
 
