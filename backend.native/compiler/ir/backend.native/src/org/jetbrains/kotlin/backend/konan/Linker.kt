@@ -133,7 +133,17 @@ internal class Linker(val context: Context) {
                 it.execute()
             }
         } catch (e: KonanExternalToolFailure) {
-            context.reportCompilationError("${e.toolName} invocation reported errors\n${e.message}")
+            val extraUserInfo =
+                    if (caches.static.isNotEmpty() || caches.dynamic.isNotEmpty())
+                        """
+                        Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
+                            
+                            kotlin.native.cacheKind=none
+                            
+                        Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
+                        """.trimIndent()
+                    else ""
+            context.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
         }
         return executable
     }

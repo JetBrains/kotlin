@@ -111,8 +111,7 @@ open class Command(initialCommand: List<String>) {
         if (code != 0) throw KonanExternalToolFailure("""
             The ${command[0]} command returned non-zero exit code: $code.
             output:
-            ${output.joinToString("\n")}
-            """.trimIndent(), command[0])
+            """.trimIndent() + "\n${output.joinToString("\n")}", command[0])
         // Show warnings in case of success linkage.
         if (stdError.isNotEmpty()) {
             stdError.joinToString("\n").also { message ->
