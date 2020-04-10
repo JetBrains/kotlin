@@ -72,7 +72,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
 
     override fun transform(usage: SliceUsage): Collection<SliceUsage>? {
         if (usage is KotlinSliceUsage) return null
-        return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
+        return listOf(KotlinSliceUsage(usage.element, usage.parent, null, false))
     }
 
     override fun getExpressionAtCaret(atCaret: PsiElement, dataFlowToThis: Boolean): KtElement? {

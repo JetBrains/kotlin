@@ -37,9 +37,10 @@ abstract class Slicer(
     protected val processor: SliceUsageProcessor,
     protected val parentUsage: KotlinSliceUsage
 ) {
-    abstract fun processChildren()
+    abstract fun processChildren(forcedExpressionMode: Boolean)
 
     protected val analysisScope: SearchScope = parentUsage.scope.toSearchScope()
+    protected val behaviour: KotlinSliceUsage.SpecialBehaviour? = parentUsage.behaviour
     protected val project = element.project
 
     protected class PseudocodeCache {
@@ -57,10 +58,14 @@ abstract class Slicer(
     protected val pseudocodeCache = PseudocodeCache()
 
     protected fun PsiElement.passToProcessor(
-        lambdaLevel: Int = parentUsage.lambdaLevel,
-        forcedExpressionMode: Boolean = false
+        behaviour: KotlinSliceUsage.SpecialBehaviour? = this@Slicer.behaviour,
+        forcedExpressionMode: Boolean = false,
     ) {
-        processor.process(KotlinSliceUsage(this, parentUsage, lambdaLevel, forcedExpressionMode))
+        processor.process(KotlinSliceUsage(this, parentUsage, behaviour, forcedExpressionMode))
+    }
+
+    protected fun PsiElement.passToProcessorAsValue(behaviour: KotlinSliceUsage.SpecialBehaviour? = this@Slicer.behaviour) {
+        passToProcessor(behaviour, forcedExpressionMode = true)
     }
 
     protected fun processCalls(

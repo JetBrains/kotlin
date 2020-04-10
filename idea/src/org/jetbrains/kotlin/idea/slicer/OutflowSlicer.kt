@@ -36,8 +36,8 @@ class OutflowSlicer(
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 
-    override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) {
+    override fun processChildren(forcedExpressionMode: Boolean) {
+        if (forcedExpressionMode) {
             (element as? KtExpression)?.let { processExpression(it) }
             return
         }
@@ -136,7 +136,9 @@ class OutflowSlicer(
                             parameters[parameterIndex + shift].passToProcessor()
                         }
 
-                        else -> {} // not supported
+                        else -> {
+                            // not supported
+                        }
                     }
                     true
                 }
@@ -153,7 +155,8 @@ class OutflowSlicer(
                     null -> (usageInfo.reference as? LightMemberReference)?.element?.passToProcessor()
                     is KtExpression -> {
                         refElement.getCallElementForExactCallee()?.passToProcessor()
-                        refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                        refElement.getCallableReferenceForExactCallee()
+                            ?.passToProcessor(LambdaResultOutflowBehaviour(behaviour))
                     }
                     else -> refElement.passToProcessor()
                 }
@@ -166,7 +169,7 @@ class OutflowSlicer(
             is KtNamedFunction -> function
             else -> null
         } ?: return
-        funExpression.passToProcessor(parentUsage.lambdaLevel + 1, true)
+        funExpression.passToProcessor(LambdaResultOutflowBehaviour(behaviour), forcedExpressionMode = true)
     }
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
@@ -229,8 +232,8 @@ class OutflowSlicer(
             }
 
             Call.CallType.INVOKE -> {
-                if (parentUsage.lambdaLevel > 0 && receiverValue == resolvedCall.dispatchReceiver) {
-                    instruction.element.passToProcessor(parentUsage.lambdaLevel - 1)
+                if (receiverValue == resolvedCall.dispatchReceiver && behaviour is LambdaResultOutflowBehaviour) {
+                    instruction.element.passToProcessor(behaviour.originalBehaviour)
                 }
             }
 
@@ -275,7 +278,7 @@ class OutflowSlicer(
         } ?: return
 
         if (receiver != null && resolvedCall.dispatchReceiver == receiver) {
-            processor.process(KotlinSliceDereferenceUsage(expression, parentUsage, parentUsage.lambdaLevel))
+            processor.process(KotlinSliceDereferenceUsage(expression, parentUsage, behaviour))
         }
     }
 
