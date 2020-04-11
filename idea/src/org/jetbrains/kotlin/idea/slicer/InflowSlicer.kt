@@ -190,8 +190,8 @@ class InflowSlicer(
                             val anonymousFunction = accessedDescriptor.containingDeclaration as? AnonymousFunctionDescriptor
                             if (anonymousFunction != null && accessedDescriptor.name.asString() == "it") {
                                 val functionLiteral = anonymousFunction.source.getPsi() as KtFunctionLiteral
-                                val sliceTransformer = ArgumentSliceProducer(anonymousFunction.valueParameters.first())
-                                processCalls(functionLiteral, false, sliceTransformer)
+                                val parameterDescriptor = anonymousFunction.valueParameters.first()
+                                processCalls(functionLiteral, false, ArgumentSliceProducer(parameterDescriptor))
                             }
                         } else {
                             accessedDeclaration.passDeclarationToProcessorWithOverriders()

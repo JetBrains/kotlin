@@ -148,12 +148,7 @@ class OutflowSlicer(
     }
 
     private fun processFunction(function: KtFunction) {
-        //TODO: CallSliceProducer in all cases
-        if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
-            processCalls(function, includeOverriders = false, sliceProducer = CallSliceProducer)
-        } else {
-            processCalls(function, false, SliceProducer.Trivial)
-        }
+        processCalls(function, includeOverriders = false, CallSliceProducer)
     }
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
