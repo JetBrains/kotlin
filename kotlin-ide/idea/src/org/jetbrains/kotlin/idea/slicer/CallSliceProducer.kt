@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 object CallSliceProducer : SliceProducer {
     override fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>? {
+        if ((parent as? KotlinSliceUsage)?.behaviour is LambdaCallsBehaviour) {
+            // UsageInfo produced by LambdaCallsBehaviour has full call-element and does not require any processing
+            return null
+        }
+
         when (val refElement = usage.element) {
             null -> {
                 val element = (usage.reference as? LightMemberReference)?.element ?: return emptyList()
