@@ -116,8 +116,8 @@ public final class CompletionServiceImpl extends BaseCompletionService {
     @Override
     public void restartCompletionOnPrefixChange(ElementPattern<String> prefixCondition) {
       CompletionProcess process = myParameters.getProcess();
-      if (process instanceof CompletionProgressIndicator) {
-        ((CompletionProgressIndicator)process)
+      if (process instanceof CompletionProcessBase) {
+        ((CompletionProcessBase)process)
           .addWatchedPrefix(myParameters.getOffset() - getPrefixMatcher().getPrefix().length(), prefixCondition);
       }
     }

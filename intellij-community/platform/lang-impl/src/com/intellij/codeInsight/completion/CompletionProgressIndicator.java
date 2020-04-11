@@ -710,9 +710,10 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     hideAutopopupIfMeaningless();
   }
 
-  static boolean shouldRestartCompletion(@NotNull Editor editor,
-                                         @NotNull Set<Pair<Integer, ElementPattern<String>>> restartingPrefixConditions,
-                                         @NotNull String toAppend) {
+  @ApiStatus.Internal
+  public static boolean shouldRestartCompletion(@NotNull Editor editor,
+                                                @NotNull Set<Pair<Integer, ElementPattern<String>>> restartingPrefixConditions,
+                                                @NotNull String toAppend) {
     int caretOffset = editor.getCaretModel().getOffset();
     CharSequence text = editor.getDocument().getCharsSequence();
     for (Pair<Integer, ElementPattern<String>> pair : restartingPrefixConditions) {
