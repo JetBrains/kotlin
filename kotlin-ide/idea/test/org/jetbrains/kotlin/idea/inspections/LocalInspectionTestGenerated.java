@@ -5194,6 +5194,26 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("afterRightBrace.kt")
+            public void testAfterRightBrace() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace.kt");
+            }
+
+            @TestMetadata("afterRightBrace2.kt")
+            public void testAfterRightBrace2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace2.kt");
+            }
+
+            @TestMetadata("afterRightBrace3.kt")
+            public void testAfterRightBrace3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace3.kt");
+            }
+
+            @TestMetadata("afterRightParenthesis.kt")
+            public void testAfterRightParenthesis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightParenthesis.kt");
+            }
+
             @TestMetadata("cascadeIf.kt")
             public void testCascadeIf() throws Exception {
                 runTest("testData/inspectionsLocal/liftOut/ifToAssignment/cascadeIf.kt");
