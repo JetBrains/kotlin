@@ -73,12 +73,7 @@ abstract class Slicer(
         includeOverriders: Boolean,
         sliceProducer: SliceProducer
     ) {
-        if (callable is KtFunctionLiteral) {
-            (callable.parent as KtLambdaExpression).passToProcessorAsValue(LambdaCallsBehaviour(sliceProducer, behaviour))
-            return
-        }
-
-        if (callable is KtFunction && callable.name == null) {
+        if (callable is KtFunctionLiteral || callable is KtFunction && callable.name == null) {
             callable.passToProcessorAsValue(LambdaCallsBehaviour(sliceProducer, behaviour))
             return
         }
