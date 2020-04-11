@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.psi.PsiCall
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
@@ -37,15 +35,10 @@ import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -326,102 +319,5 @@ class InflowSlicer(
                     (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor()
                 }
         }
-    }
-
-    @Suppress("DataClassPrivateConstructor") // we have modifier data to get equals&hashCode only
-    private data class ArgumentSliceProducer private constructor(
-        private val parameterIndex: Int,
-        private val isExtension: Boolean
-    ) : SliceProducer
-    {
-        constructor(parameterDescriptor: ValueParameterDescriptor) : this(
-            parameterDescriptor.index,
-            parameterDescriptor.containingDeclaration.isExtension
-        )
-
-        override fun produce(
-            usage: UsageInfo,
-            behaviour: KotlinSliceUsage.SpecialBehaviour?,
-            parent: SliceUsage
-        ): Collection<SliceUsage>? {
-            val element = usage.element ?: return emptyList()
-            val argumentExpression = extractArgumentExpression(element) ?: return emptyList()
-            return listOf(KotlinSliceUsage(argumentExpression, parent, behaviour, forcedExpressionMode = true))
-        }
-
-        private fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
-            val refParent = refElement.parent
-            return when {
-                refElement is KtExpression -> {
-                    val callElement = refElement as? KtCallElement
-                        ?: refElement.getParentOfTypeAndBranch { calleeExpression }
-                        ?: return null
-                    val resolvedCall = callElement.resolveToCall() ?: return null
-                    val resultingDescriptor = resolvedCall.resultingDescriptor
-                    val parameterIndexToUse = parameterIndex +
-                            (if (isExtension && resultingDescriptor.extensionReceiverParameter == null) 1 else 0)
-                    val parameterDescriptor = resultingDescriptor.valueParameters[parameterIndexToUse]
-                    val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return null
-                    when (resolvedArgument) {
-                        is DefaultValueArgument -> (parameterDescriptor.source.getPsi() as? KtParameter)?.defaultValue
-                        is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
-                        else -> null
-                    }
-                }
-
-                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameterIndex + (if (isExtension) 1 else 0))
-
-                refElement is PsiMethod -> refElement.parameterList.parameters.getOrNull(parameterIndex + (if (isExtension) 1 else 0))
-
-                else -> null
-            }
-        }
-    }
-
-    private object ReceiverSliceProducer : SliceProducer {
-        override fun produce(
-            usage: UsageInfo,
-            behaviour: KotlinSliceUsage.SpecialBehaviour?,
-            parent: SliceUsage
-        ): Collection<SliceUsage>? {
-            val refElement = usage.element ?: return emptyList()
-            when (refElement) {
-                is KtExpression -> {
-                    val resolvedCall = refElement.resolveToCall() ?: return emptyList()
-                    when (val receiver = resolvedCall.extensionReceiver) {
-                        is ExpressionReceiver -> {
-                            return listOf(KotlinSliceUsage(receiver.expression, parent, behaviour, forcedExpressionMode = true))
-                        }
-
-                        is ImplicitReceiver -> {
-                            val callableDescriptor = receiver.declarationDescriptor as? CallableDescriptor ?: return emptyList()
-                            when (val callableDeclaration = callableDescriptor.originalSource.getPsi()) {
-                                is KtFunctionLiteral -> {
-                                    val newBehaviour = LambdaCallsBehaviour(ReceiverSliceProducer, behaviour)
-                                    return listOf(KotlinSliceUsage(callableDeclaration, parent, newBehaviour, forcedExpressionMode = true))
-                                }
-
-                                is KtCallableDeclaration -> {
-                                    val receiverTypeReference = callableDeclaration.receiverTypeReference ?: return emptyList()
-                                    return listOf(KotlinSliceUsage(receiverTypeReference, parent, behaviour, false))
-                                }
-
-                                else -> return emptyList()
-                            }
-                        }
-
-                        else -> return emptyList()
-                    }
-                }
-
-                else -> {
-                    val argument = (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0) ?: return emptyList()
-                    return listOf(KotlinSliceUsage(argument, parent, behaviour, true))
-                }
-            }
-        }
-
-        override fun equals(other: Any?) = other === this
-        override fun hashCode() = 0
     }
 }

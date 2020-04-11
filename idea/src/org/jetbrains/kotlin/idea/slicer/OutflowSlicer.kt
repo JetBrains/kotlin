@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.impl.light.LightMemberReference
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -27,7 +24,8 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDete
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -265,56 +263,6 @@ class OutflowSlicer(
                 is ReadValueInstruction -> processDereferenceIfNeeded(this, pseudoValue, instr)
                 is CallInstruction -> processDereferenceIfNeeded(this, pseudoValue, instr)
             }
-        }
-    }
-
-    private object CallSliceProducer : SliceProducer {
-        override fun produce(
-            usage: UsageInfo,
-            behaviour: KotlinSliceUsage.SpecialBehaviour?,
-            parent: SliceUsage
-        ): Collection<SliceUsage>? {
-            when (val refElement = usage.element) {
-                null -> {
-                    val element = (usage.reference as? LightMemberReference)?.element ?: return emptyList()
-                    return listOf(KotlinSliceUsage(element, parent, behaviour, false))
-                }
-
-                is KtExpression -> {
-                    return mutableListOf<SliceUsage>().apply {
-                        refElement.getCallElementForExactCallee()
-                            ?.let { this += KotlinSliceUsage(it, parent, behaviour, false) }
-                        refElement.getCallableReferenceForExactCallee()
-                            ?.let { this += KotlinSliceUsage(it, parent, LambdaCallsBehaviour(SliceProducer.Trivial, behaviour), false) }
-                    }
-                }
-
-                else -> {
-                    return null // unknown type of usage - return null to process it "as is"
-                }
-            }
-        }
-
-        override fun equals(other: Any?) = other === this
-        override fun hashCode() = 0
-
-        private fun PsiElement.getCallElementForExactCallee(): PsiElement? {
-            if (this is KtArrayAccessExpression) return this
-
-            val operationRefExpr = getNonStrictParentOfType<KtOperationReferenceExpression>()
-            if (operationRefExpr != null) return operationRefExpr.parent as? KtOperationExpression
-
-            val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
-            val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
-            if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, strict = true)) return parentCall
-
-            return null
-        }
-
-        private fun PsiElement.getCallableReferenceForExactCallee(): KtCallableReferenceExpression? {
-            val callableRef = getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } ?: return null
-            val callee = KtPsiUtil.safeDeparenthesize(callableRef.callableReference)
-            return if (callee == this) callableRef else null
         }
     }
 }

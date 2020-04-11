@@ -178,15 +178,14 @@ abstract class Slicer(
     }
 
     protected fun canProcessParameter(parameter: KtParameter) = !parameter.isVarArg
-
-    protected companion object {
-        val DeclarationDescriptorWithSource.originalSource: SourceElement
-            get() {
-                var descriptor = this
-                while (descriptor.original != descriptor) {
-                    descriptor = descriptor.original
-                }
-                return descriptor.source
-            }
-    }
 }
+
+val DeclarationDescriptorWithSource.originalSource: SourceElement
+    get() {
+        var descriptor = this
+        while (descriptor.original != descriptor) {
+            descriptor = descriptor.original
+        }
+        return descriptor.source
+    }
+
