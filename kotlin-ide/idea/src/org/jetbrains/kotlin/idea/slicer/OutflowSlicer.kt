@@ -150,17 +150,12 @@ class OutflowSlicer(
     }
 
     private fun processFunction(function: KtFunction) {
+        //TODO: CallSliceProducer in all cases
         if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
             processCalls(function, includeOverriders = false, sliceProducer = CallSliceProducer)
-            return
+        } else {
+            processCalls(function, false, SliceProducer.Trivial)
         }
-
-        val funExpression = when (function) {
-            is KtFunctionLiteral -> function.parent as? KtLambdaExpression
-            is KtNamedFunction -> function
-            else -> null
-        } ?: return
-        funExpression.passToProcessor(LambdaCallsBehaviour(SliceProducer.Trivial, behaviour), forcedExpressionMode = true)
     }
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
@@ -178,7 +173,11 @@ class OutflowSlicer(
     }
 
     private fun processExpression(expression: KtExpression) {
-        expression.processPseudocodeUsages { pseudoValue, instruction ->
+        val expressionWithValue = when (expression) {
+            is KtFunctionLiteral -> expression.parent as KtLambdaExpression
+            else -> expression
+        }
+        expressionWithValue.processPseudocodeUsages { pseudoValue, instruction ->
             when (instruction) {
                 is WriteValueInstruction -> {
                     if (!processIfReceiverValue(instruction, pseudoValue)) {

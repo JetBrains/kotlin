@@ -179,10 +179,17 @@ class InflowSlicer(
                     }
 
                     is ReceiverParameterDescriptor -> {
+                        //TODO: handle non-extension receivers?
                         val callable = accessedDescriptor.containingDeclaration as? CallableDescriptor ?: return
-                        val callableDeclaration = callable.originalSource.getPsi() as? KtCallableDeclaration ?: return
-                        //TODO: what about non-extensions?
-                        callableDeclaration.receiverTypeReference?.passToProcessor()
+                        when (val declaration = callable.originalSource.getPsi()) {
+                            is KtFunctionLiteral -> {
+                                declaration.passToProcessorAsValue(LambdaCallsBehaviour(ReceiverSliceProducer, behaviour))
+                            }
+
+                            is KtCallableDeclaration -> {
+                                declaration.receiverTypeReference?.passToProcessor()
+                            }
+                        }
                     }
 
                     is ValueParameterDescriptor -> {

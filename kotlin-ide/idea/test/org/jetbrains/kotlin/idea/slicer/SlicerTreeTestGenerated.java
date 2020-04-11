@@ -130,6 +130,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/inflow/extensionLambdaParameter.kt");
         }
 
+        @TestMetadata("extensionLambdaReceiver.kt")
+        public void testExtensionLambdaReceiver() throws Exception {
+            runTest("idea/testData/slicer/inflow/extensionLambdaReceiver.kt");
+        }
+
         @TestMetadata("funParamerer.kt")
         public void testFunParamerer() throws Exception {
             runTest("idea/testData/slicer/inflow/funParamerer.kt");
