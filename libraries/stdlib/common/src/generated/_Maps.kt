@@ -40,7 +40,7 @@ public fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>> {
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each entry of original map.
  * 
- * @sample samples.collections.Collections.Transformations.flatMap
+ * @sample samples.collections.Maps.Transformations.flatMap
  */
 public inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)

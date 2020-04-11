@@ -353,7 +353,11 @@ class Maps {
             assertPrints(peopleToAge.map { it.value }, "[20, 21]")
         }
 
+        @Sample
+        fun flatMap() {
+            val map = mapOf("122" to 2, "3455" to 3)
+            assertPrints(map.flatMap { (key, value) -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
+        }
     }
-
 }
 

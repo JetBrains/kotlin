@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -290,7 +290,13 @@ object Mapping : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns a single list of all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}." }
-        sample("samples.collections.Collections.Transformations.flatMap")
+
+        fun sampleClass(f: Family): String = when (f) {
+            Maps -> "samples.collections.Maps.Transformations"
+            else -> "samples.collections.Collections.Transformations"
+        }
+
+        sample("${sampleClass(f)}.flatMap")
         typeParam("R")
         returns("List<R>")
         body {
