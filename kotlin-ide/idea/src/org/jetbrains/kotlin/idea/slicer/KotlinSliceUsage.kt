@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -98,35 +97,5 @@ open class KotlinSliceUsage : SliceUsage {
             return other is UsageInfoWrapper && super.equals(other) && behaviour == other.behaviour
         }
     }
-}
-
-data class LambdaResultOutflowBehaviour(
-    override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
-) : KotlinSliceUsage.SpecialBehaviour {
-
-    override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
-        OutflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
-    }
-
-    override val slicePresentationPrefix: String
-        get() = KotlinBundle.message("slicer.text.tracking.enclosing.lambda")
-
-    override val testPresentationPrefix: String
-        get() = "[LAMBDA] "
-}
-
-data class LambdaResultInflowBehaviour(
-    override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
-) : KotlinSliceUsage.SpecialBehaviour {
-
-    override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
-        InflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
-    }
-
-    override val slicePresentationPrefix: String
-        get() = KotlinBundle.message("slicer.text.tracking.enclosing.lambda")
-
-    override val testPresentationPrefix: String
-        get() = "[LAMBDA] "
 }
 

@@ -1,6 +1,6 @@
 4 f(<bold>1</bold>)
 9 	val v = <bold>it</bold>
-8 		[LAMBDA CALLS] foo <bold>{</bold>
-3 			[LAMBDA CALLS] fun foo(<bold>f: (Int) -> Unit</bold>) {
+8 		[LAMBDA OUT] foo <bold>{</bold>
+3 			[LAMBDA OUT] fun foo(<bold>f: (Int) -> Unit</bold>) {
 4 				f(<bold>1</bold>)
 
