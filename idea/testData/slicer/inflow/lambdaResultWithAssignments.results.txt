@@ -9,8 +9,8 @@
 9 								[LAMBDA IN] val y = foo <bold>{ it }</bold>
 9 									val y = foo <bold>{ it }</bold>
 9 										val y = foo { <bold>it</bold> }
-9 											[LAMBDA OUT] val y = foo <bold>{ it }</bold>
-3 												[LAMBDA OUT] fun foo(<bold>f: (Int) -> Int</bold>): Int {
-4 													[LAMBDA OUT] val x = <bold>f</bold>
-4 														[LAMBDA OUT] val <bold>x = f</bold>
+9 											[LAMBDA CALLS] val y = foo <bold>{ it }</bold>
+3 												[LAMBDA CALLS] fun foo(<bold>f: (Int) -> Int</bold>): Int {
+4 													[LAMBDA CALLS] val x = <bold>f</bold>
+4 														[LAMBDA CALLS] val <bold>x = f</bold>
 5 															return x(<bold>1</bold>)

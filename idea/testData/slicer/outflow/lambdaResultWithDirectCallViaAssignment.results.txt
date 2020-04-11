@@ -1,6 +1,6 @@
 4 val f = { <bold>1</bold> }
 4 	val f = <bold>{ 1 }</bold>
-4 		[LAMBDA OUT] val f = <bold>{ 1 }</bold>
-4 			[LAMBDA OUT] val <bold>f = { 1 }</bold>
+4 		[LAMBDA CALLS] val f = <bold>{ 1 }</bold>
+4 			[LAMBDA CALLS] val <bold>f = { 1 }</bold>
 5 				val x = <bold>f()</bold>
 5 					val <bold>x = f()</bold>

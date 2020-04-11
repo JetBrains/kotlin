@@ -38,5 +38,5 @@ data class LambdaCallsBehaviour(
         get() = KotlinBundle.message("slicer.text.tracking.lambda.calls")
 
     override val testPresentationPrefix: String
-        get() = "[LAMBDA OUT] "
+        get() = "[LAMBDA CALLS] "
 }
