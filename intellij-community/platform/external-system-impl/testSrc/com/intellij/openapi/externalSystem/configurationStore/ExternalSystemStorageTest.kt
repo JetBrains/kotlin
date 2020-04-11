@@ -74,11 +74,12 @@ class ExternalSystemStorageTest {
 
   @Test
   fun artifacts() = saveProjectAndCheckResult("artifacts") { project, projectDir ->
-    CompilerProjectExtension.getInstance(project)!!.compilerOutputPointer = null
     val model = ArtifactManager.getInstance(project).createModifiableModel()
-    model.addArtifact("regular", PlainArtifactType.getInstance())
-    model.addArtifact("import", PlainArtifactType.getInstance(), PackagingElementFactory.getInstance().createArchive("a.jar"),
-                      externalSource)
+    val regular = model.addArtifact("regular", PlainArtifactType.getInstance())
+    regular.outputPath = projectDir.resolve("out/artifacts/regular").systemIndependentPath
+    val root = PackagingElementFactory.getInstance().createArchive("a.jar")
+    val imported = model.addArtifact("imported", PlainArtifactType.getInstance(), root, externalSource)
+    imported.outputPath = projectDir.resolve("out/artifacts/imported").systemIndependentPath
     model.commit()
   }
 
