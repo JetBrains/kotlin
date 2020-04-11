@@ -583,6 +583,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/ifExpression.kt");
         }
 
+        @TestMetadata("implicitReceiver.kt")
+        public void testImplicitReceiver() throws Exception {
+            runTest("idea/testData/slicer/outflow/implicitReceiver.kt");
+        }
+
         @TestMetadata("indexingDereferences.kt")
         public void testIndexingDereferences() throws Exception {
             runTest("idea/testData/slicer/outflow/indexingDereferences.kt");

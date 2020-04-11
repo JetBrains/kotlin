@@ -153,14 +153,30 @@ class OutflowSlicer(
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
         //TODO: overriders
-        //TODO: implicit receivers
         val resolutionFacade = declaration.getResolutionFacade()
         val callableDescriptor = declaration.resolveToDescriptorIfAny(resolutionFacade) as? CallableDescriptor ?: return
         val extensionReceiver = callableDescriptor.extensionReceiverParameter ?: return
-        declarationWithBody.bodyExpression?.forEachDescendantOfType<KtThisExpression> { thisExpression ->
+        val body = declarationWithBody.bodyExpression ?: return
+
+        body.forEachDescendantOfType<KtThisExpression> { thisExpression ->
             val receiverDescriptor = thisExpression.resolveToCall(resolutionFacade)?.resultingDescriptor
             if (receiverDescriptor == extensionReceiver) {
                 thisExpression.passToProcessor()
+            }
+        }
+
+        // process implicit receiver usages
+        val pseudocode = pseudocodeCache[body]
+        if (pseudocode != null) {
+            for (instruction in pseudocode.instructions) {
+                if (instruction is MagicInstruction && instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
+                    val receiverPseudoValue = instruction.outputValue
+                    pseudocode.getUsages(receiverPseudoValue).forEach { receiverUseInstruction ->
+                        if (receiverUseInstruction is KtElementInstruction) {
+                            processIfReceiverValue(receiverUseInstruction, receiverPseudoValue)
+                        }
+                    }
+                }
             }
         }
     }
