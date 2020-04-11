@@ -8,6 +8,6 @@
 8 							val x = foo(<bold>fun(n: Int): Int { return n }</bold>)
 8 								val x = foo(fun(n: Int): Int { return <bold>n</bold> })
 8 									val x = foo(fun(<bold>n: Int</bold>): Int { return n })
-8 										[LAMBDA OUT] val x = foo(<bold>fun(n: Int): Int { return n }</bold>)
-3 											[LAMBDA OUT] fun foo(<bold>f: (Int) -> Int</bold>): Int {
+8 										[LAMBDA CALLS] val x = foo(<bold>fun(n: Int): Int { return n }</bold>)
+3 											[LAMBDA CALLS] fun foo(<bold>f: (Int) -> Int</bold>): Int {
 4 												return f(<bold>1</bold>)
