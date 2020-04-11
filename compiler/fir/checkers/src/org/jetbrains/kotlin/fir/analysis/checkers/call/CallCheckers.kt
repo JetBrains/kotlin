@@ -13,7 +13,8 @@ object CallCheckers {
     val QUALIFIED_ACCESS: List<FirQualifiedAccessChecker> = listOf(
         FirSuperNotAvailableChecker,
         FirNotASupertypeChecker,
-        FirSuperclassNotAccessibleFromInterfaceChecker
+        FirSuperclassNotAccessibleFromInterfaceChecker,
+        FirAbstractSuperCallChecker
     ) + EXPRESSIONS
 
     val FUNCTION_CALLS: List<FirFunctionCallChecker> = listOf<FirFunctionCallChecker>(
