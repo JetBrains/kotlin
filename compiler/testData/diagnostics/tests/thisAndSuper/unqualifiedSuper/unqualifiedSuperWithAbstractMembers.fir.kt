@@ -25,8 +25,8 @@ class B : A(), I {
     override val y: Int = super.y
 
     override fun foo(): Int {
-        super.foo()
-        return super.x
+        super.<!ABSTRACT_SUPER_CALL!>foo<!>()
+        return super.<!ABSTRACT_SUPER_CALL!>x<!>
     }
 
     override fun bar() {
