@@ -52,7 +52,7 @@ internal fun findShowUsages(project: Project, dataContext: DataContext, popupTit
         popupTitle,
         allTargets,
         ::getPresentation,
-        Consumer(handler::handle)
+        handler::handle
       ).showInBestPositionFor(dataContext)
     }
   }
