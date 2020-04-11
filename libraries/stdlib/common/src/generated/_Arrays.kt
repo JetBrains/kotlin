@@ -5955,6 +5955,8 @@ public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareBy(selector))
@@ -5962,6 +5964,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selec
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareBy(selector))
@@ -5969,6 +5973,8 @@ public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareBy(selector))
@@ -5976,6 +5982,8 @@ public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: 
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareBy(selector))
@@ -5983,6 +5991,8 @@ public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (I
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareBy(selector))
@@ -5990,6 +6000,8 @@ public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareBy(selector))
@@ -5997,6 +6009,8 @@ public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: 
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareBy(selector))
@@ -6004,6 +6018,8 @@ public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector:
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareBy(selector))
@@ -6011,6 +6027,8 @@ public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareBy(selector))
