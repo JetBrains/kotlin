@@ -200,6 +200,17 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             """.trimIndent()
             )
 
+            //language=ES6
+            it.appendln(
+                """
+                // noinspection JSUnnecessarySemicolon
+                ;(function(config) {
+                    const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
+                    config.plugins.push(new tcErrorPlugin(tcErrorPlugin))
+                })(config);
+            """.trimIndent()
+            )
+
             it.appendln("   return config;")
             it.appendln("}")
             it.appendln()
@@ -418,15 +429,17 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private val failedBrowsers: MutableList<String> = mutableListOf()
 
-                    override fun printNonTestOutput(text: String) {
+                    override fun printNonTestOutput(text: String, type: String?) {
                         val value = text.trimEnd()
                         progressLogger.progress(value)
 
-                        parseConsole(value)
+                        parseConsole(value, type)
                     }
 
-                    private fun parseConsole(text: String) {
+                    private fun parseConsole(text: String, type: String?) {
+
                         val result = KARMA_MESSAGE.matchEntire(text)
+
                         if (result != null) {
 
                             val (logLevel, message) = result.destructured
@@ -445,8 +458,20 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                                 INFO, LOG -> log.info(nonColoredMessage)
                                 DEBUG -> log.debug(nonColoredMessage)
                             }
-                        } else {
-                            super.printNonTestOutput(text)
+
+                            return
+                        }
+
+                        val nonColoredText = text.clearAnsiColor()
+
+                        if (type == "error") {
+                            log.error(nonColoredText)
+                            return
+                        }
+
+                        if (type == "warn") {
+                            log.warn(nonColoredText)
+                            return
                         }
                     }
 

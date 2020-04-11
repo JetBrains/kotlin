@@ -18,4 +18,4 @@ export const MESSAGE: string
 
 export function tcEscape(str: string): string
 
-export function formatMessage(...str: string[]): string
+export function formatMessage(type: string, ...str: string[]): string

@@ -17,6 +17,7 @@ export const BLOCK_OPENED = `##teamcity[blockOpened name='%s' flowId='%s']`
 export const BLOCK_CLOSED = `##teamcity[blockClosed name='%s' flowId='%s']`
 
 export const MESSAGE = `##teamcity[message text='%s']`
+export const TYPED_MESSAGE = `##teamcity[message text='%s' type='%s']`
 
 /**
  * from teamcity-service-messages

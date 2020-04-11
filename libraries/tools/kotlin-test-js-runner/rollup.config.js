@@ -60,6 +60,13 @@ export default [
         }
     },
     {
+        input: './tc-log-error-webpack.js',
+        output: {
+            file: 'lib/tc-log-error-webpack.js',
+            format: 'cjs'
+        }
+    },
+    {
         input: './mocha-kotlin-reporter.js',
         external: ['path', 'util'],
         output: {

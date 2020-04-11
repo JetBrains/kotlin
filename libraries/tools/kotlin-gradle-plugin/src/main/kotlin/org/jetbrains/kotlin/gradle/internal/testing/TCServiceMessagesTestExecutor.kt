@@ -52,6 +52,7 @@ class TCServiceMessagesTestExecutor(
                 spec.forkOptions.copyTo(exec)
                 exec.args = spec.args
                 exec.standardOutput = TCServiceMessageOutputStreamHandler(client, { spec.showSuppressedOutput() }, log)
+                exec.errorOutput = TCServiceMessageOutputStreamHandler(client, { spec.showSuppressedOutput() }, log)
                 execHandle = exec.build()
 
                 lateinit var result: ExecResult

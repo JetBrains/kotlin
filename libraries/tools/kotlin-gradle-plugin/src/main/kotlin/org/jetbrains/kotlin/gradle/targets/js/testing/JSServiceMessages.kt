@@ -37,7 +37,7 @@ internal open class JSServiceMessagesClient(
     settings: TCServiceMessagesClientSettings,
     log: Logger
 ) : TCServiceMessagesClient(results, settings, log) {
-    override fun printNonTestOutput(text: String) {
+    override fun printNonTestOutput(text: String, type: String?) {
         if (log.isDebugEnabled) {
             log.debug(text)
         }

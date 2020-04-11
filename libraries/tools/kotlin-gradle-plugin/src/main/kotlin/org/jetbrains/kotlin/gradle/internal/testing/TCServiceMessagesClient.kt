@@ -85,7 +85,7 @@ internal open class TCServiceMessagesClient(
                 }
             }
             is TestSuiteFinished -> close(message.ts, getSuiteName(message))
-            is Message -> regularText(message.text)
+            is Message -> printNonTestOutput(message.text, message.attributes["type"])
             else -> Unit
         }
 
@@ -115,7 +115,7 @@ internal open class TCServiceMessagesClient(
         afterMessage = false
     }
 
-    protected open fun printNonTestOutput(text: String) {
+    protected open fun printNonTestOutput(text: String, type: String? = null) {
         print(text)
     }
 
