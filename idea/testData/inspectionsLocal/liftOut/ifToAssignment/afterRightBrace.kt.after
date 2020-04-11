@@ -1,0 +1,12 @@
+fun test(i: Int) {
+    val f: () -> Boolean
+    f = if (i == 1) {
+        { true }
+    } else {
+        foo { i }
+        ({ false })
+    }
+    f()
+}
+
+fun foo(f: () -> Int) {}
