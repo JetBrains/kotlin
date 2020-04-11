@@ -450,7 +450,7 @@ public class KtPsiUtil {
 
         if (innerExpression instanceof KtLambdaExpression) {
             PsiElement prevSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(currentInner);
-            if (prevSibling != null && prevSibling.getText().endsWith(KtTokens.RPAR.getValue())) return true;
+            if (endWithParenthesisOrCallExpression(prevSibling)) return true;
         }
 
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
@@ -555,6 +555,15 @@ public class KtPsiUtil {
         }
 
         return innerPriority < parentPriority;
+    }
+
+    private static boolean endWithParenthesisOrCallExpression(PsiElement element) {
+        if (element == null) return false;
+        if (element.getText().endsWith(KtTokens.RPAR.getValue()) || element instanceof KtCallExpression) return true;
+        PsiElement[] children = element.getChildren();
+        int length = children.length;
+        if (length == 0) return false;
+        return endWithParenthesisOrCallExpression(children[length - 1]);
     }
 
     private static boolean isKeepBinaryExpressionParenthesized(KtBinaryExpression expression) {
