@@ -14,8 +14,16 @@ fun String.foo() {
     1.extensionFun()
 
     extensionFun()
+
+    with(123) {
+        extensionFun()
+    }
 }
 
 fun main() {
     "A".foo()
+}
+
+inline fun <T, R> with(receiver: T, block: T.() -> R): R {
+    return receiver.block()
 }
