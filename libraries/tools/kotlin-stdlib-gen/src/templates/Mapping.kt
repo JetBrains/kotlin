@@ -26,6 +26,11 @@ object Mapping : TemplateGroupBase() {
         }
     }
 
+    private fun sampleClass(f: Family): String = when (f) {
+        Maps -> "samples.collections.Maps.Transformations"
+        else -> "samples.collections.Collections.Transformations"
+    }
+
     val f_withIndex = fn("withIndex()") {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
@@ -290,7 +295,7 @@ object Mapping : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns a single list of all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}." }
-        sample("samples.collections.Collections.Transformations.flatMap")
+        sample("${sampleClass(f)}.flatMap")
         typeParam("R")
         returns("List<R>")
         body {
