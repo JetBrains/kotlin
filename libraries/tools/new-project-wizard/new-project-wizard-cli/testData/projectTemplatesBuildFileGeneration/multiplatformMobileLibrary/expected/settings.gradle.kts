@@ -16,4 +16,4 @@ pluginManagement {
         }
     }
 }
-rootProject.name = "MultiplatformMobileLibrary"
+rootProject.name = "multiplatformMobileLibrary"
