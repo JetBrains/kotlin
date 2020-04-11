@@ -1734,6 +1734,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
         }
 
+        @TestMetadata("typeParametersInImplicitCast.kt")
+        public void testTypeParametersInImplicitCast() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/typeParametersInImplicitCast.kt");
+        }
+
         @TestMetadata("compiler/testData/ir/irText/regressions/newInference")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

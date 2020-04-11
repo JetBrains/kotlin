@@ -1735,6 +1735,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
         }
 
+        @TestMetadata("typeParametersInImplicitCast.kt")
+        public void testTypeParametersInImplicitCast() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/typeParametersInImplicitCast.kt");
+        }
+
         @TestMetadata("compiler/testData/ir/irText/regressions/newInference")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -64,19 +66,37 @@ internal class InsertImplicitCasts(
 ) : IrElementTransformerVoid() {
 
     private val expectedFunctionExpressionReturnType = hashMapOf<FunctionDescriptor, IrType>()
-    private val returnExpressionsToBePostprocessed = arrayListOf<IrReturn>()
 
     fun run(element: IrElement) {
         element.transformChildrenVoid(this)
-        for (irReturn in returnExpressionsToBePostprocessed) {
-            postprocessReturnExpression(irReturn)
-        }
+        postprocessReturnExpressions(element)
     }
 
-    private fun postprocessReturnExpression(irReturn: IrReturn) {
-        val returnTarget = irReturn.returnTarget
-        val expectedReturnType = expectedFunctionExpressionReturnType[returnTarget] ?: return
-        irReturn.value = irReturn.value.cast(expectedReturnType)
+    private fun postprocessReturnExpressions(element: IrElement) {
+        // We need to re-create type parameter context for casts of postprocessed return values.
+        element.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitReturn(expression: IrReturn) {
+                super.visitReturn(expression)
+                val expectedReturnType = expectedFunctionExpressionReturnType[expression.returnTarget] ?: return
+                expression.value = expression.value.cast(expectedReturnType)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                typeTranslator.buildWithScope(declaration) {
+                    super.visitClass(declaration)
+                }
+            }
+
+            override fun visitFunction(declaration: IrFunction) {
+                typeTranslator.buildWithScope(declaration) {
+                    super.visitFunction(declaration)
+                }
+            }
+
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+        })
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
@@ -172,9 +192,6 @@ internal class InsertImplicitCasts(
             } else {
                 val returnTargetDescriptor = expression.returnTarget
                 val isLambdaReturnValue = returnTargetDescriptor is AnonymousFunctionDescriptor
-                if (isLambdaReturnValue) {
-                    returnExpressionsToBePostprocessed.add(expression)
-                }
                 value.cast(returnTargetDescriptor.returnType, isLambdaReturnValue = isLambdaReturnValue)
             }
         }
