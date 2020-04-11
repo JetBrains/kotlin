@@ -1,6 +1,11 @@
 8 fun <bold>Any</bold>.extensionFun() {
 3 	KotlinUtil.extensionFun(<bold>"x"</bold>);
 11 	fun <bold>String</bold>.foo() {
-20 		<bold>"A"</bold>.foo()
+24 		<bold>"A"</bold>.foo()
 12 	<bold>""</bold>.extensionFun()
 14 	<bold>1</bold>.extensionFun()
+18 	[LAMBDA CALLS] with(123) <bold>{</bold>
+27 		[LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+28 			return <bold>receiver</bold>.block()
+27 				inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+18 					with(<bold>123</bold>) {

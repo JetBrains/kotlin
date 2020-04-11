@@ -390,14 +390,24 @@ class InflowSlicer(
                     val resolvedCall = refElement.resolveToCall() ?: return emptyList()
                     when (val receiver = resolvedCall.extensionReceiver) {
                         is ExpressionReceiver -> {
-                            return listOf(KotlinSliceUsage(receiver.expression, parent, behaviour, true))
+                            return listOf(KotlinSliceUsage(receiver.expression, parent, behaviour, forcedExpressionMode = true))
                         }
 
                         is ImplicitReceiver -> {
-                            val callableDeclaration = (receiver.declarationDescriptor as? CallableDescriptor)?.originalSource?.getPsi()
-                            val receiverTypeReference = (callableDeclaration as? KtCallableDeclaration)?.receiverTypeReference
-                                ?: return emptyList()
-                            return listOf(KotlinSliceUsage(receiverTypeReference, parent, behaviour, false))
+                            val callableDescriptor = receiver.declarationDescriptor as? CallableDescriptor ?: return emptyList()
+                            when (val callableDeclaration = callableDescriptor.originalSource.getPsi()) {
+                                is KtFunctionLiteral -> {
+                                    val newBehaviour = LambdaCallsBehaviour(ReceiverSliceProducer, behaviour)
+                                    return listOf(KotlinSliceUsage(callableDeclaration, parent, newBehaviour, forcedExpressionMode = true))
+                                }
+
+                                is KtCallableDeclaration -> {
+                                    val receiverTypeReference = callableDeclaration.receiverTypeReference ?: return emptyList()
+                                    return listOf(KotlinSliceUsage(receiverTypeReference, parent, behaviour, false))
+                                }
+
+                                else -> return emptyList()
+                            }
                         }
 
                         else -> return emptyList()
