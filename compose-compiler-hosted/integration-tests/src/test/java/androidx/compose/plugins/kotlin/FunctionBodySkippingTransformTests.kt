@@ -82,7 +82,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b00011000 === 0) {
                 %dirty = %dirty or if (%composer.changed(y)) 0b1000 else 0b00010000
               }
-              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 Wrap(restartableFunction(%composer, -756386900, true) { %composer: Composer<N>?, %changed: Int ->
                   if (x > 0) {
                     %composer.startReplaceableGroup(-447710431)
@@ -131,7 +131,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b00011000 === 0) {
                 %dirty = %dirty or if (%composer.changed(children)) 0b1000 else 0b00010000
               }
-              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 children(y, %composer, 0b0110 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -156,7 +156,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b00011000 === 0) {
                 %dirty = %dirty or if (%composer.changed(y)) 0b1000 else 0b00010000
               }
-              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 Wrap(10, restartableFunction(%composer, -756386995, true) { it: Int, %composer: Composer<N>?, %changed: Int ->
                   A(x, 0, %composer, 0b0110 and %dirty, 0b0010)
                 }, %composer, 0b0110)
@@ -253,7 +253,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b00011000 === 0) {
                 %dirty = %dirty or if (%composer.changed(y)) 0b1000 else 0b00010000
               }
-              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 val tmp0_y = y
                 val tmp1_x = x
                 A(x, y, %composer, 0b0110 and %dirty or 0b00011000 and %dirty, 0)
@@ -300,7 +300,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else {
                 b
               }
-              if (%default.inv() and 0b0010 !== 0 || %dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+              if (%default.inv() and 0b0010 !== 0 || %dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 print("Hello World")
               } else {
                 %composer.skipCurrentGroup()
@@ -378,7 +378,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(x, %composer, 0b0110 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -412,7 +412,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(x, %composer, 0b0110 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -454,7 +454,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(x, %composer, 0b0110 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -512,7 +512,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else {
                 x
               }
-              if (%default.inv() and 0b0001 !== 0 || %dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%default.inv() and 0b0001 !== 0 || %dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(x, %composer, 0b0110 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -563,7 +563,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else {
                 e
               }
-              if (%default.inv() and 0b00011000 !== 0 || %dirty and 0b101010101011 xor 0b101010101010 !== 0 || !%composer.skipping) {
+              if (%default.inv() and 0b00011000 !== 0 || %dirty and 0b001010101011 xor 0b001010101010 !== 0 || !%composer.skipping) {
                 A(a, b, c, d, e, %composer, 0b0110 and %dirty or 0b00011000 and %dirty or 0b01100000 and %dirty or 0b000110000000 and %dirty or 0b011000000000 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -594,7 +594,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 X(x + 1, %composer, 0)
                 X(x, %composer, 0b0110 and %dirty)
               } else {
@@ -636,7 +636,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 B(x, x + 1, 123, fooGlobal, %composer, 0b01100000 or 0b0110 and %dirty)
               } else {
                 %composer.skipCurrentGroup()
@@ -674,7 +674,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 Provide(restartableFunction(%composer, -756386884, true) { y: Int, %composer: Composer<N>?, %changed: Int ->
                   Provide(restartableFunction(%composer, -756386923, true) { z: Int, %composer: Composer<N>?, %changed: Int ->
                     B(x, y, z, %composer, 0b0110 and %dirty or 0b00011000 and %changed shl 0b0010 or 0b01100000 and %changed shl 0b0100, 0)
@@ -714,7 +714,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 @Composable
                 fun foo(y: Int, %composer: Composer<N>?, %changed: Int) {
                   %composer.startRestartGroup(1906525656)
@@ -722,7 +722,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   if (%changed and 0b0110 === 0) {
                     %dirty = %dirty or if (%composer.changed(y)) 0b0010 else 0b0100
                   }
-                  if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                     B(x, y, %composer, 0b0110 and %dirty or 0b00011000 and %dirty shl 0b0010)
                   } else {
                     %composer.skipCurrentGroup()
@@ -737,6 +737,354 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
                 A(x, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun test15Parameters(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            @Composable
+            fun Example(
+                a00: Int = 0,
+                a01: Int = 0,
+                a02: Int = 0,
+                a03: Int = 0,
+                a04: Int = 0,
+                a05: Int = 0,
+                a06: Int = 0,
+                a07: Int = 0,
+                a08: Int = 0,
+                a09: Int = 0,
+                a10: Int = 0,
+                a11: Int = 0,
+                a12: Int = 0,
+                a13: Int = 0,
+                a14: Int = 0
+            ) {
+                // in order
+                Example(
+                    a00,
+                    a01,
+                    a02,
+                    a03,
+                    a04,
+                    a05,
+                    a06,
+                    a07,
+                    a08,
+                    a09,
+                    a10,
+                    a11,
+                    a12,
+                    a13,
+                    a14
+                )
+                // in opposite order
+                Example(
+                    a14,
+                    a13,
+                    a12,
+                    a11,
+                    a10,
+                    a09,
+                    a08,
+                    a07,
+                    a06,
+                    a05,
+                    a04,
+                    a03,
+                    a02,
+                    a01,
+                    a00
+                )
+            }
+        """,
+        """
+            @Composable
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, %composer: Composer<N>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              val a00 = if (%default and 0b0001 !== 0) 0 else a00
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a00)) 0b0010 else 0b0100
+              }
+              val a01 = if (%default and 0b0010 !== 0) 0 else a01
+              if (%default and 0b0010 !== 0) {
+                %dirty = %dirty or 0b00011000
+              } else if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a01)) 0b1000 else 0b00010000
+              }
+              val a02 = if (%default and 0b0100 !== 0) 0 else a02
+              if (%default and 0b0100 !== 0) {
+                %dirty = %dirty or 0b01100000
+              } else if (%changed and 0b01100000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a02)) 0b00100000 else 0b01000000
+              }
+              val a03 = if (%default and 0b1000 !== 0) 0 else a03
+              if (%default and 0b1000 !== 0) {
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b000110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a03)) 0b10000000 else 0b000100000000
+              }
+              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
+              if (%default and 0b00010000 !== 0) {
+                %dirty = %dirty or 0b011000000000
+              } else if (%changed and 0b011000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a04)) 0b001000000000 else 0b010000000000
+              }
+              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
+              if (%default and 0b00100000 !== 0) {
+                %dirty = %dirty or 0b0001100000000000
+              } else if (%changed and 0b0001100000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a05)) 0b100000000000 else 0b0001000000000000
+              }
+              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
+              if (%default and 0b01000000 !== 0) {
+                %dirty = %dirty or 0b0110000000000000
+              } else if (%changed and 0b0110000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a06)) 0b0010000000000000 else 0b0100000000000000
+              }
+              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
+              if (%default and 0b10000000 !== 0) {
+                %dirty = %dirty or 0b00011000000000000000
+              } else if (%changed and 0b00011000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a07)) 0b1000000000000000 else 0b00010000000000000000
+              }
+              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
+              if (%default and 0b000100000000 !== 0) {
+                %dirty = %dirty or 0b01100000000000000000
+              } else if (%changed and 0b01100000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a08)) 0b00100000000000000000 else 0b01000000000000000000
+              }
+              val a09 = if (%default and 0b001000000000 !== 0) 0 else a09
+              if (%default and 0b001000000000 !== 0) {
+                %dirty = %dirty or 0b000110000000000000000000
+              } else if (%changed and 0b000110000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a09)) 0b10000000000000000000 else 0b000100000000000000000000
+              }
+              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
+              if (%default and 0b010000000000 !== 0) {
+                %dirty = %dirty or 0b011000000000000000000000
+              } else if (%changed and 0b011000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a10)) 0b001000000000000000000000 else 0b010000000000000000000000
+              }
+              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
+              if (%default and 0b100000000000 !== 0) {
+                %dirty = %dirty or 0b0001100000000000000000000000
+              } else if (%changed and 0b0001100000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a11)) 0b100000000000000000000000 else 0b0001000000000000000000000000
+              }
+              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
+              if (%default and 0b0001000000000000 !== 0) {
+                %dirty = %dirty or 0b0110000000000000000000000000
+              } else if (%changed and 0b0110000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a12)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
+              }
+              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
+              if (%default and 0b0010000000000000 !== 0) {
+                %dirty = %dirty or 0b00011000000000000000000000000000
+              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a13)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
+              }
+              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
+              if (%default and 0b0100000000000000 !== 0) {
+                %dirty = %dirty or 0b01100000000000000000000000000000
+              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a14)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
+              }
+              if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || !%composer.skipping) {
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, %composer, 0b0110 and %dirty or 0b00011000 and %dirty or 0b01100000 and %dirty or 0b000110000000 and %dirty or 0b011000000000 and %dirty or 0b0001100000000000 and %dirty or 0b0110000000000000 and %dirty or 0b00011000000000000000 and %dirty or 0b01100000000000000000 and %dirty or 0b000110000000000000000000 and %dirty or 0b011000000000000000000000 and %dirty or 0b0001100000000000000000000000 and %dirty or 0b0110000000000000000000000000 and %dirty or 0b00011000000000000000000000000000 and %dirty or 0b01100000000000000000000000000000 and %dirty, 0)
+                Example(a14, a13, a12, a11, a10, a09, a08, a07, a06, a05, a04, a03, a02, a01, a00, %composer, 0b0110 and %dirty shr 0b00011100 or 0b00011000 and %dirty shr 0b00011000 or 0b01100000 and %dirty shr 0b00010100 or 0b000110000000 and %dirty shr 0b00010000 or 0b011000000000 and %dirty shr 0b1100 or 0b0001100000000000 and %dirty shr 0b1000 or 0b0110000000000000 and %dirty shr 0b0100 or 0b00011000000000000000 and %dirty or 0b01100000000000000000 and %dirty shl 0b0100 or 0b000110000000000000000000 and %dirty shl 0b1000 or 0b011000000000000000000000 and %dirty shl 0b1100 or 0b0001100000000000000000000000 and %dirty shl 0b00010000 or 0b0110000000000000000000000000 and %dirty shl 0b00010100 or 0b00011000000000000000000000000000 and %dirty shl 0b00011000 or 0b01100000000000000000000000000000 and %dirty shl 0b00011100, 0)
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, %composer, %changed or 0b0001, %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun test16Parameters(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            @Composable
+            fun Example(
+                a00: Int = 0,
+                a01: Int = 0,
+                a02: Int = 0,
+                a03: Int = 0,
+                a04: Int = 0,
+                a05: Int = 0,
+                a06: Int = 0,
+                a07: Int = 0,
+                a08: Int = 0,
+                a09: Int = 0,
+                a10: Int = 0,
+                a11: Int = 0,
+                a12: Int = 0,
+                a13: Int = 0,
+                a14: Int = 0,
+                a15: Int = 0
+            ) {
+                // in order
+                Example(
+                    a00,
+                    a01,
+                    a02,
+                    a03,
+                    a04,
+                    a05,
+                    a06,
+                    a07,
+                    a08,
+                    a09,
+                    a10,
+                    a11,
+                    a12,
+                    a13,
+                    a14,
+                    a15
+                )
+                // in opposite order
+                Example(
+                    a15,
+                    a14,
+                    a13,
+                    a12,
+                    a11,
+                    a10,
+                    a09,
+                    a08,
+                    a07,
+                    a06,
+                    a05,
+                    a04,
+                    a03,
+                    a02,
+                    a01,
+                    a00
+                )
+            }
+        """,
+        """
+            @Composable
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, %composer: Composer<N>?, %changed: Int, %changed1: Int, %default: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              var %dirty1 = %changed1
+              val a00 = if (%default and 0b0001 !== 0) 0 else a00
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a00)) 0b0010 else 0b0100
+              }
+              val a01 = if (%default and 0b0010 !== 0) 0 else a01
+              if (%default and 0b0010 !== 0) {
+                %dirty = %dirty or 0b00011000
+              } else if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a01)) 0b1000 else 0b00010000
+              }
+              val a02 = if (%default and 0b0100 !== 0) 0 else a02
+              if (%default and 0b0100 !== 0) {
+                %dirty = %dirty or 0b01100000
+              } else if (%changed and 0b01100000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a02)) 0b00100000 else 0b01000000
+              }
+              val a03 = if (%default and 0b1000 !== 0) 0 else a03
+              if (%default and 0b1000 !== 0) {
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b000110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a03)) 0b10000000 else 0b000100000000
+              }
+              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
+              if (%default and 0b00010000 !== 0) {
+                %dirty = %dirty or 0b011000000000
+              } else if (%changed and 0b011000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a04)) 0b001000000000 else 0b010000000000
+              }
+              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
+              if (%default and 0b00100000 !== 0) {
+                %dirty = %dirty or 0b0001100000000000
+              } else if (%changed and 0b0001100000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a05)) 0b100000000000 else 0b0001000000000000
+              }
+              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
+              if (%default and 0b01000000 !== 0) {
+                %dirty = %dirty or 0b0110000000000000
+              } else if (%changed and 0b0110000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a06)) 0b0010000000000000 else 0b0100000000000000
+              }
+              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
+              if (%default and 0b10000000 !== 0) {
+                %dirty = %dirty or 0b00011000000000000000
+              } else if (%changed and 0b00011000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a07)) 0b1000000000000000 else 0b00010000000000000000
+              }
+              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
+              if (%default and 0b000100000000 !== 0) {
+                %dirty = %dirty or 0b01100000000000000000
+              } else if (%changed and 0b01100000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a08)) 0b00100000000000000000 else 0b01000000000000000000
+              }
+              val a09 = if (%default and 0b001000000000 !== 0) 0 else a09
+              if (%default and 0b001000000000 !== 0) {
+                %dirty = %dirty or 0b000110000000000000000000
+              } else if (%changed and 0b000110000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a09)) 0b10000000000000000000 else 0b000100000000000000000000
+              }
+              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
+              if (%default and 0b010000000000 !== 0) {
+                %dirty = %dirty or 0b011000000000000000000000
+              } else if (%changed and 0b011000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a10)) 0b001000000000000000000000 else 0b010000000000000000000000
+              }
+              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
+              if (%default and 0b100000000000 !== 0) {
+                %dirty = %dirty or 0b0001100000000000000000000000
+              } else if (%changed and 0b0001100000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a11)) 0b100000000000000000000000 else 0b0001000000000000000000000000
+              }
+              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
+              if (%default and 0b0001000000000000 !== 0) {
+                %dirty = %dirty or 0b0110000000000000000000000000
+              } else if (%changed and 0b0110000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a12)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
+              }
+              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
+              if (%default and 0b0010000000000000 !== 0) {
+                %dirty = %dirty or 0b00011000000000000000000000000000
+              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a13)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
+              }
+              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
+              if (%default and 0b0100000000000000 !== 0) {
+                %dirty = %dirty or 0b01100000000000000000000000000000
+              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(a14)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
+              }
+              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
+              if (%default and 0b1000000000000000 !== 0) {
+                %dirty1 = %dirty1 or 0b0110
+              } else if (%changed1 and 0b0110 === 0) {
+                %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0010 else 0b0100
+              }
+              if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, %composer, 0, 0b0110 and %dirty or 0b00011000 and %dirty or 0b01100000 and %dirty or 0b000110000000 and %dirty or 0b011000000000 and %dirty or 0b0001100000000000 and %dirty or 0b0110000000000000 and %dirty or 0b00011000000000000000 and %dirty or 0b01100000000000000000 and %dirty or 0b000110000000000000000000 and %dirty or 0b011000000000000000000000 and %dirty or 0b0001100000000000000000000000 and %dirty or 0b0110000000000000000000000000 and %dirty or 0b00011000000000000000000000000000 and %dirty or 0b01100000000000000000000000000000 and %dirty, 0b0110 and %dirty1)
+                Example(a15, a14, a13, a12, a11, a10, a09, a08, a07, a06, a05, a04, a03, a02, a01, a00, %composer, 0, 0b0110 and %dirty1 or 0b00011000 and %dirty shr 0b00011010 or 0b01100000 and %dirty shr 0b00010110 or 0b000110000000 and %dirty shr 0b00010010 or 0b011000000000 and %dirty shr 0b1110 or 0b0001100000000000 and %dirty shr 0b1010 or 0b0110000000000000 and %dirty shr 0b0110 or 0b00011000000000000000 and %dirty shr 0b0010 or 0b01100000000000000000 and %dirty shl 0b0010 or 0b000110000000000000000000 and %dirty shl 0b0110 or 0b011000000000000000000000 and %dirty shl 0b1010 or 0b0001100000000000000000000000 and %dirty shl 0b1110 or 0b0110000000000000000000000000 and %dirty shl 0b00010010 or 0b00011000000000000000000000000000 and %dirty shl 0b00010110 or 0b01100000000000000000000000000000 and %dirty shl 0b00011010, 0b0110 and %dirty)
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, %composer, %changed or 0b0001, %changed1, %default)
               }
             }
         """
