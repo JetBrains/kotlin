@@ -14,6 +14,15 @@ interface SliceProducer {
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
+
+    object Trivial : SliceProducer {
+        override fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>? {
+            return null
+        }
+
+        override fun equals(other: Any?) = other === this
+        override fun hashCode() = 0
+    }
 }
 
 fun SliceProducer.produceAndProcess(

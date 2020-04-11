@@ -1,21 +1,21 @@
 4 f("", <bold>1</bold>)
 15 	val v = <bold>i</bold>
 14 		foo { <bold>i</bold> ->
-14 			[LAMBDA CALLS] foo <bold>{ i -></bold>
-3 				[LAMBDA CALLS] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
+14 			[LAMBDA OUT] foo <bold>{ i -></bold>
+3 				[LAMBDA OUT] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
 4 					f("", <bold>1</bold>)
 
 6 "".f(<bold>2</bold>)
 15 	val v = <bold>i</bold>
 14 		foo { <bold>i</bold> ->
-14 			[LAMBDA CALLS] foo <bold>{ i -></bold>
-3 				[LAMBDA CALLS] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
+14 			[LAMBDA OUT] foo <bold>{ i -></bold>
+3 				[LAMBDA OUT] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
 6 					"".f(<bold>2</bold>)
 
 9 f(<bold>3</bold>)
 15 	val v = <bold>i</bold>
 14 		foo { <bold>i</bold> ->
-14 			[LAMBDA CALLS] foo <bold>{ i -></bold>
-3 				[LAMBDA CALLS] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
+14 			[LAMBDA OUT] foo <bold>{ i -></bold>
+3 				[LAMBDA OUT] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
 9 					f(<bold>3</bold>)
 

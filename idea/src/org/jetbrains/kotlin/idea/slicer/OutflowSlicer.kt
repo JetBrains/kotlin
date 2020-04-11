@@ -160,7 +160,7 @@ class OutflowSlicer(
             is KtNamedFunction -> function
             else -> null
         } ?: return
-        funExpression.passToProcessor(LambdaResultOutflowBehaviour(behaviour), forcedExpressionMode = true)
+        funExpression.passToProcessor(LambdaCallsBehaviour(SliceProducer.Trivial, behaviour), forcedExpressionMode = true)
     }
 
     private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
@@ -223,13 +223,8 @@ class OutflowSlicer(
             }
 
             Call.CallType.INVOKE -> {
-                if (receiverValue == resolvedCall.dispatchReceiver) {
-                    if (behaviour is LambdaResultOutflowBehaviour) {
-                        instruction.element.passToProcessor(behaviour.originalBehaviour)
-                    }
-                    else if (behaviour is LambdaCallsBehaviour) {
-                        instruction.element.passToProcessor(behaviour)
-                    }
+                if (receiverValue == resolvedCall.dispatchReceiver && behaviour is LambdaCallsBehaviour) {
+                    instruction.element.passToProcessor(behaviour)
                 }
             }
 
@@ -291,7 +286,7 @@ class OutflowSlicer(
                         refElement.getCallElementForExactCallee()
                             ?.let { this += KotlinSliceUsage(it, parent, behaviour, false) }
                         refElement.getCallableReferenceForExactCallee()
-                            ?.let { this += KotlinSliceUsage(it, parent, LambdaResultOutflowBehaviour(behaviour), false) }
+                            ?.let { this += KotlinSliceUsage(it, parent, LambdaCallsBehaviour(SliceProducer.Trivial, behaviour), false) }
                     }
                 }
 

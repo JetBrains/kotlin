@@ -24,7 +24,8 @@ data class LambdaCallsBehaviour(
                     val sliceElement = sliceUsage.element ?: return true
                     val resolvedCall = (sliceElement as? KtElement)?.resolveToCall()
                     if (resolvedCall?.call?.callType == Call.CallType.INVOKE) {
-                        return sliceProducer.produceAndProcess(sliceUsage, originalBehaviour, parent, uniqueProcessor)
+                        val newSliceUsage = KotlinSliceUsage(resolvedCall.call.callElement, parent, originalBehaviour, true)
+                        return sliceProducer.produceAndProcess(newSliceUsage, originalBehaviour, parent, uniqueProcessor)
                     }
                 }
                 return uniqueProcessor.process(sliceUsage)
@@ -37,5 +38,5 @@ data class LambdaCallsBehaviour(
         get() = KotlinBundle.message("slicer.text.tracking.lambda.calls")
 
     override val testPresentationPrefix: String
-        get() = "[LAMBDA CALLS] "
+        get() = "[LAMBDA OUT] "
 }
