@@ -99,6 +99,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.math.ceil
+import kotlin.math.min
 
 private const val DEBUG_LOG = false
 
@@ -271,19 +273,17 @@ class ComposerParamTransformer(
             val argumentsMissing = mutableListOf<Boolean>()
             for (i in 0 until valueArgumentsCount) {
                 val arg = getValueArgument(i)
-                if (valueArgumentsCount < 22) {
-                    argumentsMissing.add(arg == null)
-                } else if (functionBodySkipping) {
-                    TODO("deal with 22+ params!")
-                }
+                argumentsMissing.add(arg == null)
                 if (arg != null) {
                     it.putValueArgument(i, arg)
                 } else if (functionBodySkipping) {
                     it.putValueArgument(i, defaultArgumentFor(ownerFn.valueParameters[i]))
                 }
             }
+            val realParams = valueArgumentsCount
+            var argIndex = valueArgumentsCount
             it.putValueArgument(
-                valueArgumentsCount,
+                argIndex++,
                 IrGetValueImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
@@ -291,20 +291,33 @@ class ComposerParamTransformer(
                 )
             )
 
-            if (functionBodySkipping && valueArgumentsCount + 1 < ownerFn.valueParameters.size) {
-                it.putValueArgument(
-                    valueArgumentsCount + 1,
-                    irConst(0)
-                )
-            }
+            if (functionBodySkipping) {
+                for (i in 0 until changedParamCount(realParams)) {
+                    if (argIndex < ownerFn.valueParameters.size) {
+                        it.putValueArgument(
+                            argIndex++,
+                            irConst(0)
+                        )
+                    } else {
+                        error("expected value parameter count to be higher")
+                    }
+                }
 
-            if (functionBodySkipping && valueArgumentsCount + 2 < ownerFn.valueParameters.size) {
-                it.putValueArgument(
-                    valueArgumentsCount + 2,
-                    irConst(
-                        bitMask(*argumentsMissing.toBooleanArray())
-                    )
-                )
+                for (i in 0 until defaultParamCount(realParams)) {
+                    val start = i * BITS_PER_INT
+                    val end = min(start + BITS_PER_INT, realParams)
+                    if (argIndex < ownerFn.valueParameters.size) {
+                        val bits = argumentsMissing
+                            .toBooleanArray()
+                            .sliceArray(start until end)
+                        it.putValueArgument(
+                            argIndex++,
+                            irConst(bitMask(*bits))
+                        )
+                    } else if (argumentsMissing.any { it }) {
+                        error("expected value parameter count to be higher")
+                    }
+                }
             }
         }
     }
@@ -313,6 +326,7 @@ class ComposerParamTransformer(
         assert(functionBodySkipping)
         return when {
             param.type.isInt() -> irConst(0)
+            // TODO(lmr): deal with all primitive types
             else -> IrConstImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
@@ -366,7 +380,10 @@ class ComposerParamTransformer(
     fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
-        val extraParams = if (functionBodySkipping) 2 else 1
+        val extraParams = if (functionBodySkipping)
+            composeSyntheticParamCount(argCount, hasDefaults = false)
+        else
+            1
         val newFnClass = context.irIntrinsics.symbols.externalSymbolTable
             .referenceClass(context.builtIns.getFunction(argCount + extraParams))
         val newDescriptor = newFnClass.descriptor.unsubstitutedMemberScope.findFirstFunction(
@@ -572,16 +589,21 @@ class ComposerParamTransformer(
                 .zip(fn.explicitParameters)
                 .toMap()
 
+            val realParams = fn.valueParameters.size
+
             val composerParam = fn.addValueParameter(
                 KtxNameConventions.COMPOSER_PARAMETER.identifier,
                 composerType.makeNullable()
             )
 
             if (functionBodySkipping) {
-                fn.addValueParameter(
-                    KtxNameConventions.CHANGED_PARAMETER.identifier,
-                    context.irBuiltIns.intType
-                )
+                val name = KtxNameConventions.CHANGED_PARAMETER.identifier
+                for (i in 0 until changedParamCount(realParams)) {
+                    fn.addValueParameter(
+                        if (i == 0) name else "$name$i",
+                        context.irBuiltIns.intType
+                    )
+                }
             }
 
             if (
@@ -592,10 +614,13 @@ class ComposerParamTransformer(
                     it.defaultValue != null
                 }
             ) {
-                fn.addValueParameter(
-                    KtxNameConventions.DEFAULT_PARAMETER.identifier,
-                    context.irBuiltIns.intType
-                )
+                val name = KtxNameConventions.DEFAULT_PARAMETER.identifier
+                for (i in 0 until defaultParamCount(realParams)) {
+                    fn.addValueParameter(
+                        if (i == 0) name else "$name$i",
+                        context.irBuiltIns.intType
+                    )
+                }
             }
 
             fn.transformChildrenVoid(object : IrElementTransformerVoid() {

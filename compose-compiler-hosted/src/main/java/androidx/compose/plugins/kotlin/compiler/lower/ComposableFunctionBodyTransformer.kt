@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -72,6 +73,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -113,6 +115,9 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.min
 
 /**
  * An enum of the different "states" a parameter of a composable function can have relating to
@@ -150,7 +155,59 @@ enum class ParamState(private val bits: Int) {
     fun bitsForSlot(slot: Int): Int = bitsForSlot(bits, slot)
 }
 
-fun bitsForSlot(bits: Int, slot: Int): Int = bits shl (slot * 2 + 1)
+const val BITS_PER_INT = 31
+const val SLOTS_PER_INT = 15
+
+fun bitsForSlot(bits: Int, slot: Int): Int {
+    val realSlot = slot.rem(SLOTS_PER_INT)
+    return bits shl (realSlot * 2 + 1)
+}
+
+fun changedParamCount(realParams: Int): Int {
+    if (realParams == 0) return 1
+    return ceil(
+        realParams.toDouble() / SLOTS_PER_INT.toDouble()
+    ).toInt()
+}
+
+fun defaultParamCount(realParams: Int): Int {
+    return ceil(
+        realParams.toDouble() / BITS_PER_INT.toDouble()
+    ).toInt()
+}
+
+fun composeSyntheticParamCount(realParams: Int, hasDefaults: Boolean = false): Int {
+    return 1 +
+            changedParamCount(realParams) +
+            if (hasDefaults) defaultParamCount(realParams) else 0
+}
+
+interface IrChangedBitMaskValue {
+    fun irIsolateBitsAtSlot(slot: Int): IrExpression
+    fun irHasDifferences(): IrExpression
+    fun irCopyToTemporary(
+        nameHint: String? = null,
+        isVar: Boolean = false,
+        exactName: Boolean = false
+    ): IrChangedBitMaskVariable
+    fun putAsValueArgumentInWithLowBit(
+        fn: IrFunctionAccessExpression,
+        startIndex: Int,
+        lowBit: Boolean
+    )
+    fun irShiftBits(fromSlot: Int, toSlot: Int): IrExpression
+}
+
+interface IrDefaultBitMaskValue {
+    fun irIsolateBitAtIndex(index: Int): IrExpression
+    fun irHasAnyProvidedAndUnstable(unstable: BooleanArray): IrExpression
+    fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int)
+}
+
+interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
+    fun asStatements(): List<IrStatement>
+    fun irOrSetBitsAtSlot(slot: Int, value: IrExpression): IrExpression
+}
 
 /**
  * This IR Transform is responsible for the main transformations of the body of a composable
@@ -396,7 +453,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        val scope = Scope.FunctionScope(declaration)
+        val scope = Scope.FunctionScope(declaration, this)
         try {
             scopeStack.push(scope)
             return visitFunctionInScope(declaration)
@@ -418,10 +475,6 @@ class ComposableFunctionBodyTransformer(
         val changedParam = scope.changedParameter!!
         val defaultParam = scope.defaultParameter
 
-        val numSlots = declaration.valueParameters.size - (
-            if (defaultParam != null) 3 else 2
-        )
-
         // restartable functions get extra logic and different types of groups from
         // non-restartable functions, and lambdas get no groups at all.
         return when {
@@ -429,21 +482,21 @@ class ComposableFunctionBodyTransformer(
                 declaration,
                 scope,
                 changedParam,
-                numSlots
+                scope.realParamCount
             )
             restartable -> visitRestartableComposableFunction(
                 declaration,
                 scope,
                 changedParam,
                 defaultParam,
-                numSlots
+                scope.realParamCount
             )
             else -> visitNonRestartableComposableFunction(
                 declaration,
                 scope,
                 changedParam,
                 defaultParam,
-                numSlots
+                scope.realParamCount
             )
         }
     }
@@ -517,8 +570,8 @@ class ComposableFunctionBodyTransformer(
     private fun visitNonRestartableComposableFunction(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
-        changedParam: IrValueDeclaration,
-        defaultParam: IrValueParameter?,
+        changedParam: IrChangedBitMaskValue,
+        defaultParam: IrDefaultBitMaskValue?,
         numSlots: Int
     ): IrStatement {
         val body = declaration.body!!
@@ -573,7 +626,7 @@ class ComposableFunctionBodyTransformer(
     private fun visitComposableLambda(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
-        changedParam: IrValueParameter,
+        changedParam: IrChangedBitMaskValue,
         numSlots: Int
     ): IrStatement {
         // no group, since restartableFunction should already create one
@@ -618,8 +671,8 @@ class ComposableFunctionBodyTransformer(
     private fun visitRestartableComposableFunction(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
-        changedParam: IrValueParameter,
-        defaultParam: IrValueParameter?,
+        changedParam: IrChangedBitMaskValue,
+        defaultParam: IrDefaultBitMaskValue?,
         numSlots: Int
     ): IrStatement {
         val body = declaration.body!!
@@ -632,18 +685,15 @@ class ComposableFunctionBodyTransformer(
         // we start off assuming that we *can* skip execution of the function
         var canSkipExecution = true
 
-        // param bitmask (same bit-space as default mask). 1 indicates that the
-        // type is unstable
-        val unstableMask = bitMask(
-            *realParams.map {
-                val isStable = it.type.toKotlinType().isStable()
-                if (!isStable && !it.hasDefaultValue()) {
-                    // if it has non-optional unstable params, the function can never skip
-                    canSkipExecution = false
-                }
-                !isStable
-            }.toBooleanArray()
-        )
+        // boolean array mapped to parameters. true indicates that the type is unstable
+        val unstableMask = realParams.map {
+            val isStable = it.type.toKotlinType().isStable()
+            if (!isStable && !it.hasDefaultValue()) {
+                // if it has non-optional unstable params, the function can never skip
+                canSkipExecution = false
+            }
+            !isStable
+        }.toBooleanArray()
 
         val defaultStatements = buildStatementsForDefault(
             realParams,
@@ -655,8 +705,7 @@ class ComposableFunctionBodyTransformer(
         // don't need to have the dirty parameter locally since it will never be different from
         // the passed in `changed` parameter.
         val skippingStatements = if (canSkipExecution && realParams.isNotEmpty()) {
-            val dirty = irTemporary(
-                irGet(changedParam),
+            val dirty = changedParam.irCopyToTemporary(
                 isVar = true,
                 nameHint = "\$dirty",
                 exactName = true
@@ -664,7 +713,7 @@ class ComposableFunctionBodyTransformer(
 
             scope.dirty = dirty
 
-            preamble.statements.add(dirty)
+            preamble.statements.addAll(dirty.asStatements())
 
             buildStatementsForSkipping(
                 realParams,
@@ -699,7 +748,9 @@ class ComposableFunctionBodyTransformer(
             .transformChildren()
             .asBodyAndResultVar()
 
-        val end = { irEndRestartGroupAndUpdateScope(declaration, changedParam, defaultParam) }
+        val end = {
+            irEndRestartGroupAndUpdateScope(declaration, changedParam, defaultParam, numSlots)
+        }
 
         scope.realizeGroup(end)
 
@@ -716,25 +767,17 @@ class ComposableFunctionBodyTransformer(
             // generate that check if we need to.
 
             var shouldExecute = irOrOr(
-                irHasDifferences(scope.dirty!!, numSlots),
+                scope.dirty!!.irHasDifferences(),
                 irNot(irIsSkipping())
             )
-            val hasAnyUnstableParams = unstableMask != 0
+            val hasAnyUnstableParams = unstableMask.any { it }
 
             // if there are unstable params, then we fence the whole expression with a check to
             // see if any of the unstable params were the ones that were provided to the
             // function. If they were, then we short-circuit and always execute
             if (hasAnyUnstableParams && defaultParam != null) {
                 shouldExecute = irOrOr(
-                    irNotEqual(
-                        // ~$default and unstableMask will be non-zero if any parameters were
-                        // *provided* AND *unstable*
-                        irAnd(
-                            irInv(irGet(defaultParam)),
-                            irConst(unstableMask)
-                        ),
-                        irConst(0)
-                    ),
+                    defaultParam.irHasAnyProvidedAndUnstable(unstableMask),
                     shouldExecute
                 )
             }
@@ -764,7 +807,7 @@ class ComposableFunctionBodyTransformer(
     private fun buildStatementsForDefault(
         parameters: List<IrValueParameter>,
         scope: Scope.FunctionScope,
-        defaultParam: IrValueParameter?
+        defaultParam: IrDefaultBitMaskValue?
     ): List<IrStatement?> {
         // if there is no default param, there are no defaults. In this case we just want to make
         // sure that that the parameters and their corresponding slots are populated in the scope
@@ -812,27 +855,24 @@ class ComposableFunctionBodyTransformer(
     private fun buildStatementsForSkipping(
         parameters: List<IrValueParameter>,
         scope: Scope.FunctionScope,
-        dirty: IrVariable,
-        changedParam: IrValueParameter,
-        defaultParam: IrValueParameter?,
-        unstableMask: Int
+        dirty: IrChangedBitMaskVariable,
+        changedParam: IrChangedBitMaskValue,
+        defaultParam: IrDefaultBitMaskValue?,
+        unstableMask: BooleanArray
     ): List<IrStatement?> {
         return parameters.mapIndexed { index, param ->
             val defaultValue = param.defaultValue
-            val modifyDirtyFromChangedResult = irSet(
-                dirty,
-                irOr(
-                    irGet(dirty),
-                    irIfThenElse(
-                        context.irBuiltIns.intType,
-                        irChanged(irGet(scope.remappedParams[param]!!)),
-                        // if the value has changed, update the bits in the slot to be
-                        // "Different"
-                        thenPart = irConst(ParamState.Different.bitsForSlot(index)),
-                        // if the value has not changed, update the bits in the slot to
-                        // be "Same"
-                        elsePart = irConst(ParamState.Same.bitsForSlot(index))
-                    )
+            val modifyDirtyFromChangedResult = dirty.irOrSetBitsAtSlot(
+                index,
+                irIfThenElse(
+                    context.irBuiltIns.intType,
+                    irChanged(irGet(scope.remappedParams[param]!!)),
+                    // if the value has changed, update the bits in the slot to be
+                    // "Different"
+                    thenPart = irConst(ParamState.Different.bitsForSlot(index)),
+                    // if the value has not changed, update the bits in the slot to
+                    // be "Same"
+                    elsePart = irConst(ParamState.Same.bitsForSlot(index))
                 )
             )
 
@@ -851,12 +891,9 @@ class ComposableFunctionBodyTransformer(
                     branches = listOf(
                         irBranch(
                             condition = irGetBit(defaultParam, index),
-                            result = irSet(
-                                dirty,
-                                irOr(
-                                    irGet(dirty),
-                                    irConst(ParamState.Static.bitsForSlot(index))
-                                )
+                            result = dirty.irOrSetBitsAtSlot(
+                                index,
+                                irConst(ParamState.Static.bitsForSlot(index))
                             )
                         ),
                         irBranch(
@@ -879,8 +916,9 @@ class ComposableFunctionBodyTransformer(
 
     private fun irEndRestartGroupAndUpdateScope(
         function: IrFunction,
-        changedParam: IrValueDeclaration,
-        defaultParam: IrValueDeclaration?
+        changedParam: IrChangedBitMaskValue,
+        defaultParam: IrDefaultBitMaskValue?,
+        numSlots: Int
     ): IrExpression {
 
         // Save the dispatch receiver into a temporary created in
@@ -928,10 +966,15 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
-        val lastIndex = function.symbol.descriptor.valueParameters.size - 1
-        val defaultIndex = lastIndex
-        val changedIndex = if (defaultParam != null) lastIndex - 1 else lastIndex
-        val composerIndex = changedIndex - 1
+        val parameterCount = function.symbol.descriptor.valueParameters.size
+        val changedIndex = numSlots + 1
+        val defaultIndex = changedIndex + changedParamCount(numSlots)
+
+        if (defaultParam == null) {
+            require(parameterCount == defaultIndex) // param count is 1-based, index is 0-based
+        } else {
+            require(parameterCount == defaultIndex + defaultParamCount(numSlots))
+        }
 
         val lambda = IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -960,23 +1003,19 @@ class ComposableFunctionBodyTransformer(
                         }
 
                     putValueArgument(
-                        composerIndex,
+                        numSlots,
                         irGet(fn.valueParameters[0])
                     )
 
-                    putValueArgument(
+                    // the call in updateScope needs to *always* have the low bit set to 1.
+                    // This ensures that the body of the function is actually executed.
+                    changedParam.putAsValueArgumentInWithLowBit(
+                        this,
                         changedIndex,
-                        // the call in updateScope needs to *always* have the low bit set to 1.
-                        // This ensures that the body of the function is actually executed.
-                        irOr(irGet(changedParam), irConst(0b1))
+                        lowBit = true
                     )
 
-                    defaultParam?.let {
-                        putValueArgument(
-                            defaultIndex,
-                            irGet(it.symbol.owner)
-                        )
-                    }
+                    defaultParam?.putAsValueArgumentIn(this, defaultIndex)
 
                     dispatchReceiver = outerReceiver?.let { irGet(it) }
                     extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
@@ -1004,46 +1043,9 @@ class ComposableFunctionBodyTransformer(
         return irMethodCall(irCurrentComposer(), isSkippingDescriptor.getter!!)
     }
 
-    private fun irHasDifferences(dirty: IrValueDeclaration, slotCount: Int): IrExpression {
-        if (slotCount == 0) {
-            // for 0 slots (no params), we can create a shortcut expression of just checking the
-            // low-bit for non-zero. Since all of the higher bits will also be 0, we can just
-            // simplify this to check if dirty is non-zero
-            return irNotEqual(
-                irGet(dirty),
-                irConst(0)
-            )
-        }
-
-        // makes an int with each slot having 0b01 mask and the low bit being 0.
-        // so for 3 slots, we would get 0b 01 01 01 0.
-        // This pattern is useful because we can and + xor it with our $changed bitmask and it
-        // will only be non-zero if any of the slots were DIFFERENT or UNCERTAIN.
-        val bitPattern = (0..slotCount).fold(0) { mask, slot ->
-            mask or bitsForSlot(0b01, slot)
-        }
-
-        // we use this pattern with the low bit set to 1 in the "and", and the low bit set to 0
-        // for the "xor". This means that if the low bit was set, we will get 1 in the resulting
-        // low bit. Since we use this calculation to determine if we need to run the body of the
-        // function, this is exactly what we want.
-
-        // $dirty and (0b 01 ... 01 1) xor (0b 01 ... 01 0)
-        return irNotEqual(
-            irXor(
-                irAnd(
-                    irGet(dirty),
-                    irConst(bitPattern or 0b1)
-                ),
-                irConst(bitPattern or 0b0)
-            ),
-            irConst(0) // anything non-zero means we have differences
-        )
-    }
-
     private fun irIsUncertainAndProvided(
-        changed: IrValueParameter,
-        default: IrValueParameter?,
+        changed: IrChangedBitMaskValue,
+        default: IrDefaultBitMaskValue?,
         slot: Int
     ): IrExpression {
         // we want to call %composer.changed if the value is uncertain *and* it was
@@ -1054,10 +1056,7 @@ class ComposableFunctionBodyTransformer(
             // (%default and 0b1) == 0 && (%changed and 0b11) == 0
             irAndAnd(
                 irEqual(
-                    irAnd(
-                        irGet(default), // a value of 1 in default means it was NOT provided
-                        irConst(0b1 shl slot)
-                    ),
+                    default.irIsolateBitAtIndex(slot),
                     irConst(0)
                 ),
                 irIsUncertain(changed, slot)
@@ -1069,15 +1068,12 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irIsUncertain(
-        changed: IrValueParameter,
+        changed: IrChangedBitMaskValue,
         slot: Int
     ): IrExpression {
         // %changed and 0b11 == 0
         return irEqual(
-            irAnd(
-                irGet(changed),
-                irBitsForSlot(0b11, slot)
-            ),
+            changed.irIsolateBitsAtSlot(slot),
             irConst(0)
         )
     }
@@ -1494,7 +1490,7 @@ class ComposableFunctionBodyTransformer(
         var isStatic: Boolean = false,
         var isCertain: Boolean = false,
         var maskSlot: Int = -1,
-        var maskParam: IrValueDeclaration? = null
+        var maskParam: IrChangedBitMaskValue? = null
     )
 
     override fun visitBlock(expression: IrBlock): IrExpression {
@@ -1572,10 +1568,11 @@ class ComposableFunctionBodyTransformer(
             paramMeta.add(meta)
         }
 
-        expression.putValueArgument(
-            changedArgIndex,
-            buildChangedParamForCall(paramMeta)
-        )
+        val changedParams = buildChangedParamsForCall(paramMeta)
+
+        changedParams.forEachIndexed { i, param ->
+            expression.putValueArgument(changedArgIndex + i, param)
+        }
 
         return expression
     }
@@ -1655,6 +1652,19 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    private fun buildChangedParamsForCall(params: List<ParamMeta>): List<IrExpression> {
+        val count = params.size
+        val changedCount = changedParamCount(count)
+        val result = mutableListOf<IrExpression>()
+        for (i in 0 until changedCount) {
+            val start = i * SLOTS_PER_INT
+            val end = min(start + SLOTS_PER_INT, count)
+            val slice = params.subList(start, end)
+            result.add(buildChangedParamForCall(slice))
+        }
+        return result
+    }
+
     private fun buildChangedParamForCall(params: List<ParamMeta>): IrExpression {
         // The general pattern here is:
         //
@@ -1693,11 +1703,10 @@ class ComposableFunctionBodyTransformer(
                 require(parentSlot != -1) { "invalid parent slot for Certain param" }
 
                 // if parentSlot is lower than slot, we shift left a positive amount of bits
-                val bitsToShiftLeft = (slot - parentSlot) * 2
                 orExprs.add(
                     irAnd(
                         irConst(bitsForSlot(0b11, slot)),
-                        irShiftBits(irGet(someMask), bitsToShiftLeft)
+                        someMask.irShiftBits(parentSlot, slot)
                     )
                 )
             }
@@ -1911,7 +1920,10 @@ class ComposableFunctionBodyTransformer(
     }
 
     sealed class Scope {
-        class FunctionScope(val function: IrFunction) : BlockScope() {
+        class FunctionScope(
+            val function: IrFunction,
+            transformer: ComposableFunctionBodyTransformer
+        ) : BlockScope() {
             val remappedParams = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
             val paramsToSlots = mutableMapOf<IrValueDeclaration, Int>()
 
@@ -1922,26 +1934,47 @@ class ComposableFunctionBodyTransformer(
             var composerParameter: IrValueParameter? = null
                 private set
 
-            var defaultParameter: IrValueParameter? = null
+            var defaultParameter: IrDefaultBitMaskValue? = null
                 private set
 
-            var changedParameter: IrValueParameter? = null
+            var changedParameter: IrChangedBitMaskValue? = null
                 private set
 
-            var dirty: IrValueDeclaration? = null
+            var realParamCount: Int = 0
+                private set
+
+            var dirty: IrChangedBitMaskValue? = null
 
             init {
-                loop@ for (param in function.valueParameters.asReversed()) {
-                    when (param.name.identifier) {
-                        KtxNameConventions.COMPOSER_PARAMETER.identifier ->
+                val defaultParams = mutableListOf<IrValueParameter>()
+                val changedParams = mutableListOf<IrValueParameter>()
+                for (param in function.valueParameters) {
+                    val paramName = param.name.identifier
+                    when {
+                        !paramName.startsWith('$') -> realParamCount++
+                        paramName == KtxNameConventions.COMPOSER_PARAMETER.identifier ->
                             composerParameter = param
-                        KtxNameConventions.DEFAULT_PARAMETER.identifier ->
-                            defaultParameter = param
-                        KtxNameConventions.CHANGED_PARAMETER.identifier ->
-                            changedParameter = param
-                        else -> break@loop
+                        paramName.startsWith(KtxNameConventions.DEFAULT_PARAMETER.identifier) ->
+                            defaultParams += param
+                        paramName.startsWith(KtxNameConventions.CHANGED_PARAMETER.identifier) ->
+                            changedParams += param
+                        else -> error("Unexpected")
                     }
                 }
+                changedParameter = if (composerParameter != null)
+                    transformer.IrChangedBitMaskValueImpl(
+                        changedParams,
+                        realParamCount
+                    )
+                else
+                    null
+                defaultParameter = if (defaultParams.isNotEmpty())
+                    transformer.IrDefaultBitMaskValueImpl(
+                        defaultParams,
+                        realParamCount
+                    )
+                else
+                    null
             }
 
             val isComposable = composerParameter != null
@@ -2020,6 +2053,213 @@ class ComposableFunctionBodyTransformer(
         class LoopScope(val loop: IrLoop) : BlockScope()
         class WhenScope : BlockScope()
         class BranchScope : BlockScope()
+    }
+
+    inner class IrDefaultBitMaskValueImpl(
+        private val params: List<IrValueParameter>,
+        private val count: Int
+    ) : IrDefaultBitMaskValue {
+        private fun bitIndex(index: Int): Int = index.rem(BITS_PER_INT)
+        private fun paramIndex(index: Int): Int = index / BITS_PER_INT
+
+        init {
+            val actual = params.size
+            val expected = defaultParamCount(count)
+            require(actual == expected) {
+                "Function with $count params had $actual default params but expected $expected"
+            }
+        }
+
+        override fun irIsolateBitAtIndex(index: Int): IrExpression {
+            require(index <= count)
+            // (%default and 0b1)
+            return irAnd(
+                // a value of 1 in default means it was NOT provided
+                irGet(params[paramIndex(index)]),
+                irConst(0b1 shl bitIndex(index))
+            )
+        }
+
+        override fun irHasAnyProvidedAndUnstable(unstable: BooleanArray): IrExpression {
+            require(count == unstable.size)
+            val expressions = params.mapIndexed { index, param ->
+                val start = index * BITS_PER_INT
+                val end = min(start + BITS_PER_INT, count)
+                val unstableMask = bitMask(*unstable.sliceArray(start until end))
+                irNotEqual(
+                    // ~$default and unstableMask will be non-zero if any parameters were
+                    // *provided* AND *unstable*
+                    irAnd(
+                        irInv(irGet(param)),
+                        irConst(unstableMask)
+                    ),
+                    irConst(0)
+                )
+            }
+            return if (expressions.size == 1)
+                expressions.single()
+            else
+                expressions.reduce { lhs, rhs -> irOrOr(lhs, rhs) }
+        }
+
+        override fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int) {
+            params.forEachIndexed { i, param ->
+                fn.putValueArgument(
+                    startIndex + i,
+                    irGet(param)
+                )
+            }
+        }
+    }
+
+    open inner class IrChangedBitMaskValueImpl(
+        private val params: List<IrValueDeclaration>,
+        private val count: Int
+    ) : IrChangedBitMaskValue {
+        protected fun paramIndexForSlot(slot: Int): Int = slot / SLOTS_PER_INT
+
+        init {
+            val actual = params.size
+            val expected = changedParamCount(count)
+            require(actual == expected) {
+                "Function with $count params had $actual changed params but expected $expected"
+            }
+        }
+
+        override fun irIsolateBitsAtSlot(slot: Int): IrExpression {
+            // %changed and 0b11
+            return irAnd(
+                irGet(params[paramIndexForSlot(slot)]),
+                irBitsForSlot(0b11, slot)
+            )
+        }
+
+        override fun irHasDifferences(): IrExpression {
+            if (count == 0) {
+                // for 0 slots (no params), we can create a shortcut expression of just checking the
+                // low-bit for non-zero. Since all of the higher bits will also be 0, we can just
+                // simplify this to check if dirty is non-zero
+                return irNotEqual(
+                    irGet(params[0]),
+                    irConst(0)
+                )
+            }
+
+            val expressions = params.mapIndexed { index, param ->
+                val start = index * SLOTS_PER_INT
+                val end = min(start + SLOTS_PER_INT, count)
+
+                // makes an int with each slot having 0b01 mask and the low bit being 0.
+                // so for 3 slots, we would get 0b 01 01 01 0.
+                // This pattern is useful because we can and + xor it with our $changed bitmask and it
+                // will only be non-zero if any of the slots were DIFFERENT or UNCERTAIN.
+                val bitPattern = (start until end).fold(0) { mask, slot ->
+                    mask or bitsForSlot(0b01, slot)
+                }
+
+                // we use this pattern with the low bit set to 1 in the "and", and the low bit set to 0
+                // for the "xor". This means that if the low bit was set, we will get 1 in the resulting
+                // low bit. Since we use this calculation to determine if we need to run the body of the
+                // function, this is exactly what we want.
+
+                // $dirty and (0b 01 ... 01 1) xor (0b 01 ... 01 0)
+                irNotEqual(
+                    irXor(
+                        irAnd(
+                            irGet(param),
+                            irConst(bitPattern or 0b1)
+                        ),
+                        irConst(bitPattern or 0b0)
+                    ),
+                    irConst(0) // anything non-zero means we have differences
+                )
+            }
+            return if (expressions.size == 1)
+                expressions.single()
+            else
+                expressions.reduce { lhs, rhs -> irOrOr(lhs, rhs) }
+        }
+
+        override fun irCopyToTemporary(
+            nameHint: String?,
+            isVar: Boolean,
+            exactName: Boolean
+        ): IrChangedBitMaskVariable {
+            val temps = params.mapIndexed { index, param ->
+                irTemporary(
+                    irGet(param),
+                    if (index == 0) nameHint else "$nameHint$index",
+                    context.irBuiltIns.intType,
+                    isVar,
+                    exactName
+                )
+            }
+            return IrChangedBitMaskVariableImpl(temps, count)
+        }
+
+        override fun putAsValueArgumentInWithLowBit(
+            fn: IrFunctionAccessExpression,
+            startIndex: Int,
+            lowBit: Boolean
+        ) {
+            params.forEachIndexed { index, param ->
+                fn.putValueArgument(
+                    startIndex + index,
+                    if (index == 0) {
+                        irOr(irGet(param), irConst(if (lowBit) 0b1 else 0b0))
+                    } else {
+                        irGet(param)
+                    }
+                )
+            }
+        }
+
+        override fun irShiftBits(fromSlot: Int, toSlot: Int): IrExpression {
+            val fromSlotAdjusted = fromSlot.rem(SLOTS_PER_INT)
+            val toSlotAdjusted = toSlot.rem(SLOTS_PER_INT)
+            val bitsToShiftLeft = (toSlotAdjusted - fromSlotAdjusted) * 2
+            val value = irGet(params[paramIndexForSlot(fromSlot)])
+
+            if (bitsToShiftLeft == 0) return value
+            val int = context.builtIns.intType
+            val shiftLeft = context.irIntrinsics.symbols.getBinaryOperator(
+                OperatorNames.SHL,
+                int,
+                int
+            )
+            val shiftRight = context.irIntrinsics.symbols.getBinaryOperator(
+                OperatorNames.SHR,
+                int,
+                int
+            )
+
+            return irCall(
+                if (bitsToShiftLeft > 0) shiftLeft else shiftRight,
+                value,
+                null,
+                irConst(abs(bitsToShiftLeft))
+            )
+        }
+    }
+
+    inner class IrChangedBitMaskVariableImpl(
+        private val temps: List<IrVariable>,
+        count: Int
+    ) : IrChangedBitMaskVariable, IrChangedBitMaskValueImpl(temps, count) {
+        override fun asStatements(): List<IrStatement> {
+            return temps
+        }
+
+        override fun irOrSetBitsAtSlot(slot: Int, value: IrExpression): IrExpression {
+            val temp = temps[paramIndexForSlot(slot)]
+            return irSet(
+                temp,
+                irOr(
+                    irGet(temp),
+                    value
+                )
+            )
+        }
     }
 }
 

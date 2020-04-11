@@ -343,14 +343,23 @@ class ComposerTypeRemapper(
         if (!type.isComposable()) return underlyingRemapType(type)
         if (!shouldTransform) return underlyingRemapType(type)
         val oldIrArguments = type.arguments
-        val extraParams = if (functionBodySkipping) 2 else 1
-        val extraArgs = listOfNotNull(
-            makeTypeProjection(composerTypeDescriptor.defaultType.toIrType(), Variance.INVARIANT),
-            if (functionBodySkipping)
-                makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
-            else
-                null
+        val realParams = oldIrArguments.size - 1
+        var extraArgs = listOf(
+            makeTypeProjection(composerTypeDescriptor.defaultType.toIrType(), Variance.INVARIANT)
         )
+        if (functionBodySkipping) {
+            val changedParams = changedParamCount(realParams)
+            extraArgs = extraArgs + (0 until changedParams).map {
+                makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
+            }
+        } else {
+            listOf(
+                makeTypeProjection(
+                    composerTypeDescriptor.defaultType.toIrType(),
+                    Variance.INVARIANT
+                )
+            )
+        }
         val newIrArguments =
             oldIrArguments.subList(0, oldIrArguments.size - 1) +
                     extraArgs +
@@ -363,7 +372,7 @@ class ComposerTypeRemapper(
                     context
                     .irBuiltIns
                     .builtIns
-                    .getFunction(oldIrArguments.size - 1 + extraParams)
+                    .getFunction(oldIrArguments.size - 1 + extraArgs.size)
                 )
             ),
             type.hasQuestionMark,

@@ -398,13 +398,10 @@ abstract class AbstractComposeLowering(
         mask.withBit(i, bit)
     }
 
-    protected fun irGetBit(param: IrValueParameter, index: Int): IrExpression {
+    protected fun irGetBit(param: IrDefaultBitMaskValue, index: Int): IrExpression {
         // value and (1 shl index) != 0
         return irNotEqual(
-            irAnd(
-                irGet(param),
-                irConst(1 shl index)
-            ),
+            param.irIsolateBitAtIndex(index),
             irConst(0)
         )
     }
@@ -446,20 +443,6 @@ abstract class AbstractComposeLowering(
             lhs,
             null,
             rhs
-        )
-    }
-
-    protected fun irShiftBits(value: IrExpression, bitsToShiftLeft: Int): IrExpression {
-        if (bitsToShiftLeft == 0) return value
-        val int = context.builtIns.intType
-        val shiftLeft = context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.SHL, int, int)
-        val shiftRight = context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.SHR, int, int)
-
-        return irCall(
-            if (bitsToShiftLeft > 0) shiftLeft else shiftRight,
-            value,
-            null,
-            irConst(abs(bitsToShiftLeft))
         )
     }
 
