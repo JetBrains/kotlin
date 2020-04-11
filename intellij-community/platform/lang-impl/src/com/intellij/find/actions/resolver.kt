@@ -23,7 +23,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.usages.UsageTarget
 import com.intellij.usages.UsageView
 import org.jetbrains.annotations.ApiStatus
-import java.util.function.Consumer
 
 /* This file contains weird logic so Symbols will work with PsiElements and UsageTargets. */
 
