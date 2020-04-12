@@ -50,8 +50,8 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
 
     val leafAnalyzer by lazy { SliceLeafAnalyzer(LEAF_ELEMENT_EQUALITY, this) }
 
-    val nullnessAnalyzer: SliceNullnessAnalyzerBase by lazy {
-        object : SliceNullnessAnalyzerBase(LEAF_ELEMENT_EQUALITY, this) {
+    val nullnessAnalyzer: HackedSliceNullnessAnalyzerBase by lazy {
+        object : HackedSliceNullnessAnalyzerBase(LEAF_ELEMENT_EQUALITY, this) {
             override fun checkNullability(element: PsiElement?): Nullability {
                 val types = when (element) {
                     is KtCallableDeclaration -> listOfNotNull((element.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)

@@ -38,7 +38,7 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
         return text
     }
 
-    fun SliceNode.isSliceLeafValueClassNode() = javaClass.name == "com.intellij.slicer.SliceLeafValueClassNode"
+    fun SliceNode.isSliceLeafValueClassNode() = this is HackedSliceLeafValueClassNode
 
     fun process(node: SliceNode, indent: Int): String {
         val usage = node.element!!.value
