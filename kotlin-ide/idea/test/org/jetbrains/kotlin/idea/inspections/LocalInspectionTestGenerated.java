@@ -7729,6 +7729,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("actual.kt")
+        public void testActual() throws Exception {
+            runTest("testData/inspectionsLocal/redundantSuspend/actual.kt");
+        }
+
         @TestMetadata("coroutineContext.kt")
         public void testCoroutineContext() throws Exception {
             runTest("testData/inspectionsLocal/redundantSuspend/coroutineContext.kt");
