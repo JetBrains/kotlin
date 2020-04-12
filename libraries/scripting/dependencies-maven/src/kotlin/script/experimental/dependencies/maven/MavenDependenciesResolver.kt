@@ -48,7 +48,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
     private fun allRepositories() = remoteRepositories() + localRepo
 
     private fun String.toMavenArtifact(): DefaultArtifact? =
-        if (this.isNotBlank() && this.count { it == ':' } == 2) DefaultArtifact(this)
+        if (this.isNotBlank() && this.count { it == ':' } >= 2) DefaultArtifact(this)
         else null
 
     override suspend fun resolve(artifactCoordinates: String): ResultWithDiagnostics<List<File>> {
