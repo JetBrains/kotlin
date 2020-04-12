@@ -23,7 +23,7 @@
 54 					val result = <bold>receiver</bold>.block()
 53 						fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
 23 							withNoInline(<bold>2</bold>) {
-36 	<bold>it</bold>.extensionFun()
+28 	<bold>it</bold>.extensionFun()
 3 		fun <bold>Any</bold>.extensionFun() {
 28 			<bold>it</bold>.extensionFun()
 36 			<bold>it</bold>.extensionFun()
