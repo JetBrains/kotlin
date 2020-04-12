@@ -1,7 +1,7 @@
-12 <bold>"A"</bold>.foo()
-7 	fun <bold>String</bold>.foo() {
-3 		fun <bold>Any</bold>.extensionFun(): Any {
-4 			return <bold>this</bold>
-3 				fun Any.<bold>extensionFun(): Any {</bold>
-8 					val v = <bold>extensionFun()</bold>
-8 						val <bold>v = extensionFun()</bold>
+16 <bold>"A"</bold>.foo()
+9 	fun <bold>String</bold>.foo() {
+5 		fun <bold>String</bold>.stringExtensionFun() = this
+5 			fun String.stringExtensionFun() = <bold>this</bold>
+5 				fun String.<bold>stringExtensionFun() = this</bold>
+10 					val string = <bold>stringExtensionFun()</bold>
+10 						val <bold>string = stringExtensionFun()</bold>
