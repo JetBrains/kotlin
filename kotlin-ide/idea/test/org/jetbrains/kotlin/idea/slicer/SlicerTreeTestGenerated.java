@@ -623,6 +623,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/lambdaResultWithDirectCallViaAssignment.kt");
         }
 
+        @TestMetadata("letResult.kt")
+        public void testLetResult() throws Exception {
+            runTest("idea/testData/slicer/outflow/letResult.kt");
+        }
+
         @TestMetadata("localVariableUsages.kt")
         public void testLocalVariableUsages() throws Exception {
             runTest("idea/testData/slicer/outflow/localVariableUsages.kt");
@@ -631,6 +636,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         @TestMetadata("memberPropertyUsages.kt")
         public void testMemberPropertyUsages() throws Exception {
             runTest("idea/testData/slicer/outflow/memberPropertyUsages.kt");
+        }
+
+        @TestMetadata("nonInlineLetResult.kt")
+        public void testNonInlineLetResult() throws Exception {
+            runTest("idea/testData/slicer/outflow/nonInlineLetResult.kt");
         }
 
         @TestMetadata("nonLocalReturn.kt")
