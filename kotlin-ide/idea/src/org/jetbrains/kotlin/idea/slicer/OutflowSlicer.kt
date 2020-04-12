@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.slicer
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
@@ -180,13 +181,16 @@ class OutflowSlicer(
                                     when (val createdAt = receiverPseudoValue.createdAt) {
                                         is ReadValueInstruction -> {
                                             val accessedDescriptor = createdAt.target.accessedDescriptor ?: return@processPseudocodeUsages
-                                            val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
-                                            when (accessedDescriptor) {
-                                                is ValueParameterDescriptor -> {
-                                                    //TODO: argument index is not always correct - first argument can be receiver
-                                                    val newMode = mode.withBehaviour(LambdaArgumentInflowBehaviour(accessedDescriptor.index))
-                                                    accessedDeclaration.passToProcessor(newMode)
-                                                }
+                                            if (accessedDescriptor is ValueParameterDescriptor) {
+                                                val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
+                                                val isExtension = accessedDescriptor.type.isExtensionFunctionType
+                                                val shift = if (isExtension) 1 else 0
+                                                val argumentIndex = parameterDescriptor.index - shift
+                                                val newMode = if (argumentIndex >= 0)
+                                                    mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
+                                                else
+                                                    mode.withBehaviour(LambdaReceiverInflowBehaviour)
+                                                accessedDeclaration.passToProcessor(newMode)
                                             }
                                         }
                                     }

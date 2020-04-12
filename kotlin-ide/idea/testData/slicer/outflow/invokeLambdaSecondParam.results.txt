@@ -1,0 +1,15 @@
+3 fun String.foo(<bold>p: String</bold>) {
+4 	val v = f({ p1, p2 -> p2 }, <bold>p</bold>)
+7 		fun f(lambda: (String, String) -> String, <bold>receiver: String</bold>): String {
+8 			return lambda("a", <bold>receiver</bold>)
+7 				[LAMBDA ARGUMENT IN] fun f(<bold>lambda: (String, String) -> String</bold>, receiver: String): String {
+4 					[LAMBDA ARGUMENT IN] val v = f(<bold>{ p1, p2 -> p2 }</bold>, p)
+4 						val v = f({ p1, <bold>p2</bold> -> p2 }, p)
+4 							val v = f({ p1, p2 -> <bold>p2</bold> }, p)
+4 								val v = f(<bold>{ p1, p2 -> p2 }</bold>, p)
+4 									[LAMBDA CALLS] val v = f(<bold>{ p1, p2 -> p2 }</bold>, p)
+7 										[LAMBDA CALLS] fun f(<bold>lambda: (String, String) -> String</bold>, receiver: String): String {
+8 											return <bold>lambda("a", receiver)</bold>
+7 												fun <bold>f(lambda: (String, String) -> String, receiver: String): String {</bold>
+4 													val v = <bold>f({ p1, p2 -> p2 }, p)</bold>
+4 														val <bold>v = f({ p1, p2 -> p2 }, p)</bold>
