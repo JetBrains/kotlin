@@ -52,8 +52,10 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
                     node.sortedChildren.forEach { append(process(it, indent)) }
                     return@buildString
                 }
+
                 // SliceLeafValueClassNode is package-private
                 node.isSliceLeafValueClassNode() -> append("[${node.nodeText}]\n")
+
                 else -> {
                     val chunks = usage.text
                     append(chunks.first().render() + " ")
@@ -62,11 +64,10 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
                         append("DEREFERENCE: ")
                     }
                     if (usage is KotlinSliceUsage) {
-                        var behaviour = usage.behaviour
-                        while (behaviour != null) {
-                            append(behaviour.testPresentationPrefix)
-                            behaviour = behaviour.originalBehaviour
+                        usage.mode.inlineCallStack.forEach {
+                            append("(INLINE CALL ${it.function?.name}) ")
                         }
+                        usage.mode.behaviourStack.reversed().joinTo(this, separator = "") { it.testPresentationPrefix }
                     }
                     chunks.slice(1 until chunks.size).joinTo(
                         this,

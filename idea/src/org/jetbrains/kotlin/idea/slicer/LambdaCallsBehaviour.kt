@@ -12,20 +12,17 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
 
-data class LambdaCallsBehaviour(
-    val sliceProducer: SliceProducer,
-    override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
-) : KotlinSliceUsage.SpecialBehaviour {
-
+data class LambdaCallsBehaviour(private val sliceProducer: SliceProducer) : KotlinSliceAnalysisMode.Behaviour {
     override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
         val processor = object : SliceUsageProcessor {
             override fun process(sliceUsage: SliceUsage): Boolean {
-                if (sliceUsage is KotlinSliceUsage && sliceUsage.behaviour === this@LambdaCallsBehaviour) {
+                if (sliceUsage is KotlinSliceUsage && sliceUsage.mode.currentBehaviour === this@LambdaCallsBehaviour) {
                     val sliceElement = sliceUsage.element ?: return true
                     val resolvedCall = (sliceElement as? KtElement)?.resolveToCall()
                     if (resolvedCall?.call?.callType == Call.CallType.INVOKE) {
-                        val newSliceUsage = KotlinSliceUsage(resolvedCall.call.callElement, parent, originalBehaviour, true)
-                        return sliceProducer.produceAndProcess(newSliceUsage, originalBehaviour, parent, uniqueProcessor)
+                        val originalMode = sliceUsage.mode.dropBehaviour()
+                        val newSliceUsage = KotlinSliceUsage(resolvedCall.call.callElement, parent, originalMode, true)
+                        return sliceProducer.produceAndProcess(newSliceUsage, originalMode, parent, uniqueProcessor)
                     }
                 }
                 return uniqueProcessor.process(sliceUsage)

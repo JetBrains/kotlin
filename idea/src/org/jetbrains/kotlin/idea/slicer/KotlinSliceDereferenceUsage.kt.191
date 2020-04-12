@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 class KotlinSliceDereferenceUsage(
     element: PsiElement,
     parent: KotlinSliceUsage,
-    behaviour: SpecialBehaviour?
-) : KotlinSliceUsage(element, parent, behaviour, false) {
+    mode: KotlinSliceAnalysisMode
+) : KotlinSliceUsage(element, parent, mode, false) {
     override fun processChildren(processor: Processor<SliceUsage>) {
         // no children
     }

@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 object CallSliceProducer : SliceProducer {
-    override fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>? {
-        if ((parent as? KotlinSliceUsage)?.behaviour is LambdaCallsBehaviour) {
+    override fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>? {
+        if ((parent as? KotlinSliceUsage)?.mode?.currentBehaviour is LambdaCallsBehaviour) {
             // UsageInfo produced by LambdaCallsBehaviour has full call-element and does not require any processing
             return null
         }
@@ -24,15 +24,22 @@ object CallSliceProducer : SliceProducer {
         when (val refElement = usage.element) {
             null -> {
                 val element = (usage.reference as? LightMemberReference)?.element ?: return emptyList()
-                return listOf(KotlinSliceUsage(element, parent, behaviour, false))
+                return listOf(KotlinSliceUsage(element, parent, mode, false))
             }
 
             is KtExpression -> {
                 return mutableListOf<SliceUsage>().apply {
                     refElement.getCallElementForExactCallee()
-                        ?.let { this += KotlinSliceUsage(it, parent, behaviour, false) }
+                        ?.let { this += KotlinSliceUsage(it, parent, mode, false) }
                     refElement.getCallableReferenceForExactCallee()
-                        ?.let { this += KotlinSliceUsage(it, parent, LambdaCallsBehaviour(SliceProducer.Trivial, behaviour), false) }
+                        ?.let {
+                            this += KotlinSliceUsage(
+                                it,
+                                parent,
+                                mode.withBehaviour(LambdaCallsBehaviour(SliceProducer.Trivial)),
+                                forcedExpressionMode = true
+                            )
+                        }
                 }
             }
 

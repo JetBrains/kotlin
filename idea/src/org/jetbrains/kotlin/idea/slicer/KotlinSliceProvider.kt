@@ -49,6 +49,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
     }
 
     val leafAnalyzer by lazy { SliceLeafAnalyzer(LEAF_ELEMENT_EQUALITY, this) }
+
     val nullnessAnalyzer: SliceNullnessAnalyzerBase by lazy {
         object : SliceNullnessAnalyzerBase(LEAF_ELEMENT_EQUALITY, this) {
             override fun checkNullability(element: PsiElement?): Nullability {
@@ -72,7 +73,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
 
     override fun transform(usage: SliceUsage): Collection<SliceUsage>? {
         if (usage is KotlinSliceUsage) return null
-        return listOf(KotlinSliceUsage(usage.element, usage.parent, null, false))
+        return listOf(KotlinSliceUsage(usage.element, usage.parent, KotlinSliceAnalysisMode.Default, false))
     }
 
     override fun getExpressionAtCaret(atCaret: PsiElement, dataFlowToThis: Boolean): KtElement? {

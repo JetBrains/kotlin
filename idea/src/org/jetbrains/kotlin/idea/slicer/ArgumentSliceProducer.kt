@@ -32,10 +32,10 @@ data class ArgumentSliceProducer private constructor(
         parameterDescriptor.containingDeclaration.isExtension
     )
 
-    override fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>? {
+    override fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>? {
         val element = usage.element ?: return emptyList()
         val argumentExpression = extractArgumentExpression(element) ?: return emptyList()
-        return listOf(KotlinSliceUsage(argumentExpression, parent, behaviour, forcedExpressionMode = true))
+        return listOf(KotlinSliceUsage(argumentExpression, parent, mode, forcedExpressionMode = true))
     }
 
     private fun extractArgumentExpression(refElement: PsiElement): PsiElement? {

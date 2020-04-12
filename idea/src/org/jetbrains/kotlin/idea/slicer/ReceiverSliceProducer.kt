@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 object ReceiverSliceProducer : SliceProducer {
-    override fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>? {
+    override fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>? {
         val refElement = usage.element ?: return emptyList()
         when (refElement) {
             is KtExpression -> {
                 val resolvedCall = refElement.resolveToCall() ?: return emptyList()
                 when (val receiver = resolvedCall.extensionReceiver) {
                     is ExpressionReceiver -> {
-                        return listOf(KotlinSliceUsage(receiver.expression, parent, behaviour, forcedExpressionMode = true))
+                        return listOf(KotlinSliceUsage(receiver.expression, parent, mode, forcedExpressionMode = true))
                     }
 
                     is ImplicitReceiver -> {
@@ -33,13 +33,13 @@ object ReceiverSliceProducer : SliceProducer {
                             ?: return emptyList()
                         when (val callableDeclaration = callableDescriptor.originalSource.getPsi()) {
                             is KtFunctionLiteral -> {
-                                val newBehaviour = LambdaCallsBehaviour(ReceiverSliceProducer, behaviour)
-                                return listOf(KotlinSliceUsage(callableDeclaration, parent, newBehaviour, forcedExpressionMode = true))
+                                val newMode = mode.withBehaviour(LambdaCallsBehaviour(ReceiverSliceProducer))
+                                return listOf(KotlinSliceUsage(callableDeclaration, parent, newMode, forcedExpressionMode = true))
                             }
 
                             is KtCallableDeclaration -> {
                                 val receiverTypeReference = callableDeclaration.receiverTypeReference ?: return emptyList()
-                                return listOf(KotlinSliceUsage(receiverTypeReference, parent, behaviour, false))
+                                return listOf(KotlinSliceUsage(receiverTypeReference, parent, mode, false))
                             }
 
                             else -> return emptyList()
@@ -52,7 +52,7 @@ object ReceiverSliceProducer : SliceProducer {
 
             else -> {
                 val argument = (refElement.parent as? PsiCall)?.argumentList?.expressions?.getOrNull(0) ?: return emptyList()
-                return listOf(KotlinSliceUsage(argument, parent, behaviour, true))
+                return listOf(KotlinSliceUsage(argument, parent, mode, false))
             }
         }
     }

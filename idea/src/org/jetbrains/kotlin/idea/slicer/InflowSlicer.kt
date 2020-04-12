@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -141,8 +142,8 @@ class InflowSlicer(
             else -> null
         }
         if (lambda != null) {
-            if (behaviour is LambdaResultInflowBehaviour) {
-                lambda.passToProcessor(behaviour.originalBehaviour)
+            if (mode.currentBehaviour is LambdaResultInflowBehaviour) {
+                lambda.passToProcessor(mode.dropBehaviour())
             }
             return
         }
@@ -176,7 +177,7 @@ class InflowSlicer(
                         val callable = accessedDescriptor.containingDeclaration as? CallableDescriptor ?: return
                         when (val declaration = callable.originalSource.getPsi()) {
                             is KtFunctionLiteral -> {
-                                declaration.passToProcessorAsValue(LambdaCallsBehaviour(ReceiverSliceProducer, behaviour))
+                                declaration.passToProcessorAsValue(mode.withBehaviour(LambdaCallsBehaviour(ReceiverSliceProducer)))
                             }
 
                             is KtCallableDeclaration -> {
@@ -194,12 +195,12 @@ class InflowSlicer(
                                 processCalls(functionLiteral, false, ArgumentSliceProducer(parameterDescriptor))
                             }
                         } else {
-                            accessedDeclaration.passDeclarationToProcessorWithOverriders()
+                            accessedDeclaration.passDeclarationToProcessorWithOverriders(createdAt.element)
                         }
                     }
 
                     else -> {
-                        accessedDeclaration?.passDeclarationToProcessorWithOverriders()
+                        accessedDeclaration?.passDeclarationToProcessorWithOverriders(createdAt.element)
                     }
                 }
             }
@@ -215,8 +216,8 @@ class InflowSlicer(
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
                     val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
                         ?: return
-                    if (behaviour is LambdaResultInflowBehaviour) {
-                        referencedDeclaration.passToProcessor(behaviour.originalBehaviour)
+                    if (mode.currentBehaviour is LambdaResultInflowBehaviour) {
+                        referencedDeclaration.passToProcessor(mode.dropBehaviour())
                     }
                 }
 
@@ -228,9 +229,9 @@ class InflowSlicer(
                 val resultingDescriptor = resolvedCall.resultingDescriptor
                 if (resultingDescriptor is FunctionInvokeDescriptor) {
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression
-                        ?.passToProcessorAsValue(LambdaResultInflowBehaviour(behaviour))
+                        ?.passToProcessorAsValue(mode.withBehaviour(LambdaResultInflowBehaviour))
                 } else {
-                    resultingDescriptor.originalSource.getPsi()?.passDeclarationToProcessorWithOverriders()
+                    resultingDescriptor.originalSource.getPsi()?.passDeclarationToProcessorWithOverriders(createdAt.element)
                 }
             }
         }
@@ -305,19 +306,37 @@ class InflowSlicer(
         }
     }
 
-    private fun PsiElement.passDeclarationToProcessorWithOverriders() {
-        passToProcessor()
+    private fun PsiElement.passDeclarationToProcessorWithOverriders(callElement: KtElement) {
+        val newMode = if (this is KtNamedFunction && hasInlineModifier())
+            mode.withInlineFunctionCall(callElement, this)
+        else
+            mode
+
+        passToProcessor(newMode)
 
         HierarchySearchRequest(this, analysisScope)
             .searchOverriders()
-            .forEach { it.namedUnwrappedElement?.passToProcessor() }
+            .forEach { it.namedUnwrappedElement?.passToProcessor(newMode) }
 
         if (this is KtCallableDeclaration && isExpectDeclaration()) {
             resolveToDescriptorIfAny(BodyResolveMode.FULL)
                 ?.actualsForExpected()
                 ?.forEach {
-                    (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor()
+                    (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor(newMode)
                 }
         }
+    }
+
+    override fun processCalls(callable: KtCallableDeclaration, includeOverriders: Boolean, sliceProducer: SliceProducer) {
+        if (callable is KtNamedFunction) {
+            val (newMode, callElement) = mode.popInlineFunctionCall(callable)
+            if (newMode != null && callElement != null) {
+                val sliceUsage = KotlinSliceUsage(callElement, parentUsage, newMode, false)
+                sliceProducer.produceAndProcess(sliceUsage, newMode, parentUsage, processor)
+                return
+            }
+        }
+
+        super.processCalls(callable, includeOverriders, sliceProducer)
     }
 }

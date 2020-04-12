@@ -43,10 +43,8 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
         }
 
-        var behaviour = sliceUsage.behaviour
-        while (behaviour != null) {
+        for (behaviour in sliceUsage.mode.behaviourStack.reversed()) {
             append(behaviour.slicePresentationPrefix, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
-            behaviour = behaviour.originalBehaviour
         }
 
         val declaration = sliceUsage.element?.parents?.firstOrNull {

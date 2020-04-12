@@ -1,7 +1,7 @@
 5 val <bold>v = this</bold>
 5 	val v = <bold>this</bold>
 4 		[LAMBDA CALLS] with("A") <bold>{</bold>
-9 			[LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-10 				return <bold>receiver</bold>.block()
-9 					inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+9 			(INLINE CALL with) [LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+10 				(INLINE CALL with) return <bold>receiver</bold>.block()
+9 					(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
 4 						with(<bold>"A"</bold>) {

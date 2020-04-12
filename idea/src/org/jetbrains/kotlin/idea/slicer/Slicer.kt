@@ -40,7 +40,7 @@ abstract class Slicer(
     abstract fun processChildren(forcedExpressionMode: Boolean)
 
     protected val analysisScope: SearchScope = parentUsage.scope.toSearchScope()
-    protected val behaviour: KotlinSliceUsage.SpecialBehaviour? = parentUsage.behaviour
+    protected val mode: KotlinSliceAnalysisMode = parentUsage.mode
     protected val project = element.project
 
     protected class PseudocodeCache {
@@ -57,24 +57,21 @@ abstract class Slicer(
 
     protected val pseudocodeCache = PseudocodeCache()
 
-    protected fun PsiElement.passToProcessor(
-        behaviour: KotlinSliceUsage.SpecialBehaviour? = this@Slicer.behaviour,
-        forcedExpressionMode: Boolean = false,
-    ) {
-        processor.process(KotlinSliceUsage(this, parentUsage, behaviour, forcedExpressionMode))
+    protected fun PsiElement.passToProcessor(mode: KotlinSliceAnalysisMode = this@Slicer.mode) {
+        processor.process(KotlinSliceUsage(this, parentUsage, mode, false))
     }
 
-    protected fun PsiElement.passToProcessorAsValue(behaviour: KotlinSliceUsage.SpecialBehaviour? = this@Slicer.behaviour) {
-        passToProcessor(behaviour, forcedExpressionMode = true)
+    protected fun PsiElement.passToProcessorAsValue(mode: KotlinSliceAnalysisMode = this@Slicer.mode) {
+        processor.process(KotlinSliceUsage(this, parentUsage, mode, forcedExpressionMode = true))
     }
 
-    protected fun processCalls(
+    protected open fun processCalls(
         callable: KtCallableDeclaration,
         includeOverriders: Boolean,
-        sliceProducer: SliceProducer
+        sliceProducer: SliceProducer,
     ) {
         if (callable is KtFunctionLiteral || callable is KtFunction && callable.name == null) {
-            callable.passToProcessorAsValue(LambdaCallsBehaviour(sliceProducer, behaviour))
+            callable.passToProcessorAsValue(mode.withBehaviour(LambdaCallsBehaviour(sliceProducer)))
             return
         }
 
@@ -117,8 +114,8 @@ abstract class Slicer(
                 is KtDeclaration -> {
                     val usageProcessor: (UsageInfo) -> Unit = processor@ { usageInfo ->
                         val element = usageInfo.element ?: return@processor
-                        val sliceUsage = KotlinSliceUsage(element, parentUsage, behaviour, false)
-                        sliceProducer.produceAndProcess(sliceUsage, behaviour, parentUsage, processor)
+                        val sliceUsage = KotlinSliceUsage(element, parentUsage, mode, false)
+                        sliceProducer.produceAndProcess(sliceUsage, mode, parentUsage, processor)
                     }
                     if (includeOverriders) {
                         declaration.processAllUsages(options, usageProcessor)
@@ -129,12 +126,12 @@ abstract class Slicer(
 
                 is PsiMethod -> {
                     val sliceUsage = JavaSliceUsage.createRootUsage(declaration, parentUsage.params)
-                    sliceProducer.produceAndProcess(sliceUsage, behaviour, parentUsage, processor)
+                    sliceProducer.produceAndProcess(sliceUsage, mode, parentUsage, processor)
                 }
 
                 else -> {
-                    val sliceUsage = KotlinSliceUsage(declaration, parentUsage, behaviour, false)
-                    sliceProducer.produceAndProcess(sliceUsage, behaviour, parentUsage, processor)
+                    val sliceUsage = KotlinSliceUsage(declaration, parentUsage, mode, false)
+                    sliceProducer.produceAndProcess(sliceUsage, mode, parentUsage, processor)
                 }
             }
         }

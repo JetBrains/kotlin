@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
 
-data class LambdaResultInflowBehaviour(
-    override val originalBehaviour: KotlinSliceUsage.SpecialBehaviour?
-) : KotlinSliceUsage.SpecialBehaviour {
-
+object LambdaResultInflowBehaviour : KotlinSliceAnalysisMode.Behaviour {
     override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
         InflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
     }
@@ -22,4 +19,7 @@ data class LambdaResultInflowBehaviour(
 
     override val testPresentationPrefix: String
         get() = "[LAMBDA IN] "
+
+    override fun equals(other: Any?) = other === this
+    override fun hashCode() = 0
 }
