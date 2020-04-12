@@ -1,0 +1,9 @@
+4 val x = foo { <bold>1</bold> }
+4 	val x = foo <bold>{ 1 }</bold>
+4 		[LAMBDA CALLS] val x = foo <bold>{ 1 }</bold>
+7 			[LAMBDA CALLS] fun foo(<bold>callback: () -> Int</bold>): Int {
+8 				[LAMBDA CALLS] return <bold>callback</bold>.invoke()
+8 					return callback.<bold>invoke()</bold>
+7 						fun <bold>foo(callback: () -> Int): Int {</bold>
+4 							val x = <bold>foo { 1 }</bold>
+4 								val <bold>x = foo { 1 }</bold>

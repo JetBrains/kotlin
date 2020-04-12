@@ -140,19 +140,26 @@ class InflowSlicer(
         }
         val currentBehaviour = mode.currentBehaviour
         if (lambda != null) {
-            if (currentBehaviour is LambdaResultInflowBehaviour) {
-                lambda.passToProcessor(mode.dropBehaviour())
-            }
-            else if (currentBehaviour is LambdaArgumentInflowBehaviour) {
-                val valueParameters = lambda.valueParameters
-                if (valueParameters.isEmpty() && lambda is KtFunctionLiteral) {
-                    if (currentBehaviour.argumentIndex == 0) {
-                        lambda.implicitItUsages().forEach {
-                            it.passToProcessor(mode.dropBehaviour())
+            when (currentBehaviour) {
+                is LambdaResultInflowBehaviour -> {
+                    lambda.passToProcessor(mode.dropBehaviour())
+                }
+
+                is LambdaArgumentInflowBehaviour -> {
+                    val valueParameters = lambda.valueParameters
+                    if (valueParameters.isEmpty() && lambda is KtFunctionLiteral) {
+                        if (currentBehaviour.argumentIndex == 0) {
+                            lambda.implicitItUsages().forEach {
+                                it.passToProcessor(mode.dropBehaviour())
+                            }
                         }
+                    } else {
+                        valueParameters.getOrNull(currentBehaviour.argumentIndex)?.passToProcessor(mode.dropBehaviour())
                     }
-                } else {
-                    valueParameters.getOrNull(currentBehaviour.argumentIndex)?.passToProcessor(mode.dropBehaviour())
+                }
+
+                is LambdaReceiverInflowBehaviour -> {
+                    processExtensionReceiverUsages(lambda, lambda, mode.dropBehaviour())
                 }
             }
             return

@@ -12,13 +12,16 @@ import com.intellij.slicer.JavaSliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
@@ -33,9 +36,11 @@ import org.jetbrains.kotlin.idea.util.expectedDescriptor
 import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 abstract class Slicer(
@@ -71,17 +76,21 @@ abstract class Slicer(
         processor.process(KotlinSliceUsage(this, parentUsage, mode, forcedExpressionMode = true))
     }
 
-    protected fun PsiElement.passToProcessorInCallMode(callElement: KtElement, withOverriders: Boolean = false) {
+    protected fun PsiElement.passToProcessorInCallMode(
+        callElement: KtElement,
+        mode: KotlinSliceAnalysisMode = this@Slicer.mode,
+        withOverriders: Boolean = false
+    ) {
         val newMode = when (this) {
-            is KtNamedFunction -> this.callMode(callElement)
+            is KtNamedFunction -> this.callMode(callElement, mode)
 
-            is KtParameter -> ownerFunction.callMode(callElement)
+            is KtParameter -> ownerFunction.callMode(callElement, mode)
 
             is KtTypeReference -> {
                 val declaration = parent
                 require(declaration is KtCallableDeclaration)
                 require(this == declaration.receiverTypeReference)
-                declaration.callMode(callElement)
+                declaration.callMode(callElement, mode)
             }
 
             else -> mode
@@ -108,13 +117,6 @@ abstract class Slicer(
                     (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor(mode)
                 }
         }
-    }
-
-    protected fun KtDeclaration?.callMode(callElement: KtElement): KotlinSliceAnalysisMode {
-        return if (this is KtNamedFunction && hasInlineModifier())
-            mode.withInlineFunctionCall(callElement, this)
-        else
-            mode
     }
 
     protected open fun processCalls(
@@ -227,6 +229,98 @@ abstract class Slicer(
     }
 
     protected fun canProcessParameter(parameter: KtParameter) = !parameter.isVarArg
+
+    protected fun processExtensionReceiverUsages(
+        declaration: KtCallableDeclaration,
+        body: KtExpression?,
+        mode: KotlinSliceAnalysisMode,
+    ) {
+        if (body == null) return
+        //TODO: overriders
+        val resolutionFacade = declaration.getResolutionFacade()
+        val callableDescriptor = declaration.resolveToDescriptorIfAny(resolutionFacade) as? CallableDescriptor ?: return
+        val extensionReceiver = callableDescriptor.extensionReceiverParameter ?: return
+
+        body.forEachDescendantOfType<KtThisExpression> { thisExpression ->
+            val receiverDescriptor = thisExpression.resolveToCall(resolutionFacade)?.resultingDescriptor
+            if (receiverDescriptor == extensionReceiver) {
+                thisExpression.passToProcessor(mode)
+            }
+        }
+
+        // process implicit receiver usages
+        val pseudocode = pseudocodeCache[body]
+        if (pseudocode != null) {
+            for (instruction in pseudocode.instructions) {
+                if (instruction is MagicInstruction && instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
+                    val receiverPseudoValue = instruction.outputValue
+                    pseudocode.getUsages(receiverPseudoValue).forEach { receiverUseInstruction ->
+                        if (receiverUseInstruction is KtElementInstruction) {
+                            // TODO: make sure it processes correct receiver!!
+                            processIfReceiverValue(receiverUseInstruction, receiverPseudoValue, mode)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected fun processIfReceiverValue(
+        instruction: KtElementInstruction,
+        receiverPseudoValue: PseudoValue,
+        mode: KotlinSliceAnalysisMode,
+    ): Boolean {
+        val receiverValue = (instruction as? InstructionWithReceivers)?.receiverValues?.get(receiverPseudoValue) ?: return false
+        val resolvedCall = instruction.element.resolveToCall() ?: return true
+        val descriptor = resolvedCall.resultingDescriptor
+
+        if (descriptor.isImplicitInvokeFunction()) {
+            when (receiverValue) {
+                resolvedCall.dispatchReceiver -> {
+                    if (mode.currentBehaviour is LambdaCallsBehaviour) {
+                        instruction.element.passToProcessor(mode)
+                    }
+                }
+
+                resolvedCall.extensionReceiver -> {
+                    val dispatchReceiver = resolvedCall.dispatchReceiver ?: return true
+                    val dispatchReceiverPseudoValue = instruction.receiverValues.entries
+                        .singleOrNull { it.value == dispatchReceiver }?.key
+                        ?: return true
+                    if (dispatchReceiverPseudoValue.createdAt != null) {
+                        when (val createdAt = dispatchReceiverPseudoValue.createdAt) {
+                            is ReadValueInstruction -> {
+                                val accessedDescriptor = createdAt.target.accessedDescriptor ?: return true
+                                val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return true
+                                when (accessedDescriptor) {
+                                    is ValueParameterDescriptor -> {
+                                        accessedDeclaration.passToProcessor(mode.withBehaviour(LambdaReceiverInflowBehaviour))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (receiverValue == resolvedCall.extensionReceiver) {
+                val declaration = descriptor.originalSource.getPsi()
+                (declaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessorInCallMode(instruction.element, mode)
+            }
+        }
+
+
+        return true
+    }
+
+    companion object {
+        protected fun KtDeclaration?.callMode(callElement: KtElement, defaultMode: KotlinSliceAnalysisMode): KotlinSliceAnalysisMode {
+            return if (this is KtNamedFunction && hasInlineModifier())
+                defaultMode.withInlineFunctionCall(callElement, this)
+            else
+                defaultMode
+        }
+    }
 }
 
 val DeclarationDescriptorWithSource.originalSource: SourceElement
@@ -238,3 +332,9 @@ val DeclarationDescriptorWithSource.originalSource: SourceElement
         return descriptor.source
     }
 
+fun CallableDescriptor.isImplicitInvokeFunction(): Boolean {
+    if (this !is FunctionDescriptor) return false
+    if (!isOperator) return false
+    if (name != OperatorNameConventions.INVOKE) return false
+    return originalSource.getPsi() == null
+}
