@@ -1,0 +1,34 @@
+3 fun String.foo(<bold>p: String</bold>) {
+4 	val v1 = with(<bold>p</bold>) { this }
+13 		(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+14 			(INLINE CALL with) return <bold>receiver</bold>.block()
+13 				(INLINE CALL with) [LAMBDA RECEIVER IN] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+4 					[LAMBDA RECEIVER IN] val v1 = with(p) <bold>{ this }</bold>
+4 						val v1 = with(p) { <bold>this</bold> }
+4 							val v1 = with(p) <bold>{ this }</bold>
+4 								[LAMBDA CALLS] val v1 = with(p) <bold>{ this }</bold>
+13 									(INLINE CALL with) [LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+14 										(INLINE CALL with) return receiver.<bold>block()</bold>
+4 											val v1 = <bold>with(p) { this }</bold>
+4 												val <bold>v1 = with(p) { this }</bold>
+6 	val v2 = with(<bold>p</bold>) { bar(this) }
+13 		(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+14 			(INLINE CALL with) return <bold>receiver</bold>.block()
+13 				(INLINE CALL with) [LAMBDA RECEIVER IN] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+6 					[LAMBDA RECEIVER IN] val v2 = with(p) <bold>{ bar(this) }</bold>
+6 						val v2 = with(p) { bar(<bold>this</bold>) }
+11 							fun bar(<bold>s: String</bold>) = s
+11 								fun bar(s: String) = <bold>s</bold>
+11 									fun <bold>bar(s: String) = s</bold>
+6 										val v2 = with(p) { <bold>bar(this)</bold> }
+6 											val v2 = with(p) <bold>{ bar(this) }</bold>
+6 												[LAMBDA CALLS] val v2 = with(p) <bold>{ bar(this) }</bold>
+13 													(INLINE CALL with) [LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+14 														(INLINE CALL with) return receiver.<bold>block()</bold>
+6 															val v2 = <bold>with(p) { bar(this) }</bold>
+6 																val <bold>v2 = with(p) { bar(this) }</bold>
+8 	val v3 = with(<bold>p</bold>) { this@foo }
+13 		(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+14 			(INLINE CALL with) return <bold>receiver</bold>.block()
+13 				(INLINE CALL with) [LAMBDA RECEIVER IN] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+8 					[LAMBDA RECEIVER IN] val v3 = with(p) <bold>{ this@foo }</bold>

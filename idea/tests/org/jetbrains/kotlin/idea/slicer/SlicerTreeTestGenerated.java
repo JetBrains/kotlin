@@ -623,6 +623,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/lambdaResultWithDirectCallViaAssignment.kt");
         }
 
+        @TestMetadata("lambdaResultWithInvokeCall.kt")
+        public void testLambdaResultWithInvokeCall() throws Exception {
+            runTest("idea/testData/slicer/outflow/lambdaResultWithInvokeCall.kt");
+        }
+
         @TestMetadata("letResult.kt")
         public void testLetResult() throws Exception {
             runTest("idea/testData/slicer/outflow/letResult.kt");
@@ -751,6 +756,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         @TestMetadata("whenExpression.kt")
         public void testWhenExpression() throws Exception {
             runTest("idea/testData/slicer/outflow/whenExpression.kt");
+        }
+
+        @TestMetadata("withResult.kt")
+        public void testWithResult() throws Exception {
+            runTest("idea/testData/slicer/outflow/withResult.kt");
         }
 
         @TestMetadata("wrongThis.kt")

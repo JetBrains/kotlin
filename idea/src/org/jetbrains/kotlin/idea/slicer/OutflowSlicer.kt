@@ -10,15 +10,11 @@ import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
@@ -26,11 +22,9 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDete
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class OutflowSlicer(
     element: KtElement,
@@ -73,13 +67,13 @@ class OutflowSlicer(
 
                 when (declaration) {
                     is KtFunction -> {
-                        processExtensionReceiver(declaration, declaration)
+                        processExtensionReceiverUsages(declaration, declaration.bodyExpression, mode)
                     }
                     
                     is KtProperty -> {
                         //TODO: process only one of them or both depending on the usage type
-                        declaration.getter?.let { processExtensionReceiver(declaration, it) }
-                        declaration.setter?.let { processExtensionReceiver(declaration, it) }
+                        processExtensionReceiverUsages(declaration, declaration.getter?.bodyExpression, mode)
+                        processExtensionReceiverUsages(declaration, declaration.setter?.bodyExpression, mode)
                     }
                 }
             }
@@ -154,36 +148,6 @@ class OutflowSlicer(
         processCalls(function, includeOverriders = false, CallSliceProducer)
     }
 
-    private fun processExtensionReceiver(declaration: KtCallableDeclaration, declarationWithBody: KtDeclarationWithBody) {
-        //TODO: overriders
-        val resolutionFacade = declaration.getResolutionFacade()
-        val callableDescriptor = declaration.resolveToDescriptorIfAny(resolutionFacade) as? CallableDescriptor ?: return
-        val extensionReceiver = callableDescriptor.extensionReceiverParameter ?: return
-        val body = declarationWithBody.bodyExpression ?: return
-
-        body.forEachDescendantOfType<KtThisExpression> { thisExpression ->
-            val receiverDescriptor = thisExpression.resolveToCall(resolutionFacade)?.resultingDescriptor
-            if (receiverDescriptor == extensionReceiver) {
-                thisExpression.passToProcessor()
-            }
-        }
-
-        // process implicit receiver usages
-        val pseudocode = pseudocodeCache[body]
-        if (pseudocode != null) {
-            for (instruction in pseudocode.instructions) {
-                if (instruction is MagicInstruction && instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
-                    val receiverPseudoValue = instruction.outputValue
-                    pseudocode.getUsages(receiverPseudoValue).forEach { receiverUseInstruction ->
-                        if (receiverUseInstruction is KtElementInstruction) {
-                            processIfReceiverValue(receiverUseInstruction, receiverPseudoValue)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun processExpression(expression: KtExpression) {
         val expressionWithValue = when (expression) {
             is KtFunctionLiteral -> expression.parent as KtLambdaExpression
@@ -192,24 +156,24 @@ class OutflowSlicer(
         expressionWithValue.processPseudocodeUsages { pseudoValue, instruction ->
             when (instruction) {
                 is WriteValueInstruction -> {
-                    if (!processIfReceiverValue(instruction, pseudoValue)) {
+                    if (!processIfReceiverValue(instruction, pseudoValue, mode)) {
                         instruction.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                     }
                 }
 
                 is ReadValueInstruction -> {
-                    processIfReceiverValue(instruction, pseudoValue)
+                    processIfReceiverValue(instruction, pseudoValue, mode)
                 }
 
                 is CallInstruction -> {
-                    if (!processIfReceiverValue(instruction, pseudoValue)) {
+                    if (!processIfReceiverValue(instruction, pseudoValue, mode)) {
                         val parameterDescriptor = instruction.arguments[pseudoValue] ?: return@processPseudocodeUsages
                         val parameter = parameterDescriptor.originalSource.getPsi()
                         if (parameter != null) {
                             parameter.passToProcessorInCallMode(instruction.element)
                         } else {
-                            val function = parameterDescriptor.containingDeclaration as? FunctionDescriptor
-                            if (function != null && function.isOperator && function.name == OperatorNameConventions.INVOKE) {
+                            val function = parameterDescriptor.containingDeclaration as? FunctionDescriptor ?: return@processPseudocodeUsages
+                            if (function.isImplicitInvokeFunction()) {
                                 val receiverPseudoValue = instruction.receiverValues.entries.singleOrNull()?.key
                                     ?: return@processPseudocodeUsages
                                 if (receiverPseudoValue.createdAt != null) {
@@ -254,30 +218,6 @@ class OutflowSlicer(
                 }
             }
         }
-    }
-
-    private fun processIfReceiverValue(instruction: KtElementInstruction, pseudoValue: PseudoValue): Boolean {
-        val receiverValue = (instruction as? InstructionWithReceivers)?.receiverValues?.get(pseudoValue) ?: return false
-        val resolvedCall = instruction.element.resolveToCall() ?: return true
-        when (resolvedCall.call.callType) {
-            Call.CallType.DEFAULT -> {
-                if (receiverValue == resolvedCall.extensionReceiver) {
-                    val targetDeclaration = resolvedCall.resultingDescriptor.originalSource.getPsi()
-                    (targetDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessorInCallMode(instruction.element)
-                }
-            }
-
-            Call.CallType.INVOKE -> {
-                if (receiverValue == resolvedCall.dispatchReceiver && mode.currentBehaviour is LambdaCallsBehaviour) {
-                    instruction.element.passToProcessor()
-                }
-            }
-
-            else -> {
-                //TODO
-            }
-        }
-        return true
     }
 
     private fun processDereferenceIfNeeded(

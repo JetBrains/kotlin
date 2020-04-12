@@ -9,7 +9,6 @@ import com.intellij.slicer.SliceUsage
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
-import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
 
 data class LambdaCallsBehaviour(private val sliceProducer: SliceProducer) : KotlinSliceAnalysisMode.Behaviour {
@@ -19,7 +18,7 @@ data class LambdaCallsBehaviour(private val sliceProducer: SliceProducer) : Kotl
                 if (sliceUsage is KotlinSliceUsage && sliceUsage.mode.currentBehaviour === this@LambdaCallsBehaviour) {
                     val sliceElement = sliceUsage.element ?: return true
                     val resolvedCall = (sliceElement as? KtElement)?.resolveToCall()
-                    if (resolvedCall?.call?.callType == Call.CallType.INVOKE) {
+                    if (resolvedCall != null && resolvedCall.resultingDescriptor.isImplicitInvokeFunction()) {
                         val originalMode = sliceUsage.mode.dropBehaviour()
                         val newSliceUsage = KotlinSliceUsage(resolvedCall.call.callElement, parent, originalMode, true)
                         return sliceProducer.produceAndProcess(newSliceUsage, originalMode, parent, uniqueProcessor)
