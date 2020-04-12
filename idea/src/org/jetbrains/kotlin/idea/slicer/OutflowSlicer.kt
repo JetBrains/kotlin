@@ -177,21 +177,19 @@ class OutflowSlicer(
                             if (function.isImplicitInvokeFunction()) {
                                 val receiverPseudoValue = instruction.receiverValues.entries.singleOrNull()?.key
                                     ?: return@processPseudocodeUsages
-                                if (receiverPseudoValue.createdAt != null) {
-                                    when (val createdAt = receiverPseudoValue.createdAt) {
-                                        is ReadValueInstruction -> {
-                                            val accessedDescriptor = createdAt.target.accessedDescriptor ?: return@processPseudocodeUsages
-                                            if (accessedDescriptor is ValueParameterDescriptor) {
-                                                val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
-                                                val isExtension = accessedDescriptor.type.isExtensionFunctionType
-                                                val shift = if (isExtension) 1 else 0
-                                                val argumentIndex = parameterDescriptor.index - shift
-                                                val newMode = if (argumentIndex >= 0)
-                                                    mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
-                                                else
-                                                    mode.withBehaviour(LambdaReceiverInflowBehaviour)
-                                                accessedDeclaration.passToProcessor(newMode)
-                                            }
+                                when (val createdAt = receiverPseudoValue.createdAt) {
+                                    is ReadValueInstruction -> {
+                                        val accessedDescriptor = createdAt.target.accessedDescriptor ?: return@processPseudocodeUsages
+                                        if (accessedDescriptor is ValueParameterDescriptor) {
+                                            val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
+                                            val isExtension = accessedDescriptor.type.isExtensionFunctionType
+                                            val shift = if (isExtension) 1 else 0
+                                            val argumentIndex = parameterDescriptor.index - shift
+                                            val newMode = if (argumentIndex >= 0)
+                                                mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
+                                            else
+                                                mode.withBehaviour(LambdaReceiverInflowBehaviour)
+                                            accessedDeclaration.passToProcessor(newMode)
                                         }
                                     }
                                 }
