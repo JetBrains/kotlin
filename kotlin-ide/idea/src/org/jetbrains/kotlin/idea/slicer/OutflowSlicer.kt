@@ -156,17 +156,17 @@ class OutflowSlicer(
         expressionWithValue.processPseudocodeUsages { pseudoValue, instruction ->
             when (instruction) {
                 is WriteValueInstruction -> {
-                    if (!processIfReceiverValue(instruction, pseudoValue, mode)) {
+                    if (!pseudoValue.processIfReceiverValue(instruction, mode)) {
                         instruction.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                     }
                 }
 
                 is ReadValueInstruction -> {
-                    processIfReceiverValue(instruction, pseudoValue, mode)
+                    pseudoValue.processIfReceiverValue(instruction, mode)
                 }
 
                 is CallInstruction -> {
-                    if (!processIfReceiverValue(instruction, pseudoValue, mode)) {
+                    if (!pseudoValue.processIfReceiverValue(instruction, mode)) {
                         val parameterDescriptor = instruction.arguments[pseudoValue] ?: return@processPseudocodeUsages
                         val parameter = parameterDescriptor.originalSource.getPsi()
                         if (parameter != null) {
