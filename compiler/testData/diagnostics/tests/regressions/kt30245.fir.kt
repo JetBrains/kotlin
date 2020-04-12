@@ -11,6 +11,8 @@ fun test() {
     val f02: Sample.() -> Unit = id<Sample.() -> Unit> { s: Sample -> }
 }
 
+enum class E { VALUE }
+
 typealias E0 = Int.() -> Int
 class W1(val f: E0) {
     // overload ambiguity is not supported yet - see commented examples with "overload" keyword below
@@ -68,15 +70,18 @@ fun test2() { // to extension lambda 1
     val w23 = W2 { s -> s.length } // oi+ ni+
     val i23: E1 = id { s -> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
     val w24 = W2 { s: String -> this + s.length } // oi+ ni+
-//    val i24: E1 = id { s: String -> this + s.length } //oi- ni-
+    val i24: E1 = id { s: String -> this + s.length } //oi- ni+
     val w25 = W2 { s: String -> s.length } // oi+ ni+
-//    val i25: E1 = id { s: String -> s.length } // oi- ni-
-
-    // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
-//    val w26 = W2 { i, s -> i + s.length } // overload oi- ni-
-//    val i26: E1 = id { i, s -> i + s.length } // overload oi- ni-
-//    val w27 = W2 { i, s: String -> i + s.length } // overload oi- ni-
-//    val i27: E1 = id { i, s: String -> i + s.length } // overload oi- ni-
+    val i25: E1 = id { s: String -> s.length } // oi- ni+
+    val w26 = W2(id { s: String -> this + s.length }) // oi- ni+
+    val w26a = W2(id { s -> this + s.<!UNRESOLVED_REFERENCE!>length<!> }) // oi+ ni+
+    val i26: E1 = id { s: String -> this + s.length } // oi- ni+
+    val i26a: E1 = id { s -> this + s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val e = E.VALUE
+    val w27 = <!INAPPLICABLE_CANDIDATE!>W2<!>(when (e) { E.VALUE ->  { s: String -> this + s.length } }) // oi- ni+
+    val w27a = <!INAPPLICABLE_CANDIDATE!>W2<!>(when (e) { E.VALUE ->  { s -> this + s.<!UNRESOLVED_REFERENCE!>length<!> } }) // oi+ ni+
+    val i27: E1 = when (e) { E.VALUE ->  { s: String -> this + s.length } } // oi+ ni+
+    val i27a: E1 = when (e) { E.VALUE ->  { s -> this + s.<!UNRESOLVED_REFERENCE!>length<!> } } // oi+ ni+
 
     val w28 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
     val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni-
@@ -84,8 +89,14 @@ fun test2() { // to extension lambda 1
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
-//    val o2a = W2 { i: Int -> i } // overload oi- ni+
-//    val o2b = W2 { i -> i } // overload oi- ni-
+//    val w2a = W2 { i, s -> i + s.length } // overload oi- ni-
+//    val i2a: E1 = id { i, s -> i + s.length } // overload oi- ni-
+//    val w2b = W2 { i, s: String -> i + s.length } // overload oi- ni-
+//    val i2b: E1 = id { i, s: String -> i + s.length } // overload oi- ni-
+
+    // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
+//    val o2c = W2 { i: Int -> i } // overload oi- ni+
+//    val o2d = W2 { i -> i } // overload oi- ni-
 }
 
 fun test3() { // to non-extension lambda 1

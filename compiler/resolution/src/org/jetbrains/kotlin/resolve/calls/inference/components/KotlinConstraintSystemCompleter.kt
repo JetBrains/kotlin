@@ -263,9 +263,12 @@ class KotlinConstraintSystemCompleter(
             c.notFixedTypeVariables.getValue(variable),
             TypeVariableDirectionCalculator.ResolveDirection.TO_SUPERTYPE
         ) as KotlinType
-        val isExtensionWithoutParameters =
-            functionalType.isExtensionFunctionType && functionalType.arguments.size == 2 && parameterTypes?.isEmpty() == true
-        if (parameterTypes?.all { type -> type != null } == true && !isExtensionWithoutParameters) return this
+
+        val isExtensionFunction = functionalType.isExtensionFunctionType
+        val isExtensionFunctionWithReceiverAsDeclaredParameter =
+            isExtensionFunction && functionalType.arguments.size - 1 == parameterTypes?.count { it != null }
+        if (parameterTypes?.all { it != null } == true && (!isExtensionFunction || isExtensionFunctionWithReceiverAsDeclaredParameter)) return this
+
         if (!functionalType.isSuitable()) return this
         val returnVariable = typeVariableCreator()
         csBuilder.registerVariable(returnVariable)
