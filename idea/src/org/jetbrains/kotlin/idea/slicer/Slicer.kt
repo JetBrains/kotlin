@@ -257,7 +257,7 @@ abstract class Slicer(
                     pseudocode.getUsages(receiverPseudoValue).forEach { receiverUseInstruction ->
                         if (receiverUseInstruction is KtElementInstruction) {
                             // TODO: make sure it processes correct receiver!!
-                            processIfReceiverValue(receiverUseInstruction, receiverPseudoValue, mode)
+                            receiverPseudoValue.processIfReceiverValue(receiverUseInstruction, mode)
                         }
                     }
                 }
@@ -265,12 +265,8 @@ abstract class Slicer(
         }
     }
 
-    protected fun processIfReceiverValue(
-        instruction: KtElementInstruction,
-        receiverPseudoValue: PseudoValue,
-        mode: KotlinSliceAnalysisMode,
-    ): Boolean {
-        val receiverValue = (instruction as? InstructionWithReceivers)?.receiverValues?.get(receiverPseudoValue) ?: return false
+    protected fun PseudoValue.processIfReceiverValue(instruction: KtElementInstruction, mode: KotlinSliceAnalysisMode): Boolean {
+        val receiverValue = (instruction as? InstructionWithReceivers)?.receiverValues?.get(this) ?: return false
         val resolvedCall = instruction.element.resolveToCall() ?: return true
         val descriptor = resolvedCall.resultingDescriptor
 
@@ -308,7 +304,6 @@ abstract class Slicer(
                 (declaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessorInCallMode(instruction.element, mode)
             }
         }
-
 
         return true
     }
