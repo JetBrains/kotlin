@@ -1086,11 +1086,6 @@ public final class BuildManager implements Disposable {
       cmdLine.addParameter("-Xmx" + heapSize + "m");
     }
 
-    if (SystemInfo.isMac && sdkVersion != null && JavaSdkVersion.JDK_1_6.equals(sdkVersion) && Registry.is("compiler.process.32bit.vm.on.mac")) {
-      // unfortunately -d32 is supported on jdk 1.6 only
-      cmdLine.addParameter("-d32");
-    }
-
     cmdLine.addParameter("-Djava.awt.headless=true");
     if (sdkVersion != null && sdkVersion.ordinal() < JavaSdkVersion.JDK_1_9.ordinal()) {
       //-Djava.endorsed.dirs is not supported in JDK 9+, may result in abnormal process termination
