@@ -11,6 +11,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.JavaSliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.addIfNotNull
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -25,7 +26,12 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.expectedDescriptor
+import org.jetbrains.kotlin.idea.util.hasInlineModifier
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -63,6 +69,52 @@ abstract class Slicer(
 
     protected fun PsiElement.passToProcessorAsValue(mode: KotlinSliceAnalysisMode = this@Slicer.mode) {
         processor.process(KotlinSliceUsage(this, parentUsage, mode, forcedExpressionMode = true))
+    }
+
+    protected fun PsiElement.passToProcessorInCallMode(callElement: KtElement, withOverriders: Boolean = false) {
+        val newMode = when (this) {
+            is KtNamedFunction -> this.callMode(callElement)
+
+            is KtParameter -> ownerFunction.callMode(callElement)
+
+            is KtTypeReference -> {
+                val declaration = parent
+                require(declaration is KtCallableDeclaration)
+                require(this == declaration.receiverTypeReference)
+                declaration.callMode(callElement)
+            }
+
+            else -> mode
+        }
+
+        if (withOverriders) {
+            passDeclarationToProcessorWithOverriders(newMode)
+        } else {
+            passToProcessor(newMode)
+        }
+    }
+
+    protected fun PsiElement.passDeclarationToProcessorWithOverriders(mode: KotlinSliceAnalysisMode = this@Slicer.mode) {
+        passToProcessor(mode)
+
+        HierarchySearchRequest(this, analysisScope)
+            .searchOverriders()
+            .forEach { it.namedUnwrappedElement?.passToProcessor(mode) }
+
+        if (this is KtCallableDeclaration && isExpectDeclaration()) {
+            resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                ?.actualsForExpected()
+                ?.forEach {
+                    (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor(mode)
+                }
+        }
+    }
+
+    protected fun KtDeclaration?.callMode(callElement: KtElement): KotlinSliceAnalysisMode {
+        return if (this is KtNamedFunction && hasInlineModifier())
+            mode.withInlineFunctionCall(callElement, this)
+        else
+            mode
     }
 
     protected open fun processCalls(

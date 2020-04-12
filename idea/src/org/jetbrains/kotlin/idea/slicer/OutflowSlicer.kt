@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
@@ -16,6 +15,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -23,13 +24,13 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class OutflowSlicer(
     element: KtElement,
@@ -202,12 +203,46 @@ class OutflowSlicer(
 
                 is CallInstruction -> {
                     if (!processIfReceiverValue(instruction, pseudoValue)) {
-                        instruction.arguments[pseudoValue]?.originalSource?.getPsi()?.passCalledDeclarationToProcessor(instruction.element)
+                        val parameterDescriptor = instruction.arguments[pseudoValue] ?: return@processPseudocodeUsages
+                        val parameter = parameterDescriptor.originalSource.getPsi()
+                        if (parameter != null) {
+                            parameter.passToProcessorInCallMode(instruction.element)
+                        } else {
+                            val function = parameterDescriptor.containingDeclaration as? FunctionDescriptor
+                            if (function != null && function.isOperator && function.name == OperatorNameConventions.INVOKE) {
+                                val receiverPseudoValue = instruction.receiverValues.entries.singleOrNull()?.key
+                                    ?: return@processPseudocodeUsages
+                                if (receiverPseudoValue.createdAt != null) {
+                                    when (val createdAt = receiverPseudoValue.createdAt) {
+                                        is ReadValueInstruction -> {
+                                            val accessedDescriptor = createdAt.target.accessedDescriptor ?: return@processPseudocodeUsages
+                                            val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
+                                            when (accessedDescriptor) {
+                                                is ValueParameterDescriptor -> {
+                                                    //TODO: argument index is not always correct - first argument can be receiver
+                                                    val newMode = mode.withBehaviour(LambdaArgumentInflowBehaviour(accessedDescriptor.index))
+                                                    accessedDeclaration.passToProcessor(newMode)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
                 is ReturnValueInstruction -> {
-                    instruction.subroutine.passToProcessor()
+                    val subroutine = instruction.subroutine
+                    if (subroutine is KtNamedFunction) {
+                        val (newMode, callElement) = mode.popInlineFunctionCall(subroutine)
+                        if (newMode != null) {
+                            callElement?.passToProcessor(newMode)
+                            return@processPseudocodeUsages
+                        }
+                    }
+
+                    subroutine.passToProcessor()
                 }
 
                 is MagicInstruction -> {
@@ -228,13 +263,13 @@ class OutflowSlicer(
             Call.CallType.DEFAULT -> {
                 if (receiverValue == resolvedCall.extensionReceiver) {
                     val targetDeclaration = resolvedCall.resultingDescriptor.originalSource.getPsi()
-                    (targetDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passCalledDeclarationToProcessor(instruction.element)
+                    (targetDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessorInCallMode(instruction.element)
                 }
             }
 
             Call.CallType.INVOKE -> {
                 if (receiverValue == resolvedCall.dispatchReceiver && mode.currentBehaviour is LambdaCallsBehaviour) {
-                    instruction.element.passCalledDeclarationToProcessor(instruction.element, mode)
+                    instruction.element.passToProcessor()
                 }
             }
 
@@ -277,21 +312,5 @@ class OutflowSlicer(
                 is CallInstruction -> processDereferenceIfNeeded(this, pseudoValue, instr)
             }
         }
-    }
-
-    private fun PsiElement.passCalledDeclarationToProcessor(
-        callElement: KtElement,
-        mode: KotlinSliceAnalysisMode = this@OutflowSlicer.mode
-    ) {
-        var newMode = mode
-        when (this) {
-            is KtParameter -> {
-                val ownerFunction = ownerFunction as? KtNamedFunction
-                if (ownerFunction != null && ownerFunction.hasInlineModifier()) {
-                    newMode = mode.withInlineFunctionCall(callElement, ownerFunction)
-                }
-            }
-        }
-        passToProcessor(newMode)
     }
 }

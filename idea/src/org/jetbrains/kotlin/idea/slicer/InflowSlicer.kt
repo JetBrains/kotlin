@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.psi.PsiCall
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
@@ -27,15 +25,14 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
-import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
-import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.hasInlineModifier
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTargetElementEvaluator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -141,9 +138,22 @@ class InflowSlicer(
             is KtNamedFunction -> expression.takeIf { expression.name == null }
             else -> null
         }
+        val currentBehaviour = mode.currentBehaviour
         if (lambda != null) {
-            if (mode.currentBehaviour is LambdaResultInflowBehaviour) {
+            if (currentBehaviour is LambdaResultInflowBehaviour) {
                 lambda.passToProcessor(mode.dropBehaviour())
+            }
+            else if (currentBehaviour is LambdaArgumentInflowBehaviour) {
+                val valueParameters = lambda.valueParameters
+                if (valueParameters.isEmpty() && lambda is KtFunctionLiteral) {
+                    if (currentBehaviour.argumentIndex == 0) {
+                        lambda.implicitItUsages().forEach {
+                            it.passToProcessor(mode.dropBehaviour())
+                        }
+                    }
+                } else {
+                    valueParameters.getOrNull(currentBehaviour.argumentIndex)?.passToProcessor(mode.dropBehaviour())
+                }
             }
             return
         }
@@ -195,12 +205,12 @@ class InflowSlicer(
                                 processCalls(functionLiteral, false, ArgumentSliceProducer(parameterDescriptor))
                             }
                         } else {
-                            accessedDeclaration.passDeclarationToProcessorWithOverriders(createdAt.element)
+                            accessedDeclaration.passDeclarationToProcessorWithOverriders()
                         }
                     }
 
                     else -> {
-                        accessedDeclaration?.passDeclarationToProcessorWithOverriders(createdAt.element)
+                        accessedDeclaration?.passDeclarationToProcessorWithOverriders()
                     }
                 }
             }
@@ -216,9 +226,10 @@ class InflowSlicer(
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
                     val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
                         ?: return
-                    if (mode.currentBehaviour is LambdaResultInflowBehaviour) {
+                    if (currentBehaviour is LambdaResultInflowBehaviour) {
                         referencedDeclaration.passToProcessor(mode.dropBehaviour())
                     }
+                    //TODO: LambdaArgumentInflowBehaviour
                 }
 
                 else -> return
@@ -231,7 +242,7 @@ class InflowSlicer(
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression
                         ?.passToProcessorAsValue(mode.withBehaviour(LambdaResultInflowBehaviour))
                 } else {
-                    resultingDescriptor.originalSource.getPsi()?.passDeclarationToProcessorWithOverriders(createdAt.element)
+                    resultingDescriptor.originalSource.getPsi()?.passToProcessorInCallMode(createdAt.element, withOverriders = true)
                 }
             }
         }
@@ -306,27 +317,6 @@ class InflowSlicer(
         }
     }
 
-    private fun PsiElement.passDeclarationToProcessorWithOverriders(callElement: KtElement) {
-        val newMode = if (this is KtNamedFunction && hasInlineModifier())
-            mode.withInlineFunctionCall(callElement, this)
-        else
-            mode
-
-        passToProcessor(newMode)
-
-        HierarchySearchRequest(this, analysisScope)
-            .searchOverriders()
-            .forEach { it.namedUnwrappedElement?.passToProcessor(newMode) }
-
-        if (this is KtCallableDeclaration && isExpectDeclaration()) {
-            resolveToDescriptorIfAny(BodyResolveMode.FULL)
-                ?.actualsForExpected()
-                ?.forEach {
-                    (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor(newMode)
-                }
-        }
-    }
-
     override fun processCalls(callable: KtCallableDeclaration, includeOverriders: Boolean, sliceProducer: SliceProducer) {
         if (callable is KtNamedFunction) {
             val (newMode, callElement) = mode.popInlineFunctionCall(callable)
@@ -338,5 +328,13 @@ class InflowSlicer(
         }
 
         super.processCalls(callable, includeOverriders, sliceProducer)
+    }
+
+    private fun KtFunctionLiteral.implicitItUsages(): Collection<KtSimpleNameExpression> {
+        return collectDescendantsOfType(fun(expression: KtSimpleNameExpression): Boolean {
+            if (expression.getQualifiedExpressionForSelector() != null || expression.getReferencedName() != "it") return false
+            val lBrace = KotlinTargetElementEvaluator.findLambdaOpenLBraceForGeneratedIt(expression.mainReference) ?: return false
+            return lBrace == this.lBrace.node.treeNext.psi
+        })
     }
 }
