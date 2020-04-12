@@ -1,0 +1,13 @@
+[NotNull Values]
+7 	with(123) <bold>{</bold>
+3 		fun <bold>Any</bold>.extensionFun() {
+7 			[LAMBDA CALLS] with(123) <bold>{</bold>
+19 			[LAMBDA CALLS] withNoInline(1) <bold>{</bold>
+12 	<bold>this</bold>.extensionFun()
+3 		fun <bold>Any</bold>.extensionFun() {
+12 			<bold>this</bold>.extensionFun()
+36 	<bold>it</bold>.extensionFun()
+3 		fun <bold>Any</bold>.extensionFun() {
+28 			<bold>it</bold>.extensionFun()
+36 			<bold>it</bold>.extensionFun()
+

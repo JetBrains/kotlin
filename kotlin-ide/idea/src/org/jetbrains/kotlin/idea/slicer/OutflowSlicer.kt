@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -200,7 +202,7 @@ class OutflowSlicer(
 
                 is CallInstruction -> {
                     if (!processIfReceiverValue(instruction, pseudoValue)) {
-                        instruction.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
+                        instruction.arguments[pseudoValue]?.originalSource?.getPsi()?.passCalledDeclarationToProcessor(instruction.element)
                     }
                 }
 
@@ -226,13 +228,13 @@ class OutflowSlicer(
             Call.CallType.DEFAULT -> {
                 if (receiverValue == resolvedCall.extensionReceiver) {
                     val targetDeclaration = resolvedCall.resultingDescriptor.originalSource.getPsi()
-                    (targetDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
+                    (targetDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passCalledDeclarationToProcessor(instruction.element)
                 }
             }
 
             Call.CallType.INVOKE -> {
-                if (receiverValue == resolvedCall.dispatchReceiver && behaviour is LambdaCallsBehaviour) {
-                    instruction.element.passToProcessor(behaviour)
+                if (receiverValue == resolvedCall.dispatchReceiver && mode.currentBehaviour is LambdaCallsBehaviour) {
+                    instruction.element.passCalledDeclarationToProcessor(instruction.element, mode)
                 }
             }
 
@@ -258,7 +260,7 @@ class OutflowSlicer(
         } ?: return
 
         if (receiver != null && resolvedCall.dispatchReceiver == receiver) {
-            processor.process(KotlinSliceDereferenceUsage(expression, parentUsage, behaviour))
+            processor.process(KotlinSliceDereferenceUsage(expression, parentUsage, mode))
         }
     }
 
@@ -275,5 +277,21 @@ class OutflowSlicer(
                 is CallInstruction -> processDereferenceIfNeeded(this, pseudoValue, instr)
             }
         }
+    }
+
+    private fun PsiElement.passCalledDeclarationToProcessor(
+        callElement: KtElement,
+        mode: KotlinSliceAnalysisMode = this@OutflowSlicer.mode
+    ) {
+        var newMode = mode
+        when (this) {
+            is KtParameter -> {
+                val ownerFunction = ownerFunction as? KtNamedFunction
+                if (ownerFunction != null && ownerFunction.hasInlineModifier()) {
+                    newMode = mode.withInlineFunctionCall(callElement, ownerFunction)
+                }
+            }
+        }
+        passToProcessor(newMode)
     }
 }

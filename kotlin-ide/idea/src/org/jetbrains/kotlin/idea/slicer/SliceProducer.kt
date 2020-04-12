@@ -10,13 +10,13 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 
 interface SliceProducer {
-    fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>?
+    fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>?
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 
     object Trivial : SliceProducer {
-        override fun produce(usage: UsageInfo, behaviour: KotlinSliceUsage.SpecialBehaviour?, parent: SliceUsage): Collection<SliceUsage>? {
+        override fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>? {
             return null
         }
 
@@ -27,11 +27,11 @@ interface SliceProducer {
 
 fun SliceProducer.produceAndProcess(
     sliceUsage: SliceUsage,
-    behaviour: KotlinSliceUsage.SpecialBehaviour?,
+    mode: KotlinSliceAnalysisMode,
     parentUsage: SliceUsage,
     processor: SliceUsageProcessor
 ): Boolean {
-    val result = produce(sliceUsage.usageInfo, behaviour, parentUsage) ?: listOf(sliceUsage)
+    val result = produce(sliceUsage.usageInfo, mode, parentUsage) ?: listOf(sliceUsage)
     for (usage in result) {
         if (!processor.process(usage)) return false
     }

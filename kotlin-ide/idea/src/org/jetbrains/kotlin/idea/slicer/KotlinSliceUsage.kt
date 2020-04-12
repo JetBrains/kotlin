@@ -24,57 +24,61 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
 
 open class KotlinSliceUsage : SliceUsage {
-    interface SpecialBehaviour {
-        val originalBehaviour: SpecialBehaviour?
-        fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor)
 
-        val slicePresentationPrefix: String
-        val testPresentationPrefix: String
-
-        override fun equals(other: Any?): Boolean
-        override fun hashCode(): Int
-    }
-
-    val behaviour: SpecialBehaviour?
+    val mode: KotlinSliceAnalysisMode
     val forcedExpressionMode: Boolean
+
+    private var usageInfo: UsageInfo? = null
 
     constructor(
         element: PsiElement,
         parent: SliceUsage,
-        behaviour: SpecialBehaviour?,
+        mode: KotlinSliceAnalysisMode,
         forcedExpressionMode: Boolean,
     ) : super(element, parent) {
-        this.behaviour = behaviour
+        this.mode = mode
         this.forcedExpressionMode = forcedExpressionMode
+        initializeUsageInfo()
     }
 
     constructor(element: PsiElement, params: SliceAnalysisParams) : super(element, params) {
-        this.behaviour = null
+        this.mode = KotlinSliceAnalysisMode.Default
         this.forcedExpressionMode = false
+        initializeUsageInfo()
+    }
+
+    private fun initializeUsageInfo() {
+        val originalInfo = getUsageInfo()
+        if (mode != KotlinSliceAnalysisMode.Default) {
+            val element = originalInfo.element
+            if (element != null) {
+                usageInfo = UsageInfoWrapper(element, mode)
+            } else {
+                usageInfo = null
+            }
+        } else {
+            usageInfo = originalInfo
+        }
+    }
+
+    // we have to replace UsageInfo with another one whose equality takes into account mode
+    override fun getUsageInfo(): UsageInfo {
+        return usageInfo ?: super.getUsageInfo()
     }
 
     override fun copy(): KotlinSliceUsage {
-        val element = usageInfo.element!!
+        val element = getUsageInfo().element!!
         return if (parent == null)
             KotlinSliceUsage(element, params)
         else
-            KotlinSliceUsage(element, parent, behaviour, forcedExpressionMode)
+            KotlinSliceUsage(element, parent, mode, forcedExpressionMode)
     }
 
-    override fun getUsageInfo(): UsageInfo {
-        val originalInfo = super.getUsageInfo()
-        if (behaviour != null) {
-            val element = originalInfo.element ?: return originalInfo
-            // Do not let IDEA consider usages of the same anonymous function as duplicates when their levels differ
-            return UsageInfoWrapper(element, behaviour)
-        }
-        return originalInfo
-    }
-
-    override fun canBeLeaf() = element != null && behaviour == null
+    override fun canBeLeaf() = element != null && mode == KotlinSliceAnalysisMode.Default
 
     public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
         val ktElement = element as? KtElement ?: return
+        val behaviour = mode.currentBehaviour
         if (behaviour != null) {
             behaviour.processUsages(ktElement, this, uniqueProcessor)
         } else {
@@ -84,6 +88,7 @@ open class KotlinSliceUsage : SliceUsage {
 
     public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
         val ktElement = element as? KtElement ?: return
+        val behaviour = mode.currentBehaviour
         if (behaviour != null) {
             behaviour.processUsages(ktElement, this, uniqueProcessor)
         } else {
@@ -92,9 +97,9 @@ open class KotlinSliceUsage : SliceUsage {
     }
 
     @Suppress("EqualsOrHashCode")
-    private class UsageInfoWrapper(element: PsiElement, private val behaviour: SpecialBehaviour) : UsageInfo(element) {
+    private class UsageInfoWrapper(element: PsiElement, private val mode: KotlinSliceAnalysisMode) : UsageInfo(element) {
         override fun equals(other: Any?): Boolean {
-            return other is UsageInfoWrapper && super.equals(other) && behaviour == other.behaviour
+            return other is UsageInfoWrapper && super.equals(other) && mode == other.mode
         }
     }
 }
