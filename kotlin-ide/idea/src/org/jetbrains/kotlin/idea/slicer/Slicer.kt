@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
@@ -256,8 +259,14 @@ abstract class Slicer(
                     val receiverPseudoValue = instruction.outputValue
                     pseudocode.getUsages(receiverPseudoValue).forEach { receiverUseInstruction ->
                         if (receiverUseInstruction is KtElementInstruction) {
-                            // TODO: make sure it processes correct receiver!!
-                            receiverPseudoValue.processIfReceiverValue(receiverUseInstruction, mode)
+                            receiverPseudoValue.processIfReceiverValue(
+                                receiverUseInstruction,
+                                mode,
+                                filter = { receiverValue, resolvedCall ->
+                                    receiverValue == resolvedCall.extensionReceiver &&
+                                            (receiverValue as? ImplicitReceiver)?.declarationDescriptor == callableDescriptor
+                                }
+                            )
                         }
                     }
                 }
@@ -265,9 +274,15 @@ abstract class Slicer(
         }
     }
 
-    protected fun PseudoValue.processIfReceiverValue(instruction: KtElementInstruction, mode: KotlinSliceAnalysisMode): Boolean {
+    protected fun PseudoValue.processIfReceiverValue(
+        instruction: KtElementInstruction,
+        mode: KotlinSliceAnalysisMode,
+        filter: (ReceiverValue, ResolvedCall<out CallableDescriptor>) -> Boolean = { _, _ -> true }
+    ): Boolean {
         val receiverValue = (instruction as? InstructionWithReceivers)?.receiverValues?.get(this) ?: return false
         val resolvedCall = instruction.element.resolveToCall() ?: return true
+        if (!filter(receiverValue, resolvedCall)) return true
+
         val descriptor = resolvedCall.resultingDescriptor
 
         if (descriptor.isImplicitInvokeFunction()) {
