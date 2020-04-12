@@ -49,7 +49,6 @@ import com.intellij.usages.FindUsagesProcessPresentation;
 import com.intellij.usages.UsageView;
 import com.intellij.usages.UsageViewPresentation;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.PatternUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -63,6 +62,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 public class FindInProjectUtil {
   private static final int USAGES_PER_READ_ACTION = 100;
@@ -440,27 +440,32 @@ public class FindInProjectUtil {
   }
 
   @NotNull
-  public static String buildStringToFindForIndicesFromRegExp(@NotNull String stringToFind, @NotNull Project project) {
-    if (!Registry.is("idea.regexp.search.uses.indices")) return "";
-
+  public static String extractStringToFind(@NotNull String regexp, @NotNull Project project) {
     return ReadAction.compute(() -> {
       final List<PsiElement> topLevelRegExpChars = getTopLevelRegExpChars("a", project);
-      if (topLevelRegExpChars.size() != 1) return "";
+      if (topLevelRegExpChars.size() != 1) return " ";
 
       // leave only top level regExpChars
-      return StringUtil.join(getTopLevelRegExpChars(stringToFind, project), new Function<PsiElement, String>() {
-        final Class regExpCharPsiClass = topLevelRegExpChars.get(0).getClass();
 
-        @Override
-        public String fun(PsiElement element) {
-          if (regExpCharPsiClass.isInstance(element)) {
-            String text = element.getText();
+      final Class regExpCharPsiClass = topLevelRegExpChars.get(0).getClass();
+      return getTopLevelRegExpChars(regexp, project)
+        .stream()
+        .map(psi -> {
+          if (regExpCharPsiClass.isInstance(psi)) {
+            String text = psi.getText();
             if (!text.startsWith("\\")) return text;
           }
           return " ";
-        }
-      }, "");
+        })
+        .collect(Collectors.joining());
     });
+  }
+
+  @NotNull
+  public static String buildStringToFindForIndicesFromRegExp(@NotNull String stringToFind, @NotNull Project project) {
+    if (!Registry.is("idea.regexp.search.uses.indices")) return "";
+
+    return StringUtil.trim(StringUtil.join(extractStringToFind(stringToFind, project), " "));
   }
 
   public static void initStringToFindFromDataContext(FindModel findModel, @NotNull DataContext dataContext) {
