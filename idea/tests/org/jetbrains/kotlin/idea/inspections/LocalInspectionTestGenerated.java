@@ -8327,6 +8327,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("actual.kt")
+        public void testActual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSuspend/actual.kt");
+        }
+
         public void testAllFilesPresentInRedundantSuspend() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantSuspend"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
