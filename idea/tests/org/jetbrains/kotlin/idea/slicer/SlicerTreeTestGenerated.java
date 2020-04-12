@@ -598,6 +598,16 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/indexingDereferences.kt");
         }
 
+        @TestMetadata("invokeExtensionLambda.kt")
+        public void testInvokeExtensionLambda() throws Exception {
+            runTest("idea/testData/slicer/outflow/invokeExtensionLambda.kt");
+        }
+
+        @TestMetadata("invokeLambdaSecondParam.kt")
+        public void testInvokeLambdaSecondParam() throws Exception {
+            runTest("idea/testData/slicer/outflow/invokeLambdaSecondParam.kt");
+        }
+
         @TestMetadata("jvmFieldMemberPropertyJavaUsages.kt")
         public void testJvmFieldMemberPropertyJavaUsages() throws Exception {
             runTest("idea/testData/slicer/outflow/jvmFieldMemberPropertyJavaUsages.kt");
