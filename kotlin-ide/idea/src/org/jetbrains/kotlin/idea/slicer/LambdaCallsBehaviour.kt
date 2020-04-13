@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.slicer.SliceUsage
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 data class LambdaCallsBehaviour(private val sliceProducer: SliceProducer) : KotlinSliceAnalysisMode.Behaviour {
     override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
-        val processor = object : SliceUsageProcessor {
+        val processor = object : Processor<SliceUsage> {
             override fun process(sliceUsage: SliceUsage): Boolean {
                 if (sliceUsage is KotlinSliceUsage && sliceUsage.mode.currentBehaviour === this@LambdaCallsBehaviour) {
                     val sliceElement = sliceUsage.element ?: return true
