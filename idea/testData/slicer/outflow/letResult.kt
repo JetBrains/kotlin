@@ -9,9 +9,12 @@ fun foo(<caret>p: String) {
         val it = "a"
         it
     }
+
+    val v4 = p.let(::zoo)
 }
 
 fun bar(s: String) = s
+fun zoo(s: String) = s
 
 inline fun <T, R> T.let(block: (T) -> R): R {
     return block(this)
