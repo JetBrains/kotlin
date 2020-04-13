@@ -15,23 +15,24 @@ import java.util.*
 import kotlin.collections.LinkedHashMap
 
 class RecentPlacesFeatures : ElementFeatureProvider {
-  override fun getName(): String = "common_recent_places"
+  override fun getName(): String = "recent_places"
 
   override fun calculateFeatures(element: LookupElement,
                                  location: CompletionLocation,
                                  contextFeatures: ContextFeatures): MutableMap<String, MLFeatureValue> {
     val features = mutableMapOf<String, MLFeatureValue>()
-    if (StoreRecentPlacesListener.recentPlaces.contains(element.lookupString))
+    if (StoreRecentPlacesListener.isInRecentPlaces(element.lookupString))
       features["contains"] = MLFeatureValue.binary(true)
-    if (StoreRecentPlacesListener.childrenRecentPlaces.contains(element.lookupString))
+    if (StoreRecentPlacesListener.isInChildrenRecentPlaces(element.lookupString))
       features["children_contains"] = MLFeatureValue.binary(true)
       return features
   }
 
   class StoreRecentPlacesListener(private val project: Project) : IdeDocumentHistoryImpl.RecentPlacesListener {
     companion object {
-      val recentPlaces = createFixedSizeSet(20)
-      val childrenRecentPlaces = createFixedSizeSet(100)
+      private val recentPlaces = createFixedSizeSet(20)
+      private val childrenRecentPlaces = createFixedSizeSet(100)
+      private const val MAX_CHILDREN_PER_PLACE = 10
 
       private fun createFixedSizeSet(maxSize: Int): MutableSet<String> =
         Collections.newSetFromMap(object : LinkedHashMap<String, Boolean>() {
@@ -39,6 +40,9 @@ class RecentPlacesFeatures : ElementFeatureProvider {
             return size > maxSize
           }
         })
+
+      fun isInRecentPlaces(value: String) = recentPlaces.contains(value)
+      fun isInChildrenRecentPlaces(value: String) = childrenRecentPlaces.contains(value)
     }
 
     override fun recentPlaceAdded(changePlace: IdeDocumentHistoryImpl.PlaceInfo, isChanged: Boolean) {
@@ -50,7 +54,7 @@ class RecentPlacesFeatures : ElementFeatureProvider {
       if (element != null && namesValidator.isIdentifier(element.text, project)) {
         recentPlaces.addToTop(element.text)
         val declaration = findDeclaration(element) ?: return
-        for(child in declaration.children) {
+        for (child in declaration.children.take(MAX_CHILDREN_PER_PLACE)) {
           if (child is PsiNamedElement) {
             val name = child.name ?: continue
             childrenRecentPlaces.addToTop(name)
