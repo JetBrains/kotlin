@@ -83,7 +83,6 @@ class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
 
 object NativeLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.native"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        // TODO: detect native platform by ???
         get() = NativePlatforms.unspecifiedNativePlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
