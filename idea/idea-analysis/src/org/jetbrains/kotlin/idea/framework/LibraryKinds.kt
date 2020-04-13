@@ -36,6 +36,8 @@ import java.util.jar.Attributes
 import java.util.regex.Pattern
 
 interface KotlinLibraryKind {
+    // TODO: Drop this property. See https://youtrack.jetbrains.com/issue/KT-38233
+    //  This property returns approximate library platform, as the real platform can be evaluated only for concrete library.
     val compilerPlatform: TargetPlatform
 }
 
@@ -53,6 +55,8 @@ object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
+// TODO: Drop this property. See https://youtrack.jetbrains.com/issue/KT-38233
+//  It returns approximate library platform, as the real platform can be evaluated only for concrete library.
 val PersistentLibraryKind<*>?.platform: TargetPlatform
     get() = when (this) {
         is KotlinLibraryKind -> this.compilerPlatform
