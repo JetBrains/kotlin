@@ -57,7 +57,7 @@ internal fun findShowUsages(project: Project, dataContext: DataContext, popupTit
   }
 }
 
-internal fun allTargets(project: Project, symbols: Collection<Symbol>, usageTargets: Array<out UsageTarget>): List<SymbolOrTarget> {
+private fun allTargets(project: Project, symbols: Collection<Symbol>, usageTargets: Array<out UsageTarget>): List<SymbolOrTarget> {
   val allTargets = ArrayList<SymbolOrTarget>()
   symbols.mapTo(allTargets) { SymbolOrTarget.S(it) }
   for (usageTarget in usageTargets) {
@@ -92,7 +92,7 @@ private fun targetSymbols(dataContext: DataContext): List<Symbol> {
   return targetSymbols(file, offset).toList()
 }
 
-internal sealed class SymbolOrTarget {
+private sealed class SymbolOrTarget {
   class S(val symbol: Symbol) : SymbolOrTarget()
   class UT(val target: UsageTarget) : SymbolOrTarget()
 }
