@@ -12,13 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -29,6 +28,7 @@ internal class ClassMemberGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
     private val conversionScope: Fir2IrConversionScope,
+    private val callGenerator: CallAndReferenceGenerator,
     fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components {
 
@@ -211,7 +211,7 @@ internal class ClassMemberGenerator(
         return this
     }
 
-    private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpressionBase {
+    private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType()
         val constructorSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
             ?: return convertWithOffsets { startOffset, endOffset ->
@@ -240,21 +240,8 @@ internal class ClassMemberGenerator(
                     irConstructorSymbol
                 )
             }.let {
-                val argumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
-                val valueParameters = constructorSymbol.fir.valueParameters
-                for (argument in arguments) {
-                    if (argument is FirNamedArgumentExpression) {
-                        valueParameters.firstOrNull { it.name == argument.name }?.let { argumentMapping[argument] = it }
-                    }
-                }
-                if (argumentMapping.size == valueParameters.size) {
-                    it.applyArgumentsWithReordering(argumentMapping, valueParameters, visitor, conversionScope, declarationStorage)
-                } else {
-                    for ((index, argument) in arguments.withIndex()) {
-                        val argumentExpression = visitor.convertToIrExpression(argument)
-                        it.putValueArgument(index, argumentExpression)
-                    }
-                    it
+                with(callGenerator) {
+                    it.applyCallArguments(this@toIrDelegatingConstructorCall)
                 }
             }
         }

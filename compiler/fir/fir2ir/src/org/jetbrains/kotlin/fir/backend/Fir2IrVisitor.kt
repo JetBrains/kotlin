@@ -62,9 +62,9 @@ class Fir2IrVisitor(
 
     private val conversionScope = Fir2IrConversionScope()
 
-    private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, fakeOverrideMode)
-
     private val callGenerator = CallAndReferenceGenerator(components, this, conversionScope)
+
+    private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, callGenerator, fakeOverrideMode)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
