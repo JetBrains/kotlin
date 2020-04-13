@@ -668,6 +668,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/notNullAssertion.kt");
         }
 
+        @TestMetadata("nullableLambda.kt")
+        public void testNullableLambda() throws Exception {
+            runTest("idea/testData/slicer/outflow/nullableLambda.kt");
+        }
+
         @TestMetadata("openMethodParameter.kt")
         public void testOpenMethodParameter() throws Exception {
             runTest("idea/testData/slicer/outflow/openMethodParameter.kt");

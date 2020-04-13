@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -177,22 +181,26 @@ class OutflowSlicer(
                             if (function.isImplicitInvokeFunction()) {
                                 val receiverPseudoValue = instruction.receiverValues.entries.singleOrNull()?.key
                                     ?: return@processPseudocodeUsages
-                                when (val createdAt = receiverPseudoValue.createdAt) {
-                                    is ReadValueInstruction -> {
-                                        val accessedDescriptor = createdAt.target.accessedDescriptor ?: return@processPseudocodeUsages
-                                        if (accessedDescriptor is ValueParameterDescriptor) {
-                                            val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
-                                            val isExtension = accessedDescriptor.type.isExtensionFunctionType
-                                            val shift = if (isExtension) 1 else 0
-                                            val argumentIndex = parameterDescriptor.index - shift
-                                            val newMode = if (argumentIndex >= 0)
-                                                mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
-                                            else
-                                                mode.withBehaviour(LambdaReceiverInflowBehaviour)
-                                            accessedDeclaration.passToProcessor(newMode)
-                                        }
+                                val receiverExpression = receiverPseudoValue.element as? KtExpression ?: return@processPseudocodeUsages
+                                val bindingContext = receiverExpression.analyze(BodyResolveMode.PARTIAL)
+                                var receiverType = bindingContext.getType(receiverExpression)
+                                var receiver: PsiElement = receiverExpression
+                                if (receiverType == null && receiverExpression is KtReferenceExpression) {
+                                    val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, receiverExpression]
+                                    if (targetDescriptor is CallableDescriptor) {
+                                        receiverType = targetDescriptor.returnType
+                                        receiver = targetDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
                                     }
                                 }
+                                if (receiverType == null || !receiverType.isFunctionType) return@processPseudocodeUsages
+                                val isExtension = receiverType.isExtensionFunctionType
+                                val shift = if (isExtension) 1 else 0
+                                val argumentIndex = parameterDescriptor.index - shift
+                                val newMode = if (argumentIndex >= 0)
+                                    mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
+                                else
+                                    mode.withBehaviour(LambdaReceiverInflowBehaviour)
+                                receiver.passToProcessor(newMode)
                             }
                         }
                     }
