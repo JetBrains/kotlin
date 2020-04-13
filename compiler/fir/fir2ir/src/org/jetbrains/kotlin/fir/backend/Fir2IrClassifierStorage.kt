@@ -65,35 +65,13 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    internal fun IrDeclaration.declareThisReceiverParameter(
-        parent: IrDeclarationParent,
-        thisType: IrType,
-        thisOrigin: IrDeclarationOrigin,
-        startOffset: Int = this.startOffset,
-        endOffset: Int = this.endOffset
-    ): IrValueParameter {
-        val receiverDescriptor = WrappedReceiverParameterDescriptor()
-        return symbolTable.declareValueParameter(
-            startOffset, endOffset, thisOrigin, receiverDescriptor, thisType
-        ) { symbol ->
-            IrValueParameterImpl(
-                startOffset, endOffset, thisOrigin, symbol,
-                Name.special("<this>"), -1, thisType,
-                varargElementType = null, isCrossinline = false, isNoinline = false
-            ).apply {
-                this.parent = parent
-                receiverDescriptor.bind(this)
-            }
-        }
-    }
-
     private fun IrClass.setThisReceiver() {
         symbolTable.enterScope(descriptor)
         val typeArguments = this.typeParameters.map {
             IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
         }
         thisReceiver = declareThisReceiverParameter(
-            parent = this,
+            symbolTable,
             thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )

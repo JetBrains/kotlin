@@ -339,7 +339,7 @@ class Fir2IrDeclarationStorage(
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
                         declareThisReceiverParameter(
-                            parent,
+                            symbolTable,
                             thisType = receiverTypeRef.toIrType(typeContext),
                             thisOrigin = thisOrigin,
                             startOffset = startOffset,
@@ -349,7 +349,7 @@ class Fir2IrDeclarationStorage(
                 }
                 if (function !is FirAnonymousFunction && containingClass != null && !isStatic) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
-                        parent,
+                        symbolTable,
                         thisType = containingClass.thisReceiver!!.type,
                         thisOrigin = thisOrigin
                     )
@@ -358,7 +358,7 @@ class Fir2IrDeclarationStorage(
                 // Set dispatch receiver parameter for inner class's constructor.
                 if (containingClass?.isInner == true) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
-                        parent,
+                        symbolTable,
                         thisType = containingClass.thisReceiver!!.type,
                         thisOrigin = thisOrigin
                     )

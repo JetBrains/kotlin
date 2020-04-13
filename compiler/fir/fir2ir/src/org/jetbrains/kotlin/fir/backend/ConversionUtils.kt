@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -283,3 +286,26 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
 
 fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
     declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
+
+internal fun IrDeclarationParent.declareThisReceiverParameter(
+    symbolTable: SymbolTable,
+    thisType: IrType,
+    thisOrigin: IrDeclarationOrigin,
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset
+): IrValueParameter {
+    val receiverDescriptor = WrappedReceiverParameterDescriptor()
+    return symbolTable.declareValueParameter(
+        startOffset, endOffset, thisOrigin, receiverDescriptor, thisType
+    ) { symbol ->
+        IrValueParameterImpl(
+            startOffset, endOffset, thisOrigin, symbol,
+            Name.special("<this>"), -1, thisType,
+            varargElementType = null, isCrossinline = false, isNoinline = false
+        ).apply {
+            this.parent = this@declareThisReceiverParameter
+            receiverDescriptor.bind(this)
+        }
+    }
+}
+

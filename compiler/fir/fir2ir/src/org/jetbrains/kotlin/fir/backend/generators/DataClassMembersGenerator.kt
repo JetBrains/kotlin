@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -59,27 +60,13 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         }
 
         fun generateDispatchReceiverParameter(irFunction: IrFunction, valueParameterDescriptor: WrappedValueParameterDescriptor) =
-            components.symbolTable.declareValueParameter(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
+            irFunction.declareThisReceiverParameter(
+                components.symbolTable,
+                irClass.defaultType,
                 origin,
-                valueParameterDescriptor,
-                components.irBuiltIns.anyNType
-            ) { symbol ->
-                IrValueParameterImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    origin,
-                    symbol,
-                    Name.special("<this>"),
-                    -1,
-                    irClass.defaultType,
-                    null,
-                    isCrossinline = false,
-                    isNoinline = false
-                )
-            }.apply {
-                parent = irFunction
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET
+            ).apply {
                 valueParameterDescriptor.bind(this)
             }
 
