@@ -23,46 +23,13 @@ internal class KtDeclarationTreeNode(
 
     override fun extractPsiFromValue(): PsiElement? = value
 
-    override fun getChildrenImpl(): Collection<AbstractTreeNode<*>> {
-        val settings = settings
-        val project = project
-
-        if (!settings.isShowMembers) return emptyList()
-        val declaration = value ?: return emptyList()
-
-        val result = mutableListOf<AbstractTreeNode<*>>()
-        declaration.acceptChildren(object : KtTreeVisitorVoid() {
-            override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-                result.add(
-                    KtClassOrObjectTreeNode(
-                        project = project,
-                        ktClassOrObject = classOrObject,
-                        viewSettings = settings
-                    )
-                )
-            }
-
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                result.add(
-                    KtDeclarationTreeNode(
-                        project = project,
-                        ktDeclaration = function,
-                        viewSettings = settings
-                    )
-                )
-            }
-        })
-
-        return result
-    }
+    override fun getChildrenImpl(): Collection<AbstractTreeNode<*>> = emptyList()
 
     override fun updateImpl(data: PresentationData) {
         val declaration = value ?: return
         val project = project ?: return
         data.presentableText = tryGetRepresentableText(declaration, project)
     }
-
-    override fun expandOnDoubleClick(): Boolean = false
 
     override fun isDeprecated(): Boolean = value?.let { KtPsiUtil.isDeprecated(it) } ?: false
 
