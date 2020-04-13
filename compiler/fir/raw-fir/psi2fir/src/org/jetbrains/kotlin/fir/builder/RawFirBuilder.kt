@@ -161,7 +161,7 @@ class RawFirBuilder(
             delegatedSuperType: FirTypeRef,
             delegatedSelfType: FirResolvedTypeRef,
             owner: KtClassOrObject,
-           ownerClassBuilder: FirClassBuilder, hasPrimaryConstructor: Boolean,
+            ownerClassBuilder: FirClassBuilder, hasPrimaryConstructor: Boolean,
             ownerTypeParameters: List<FirTypeParameterRef>
         ): FirDeclaration {
             return when (this) {
@@ -693,15 +693,15 @@ class RawFirBuilder(
                             val zippedParameters = classOrObject.primaryConstructorParameters.zip(
                                 declarations.filterIsInstance<FirProperty>(),
                             )
-                            DataClassMemberGenerator(
+                            DataClassMembersGenerator(
                                 baseSession,
                                 classOrObject,
                                 this,
-                                firPrimaryConstructor.returnTypeRef,
+                                firPrimaryConstructor,
                                 zippedParameters,
                                 context.packageFqName,
                                 context.className
-                            ).generateMembers()
+                            ).generate()
                         }
 
                         if (classOrObject.hasModifier(ENUM_KEYWORD)) {

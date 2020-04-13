@@ -26,6 +26,7 @@ FILE: annotated.kt
         }
 
         public final fun copy(): R|Two| {
+            ^copy R|/Two.Two|()
         }
 
     }

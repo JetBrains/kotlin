@@ -10,15 +10,16 @@ FILE: lambda.kt
         public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
-        public final fun component1(): <implicit> {
+        public final fun component1(): Int {
             ^component1 this@R|/Tuple|.R|/Tuple.x|
         }
 
-        public final fun component2(): <implicit> {
+        public final fun component2(): Int {
             ^component2 this@R|/Tuple|.R|/Tuple.y|
         }
 
         public final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple| {
+            ^copy R|/Tuple.Tuple|(this@R|/Tuple|.R|/Tuple.x|, this@R|/Tuple|.R|/Tuple.y|)
         }
 
     }

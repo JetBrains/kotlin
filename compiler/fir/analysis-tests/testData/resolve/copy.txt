@@ -19,6 +19,7 @@ FILE: copy.kt
         }
 
         public final fun copy(x: R|kotlin/Int| = this@R|/Some|.R|/Some.x|, y: R|kotlin/String| = this@R|/Some|.R|/Some.y|): R|Some| {
+            ^copy R|/Some.Some|(this@R|/Some|.R|/Some.x|, this@R|/Some|.R|/Some.y|)
         }
 
     }

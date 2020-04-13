@@ -55,6 +55,7 @@ FILE: problems2.kt
             }
 
             public final fun copy(x: R|kotlin/Int| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|, arr: R|kotlin/Array<kotlin/String>?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|, s: R|kotlin/String?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|): R|Some.WithPrimary| {
+                ^copy R|/Some.WithPrimary.WithPrimary|(this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|, this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|, this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|)
             }
 
         }

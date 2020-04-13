@@ -206,6 +206,26 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CALL 'public final fun <get-doubleArray> (): kotlin.DoubleArray declared in <root>.Test1' type=kotlin.DoubleArray origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (stringArray: kotlin.Array<kotlin.String>, charArray: kotlin.CharArray, booleanArray: kotlin.BooleanArray, byteArray: kotlin.ByteArray, shortArray: kotlin.ShortArray, intArray: kotlin.IntArray, longArray: kotlin.LongArray, floatArray: kotlin.FloatArray, doubleArray: kotlin.DoubleArray): <root>.Test1 declared in <root>.Test1'
+          CONSTRUCTOR_CALL 'public constructor <init> (stringArray: kotlin.Array<kotlin.String>, charArray: kotlin.CharArray, booleanArray: kotlin.BooleanArray, byteArray: kotlin.ByteArray, shortArray: kotlin.ShortArray, intArray: kotlin.IntArray, longArray: kotlin.LongArray, floatArray: kotlin.FloatArray, doubleArray: kotlin.DoubleArray) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
+            stringArray: CALL 'public final fun <get-stringArray> (): kotlin.Array<kotlin.String> declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            charArray: CALL 'public final fun <get-charArray> (): kotlin.CharArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            booleanArray: CALL 'public final fun <get-booleanArray> (): kotlin.BooleanArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            byteArray: CALL 'public final fun <get-byteArray> (): kotlin.ByteArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            shortArray: CALL 'public final fun <get-shortArray> (): kotlin.ShortArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            intArray: CALL 'public final fun <get-intArray> (): kotlin.IntArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            longArray: CALL 'public final fun <get-longArray> (): kotlin.LongArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            floatArray: CALL 'public final fun <get-floatArray> (): kotlin.FloatArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            doubleArray: CALL 'public final fun <get-doubleArray> (): kotlin.DoubleArray declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test1, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test1
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
@@ -456,6 +476,11 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=kotlin.Array<T of <root>.Test2> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.copy' type=<root>.Test2<T of <root>.Test2> origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (genericArray: kotlin.Array<T of <root>.Test2>): <root>.Test2<T of <root>.Test2> declared in <root>.Test2'
+          CONSTRUCTOR_CALL 'public constructor <init> (genericArray: kotlin.Array<T of <root>.Test2>) [primary] declared in <root>.Test2' type=<root>.Test2<T of <root>.Test2> origin=null
+            <class: T>: <none>
+            genericArray: CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.copy' type=<root>.Test2<T of <root>.Test2> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test2<T of <root>.Test2>, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test2<T of <root>.Test2>
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
@@ -537,6 +562,10 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CALL 'public final fun <get-anyArrayN> (): kotlin.Array<kotlin.Any>? declared in <root>.Test3' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (anyArrayN: kotlin.Array<kotlin.Any>?): <root>.Test3 declared in <root>.Test3'
+          CONSTRUCTOR_CALL 'public constructor <init> (anyArrayN: kotlin.Array<kotlin.Any>?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
+            anyArrayN: CALL 'public final fun <get-anyArrayN> (): kotlin.Array<kotlin.Any>? declared in <root>.Test3' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test3, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test3
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

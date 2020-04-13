@@ -52,6 +52,12 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.Int): <root>.A declared in <root>.A'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
+            x: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.A' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
+            y: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
