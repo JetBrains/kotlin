@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Frame
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -20,7 +19,7 @@ enum class ReturnLabel {
 interface ExecutionResult {
     val returnLabel: ReturnLabel
 
-    suspend fun getNextLabel(irElement: IrElement, data: Frame, interpret: suspend IrElement.(Frame) -> ExecutionResult): ExecutionResult
+    suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult
 }
 
 inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
@@ -28,20 +27,8 @@ inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, r
     return this
 }
 
-inline fun ExecutionResult.checkForReturn(newFrame: Frame, oldFrame: Frame, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
-    if (this.returnLabel != ReturnLabel.NEXT) {
-        if ((this.returnLabel == ReturnLabel.RETURN || this.returnLabel == ReturnLabel.EXCEPTION) && newFrame.hasReturnValue()) {
-            oldFrame.pushReturnValue(newFrame)
-        }
-        returnBlock(this)
-    }
-    return this
-}
-
 open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel) : ExecutionResult {
-    override suspend fun getNextLabel(
-        irElement: IrElement, data: Frame, interpret: suspend IrElement.(Frame) -> ExecutionResult
-    ): ExecutionResult {
+    override suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> this
             ReturnLabel.BREAK_WHEN -> when (irElement) {
@@ -61,9 +48,7 @@ open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel) : E
 }
 
 class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: String) : ExecutionResultWithoutInfo(returnLabel) {
-    override suspend fun getNextLabel(
-        irElement: IrElement, data: Frame, interpret: suspend IrElement.(Frame) -> ExecutionResult
-    ): ExecutionResult {
+    override suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> when (irElement) {
                 is IrCall -> if (info == irElement.symbol.descriptor.toString()) Next else this
@@ -80,7 +65,7 @@ class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: S
                 else -> this
             }
             ReturnLabel.CONTINUE -> when (irElement) {
-                is IrWhileLoop -> if ((irElement.label ?: "") == info) irElement.interpret(data) else this
+                is IrWhileLoop -> if ((irElement.label ?: "") == info) irElement.interpret() else this
                 else -> this
             }
             ReturnLabel.EXCEPTION -> Exception

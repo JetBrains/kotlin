@@ -35,6 +35,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val classCastException = irExceptions.first { it.name.asString() == ClassCastException::class.java.simpleName }
     private val illegalArgumentException = irExceptions.first { it.name.asString() == IllegalArgumentException::class.java.simpleName }
 
+    private val stack = StackImpl()
     private val stackTrace = mutableListOf<String>()
     private var commandCount = 0
 
@@ -62,13 +63,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     fun interpret(expression: IrExpression): IrExpression {
-        val data = InterpreterFrame()
+        stack.clean()
         return try {
             runBlocking {
-                return@runBlocking when (val returnLabel = withContext(this.coroutineContext) { expression.interpret(data).returnLabel }) {
-                    ReturnLabel.NEXT -> data.popReturnValue().toIrExpression(expression)
+                return@runBlocking when (val returnLabel = withContext(this.coroutineContext) { expression.interpret().returnLabel }) {
+                    ReturnLabel.NEXT -> stack.popReturnValue().toIrExpression(expression)
                     ReturnLabel.EXCEPTION -> {
-                        val message = (data.popReturnValue() as ExceptionState).getFullDescription()
+                        val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
                         IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
                     }
                     else -> TODO("$returnLabel not supported as result of interpretation")
@@ -80,61 +81,61 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
     }
 
-    private suspend fun IrElement.interpret(data: Frame): ExecutionResult {
+    private suspend fun IrElement.interpret(): ExecutionResult {
         try {
             incrementAndCheckCommands()
             val executionResult = when (this) {
-                is IrFunctionImpl -> interpretFunction(this, data)
-                is IrCall -> interpretCall(this, data)
-                is IrConstructorCall -> interpretConstructorCall(this, data)
-                is IrEnumConstructorCall -> interpretEnumConstructorCall(this, data)
-                is IrDelegatingConstructorCall -> interpretDelegatedConstructorCall(this, data)
-                is IrInstanceInitializerCall -> interpretInstanceInitializerCall(this, data)
-                is IrBody -> interpretBody(this, data)
-                is IrBlock -> interpretBlock(this, data)
-                is IrReturn -> interpretReturn(this, data)
-                is IrSetField -> interpretSetField(this, data)
-                is IrGetField -> interpretGetField(this, data)
-                is IrGetValue -> interpretGetValue(this, data)
-                is IrGetObjectValue -> interpretGetObjectValue(this, data)
-                is IrGetEnumValue -> interpretGetEnumValue(this, data)
-                is IrEnumEntry -> interpretEnumEntry(this, data)
-                is IrConst<*> -> interpretConst(this, data)
-                is IrVariable -> interpretVariable(this, data)
-                is IrSetVariable -> interpretSetVariable(this, data)
-                is IrTypeOperatorCall -> interpretTypeOperatorCall(this, data)
-                is IrBranch -> interpretBranch(this, data)
-                is IrWhileLoop -> interpretWhile(this, data)
-                is IrWhen -> interpretWhen(this, data)
-                is IrBreak -> interpretBreak(this, data)
-                is IrContinue -> interpretContinue(this, data)
-                is IrVararg -> interpretVararg(this, data)
-                is IrSpreadElement -> interpretSpreadElement(this, data)
-                is IrTry -> interpretTry(this, data)
-                is IrCatch -> interpretCatch(this, data)
-                is IrThrow -> interpretThrow(this, data)
-                is IrStringConcatenation -> interpretStringConcatenation(this, data)
-                is IrFunctionExpression -> interpretFunctionExpression(this, data)
-                is IrFunctionReference -> interpretFunctionReference(this, data)
-                is IrComposite -> interpretComposite(this, data)
+                is IrFunctionImpl -> interpretFunction(this)
+                is IrCall -> interpretCall(this)
+                is IrConstructorCall -> interpretConstructorCall(this)
+                is IrEnumConstructorCall -> interpretEnumConstructorCall(this)
+                is IrDelegatingConstructorCall -> interpretDelegatedConstructorCall(this)
+                is IrInstanceInitializerCall -> interpretInstanceInitializerCall(this)
+                is IrBody -> interpretBody(this)
+                is IrBlock -> interpretBlock(this)
+                is IrReturn -> interpretReturn(this)
+                is IrSetField -> interpretSetField(this)
+                is IrGetField -> interpretGetField(this)
+                is IrGetValue -> interpretGetValue(this)
+                is IrGetObjectValue -> interpretGetObjectValue(this)
+                is IrGetEnumValue -> interpretGetEnumValue(this)
+                is IrEnumEntry -> interpretEnumEntry(this)
+                is IrConst<*> -> interpretConst(this)
+                is IrVariable -> interpretVariable(this)
+                is IrSetVariable -> interpretSetVariable(this)
+                is IrTypeOperatorCall -> interpretTypeOperatorCall(this)
+                is IrBranch -> interpretBranch(this)
+                is IrWhileLoop -> interpretWhile(this)
+                is IrWhen -> interpretWhen(this)
+                is IrBreak -> interpretBreak(this)
+                is IrContinue -> interpretContinue(this)
+                is IrVararg -> interpretVararg(this)
+                is IrSpreadElement -> interpretSpreadElement(this)
+                is IrTry -> interpretTry(this)
+                is IrCatch -> interpretCatch(this)
+                is IrThrow -> interpretThrow(this)
+                is IrStringConcatenation -> interpretStringConcatenation(this)
+                is IrFunctionExpression -> interpretFunctionExpression(this)
+                is IrFunctionReference -> interpretFunctionReference(this)
+                is IrComposite -> interpretComposite(this)
 
                 else -> TODO("${this.javaClass} not supported")
             }
 
-            return executionResult.getNextLabel(this, data) { this@getNextLabel.interpret(it) }
+            return executionResult.getNextLabel(this) { this@getNextLabel.interpret() }
         } catch (e: InterpreterException) {
             throw e
         } catch (e: Throwable) {
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
-            data.pushReturnValue(ExceptionState(e, irExceptionClass, stackTrace))
+            stack.pushReturnValue(ExceptionState(e, irExceptionClass, stackTrace))
             return Exception
         }
     }
 
     // this method is used to get stack trace after exception
-    private suspend fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): ExecutionResult {
+    private suspend fun interpretFunction(irFunction: IrFunctionImpl): ExecutionResult {
         return try {
             yield()
 
@@ -149,9 +150,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
 
             when (val kind = (irFunction.body as? IrSyntheticBody)?.kind) {
-                IrSyntheticBodyKind.ENUM_VALUES -> handleIntrinsicMethods(irFunction, data)
-                IrSyntheticBodyKind.ENUM_VALUEOF -> handleIntrinsicMethods(irFunction, data)
-                null -> irFunction.body?.interpret(data) ?: throw InterpreterException("Ir function must be with body")
+                IrSyntheticBodyKind.ENUM_VALUES, IrSyntheticBodyKind.ENUM_VALUEOF -> handleIntrinsicMethods(irFunction)
+                null -> irFunction.body?.interpret() ?: throw InterpreterException("Ir function must be with body")
                 else -> throw InterpreterException("Unsupported IrSyntheticBodyKind $kind")
             }
         } finally {
@@ -159,72 +159,72 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
     }
 
-    private suspend fun MethodHandle?.invokeMethod(irFunction: IrFunction, data: Frame): ExecutionResult {
-        this ?: return handleIntrinsicMethods(irFunction, data)
-        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data.getAll()))
-        data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+    private suspend fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
+        this ?: return handleIntrinsicMethods(irFunction)
+        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(stack.getAll()))
+        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
 
         return Next
     }
 
-    private suspend fun handleIntrinsicMethods(irFunction: IrFunction, data: Frame): ExecutionResult {
+    private suspend fun handleIntrinsicMethods(irFunction: IrFunction): ExecutionResult {
         when (irFunction.name.asString()) {
             "emptyArray" -> {
                 val result = emptyArray<Any?>()
-                data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+                stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "arrayOf" -> {
-                val result = irFunction.getArgsForMethodInvocation(data.getAll()).toTypedArray()
-                data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+                val result = irFunction.getArgsForMethodInvocation(stack.getAll()).toTypedArray()
+                stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "arrayOfNulls" -> {
-                val size = (data.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value as Int
+                val size = (stack.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value as Int
                 val result = arrayOfNulls<Any?>(size)
-                data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+                stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "values", "enumValues" -> {
                 val enumClass =
-                    (irFunction.parent as? IrClass) ?: data.getVariableState(irFunction.typeParameters.first().descriptor).irClass
+                    (irFunction.parent as? IrClass) ?: stack.getVariableState(irFunction.typeParameters.first().descriptor).irClass
                 val enumEntries = enumClass.declarations
                     .filterIsInstance<IrEnumEntry>()
                     .map { entry ->
-                        entry.interpret(data).check { return it }
-                        data.popReturnValue() as Common
+                        entry.interpret().check { return it }
+                        stack.popReturnValue() as Common
                     }
-                data.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
+                stack.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
             }
             "valueOf", "enumValueOf" -> {
                 val enumClass =
-                    (irFunction.parent as? IrClass) ?: data.getVariableState(irFunction.typeParameters.first().descriptor).irClass
-                val enumEntryName = (data.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value.toString()
+                    (irFunction.parent as? IrClass) ?: stack.getVariableState(irFunction.typeParameters.first().descriptor).irClass
+                val enumEntryName = (stack.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value.toString()
                 val enumEntry = enumClass.declarations
                     .filterIsInstance<IrEnumEntry>()
                     .singleOrNull { it.name.asString() == enumEntryName }
                 if (enumEntry == null) {
                     val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
-                    data.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
+                    stack.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
                     return Exception
                 } else {
-                    enumEntry.interpret(data).check { return it }
+                    enumEntry.interpret().check { return it }
                 }
             }
             "replace" -> {
-                val states = data.getAll().map { it.state }
+                val states = stack.getAll().map { it.state }
                 val regex = states.filterIsInstance<Wrapper>().single().value as Regex
                 val input = states.filterIsInstance<Primitive<*>>().single().value.toString()
                 val transform = states.filterIsInstance<Lambda>().single().irFunction
                 val matchResultParameter = transform.valueParameters.single()
                 val result = regex.replace(input) {
                     val itAsState = Variable(matchResultParameter.descriptor, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
-                    val newFrame = InterpreterFrame(mutableListOf(itAsState))
-                    runBlocking { transform.interpret(newFrame) }
-                    (newFrame.popReturnValue() as Primitive<*>).value.toString()
+                    runBlocking { stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() } }//.check { return it }
+                    (stack.popReturnValue() as Primitive<*>).value.toString()
+                    //TODO("replace not implemented")
                 }
-                data.pushReturnValue(result.toState(irBuiltIns.stringType))
+                stack.pushReturnValue(result.toState(irBuiltIns.stringType))
             }
             "hashCode" -> {
                 if (irFunction.parentAsClass.isEnumClass) {
-                    calculateBuiltIns(irFunction.getLastOverridden() as IrSimpleFunction, data)
+                    calculateBuiltIns(irFunction.getLastOverridden() as IrSimpleFunction)
                 } else {
                     throw InterpreterException("Hash code function intrinsic is supported only for enum class")
                 }
@@ -235,51 +235,58 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Next
     }
 
-    private suspend fun calculateAbstract(irFunction: IrFunction, data: Frame): ExecutionResult {
+    private suspend fun calculateAbstract(irFunction: IrFunction): ExecutionResult {
         if (irFunction.body == null) {
-            val receiver = data.getVariableState(irFunction.getReceiver()!!) as Complex
+            val receiver = stack.getVariableState(irFunction.getReceiver()!!) as Complex
             val instance = receiver.getOriginal()
 
             val functionImplementation = instance.getIrFunction(irFunction.descriptor)
             if (functionImplementation?.body == null) throw InterpreterMethodNotFoundException("Method \"${irFunction.name}\" wasn't implemented")
-            val arguments = functionImplementation.valueParameters.map { Variable(it.descriptor, data.getVariableState(it.descriptor)) }
-            val newFrame = InterpreterFrame()
-            newFrame.addVar(Variable(functionImplementation.getReceiver()!!, instance))
-            newFrame.addAll(arguments)
-            return functionImplementation.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
+
+            val valueArguments = mutableListOf<Variable>()
+            valueArguments.add(Variable(functionImplementation.getReceiver()!!, instance))
+            functionImplementation.valueParameters
+                .map { Variable(it.descriptor, stack.getVariableState(it.descriptor)) }
+                .forEach { valueArguments.add(it) }
+            return stack.newFrame(initPool = valueArguments) {
+                functionImplementation.interpret()
+            }
         }
-        return irFunction.body!!.interpret(data)
+        return irFunction.body!!.interpret()
     }
 
-    private suspend fun calculateOverridden(owner: IrSimpleFunction, data: Frame): ExecutionResult {
+    private suspend fun calculateOverridden(owner: IrSimpleFunction): ExecutionResult {
         val variableDescriptor = owner.getReceiver()!!
-        val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superClass
+        val superQualifier = (stack.getVariableState(variableDescriptor) as? Complex)?.superClass
         if (superQualifier == null) {
             // superQualifier is null for exception state => find method in builtins
-            return calculateBuiltIns(owner.getLastOverridden() as IrSimpleFunction, data)
+            return calculateBuiltIns(owner.getLastOverridden() as IrSimpleFunction)
         }
         val overridden = owner.overriddenSymbols.single()
 
-        val newStates = InterpreterFrame(mutableListOf(Variable(overridden.owner.getReceiver()!!, superQualifier)))
+        val valueArguments = mutableListOf<Variable>()
+        valueArguments.add(Variable(overridden.owner.getReceiver()!!, superQualifier))
         owner.valueParameters.zip(overridden.owner.valueParameters)
-            .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
-            .forEach { newStates.addVar(it) }
+            .map { Variable(it.second.descriptor, stack.getVariableState(it.first.descriptor)) }
+            .forEach { valueArguments.add(it) }
 
-        val overriddenOwner = overridden.owner
-        return when {
-            overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
-            superQualifier.superClass == null -> calculateBuiltIns(overriddenOwner, newStates)
-            else -> calculateOverridden(overriddenOwner, newStates)
-        }.apply { data.pushReturnValue(newStates) }
+        return stack.newFrame(initPool = valueArguments) {
+            val overriddenOwner = overridden.owner
+            return@newFrame when {
+                overriddenOwner.body != null -> overriddenOwner.interpret()
+                superQualifier.superClass == null -> calculateBuiltIns(overriddenOwner)
+                else -> calculateOverridden(overriddenOwner)
+            }
+        }
     }
 
-    private suspend fun calculateBuiltIns(irFunction: IrFunction, data: Frame): ExecutionResult {
+    private suspend fun calculateBuiltIns(irFunction: IrFunction): ExecutionResult {
         val descriptor = irFunction.descriptor
         val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
             null -> descriptor.name.asString()
             else -> property.owner.name.asString()
         }
-        val args = data.getAll().map { it.state }
+        val args = stack.getAll().map { it.state }
 
         val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
@@ -296,7 +303,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 val function = binaryFunctions[signature]
                     ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in binary map")
                 when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
+                    "rangeTo" -> return calculateRangeTo(irFunction.returnType)
                     else -> function.invoke(argsValues[0], argsValues[1])
                 }
             }
@@ -308,27 +315,27 @@ class IrInterpreter(irModule: IrModuleFragment) {
             else -> throw InterpreterException("Unsupported number of arguments")
         }
 
-        data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Next
     }
 
-    private suspend fun calculateRangeTo(type: IrType, data: Frame): ExecutionResult {
+    private suspend fun calculateRangeTo(type: IrType): ExecutionResult {
         val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
 
-        val primitiveValueParameters = data.getAll().map { it.state as Primitive<*> }
+        val primitiveValueParameters = stack.getAll().map { it.state as Primitive<*> }
         primitiveValueParameters.forEachIndexed { index, primitive ->
             constructorCall.putValueArgument(index, primitive.value.toIrConst(primitive.type))
         }
 
         val constructorValueParameters = constructor.valueParameters.map { it.descriptor }.zip(primitiveValueParameters)
-        val newFrame = InterpreterFrame(constructorValueParameters.map { Variable(it.first, it.second) }.toMutableList())
-
-        return constructorCall.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
+        return stack.newFrame(initPool = constructorValueParameters.map { Variable(it.first, it.second) }) {
+            constructorCall.interpret()
+        }
     }
 
     private suspend fun interpretValueParameters(
-        expression: IrFunctionAccessExpression, irFunction: IrFunction, data: Frame, newFrame: Frame
+        expression: IrFunctionAccessExpression, irFunction: IrFunction, pool: MutableList<Variable>
     ): ExecutionResult {
         // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
         val receiverAsFirstArgument = when (expression.dispatchReceiver?.type?.isFunction()) {
@@ -339,103 +346,107 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
         val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
-        val frameWithReceiverAndData = data.copy().apply { addAll(newFrame.getAll()) } // primary use case: copy method in data class
-        for ((i, valueArgument) in valueArguments.withIndex()) {
-            (valueArgument ?: defaultValues[i])!!.interpret(frameWithReceiverAndData).checkForReturn(frameWithReceiverAndData, data) { return it }
-            with(Variable(valueParametersDescriptors[i], frameWithReceiverAndData.popReturnValue())) {
-                frameWithReceiverAndData.addVar(this)
-                newFrame.addVar(this)
+
+        return stack.newFrame(asSubFrame = true, initPool = pool) {
+            for ((i, valueArgument) in valueArguments.withIndex()) { // TODO zip
+                (valueArgument ?: defaultValues[i])!!.interpret().check { return@newFrame it }
+                with(Variable(valueParametersDescriptors[i], stack.popReturnValue())) {
+                    stack.addVar(this)
+                    pool.add(this)
+                }
             }
+            Next
         }
-        return Next
     }
 
-    private suspend fun interpretCall(expression: IrCall, data: Frame): ExecutionResult {
-        val newFrame = InterpreterFrame()
-
+    private suspend fun interpretCall(expression: IrCall): ExecutionResult {
+        val valueArguments = mutableListOf<Variable>()
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
-        rawDispatchReceiver?.interpret(data)?.check { return it }
-        val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
+        rawDispatchReceiver?.interpret()?.check { return it }
+        val dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }
 
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
-        rawExtensionReceiver?.interpret(data)?.check { return it }
-        val extensionReceiver = rawExtensionReceiver?.let { data.popReturnValue() }
+        rawExtensionReceiver?.interpret()?.check { return it }
+        val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }
 
         // find correct ir function
         val functionReceiver = dispatchReceiver?.getFunctionReceiver(expression.superQualifierSymbol?.owner)
         val irFunction = functionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
 
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
-        irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> newFrame.addVar(Variable(it, receiver)) } }
-        irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> newFrame.addVar(Variable(it, receiver)) } }
+        irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
+        irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
 
-        interpretValueParameters(expression, irFunction, data, newFrame).check { return it }
+        interpretValueParameters(expression, irFunction, valueArguments).check { return it }
 
         // TODO fun saveReifiedParameters
         irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
             if (typeParameter.isReified) {
                 val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner)
-                newFrame.addVar(Variable(typeParameter.descriptor, typeArgumentState))
+                valueArguments.add(Variable(typeParameter.descriptor, typeArgumentState))
             }
         }
 
-        if (irFunction.isInline || irFunction.isLocal) newFrame.addAll(data.getAll())
-
-        val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
-        val isInterfaceDefaultMethod = irFunction.body != null && (irFunction.parent as? IrClass)?.isInterface == true
-        val executionResult = when {
-            isWrapper && !isInterfaceDefaultMethod -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
-            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, newFrame)
-            irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
-            irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrSimpleFunction, newFrame)
-            irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction, newFrame)
-            else -> irFunction.interpret(newFrame)
+        return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
+            val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
+            val isInterfaceDefaultMethod = irFunction.body != null && (irFunction.parent as? IrClass)?.isInterface == true
+            return@newFrame when {
+                isWrapper && !isInterfaceDefaultMethod -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction)
+                irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
+                irFunction.isAbstract() -> calculateAbstract(irFunction) //abstract check must be before fake overridden check
+                irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrSimpleFunction)
+                irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction)
+                else -> irFunction.interpret()
+            }
         }
-        data.pushReturnValue(newFrame)
-        return executionResult
     }
 
-    private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall, data: Frame): ExecutionResult {
+    private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
         val irClass = call.classSymbol.owner
 
+        // properties processing
         val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
         classProperties.forEach { property ->
-            property.backingField?.initializer?.expression?.interpret(data)?.check { return it }
+            property.backingField?.initializer?.expression?.interpret()?.check { return it }
             val receiver = irClass.descriptor.thisAsReceiverParameter
-            if (property.backingField?.initializer != null)
-                property.backingField?.let { data.getVariableState(receiver).setState(Variable(it.descriptor, data.popReturnValue())) }
+            if (property.backingField?.initializer != null) {
+                val receiverState = stack.getVariableState(receiver)
+                val propertyState = Variable(property.backingField!!.descriptor, stack.popReturnValue())
+                receiverState.setState(propertyState)
+            }
         }
 
+        // init blocks processing
         val anonymousInitializer = irClass.declarations.filterIsInstance<IrAnonymousInitializer>().filter { !it.isStatic }
-        anonymousInitializer.forEach { init -> init.body.interpret(data).check { return it } }
+        anonymousInitializer.forEach { init -> init.body.interpret().check { return it } }
 
         return Next
     }
 
-    private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): ExecutionResult {
+    private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression): ExecutionResult {
         val owner = constructorCall.symbol.owner
         val isPrimary = (owner as IrConstructor).isPrimary
-        val newFrame = InterpreterFrame()
+        val valueArguments = mutableListOf<Variable>()
 
-        interpretValueParameters(constructorCall, owner, data, newFrame)
+        interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
 
         val parent = owner.parent as IrClass
         if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
             return when (owner.parentAsClass.getEvaluateIntrinsicValue()) {
                 "kotlin.Long" -> {
-                    val low = (newFrame.getVariableState(owner.valueParameters[0].descriptor) as Primitive<*>).value as Int
-                    val high = (newFrame.getVariableState(owner.valueParameters[1].descriptor) as Primitive<*>).value as Int
-                    data.pushReturnValue((high.toLong().shl(32) + low).toState(irBuiltIns.longType))
+                    val low = (valueArguments[0].state as Primitive<*>).value as Int
+                    val high = (valueArguments[1].state as Primitive<*>).value as Int
+                    stack.pushReturnValue((high.toLong().shl(32) + low).toState(irBuiltIns.longType))
                     Next
                 }
                 "kotlin.Char" -> {
-                    val value = (newFrame.getVariableState(owner.valueParameters[0].descriptor) as Primitive<*>).value as Int
-                    data.pushReturnValue(value.toChar().toState(irBuiltIns.longType))
+                    val value = (valueArguments[0].state as Primitive<*>).value as Int
+                    stack.pushReturnValue(value.toChar().toState(irBuiltIns.charType))
                     Next
                 }
-                else -> Wrapper.getConstructorMethod(owner).invokeMethod(owner, newFrame).apply { data.pushReturnValue(newFrame) }
+                else -> stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
             }
         }
 
@@ -443,50 +454,64 @@ class IrInterpreter(irModule: IrModuleFragment) {
             // array constructor doesn't have body so must be treated separately
             val arrayConstructor = irBuiltIns.primitiveArrays.first().constructors.single { it.owner.valueParameters.size == 2 }
             val sizeDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "size" }.descriptor
-            val size = (newFrame.getVariableState(sizeDescriptor) as Primitive<*>).value as Int
+            val size = (valueArguments[0].state as Primitive<*>).value as Int
 
             val arrayValue = MutableList<Any>(size) { 0 }
             if (owner.valueParameters.size == 2) {
                 val initDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "init" }.descriptor
-                val initLambda = newFrame.getVariableState(initDescriptor) as Lambda
+                val initLambda = valueArguments[1].state as Lambda
                 val indexDescriptor = initLambda.irFunction.valueParameters.single().descriptor
                 for (i in 0 until size) {
-                    val lambdaFrame = InterpreterFrame(mutableListOf(Variable(indexDescriptor, i.toState(irBuiltIns.intType))))
-                    initLambda.irFunction.body!!.interpret(lambdaFrame).check(ReturnLabel.RETURN) { return it }
-                    arrayValue[i] = lambdaFrame.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
+                    stack.newFrame(initPool = listOf(Variable(indexDescriptor, i.toState(irBuiltIns.intType)))) {
+                        initLambda.irFunction.body!!.interpret()
+                    }.check(ReturnLabel.RETURN) { return it } // TODO throw exception if label != RETURN
+                    arrayValue[i] = stack.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
                 }
             }
-            data.pushReturnValue(arrayValue.toPrimitiveStateArray(parent.defaultType))
+            stack.pushReturnValue(arrayValue.toPrimitiveStateArray(parent.defaultType))
             return Next
         }
 
-        val state = Common(parent)
-        newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
-        constructorCall.getBody()?.interpret(newFrame)?.checkForReturn(newFrame, data) { return it }
-        val returnedState = newFrame.popReturnValue() as Complex
-        data.pushReturnValue(if (isPrimary) state.apply { this.setSuperClassInstance(returnedState) } else returnedState.apply { setStatesFrom(state) })
-        return Next
+        val receiverState = Common(parent)
+        valueArguments.add(Variable(constructorCall.getThisAsReceiver(), receiverState)) //used to set up fields in body
+        return stack.newFrame(initPool = valueArguments) {
+            val statements = constructorCall.getBody()!!.statements
+            when (val first = statements[0]) {
+                // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
+                is IrTypeOperatorCall -> first.argument.interpret().check { return@newFrame it }
+                else -> first.interpret().check { return@newFrame it }
+            }
+            val returnedState = stack.popReturnValue() as Complex
+            for (i in 1 until statements.size) statements[i].interpret().check { return@newFrame it }
+
+            val state =
+                if (isPrimary) receiverState.apply { this.setSuperClassInstance(returnedState) }
+                else returnedState.apply { setStatesFrom(receiverState) } // if is secondary then only copy all properties from receiver
+
+            stack.pushReturnValue(state)
+            Next
+        }
     }
 
-    private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): ExecutionResult {
-        return interpretConstructor(constructorCall, data)
+    private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall): ExecutionResult {
+        return interpretConstructor(constructorCall)
     }
 
-    private suspend fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall, data: Frame): ExecutionResult {
-        return interpretConstructor(enumConstructorCall, data)
+    private suspend fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall): ExecutionResult {
+        return interpretConstructor(enumConstructorCall)
     }
 
-    private suspend fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): ExecutionResult {
+    private suspend fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
         if (delegatingConstructorCall.symbol.descriptor.containingDeclaration.defaultType == DefaultBuiltIns.Instance.anyType) {
             val anyAsStateObject = Common(irBuiltIns.anyClass.owner)
-            data.pushReturnValue(anyAsStateObject)
+            stack.pushReturnValue(anyAsStateObject)
             return Next
         }
 
-        return interpretConstructor(delegatingConstructorCall, data)
+        return interpretConstructor(delegatingConstructorCall)
     }
 
-    private suspend fun interpretConst(expression: IrConst<*>, data: Frame): ExecutionResult {
+    private suspend fun interpretConst(expression: IrConst<*>): ExecutionResult {
         fun getSignedType(unsignedClassName: String): IrType {
             return when (unsignedClassName) {
                 "UByte" -> irBuiltIns.byteType
@@ -503,156 +528,140 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
             constructorCall.putValueArgument(0, expression.value.toIrConst(getSignedType(unsignedClass.owner.name.asString())))
 
-            constructorCall.interpret(data)
+            constructorCall.interpret()
         } else {
-            data.pushReturnValue(expression.toPrimitive())
+            stack.pushReturnValue(expression.toPrimitive())
             Next
         }
     }
 
-    private suspend fun interpretStatements(statements: List<IrStatement>, data: Frame): ExecutionResult {
+    private suspend fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
         var executionResult: ExecutionResult = Next
-        val iterator = statements.iterator()
-        while (executionResult.returnLabel == ReturnLabel.NEXT && iterator.hasNext()) {
-            executionResult = iterator.next().interpret(data)
+        for (statement in statements) {
+            executionResult = statement.interpret().check { return it }
         }
         return executionResult
     }
 
-    private suspend fun interpretBlock(block: IrBlock, data: Frame): ExecutionResult {
-        val newFrame = data.copy()
-        return interpretStatements(block.statements, newFrame).apply { data.pushReturnValue(newFrame) }
+    private suspend fun interpretBlock(block: IrBlock): ExecutionResult {
+        return stack.newFrame(asSubFrame = true) { interpretStatements(block.statements) }
     }
 
-    private suspend fun interpretBody(body: IrBody, data: Frame): ExecutionResult {
-        val newFrame = data.copy()
-        return interpretStatements(body.statements, newFrame).apply { data.pushReturnValue(newFrame) }
+    private suspend fun interpretBody(body: IrBody): ExecutionResult {
+        return stack.newFrame(asSubFrame = true) { interpretStatements(body.statements) }
     }
 
-    private suspend fun interpretReturn(expression: IrReturn, data: Frame): ExecutionResult {
-        val executionResult = expression.value.interpret(data)
-        return when (executionResult.returnLabel) {
-            ReturnLabel.NEXT -> Return.addInfo(expression.returnTargetSymbol.descriptor.toString())
-            else -> executionResult
-        }
+    private suspend fun interpretReturn(expression: IrReturn): ExecutionResult {
+        expression.value.interpret().check { return it }
+        return Return.addInfo(expression.returnTargetSymbol.descriptor.toString())
     }
 
-    private suspend fun interpretWhile(expression: IrWhileLoop, data: Frame): ExecutionResult {
+    private suspend fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
         var executionResult: ExecutionResult = Next
-        while (executionResult.returnLabel == ReturnLabel.NEXT) {
-            executionResult = expression.condition.interpret(data)
-            if (executionResult.returnLabel == ReturnLabel.NEXT && (data.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
-                executionResult = expression.body?.interpret(data) ?: Next
-            } else {
-                break
-            }
+        while (true) {
+            executionResult = expression.condition.interpret().check { return it }
+            val condition = (stack.popReturnValue() as? Primitive<*>)?.value as? Boolean
+            if (condition != true) break else expression.body?.interpret()?.check { return it } ?: return Next
         }
         return executionResult
     }
 
-    private suspend fun interpretWhen(expression: IrWhen, data: Frame): ExecutionResult {
+    private suspend fun interpretWhen(expression: IrWhen): ExecutionResult {
         var executionResult: ExecutionResult = Next
-        val iterator = expression.branches.asSequence().iterator()
-        while (executionResult.returnLabel == ReturnLabel.NEXT && iterator.hasNext()) {
-            executionResult = iterator.next().interpret(data)
+        for (branch in expression.branches) {
+            executionResult = branch.interpret().check { return it }
         }
         return executionResult
     }
 
-    private suspend fun interpretBranch(expression: IrBranch, data: Frame): ExecutionResult {
-        var executionResult = expression.condition.interpret(data)
-        if (executionResult.returnLabel == ReturnLabel.NEXT && (data.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
-            executionResult = expression.result.interpret(data)
-            if (executionResult.returnLabel == ReturnLabel.NEXT) return BreakWhen
+    private suspend fun interpretBranch(expression: IrBranch): ExecutionResult {
+        val executionResult = expression.condition.interpret().check { return it }
+        if ((stack.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
+            expression.result.interpret().check { return it }
+            return BreakWhen
         }
         return executionResult
     }
 
-    private suspend fun interpretBreak(breakStatement: IrBreak, data: Frame): ExecutionResult {
+    private suspend fun interpretBreak(breakStatement: IrBreak): ExecutionResult {
         return BreakLoop.addInfo(breakStatement.label ?: "")
     }
 
-    private suspend fun interpretContinue(continueStatement: IrContinue, data: Frame): ExecutionResult {
+    private suspend fun interpretContinue(continueStatement: IrContinue): ExecutionResult {
         return Continue.addInfo(continueStatement.label ?: "")
     }
 
-    private suspend fun interpretSetField(expression: IrSetField, data: Frame): ExecutionResult {
-        val executionResult = expression.value.interpret(data)
-        if (executionResult.returnLabel != ReturnLabel.NEXT) return executionResult
+    private suspend fun interpretSetField(expression: IrSetField): ExecutionResult {
+        expression.value.interpret().check { return it }
 
         // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
         val receiver = (expression.receiver as IrDeclarationReference).symbol.descriptor
-        data.getVariableState(receiver).setState(Variable(expression.symbol.owner.descriptor, data.popReturnValue()))
+        stack.getVariableState(receiver).setState(Variable(expression.symbol.owner.descriptor, stack.popReturnValue()))
         return Next
     }
 
-    private suspend fun interpretGetField(expression: IrGetField, data: Frame): ExecutionResult {
-        val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor // receiver is null, for example, for top level fields
-        val result = receiver?.let { data.getVariableState(receiver).getState(expression.symbol.descriptor)?.copy() }
-        if (result == null) {
-            return expression.symbol.owner.initializer?.expression?.interpret(data) ?: Next
-        }
-        data.pushReturnValue(result)
+    private suspend fun interpretGetField(expression: IrGetField): ExecutionResult {
+        val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor
+        // receiver is null, for example, for top level fields
+        val result = receiver?.let { stack.getVariableState(receiver).getState(expression.symbol.descriptor)?.copy() }
+            ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
+        stack.pushReturnValue(result)
         return Next
     }
 
-    private suspend fun interpretGetValue(expression: IrGetValue, data: Frame): ExecutionResult {
-        data.pushReturnValue(data.getVariableState(expression.symbol.descriptor).copy())
+    private suspend fun interpretGetValue(expression: IrGetValue): ExecutionResult {
+        stack.pushReturnValue(stack.getVariableState(expression.symbol.descriptor).copy())
         return Next
     }
 
-    private suspend fun interpretVariable(expression: IrVariable, data: Frame): ExecutionResult {
-        val executionResult = expression.initializer?.interpret(data)// TODO replace with check
-        if (executionResult?.returnLabel != ReturnLabel.NEXT) return executionResult ?: Next
-        data.addVar(Variable(expression.descriptor, data.popReturnValue()))
+    private suspend fun interpretVariable(expression: IrVariable): ExecutionResult {
+        expression.initializer?.interpret()?.check { return it } ?: return Next
+        stack.addVar(Variable(expression.descriptor, stack.popReturnValue()))
         return Next
     }
 
-    private suspend fun interpretSetVariable(expression: IrSetVariable, data: Frame): ExecutionResult {
-        val executionResult = expression.value.interpret(data)
-        if (executionResult.returnLabel != ReturnLabel.NEXT) return executionResult
+    private suspend fun interpretSetVariable(expression: IrSetVariable): ExecutionResult {
+        expression.value.interpret().check { return it }
 
-        if (data.contains(expression.symbol.descriptor)) {
-            val variable = data.getVariableState(expression.symbol.descriptor)
-            variable.setState(Variable(expression.symbol.descriptor, data.popReturnValue()))
+        if (stack.contains(expression.symbol.descriptor)) {
+            val variable = stack.getVariableState(expression.symbol.descriptor)
+            variable.setState(Variable(expression.symbol.descriptor, stack.popReturnValue()))
         } else {
-            data.addVar(Variable(expression.symbol.descriptor, data.popReturnValue()))
+            stack.addVar(Variable(expression.symbol.descriptor, stack.popReturnValue()))
         }
         return Next
     }
 
-    private suspend fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): ExecutionResult {
+    private suspend fun interpretGetObjectValue(expression: IrGetObjectValue): ExecutionResult {
         val owner = expression.symbol.owner
         if (owner.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            data.pushReturnValue(Wrapper.getCompanionObject(owner))
+            stack.pushReturnValue(Wrapper.getCompanionObject(owner))
             return Next
         }
-        data.pushReturnValue(Common(owner).apply { setSuperClassRecursive() })
+        stack.pushReturnValue(Common(owner).apply { setSuperClassRecursive() })
         return Next
     }
 
-    private suspend fun interpretGetEnumValue(expression: IrGetEnumValue, data: Frame): ExecutionResult {
+    private suspend fun interpretGetEnumValue(expression: IrGetEnumValue): ExecutionResult {
         val enumEntry = expression.symbol.owner
         val enumSignature = Pair(enumEntry.parentAsClass, enumEntry.name.asString())
-        mapOfEnums[enumSignature]?.let { return Next.apply { data.pushReturnValue(it) } }
+        mapOfEnums[enumSignature]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
         val enumClass = enumEntry.symbol.owner.parentAsClass
         if (enumClass.hasAnnotation(evaluateIntrinsicAnnotation)) {
             val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
             val enumName = Variable(valueOfFun.valueParameters.first().descriptor, enumEntry.name.asString().toState(irBuiltIns.stringType))
-            val newFrame = InterpreterFrame(mutableListOf(enumName))
-            return Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun, newFrame).apply {
-                if (this.returnLabel == ReturnLabel.NEXT) mapOfEnums[enumSignature] = newFrame.peekReturnValue() as Wrapper
-                data.pushReturnValue(newFrame)
-            }
+            return stack.newFrame(initPool = listOf(enumName)) {
+                Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun)
+            }.apply { if (this.returnLabel == ReturnLabel.NEXT) mapOfEnums[enumSignature] = stack.peekReturnValue() as Wrapper }
         }
-
-        return interpretEnumEntry(enumEntry, data).apply {
-            if (this.returnLabel == ReturnLabel.NEXT) mapOfEnums[enumSignature] = data.peekReturnValue() as Common
+        // TODO extract common code
+        return interpretEnumEntry(enumEntry).apply {
+            if (this.returnLabel == ReturnLabel.NEXT) mapOfEnums[enumSignature] = stack.peekReturnValue() as Common
         }
     }
 
-    private suspend fun interpretEnumEntry(enumEntry: IrEnumEntry, data: Frame): ExecutionResult {
+    private suspend fun interpretEnumEntry(enumEntry: IrEnumEntry): ExecutionResult {
         val enumClass = enumEntry.symbol.owner.parentAsClass
         val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
 
@@ -664,54 +673,49 @@ class IrInterpreter(irModule: IrModuleFragment) {
             enumSuperCall.mapValueParameters { valueArguments[it.index] }
         }
 
-        val executionResult = enumEntry.initializerExpression?.interpret(data)?.check { return it }
-        enumSuperCall?.mapValueParameters { null }
-        data.pushReturnValue((data.popReturnValue() as Complex))
+        val executionResult = enumEntry.initializerExpression?.interpret()?.check { return it }
+        enumSuperCall?.mapValueParameters { null } // restore to null
         return executionResult ?: throw InterpreterException("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
-    private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): ExecutionResult {
-        val executionResult = expression.argument.interpret(data).check { return it }
+    private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
+        val executionResult = expression.argument.interpret().check { return it }
 
-        return when (expression.operator) {
+        when (expression.operator) {
             // coercion to unit means that return value isn't used
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> executionResult
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
-                    val convertibleClassName = data.popReturnValue().irClass.fqNameForIrSerialization
+                if (!stack.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
+                    val convertibleClassName = stack.popReturnValue().irClass.fqNameForIrSerialization
                     val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
                     val message = "$convertibleClassName cannot be cast to $castClassName"
-                    data.pushReturnValue(ExceptionState(ClassCastException(message), classCastException, stackTrace))
-                    Exception
-                } else {
-                    executionResult
+                    stack.pushReturnValue(ExceptionState(ClassCastException(message), classCastException, stackTrace))
+                    return Exception
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
-                    data.popReturnValue()
-                    data.pushReturnValue(null.toState(irBuiltIns.nothingType))
+                if (!stack.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
+                    stack.popReturnValue()
+                    stack.pushReturnValue(null.toState(irBuiltIns.nothingType))
                 }
-                executionResult
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = data.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
-                data.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
-                executionResult
+                val isInstance = stack.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
+                stack.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = data.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
-                data.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
-                executionResult
+                val isInstance = stack.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
+                stack.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
             }
             else -> TODO("${expression.operator} not implemented")
         }
+        return executionResult
     }
 
-    private suspend fun interpretVararg(expression: IrVararg, data: Frame): ExecutionResult {
+    private suspend fun interpretVararg(expression: IrVararg): ExecutionResult {
         val args = expression.elements.flatMap {
-            it.interpret(data).check { return it }
-            return@flatMap when (val result = data.popReturnValue()) {
+            it.interpret().check { executionResult -> return executionResult }
+            return@flatMap when (val result = stack.popReturnValue()) {
                 is Wrapper -> listOf(result.value)
                 is Primitive<*> ->
                     when (val value = result.value) {
@@ -729,83 +733,84 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 else -> listOf(result)
             }
         }
-        data.pushReturnValue(args.toPrimitiveStateArray(expression.type))
+        stack.pushReturnValue(args.toPrimitiveStateArray(expression.type))
         return Next
     }
 
-    private suspend fun interpretSpreadElement(spreadElement: IrSpreadElement, data: Frame): ExecutionResult {
-        return spreadElement.expression.interpret(data).check { return it }
+    private suspend fun interpretSpreadElement(spreadElement: IrSpreadElement): ExecutionResult {
+        return spreadElement.expression.interpret().check { return it }
     }
 
-    private suspend fun interpretTry(expression: IrTry, data: Frame): ExecutionResult {
-        var executionResult = expression.tryResult.interpret(data)
+    private suspend fun interpretTry(expression: IrTry): ExecutionResult {
+        var executionResult = expression.tryResult.interpret()
         if (executionResult.returnLabel == ReturnLabel.EXCEPTION) {
-            val exception = data.peekReturnValue() as ExceptionState
+            val exception = stack.peekReturnValue() as ExceptionState
             for (catchBlock in expression.catches) {
                 if (exception.isSubtypeOf(catchBlock.catchParameter.type.classOrNull!!.owner)) {
-                    executionResult = catchBlock.interpret(data)
+                    executionResult = catchBlock.interpret()
                     break
                 }
             }
         }
         // TODO check flow correctness; should I return finally result code if in catch there was an exception?
-        return expression.finallyExpression?.interpret(data) ?: executionResult
+        return expression.finallyExpression?.interpret() ?: executionResult
     }
 
-    private suspend fun interpretCatch(expression: IrCatch, data: Frame): ExecutionResult {
-        val newFrame = InterpreterFrame(data.getAll().toMutableList())
-        newFrame.addVar(Variable(expression.parameter, data.popReturnValue()))
-        return expression.result.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
+    private suspend fun interpretCatch(expression: IrCatch): ExecutionResult {
+        val catchParameter = Variable(expression.parameter, stack.popReturnValue())
+        return stack.newFrame(asSubFrame = true, initPool = listOf(catchParameter)) {
+            expression.result.interpret()
+        }
     }
 
-    private suspend fun interpretThrow(expression: IrThrow, data: Frame): ExecutionResult {
-        expression.value.interpret(data).check { return it }
-        when (val exception = data.popReturnValue()) {
-            is Common -> data.pushReturnValue(ExceptionState(exception, stackTrace))
-            is Wrapper -> data.pushReturnValue(ExceptionState(exception, stackTrace))
-            is ExceptionState -> data.pushReturnValue(exception)
+    private suspend fun interpretThrow(expression: IrThrow): ExecutionResult {
+        expression.value.interpret().check { return it }
+        when (val exception = stack.popReturnValue()) {
+            is Common -> stack.pushReturnValue(ExceptionState(exception, stackTrace))
+            is Wrapper -> stack.pushReturnValue(ExceptionState(exception, stackTrace))
+            is ExceptionState -> stack.pushReturnValue(exception)
             else -> throw InterpreterException("${exception::class} cannot be used as exception state")
         }
         return Exception
     }
 
-    private suspend fun interpretStringConcatenation(expression: IrStringConcatenation, data: Frame): ExecutionResult {
+    private suspend fun interpretStringConcatenation(expression: IrStringConcatenation): ExecutionResult {
         val result = StringBuilder()
         expression.arguments.forEach {
-            it.interpret(data).check { executionResult -> return executionResult }
+            it.interpret().check { executionResult -> return executionResult }
             result.append(
-                when (val returnValue = data.popReturnValue()) {
+                when (val returnValue = stack.popReturnValue()) {
                     is Primitive<*> -> returnValue.value.toString()
                     is Wrapper -> returnValue.value.toString()
                     is Common -> {
                         val toStringFun = returnValue.getToStringFunction()
-                        val newFrame = InterpreterFrame(mutableListOf(Variable(toStringFun.getReceiver()!!, returnValue)))
-                        val executionResult = toStringFun.body?.let { toStringFun.interpret(newFrame) } ?: calculateOverridden(toStringFun, newFrame)
-                        if (executionResult.returnLabel != ReturnLabel.NEXT) return executionResult
-                        (newFrame.popReturnValue() as Primitive<*>).value.toString()
+                        stack.newFrame(initPool = mutableListOf(Variable(toStringFun.getReceiver()!!, returnValue))) {
+                            toStringFun.body?.let { toStringFun.interpret() } ?: calculateOverridden(toStringFun)
+                        }.check { executionResult -> return executionResult }
+                        (stack.popReturnValue() as Primitive<*>).value.toString()
                     }
                     else -> throw InterpreterException("$returnValue cannot be used in StringConcatenation expression")
                 }
             )
         }
 
-        data.pushReturnValue(result.toString().toState(expression.type))
+        stack.pushReturnValue(result.toString().toState(expression.type))
         return Next
     }
 
-    private suspend fun interpretFunctionExpression(expression: IrFunctionExpression, data: Frame): ExecutionResult {
-        data.pushReturnValue(Lambda(expression.function, expression.type.classOrNull!!.owner))
+    private suspend fun interpretFunctionExpression(expression: IrFunctionExpression): ExecutionResult {
+        stack.pushReturnValue(Lambda(expression.function, expression.type.classOrNull!!.owner))
         return Next
     }
 
-    private suspend fun interpretFunctionReference(reference: IrFunctionReference, data: Frame): ExecutionResult {
-        data.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
+    private suspend fun interpretFunctionReference(reference: IrFunctionReference): ExecutionResult {
+        stack.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
         return Next
     }
 
-    private suspend fun interpretComposite(expression: IrComposite, data: Frame): ExecutionResult {
+    private suspend fun interpretComposite(expression: IrComposite): ExecutionResult {
         return when (expression.origin) {
-            IrStatementOrigin.DESTRUCTURING_DECLARATION -> interpretStatements(expression.statements, data)
+            IrStatementOrigin.DESTRUCTURING_DECLARATION -> interpretStatements(expression.statements)
             else -> TODO("${expression.origin} not implemented")
         }
     }

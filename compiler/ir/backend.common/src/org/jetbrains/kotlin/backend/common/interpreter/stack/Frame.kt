@@ -14,16 +14,17 @@ interface Frame {
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
     fun getVariableState(variableDescriptor: DeclarationDescriptor): State
+    fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State?
     fun getAll(): List<Variable>
     fun contains(descriptor: DeclarationDescriptor): Boolean
     fun pushReturnValue(state: State)
-    fun pushReturnValue(frame: Frame)
+    fun pushReturnValue(frame: Frame) // TODO rename to getReturnValueFrom
     fun peekReturnValue(): State
     fun popReturnValue(): State
     fun hasReturnValue(): Boolean
-    fun copy(): Frame
 }
 
+// TODO replace exceptions with InterpreterException
 class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Frame {
     private val returnStack: MutableList<State> = mutableListOf()
 
@@ -35,8 +36,12 @@ class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Fram
         pool.addAll(variables)
     }
 
-    override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
+    override fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State? {
         return pool.firstOrNull { it.descriptor.equalTo(variableDescriptor) }?.state
+    }
+
+    override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
+        return tryGetVariableState(variableDescriptor)
             ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $variableDescriptor")
     }
 
@@ -74,9 +79,5 @@ class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Fram
             return item
         }
         throw NoSuchElementException("Return values stack is empty")
-    }
-
-    override fun copy(): Frame {
-        return InterpreterFrame(pool.toMutableList())
     }
 }
