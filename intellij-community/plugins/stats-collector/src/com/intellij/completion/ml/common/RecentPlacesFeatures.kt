@@ -19,13 +19,18 @@ class RecentPlacesFeatures : ElementFeatureProvider {
 
   override fun calculateFeatures(element: LookupElement,
                                  location: CompletionLocation,
-                                 contextFeatures: ContextFeatures): MutableMap<String, MLFeatureValue> {
-    val features = mutableMapOf<String, MLFeatureValue>()
-    if (StoreRecentPlacesListener.isInRecentPlaces(element.lookupString))
-      features["contains"] = MLFeatureValue.binary(true)
-    if (StoreRecentPlacesListener.isInChildrenRecentPlaces(element.lookupString))
-      features["children_contains"] = MLFeatureValue.binary(true)
-      return features
+                                 contextFeatures: ContextFeatures): Map<String, MLFeatureValue> {
+    val inRecentPlaces = StoreRecentPlacesListener.isInRecentPlaces(element.lookupString)
+    val inChildrenRecentPlaces = StoreRecentPlacesListener.isInChildrenRecentPlaces(element.lookupString)
+    return when {
+      inRecentPlaces && inChildrenRecentPlaces -> mapOf(
+        "contains" to MLFeatureValue.binary(true),
+        "children_contains" to MLFeatureValue.binary(true)
+      )
+      inRecentPlaces -> mapOf("contains" to MLFeatureValue.binary(true))
+      inChildrenRecentPlaces -> mapOf("children_contains" to MLFeatureValue.binary(true))
+      else -> emptyMap()
+    }
   }
 
   class StoreRecentPlacesListener(private val project: Project) : IdeDocumentHistoryImpl.RecentPlacesListener {
@@ -54,16 +59,15 @@ class RecentPlacesFeatures : ElementFeatureProvider {
       if (element != null && namesValidator.isIdentifier(element.text, project)) {
         recentPlaces.addToTop(element.text)
         val declaration = findDeclaration(element) ?: return
-        for (child in declaration.children.take(MAX_CHILDREN_PER_PLACE)) {
-          if (child is PsiNamedElement) {
-            val name = child.name ?: continue
-            childrenRecentPlaces.addToTop(name)
-          }
-        }
+        for (childName in declaration.getChildrenNames().take(MAX_CHILDREN_PER_PLACE))
+          childrenRecentPlaces.addToTop(childName)
       }
     }
 
     override fun recentPlaceRemoved(changePlace: IdeDocumentHistoryImpl.PlaceInfo, isChanged: Boolean) = Unit
+
+    private fun PsiElement.getChildrenNames(): List<String> =
+      this.children.filterIsInstance<PsiNamedElement>().mapNotNull { it.name }
 
     private fun findDeclaration(element: PsiElement): PsiElement? {
       var curElement = element
