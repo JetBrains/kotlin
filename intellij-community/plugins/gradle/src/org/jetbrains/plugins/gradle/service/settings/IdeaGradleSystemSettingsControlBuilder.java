@@ -247,7 +247,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
         protected void textChanged(@NotNull DocumentEvent e) {
           boolean showMigration = e.getDocument().getLength() > 0;
           fixLabel.setHyperlinkText(
-            GradleBundle.message("gradle.settings.text.vm.options.link.tooltip"),
+            GradleBundle.message("gradle.settings.text.vm.options.link.tooltip") + " ",
             showMigration ? GradleBundle.message("gradle.settings.text.vm.options.link.text") : "  ", "");
         }
       });
