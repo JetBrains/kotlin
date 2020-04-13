@@ -19,7 +19,7 @@ class Foo {
 
 fun test_1(foo: Foo, x: Any) {
     foo.require(x is String)
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }
 
 fun test_2(foo: Foo): Int {

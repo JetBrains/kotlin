@@ -30,9 +30,9 @@ fun case4() {
         myRun {
             val s: String
             run {
-                s = "hello"
+                <!UNRESOLVED_REFERENCE!>s<!> = "hello"
             }
-            s.length
+            <!UNRESOLVED_REFERENCE!>s<!>.<!UNRESOLVED_REFERENCE!>length<!>
         }
     }
 }

@@ -26,7 +26,7 @@ fun testBasicEquals(x: Int?) {
         x.<!AMBIGUITY!>inc<!>()
     }
     else {
-        x.<!AMBIGUITY!>inc<!>()
+        x.inc()
     }
 
     x.<!AMBIGUITY!>inc<!>()
@@ -36,7 +36,7 @@ fun testBasicNotEquals(x: Int?) {
     x.<!AMBIGUITY!>inc<!>()
 
     if (myEqualsNotNull(x)) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.inc()
     }
     else {
         x.<!AMBIGUITY!>inc<!>()

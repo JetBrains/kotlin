@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 fun test(x: Any?) {
     if (isString(x)) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 

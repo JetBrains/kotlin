@@ -20,7 +20,7 @@ class SomeClass {
     }
 
     fun callMemberContractWithoutThis() {
-        contract()
+        <!INAPPLICABLE_CANDIDATE!>contract<!>()
     }
 
     fun callTopLevelSamePsiInMember() {

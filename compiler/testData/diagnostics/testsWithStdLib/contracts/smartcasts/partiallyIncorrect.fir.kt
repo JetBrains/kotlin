@@ -13,7 +13,7 @@ fun isString(x: Any?): Boolean {
 
 fun incorrectPartDoesntMatter(x: Any?) {
     if (isString(x) && 1) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
