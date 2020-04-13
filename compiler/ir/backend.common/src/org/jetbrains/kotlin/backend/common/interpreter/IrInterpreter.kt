@@ -178,7 +178,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "arrayOfNulls" -> {
-                val size = (stack.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value as Int
+                val size = stack.getVariableState(irFunction.valueParameters.first().descriptor).asInt()
                 val result = arrayOfNulls<Any?>(size)
                 stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
@@ -196,7 +196,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             "valueOf", "enumValueOf" -> {
                 val enumClass =
                     (irFunction.parent as? IrClass) ?: stack.getVariableState(irFunction.typeParameters.first().descriptor).irClass
-                val enumEntryName = (stack.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value.toString()
+                val enumEntryName = stack.getVariableState(irFunction.valueParameters.first().descriptor).asString()
                 val enumEntry = enumClass.declarations
                     .filterIsInstance<IrEnumEntry>()
                     .singleOrNull { it.name.asString() == enumEntryName }
@@ -211,13 +211,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
             "replace" -> {
                 val states = stack.getAll().map { it.state }
                 val regex = states.filterIsInstance<Wrapper>().single().value as Regex
-                val input = states.filterIsInstance<Primitive<*>>().single().value.toString()
+                val input = states.filterIsInstance<Primitive<*>>().single().asString()
                 val transform = states.filterIsInstance<Lambda>().single().irFunction
                 val matchResultParameter = transform.valueParameters.single()
                 val result = regex.replace(input) {
                     val itAsState = Variable(matchResultParameter.descriptor, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
                     runBlocking { stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() } }//.check { return it }
-                    (stack.popReturnValue() as Primitive<*>).value.toString()
+                    stack.popReturnValue().asString()
                     //TODO("replace not implemented")
                 }
                 stack.pushReturnValue(result.toState(irBuiltIns.stringType))
@@ -436,13 +436,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
         if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
             return when (owner.parentAsClass.getEvaluateIntrinsicValue()) {
                 "kotlin.Long" -> {
-                    val low = (valueArguments[0].state as Primitive<*>).value as Int
-                    val high = (valueArguments[1].state as Primitive<*>).value as Int
+                    val low = valueArguments[0].state.asInt()
+                    val high = valueArguments[1].state.asInt()
                     stack.pushReturnValue((high.toLong().shl(32) + low).toState(irBuiltIns.longType))
                     Next
                 }
                 "kotlin.Char" -> {
-                    val value = (valueArguments[0].state as Primitive<*>).value as Int
+                    val value = valueArguments[0].state.asInt()
                     stack.pushReturnValue(value.toChar().toState(irBuiltIns.charType))
                     Next
                 }
@@ -454,7 +454,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             // array constructor doesn't have body so must be treated separately
             val arrayConstructor = irBuiltIns.primitiveArrays.first().constructors.single { it.owner.valueParameters.size == 2 }
             val sizeDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "size" }.descriptor
-            val size = (valueArguments[0].state as Primitive<*>).value as Int
+            val size = valueArguments[0].state.asInt()
 
             val arrayValue = MutableList<Any>(size) { 0 }
             if (owner.valueParameters.size == 2) {
@@ -557,10 +557,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
-        var executionResult: ExecutionResult = Next
+        var executionResult: ExecutionResult
         while (true) {
             executionResult = expression.condition.interpret().check { return it }
-            val condition = (stack.popReturnValue() as? Primitive<*>)?.value as? Boolean
+            val condition = stack.popReturnValue().asBooleanOrNull()
             if (condition != true) break else expression.body?.interpret()?.check { return it } ?: return Next
         }
         return executionResult
@@ -576,7 +576,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun interpretBranch(expression: IrBranch): ExecutionResult {
         val executionResult = expression.condition.interpret().check { return it }
-        if ((stack.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
+        if (stack.popReturnValue().asBooleanOrNull() == true) {
             expression.result.interpret().check { return it }
             return BreakWhen
         }
@@ -787,7 +787,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                         stack.newFrame(initPool = mutableListOf(Variable(toStringFun.getReceiver()!!, returnValue))) {
                             toStringFun.body?.let { toStringFun.interpret() } ?: calculateOverridden(toStringFun)
                         }.check { executionResult -> return executionResult }
-                        (stack.popReturnValue() as Primitive<*>).value.toString()
+                        stack.popReturnValue().asString()
                     }
                     else -> throw InterpreterException("$returnValue cannot be used in StringConcatenation expression")
                 }

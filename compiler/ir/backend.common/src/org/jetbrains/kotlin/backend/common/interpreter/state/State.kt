@@ -33,3 +33,9 @@ interface State {
 
     fun getIrFunction(descriptor: FunctionDescriptor): IrFunction?
 }
+
+fun State.asInt() = (this as Primitive<*>).value as Int
+fun State.asBoolean() = (this as Primitive<*>).value as Boolean
+fun State.asString() = (this as Primitive<*>).value.toString()
+
+fun State.asBooleanOrNull() = (this as? Primitive<*>)?.value as? Boolean
