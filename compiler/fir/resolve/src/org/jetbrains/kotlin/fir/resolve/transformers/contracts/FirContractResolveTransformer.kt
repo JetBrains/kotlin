@@ -25,11 +25,16 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSession) : FirBodyResolveTransformer(
+class FirContractResolveTransformer(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    outerBodyResolveContext: BodyResolveContext? = null
+) : FirBodyResolveTransformer(
     session,
     FirResolvePhase.CONTRACTS,
     implicitTypeOnly = false,
-    scopeSession
+    scopeSession,
+    outerBodyResolveContext = outerBodyResolveContext
 ) {
     override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsContractResolveTransformer(this)
 
