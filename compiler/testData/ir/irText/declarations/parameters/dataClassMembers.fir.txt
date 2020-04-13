@@ -55,6 +55,13 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
           CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test, y: kotlin.String): <root>.Test<T of <root>.Test> declared in <root>.Test'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Test, y: kotlin.String) [primary] declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
+            <class: T>: <none>
+            x: CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
+            y: CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test<T of <root>.Test>
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

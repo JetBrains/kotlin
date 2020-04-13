@@ -30,6 +30,10 @@ FILE fqName:<root> fileName:/kt31649.kt
           CALL 'public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData' type=kotlin.Nothing? origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.copy' type=<root>.TestData origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (nn: kotlin.Nothing?): <root>.TestData declared in <root>.TestData'
+          CONSTRUCTOR_CALL 'public constructor <init> (nn: kotlin.Nothing?) [primary] declared in <root>.TestData' type=<root>.TestData origin=null
+            nn: CALL 'public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.copy' type=<root>.TestData origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestData, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.TestData
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

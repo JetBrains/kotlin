@@ -167,6 +167,12 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.P declared in <root>.P.copy' type=<root>.P origin=null
       BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.Int): <root>.P declared in <root>.P'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.P' type=<root>.P origin=null
+            x: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.P declared in <root>.P.copy' type=<root>.P origin=null
+            y: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=IrErrorType origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.P declared in <root>.P.copy' type=<root>.P origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.P, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.P
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

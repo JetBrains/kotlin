@@ -412,7 +412,6 @@ class DeclarationsConverter(
 
                     delegationSpecifiers?.let { superTypeRefs += it.superTypesRef }
 
-
                     when {
                         modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) -> {
                             delegatedSuperTypeRef = buildResolvedTypeRef {
@@ -467,15 +466,15 @@ class DeclarationsConverter(
                     //parse data class
                     if (modifiers.isDataClass() && firPrimaryConstructor != null) {
                         val zippedParameters = properties.map { it.source?.lightNode!! to it }
-                        DataClassMemberGenerator(
+                        DataClassMembersGenerator(
                             baseSession,
                             classNode,
                             this,
-                            firPrimaryConstructor.returnTypeRef,
+                            firPrimaryConstructor,
                             zippedParameters,
                             context.packageFqName,
                             context.className
-                        ).generateMembers()
+                        ).generate()
                     }
 
                     if (modifiers.isEnum()) {
