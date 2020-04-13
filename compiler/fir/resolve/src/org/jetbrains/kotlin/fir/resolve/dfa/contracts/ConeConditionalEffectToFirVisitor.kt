@@ -85,18 +85,23 @@ fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, 
     return condition.accept(ConeConditionalEffectToFirVisitor, argumentMapping)
 }
 
-fun createArgumentsMapping(functionCall: FirFunctionCall): Map<Int, FirExpression>? {
-    val function = functionCall.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return null
+fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExpression>? {
     val argumentsMapping = mutableMapOf<Int, FirExpression>()
-    functionCall.extensionReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
-        ?: functionCall.dispatchReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
-
-
-    val nameToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter.name to index }.toMap()
-    functionCall.arguments.forEachIndexed { index, argument ->
-        when (argument) {
-            is FirNamedArgumentExpression -> argumentsMapping[nameToIndex[argument.name]!!] = argument
-            else -> argumentsMapping[index] = argument
+    qualifiedAccess.extensionReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
+        ?: qualifiedAccess.dispatchReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
+    when (qualifiedAccess) {
+        is FirFunctionCall -> {
+            val function = qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return null
+            val nameToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter.name to index }.toMap()
+            qualifiedAccess.arguments.forEachIndexed { index, argument ->
+                when (argument) {
+                    is FirNamedArgumentExpression -> argumentsMapping[nameToIndex[argument.name]!!] = argument
+                    else -> argumentsMapping[index] = argument
+                }
+            }
+        }
+        is FirVariableAssignment -> {
+            argumentsMapping[0] = qualifiedAccess.rValue
         }
     }
     return argumentsMapping

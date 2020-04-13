@@ -24,12 +24,12 @@ FILE: propertyAccessors.kt
     public final fun test_1(a: R|A?|): R|kotlin/Unit| {
         when () {
             R|<local>/a|.R|/isNotNull| ->  {
-                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/a|.R|/A.foo|()
             }
         }
 
     }
     public final fun test_2(a: R|A?|): R|kotlin/Unit| {
         R|<local>/a|.R|/isNotNull| = Boolean(true)
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.R|/A.foo|()
     }

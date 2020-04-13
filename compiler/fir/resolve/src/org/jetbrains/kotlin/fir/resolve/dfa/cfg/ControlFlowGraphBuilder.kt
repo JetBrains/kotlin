@@ -607,12 +607,12 @@ class ControlFlowGraphBuilder {
         return leftExitNode to rightExitNode
     }
 
-    fun enterContract(functionCall: FirFunctionCall): EnterContractNode {
-        return createEnterContractNode(functionCall).also { addNewSimpleNode(it) }
+    fun enterContract(qualifiedAccess: FirQualifiedAccess): EnterContractNode {
+        return createEnterContractNode(qualifiedAccess).also { addNewSimpleNode(it) }
     }
 
-    fun exitContract(functionCall: FirFunctionCall): ExitContractNode {
-        return createExitContractNode(functionCall).also { addNewSimpleNode(it) }
+    fun exitContract(qualifiedAccess: FirQualifiedAccess): ExitContractNode {
+        return createExitContractNode(qualifiedAccess).also { addNewSimpleNode(it) }
     }
 
     fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression): BinaryOrExitNode {

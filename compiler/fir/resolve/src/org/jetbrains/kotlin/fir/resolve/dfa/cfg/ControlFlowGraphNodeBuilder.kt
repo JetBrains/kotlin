@@ -132,10 +132,10 @@ fun ControlFlowGraphBuilder.createAnnotationEnterNode(fir: FirAnnotationCall): A
 fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
     VariableDeclarationNode(graph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createExitContractNode(fir: FirFunctionCall): ExitContractNode =
+fun ControlFlowGraphBuilder.createExitContractNode(fir: FirQualifiedAccess): ExitContractNode =
     ExitContractNode(graph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createEnterContractNode(fir: FirFunctionCall): EnterContractNode =
+fun ControlFlowGraphBuilder.createEnterContractNode(fir: FirQualifiedAccess): EnterContractNode =
     EnterContractNode(graph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirConstExpression<*>): ConstExpressionNode =

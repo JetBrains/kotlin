@@ -20,11 +20,11 @@ var Any?.isNotNull: Boolean
 
 fun test_1(a: A?) {
     if (a.isNotNull) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        a.foo()
     }
 }
 
 fun test_2(a: A?) {
     a.isNotNull = true
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.foo()
 }
