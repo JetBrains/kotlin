@@ -98,7 +98,7 @@ public class IndexedHashesSupport {
   public static byte @NotNull [] calculateHashForPhysicalVirtualFileNotCached(@NotNull VirtualFile virtualFile) {
     boolean binary = virtualFile.getFileType().isBinary();
 
-    byte[] contentHash = ((PersistentFSImpl)PersistentFS.getInstance()).getContentHashIfStored(virtualFile);
+    byte[] contentHash = PersistentFSImpl.getContentHashIfStored(virtualFile);
     if (contentHash == null) {
       contentHash = DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, virtualFile);
     }
