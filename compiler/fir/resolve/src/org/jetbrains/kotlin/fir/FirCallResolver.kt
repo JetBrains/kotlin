@@ -315,12 +315,12 @@ class FirCallResolver(
                 candidates += candidate
             }
         }
-        return callResolver.selectCandidateFromGivenCandidates(delegatedConstructorCall, className, candidates)
+        return callResolver.selectDelegatingConstructorCall(delegatedConstructorCall, className, candidates)
     }
 
-    private fun <T> selectCandidateFromGivenCandidates(
-        call: T, name: Name, candidates: Collection<Candidate>,
-    ): T where T : FirResolvable, T : FirCall {
+    private fun selectDelegatingConstructorCall(
+        call: FirDelegatedConstructorCall, name: Name, candidates: Collection<Candidate>,
+    ): FirDelegatedConstructorCall {
         val result = CandidateCollector(this, resolutionStageRunner)
         candidates.forEach { result.consumeCandidate(TowerGroup.Start, it) }
         val bestCandidates = result.bestCandidates()
@@ -337,7 +337,7 @@ class FirCallResolver(
             result.currentApplicability,
         )
 
-        return call.transformCalleeReference(StoreNameReference, nameReference) as T
+        return call.transformCalleeReference(StoreNameReference, nameReference)
     }
 
     private fun createCallableReferencesInfoForLHS(
