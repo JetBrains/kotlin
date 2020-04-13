@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -14,7 +15,7 @@ data class LambdaArgumentInflowBehaviour(val argumentIndex: Int) : KotlinSliceAn
     }
 
     override val slicePresentationPrefix: String
-        get() = TODO()
+        get() = KotlinBundle.message("slicer.text.tracking.lambda.argument")
 
     override val testPresentationPrefix: String
         get() = "[LAMBDA ARGUMENT IN] "

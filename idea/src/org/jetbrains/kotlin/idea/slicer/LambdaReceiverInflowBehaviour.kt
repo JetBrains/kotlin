@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -14,7 +15,7 @@ object LambdaReceiverInflowBehaviour : KotlinSliceAnalysisMode.Behaviour {
     }
 
     override val slicePresentationPrefix: String
-        get() = TODO()
+        get() = KotlinBundle.message("slicer.text.tracking.lambda.receiver")
 
     override val testPresentationPrefix: String
         get() = "[LAMBDA RECEIVER IN] "
