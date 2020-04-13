@@ -190,6 +190,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/inflow/ifExpression.kt");
         }
 
+        @TestMetadata("inlineExtensionImplicitReceiver.kt")
+        public void testInlineExtensionImplicitReceiver() throws Exception {
+            runTest("idea/testData/slicer/inflow/inlineExtensionImplicitReceiver.kt");
+        }
+
         @TestMetadata("inlineFunctionManyCalls.kt")
         public void testInlineFunctionManyCalls() throws Exception {
             runTest("idea/testData/slicer/inflow/inlineFunctionManyCalls.kt");

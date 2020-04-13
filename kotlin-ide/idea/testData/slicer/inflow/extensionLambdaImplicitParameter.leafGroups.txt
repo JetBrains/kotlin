@@ -1,18 +1,18 @@
-4 f("", <bold>1</bold>)
-15 	val v = <bold>it</bold>
-14 		[LAMBDA CALLS ARGUMENT #0 EXTENSION] foo <bold>{</bold>
-3 			[LAMBDA CALLS ARGUMENT #0 EXTENSION] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
-4 				f("", <bold>1</bold>)
+5 f("", <bold>1</bold>)
+16 	val v = <bold>it</bold>
+15 		[LAMBDA CALLS ARGUMENT #0 EXTENSION] foo <bold>{</bold>
+4 			[LAMBDA CALLS ARGUMENT #0 EXTENSION] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
+5 				f("", <bold>1</bold>)
 
-6 "".f(<bold>2</bold>)
-15 	val v = <bold>it</bold>
-14 		[LAMBDA CALLS ARGUMENT #0 EXTENSION] foo <bold>{</bold>
-3 			[LAMBDA CALLS ARGUMENT #0 EXTENSION] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
-6 				"".f(<bold>2</bold>)
+7 "".f(<bold>2</bold>)
+16 	val v = <bold>it</bold>
+15 		[LAMBDA CALLS ARGUMENT #0 EXTENSION] foo <bold>{</bold>
+4 			[LAMBDA CALLS ARGUMENT #0 EXTENSION] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
+7 				"".f(<bold>2</bold>)
 
-9 f(<bold>3</bold>)
-15 	val v = <bold>it</bold>
-14 		[LAMBDA CALLS ARGUMENT #0 EXTENSION] foo <bold>{</bold>
-3 			[LAMBDA CALLS ARGUMENT #0 EXTENSION] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
-9 				f(<bold>3</bold>)
+10 f(<bold>3</bold>)
+16 	val v = <bold>it</bold>
+15 		[LAMBDA CALLS ARGUMENT #0 EXTENSION] foo <bold>{</bold>
+4 			[LAMBDA CALLS ARGUMENT #0 EXTENSION] fun foo(<bold>f: String.(Int) -> Unit</bold>) {
+10 				f(<bold>3</bold>)
 

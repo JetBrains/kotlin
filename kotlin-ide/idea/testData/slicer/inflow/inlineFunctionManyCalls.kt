@@ -1,4 +1,5 @@
 // FLOW: IN
+// RUNTIME_WITH_SOURCES
 
 fun <caret>Any.extensionFun() {
 }
@@ -44,10 +45,6 @@ fun String.foo() {
 inline fun <T, R> with(receiver: T, block: T.() -> R): R {
     val result = receiver.block()
     return result
-}
-
-inline fun <T, R> T.let(block: (T) -> R): R {
-    return block(this)
 }
 
 fun <T, R> withNoInline(receiver: T, block: T.() -> R): R {

@@ -1,4 +1,5 @@
 // FLOW: IN
+// RUNTIME_WITH_SOURCES
 
 fun foo(f: String.(Int) -> Unit) {
     f("", 1)

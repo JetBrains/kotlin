@@ -9,6 +9,7 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.util.parentOfType
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.source.getPsi
 
 class OutflowSlicer(
     element: KtElement,
@@ -68,7 +68,7 @@ class OutflowSlicer(
                     declaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
                         ?.actualsForExpected()
                         ?.forEach {
-                            val actualDeclaration = (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
+                            val actualDeclaration = (it as? DeclarationDescriptorWithSource)?.toPsi()
                             (actualDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
                         }
                 }
@@ -112,6 +112,8 @@ class OutflowSlicer(
             }
         }
 
+        var searchScope = analysisScope
+
         if (variable is KtParameter) {
             if (!canProcessParameter(variable)) return //TODO
 
@@ -122,7 +124,7 @@ class OutflowSlicer(
                     variable.resolveToDescriptorIfAny(BodyResolveMode.FULL)
                         ?.actualsForExpected()
                         ?.forEach {
-                            (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor()
+                            (it as? DeclarationDescriptorWithSource)?.toPsi()?.passToProcessor()
                         }
                 }
 
@@ -148,10 +150,14 @@ class OutflowSlicer(
                     }
                     true
                 }
+
+                if (callable is KtNamedFunction) { // references to parameters of inline function can be outside analysis scope
+                    searchScope = LocalSearchScope(callable)
+                }
             }
         }
 
-        processVariableAccesses(variable, analysisScope, accessKind, ::processVariableAccess)
+        processVariableAccesses(variable, searchScope, accessKind, ::processVariableAccess)
     }
 
     private fun processFunction(function: KtFunction) {
@@ -167,7 +173,7 @@ class OutflowSlicer(
             when (instruction) {
                 is WriteValueInstruction -> {
                     if (!pseudoValue.processIfReceiverValue(instruction, mode)) {
-                        instruction.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
+                        instruction.target.accessedDescriptor?.toPsi()?.passToProcessor()
                     }
                 }
 
@@ -178,7 +184,7 @@ class OutflowSlicer(
                 is CallInstruction -> {
                     if (!pseudoValue.processIfReceiverValue(instruction, mode)) {
                         val parameterDescriptor = instruction.arguments[pseudoValue] ?: return@processPseudocodeUsages
-                        val parameter = parameterDescriptor.originalSource.getPsi()
+                        val parameter = parameterDescriptor.toPsi()
                         if (parameter != null) {
                             parameter.passToProcessorInCallMode(instruction.element)
                         } else {
@@ -225,7 +231,7 @@ class OutflowSlicer(
             val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, receiverExpression]
             if (targetDescriptor is CallableDescriptor) {
                 receiverType = targetDescriptor.returnType
-                receiver = targetDescriptor.originalSource.getPsi() ?: return
+                receiver = targetDescriptor.toPsi() ?: return
             }
         }
         if (receiverType == null || !receiverType.isFunctionType) return
