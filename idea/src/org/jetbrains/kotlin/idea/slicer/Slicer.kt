@@ -298,14 +298,11 @@ abstract class Slicer(
                     val dispatchReceiverPseudoValue = instruction.receiverValues.entries
                         .singleOrNull { it.value == dispatchReceiver }?.key
                         ?: return true
-                    when (val createdAt = dispatchReceiverPseudoValue.createdAt) {
-                        is ReadValueInstruction -> {
-                            val accessedDescriptor = createdAt.target.accessedDescriptor
-                            if (accessedDescriptor is ValueParameterDescriptor) {
-                                val accessedDeclaration = accessedDescriptor.originalSource.getPsi()
-                                accessedDeclaration?.passToProcessor(mode.withBehaviour(LambdaReceiverInflowBehaviour))
-                            }
-                        }
+                    val createdAt = dispatchReceiverPseudoValue.createdAt
+                    val accessedDescriptor = (createdAt as ReadValueInstruction?)?.target?.accessedDescriptor
+                    if (accessedDescriptor is VariableDescriptor) {
+                        val accessedDeclaration = accessedDescriptor.originalSource.getPsi()
+                        accessedDeclaration?.passToProcessor(mode.withBehaviour(LambdaReceiverInflowBehaviour))
                     }
                 }
             }

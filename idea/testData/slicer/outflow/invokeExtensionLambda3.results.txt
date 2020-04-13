@@ -1,0 +1,18 @@
+3 fun String.foo(<bold>p: String</bold>) {
+4 	val v = bar(<bold>p</bold>) { this }
+7 		fun <T, R> bar(<bold>receiver: T</bold>, block: T.() -> R): R {
+9 			return <bold>receiver</bold>.b()
+8 				[LAMBDA RECEIVER IN] val <bold>b = block</bold>
+8 					[LAMBDA RECEIVER IN] val b = <bold>block</bold>
+7 						[LAMBDA RECEIVER IN] fun <T, R> bar(receiver: T, <bold>block: T.() -> R</bold>): R {
+4 							[LAMBDA RECEIVER IN] val v = bar(p) <bold>{ this }</bold>
+4 								val v = bar(p) { <bold>this</bold> }
+4 									val v = bar(p) <bold>{ this }</bold>
+4 										[LAMBDA CALLS] val v = bar(p) <bold>{ this }</bold>
+7 											[LAMBDA CALLS] fun <T, R> bar(receiver: T, <bold>block: T.() -> R</bold>): R {
+8 												[LAMBDA CALLS] val b = <bold>block</bold>
+8 													[LAMBDA CALLS] val <bold>b = block</bold>
+9 														return receiver.<bold>b()</bold>
+7 															fun <T, R> <bold>bar(receiver: T, block: T.() -> R): R {</bold>
+4 																val v = <bold>bar(p) { this }</bold>
+4 																	val <bold>v = bar(p) { this }</bold>
