@@ -260,10 +260,9 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         return argumentMapping?.map { (argument, valueParameter) ->
-                val expectedType = valueParameter.returnTypeRef.substitute(this)
-                argument.unwrapArgument() to expectedType
-            }
-            ?.toMap()?.toExpectedType()
+            val expectedType = valueParameter.returnTypeRef.substitute(this)
+            argument.unwrapArgument() to expectedType
+        }?.toMap()?.toExpectedType()
     }
 
     override fun transformDelegatedConstructorCall(
@@ -272,8 +271,12 @@ class FirCallCompletionResultsWriterTransformer(
     ): CompositeTransformResult<FirStatement> {
         val calleeReference =
             delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
+        val subCandidate = calleeReference.candidate
 
         delegatedConstructorCall.argumentList.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
+        subCandidate.argumentMapping?.let {
+            delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
+        }
         return delegatedConstructorCall.transformCalleeReference(
             StoreCalleeReference,
             buildResolvedNamedReference {
