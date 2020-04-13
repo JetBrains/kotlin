@@ -1,6 +1,6 @@
 12 fun <bold>C</bold>.extensionFun() {}
 7 	[LAMBDA CALLS RECEIVER] val c = C().apply <bold>{</bold>
-79 		(INLINE CALL apply) [LAMBDA CALLS RECEIVER] public inline fun <T> T.apply(<bold>block: T.() -> Unit</bold>): T {
-79 			(INLINE CALL apply) public inline fun <T> <bold>T</bold>.apply(block: T.() -> Unit): T {
+LIB 		(INLINE CALL apply) [LAMBDA CALLS RECEIVER] public inline fun <T> T.apply(<bold>block: T.() -> Unit</bold>): T {
+LIB 			(INLINE CALL apply) public inline fun <T> <bold>T</bold>.apply(block: T.() -> Unit): T {
 7 				val c = <bold>C()</bold>.apply {
 4 					class <bold>C</bold>

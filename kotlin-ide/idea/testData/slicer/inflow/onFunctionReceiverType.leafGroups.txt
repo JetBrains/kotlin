@@ -18,8 +18,8 @@
 18 with(<bold>123</bold>) {
 8 	fun <bold>Any</bold>.extensionFun() {
 18 		[LAMBDA CALLS RECEIVER] with(123) <bold>{</bold>
-66 			(INLINE CALL with) [LAMBDA CALLS RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-70 				(INLINE CALL with) return <bold>receiver</bold>.block()
-66 					(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+LIB 			(INLINE CALL with) [LAMBDA CALLS RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+LIB 				(INLINE CALL with) return <bold>receiver</bold>.block()
+LIB 					(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
 18 						with(<bold>123</bold>) {
 
