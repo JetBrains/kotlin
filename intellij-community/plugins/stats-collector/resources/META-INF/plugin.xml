@@ -106,6 +106,7 @@
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ngram.NGramFeatureProvider"/>
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.ContextSimilarityFeatures"/>
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.RecentPlacesFeatures"/>
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.codeInsight.completion.ml.VcsFeatureProvider"/>
   </extensions>
 
   <projectListeners>
