@@ -10,8 +10,12 @@ package org.jetbrains.kotlin.gradle.scripting.internal
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.transform.ArtifactTransform
+import org.gradle.api.artifacts.transform.InputArtifact
+import org.gradle.api.artifacts.transform.TransformAction
+import org.gradle.api.artifacts.transform.TransformOutputs
+import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -25,7 +29,6 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -149,46 +152,45 @@ private fun configureDiscoveryTransformation(
     }
 }
 
-internal class DiscoverScriptExtensionsTransform : ArtifactTransform() {
+internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
+    @InputArtifact
+    abstract fun getInputArtifact(): Provider<FileSystemLocation>
 
-    override fun transform(input: File): List<File> {
+    override fun transform(outputs: TransformOutputs) {
+        val input = getInputArtifact().get().asFile
+
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
                 listOf(input),
                 defaultJvmScriptingHostConfiguration,
                 PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false).reporter
             ).definitions
+
         val extensions = definitions.mapTo(arrayListOf()) { it.fileExtension }
-        return if (extensions.isNotEmpty()) {
-            val outputFile = outputDirectory.resolve("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
+
+        if (extensions.isNotEmpty()) {
+            val outputFile = outputs.file("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
             outputFile.writeText(extensions.joinToString("\n"))
             listOf(outputFile)
-        } else emptyList()
+        }
     }
 }
 
-private
-fun Project.registerDiscoverScriptExtensionsTransform() {
+private fun Project.registerDiscoverScriptExtensionsTransform() {
     dependencies.apply {
-        registerTransform {
-            with(it) {
-                from.attribute(artifactType, "jar")
-                to.attribute(artifactType, scriptFilesExtensions)
-                artifactTransform(DiscoverScriptExtensionsTransform::class.java)
-            }
+        registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
+            transformSpec.from.attribute(artifactType, "jar")
+            transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+
         }
-        registerTransform {
-            with(it) {
-                from.attribute(artifactType, "classes")
-                to.attribute(artifactType, scriptFilesExtensions)
-                artifactTransform(DiscoverScriptExtensionsTransform::class.java)
-            }
+        registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
+            transformSpec.from.attribute(artifactType, "classes")
+            transformSpec.to.attribute(artifactType, scriptFilesExtensions)
         }
     }
 }
 
-private
-fun <T> Project.withRegisteredDiscoverScriptExtensionsTransform(block: () -> T): T {
+private fun <T> Project.withRegisteredDiscoverScriptExtensionsTransform(block: () -> T): T {
     if (!project.extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
         registerDiscoverScriptExtensionsTransform()
         project.extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
@@ -200,8 +202,7 @@ private val artifactType = Attribute.of("artifactType", String::class.java)
 
 private val scriptFilesExtensions = "script-files-extensions"
 
-private
-fun Configuration.discoverScriptExtensionsFiles() =
+private fun Configuration.discoverScriptExtensionsFiles() =
     incoming.artifactView {
         attributes {
             it.attribute(artifactType, scriptFilesExtensions)

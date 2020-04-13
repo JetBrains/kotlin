@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
-import org.gradle.api.artifacts.transform.ArtifactTransform
+import org.gradle.api.artifacts.transform.InputArtifact
+import org.gradle.api.artifacts.transform.TransformAction
+import org.gradle.api.artifacts.transform.TransformOutputs
+import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.provider.Provider
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
@@ -15,19 +20,23 @@ import java.util.zip.ZipFile
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
 private const val MODULE_INFO = "module-info.class"
 
-class StructureArtifactTransform : ArtifactTransform() {
-    override fun transform(input: File): MutableList<File> {
+abstract class StructureTransformAction : TransformAction<TransformParameters.None> {
+    @get:InputArtifact
+    abstract val inputArtifact: File
+
+    override fun transform(outputs: TransformOutputs) {
         try {
+            val input = inputArtifact
+
             val data = if (input.isDirectory) {
                 visitDirectory(input)
             } else {
                 visitJar(input)
             }
 
-            val dataFile = outputDirectory.resolve("output.bin")
+            val dataFile = outputs.file("output.bin")
             data.saveTo(dataFile)
 
-            return mutableListOf(dataFile)
         } catch (e: Throwable) {
             throw e
         }
