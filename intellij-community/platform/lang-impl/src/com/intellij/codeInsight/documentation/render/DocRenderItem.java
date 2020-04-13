@@ -214,7 +214,7 @@ public class DocRenderItem {
       List<DocRenderItem> itemsToUpdateInlays = new ArrayList<>();
       boolean updated = false;
       for (DocRenderItem item : items) {
-        if ((item.inlay == null) == globalSetting) {
+        if (item.isValid() && (item.inlay == null) == globalSetting) {
           updated |= item.toggle(foldingTasks);
           itemsToUpdateInlays.add(item);
         }
