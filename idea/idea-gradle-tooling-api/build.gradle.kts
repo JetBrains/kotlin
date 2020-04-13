@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
+jvmTarget = "1.6"
 
 // BUNCH 193: this module is no longer needed since IDEA 2020.1
 Platform[193].orLower {

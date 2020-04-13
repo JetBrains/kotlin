@@ -19,6 +19,7 @@ dependencies {
     compileOnly(intellijDep())
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
+    compileOnly(project(":idea:kotlin-gradle-tooling"))
 
     testRuntime(project(":kotlin-reflect"))
 

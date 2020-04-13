@@ -23,6 +23,7 @@ dependencies {
     }
     compileOnly(intellijDep()) { includeJars("platform-api", "extensions", "util") }
     compileOnly(intellijDep("gradle"))
+    compileOnly(project(":idea:kotlin-gradle-tooling"))
 }
 
 sourceSets {
