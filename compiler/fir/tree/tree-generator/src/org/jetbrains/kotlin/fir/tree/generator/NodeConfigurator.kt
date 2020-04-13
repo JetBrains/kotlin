@@ -229,7 +229,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirClassSymbol", "F")
             +classKind
             +superTypeRefs(withReplace = true)
-            +declarations
+            +declarations.withTransform()
             +annotations
             +scopeProvider
         }
@@ -238,7 +238,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(klass, "F", regularClass)
             +name
             +symbol("FirRegularClassSymbol")
-            +field("companionObject", regularClass, nullable = true)
+            +field("companionObject", regularClass, nullable = true).withTransform()
             +booleanField("hasLazyNestedClassifiers")
             +superTypeRefs(withReplace = true)
             +controlFlowGraphReferenceField

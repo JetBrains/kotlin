@@ -79,6 +79,16 @@ internal class FirClassImpl(
         return this
     }
 
+    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClassImpl {
+        declarations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirClassImpl {
+        companionObject = companionObject?.transformSingle(transformer, data)
+        return this
+    }
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirClassImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this

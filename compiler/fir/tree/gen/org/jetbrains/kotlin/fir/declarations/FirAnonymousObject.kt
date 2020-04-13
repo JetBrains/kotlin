@@ -37,6 +37,8 @@ abstract class FirAnonymousObject : FirClass<FirAnonymousObject>, FirExpression(
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
 
+    abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObject
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 
     abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousObject
