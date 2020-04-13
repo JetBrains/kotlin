@@ -107,7 +107,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     equalsDescriptor.bind(this)
                     dispatchReceiverParameter = generateDispatchReceiverParameter(this, equalsDispatchReceiverDescriptor)
                     val irFunction = this
-                    valueParameters +=
+                    valueParameters = listOf(
                         components.symbolTable.declareValueParameter(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
@@ -131,6 +131,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                             parent = irFunction
                             equalsValueParameterDescriptor.bind(this)
                         }
+                    )
                 }
             irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
 
