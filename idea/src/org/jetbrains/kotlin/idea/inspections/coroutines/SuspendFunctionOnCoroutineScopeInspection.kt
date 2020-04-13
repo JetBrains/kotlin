@@ -181,6 +181,7 @@ class SuspendFunctionOnCoroutineScopeInspection : AbstractKotlinInspection() {
                         val bodyText = buildString {
                             for (statement in blockExpression.statements) {
                                 append(statement.text)
+                                append("\n")
                             }
                         }
                         blockExpression.replaced(
