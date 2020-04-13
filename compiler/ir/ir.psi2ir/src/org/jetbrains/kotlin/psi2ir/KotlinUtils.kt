@@ -65,12 +65,6 @@ fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: Bindin
     }
 }
 
-inline fun ClassDescriptor.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
-    unsubstitutedMemberScope.findFirstFunction(name, predicate)
-
-inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
-    getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
-
 fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
     getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
 

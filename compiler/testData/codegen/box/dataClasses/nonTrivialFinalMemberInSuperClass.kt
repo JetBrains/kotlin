@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 abstract class Base {
     final override fun toString() = "OK"
     final override fun hashCode() = 42

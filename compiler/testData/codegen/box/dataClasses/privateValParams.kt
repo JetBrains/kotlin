@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 data class D(private val x: Long, private val y: Char) {
     fun foo() = "${component1()}${component2()}"
 }
