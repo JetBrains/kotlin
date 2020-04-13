@@ -13,16 +13,13 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
@@ -78,124 +75,86 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             // TODO: consolidate componentN() and copy(...) too?
 
             // TODO: generate equals, hashCode, and toString only if needed
-            val equalsDescriptor = WrappedSimpleFunctionDescriptor()
-            val equalsDispatchReceiverDescriptor = WrappedValueParameterDescriptor()
-            val equalsValueParameterDescriptor = WrappedValueParameterDescriptor()
-            val equalsFunction =
-                components.symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, equalsDescriptor) { symbol ->
-                    IrFunctionImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        origin,
-                        symbol,
-                        Name.identifier("equals"),
-                        Visibilities.PUBLIC,
-                        Modality.OPEN,
-                        components.irBuiltIns.booleanType,
-                        isInline = false,
-                        isExternal = false,
-                        isTailrec = false,
-                        isSuspend = false,
-                        isExpect = false,
-                        isFakeOverride = false,
-                        isOperator = false
-                    ).apply {
-                        metadata = MetadataSource.Function(descriptor)
-                    }
-                }.apply {
-                    parent = irClass
-                    equalsDescriptor.bind(this)
-                    dispatchReceiverParameter = generateDispatchReceiverParameter(this, equalsDispatchReceiverDescriptor)
-                    val irFunction = this
-                    valueParameters = listOf(
-                        components.symbolTable.declareValueParameter(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            origin,
-                            equalsValueParameterDescriptor,
-                            components.irBuiltIns.anyNType
-                        ) { symbol ->
-                            IrValueParameterImpl(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                origin,
-                                symbol,
-                                Name.identifier("other"),
-                                0,
-                                components.irBuiltIns.anyNType,
-                                null,
-                                isCrossinline = false,
-                                isNoinline = false
-                            )
-                        }.apply {
-                            parent = irFunction
-                            equalsValueParameterDescriptor.bind(this)
-                        }
-                    )
-                }
+            val equalsFunction = createSyntheticIrFunction(
+                Name.identifier("equals"),
+                components.irBuiltIns.booleanType,
+            ).apply {
+                valueParameters = listOf(
+                    createSyntheticIrParameter(this, Name.identifier("other"), components.irBuiltIns.anyNType)
+                )
+            }
             irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
 
-            val hashCodeDescriptor = WrappedSimpleFunctionDescriptor()
-            val hashCodeDispatchReceiverDescriptor = WrappedValueParameterDescriptor()
-            val hashCodeFunction =
-                components.symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, hashCodeDescriptor) { symbol ->
-                    IrFunctionImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        origin,
-                        symbol,
-                        Name.identifier("hashCode"),
-                        Visibilities.PUBLIC,
-                        Modality.OPEN,
-                        components.irBuiltIns.intType,
-                        isInline = false,
-                        isExternal = false,
-                        isTailrec = false,
-                        isSuspend = false,
-                        isExpect = false,
-                        isFakeOverride = false,
-                        isOperator = false
-                    ).apply {
-                        metadata = MetadataSource.Function(descriptor)
-                    }
-                }.apply {
-                    parent = irClass
-                    hashCodeDescriptor.bind(this)
-                    dispatchReceiverParameter = generateDispatchReceiverParameter(this, hashCodeDispatchReceiverDescriptor)
-                }
+            val hashCodeFunction = createSyntheticIrFunction(
+                Name.identifier("hashCode"),
+                components.irBuiltIns.intType,
+            )
             irDataClassMembersGenerator.generateHashCodeMethod(hashCodeFunction, properties)
 
-            val toStringDescriptor = WrappedSimpleFunctionDescriptor()
-            val toStringDispatchReceiverDescriptor = WrappedValueParameterDescriptor()
-            val toStringFunction =
-                components.symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, toStringDescriptor) { symbol ->
-                    IrFunctionImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        origin,
-                        symbol,
-                        Name.identifier("toString"),
-                        Visibilities.PUBLIC,
-                        Modality.OPEN,
-                        components.irBuiltIns.stringType,
-                        isInline = false,
-                        isExternal = false,
-                        isTailrec = false,
-                        isSuspend = false,
-                        isExpect = false,
-                        isFakeOverride = false,
-                        isOperator = false
-                    ).apply {
-                        metadata = MetadataSource.Function(descriptor)
-                    }
-                }.apply {
-                    parent = irClass
-                    toStringDescriptor.bind(this)
-                    dispatchReceiverParameter = generateDispatchReceiverParameter(this, toStringDispatchReceiverDescriptor)
-                }
+            val toStringFunction = createSyntheticIrFunction(
+                Name.identifier("toString"),
+                components.irBuiltIns.stringType,
+            )
             irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
 
             return listOf(equalsFunction.name, hashCodeFunction.name, toStringFunction.name)
+        }
+
+        private fun createSyntheticIrFunction(name: Name, returnType: IrType): IrFunction {
+            val functionDescriptor = WrappedSimpleFunctionDescriptor()
+            val thisReceiverDescriptor = WrappedValueParameterDescriptor()
+            return components.symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, functionDescriptor) { symbol ->
+                IrFunctionImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    origin,
+                    symbol,
+                    name,
+                    Visibilities.PUBLIC,
+                    Modality.OPEN,
+                    returnType,
+                    isInline = false,
+                    isExternal = false,
+                    isTailrec = false,
+                    isSuspend = false,
+                    isExpect = false,
+                    isFakeOverride = false,
+                    isOperator = false
+                ).apply {
+                    metadata = MetadataSource.Function(functionDescriptor)
+                }
+            }.apply {
+                parent = irClass
+                functionDescriptor.bind(this)
+                dispatchReceiverParameter = generateDispatchReceiverParameter(this, thisReceiverDescriptor)
+            }
+        }
+
+        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType): IrValueParameter {
+            val descriptor = WrappedValueParameterDescriptor()
+            return components.symbolTable.declareValueParameter(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                origin,
+                descriptor,
+                type
+            ) { symbol ->
+                IrValueParameterImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    origin,
+                    symbol,
+                    name,
+                    0,
+                    type,
+                    null,
+                    isCrossinline = false,
+                    isNoinline = false
+                )
+            }.apply {
+                parent = irFunction
+                descriptor.bind(this)
+            }
         }
     }
 }
