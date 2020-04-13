@@ -2,10 +2,10 @@
 4 	val v = bar(<bold>p</bold>) { this }
 7 		fun <T, R> bar(<bold>receiver: T</bold>, block: T.() -> R): R {
 9 			return <bold>receiver</bold>.b()
-8 				[LAMBDA RECEIVER IN] val <bold>b = block</bold>
-8 					[LAMBDA RECEIVER IN] val b = <bold>block</bold>
-7 						[LAMBDA RECEIVER IN] fun <T, R> bar(receiver: T, <bold>block: T.() -> R</bold>): R {
-4 							[LAMBDA RECEIVER IN] val v = bar(p) <bold>{ this }</bold>
+8 				[LAMBDA RECEIVER] val <bold>b = block</bold>
+8 					[LAMBDA RECEIVER] val b = <bold>block</bold>
+7 						[LAMBDA RECEIVER] fun <T, R> bar(receiver: T, <bold>block: T.() -> R</bold>): R {
+4 							[LAMBDA RECEIVER] val v = bar(p) <bold>{ this }</bold>
 4 								val v = bar(p) { <bold>this</bold> }
 4 									val v = bar(p) <bold>{ this }</bold>
 4 										[LAMBDA CALLS] val v = bar(p) <bold>{ this }</bold>

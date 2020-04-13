@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 interface SliceProducer {
     fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>?
 
+    val testPresentation: String?
+
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 
@@ -19,6 +21,9 @@ interface SliceProducer {
         override fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>? {
             return null
         }
+
+        override val testPresentation: String?
+            get() = null
 
         override fun equals(other: Any?) = other === this
         override fun hashCode() = 0

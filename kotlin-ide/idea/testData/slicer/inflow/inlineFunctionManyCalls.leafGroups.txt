@@ -1,8 +1,8 @@
 35 <bold>"D"</bold>.letNoInline {
 3 	fun <bold>Any</bold>.extensionFun() {
 36 		<bold>it</bold>.extensionFun()
-35 			[LAMBDA CALLS] "D".letNoInline <bold>{</bold>
-58 				[LAMBDA CALLS] fun <T, R> T.letNoInline(<bold>block: (T) -> R</bold>): R {
+35 			[LAMBDA CALLS ARGUMENT #0] "D".letNoInline <bold>{</bold>
+58 				[LAMBDA CALLS ARGUMENT #0] fun <T, R> T.letNoInline(<bold>block: (T) -> R</bold>): R {
 59 					return block(<bold>this</bold>)
 58 						fun <T, R> <bold>T</bold>.letNoInline(block: (T) -> R): R {
 35 							<bold>"D"</bold>.letNoInline {
@@ -10,8 +10,8 @@
 39 <bold>"C"</bold>.letNoInline {
 3 	fun <bold>Any</bold>.extensionFun() {
 36 		<bold>it</bold>.extensionFun()
-35 			[LAMBDA CALLS] "D".letNoInline <bold>{</bold>
-58 				[LAMBDA CALLS] fun <T, R> T.letNoInline(<bold>block: (T) -> R</bold>): R {
+35 			[LAMBDA CALLS ARGUMENT #0] "D".letNoInline <bold>{</bold>
+58 				[LAMBDA CALLS ARGUMENT #0] fun <T, R> T.letNoInline(<bold>block: (T) -> R</bold>): R {
 59 					return block(<bold>this</bold>)
 58 						fun <T, R> <bold>T</bold>.letNoInline(block: (T) -> R): R {
 39 							<bold>"C"</bold>.letNoInline {
@@ -19,32 +19,32 @@
 27 <bold>"A"</bold>.let {
 3 	fun <bold>Any</bold>.extensionFun() {
 28 		<bold>it</bold>.extensionFun()
-27 			[LAMBDA CALLS] "A".let <bold>{</bold>
-49 				(INLINE CALL let) [LAMBDA CALLS] inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
+27 			[LAMBDA CALLS ARGUMENT #0] "A".let <bold>{</bold>
+49 				(INLINE CALL let) [LAMBDA CALLS ARGUMENT #0] inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
 50 					(INLINE CALL let) return block(<bold>this</bold>)
 49 						(INLINE CALL let) inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
 27 							<bold>"A"</bold>.let {
 
 19 withNoInline(<bold>1</bold>) {
 3 	fun <bold>Any</bold>.extensionFun() {
-19 		[LAMBDA CALLS] withNoInline(1) <bold>{</bold>
-53 			[LAMBDA CALLS] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
+19 		[LAMBDA CALLS RECEIVER] withNoInline(1) <bold>{</bold>
+53 			[LAMBDA CALLS RECEIVER] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
 54 				val result = <bold>receiver</bold>.block()
 53 					fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
 19 						withNoInline(<bold>1</bold>) {
 
 7 with(<bold>123</bold>) {
 3 	fun <bold>Any</bold>.extensionFun() {
-7 		[LAMBDA CALLS] with(123) <bold>{</bold>
-44 			(INLINE CALL with) [LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+7 		[LAMBDA CALLS RECEIVER] with(123) <bold>{</bold>
+44 			(INLINE CALL with) [LAMBDA CALLS RECEIVER] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
 45 				(INLINE CALL with) val result = <bold>receiver</bold>.block()
 44 					(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
 7 						with(<bold>123</bold>) {
 
 23 withNoInline(<bold>2</bold>) {
 3 	fun <bold>Any</bold>.extensionFun() {
-19 		[LAMBDA CALLS] withNoInline(1) <bold>{</bold>
-53 			[LAMBDA CALLS] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
+19 		[LAMBDA CALLS RECEIVER] withNoInline(1) <bold>{</bold>
+53 			[LAMBDA CALLS RECEIVER] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
 54 				val result = <bold>receiver</bold>.block()
 53 					fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
 23 						withNoInline(<bold>2</bold>) {
@@ -52,8 +52,8 @@
 11 with(<bold>456</bold>) {
 3 	fun <bold>Any</bold>.extensionFun() {
 12 		<bold>this</bold>.extensionFun()
-11 			[LAMBDA CALLS] with(456) <bold>{</bold>
-44 				(INLINE CALL with) [LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+11 			[LAMBDA CALLS RECEIVER] with(456) <bold>{</bold>
+44 				(INLINE CALL with) [LAMBDA CALLS RECEIVER] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
 45 					(INLINE CALL with) val result = <bold>receiver</bold>.block()
 44 						(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
 11 							with(<bold>456</bold>) {

@@ -18,7 +18,7 @@ object LambdaReceiverInflowBehaviour : KotlinSliceAnalysisMode.Behaviour {
         get() = KotlinBundle.message("slicer.text.tracking.lambda.receiver")
 
     override val testPresentationPrefix: String
-        get() = "[LAMBDA RECEIVER IN] "
+        get() = "[LAMBDA RECEIVER] "
 
     override fun equals(other: Any?) = other === this
     override fun hashCode() = 0

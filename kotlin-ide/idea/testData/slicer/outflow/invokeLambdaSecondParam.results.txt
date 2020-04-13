@@ -2,8 +2,8 @@
 4 	val v = f({ p1, p2 -> p2 }, <bold>p</bold>)
 7 		fun f(lambda: (String, String) -> String, <bold>receiver: String</bold>): String {
 8 			return lambda("a", <bold>receiver</bold>)
-7 				[LAMBDA ARGUMENT IN] fun f(<bold>lambda: (String, String) -> String</bold>, receiver: String): String {
-4 					[LAMBDA ARGUMENT IN] val v = f(<bold>{ p1, p2 -> p2 }</bold>, p)
+7 				[LAMBDA PARAMETER #1] fun f(<bold>lambda: (String, String) -> String</bold>, receiver: String): String {
+4 					[LAMBDA PARAMETER #1] val v = f(<bold>{ p1, p2 -> p2 }</bold>, p)
 4 						val v = f({ p1, <bold>p2</bold> -> p2 }, p)
 4 							val v = f({ p1, p2 -> <bold>p2</bold> }, p)
 4 								val v = f(<bold>{ p1, p2 -> p2 }</bold>, p)

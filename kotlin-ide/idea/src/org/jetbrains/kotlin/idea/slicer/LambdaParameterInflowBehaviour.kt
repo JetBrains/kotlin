@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtElement
 
-data class LambdaArgumentInflowBehaviour(val argumentIndex: Int) : KotlinSliceAnalysisMode.Behaviour {
+data class LambdaParameterInflowBehaviour(val parameterIndex: Int) : KotlinSliceAnalysisMode.Behaviour {
     override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor) {
         InflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
     }
@@ -18,5 +18,5 @@ data class LambdaArgumentInflowBehaviour(val argumentIndex: Int) : KotlinSliceAn
         get() = KotlinBundle.message("slicer.text.tracking.lambda.argument")
 
     override val testPresentationPrefix: String
-        get() = "[LAMBDA ARGUMENT IN] "
+        get() = "[LAMBDA PARAMETER #$parameterIndex] "
 }

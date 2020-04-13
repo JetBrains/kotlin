@@ -227,9 +227,9 @@ class OutflowSlicer(
         if (receiverType == null || !receiverType.isFunctionType) return
         val isExtension = receiverType.isExtensionFunctionType
         val shift = if (isExtension) 1 else 0
-        val argumentIndex = parameterDescriptor.index - shift
-        val newMode = if (argumentIndex >= 0)
-            mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
+        val parameterIndex = parameterDescriptor.index - shift
+        val newMode = if (parameterIndex >= 0)
+            mode.withBehaviour(LambdaParameterInflowBehaviour(parameterIndex))
         else
             mode.withBehaviour(LambdaReceiverInflowBehaviour)
         receiver.passToProcessor(newMode)

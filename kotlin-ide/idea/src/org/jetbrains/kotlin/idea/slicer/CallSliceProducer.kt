@@ -49,6 +49,9 @@ object CallSliceProducer : SliceProducer {
         }
     }
 
+    override val testPresentation: String?
+        get() = null
+
     override fun equals(other: Any?) = other === this
     override fun hashCode() = 0
 
