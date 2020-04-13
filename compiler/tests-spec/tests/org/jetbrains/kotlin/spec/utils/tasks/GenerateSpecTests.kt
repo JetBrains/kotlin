@@ -31,7 +31,7 @@ fun detectDirsWithTestsMapFileOnly(dirName: String): List<String> {
         }
     }
 
-    return excludedDirs
+    return excludedDirs.sorted()
 }
 
 fun generateTests() {
