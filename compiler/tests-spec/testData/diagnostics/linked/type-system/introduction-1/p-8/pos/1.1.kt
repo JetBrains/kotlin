@@ -7,7 +7,7 @@
  *
  * SPEC VERSION: 0.1-296
  * PLACE: type-system, introduction-1 -> paragraph 8 -> sentence 1
- * RELEVANT PLACES: type-system, type-kinds, built-in-types, kotlin.Any -> paragraph 1 -> sentence 1
+ * RELEVANT PLACES: type-system, type-kinds, built-in-types, kotlin.any -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
  * HELPERS: checkType
