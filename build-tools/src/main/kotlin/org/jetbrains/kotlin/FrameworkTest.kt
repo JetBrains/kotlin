@@ -222,6 +222,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
                 ?: error("Can't find python3")
 
         runTest(executorService = localExecutorService(project), testExecutable = python3,
-                args = listOf(bitcodeBuildTool, "--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
+                args = listOf("-B", bitcodeBuildTool, "--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
 }
