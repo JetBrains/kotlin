@@ -19,27 +19,6 @@ package org.jetbrains.kotlin.samWithReceiver.ide
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.annotation.plugin.ide.*
 
-interface SamWithReceiverModel : AnnotationBasedPluginModel {
-    override fun dump(): DumpedPluginModel {
-        return DumpedPluginModelImpl(SamWithReceiverModelImpl::class.java, annotations.toList(), presets.toList())
-    }
-}
-
-class SamWithReceiverModelImpl(
-        override val annotations: List<String>,
-        override val presets: List<String>
-) : SamWithReceiverModel
-
-class SamWithReceiverModelBuilderService : AnnotationBasedPluginModelBuilderService<SamWithReceiverModel>() {
-    override val gradlePluginNames get() = listOf("org.jetbrains.kotlin.plugin.sam.with.receiver", "kotlin-sam-with-receiver")
-    override val extensionName get() = "samWithReceiver"
-    override val modelClass get() = SamWithReceiverModel::class.java
-
-    override fun createModel(annotations: List<String>, presets: List<String>, extension: Any?): SamWithReceiverModelImpl {
-        return SamWithReceiverModelImpl(annotations, presets)
-    }
-}
-
 class SamWithReceiverProjectResolverExtension : AnnotationBasedPluginProjectResolverExtension<SamWithReceiverModel>() {
     companion object {
         val KEY = Key<SamWithReceiverModel>("SamWithReceiverModel")
