@@ -227,10 +227,5 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
         initEvent.getData(PlatformDataKeys.CONTEXT_COMPONENT),
         initEvent.getData(CommonDataKeys.EDITOR));
     }
-
-    @Override
-    public @Nullable KeyboardShortcut getShortcut() {
-      return ActionManager.getInstance().getKeyboardShortcut("GotoAction");
-    }
   }
 }

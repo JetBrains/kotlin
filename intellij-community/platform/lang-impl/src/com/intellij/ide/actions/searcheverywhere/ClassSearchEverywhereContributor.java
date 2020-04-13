@@ -178,11 +178,6 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
       return new ClassSearchEverywhereContributor(initEvent);
     }
-
-    @Override
-    public @Nullable KeyboardShortcut getShortcut() {
-      return ActionManager.getInstance().getKeyboardShortcut("GotoClass");
-    }
   }
 
   @NotNull

@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -62,11 +61,6 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
       return new SymbolSearchEverywhereContributor(initEvent);
-    }
-
-    @Override
-    public @Nullable KeyboardShortcut getShortcut() {
-      return ActionManager.getInstance().getKeyboardShortcut("GotoSymbol");
     }
   }
 }

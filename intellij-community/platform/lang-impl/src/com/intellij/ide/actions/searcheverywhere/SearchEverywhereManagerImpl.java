@@ -1,7 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
+import com.intellij.codeWithMe.ClientId;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -21,7 +23,6 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.codeWithMe.ClientId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,8 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   public static final String ALL_CONTRIBUTORS_GROUP_ID = "SearchEverywhereContributor.All";
   private static final String LOCATION_SETTINGS_KEY = "search.everywhere.popup";
 
+  private final Map<String, String> myTabsShortcutsMap;
+
   private final Project myProject;
 
   private JBPopup myBalloon;
@@ -54,6 +57,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
   public SearchEverywhereManagerImpl(Project project) {
     myProject = project;
+    myTabsShortcutsMap = createShortcutsMap();
   }
 
   @Override
@@ -71,20 +75,14 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       new RunConfigurationsSEContributor(project, contextComponent, () -> mySearchEverywhereUI.getSearchField().getText())
     );
 
-    Map<String, String> shortcuts = new HashMap<>();
-    shortcuts.put(ALL_CONTRIBUTORS_GROUP_ID, "Double Shift");
     List<SearchEverywhereContributor<?>> contributors = new ArrayList<>(serviceContributors);
     for (SearchEverywhereContributorFactory<?> factory : SearchEverywhereContributor.EP_NAME.getExtensionList()) {
       SearchEverywhereContributor<?> contributor = factory.createContributor(initEvent);
       contributors.add(contributor);
-      KeyboardShortcut shortcut = factory.getShortcut();
-      if (shortcut != null){
-        shortcuts.put(contributor.getSearchProviderId(), KeymapUtil.getShortcutText(shortcut));
-      }
     }
     contributors.sort(Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
 
-    mySearchEverywhereUI = createView(myProject, contributors, shortcuts);
+    mySearchEverywhereUI = createView(myProject, contributors);
     mySearchEverywhereUI.switchToContributor(contributorID);
 
     myHistoryIterator = myHistoryList.getIterator(contributorID);
@@ -228,9 +226,8 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   }
 
   private SearchEverywhereUI createView(Project project,
-                                        List<? extends SearchEverywhereContributor<?>> contributors,
-                                        Map<String, String> shortcuts) {
-    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors, shortcuts::get);
+                                        List<? extends SearchEverywhereContributor<?>> contributors) {
+    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors, myTabsShortcutsMap::get);
 
     view.setSearchFinishedHandler(() -> {
       if (isShown()) {
@@ -326,6 +323,23 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     if (myHistoryIterator == null || !myHistoryIterator.getContributorID().equals(selectedContributorID)) {
       myHistoryIterator = myHistoryList.getIterator(selectedContributorID);
     }
+  }
+
+  private static Map<String, String> createShortcutsMap() {
+    Map<String, String> res = new HashMap<>();
+
+    res.put(ALL_CONTRIBUTORS_GROUP_ID, "Double Shift");
+    addShortcut(res, "ClassSearchEverywhereContributor", "GotoClass");
+    addShortcut(res, "FileSearchEverywhereContributor", "GotoFile");
+    addShortcut(res, "SymbolSearchEverywhereContributor", "GotoSymbol");
+    addShortcut(res, "ActionSearchEverywhereContributor", "GotoAction");
+
+    return res;
+  }
+
+  private static void addShortcut(Map<String, String> map, String contributorID, String actionID) {
+    KeyboardShortcut shortcut = ActionManager.getInstance().getKeyboardShortcut(actionID);
+    if (shortcut != null) map.put(contributorID, KeymapUtil.getShortcutText(shortcut));
   }
 
   private static class SearchHistoryList {

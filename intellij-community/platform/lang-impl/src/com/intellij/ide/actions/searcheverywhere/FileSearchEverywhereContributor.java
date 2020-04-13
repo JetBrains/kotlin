@@ -16,7 +16,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
@@ -133,11 +132,6 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
       return new FileSearchEverywhereContributor(initEvent);
-    }
-
-    @Override
-    public @Nullable KeyboardShortcut getShortcut() {
-      return ActionManager.getInstance().getKeyboardShortcut("GotoFile");
     }
   }
 
