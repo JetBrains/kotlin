@@ -200,7 +200,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         val testTarget = project.testTarget
         val configurables = project.platformManager.platform(testTarget).configurables as AppleConfigurables
 
-        val bitcodeBuildTool = Paths.get("${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool")
+        val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
         val toolPath = "${configurables.absoluteTargetToolchain}/usr/bin/"
         val sdk = when (testTarget) {
             KonanTarget.IOS_X64,
@@ -216,7 +216,8 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             else -> error("Cannot validate bitcode for test target $testTarget")
         }
 
-        runTest(executorService = localExecutorService(project),
-                testExecutable = bitcodeBuildTool, args = listOf("--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
+        val python3 = Paths.get("/usr/bin/python3")
+        runTest(executorService = localExecutorService(project), testExecutable = python3,
+                args = listOf(bitcodeBuildTool, "--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
 }
