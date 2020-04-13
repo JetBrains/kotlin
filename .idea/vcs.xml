@@ -2,19 +2,12 @@
 <project version="4">
   <component name="CommitMessageInspectionProfile">
     <profile version="1.0">
-      <inspection_tool class="BodyLimit" enabled="false" enabled_by_default="false" level="WARNING">
+      <inspection_tool class="BodyLimit" enabled="false" level="WARNING" enabled_by_default="false">
         <option name="RIGHT_MARGIN" value="120" />
       </inspection_tool>
-      <inspection_tool class="BodyLimit" enabled="false" enabled_by_default="false" level="WARNING">
-        <option name="RIGHT_MARGIN" value="120" />
-      </inspection_tool>
-      <inspection_tool class="GrazieCommit" enabled="true" enabled_by_default="true" level="TYPO" />
-      <inspection_tool class="SubjectBodySeparation" enabled="true" enabled_by_default="true" level="WARNING" />
-      <inspection_tool class="SubjectBodySeparation" enabled="true" enabled_by_default="true" level="WARNING" />
-      <inspection_tool class="SubjectLimit" enabled="true" enabled_by_default="true" level="WARNING">
-        <option name="RIGHT_MARGIN" value="120" />
-      </inspection_tool>
-      <inspection_tool class="SubjectLimit" enabled="true" enabled_by_default="true" level="WARNING">
+      <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
+      <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
+      <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="RIGHT_MARGIN" value="120" />
       </inspection_tool>
     </profile>
@@ -66,8 +59,8 @@
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/intellij" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="VcsDirectoryRenames">
     <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community">
@@ -132,3 +125,4 @@
     </rename>
   </component>
 </project>
+

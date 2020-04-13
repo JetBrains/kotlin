@@ -92,7 +92,7 @@
     <resource url="http://jetbrains.org/intellij/schema/application-info" location="$PROJECT_DIR$/intellij/community/platform/platform-resources/src/idea/ApplicationInfo.xsd" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/intellij/out/classes" />
+    <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="PropertiesSeparatorManager">
     <file url="file://$PROJECT_DIR$/intellij/community/plugins/InspectionGadgets/InspectionGadgetsAnalysis/resources/messages/InspectionGadgetsBundle" separator="\u005f" />
@@ -111,3 +111,4 @@
     <option name="shouldCheckCurrentProject" value="true" />
   </component>
 </project>
+

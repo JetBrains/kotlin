@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ProjectDictionaryState">
+  <dictionary name="intellij-avu">
+    <words>
+      <w>argc</w>
+      <w>argv</w>
+      <w>bkpt</w>
+      <w>cfunc</w>
+      <w>disp</w>
+      <w>fullname</w>
+      <w>octs</w>
+      <w>ptrace</w>
+      <w>sigint</w>
+      <w>sigsegv</w>
+      <w>vals</w>
+      <w>watchpoints</w>
+      <w>wdir</w>
+      <w>yjpagent</w>
+      <w>yourkit</w>
+    </words>
+  </dictionary>
+</component>
+
