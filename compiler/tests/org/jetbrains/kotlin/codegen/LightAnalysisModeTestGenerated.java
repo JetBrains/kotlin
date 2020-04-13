@@ -15581,6 +15581,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/lambdaInstanceOf.kt");
         }
 
+        @TestMetadata("protectedField.kt")
+        public void testProtectedField() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
+        }
+
         @TestMetadata("samUnboundTypeParameter.kt")
         public void testSamUnboundTypeParameter() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/samUnboundTypeParameter.kt");
