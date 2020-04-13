@@ -2,7 +2,7 @@
 9 	val <bold>v = value</bold>
 9 		val v = <bold>value</bold>
 8 			foo(fun(<bold>value: Int</bold>) {
-8 				[LAMBDA CALLS] foo(<bold>fun(value: Int) {</bold>
-3 					[LAMBDA CALLS] fun foo(<bold>f: (Int) -> Unit</bold>) {
+8 				[LAMBDA CALLS ARGUMENT #0] foo(<bold>fun(value: Int) {</bold>
+3 					[LAMBDA CALLS ARGUMENT #0] fun foo(<bold>f: (Int) -> Unit</bold>) {
 4 						f(<bold>1</bold>)
 

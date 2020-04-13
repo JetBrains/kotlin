@@ -2,8 +2,8 @@
 4 	val v1 = <bold>p</bold>.let { value -> bar(value) }
 16 		fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
 17 			return block(<bold>this</bold>)
-16 				[LAMBDA ARGUMENT IN] fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-4 					[LAMBDA ARGUMENT IN] val v1 = p.let <bold>{ value -> bar(value) }</bold>
+16 				[LAMBDA PARAMETER #0] fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
+4 					[LAMBDA PARAMETER #0] val v1 = p.let <bold>{ value -> bar(value) }</bold>
 4 						val v1 = p.let { <bold>value</bold> -> bar(value) }
 4 							val v1 = p.let { value -> bar(<bold>value</bold>) }
 14 								fun bar(<bold>s: String</bold>) = s
@@ -21,12 +21,12 @@
 6 																		val <bold>v2 = p.let { it }</bold>
 8 																	val v3 = p.<bold>let {</bold>
 8 																		val <bold>v3 = p.let {</bold>
-6 					[LAMBDA ARGUMENT IN] val v2 = p.let <bold>{ it }</bold>
+6 					[LAMBDA PARAMETER #0] val v2 = p.let <bold>{ it }</bold>
 6 						val v2 = p.let { <bold>it</bold> }
 6 							val v2 = p.let <bold>{ it }</bold>
 6 								[LAMBDA CALLS] val v2 = p.let <bold>{ it }</bold>
 16 									[LAMBDA CALLS] DUPLICATE: fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-8 					[LAMBDA ARGUMENT IN] val v3 = p.let <bold>{</bold>
+8 					[LAMBDA PARAMETER #0] val v3 = p.let <bold>{</bold>
 6 	val v2 = <bold>p</bold>.let { it }
 16 		DUPLICATE: fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
 8 	val v3 = <bold>p</bold>.let {

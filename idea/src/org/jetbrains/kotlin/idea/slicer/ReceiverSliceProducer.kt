@@ -57,6 +57,9 @@ object ReceiverSliceProducer : SliceProducer {
         }
     }
 
+    override val testPresentation: String?
+        get() = "RECEIVER"
+
     override fun equals(other: Any?) = other === this
     override fun hashCode() = 0
 }

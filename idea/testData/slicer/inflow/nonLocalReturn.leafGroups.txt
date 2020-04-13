@@ -9,8 +9,8 @@
 5 								fun bar(a: Int): Int = foo(a) <bold>{ if (it > 0) it else return 0 }</bold>
 5 									fun bar(a: Int): Int = foo(a) { <bold>if (it > 0) it else return 0</bold> }
 5 										fun bar(a: Int): Int = foo(a) { if (it > 0) <bold>it</bold> else return 0 }
-5 											[LAMBDA CALLS] fun bar(a: Int): Int = foo(a) <bold>{ if (it > 0) it else return 0 }</bold>
-3 												(INLINE CALL foo) [LAMBDA CALLS] inline fun foo(a: Int, <bold>f: (Int) -> Int</bold>) = f(a)
+5 											[LAMBDA CALLS ARGUMENT #0] fun bar(a: Int): Int = foo(a) <bold>{ if (it > 0) it else return 0 }</bold>
+3 												(INLINE CALL foo) [LAMBDA CALLS ARGUMENT #0] inline fun foo(a: Int, <bold>f: (Int) -> Int</bold>) = f(a)
 3 													(INLINE CALL foo) inline fun foo(a: Int, f: (Int) -> Int) = f(<bold>a</bold>)
 3 														(INLINE CALL foo) inline fun foo(<bold>a: Int</bold>, f: (Int) -> Int) = f(a)
 5 															fun bar(a: Int): Int = foo(<bold>a</bold>) { if (it > 0) it else return 0 }

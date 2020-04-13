@@ -145,16 +145,16 @@ class InflowSlicer(
                     lambda.passToProcessor(mode.dropBehaviour())
                 }
 
-                is LambdaArgumentInflowBehaviour -> {
+                is LambdaParameterInflowBehaviour -> {
                     val valueParameters = lambda.valueParameters
                     if (valueParameters.isEmpty() && lambda is KtFunctionLiteral) {
-                        if (currentBehaviour.argumentIndex == 0) {
+                        if (currentBehaviour.parameterIndex == 0) {
                             lambda.implicitItUsages().forEach {
                                 it.passToProcessor(mode.dropBehaviour())
                             }
                         }
                     } else {
-                        valueParameters.getOrNull(currentBehaviour.argumentIndex)?.passToProcessor(mode.dropBehaviour())
+                        valueParameters.getOrNull(currentBehaviour.parameterIndex)?.passToProcessor(mode.dropBehaviour())
                     }
                 }
 
@@ -238,9 +238,9 @@ class InflowSlicer(
                             referencedDeclaration.passToProcessor(mode.dropBehaviour())
                         }
 
-                        is LambdaArgumentInflowBehaviour -> {
+                        is LambdaParameterInflowBehaviour -> {
                             val parameter = (referencedDeclaration as? KtCallableDeclaration)
-                                ?.valueParameters?.getOrNull(currentBehaviour.argumentIndex)
+                                ?.valueParameters?.getOrNull(currentBehaviour.parameterIndex)
                             parameter?.passToProcessor(mode.dropBehaviour())
                         }
 

@@ -4,8 +4,8 @@
 24 		<bold>"A"</bold>.foo()
 12 	<bold>""</bold>.extensionFun()
 14 	<bold>1</bold>.extensionFun()
-18 	[LAMBDA CALLS] with(123) <bold>{</bold>
-27 		(INLINE CALL with) [LAMBDA CALLS] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+18 	[LAMBDA CALLS RECEIVER] with(123) <bold>{</bold>
+27 		(INLINE CALL with) [LAMBDA CALLS RECEIVER] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
 28 			(INLINE CALL with) return <bold>receiver</bold>.block()
 27 				(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
 18 					with(<bold>123</bold>) {

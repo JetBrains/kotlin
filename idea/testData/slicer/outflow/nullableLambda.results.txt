@@ -2,10 +2,10 @@
 4 	val v = bar(<bold>p</bold>, true, { this })
 7 		fun bar(<bold>receiver: String</bold>, b: Boolean, lambda: (String.() -> String)?): String {
 8 			return if (b) lambda!!.invoke(<bold>receiver</bold>) else ""
-8 				[LAMBDA RECEIVER IN] return if (b) <bold>lambda!!</bold>.invoke(receiver) else ""
-8 					[LAMBDA RECEIVER IN] return if (b) <bold>lambda</bold>!!.invoke(receiver) else ""
-7 						[LAMBDA RECEIVER IN] fun bar(receiver: String, b: Boolean, <bold>lambda: (String.() -> String)?</bold>): String {
-4 							[LAMBDA RECEIVER IN] val v = bar(p, true, <bold>{ this }</bold>)
+8 				[LAMBDA RECEIVER] return if (b) <bold>lambda!!</bold>.invoke(receiver) else ""
+8 					[LAMBDA RECEIVER] return if (b) <bold>lambda</bold>!!.invoke(receiver) else ""
+7 						[LAMBDA RECEIVER] fun bar(receiver: String, b: Boolean, <bold>lambda: (String.() -> String)?</bold>): String {
+4 							[LAMBDA RECEIVER] val v = bar(p, true, <bold>{ this }</bold>)
 4 								val v = bar(p, true, { <bold>this</bold> })
 4 									val v = bar(p, true, <bold>{ this }</bold>)
 4 										[LAMBDA CALLS] val v = bar(p, true, <bold>{ this }</bold>)

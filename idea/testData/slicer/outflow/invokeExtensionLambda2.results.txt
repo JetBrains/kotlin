@@ -2,12 +2,12 @@
 4 	val v1 = bar(<bold>p</bold>) { { this } }
 7 		(INLINE CALL bar) inline fun bar(<bold>x: String</bold>, lambda: () -> String.() -> String): String {
 8 			(INLINE CALL bar) return lambda()(<bold>x</bold>)
-8 				(INLINE CALL bar) [LAMBDA RECEIVER IN] return <bold>lambda()</bold>(x)
-8 					(INLINE CALL bar) [LAMBDA IN] [LAMBDA RECEIVER IN] return <bold>lambda</bold>()(x)
-7 						(INLINE CALL bar) [LAMBDA IN] [LAMBDA RECEIVER IN] inline fun bar(x: String, <bold>lambda: () -> String.() -> String</bold>): String {
-4 							[LAMBDA IN] [LAMBDA RECEIVER IN] val v1 = bar(p) <bold>{ { this } }</bold>
-4 								[LAMBDA RECEIVER IN] val v1 = bar(p) <bold>{ { this } }</bold>
-4 									[LAMBDA RECEIVER IN] val v1 = bar(p) { <bold>{ this }</bold> }
+8 				(INLINE CALL bar) [LAMBDA RECEIVER] return <bold>lambda()</bold>(x)
+8 					(INLINE CALL bar) [LAMBDA IN] [LAMBDA RECEIVER] return <bold>lambda</bold>()(x)
+7 						(INLINE CALL bar) [LAMBDA IN] [LAMBDA RECEIVER] inline fun bar(x: String, <bold>lambda: () -> String.() -> String</bold>): String {
+4 							[LAMBDA IN] [LAMBDA RECEIVER] val v1 = bar(p) <bold>{ { this } }</bold>
+4 								[LAMBDA RECEIVER] val v1 = bar(p) <bold>{ { this } }</bold>
+4 									[LAMBDA RECEIVER] val v1 = bar(p) { <bold>{ this }</bold> }
 4 										val v1 = bar(p) { { <bold>this</bold> } }
 4 											val v1 = bar(p) { <bold>{ this }</bold> }
 4 												[LAMBDA CALLS] val v1 = bar(p) { <bold>{ this }</bold> }

@@ -38,6 +38,8 @@ data class ArgumentSliceProducer private constructor(
         return listOf(KotlinSliceUsage(argumentExpression, parent, mode, forcedExpressionMode = true))
     }
 
+    override val testPresentation = "ARGUMENT #$parameterIndex".let { if (isExtension) "$it EXTENSION" else it }
+
     private fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
         val refParent = refElement.parent
         return when {

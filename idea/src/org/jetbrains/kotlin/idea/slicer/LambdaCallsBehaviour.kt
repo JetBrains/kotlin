@@ -34,5 +34,12 @@ data class LambdaCallsBehaviour(private val sliceProducer: SliceProducer) : Kotl
         get() = KotlinBundle.message("slicer.text.tracking.lambda.calls")
 
     override val testPresentationPrefix: String
-        get() = "[LAMBDA CALLS] "
+        get() = buildString {
+            append("[LAMBDA CALLS")
+            sliceProducer.testPresentation?.let {
+                append(" ")
+                append(it)
+            }
+            append("] ")
+        }
 }
