@@ -82,6 +82,7 @@ import org.jetbrains.jps.api.*;
 import org.jetbrains.jps.cmdline.BuildMain;
 import org.jetbrains.jps.cmdline.ClasspathBootstrap;
 import org.jetbrains.jps.incremental.Utils;
+import org.jetbrains.jps.incremental.storage.ProjectStamps;
 import org.jetbrains.jps.model.java.compiler.JavaCompilers;
 
 import javax.tools.*;
@@ -1164,7 +1165,7 @@ public final class BuildManager implements Disposable {
     if (isGeneratePortableCachesEnabled()) {
       //cmdLine.addParameter("-Didea.resizeable.file.truncate.on.close=true");
       //cmdLine.addParameter("-Dkotlin.jps.non.caching.storage=true");
-      cmdLine.addParameter("-Dorg.jetbrains.jps.portable.caches=true");
+      cmdLine.addParameter("-D" + ProjectStamps.PORTABLE_CACHES_PROPERTY + "=true");
     }
 
     // javac's VM should use the same default locale that IDEA uses in order for javac to print messages in 'correct' language
