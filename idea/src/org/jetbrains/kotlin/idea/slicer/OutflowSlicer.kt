@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruc
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
@@ -177,30 +178,10 @@ class OutflowSlicer(
                         if (parameter != null) {
                             parameter.passToProcessorInCallMode(instruction.element)
                         } else {
-                            val function = parameterDescriptor.containingDeclaration as? FunctionDescriptor ?: return@processPseudocodeUsages
+                            val function = parameterDescriptor.containingDeclaration as? FunctionDescriptor
+                                ?: return@processPseudocodeUsages
                             if (function.isImplicitInvokeFunction()) {
-                                val receiverPseudoValue = instruction.receiverValues.entries.singleOrNull()?.key
-                                    ?: return@processPseudocodeUsages
-                                val receiverExpression = receiverPseudoValue.element as? KtExpression ?: return@processPseudocodeUsages
-                                val bindingContext = receiverExpression.analyze(BodyResolveMode.PARTIAL)
-                                var receiverType = bindingContext.getType(receiverExpression)
-                                var receiver: PsiElement = receiverExpression
-                                if (receiverType == null && receiverExpression is KtReferenceExpression) {
-                                    val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, receiverExpression]
-                                    if (targetDescriptor is CallableDescriptor) {
-                                        receiverType = targetDescriptor.returnType
-                                        receiver = targetDescriptor.originalSource.getPsi() ?: return@processPseudocodeUsages
-                                    }
-                                }
-                                if (receiverType == null || !receiverType.isFunctionType) return@processPseudocodeUsages
-                                val isExtension = receiverType.isExtensionFunctionType
-                                val shift = if (isExtension) 1 else 0
-                                val argumentIndex = parameterDescriptor.index - shift
-                                val newMode = if (argumentIndex >= 0)
-                                    mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
-                                else
-                                    mode.withBehaviour(LambdaReceiverInflowBehaviour)
-                                receiver.passToProcessor(newMode)
+                                processImplicitInvokeCall(instruction, parameterDescriptor)
                             }
                         }
                     }
@@ -228,6 +209,30 @@ class OutflowSlicer(
                 }
             }
         }
+    }
+
+    private fun processImplicitInvokeCall(instruction: CallInstruction, parameterDescriptor: ValueParameterDescriptor) {
+        val receiverPseudoValue = instruction.receiverValues.entries.singleOrNull()?.key ?: return
+        val receiverExpression = receiverPseudoValue.element as? KtExpression ?: return
+        val bindingContext = receiverExpression.analyze(BodyResolveMode.PARTIAL)
+        var receiverType = bindingContext.getType(receiverExpression)
+        var receiver: PsiElement = receiverExpression
+        if (receiverType == null && receiverExpression is KtReferenceExpression) {
+            val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, receiverExpression]
+            if (targetDescriptor is CallableDescriptor) {
+                receiverType = targetDescriptor.returnType
+                receiver = targetDescriptor.originalSource.getPsi() ?: return
+            }
+        }
+        if (receiverType == null || !receiverType.isFunctionType) return
+        val isExtension = receiverType.isExtensionFunctionType
+        val shift = if (isExtension) 1 else 0
+        val argumentIndex = parameterDescriptor.index - shift
+        val newMode = if (argumentIndex >= 0)
+            mode.withBehaviour(LambdaArgumentInflowBehaviour(argumentIndex))
+        else
+            mode.withBehaviour(LambdaReceiverInflowBehaviour)
+        receiver.passToProcessor(newMode)
     }
 
     private fun processDereferenceIfNeeded(
