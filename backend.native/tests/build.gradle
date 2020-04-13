@@ -3961,6 +3961,10 @@ if (isAppleTarget(project)) {
                 srcDir "objcexport/library"
                 artifactName "test-library"
 
+                if (!useCustomDist) {
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
+
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
             }
@@ -4005,6 +4009,10 @@ if (isAppleTarget(project)) {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
                 artifactName "test-library"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
 
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
