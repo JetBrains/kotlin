@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.util.parentOfType
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -95,7 +97,9 @@ class OutflowSlicer(
         fun processVariableAccess(usageInfo: UsageInfo) {
             val refElement = usageInfo.element ?: return
             if (refElement !is KtExpression) {
-                refElement.passToProcessor()
+                if (refElement.parentOfType<PsiComment>() == null) {
+                    refElement.passToProcessor()
+                }
                 return
             }
 

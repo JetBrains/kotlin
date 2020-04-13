@@ -513,6 +513,16 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/diamondHierarchyMiddleInterfaceFun.kt");
         }
 
+        @TestMetadata("docCommentRefs.kt")
+        public void testDocCommentRefs() throws Exception {
+            runTest("idea/testData/slicer/outflow/docCommentRefs.kt");
+        }
+
+        @TestMetadata("docCommentRefs2.kt")
+        public void testDocCommentRefs2() throws Exception {
+            runTest("idea/testData/slicer/outflow/docCommentRefs2.kt");
+        }
+
         @TestMetadata("doubleLambdaResult.kt")
         public void testDoubleLambdaResult() throws Exception {
             runTest("idea/testData/slicer/outflow/doubleLambdaResult.kt");

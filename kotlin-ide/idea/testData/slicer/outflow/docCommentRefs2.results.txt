@@ -1,0 +1,3 @@
+3 val String.<bold>foo: Int</bold>
+10 	val v = "".<bold>foo</bold>
+10 		val <bold>v = "".foo</bold>

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.parentOfType
 import com.intellij.slicer.JavaSliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.addIfNotNull
@@ -171,6 +173,7 @@ abstract class Slicer(
                 is KtDeclaration -> {
                     val usageProcessor: (UsageInfo) -> Unit = processor@ { usageInfo ->
                         val element = usageInfo.element ?: return@processor
+                        if (element.parentOfType<PsiComment>() != null) return@processor
                         val sliceUsage = KotlinSliceUsage(element, parentUsage, mode, false)
                         sliceProducer.produceAndProcess(sliceUsage, mode, parentUsage, processor)
                     }
