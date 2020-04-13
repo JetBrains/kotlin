@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
@@ -38,9 +40,12 @@ import org.jetbrains.kotlin.idea.util.expectedDescriptor
 import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -119,7 +124,7 @@ abstract class Slicer(
             resolveToDescriptorIfAny(BodyResolveMode.FULL)
                 ?.actualsForExpected()
                 ?.forEach {
-                    (it as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()?.passToProcessor(mode)
+                    (it as? DeclarationDescriptorWithSource)?.toPsi()?.passToProcessor(mode)
                 }
         }
     }
@@ -168,7 +173,7 @@ abstract class Slicer(
         }
 
         for (superDescriptor in superDescriptors) {
-            val declaration = superDescriptor.originalSource.getPsi() ?: continue
+            val declaration = superDescriptor.toPsi() ?: continue
             when (declaration) {
                 is KtDeclaration -> {
                     val usageProcessor: (UsageInfo) -> Unit = processor@ { usageInfo ->
@@ -226,12 +231,28 @@ abstract class Slicer(
                 DescriptorUtils.getAllOverriddenDeclarations(descriptor)
             }
             additionalDescriptors.mapNotNullTo(allDeclarations) {
-                it.originalSource.getPsi() as? KtCallableDeclaration
+                it.toPsi() as? KtCallableDeclaration
             }
 
         }
 
-        allDeclarations.forEach { it.processAllExactUsages(options, usageProcessor) }
+        allDeclarations.forEach {
+            it.processAllExactUsages(options) { usageInfo ->
+                if (!shouldIgnoreVariableUsage(usageInfo)) {
+                    usageProcessor.invoke(usageInfo)
+                }
+            }
+        }
+    }
+
+    // ignore parameter usages in function contract
+    private fun shouldIgnoreVariableUsage(usage: UsageInfo): Boolean {
+        val element = usage.element ?: return true
+        return element.parents.any {
+            it is KtCallExpression &&
+                    (it.calleeExpression as? KtSimpleNameExpression)?.getReferencedName() == "contract" &&
+                    it.resolveToCall()?.resultingDescriptor?.fqNameOrNull()?.asString() == "kotlin.contracts.contract"
+        }
     }
 
     protected fun canProcessParameter(parameter: KtParameter) = !parameter.isVarArg
@@ -304,19 +325,22 @@ abstract class Slicer(
                     val createdAt = dispatchReceiverPseudoValue.createdAt
                     val accessedDescriptor = (createdAt as ReadValueInstruction?)?.target?.accessedDescriptor
                     if (accessedDescriptor is VariableDescriptor) {
-                        val accessedDeclaration = accessedDescriptor.originalSource.getPsi()
-                        accessedDeclaration?.passToProcessor(mode.withBehaviour(LambdaReceiverInflowBehaviour))
+                        accessedDescriptor.toPsi()?.passToProcessor(mode.withBehaviour(LambdaReceiverInflowBehaviour))
                     }
                 }
             }
         } else {
             if (receiverValue == resolvedCall.extensionReceiver) {
-                val declaration = descriptor.originalSource.getPsi()
-                (declaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessorInCallMode(instruction.element, mode)
+                (descriptor.toPsi() as? KtCallableDeclaration)?.receiverTypeReference
+                    ?.passToProcessorInCallMode(instruction.element, mode)
             }
         }
 
         return true
+    }
+
+    protected fun DeclarationDescriptor.toPsi(): PsiElement? {
+        return descriptorToPsi(this, project, analysisScope)
     }
 
     companion object {
@@ -326,21 +350,25 @@ abstract class Slicer(
             else
                 defaultMode
         }
+
+        fun descriptorToPsi(descriptor: DeclarationDescriptor, project: Project, analysisScope: SearchScope): PsiElement? {
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
+            if (analysisScope.contains(declaration)) return declaration.navigationElement
+
+            // we ignore access scope for inline declarations
+            val isInline = when (declaration) {
+                is KtNamedFunction -> declaration.hasInlineModifier()
+                is KtParameter -> declaration.ownerFunction?.hasInlineModifier() == true
+                else -> false
+            }
+            return if (isInline) declaration.navigationElement else null
+        }
     }
 }
-
-val DeclarationDescriptorWithSource.originalSource: SourceElement
-    get() {
-        var descriptor = this
-        while (descriptor.original != descriptor) {
-            descriptor = descriptor.original
-        }
-        return descriptor.source
-    }
 
 fun CallableDescriptor.isImplicitInvokeFunction(): Boolean {
     if (this !is FunctionDescriptor) return false
     if (!isOperator) return false
     if (name != OperatorNameConventions.INVOKE) return false
-    return originalSource.getPsi() == null
+    return source.getPsi() == null
 }

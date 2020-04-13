@@ -77,7 +77,7 @@ class InflowSlicer(
             val getter = (property.unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter ?: return
             val bindingContext = property.analyzeWithContent()
             val delegateGetterResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getter]
-            delegateGetterResolvedCall?.resultingDescriptor?.originalSource?.getPsi()?.passToProcessor()
+            delegateGetterResolvedCall?.resultingDescriptor?.toPsi()?.passToProcessor()
             return
         }
 
@@ -178,7 +178,7 @@ class InflowSlicer(
                 }
 
                 val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
-                val accessedDeclaration = accessedDescriptor.originalSource.getPsi()
+                val accessedDeclaration = accessedDescriptor.toPsi()
                 when (accessedDescriptor) {
                     is SyntheticFieldDescriptor -> {
                         val property = accessedDeclaration as? KtProperty ?: return
@@ -192,7 +192,7 @@ class InflowSlicer(
                     is ReceiverParameterDescriptor -> {
                         //TODO: handle non-extension receivers?
                         val callable = accessedDescriptor.containingDeclaration as? CallableDescriptor ?: return
-                        when (val declaration = callable.originalSource.getPsi()) {
+                        when (val declaration = callable.toPsi()) {
                             is KtFunctionLiteral -> {
                                 declaration.passToProcessorAsValue(mode.withBehaviour(LambdaCallsBehaviour(ReceiverSliceProducer)))
                             }
@@ -231,8 +231,7 @@ class InflowSlicer(
                     val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
                     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
-                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
-                        ?: return
+                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.toPsi() ?: return
                     when (currentBehaviour) {
                         is LambdaResultInflowBehaviour -> {
                             referencedDeclaration.passToProcessor(mode.dropBehaviour())
@@ -262,7 +261,7 @@ class InflowSlicer(
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression
                         ?.passToProcessorAsValue(mode.withBehaviour(LambdaResultInflowBehaviour))
                 } else {
-                    resultingDescriptor.originalSource.getPsi()?.passToProcessorInCallMode(createdAt.element, withOverriders = true)
+                    resultingDescriptor.toPsi()?.passToProcessorInCallMode(createdAt.element, withOverriders = true)
                 }
             }
         }

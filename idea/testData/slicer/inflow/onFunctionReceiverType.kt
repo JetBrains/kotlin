@@ -1,5 +1,5 @@
 // FLOW: IN
-// WITH_RUNTIME
+// RUNTIME_WITH_SOURCES
 
 @file: JvmName("KotlinUtil")
 
@@ -22,8 +22,4 @@ fun String.foo() {
 
 fun main() {
     "A".foo()
-}
-
-inline fun <T, R> with(receiver: T, block: T.() -> R): R {
-    return receiver.block()
 }

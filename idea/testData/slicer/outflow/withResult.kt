@@ -1,4 +1,5 @@
 // FLOW: OUT
+// RUNTIME_WITH_SOURCES
 
 fun String.foo(<caret>p: String) {
     val v1 = with(p) { this }
@@ -12,7 +13,3 @@ fun String.foo(<caret>p: String) {
 
 fun bar(s: String) = s
 fun zoo(s: String) = s
-
-inline fun <T, R> with(receiver: T, block: T.() -> R): R {
-    return receiver.block()
-}

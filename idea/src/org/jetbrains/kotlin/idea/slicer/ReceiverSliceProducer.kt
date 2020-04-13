@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.resolve.source.getPsi
 
 object ReceiverSliceProducer : SliceProducer {
     override fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>? {
@@ -29,16 +28,15 @@ object ReceiverSliceProducer : SliceProducer {
                     }
 
                     is ImplicitReceiver -> {
-                        val callableDescriptor = receiver.declarationDescriptor as? CallableDescriptor
-                            ?: return emptyList()
-                        when (val callableDeclaration = callableDescriptor.originalSource.getPsi()) {
+                        val callableDescriptor = receiver.declarationDescriptor as? CallableDescriptor ?: return emptyList()
+                        when (val declaration = Slicer.descriptorToPsi(callableDescriptor, usage.project, parent.scope.toSearchScope())) {
                             is KtFunctionLiteral -> {
                                 val newMode = mode.withBehaviour(LambdaCallsBehaviour(ReceiverSliceProducer))
-                                return listOf(KotlinSliceUsage(callableDeclaration, parent, newMode, forcedExpressionMode = true))
+                                return listOf(KotlinSliceUsage(declaration, parent, newMode, forcedExpressionMode = true))
                             }
 
                             is KtCallableDeclaration -> {
-                                val receiverTypeReference = callableDeclaration.receiverTypeReference ?: return emptyList()
+                                val receiverTypeReference = declaration.receiverTypeReference ?: return emptyList()
                                 return listOf(KotlinSliceUsage(receiverTypeReference, parent, mode, false))
                             }
 

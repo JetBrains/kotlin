@@ -1,30 +1,30 @@
 [NotNull Values]
-7 	with(<bold>123</bold>) {
-3 		fun <bold>Any</bold>.extensionFun() {
-7 			[LAMBDA CALLS RECEIVER] with(123) <bold>{</bold>
-44 				(INLINE CALL with) [LAMBDA CALLS RECEIVER] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-45 					(INLINE CALL with) val result = <bold>receiver</bold>.block()
-44 						(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
-7 							with(<bold>123</bold>) {
-12 	<bold>this</bold>.extensionFun()
-3 		fun <bold>Any</bold>.extensionFun() {
-12 			<bold>this</bold>.extensionFun()
-19 	withNoInline(<bold>1</bold>) {
-3 		fun <bold>Any</bold>.extensionFun() {
-19 			[LAMBDA CALLS RECEIVER] withNoInline(1) <bold>{</bold>
-53 				[LAMBDA CALLS RECEIVER] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
-54 					val result = <bold>receiver</bold>.block()
-53 						fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
-19 							withNoInline(<bold>1</bold>) {
-23 	withNoInline(<bold>2</bold>) {
-3 		fun <bold>Any</bold>.extensionFun() {
-19 			[LAMBDA CALLS RECEIVER] withNoInline(1) <bold>{</bold>
-53 				[LAMBDA CALLS RECEIVER] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
-54 					val result = <bold>receiver</bold>.block()
-53 						fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
-23 							withNoInline(<bold>2</bold>) {
-28 	<bold>it</bold>.extensionFun()
-3 		fun <bold>Any</bold>.extensionFun() {
-28 			<bold>it</bold>.extensionFun()
-36 			<bold>it</bold>.extensionFun()
+8 	with(<bold>123</bold>) {
+4 		fun <bold>Any</bold>.extensionFun() {
+8 			[LAMBDA CALLS RECEIVER] with(123) <bold>{</bold>
+45 				(INLINE CALL with) [LAMBDA CALLS RECEIVER] inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
+46 					(INLINE CALL with) val result = <bold>receiver</bold>.block()
+45 						(INLINE CALL with) inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
+8 							with(<bold>123</bold>) {
+13 	<bold>this</bold>.extensionFun()
+4 		fun <bold>Any</bold>.extensionFun() {
+13 			<bold>this</bold>.extensionFun()
+20 	withNoInline(<bold>1</bold>) {
+4 		fun <bold>Any</bold>.extensionFun() {
+20 			[LAMBDA CALLS RECEIVER] withNoInline(1) <bold>{</bold>
+50 				[LAMBDA CALLS RECEIVER] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
+51 					val result = <bold>receiver</bold>.block()
+50 						fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
+20 							withNoInline(<bold>1</bold>) {
+24 	withNoInline(<bold>2</bold>) {
+4 		fun <bold>Any</bold>.extensionFun() {
+20 			[LAMBDA CALLS RECEIVER] withNoInline(1) <bold>{</bold>
+50 				[LAMBDA CALLS RECEIVER] fun <T, R> withNoInline(receiver: T, <bold>block: T.() -> R</bold>): R {
+51 					val result = <bold>receiver</bold>.block()
+50 						fun <T, R> withNoInline(<bold>receiver: T</bold>, block: T.() -> R): R {
+24 							withNoInline(<bold>2</bold>) {
+37 	<bold>it</bold>.extensionFun()
+4 		fun <bold>Any</bold>.extensionFun() {
+29 			<bold>it</bold>.extensionFun()
+37 			<bold>it</bold>.extensionFun()
 
