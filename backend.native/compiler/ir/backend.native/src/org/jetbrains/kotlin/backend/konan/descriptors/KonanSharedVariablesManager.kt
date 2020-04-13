@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.types.*
 
 internal class KonanSharedVariablesManager(val context: KonanBackendContext) : SharedVariablesManager {
 
@@ -32,18 +32,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
     private val elementProperty = refClass.owner.declarations.filterIsInstance<IrProperty>().single()
 
-    private fun refType(elementType: KotlinType): KotlinType {
-        return refClass.descriptor.defaultType.replace(listOf(TypeProjectionImpl(elementType)))
-    }
-
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
-        val variableDescriptor = originalDeclaration.descriptor
-        val sharedVariableDescriptor = LocalVariableDescriptor(
-                variableDescriptor.containingDeclaration, variableDescriptor.annotations, variableDescriptor.name,
-                refType(variableDescriptor.type),
-                false, false, variableDescriptor.source
-        )
-
         val valueType = originalDeclaration.type
 
         val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
@@ -54,11 +43,19 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
             putTypeArgument(0, valueType)
         }
 
-        return IrVariableImpl(
-                originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin,
-                sharedVariableDescriptor, refConstructorCall.type
-        ).apply {
-            initializer = refConstructorCall
+        return with(originalDeclaration) {
+            WrappedVariableDescriptor().let {
+                IrVariableImpl(
+                        startOffset, endOffset, origin,
+                        IrVariableSymbolImpl(it), name, refConstructorCall.type,
+                        isVar = false,
+                        isConst = false,
+                        isLateinit = false
+                ).apply {
+                    it.bind(this)
+                    initializer = refConstructorCall
+                }
+            }
         }
     }
 

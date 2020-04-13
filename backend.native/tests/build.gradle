@@ -1301,6 +1301,11 @@ linkTest("initializers_linkTest2") {
     lib = "codegen/initializers/linkTest2_lib.kt"
 }
 
+linkTest("initializers_sharedVarInInitBlock") {
+    source = "codegen/initializers/sharedVarInInitBlock_main.kt"
+    lib = "codegen/initializers/sharedVarInInitBlock_lib.kt"
+}
+
 task arithmetic_basic(type: KonanLocalTest) {
     source = "codegen/arithmetic/basic.kt"
 }
