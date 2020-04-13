@@ -91,18 +91,18 @@ public class DocRenderItem {
       List<DocRenderItem> itemsToUpdateInlays = new ArrayList<>();
       boolean updated = false;
       for (Iterator<DocRenderItem> it = items.iterator(); it.hasNext(); ) {
-        DocRenderItem item = it.next();
-        DocRenderPassFactory.Item matchingItem = item.isValid() ? itemsToSet.removeItem(item.highlighter) : null;
-        if (matchingItem == null) {
-          updated |= item.remove(foldingTasks);
+        DocRenderItem existingItem = it.next();
+        DocRenderPassFactory.Item matchingNewItem = existingItem.isValid() ? itemsToSet.removeItem(existingItem.highlighter) : null;
+        if (matchingNewItem == null) {
+          updated |= existingItem.remove(foldingTasks);
           it.remove();
         }
-        else if (matchingItem.textToRender != null && !matchingItem.textToRender.equals(item.textToRender)) {
-          item.textToRender = matchingItem.textToRender;
-          itemsToUpdateInlays.add(item);
+        else if (matchingNewItem.textToRender != null && !matchingNewItem.textToRender.equals(existingItem.textToRender)) {
+          existingItem.textToRender = matchingNewItem.textToRender;
+          itemsToUpdateInlays.add(existingItem);
         }
         else {
-          item.updateIcon();
+          existingItem.updateIcon();
         }
       }
       Collection<DocRenderItem> newRenderItems = new ArrayList<>();
