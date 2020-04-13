@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.idea.slicer
 import com.intellij.analysis.AnalysisScope
 import com.intellij.ide.projectView.TreeStructureProvider
 import com.intellij.ide.util.treeView.AbstractTreeStructureBase
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.slicer.DuplicateMap
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceNode
 import com.intellij.slicer.SliceRootNode
 import com.intellij.usages.TextChunk
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.awt.Font
@@ -30,6 +32,9 @@ internal class TestSliceTreeStructure(private val rootNode: SliceNode) : Abstrac
 }
 
 internal fun buildTreeRepresentation(rootNode: SliceNode): String {
+    val project = rootNode.element!!.project!!
+    val projectScope = GlobalSearchScope.projectScope(project)
+
     fun TextChunk.render(): String {
         var text = text
         if (attributes.fontType == Font.BOLD) {
@@ -58,7 +63,11 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
 
                 else -> {
                     val chunks = usage.text
-                    append(chunks.first().render() + " ")
+                    if (!projectScope.contains(usage.element)) {
+                        append("LIB ")
+                    } else {
+                        append(chunks.first().render() + " ")
+                    }
                     append("\t".repeat(indent))
                     if (usage is KotlinSliceDereferenceUsage) {
                         append("DEREFERENCE: ")
