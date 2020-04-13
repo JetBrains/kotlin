@@ -583,11 +583,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return executionResult
     }
 
-    private suspend fun interpretBreak(breakStatement: IrBreak): ExecutionResult {
+    private fun interpretBreak(breakStatement: IrBreak): ExecutionResult {
         return BreakLoop.addInfo(breakStatement.label ?: "")
     }
 
-    private suspend fun interpretContinue(continueStatement: IrContinue): ExecutionResult {
+    private fun interpretContinue(continueStatement: IrContinue): ExecutionResult {
         return Continue.addInfo(continueStatement.label ?: "")
     }
 
@@ -609,7 +609,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Next
     }
 
-    private suspend fun interpretGetValue(expression: IrGetValue): ExecutionResult {
+    private fun interpretGetValue(expression: IrGetValue): ExecutionResult {
         stack.pushReturnValue(stack.getVariableState(expression.symbol.descriptor).copy())
         return Next
     }
@@ -632,7 +632,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Next
     }
 
-    private suspend fun interpretGetObjectValue(expression: IrGetObjectValue): ExecutionResult {
+    private fun interpretGetObjectValue(expression: IrGetObjectValue): ExecutionResult {
         val owner = expression.symbol.owner
         if (owner.hasAnnotation(evaluateIntrinsicAnnotation)) {
             stack.pushReturnValue(Wrapper.getCompanionObject(owner))
@@ -798,12 +798,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Next
     }
 
-    private suspend fun interpretFunctionExpression(expression: IrFunctionExpression): ExecutionResult {
+    private fun interpretFunctionExpression(expression: IrFunctionExpression): ExecutionResult {
         stack.pushReturnValue(Lambda(expression.function, expression.type.classOrNull!!.owner))
         return Next
     }
 
-    private suspend fun interpretFunctionReference(reference: IrFunctionReference): ExecutionResult {
+    private fun interpretFunctionReference(reference: IrFunctionReference): ExecutionResult {
         stack.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
         return Next
     }
