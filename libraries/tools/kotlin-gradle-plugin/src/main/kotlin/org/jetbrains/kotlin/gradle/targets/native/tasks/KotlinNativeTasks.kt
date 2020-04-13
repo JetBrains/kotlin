@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.library.*
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.util.Logger as KLogger
 
 // TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
 // region Useful extensions
@@ -750,7 +753,9 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
         val artifactsLibraries = artifactsToAddToCache
             .map {
                 resolveSingleFileKlib(
-                    org.jetbrains.kotlin.konan.file.File(it.file.absolutePath), strategy = nativeSingleFileResolveStrategy
+                    KFile(it.file.absolutePath),
+                    logger = GradleLoggerAdapter(project.logger),
+                    strategy = nativeSingleFileResolveStrategy
                 )
             }
             .associateBy { it.uniqueName }
@@ -820,7 +825,9 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
         if (File(rootCacheDirectory, platformLibName.cachedName).exists())
             return
         val unresolvedDependencies = resolveSingleFileKlib(
-            org.jetbrains.kotlin.konan.file.File(platformLib.absolutePath), strategy = nativeSingleFileResolveStrategy
+            KFile(platformLib.absolutePath),
+            logger = GradleLoggerAdapter(project.logger),
+            strategy = nativeSingleFileResolveStrategy
         ).unresolvedDependencies
         for (dependency in unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
@@ -863,6 +870,13 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
             for (cacheDirectory in allCacheDirectories)
                 add("-Xcache-directory=$cacheDirectory")
         }
+    }
+
+    private class GradleLoggerAdapter(private val gradleLogger: Logger) : KLogger {
+        override fun log(message: String) = gradleLogger.info(message)
+        override fun warning(message: String) = gradleLogger.warn(message)
+        override fun error(message: String) = kotlin.error(message)
+        override fun fatal(message: String): Nothing = kotlin.error(message)
     }
 
     companion object {
