@@ -1,6 +1,10 @@
 // !JVM_DEFAULT_MODE: disable
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+
+// First item on Android is `java.lang.Thread.getStackTrace`
+// IGNORE_BACKEND: ANDROID
+
 // WITH_RUNTIME
 // FULL_JDK
 

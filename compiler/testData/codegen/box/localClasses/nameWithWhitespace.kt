@@ -8,6 +8,7 @@
 //
 // See: https://source.android.com/devices/tech/dalvik/dex-format#simplename
 // IGNORE_DEXING
+// IGNORE_BACKEND: ANDROID
 
 fun `method with spaces`(): String {
     data class C(val s: String = "OK")

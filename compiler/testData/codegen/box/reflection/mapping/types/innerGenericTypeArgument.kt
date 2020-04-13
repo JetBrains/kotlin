@@ -1,6 +1,9 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
+// "IOOBE: Invalid index 4, size is 4" for java.lang.reflect.ParameterizedType on Android
+// IGNORE_BACKEND: ANDROID
+
 // WITH_REFLECT
 
 import kotlin.reflect.jvm.javaType

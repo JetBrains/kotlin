@@ -246,9 +246,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
 
         for (file in files) {
-            if (SpecialFiles.getExcludedFiles().contains(file.name)) {
-                continue
-            }
             if (file.isDirectory) {
                 val listFiles = file.listFiles()
                 if (listFiles != null) {
@@ -261,7 +258,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file)) {
+                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file) ||
+                    InTextDirectivesUtils.isIgnoredTarget(TargetBackend.ANDROID, file)
+                ) {
                     continue
                 }
 
@@ -313,16 +312,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun createTestFiles(file: File, expectedText: String): List<KotlinBaseTest.TestFile> =
-        TestFiles.createTestFiles(
-            file.name,
-            expectedText,
-            object : TestFiles.TestFileFactoryNoModules<KotlinBaseTest.TestFile>() {
-                override fun create(fileName: String, text: String, directives: Directives): KotlinBaseTest.TestFile {
-                    return KotlinBaseTest.TestFile(fileName, text, directives)
-                }
-            }, false,
-            "kotlin.coroutines"
-        )
+        CodegenTestCase.createTestFilesFromFile(file, expectedText, "kotlin.coroutines", false, TargetBackend.JVM)
 
     companion object {
         const val GRADLE_VERSION = "5.6.4"
@@ -359,6 +349,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             val rootFolder = File("")
             val pathManager = PathManager(rootFolder.absolutePath, tmpFolder.absolutePath)
             generate(pathManager, true)
+            println("Android test project is generated into " + tmpFolder.absolutePath + " folder")
         }
     }
 }

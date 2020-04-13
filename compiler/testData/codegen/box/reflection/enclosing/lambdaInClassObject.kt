@@ -1,7 +1,9 @@
 // TARGET_BACKEND: JVM
 
-// WITH_REFLECT
+// has declaring class on Android 4.4
+// IGNORE_BACKEND: ANDROID
 
+// WITH_REFLECT
 class O {
     companion object {
         // Currently we consider <clinit> in class O as the enclosing method of this lambda,

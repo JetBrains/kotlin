@@ -2,6 +2,9 @@
 // WITH_REFLECT
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
 
+// different annotation order
+// IGNORE_BACKEND: ANDROID
+
 package test
 
 import kotlin.test.assertEquals

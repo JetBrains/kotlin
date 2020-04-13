@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 
+// has declaring class on Android 4.4
+// IGNORE_BACKEND: ANDROID
+
 // WITH_REFLECT
 
 val l: Any = {}
