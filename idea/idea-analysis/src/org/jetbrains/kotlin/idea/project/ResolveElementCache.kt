@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.project
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -71,7 +72,8 @@ class ResolveElementCache(
                 CachedValueProvider.Result.create(
                     ContainerUtil.createConcurrentWeakKeySoftValueMap<KtElement, CachedFullResolve>(),
                     KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
-                    resolveSession.exceptionTracker
+                    resolveSession.exceptionTracker,
+                    rootsChangedTracker
                 )
             },
             false
@@ -110,11 +112,14 @@ class ResolveElementCache(
                 CachedValueProvider.Result.create(
                     slruCache,
                     KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
-                    resolveSession.exceptionTracker
+                    resolveSession.exceptionTracker,
+                    rootsChangedTracker
                 )
             },
             false
         )
+
+    private val rootsChangedTracker = ProjectRootModificationTracker.getInstance(project)
 
     override fun resolveFunctionBody(function: KtNamedFunction) = getElementsAdditionalResolve(function, null, BodyResolveMode.FULL)
 
