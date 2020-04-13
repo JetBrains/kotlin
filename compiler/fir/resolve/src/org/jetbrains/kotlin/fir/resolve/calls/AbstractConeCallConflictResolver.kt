@@ -163,9 +163,9 @@ abstract class AbstractConeCallConflictResolver(
         call: Candidate,
         function: FirFunction<*>
     ): List<ConeKotlinType> {
-        return (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
-            ?: (listOfNotNull(function.receiverTypeRef?.coneTypeUnsafe()) +
-                    call.argumentMapping?.map { it.value.argumentType() }.orEmpty()))
+        return listOfNotNull(function.receiverTypeRef?.coneTypeUnsafe()) +
+                (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
+                    ?: call.argumentMapping?.map { it.value.argumentType() }.orEmpty())
     }
 
     private fun createFlatSignature(call: Candidate, klass: FirClass<*>): FlatSignature<Candidate> {
