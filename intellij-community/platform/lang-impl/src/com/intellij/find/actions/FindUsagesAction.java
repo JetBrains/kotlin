@@ -28,7 +28,7 @@ import com.intellij.usages.UsageTarget;
 import com.intellij.usages.UsageView;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.find.actions.ImplKt.findUsages;
+import static com.intellij.find.actions.FindUsagesKt.findUsages;
 import static com.intellij.find.actions.ResolverKt.findShowUsages;
 
 public class FindUsagesAction extends AnAction {

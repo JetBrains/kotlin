@@ -7,6 +7,7 @@ import com.intellij.find.FindBundle.message
 import com.intellij.find.FindSettings
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions
+import com.intellij.find.usages.impl.AllSearchOptions
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo
 import com.intellij.openapi.options.OptionEditor
 import com.intellij.openapi.options.OptionEditorProvider

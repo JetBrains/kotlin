@@ -4,6 +4,8 @@
 package com.intellij.find.actions
 
 import com.intellij.find.usages.UsageHandler
+import com.intellij.find.usages.impl.AllSearchOptions
+import com.intellij.find.usages.impl.createUsageHandler
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.model.presentation.SymbolPresentationService

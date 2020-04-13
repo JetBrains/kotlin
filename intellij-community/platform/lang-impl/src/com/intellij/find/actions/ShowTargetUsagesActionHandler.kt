@@ -5,6 +5,10 @@ import com.intellij.find.FindSettings
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions.createOptions
+import com.intellij.find.usages.impl.AllSearchOptions
+import com.intellij.find.usages.impl.buildQuery
+import com.intellij.find.usages.impl.createUsageHandler
+import com.intellij.find.usages.impl.hasTextSearchStrings
 import com.intellij.model.Symbol
 import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
 import com.intellij.openapi.actionSystem.DataContext
