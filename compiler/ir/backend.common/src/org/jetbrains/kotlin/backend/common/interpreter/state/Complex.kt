@@ -17,8 +17,15 @@ abstract class Complex(
     override val irClass: IrClass, override val fields: MutableList<Variable>, var superClass: Complex?, var subClass: Complex?
 ) : State {
     fun setSuperClassInstance(superClass: Complex) {
-        this.superClass = superClass
-        superClass.subClass = this
+        if (this.irClass == superClass.irClass) {
+            // if superClass is just secondary constructor instance, then copy properties that isn't already present in instance
+            superClass.fields.forEach { if (!this.contains(it)) fields.add(it) }
+            this.superClass = superClass.superClass
+            superClass.superClass?.subClass = this
+        } else {
+            this.superClass = superClass
+            superClass.subClass = this
+        }
     }
 
     fun getOriginal(): Complex {
@@ -29,14 +36,14 @@ abstract class Complex(
         return irClass.fqNameForIrSerialization.toString()
     }
 
+    private fun contains(variable: Variable) = fields.any { it.descriptor == variable.descriptor }
+
     override fun setState(newVar: Variable) {
         when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
             null -> fields.add(newVar)                          // newVar isn't present in value list
             else -> fields[fields.indexOf(oldState)] = newVar   // newVar already present
         }
     }
-
-    fun setStatesFrom(state: Complex) = state.fields.forEach { setState(it) }
 
     override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }

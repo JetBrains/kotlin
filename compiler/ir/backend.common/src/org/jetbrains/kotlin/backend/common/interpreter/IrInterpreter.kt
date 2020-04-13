@@ -427,7 +427,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression): ExecutionResult {
         val owner = constructorCall.symbol.owner
-        val isPrimary = (owner as IrConstructor).isPrimary
         val valueArguments = mutableListOf<Variable>()
 
         interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
@@ -472,23 +471,17 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return Next
         }
 
-        val receiverState = Common(parent)
-        valueArguments.add(Variable(constructorCall.getThisAsReceiver(), receiverState)) //used to set up fields in body
+        val state = Common(parent)
+        valueArguments.add(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments) {
             val statements = constructorCall.getBody()!!.statements
-            when (val first = statements[0]) {
-                // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
-                is IrTypeOperatorCall -> first.argument.interpret().check { return@newFrame it }
-                else -> first.interpret().check { return@newFrame it }
-            }
+            // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
+            ((statements[0] as? IrTypeOperatorCall)?.argument ?: statements[0]).interpret().check { return@newFrame it }
             val returnedState = stack.popReturnValue() as Complex
+
             for (i in 1 until statements.size) statements[i].interpret().check { return@newFrame it }
 
-            val state =
-                if (isPrimary) receiverState.apply { this.setSuperClassInstance(returnedState) }
-                else returnedState.apply { setStatesFrom(receiverState) } // if is secondary then only copy all properties from receiver
-
-            stack.pushReturnValue(state)
+            stack.pushReturnValue(state.apply { this.setSuperClassInstance(returnedState) })
             Next
         }
     }
