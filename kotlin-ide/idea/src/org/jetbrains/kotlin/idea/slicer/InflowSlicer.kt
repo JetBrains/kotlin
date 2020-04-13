@@ -233,10 +233,23 @@ class InflowSlicer(
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
                     val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
                         ?: return
-                    if (currentBehaviour is LambdaResultInflowBehaviour) {
-                        referencedDeclaration.passToProcessor(mode.dropBehaviour())
+                    when (currentBehaviour) {
+                        is LambdaResultInflowBehaviour -> {
+                            referencedDeclaration.passToProcessor(mode.dropBehaviour())
+                        }
+
+                        is LambdaArgumentInflowBehaviour -> {
+                            val parameter = (referencedDeclaration as? KtCallableDeclaration)
+                                ?.valueParameters?.getOrNull(currentBehaviour.argumentIndex)
+                            parameter?.passToProcessor(mode.dropBehaviour())
+                        }
+
+                        is LambdaReceiverInflowBehaviour -> {
+                            val parameter = (referencedDeclaration as? KtCallableDeclaration)
+                                ?.valueParameters?.getOrNull(0)
+                            parameter?.passToProcessor(mode.dropBehaviour())
+                        }
                     }
-                    //TODO: LambdaArgumentInflowBehaviour
                 }
 
                 else -> return
