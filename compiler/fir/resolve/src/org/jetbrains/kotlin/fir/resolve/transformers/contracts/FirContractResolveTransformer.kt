@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescripti
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.errorTypeFromPrototype
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -38,12 +39,12 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
             data: ResolutionMode
         ): CompositeTransformResult<FirSimpleFunction> {
             if (!simpleFunction.hasContractToResolve) {
-                simpleFunction.replaceResolvePhase(FirResolvePhase.CONTRACTS)
+                simpleFunction.updatePhase()
                 return simpleFunction.compose()
             }
             val containingDeclaration = context.containerIfAny
             if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
-                simpleFunction.replaceResolvePhase(FirResolvePhase.CONTRACTS)
+                simpleFunction.updatePhase()
                 simpleFunction.replaceReturnTypeRef(
                     simpleFunction.returnTypeRef.errorTypeFromPrototype(
                         ConeContractDescriptionError("Local function can not be used in contract description")
@@ -61,6 +62,48 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
                 } else {
                     transformContractDescriptionOwner(simpleFunction)
                 }
+            }
+        }
+
+        override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
+            if (
+                property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
+                property.isLocal || property.delegate != null
+            ) {
+                property.updatePhase()
+                return property.compose()
+            }
+            if (property is FirSyntheticProperty) {
+                transformSimpleFunction(property.getter.delegate, data)
+                return property.compose()
+            }
+            withTypeParametersOf(property) {
+                withLocalScopeCleanup {
+                    context.withContainer(property) {
+                        property.getter?.let { transformPropertyAccessor(it, property) }
+                        property.setter?.let { transformPropertyAccessor(it, property) }
+                    }
+                }
+            }
+            property.updatePhase()
+            return property.compose()
+        }
+
+        private fun transformPropertyAccessor(
+            propertyAccessor: FirPropertyAccessor,
+            owner: FirProperty
+        ): CompositeTransformResult<FirStatement> {
+            if (!propertyAccessor.hasContractToResolve) {
+                propertyAccessor.updatePhase()
+                return propertyAccessor.compose()
+            }
+            val receiverTypeRef = owner.receiverTypeRef
+            return if (receiverTypeRef != null) {
+                withLabelAndReceiverType(owner.name, propertyAccessor, receiverTypeRef.coneTypeUnsafe()) {
+                    transformContractDescriptionOwner(propertyAccessor)
+                }
+            } else {
+                transformContractDescriptionOwner(propertyAccessor)
             }
         }
 
@@ -119,6 +162,10 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
 
         private val FirContractDescriptionOwner.hasContractToResolve: Boolean
             get() = contractDescription is FirRawContractDescription
+
+        private fun FirDeclaration.updatePhase() {
+            replaceResolvePhase(FirResolvePhase.CONTRACTS)
+        }
     }
 }
 
