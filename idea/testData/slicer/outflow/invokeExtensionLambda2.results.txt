@@ -1,0 +1,20 @@
+3 fun String.foo(<bold>p: String</bold>) {
+4 	val v1 = bar(<bold>p</bold>) { { this } }
+7 		(INLINE CALL bar) inline fun bar(<bold>x: String</bold>, lambda: () -> String.() -> String): String {
+8 			(INLINE CALL bar) return lambda()(<bold>x</bold>)
+8 				(INLINE CALL bar) [LAMBDA RECEIVER IN] return <bold>lambda()</bold>(x)
+8 					(INLINE CALL bar) [LAMBDA IN] [LAMBDA RECEIVER IN] return <bold>lambda</bold>()(x)
+7 						(INLINE CALL bar) [LAMBDA IN] [LAMBDA RECEIVER IN] inline fun bar(x: String, <bold>lambda: () -> String.() -> String</bold>): String {
+4 							[LAMBDA IN] [LAMBDA RECEIVER IN] val v1 = bar(p) <bold>{ { this } }</bold>
+4 								[LAMBDA RECEIVER IN] val v1 = bar(p) <bold>{ { this } }</bold>
+4 									[LAMBDA RECEIVER IN] val v1 = bar(p) { <bold>{ this }</bold> }
+4 										val v1 = bar(p) { { <bold>this</bold> } }
+4 											val v1 = bar(p) { <bold>{ this }</bold> }
+4 												[LAMBDA CALLS] val v1 = bar(p) { <bold>{ this }</bold> }
+4 													[LAMBDA CALLS] val v1 = bar(p) <bold>{ { this } }</bold>
+4 														[LAMBDA CALLS] [LAMBDA CALLS] val v1 = bar(p) <bold>{ { this } }</bold>
+7 															(INLINE CALL bar) [LAMBDA CALLS] [LAMBDA CALLS] inline fun bar(x: String, <bold>lambda: () -> String.() -> String</bold>): String {
+8 																(INLINE CALL bar) [LAMBDA CALLS] return <bold>lambda()</bold>(x)
+8 																	(INLINE CALL bar) return <bold>lambda()(x)</bold>
+4 																		val v1 = <bold>bar(p) { { this } }</bold>
+4 																			val <bold>v1 = bar(p) { { this } }</bold>
