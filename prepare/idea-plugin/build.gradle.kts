@@ -43,6 +43,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
         ":compiler:fir:resolve",
+        ":compiler:fir:fir-serialization",
         ":compiler:fir:tree",
         ":compiler:fir:java",
         ":compiler:fir:jvm",

@@ -341,7 +341,7 @@ internal fun FirExpression.getExpectedType(
 }
 
 
-private fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
+fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
     return this.arrayElementType(session) ?: error("Failed to extract! ${this.render()}!")
 }
 
