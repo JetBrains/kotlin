@@ -1,0 +1,3 @@
+4 fun <bold>foo(): Int = 10</bold>
+10 	val v = <bold>foo()</bold>
+10 		val <bold>v = foo()</bold>
