@@ -603,6 +603,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/invokeExtensionLambda.kt");
         }
 
+        @TestMetadata("invokeExtensionLambda2.kt")
+        public void testInvokeExtensionLambda2() throws Exception {
+            runTest("idea/testData/slicer/outflow/invokeExtensionLambda2.kt");
+        }
+
         @TestMetadata("invokeLambdaSecondParam.kt")
         public void testInvokeLambdaSecondParam() throws Exception {
             runTest("idea/testData/slicer/outflow/invokeLambdaSecondParam.kt");
