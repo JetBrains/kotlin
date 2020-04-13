@@ -38,13 +38,12 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
             simpleFunction: FirSimpleFunction,
             data: ResolutionMode
         ): CompositeTransformResult<FirSimpleFunction> {
+            simpleFunction.updatePhase()
             if (!simpleFunction.hasContractToResolve) {
-                simpleFunction.updatePhase()
                 return simpleFunction.compose()
             }
             val containingDeclaration = context.containerIfAny
             if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
-                simpleFunction.updatePhase()
                 simpleFunction.replaceReturnTypeRef(
                     simpleFunction.returnTypeRef.errorTypeFromPrototype(
                         ConeContractDescriptionError("Local function can not be used in contract description")
@@ -66,11 +65,11 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
         }
 
         override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
+            property.updatePhase()
             if (
                 property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
                 property.isLocal || property.delegate != null
             ) {
-                property.updatePhase()
                 return property.compose()
             }
             if (property is FirSyntheticProperty) {
@@ -85,7 +84,6 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
                     }
                 }
             }
-            property.updatePhase()
             return property.compose()
         }
 
@@ -93,8 +91,8 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
             propertyAccessor: FirPropertyAccessor,
             owner: FirProperty
         ): CompositeTransformResult<FirStatement> {
+            propertyAccessor.updatePhase()
             if (!propertyAccessor.hasContractToResolve) {
-                propertyAccessor.updatePhase()
                 return propertyAccessor.compose()
             }
             val receiverTypeRef = owner.receiverTypeRef
@@ -152,6 +150,42 @@ class FirContractResolveTransformer(session: FirSession, scopeSession: ScopeSess
             owner.body.replaceFirstStatement(functionCall)
             dataFlowAnalyzer.exitContractDescription()
             return owner.compose()
+        }
+
+        override fun transformSealedClass(sealedClass: FirSealedClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+            return transformRegularClass(sealedClass, data)
+        }
+
+        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+            regularClass.updatePhase()
+            context.storeClass(regularClass)
+            regularClass.transformCompanionObject(this, data)
+            withTypeParametersOf(regularClass) {
+                regularClass.transformDeclarations(this, data)
+            }
+            return regularClass.compose()
+        }
+
+        override fun transformAnonymousObject(
+            anonymousObject: FirAnonymousObject,
+            data: ResolutionMode
+        ): CompositeTransformResult<FirStatement> {
+            return anonymousObject.compose()
+        }
+
+        override fun transformAnonymousInitializer(
+            anonymousInitializer: FirAnonymousInitializer,
+            data: ResolutionMode
+        ): CompositeTransformResult<FirDeclaration> {
+            return anonymousInitializer.compose()
+        }
+
+        override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+            return constructor.compose()
+        }
+
+        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+            return enumEntry.compose()
         }
 
         private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(owner: T): CompositeTransformResult<T> {
