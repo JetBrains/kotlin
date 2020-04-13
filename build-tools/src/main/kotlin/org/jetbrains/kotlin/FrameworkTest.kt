@@ -10,6 +10,7 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.*
 
 import java.io.FileWriter
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -216,7 +217,10 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             else -> error("Cannot validate bitcode for test target $testTarget")
         }
 
-        val python3 = Paths.get("/usr/bin/python3")
+        val python3 = listOf("/usr/bin/python3", "/usr/local/bin/python3")
+                .map { Paths.get(it) }.firstOrNull { Files.exists(it) }
+                ?: error("Can't find python3")
+
         runTest(executorService = localExecutorService(project), testExecutable = python3,
                 args = listOf(bitcodeBuildTool, "--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
