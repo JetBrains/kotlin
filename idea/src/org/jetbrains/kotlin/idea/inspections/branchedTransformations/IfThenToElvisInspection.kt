@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import javax.swing.JComponent
 
-class IfThenToElvisInspection(
-    @JvmField var highlightStatement: Boolean = false
+class IfThenToElvisInspection @JvmOverloads constructor(
+    @JvmField var highlightStatement: Boolean = false,
+    private val inlineWithPrompt: Boolean = true
 ) : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
     override fun inspectionText(element: KtIfExpression): String = KotlinBundle.message("if.then.foldable.to")
 
@@ -41,7 +42,7 @@ class IfThenToElvisInspection(
             ProblemHighlightType.INFORMATION
 
     override fun applyTo(element: KtIfExpression, project: Project, editor: Editor?) {
-        convert(element, editor)
+        convert(element, editor, inlineWithPrompt)
     }
 
     override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.fromIfKeywordToRightParenthesisTextRangeInThis()
@@ -53,7 +54,7 @@ class IfThenToElvisInspection(
     companion object {
         val INTENTION_TEXT get() = KotlinBundle.message("replace.if.expression.with.elvis.expression")
 
-        fun convert(element: KtIfExpression, editor: Editor?) {
+        fun convert(element: KtIfExpression, editor: Editor?, inlineWithPrompt: Boolean) {
             val ifThenToSelectData = element.buildSelectTransformationData() ?: return
 
             val factory = KtPsiFactory(element)
@@ -79,7 +80,7 @@ class IfThenToElvisInspection(
             }
 
             if (editor != null) {
-                elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+                elvis.inlineLeftSideIfApplicable(editor, inlineWithPrompt)
                 with(IfThenToSafeAccessInspection) {
                     (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor)
                 }

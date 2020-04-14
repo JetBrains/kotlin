@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
-class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
+class IfThenToSafeAccessInspection @JvmOverloads constructor(private val inlineWithPrompt: Boolean = true) :
+    AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
 
     override fun isApplicable(element: KtIfExpression): Boolean = isApplicableTo(element, expressionShouldBeStable = true)
 
@@ -42,7 +43,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
     override val startFixInWriteAction = false
 
     override fun applyTo(element: KtIfExpression, project: Project, editor: Editor?) {
-        convert(element, editor)
+        convert(element, editor, inlineWithPrompt)
     }
 
     companion object {
@@ -59,7 +60,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
             }
         }
 
-        fun convert(ifExpression: KtIfExpression, editor: Editor?) {
+        fun convert(ifExpression: KtIfExpression, editor: Editor?, inlineWithPrompt: Boolean) {
             val ifThenToSelectData = ifExpression.buildSelectTransformationData() ?: return
 
             val factory = KtPsiFactory(ifExpression)
@@ -70,7 +71,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
             }
 
             if (editor != null && resultExpr is KtSafeQualifiedExpression) {
-                resultExpr.inlineReceiverIfApplicableWithPrompt(editor)
+                resultExpr.inlineReceiverIfApplicable(editor, inlineWithPrompt)
                 resultExpr.renameLetParameter(editor)
             }
         }
