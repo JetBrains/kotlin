@@ -56,7 +56,7 @@ class Reducer(private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<ESExpr
 
         val result = when (reducedArg) {
             is ESConstant -> argType!!.isSubtypeOf(isType)
-            is ESVariable -> if (argType?.isSubtypeOf(isType) == true) true else null
+            is ESVariable, is ESReceiver -> if (argType?.isSubtypeOf(isType) == true) true else null
             else -> throw IllegalStateException("Unknown ESValue: $reducedArg")
         }
 
