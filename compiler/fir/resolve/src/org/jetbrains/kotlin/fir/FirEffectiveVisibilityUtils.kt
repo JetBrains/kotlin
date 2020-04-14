@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -34,14 +36,27 @@ fun ConeKotlinType.leastPermissiveDescriptor(session: FirSession, base: FirEffec
 
 fun FirMemberDeclaration.firEffectiveVisibility(
     session: FirSession, visibility: Visibility = this.visibility, checkPublishedApi: Boolean = false
-): FirEffectiveVisibility =
-    lowerBound(
+): FirEffectiveVisibility {
+    val containing = this.containingClass(session)
+    return lowerBound(
         visibility.firEffectiveVisibility(session, this),
-        this.containingClass(session)?.firEffectiveVisibility(session, checkPublishedApi) ?: Public
+        this.effectiveVisibility,
+        containing?.firEffectiveVisibility(session, checkPublishedApi) ?: Public,
+        containing?.effectiveVisibility ?: Public
     )
+}
 
-private fun lowerBound(first: FirEffectiveVisibility, second: FirEffectiveVisibility) =
-    first.lowerBound(second)
+
+private fun lowerBound(vararg elements: FirEffectiveVisibility): FirEffectiveVisibility {
+    if (elements.size < 2) {
+        throw IllegalArgumentException("Number of elements must be greater than 1")
+    }
+    var result = elements[0]
+    for (el in elements) {
+        result = result.lowerBound(el)
+    }
+    return result
+}
 
 private fun FirMemberDeclaration.containingClass(session: FirSession): FirRegularClass? {
     val classId = when (this) {
@@ -50,7 +65,9 @@ private fun FirMemberDeclaration.containingClass(session: FirSession): FirRegula
         else -> null
     } ?: return null
     if (classId.isLocal) return null
-    return session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
+    val buffer = session.declaredMemberScopeProvider.getClassByClassId(classId)
+    return (session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass)
+        ?: (session.declaredMemberScopeProvider.getClassByClassId(classId) as? FirRegularClass)
 }
 
 private fun Visibility.forVisibility(
@@ -63,7 +80,8 @@ private fun Visibility.forVisibility(
         Visibilities.PUBLIC -> Public
         Visibilities.LOCAL -> Local
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
-        else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
+        // TODO: else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
+        else -> Private
     }
 
 class DeclarationWithRelation internal constructor(val declaration: FirMemberDeclaration, private val relation: RelationToType) {

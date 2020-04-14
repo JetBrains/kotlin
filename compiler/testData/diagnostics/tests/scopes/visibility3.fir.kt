@@ -16,7 +16,7 @@ private fun bar() {
     x = 20
 }
 
-fun makeA() = A()
+<!EXPOSED_FUNCTION_RETURN_TYPE!>fun makeA() = A()<!>
 
 private object PO {}
 

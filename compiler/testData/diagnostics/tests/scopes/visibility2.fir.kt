@@ -9,7 +9,7 @@ private open class A {
 
 private fun foo() {}
 
-fun makeA() = A()
+<!EXPOSED_FUNCTION_RETURN_TYPE!>fun makeA() = A()<!>
 
 private object PO {}
 

@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
-inline fun call(a: A) {
+inline fun call(<!EXPOSED_PARAMETER_TYPE!>a: A<!>) {
     a.test()
     publishedTopLevel()
     

@@ -15,7 +15,7 @@ fun test(e: MyException, stream: PrintStream) {
     val result = e.getLocalizedMessage()
 }
 
-fun test(e: YourException, stream: PrintStream) {
+fun test(<!EXPOSED_PARAMETER_TYPE!>e: YourException<!>, stream: PrintStream) {
     e.printStackTrace()
     e.printStackTrace(stream)
     val result = e.getLocalizedMessage()

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -17,6 +18,24 @@ class FirDeclaredMemberScopeProvider : FirSessionComponent {
 
     private val declaredMemberCache = mutableMapOf<FirClass<*>, FirScope>()
     private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope>()
+
+    fun getClassByClassId(classId: ClassId): FirClass<*>? {
+        for ((clazz, _) in declaredMemberCache) {
+            if (clazz.classId.packageFqName == classId.packageFqName
+                && clazz.classId.relativeClassName == classId.relativeClassName
+            ) {
+                return clazz
+            }
+        }
+        for ((clazz, _) in nestedClassifierCache) {
+            if (clazz.classId.packageFqName == classId.packageFqName
+                && clazz.classId.relativeClassName == classId.relativeClassName
+            ) {
+                return clazz
+            }
+        }
+        return null
+    }
 
     fun declaredMemberScope(
         klass: FirClass<*>,

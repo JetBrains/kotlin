@@ -71,5 +71,6 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(EXPOSED_FUNCTION_RETURN_TYPE, "{0} function exposes its {2} return type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type{1}", TO_STRING, TO_STRING, TO_STRING)
+        }
     }
 }

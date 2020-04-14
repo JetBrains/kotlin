@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 object FirErrors {
     val UNRESOLVED_REFERENCE by error1<FirSourceElement, PsiElement, String?>()
@@ -49,11 +51,11 @@ object FirErrors {
     val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED)
 
     // Exposed visibility group
-    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
-    val EXPOSED_FUNCTION_RETURN_TYPE by error3<FirSourceElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
-    val EXPOSED_RECEIVER_TYPE by error3<FirSourceElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
-    val EXPOSED_PROPERTY_TYPE by error3<FirSourceElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
-    val EXPOSED_PARAMETER_TYPE by error3<FirSourceElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
+    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
+    val EXPOSED_FUNCTION_RETURN_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
+    val EXPOSED_RECEIVER_TYPE by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
+    val EXPOSED_PROPERTY_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
+    val EXPOSED_PARAMETER_TYPE by error3<FirSourceElement, KtParameter, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>()
 
     val REPEATED_MODIFIER by error1<FirSourceElement, PsiElement, KtModifierKeywordToken>()
     val REDUNDANT_MODIFIER by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()

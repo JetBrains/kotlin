@@ -6,7 +6,7 @@ private class S public constructor() {
     }
 }
 
-internal inline fun x(s: S, z: () -> Unit) {
+internal inline fun x(<!EXPOSED_PARAMETER_TYPE!>s: S<!>, z: () -> Unit) {
     z()
     S()
     s.a()
