@@ -1,6 +1,6 @@
-4 var x: Int = <bold>1</bold> (in A.x: Int)
+4 var x: Int = <bold>1</bold> (in A.x)
 4 	var <bold>x: Int = 1</bold> (in A)
-4 		var x: Int = <bold>1</bold> (in A.x: Int)
+4 		var x: Int = <bold>1</bold> (in A.x)
 
 9 x = <bold>2</bold> (in A.test())
 4 	var <bold>x: Int = 1</bold> (in A)

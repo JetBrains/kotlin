@@ -10,15 +10,14 @@ import com.intellij.slicer.SliceUsageCellRendererBase
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.FontUtil
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
@@ -63,6 +62,7 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
                     it is KtObjectDeclaration && !it.isObjectLiteral() ||
                     it is KtNamedFunction && !it.isLocal ||
                     it is KtProperty && !it.isLocal ||
+                    it is KtPropertyAccessor ||
                     it is KtConstructor<*>
         } as? KtDeclaration ?: return null
 
@@ -85,7 +85,30 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
                 }
             }
 
-            append(descriptorRenderer.render(descriptor))
+            when (descriptor) {
+                is PropertyDescriptor -> {
+                    renderPropertyOrAccessor(descriptor)
+                }
+
+                is PropertyAccessorDescriptor -> {
+                    val property = descriptor.correspondingProperty
+                    renderPropertyOrAccessor(property, if (descriptor is PropertyGetterDescriptor) ".get" else ".set")
+                }
+
+                else -> {
+                    append(descriptorRenderer.render(descriptor))
+                }
+            }
+        }
+    }
+
+    private fun StringBuilder.renderPropertyOrAccessor(propertyDescriptor: PropertyDescriptor, accessorSuffix: String = "") {
+        append(propertyDescriptor.name.render())
+        append(accessorSuffix)
+        val receiverType = propertyDescriptor.extensionReceiverParameter?.type
+        if (receiverType != null) {
+            append(" on ")
+            append(descriptorRenderer.renderType(receiverType))
         }
     }
 

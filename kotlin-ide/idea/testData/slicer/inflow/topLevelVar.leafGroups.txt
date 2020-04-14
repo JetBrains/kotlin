@@ -1,6 +1,6 @@
-3 var foo: Int = <bold>1</bold> (in foo: Int)
+3 var foo: Int = <bold>1</bold> (in foo)
 3 	var <bold>foo: Int = 1</bold>
-3 		var foo: Int = <bold>1</bold> (in foo: Int)
+3 		var foo: Int = <bold>1</bold> (in foo)
 
 7 foo = <bold>2</bold> (in test())
 3 	var <bold>foo: Int = 1</bold>

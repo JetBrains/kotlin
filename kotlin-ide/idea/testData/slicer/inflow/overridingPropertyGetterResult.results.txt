@@ -2,6 +2,6 @@
 20 	val y = <bold>b.foo</bold> (in test(A, B,…))
 3 		return <bold>5</bold>;
 9 		override val <bold>foo: Int</bold> (in B)
-10 			get() = <bold>2</bold> (in B.foo: Int)
+10 			get() = <bold>2</bold> (in B.foo.get)
 14 		override val <bold>foo: Int</bold> (in C)
-15 			get() = <bold>3</bold> (in C.foo: Int)
+15 			get() = <bold>3</bold> (in C.foo.get)

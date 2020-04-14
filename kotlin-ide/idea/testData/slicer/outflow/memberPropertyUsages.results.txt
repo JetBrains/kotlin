@@ -1,6 +1,6 @@
 4 val <bold>x = 1</bold> (in A)
 3 	int x = new A().<bold>getX</bold>();
-6 	val y = <bold>x</bold> (in A.y: Int)
+6 	val y = <bold>x</bold> (in A.y)
 6 		val <bold>y = x</bold> (in A)
 11 	z = <bold>x</bold> (in A)
 8 		val <bold>z: Int</bold> (in A)
