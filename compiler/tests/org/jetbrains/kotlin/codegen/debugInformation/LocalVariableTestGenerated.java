@@ -60,4 +60,126 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/debug/localVariables/underscoreNames.kt");
     }
+
+    @TestMetadata("compiler/testData/debug/localVariables/receiverMangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(BlockJUnit4ClassRunner.class)
+    public static class ReceiverMangling extends AbstractLocalVariableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        @Test
+        public void testAllFilesPresentInReceiverMangling() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("deepInline.kt")
+        public void testDeepInline() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/deepInline.kt");
+        }
+
+        @Test
+        @TestMetadata("deepInlineWithLabels.kt")
+        public void testDeepInlineWithLabels() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/deepInlineWithLabels.kt");
+        }
+
+        @Test
+        @TestMetadata("deepNoinlineWIthLabels_before.kt")
+        public void testDeepNoinlineWIthLabels_before() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/deepNoinlineWIthLabels_before.kt");
+        }
+
+        @Test
+        @TestMetadata("deepNoinlineWithLabels_after.kt")
+        public void testDeepNoinlineWithLabels_after() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/deepNoinlineWithLabels_after.kt");
+        }
+
+        @Test
+        @TestMetadata("deepNoinline_after.kt")
+        public void testDeepNoinline_after() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/deepNoinline_after.kt");
+        }
+
+        @Test
+        @TestMetadata("deepNoinline_before.kt")
+        public void testDeepNoinline_before() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/deepNoinline_before.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineClassCapture.kt")
+        public void testInlineClassCapture() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/inlineClassCapture.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineReceivers.kt")
+        public void testInlineReceivers() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/inlineReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("innerClass.kt")
+        public void testInnerClass() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/innerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("localFunctions.kt")
+        public void testLocalFunctions() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/localFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("mangledNames.kt")
+        public void testMangledNames() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/mangledNames.kt");
+        }
+
+        @Test
+        @TestMetadata("nonInlineReceivers_after.kt")
+        public void testNonInlineReceivers_after() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/nonInlineReceivers_after.kt");
+        }
+
+        @Test
+        @TestMetadata("nonInlineReceivers_before.kt")
+        public void testNonInlineReceivers_before() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/nonInlineReceivers_before.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiver.kt")
+        public void testSimpleCapturedReceiver() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverFunctionExpression.kt")
+        public void testSimpleCapturedReceiverFunctionExpression() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverFunctionExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverWithLabel.kt")
+        public void testSimpleCapturedReceiverWithLabel() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithLabel.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverWithParens.kt")
+        public void testSimpleCapturedReceiverWithParens() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithParens.kt");
+        }
+    }
 }
