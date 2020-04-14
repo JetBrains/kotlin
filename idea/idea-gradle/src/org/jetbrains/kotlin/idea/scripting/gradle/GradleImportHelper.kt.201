@@ -31,18 +31,15 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.function.Predicate
 
 fun runPartialGradleImport(project: Project) {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    val projectSettings = gradleSettings.getLinkedProjectsSettings()
-        .filterIsInstance<GradleProjectSettings>()
-        .firstOrNull() ?: return
-
-    ExternalSystemUtil.refreshProject(
-        projectSettings.externalProjectPath,
-        ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-            .projectResolverPolicy(
-                GradlePartialResolverPolicy(Predicate<GradleProjectResolverExtension?> { it is KotlinDslScriptModelResolver })
-            )
-    )
+    getGradleProjectSettings(project).forEach {
+        ExternalSystemUtil.refreshProject(
+            it.externalProjectPath,
+            ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+                .projectResolverPolicy(
+                    GradlePartialResolverPolicy(Predicate<GradleProjectResolverExtension?> { it is KotlinDslScriptModelResolver })
+                )
+        )
+    }
 }
 
 private var Project.shouldShowLoadConfiguraionsAction: Boolean?

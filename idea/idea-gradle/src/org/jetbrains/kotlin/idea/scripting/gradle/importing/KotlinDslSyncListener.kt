@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
+import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -35,17 +36,8 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
 
         if (models.isEmpty()) return
 
-        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        val projectSettings = gradleSettings.getLinkedProjectsSettings()
-            .filterIsInstance<GradleProjectSettings>().firstOrNull()
-            ?: return
+        val javaHome = getJavaHomeForGradleProject(project)
 
-        val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
-            project,
-            projectSettings.externalProjectPath,
-            GradleConstants.SYSTEM_ID
-        )
-
-        saveScriptModels(project, id, gradleExeSettings.javaHome, models)
+        saveScriptModels(project, id, javaHome, models)
     }
 }
