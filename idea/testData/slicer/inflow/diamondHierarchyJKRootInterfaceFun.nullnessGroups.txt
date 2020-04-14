@@ -1,3 +1,4 @@
 [NotNull Values]
-8 	val <bold>x = a.foo()</bold> (in test(A, B, C, D))
-8 		val <bold>x = a.foo()</bold> (in test(A, B, C, D))
+8 	val <bold>x = a.foo()</bold> (in test(A, B,…))
+8 		val <bold>x = a.foo()</bold> (in test(A, B,…))
+

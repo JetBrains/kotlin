@@ -1,3 +1,4 @@
 [NotNull Values]
-22 	val <bold>z = c.foo()</bold> (in test(A, B, C, D))
-22 		val <bold>z = c.foo()</bold> (in test(A, B, C, D))
+22 	val <bold>z = c.foo()</bold> (in test(A, B,…))
+22 		val <bold>z = c.foo()</bold> (in test(A, B,…))
+

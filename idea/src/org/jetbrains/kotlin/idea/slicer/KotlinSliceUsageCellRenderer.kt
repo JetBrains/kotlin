@@ -12,6 +12,7 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.FontUtil
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -26,6 +27,7 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
     private val descriptorRenderer = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {
         withoutReturnType = true
         renderConstructorKeyword = false
+        valueParametersHandler = TruncatedValueParametersHandler(maxParameters = 2)
     }
 
     override fun customizeCellRendererFor(sliceUsage: SliceUsage) {
@@ -84,6 +86,45 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
 
             append(descriptorRenderer.render(descriptor))
+        }
+    }
+
+    private class TruncatedValueParametersHandler(private val maxParameters: Int) : DescriptorRenderer.ValueParametersHandler {
+        private var truncateLength = -1
+
+        override fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder) {
+            builder.append("(")
+        }
+
+        override fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder) {
+            if (parameterCount > maxParameters) {
+                builder.setLength(truncateLength)
+                builder.append(",${Typography.ellipsis}")
+            }
+            builder.append(")")
+        }
+
+        override fun appendBeforeValueParameter(
+            parameter: ValueParameterDescriptor,
+            parameterIndex: Int,
+            parameterCount: Int,
+            builder: StringBuilder
+        ) {
+        }
+
+        override fun appendAfterValueParameter(
+            parameter: ValueParameterDescriptor,
+            parameterIndex: Int,
+            parameterCount: Int,
+            builder: StringBuilder
+        ) {
+            if (parameterIndex < parameterCount - 1) {
+                if (parameterIndex == maxParameters - 1) {
+                    truncateLength = builder.length
+                } else {
+                    builder.append(", ")
+                }
+            }
         }
     }
 }
