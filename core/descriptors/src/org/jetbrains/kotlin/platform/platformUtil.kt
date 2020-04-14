@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.platform
 
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-
 inline fun <reified T : SimplePlatform> TargetPlatform.subplatformsOfType(): List<T> = componentPlatforms.filterIsInstance<T>()
 fun <T> TargetPlatform.subplatformsOfType(klass: Class<T>): List<T> = componentPlatforms.filterIsInstance(klass)
 
