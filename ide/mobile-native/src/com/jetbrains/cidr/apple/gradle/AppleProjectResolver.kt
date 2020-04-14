@@ -133,8 +133,13 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
                     dataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRoot)
                 }
 
-                target.sourceFolders.forEach { createRoot(it, ExternalSystemSourceType.SOURCE) }
-                target.testFolders.forEach { createRoot(it, ExternalSystemSourceType.TEST) }
+                val moduleId = dataNode.data.id
+                if (moduleId.endsWith("Main")) {
+                    target.sourceFolders.forEach { createRoot(it, ExternalSystemSourceType.SOURCE) }
+                }
+                if (moduleId.endsWith("Test")) {
+                    target.testFolders.forEach { createRoot(it, ExternalSystemSourceType.TEST) }
+                }
             }
 
             ideModule.createChild(APPLE_PROJECT, AppleProjectModelImpl(targets))
