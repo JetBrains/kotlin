@@ -10,7 +10,6 @@ import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvid
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class PostfixTemplateLookupElement extends CustomLiveTemplateLookupElement {
@@ -46,13 +45,8 @@ public class PostfixTemplateLookupElement extends CustomLiveTemplateLookupElemen
   @Override
   public void renderElement(LookupElementPresentation presentation) {
     super.renderElement(presentation);
-    if (sudden) {
-      presentation.setTailText(" " + UIUtil.rightArrow() + " " + myTemplate.getExample());
-    }
-    else {
-      presentation.setTypeText(myTemplate.getExample());
-      presentation.setTypeGrayed(true);
-    }
+    presentation.setTypeText(myTemplate.getExample());
+    presentation.setTypeGrayed(true);
   }
 
   @Override

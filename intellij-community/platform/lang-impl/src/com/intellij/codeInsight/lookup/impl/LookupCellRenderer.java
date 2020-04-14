@@ -128,7 +128,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     LookupElementPresentation presentation = myAsyncRendering.getLastComputed(item);
     if (presentation == null) {
-      presentation = new RealLookupElementPresentation(myLookup.isSelectionTouched());
+      presentation = new RealLookupElementPresentation();
       renderLookupElement(item, presentation);
     }
 

@@ -66,7 +66,7 @@ public class AsyncRendering {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private void renderInBackground(LookupElement element, LookupElementRenderer renderer, Ref<CancellablePromise<?>> promiseRef) {
-    RealLookupElementPresentation presentation = new RealLookupElementPresentation(false);
+    RealLookupElementPresentation presentation = new RealLookupElementPresentation();
     renderer.renderElement(element, presentation);
 
     rememberPresentation(element, presentation);
