@@ -10,6 +10,8 @@ internal class TeamCityMessageStackTraceProcessor {
 
     fun process(text: String, firstLineAction: (String?) -> Unit) {
         firstLine = if (text.trim().startsWith("at ")) {
+            // firstLineAction can have side effects
+            // that's why important to call it even with null line
             firstLineAction(firstLine)
             null
         } else {

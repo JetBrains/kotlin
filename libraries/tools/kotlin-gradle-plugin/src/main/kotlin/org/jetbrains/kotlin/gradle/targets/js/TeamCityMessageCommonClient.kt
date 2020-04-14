@@ -16,6 +16,9 @@ class TeamCityMessageCommonClient(
     private val log: Logger,
     private val progressLogger: ProgressLogger
 ) : ServiceMessageParserCallback {
+
+    private val stackTraceProcessor = TeamCityMessageStackTraceProcessor()
+
     override fun parseException(e: ParseException, text: String) {
         log.error("Failed to parse test process messages: \"$text\"", e)
     }
@@ -30,7 +33,15 @@ class TeamCityMessageCommonClient(
         val value = text.trimEnd()
         progressLogger.progress(value)
 
-        type?.let { log.processLogMessage(value, it) }
+        var actualType = type
+        stackTraceProcessor.process(text) { line ->
+            actualType = ERROR
+            if (line != null) {
+                printMessage(line, actualType)
+            }
+        }
+
+        actualType?.let { log.processLogMessage(value, it) }
     }
 
     override fun regularText(text: String) {
