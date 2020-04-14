@@ -232,7 +232,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
-        override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
         private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
         override val callResolver: FirCallResolver = FirCallResolver(
             this,
@@ -247,6 +246,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
             IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx)
+        override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver =
+            FirDoubleColonExpressionResolver(session, integerLiteralTypeApproximator)
         override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)
     }
 }

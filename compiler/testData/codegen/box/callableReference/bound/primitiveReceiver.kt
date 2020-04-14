@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun Boolean.foo() = 1
 fun Byte.foo() = 2
 fun Short.foo() = 3
