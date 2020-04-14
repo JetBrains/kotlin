@@ -1605,7 +1605,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             """
                 @Test
                 fun fail() {
-                    error("FAILURE!")
+                    throw IllegalStateException("FAILURE!")
                 }
             """.trimIndent()
         )
