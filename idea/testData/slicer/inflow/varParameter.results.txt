@@ -1,4 +1,4 @@
-3 open class A(var <bold>n: Int</bold>) { (in A(Int))
+3 open class A(var <bold>n: Int</bold>) { (in A)
 3 	super(<bold>n</bold>);
 2 		D(int <bold>n</bold>) {
 7 	A a = new A(<bold>3</bold>);
