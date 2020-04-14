@@ -1,6 +1,6 @@
 15 val <bold>y = b.foo</bold> (in test(A, B, C))
 15 	val y = <bold>b.foo</bold> (in test(A, B, C))
-7 		open class B(override val <bold>foo: Int</bold>) : A() (in B(Int))
+7 		open class B(override val <bold>foo: Int</bold>) : A() (in B)
 3 			super(<bold>10</bold>);
 9 			class C : B(<bold>1</bold>) { (in C)
 7 		return <bold>5</bold>;

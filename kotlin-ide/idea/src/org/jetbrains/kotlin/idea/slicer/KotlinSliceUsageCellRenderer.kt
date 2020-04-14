@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
@@ -54,13 +55,19 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
     }
 
     fun containerSuffix(sliceUsage: SliceUsage): String? {
-        val declaration = sliceUsage.element?.parents?.firstOrNull {
+        val element = sliceUsage.element ?: return null
+        var declaration = element.parents.firstOrNull {
             it is KtClass ||
                     it is KtObjectDeclaration && !it.isObjectLiteral() ||
                     it is KtNamedFunction && !it.isLocal ||
                     it is KtProperty && !it.isLocal ||
                     it is KtConstructor<*>
         } as? KtDeclaration ?: return null
+
+        // for a val or var among primary constructor parameters show the class as container
+        if (declaration is KtPrimaryConstructor && element is KtParameter && element.hasValOrVar()) {
+            declaration = declaration.containingClassOrObject!!
+        }
 
         return buildString {
             append(KotlinBundle.message("slicer.text.in", ""))
