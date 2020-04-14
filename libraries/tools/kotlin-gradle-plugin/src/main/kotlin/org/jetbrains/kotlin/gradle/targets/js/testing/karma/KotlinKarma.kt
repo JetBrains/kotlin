@@ -430,6 +430,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         progressLogger.progress(value)
 
                         parseConsole(value, type)
+                        super.printNonTestOutput(text, type)
                     }
 
                     private fun parseConsole(text: String, type: String?) {
