@@ -14,7 +14,7 @@ export const TEST_END: string
 export const TEST_END_NO_DURATION: string
 export const BLOCK_OPENED: string
 export const BLOCK_CLOSED: string
-export const MESSAGE: string
+export const TYPED_MESSAGE: string
 
 export function tcEscape(str: string): string
 

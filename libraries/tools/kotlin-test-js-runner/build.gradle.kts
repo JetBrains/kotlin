@@ -57,6 +57,8 @@ tasks {
             "karma-debug-runner.js",
             "karma-debug-framework.js",
             "mocha-kotlin-reporter.js",
+            "tc-log-appender.js",
+            "tc-log-error-webpack.js",
             "package.json",
             "rollup.config.js",
             "tsconfig.json",

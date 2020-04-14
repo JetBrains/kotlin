@@ -82,7 +82,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                 config.loggers = [
                     {
                         type: 'kotlin-test-js-runner/tc-log-appender.js',
-                        layout: { type: 'pattern', pattern: '%[%d{DATE}:%p [%c]: %]%m' }
+                        layout: { type: 'pattern', pattern: '%[[%c]: %]%m' }
                     }
                 ]
             """.trimIndent()
@@ -438,24 +438,21 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private fun parseConsole(text: String, type: String?) {
 
-                        val result = KARMA_MESSAGE.matchEntire(text)
+                        var actualText = text
 
-                        if (result != null) {
+                        val launcherMessage = KARMA_LAUNCHER_MESSAGE.matchEntire(text)
 
-                            val (logLevel, message) = result.destructured
-
-                            when (logLevel.toLowerCase()) {
+                        if (launcherMessage != null) {
+                            val (message) = launcherMessage.destructured
+                            actualText = message
+                            when (type?.toLowerCase()) {
                                 WARN, ERROR -> {
                                     processFailedBrowsers(text)
                                 }
                             }
-
-                            processLogMessage(message, logLevel)
-
-                            return
                         }
 
-                        type?.let { processLogMessage(text, it) }
+                        type?.let { processLogMessage(actualText, it) }
                     }
 
                     private fun processLogMessage(
@@ -559,5 +556,5 @@ private const val INFO = "info"
 private const val DEBUG = "debug"
 private const val LOG = "log"
 
-private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
+private val KARMA_LAUNCHER_MESSAGE = "^.*\\[launcher]: ([\\w\\W]*)\$"
     .toRegex()
