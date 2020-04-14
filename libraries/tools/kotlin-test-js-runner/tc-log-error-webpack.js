@@ -13,18 +13,21 @@ class TeamCityErrorPlugin {
     apply(compiler) {
         compiler.hooks.done.tap('TeamCityErrorPlugin', (stats) => {
             stats.compilation.errors.forEach(error => {
+                const type = 'error'
                 if (error instanceof ModuleNotFoundError) {
                     error.dependencies.forEach(dependency => {
-                        console.error(formatMessage(TYPED_MESSAGE, `Module '${dependency.request}' not found`, 'error'))
+                        console[type](formatMessage(TYPED_MESSAGE, `Module '${dependency.request}' not found`, type))
                     })
                     return
                 }
 
-                console.error(formatMessage(TYPED_MESSAGE, error.message, 'error'))
+                console[type](formatMessage(TYPED_MESSAGE, error.message, type))
             })
 
             stats.compilation.warnings.forEach(warning => {
-                console.warn(formatMessage(TYPED_MESSAGE, warning.message, 'warn'))
+                const type = 'warn'
+
+                console[type](formatMessage(TYPED_MESSAGE, warning.message, type))
             })
         });
     }
