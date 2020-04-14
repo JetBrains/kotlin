@@ -1602,7 +1602,12 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element.
+ * 
+ * Returns the specified [initial] value if the collection is empty.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  */
 public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
@@ -1613,6 +1618,9 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original collection.
+ * 
+ * Returns the specified [initial] value if the collection is empty.
+ * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
@@ -1624,7 +1632,12 @@ public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: 
 }
 
 /**
- * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element and current accumulator value.
+ * 
+ * Returns the specified [initial] value if the list is empty.
+ * 
+ * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
  */
 public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R {
     var accumulator = initial
@@ -1640,6 +1653,9 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) ->
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
  * to each element with its index in the original list and current accumulator value.
+ * 
+ * Returns the specified [initial] value if the list is empty.
+ * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
@@ -1890,7 +1906,14 @@ public inline fun <T, C : Iterable<T>> C.onEachIndexed(action: (index: Int, T) -
 }
 
 /**
- * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element.
+ * 
+ * Throws an exception if this collection is empty. If the collection can be empty in an expected way,
+ * please use [reduceOrNull] instead. It returns `null` when its receiver is empty.
+ * 
+ * @param [operation] function that takes current accumulator value and an element,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduce
  */
@@ -1907,8 +1930,12 @@ public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original collection.
- * @param [operation] function that takes the index of an element, current accumulator value
- * and the element itself and calculates the next accumulator value.
+ * 
+ * Throws an exception if this collection is empty. If the collection can be empty in an expected way,
+ * please use [reduceIndexedOrNull] instead. It returns `null` when its receiver is empty.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value and the element itself,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduce
  */
@@ -1926,9 +1953,11 @@ public inline fun <S, T : S> Iterable<T>.reduceIndexed(operation: (index: Int, a
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original collection.
- * Returns null if the collection is empty.
- * @param [operation] function that takes the index of an element, current accumulator value
- * and the element itself and calculates the next accumulator value.
+ * 
+ * Returns `null` if the collection is empty.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value and the element itself,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
@@ -1945,7 +1974,13 @@ public inline fun <S, T : S> Iterable<T>.reduceIndexedOrNull(operation: (index: 
 }
 
 /**
- * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the collection is empty.
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element.
+ * 
+ * Returns `null` if the collection is empty.
+ * 
+ * @param [operation] function that takes current accumulator value and an element,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
@@ -1962,7 +1997,14 @@ public inline fun <S, T : S> Iterable<T>.reduceOrNull(operation: (acc: S, T) -> 
 }
 
 /**
- * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * Accumulates value starting with the last element and applying [operation] from right to left
+ * to each element and current accumulator value.
+ * 
+ * Throws an exception if this list is empty. If the list can be empty in an expected way,
+ * please use [reduceRightOrNull] instead. It returns `null` when its receiver is empty.
+ * 
+ * @param [operation] function that takes an element and current accumulator value,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceRight
  */
@@ -1978,10 +2020,14 @@ public inline fun <S, T : S> List<T>.reduceRight(operation: (T, acc: S) -> S): S
 }
 
 /**
- * Accumulates value starting with last element and applying [operation] from right to left
+ * Accumulates value starting with the last element and applying [operation] from right to left
  * to each element with its index in the original list and current accumulator value.
- * @param [operation] function that takes the index of an element, the element itself
- * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * Throws an exception if this list is empty. If the list can be empty in an expected way,
+ * please use [reduceRightIndexedOrNull] instead. It returns `null` when its receiver is empty.
+ * 
+ * @param [operation] function that takes the index of an element, the element itself and current accumulator value,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceRight
  */
@@ -1998,11 +2044,13 @@ public inline fun <S, T : S> List<T>.reduceRightIndexed(operation: (index: Int, 
 }
 
 /**
- * Accumulates value starting with last element and applying [operation] from right to left
+ * Accumulates value starting with the last element and applying [operation] from right to left
  * to each element with its index in the original list and current accumulator value.
- * Returns null if the list is empty.
- * @param [operation] function that takes the index of an element, the element itself
- * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * Returns `null` if the list is empty.
+ * 
+ * @param [operation] function that takes the index of an element, the element itself and current accumulator value,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
@@ -2020,7 +2068,13 @@ public inline fun <S, T : S> List<T>.reduceRightIndexedOrNull(operation: (index:
 }
 
 /**
- * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the list is empty.
+ * Accumulates value starting with the last element and applying [operation] from right to left
+ * to each element and current accumulator value.
+ * 
+ * Returns `null` if the list is empty.
+ * 
+ * @param [operation] function that takes an element and current accumulator value,
+ * and calculates the next accumulator value.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */

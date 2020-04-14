@@ -5,7 +5,10 @@
 
 package templates
 
+import templates.DocExtensions.collection
+import templates.DocExtensions.element
 import templates.DocExtensions.mapResult
+import templates.DocExtensions.prefixWithArticle
 import templates.Family.*
 import templates.SequenceClass.*
 
@@ -521,6 +524,9 @@ object Aggregates : TemplateGroupBase() {
             """
             Accumulates value starting with [initial] value and applying [operation] from left to right
             to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            
+            Returns the specified [initial] value if the ${f.collection} is empty.
+            
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
             and the ${f.element} itself, and calculates the next accumulator value.
             """
@@ -548,6 +554,9 @@ object Aggregates : TemplateGroupBase() {
             """
             Accumulates value starting with [initial] value and applying [operation] from right to left
             to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            
+            Returns the specified [initial] value if the ${f.collection} is empty.
+            
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
             and current accumulator value, and calculates the next accumulator value.
             """
@@ -588,7 +597,16 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        doc {
+            """
+            Accumulates value starting with [initial] value and applying [operation] from left to right 
+            to current accumulator value and each ${f.element}.
+
+            Returns the specified [initial] value if the ${f.collection} is empty.
+
+            @param [operation] function that takes current accumulator value and ${f.element.prefixWithArticle()}, and calculates the next accumulator value.
+            """
+        }
         typeParam("R")
         returns("R")
         body {
@@ -606,7 +624,16 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with [initial] value and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        doc {
+            """
+            Accumulates value starting with [initial] value and applying [operation] from right to left 
+            to each ${f.element} and current accumulator value.
+
+            Returns the specified [initial] value if the ${f.collection} is empty.
+
+            @param [operation] function that takes ${f.element.prefixWithArticle()} and current accumulator value, and calculates the next accumulator value.
+            """
+        }
         typeParam("R")
         returns("R")
         body {
@@ -633,20 +660,47 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.reduceDoc(fName: String): String {
+        fun summaryDoc(isLeftToRight: Boolean, isIndexed: Boolean): String {
+            val acc = "current accumulator value"
+            val element = if (isIndexed) "each ${f.element} with its index in the original ${f.collection}" else "each ${f.element}"
+            val start = if (isLeftToRight) "first" else "last"
+            val iteration = if (isLeftToRight) "left to right\nto $acc and $element" else "right to left\nto $element and $acc"
+            return """
+                Accumulates value starting with the $start ${f.element} and applying [operation] from $iteration."""
+        }
+
+        fun paramDoc(isLeftToRight: Boolean, isIndexed: Boolean): String {
+            val acc = "current accumulator value"
+            val element = if (isIndexed) "the ${f.element} itself" else f.element.prefixWithArticle()
+            val index = if (isIndexed) "the index of ${f.element.prefixWithArticle()}, " else ""
+            return """
+                @param [operation] function that takes $index${if (isLeftToRight) "$acc and $element" else "$element and $acc"}, 
+                and calculates the next accumulator value."""
+        }
+
+        fun emptyNote(isThrowing: Boolean): String = if (isThrowing) """
+            Throws an exception if this ${f.collection} is empty. If the ${f.collection} can be empty in an expected way, 
+            please use [${fName}OrNull] instead. It returns `null` when its receiver is empty."""
+        else """
+            Returns `null` if the ${f.collection} is empty."""
+
+        val isLeftToRight = fName.contains("Right").not()
+        val isIndexed = fName.contains("Indexed")
+        val isThrowing = fName.contains("OrNull").not()
+        return """
+            ${summaryDoc(isLeftToRight, isIndexed)}
+            ${emptyNote(isThrowing)}
+            ${paramDoc(isLeftToRight, isIndexed)}"""
+    }
+
     val f_reduceIndexed = fn("reduceIndexed(operation: (index: Int, acc: T, T) -> T)") {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc {
-            """
-            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
-            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
-            and the ${f.element} itself and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceIndexed") }
         sample("samples.collections.Collections.Aggregates.reduce")
         returns("T")
         body {
@@ -668,14 +722,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc {
-            """
-            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
-            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
-            and the ${f.element} itself and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceIndexed") }
         typeParam("S")
         typeParam("T : S")
         sample("samples.collections.Collections.Aggregates.reduce")
@@ -715,15 +762,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc {
-            """
-            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
-            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
-            Returns null if the ${f.collection} is empty.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
-            and the ${f.element} itself and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceIndexedOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceOrNull")
         returns("T?")
         body {
@@ -746,15 +785,7 @@ object Aggregates : TemplateGroupBase() {
         since("1.4")
         inline()
 
-        doc {
-            """
-            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
-            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
-            Returns null if the ${f.collection} is empty.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
-            and the ${f.element} itself and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceIndexedOrNull") }
         typeParam("S")
         typeParam("T : S")
         sample("samples.collections.Collections.Aggregates.reduceOrNull")
@@ -793,14 +824,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc {
-            """
-            Accumulates value starting with last ${f.element} and applying [operation] from right to left
-            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
-            and current accumulator value, and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceRightIndexed") }
         sample("samples.collections.Collections.Aggregates.reduceRight")
         returns("T")
         body {
@@ -824,14 +848,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc {
-            """
-            Accumulates value starting with last ${f.element} and applying [operation] from right to left
-            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
-            and current accumulator value, and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceRightIndexed") }
         sample("samples.collections.Collections.Aggregates.reduceRight")
         typeParam("S")
         typeParam("T : S")
@@ -874,15 +891,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc {
-            """
-            Accumulates value starting with last ${f.element} and applying [operation] from right to left
-            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
-            Returns null if the ${f.collection} is empty.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
-            and current accumulator value, and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceRightIndexedOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
         returns("T?")
         body {
@@ -907,15 +916,7 @@ object Aggregates : TemplateGroupBase() {
         since("1.4")
         inline()
 
-        doc {
-            """
-            Accumulates value starting with last ${f.element} and applying [operation] from right to left
-            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
-            Returns null if the ${f.collection} is empty.
-            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
-            and current accumulator value, and calculates the next accumulator value.
-            """
-        }
+        doc { reduceDoc("reduceRightIndexedOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
         typeParam("S")
         typeParam("T : S")
@@ -957,7 +958,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        doc { reduceDoc("reduce") }
         sample("samples.collections.Collections.Aggregates.reduce")
         returns("T")
         body {
@@ -979,7 +980,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
+        doc { reduceDoc("reduce") }
         sample("samples.collections.Collections.Aggregates.reduce")
         typeParam("S")
         typeParam("T : S")
@@ -1018,7 +1019,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}. Returns null if the ${f.collection} is empty." }
+        doc { reduceDoc("reduceOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceOrNull")
         returns("T?")
         body {
@@ -1042,7 +1043,7 @@ object Aggregates : TemplateGroupBase() {
         annotation("@ExperimentalStdlibApi")
         inline()
 
-        doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}. Returns null if the ${f.collection} is empty." }
+        doc { reduceDoc("reduceOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceOrNull")
         typeParam("S")
         typeParam("T : S")
@@ -1079,7 +1080,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        doc { reduceDoc("reduceRight") }
         sample("samples.collections.Collections.Aggregates.reduceRight")
         returns("T")
         body {
@@ -1101,7 +1102,7 @@ object Aggregates : TemplateGroupBase() {
         include(Lists, ArraysOfObjects)
     } builder {
         inline()
-        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
+        doc { reduceDoc("reduceRight") }
         sample("samples.collections.Collections.Aggregates.reduceRight")
         typeParam("S")
         typeParam("T : S")
@@ -1143,7 +1144,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value. Returns null if the ${f.collection} is empty." }
+        doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
         returns("T?")
         body {
@@ -1167,7 +1168,7 @@ object Aggregates : TemplateGroupBase() {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
         inline()
-        doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value. Returns null if the ${f.collection} is empty." }
+        doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
         typeParam("S")
         typeParam("T : S")
