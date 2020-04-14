@@ -432,7 +432,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         progressLogger.progress(value)
 
                         parseConsole(value, type)
-                        super.printNonTestOutput(text, type)
                     }
 
                     private fun parseConsole(text: String, type: String?) {
@@ -461,6 +460,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         }
 
                         actualType?.let { log.processLogMessage(actualText, it) }
+                            ?: super.printNonTestOutput(text, type)
+
                     }
 
                     private fun processFailedBrowsers(text: String) {
