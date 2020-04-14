@@ -52,16 +52,16 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             try {
                 emulator.waitEmulatorStart()
 
-                runTestsOnEmulator(gradleRunner, TestSuite("Dex")).apply {
+                runTestsOnEmulator(gradleRunner, TestSuite("D8")).apply {
                     rootSuite.addTest(this)
                 }
 
                 renameFlavorFolder()
-                enableD8(true)
-                runTestsOnEmulator(gradleRunner, TestSuite("D8")).apply {
+                enableD8(false)
+                runTestsOnEmulator(gradleRunner, TestSuite("DX")).apply {
                     (0 until this.countTestCases()).forEach {
                         val testCase = testAt(it) as TestCase
-                        testCase.name += "_D8"
+                        testCase.name += "_DX"
                     }
                     rootSuite.addTest(this)
                 }
@@ -109,7 +109,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
     private fun renameFlavorFolder() {
         val reportFolder = File(flavorFolder())
-        reportFolder.renameTo(File(reportFolder.parentFile, reportFolder.name + "_dex"))
+        reportFolder.renameTo(File(reportFolder.parentFile, reportFolder.name + "_d8"))
     }
 
     private fun flavorFolder() = pathManager.tmpFolder + "/build/test/results/connected/flavors"
