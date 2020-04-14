@@ -2,7 +2,7 @@
 4 	val v = bar(<bold>p</bold>) { this } (in foo(String) on String)
 7 		fun <T, R> bar(<bold>receiver: T</bold>, block: T.() -> R): R { (in bar(T, T.() -> R))
 9 			return <bold>receiver</bold>.b() (in bar(T, T.() -> R))
-8 				[LAMBDA RECEIVER] val <bold>b = block</bold> (in bar(T, T.() -> R))
+8 				[LAMBDA RECEIVER] <bold>val b</bold> = block (in bar(T, T.() -> R))
 8 					[LAMBDA RECEIVER] val b = <bold>block</bold> (in bar(T, T.() -> R))
 7 						[LAMBDA RECEIVER] fun <T, R> bar(receiver: T, <bold>block: T.() -> R</bold>): R { (in bar(T, T.() -> R))
 4 							[LAMBDA RECEIVER] val v = bar(p) <bold>{ this }</bold> (in foo(String) on String)
@@ -11,8 +11,8 @@
 4 										[LAMBDA CALLS] val v = bar(p) <bold>{ this }</bold> (in foo(String) on String)
 7 											[LAMBDA CALLS] fun <T, R> bar(receiver: T, <bold>block: T.() -> R</bold>): R { (in bar(T, T.() -> R))
 8 												[LAMBDA CALLS] val b = <bold>block</bold> (in bar(T, T.() -> R))
-8 													[LAMBDA CALLS] val <bold>b = block</bold> (in bar(T, T.() -> R))
+8 													[LAMBDA CALLS] <bold>val b</bold> = block (in bar(T, T.() -> R))
 9 														return receiver.<bold>b()</bold> (in bar(T, T.() -> R))
-7 															fun <T, R> <bold>bar(receiver: T, block: T.() -> R): R {</bold>
+7 															<bold>fun <T, R> bar(receiver: T, block: T.() -> R): R</bold> {
 4 																val v = <bold>bar(p) { this }</bold> (in foo(String) on String)
-4 																	val <bold>v = bar(p) { this }</bold> (in foo(String) on String)
+4 																	<bold>val v</bold> = bar(p) { this } (in foo(String) on String)

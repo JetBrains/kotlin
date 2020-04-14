@@ -1,4 +1,4 @@
-4 val <bold>x = when (m) {</bold> (in test(Int, Int))
+4 <bold>val x</bold> = when (m) { (in test(Int, Int))
 4 	val x = <bold>when (m) {</bold> (in test(Int, Int))
 5 		1 -> <bold>1</bold> (in test(Int, Int))
 6 		2 -> <bold>n</bold> (in test(Int, Int))

@@ -17,4 +17,4 @@
 8 																(INLINE CALL bar) [LAMBDA CALLS] return <bold>lambda()</bold>(x) (in bar(String, () -> String.() -> String))
 8 																	(INLINE CALL bar) return <bold>lambda()(x)</bold> (in bar(String, () -> String.() -> String))
 4 																		val v1 = <bold>bar(p) { { this } }</bold> (in foo(String) on String)
-4 																			val <bold>v1 = bar(p) { { this } }</bold> (in foo(String) on String)
+4 																			<bold>val v1</bold> = bar(p) { { this } } (in foo(String) on String)
