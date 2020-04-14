@@ -17,18 +17,14 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
-import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
-import org.jetbrains.kotlin.gradle.utils.clearAnsiColor
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
@@ -452,24 +448,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                             }
                         }
 
-                        type?.let { processLogMessage(actualText, it) }
-                    }
-
-                    private fun processLogMessage(
-                        message: String,
-                        type: String
-                    ) {
-                        val nonColoredMessage = message.clearAnsiColor()
-                        when (type.toLowerCase()) {
-                            WARN -> {
-                                log.warn(nonColoredMessage)
-                            }
-                            ERROR -> {
-                                log.error(nonColoredMessage)
-                            }
-                            INFO, LOG -> log.info(nonColoredMessage)
-                            DEBUG -> log.debug(nonColoredMessage)
-                        }
+                        type?.let { log.processLogMessage(actualText, it) }
                     }
 
                     private fun processFailedBrowsers(text: String) {
@@ -549,12 +528,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         appendln()
     }
 }
-
-private const val ERROR = "error"
-private const val WARN = "warn"
-private const val INFO = "info"
-private const val DEBUG = "debug"
-private const val LOG = "log"
 
 private val KARMA_LAUNCHER_MESSAGE = "^.*\\[launcher]: ([\\w\\W]*)\$"
     .toRegex()
