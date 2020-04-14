@@ -444,34 +444,34 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                             val (logLevel, message) = result.destructured
 
-                            val nonColoredMessage = message.clearAnsiColor()
-
-                            when (logLevel) {
-                                WARN -> {
+                            when (logLevel.toLowerCase()) {
+                                WARN, ERROR -> {
                                     processFailedBrowsers(text)
-                                    log.warn(nonColoredMessage)
                                 }
-                                ERROR -> {
-                                    processFailedBrowsers(text)
-                                    log.error(nonColoredMessage)
-                                }
-                                INFO, LOG -> log.info(nonColoredMessage)
-                                DEBUG -> log.debug(nonColoredMessage)
                             }
 
+                            processLogMessage(message, logLevel)
+
                             return
                         }
 
-                        val nonColoredText = text.clearAnsiColor()
+                        type?.let { processLogMessage(text, it) }
+                    }
 
-                        if (type == "error") {
-                            log.error(nonColoredText)
-                            return
-                        }
-
-                        if (type == "warn") {
-                            log.warn(nonColoredText)
-                            return
+                    private fun processLogMessage(
+                        message: String,
+                        type: String
+                    ) {
+                        val nonColoredMessage = message.clearAnsiColor()
+                        when (type.toLowerCase()) {
+                            WARN -> {
+                                log.warn(nonColoredMessage)
+                            }
+                            ERROR -> {
+                                log.error(nonColoredMessage)
+                            }
+                            INFO, LOG -> log.info(nonColoredMessage)
+                            DEBUG -> log.debug(nonColoredMessage)
                         }
                     }
 
@@ -553,11 +553,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 }
 
-private const val ERROR = "ERROR"
-private const val WARN = "WARN"
-private const val INFO = "INFO"
-private const val DEBUG = "DEBUG"
-private const val LOG = "LOG"
+private const val ERROR = "error"
+private const val WARN = "warn"
+private const val INFO = "info"
+private const val DEBUG = "debug"
+private const val LOG = "log"
 
 private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
     .toRegex()
