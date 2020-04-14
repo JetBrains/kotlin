@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class PrimitiveConeNumericComparisonInfo(
-    val comparisonType: ConeKotlinType,
-    val leftPrimitiveType: ConeClassLikeType,
-    val rightPrimitiveType: ConeClassLikeType,
-    val leftType: ConeKotlinType,
-    val rightType: ConeKotlinType
+    val comparisonType: ConeClassLikeType,
+    val leftType: ConeClassLikeType,
+    val rightType: ConeClassLikeType
 )
 
 val FirComparisonExpression.left: FirExpression
@@ -26,24 +25,38 @@ val FirComparisonExpression.left: FirExpression
 val FirComparisonExpression.right: FirExpression
     get() = compareToCall.arguments.getOrNull(0) ?: error("There should be a first arg for ${compareToCall.render()}")
 
-fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(): PrimitiveConeNumericComparisonInfo? {
+fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(): PrimitiveConeNumericComparisonInfo? =
+    inferPrimitiveNumericComparisonInfo(left, right)
+
+fun inferPrimitiveNumericComparisonInfo(left: FirExpression, right: FirExpression): PrimitiveConeNumericComparisonInfo? {
     val leftType = left.typeRef.coneTypeSafe<ConeKotlinType>() ?: return null
     val rightType = right.typeRef.coneTypeSafe<ConeKotlinType>() ?: return null
     val leftPrimitiveOrNullableType = leftType.getPrimitiveTypeOrSupertype() ?: return null
     val rightPrimitiveOrNullableType = rightType.getPrimitiveTypeOrSupertype() ?: return null
-    val leftPrimitiveType = leftPrimitiveOrNullableType.withNullability(ConeNullability.NOT_NULL)
-    val rightPrimitiveType = rightPrimitiveOrNullableType.withNullability(ConeNullability.NOT_NULL)
+    val leastCommonType = leastCommonPrimitiveNumericType(leftPrimitiveOrNullableType, rightPrimitiveOrNullableType)
 
-    // TODO: Support different types with coercion
-    if (leftPrimitiveType != rightPrimitiveType) return null
-    val leastCommonType = rightPrimitiveType
-
-    return PrimitiveConeNumericComparisonInfo(
-        leastCommonType,
-        leftPrimitiveType, rightPrimitiveType,
-        leftPrimitiveOrNullableType, rightPrimitiveOrNullableType
-    )
+    return PrimitiveConeNumericComparisonInfo(leastCommonType, leftPrimitiveOrNullableType, rightPrimitiveOrNullableType)
 }
+
+private fun leastCommonPrimitiveNumericType(t1: ConeClassLikeType, t2: ConeClassLikeType): ConeClassLikeType {
+    val pt1 = t1.promoteIntegerTypeToIntIfRequired()
+    val pt2 = t2.promoteIntegerTypeToIntIfRequired()
+
+    return when {
+        pt1.isDouble() || pt2.isDouble() -> PrimitiveTypes.Double
+        pt1.isFloat() || pt2.isFloat() -> PrimitiveTypes.Float
+        pt1.isLong() || pt2.isLong() -> PrimitiveTypes.Long
+        pt1.isInt() || pt2.isInt() -> PrimitiveTypes.Int
+        else -> throw AssertionError("Unexpected types: t1=$t1, t2=$t2")
+    }
+}
+
+private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLikeType =
+    when (lookupTag.classId) {
+        StandardClassIds.Byte, StandardClassIds.Short -> PrimitiveTypes.Int
+        StandardClassIds.Long, StandardClassIds.Int, StandardClassIds.Float, StandardClassIds.Double, StandardClassIds.Char -> this
+        else -> throw AssertionError("Primitive number type expected: $this")
+    }
 
 private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
     when {
@@ -53,6 +66,8 @@ private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
             }
         this is ConeClassLikeType && isPrimitiveNumberType() ->
             this
+        this is ConeFlexibleType ->
+            this.lowerBound.getPrimitiveTypeOrSupertype()
         else ->
             null
     }

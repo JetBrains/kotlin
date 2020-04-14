@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
-import java.lang.IllegalArgumentException
 
 internal class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -110,37 +110,46 @@ internal class CallAndReferenceGenerator(
             return convertToUnsafeIrCall(qualifiedAccess, typeRef, explicitReceiverExpression)
         }
         return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
-            val type = typeRef.toIrType()
             val callableSymbol = (qualifiedAccess.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>
             val typeShouldBeNotNull = callableSymbol?.fir?.returnTypeRef?.coneTypeSafe<ConeKotlinType>()?.isNullable == false
-            val unsafeIrCall = convertToUnsafeIrCall(
-                qualifiedAccess, typeRef, explicitReceiverExpression, makeNotNull = typeShouldBeNotNull
+            val unsafeIrCall =
+                convertToUnsafeIrCall(qualifiedAccess, typeRef, explicitReceiverExpression, makeNotNull = typeShouldBeNotNull)
+
+            convertToSafeIrCall(
+                unsafeIrCall,
+                explicitReceiverExpression!!,
+                isDispatch = explicitReceiver == qualifiedAccess.dispatchReceiver
             )
-            IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.SAFE_CALL).apply {
-                val receiverVariable = declarationStorage.declareTemporaryVariable(explicitReceiverExpression!!).apply {
-                    parent = conversionScope.parentFromStack()
+        }
+    }
+
+    internal fun convertToSafeIrCall(call: IrExpression, explicitReceiverExpression: IrExpression, isDispatch: Boolean): IrExpression {
+        val startOffset = call.startOffset
+        val endOffset = call.endOffset
+        val receiverVariable = declarationStorage.declareTemporaryVariable(explicitReceiverExpression, "safe_receiver").apply {
+            parent = conversionScope.parentFromStack()
+        }
+        val variableSymbol = symbolTable.referenceValue(receiverVariable.descriptor)
+
+        val resultType = call.type.makeNullable()
+        return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
+            statements += receiverVariable
+            statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
+                val condition = IrCallImpl(
+                    startOffset, endOffset, irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, origin = IrStatementOrigin.EQEQ
+                ).apply {
+                    putValueArgument(0, IrGetValueImpl(startOffset, endOffset, variableSymbol))
+                    putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
                 }
-                statements += receiverVariable
-                statements += IrWhenImpl(startOffset, endOffset, type).apply {
-                    val variableSymbol = symbolTable.referenceValue(receiverVariable.descriptor)
-                    val condition = IrCallImpl(
-                        startOffset, endOffset, irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, origin = IrStatementOrigin.EQEQ
-                    ).apply {
-                        putValueArgument(0, IrGetValueImpl(startOffset, endOffset, variableSymbol))
-                        putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
-                    }
-                    branches += IrBranchImpl(
-                        condition, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
-                    )
-                    val newReceiver = IrGetValueImpl(startOffset, endOffset, variableSymbol)
-                    val replacedCall = unsafeIrCall.replaceReceiver(
-                        newReceiver, isDispatch = explicitReceiver == qualifiedAccess.dispatchReceiver
-                    )
-                    branches += IrElseBranchImpl(
-                        IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
-                        replacedCall
-                    )
-                }
+                branches += IrBranchImpl(
+                    condition, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
+                )
+                val newReceiver = IrGetValueImpl(startOffset, endOffset, variableSymbol)
+                val replacedCall = call.replaceReceiver(newReceiver, isDispatch)
+                branches += IrElseBranchImpl(
+                    IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
+                    replacedCall
+                )
             }
         }
     }
