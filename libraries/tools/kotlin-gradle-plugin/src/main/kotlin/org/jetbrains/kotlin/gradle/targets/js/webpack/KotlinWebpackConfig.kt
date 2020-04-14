@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("NodeJsCodingAssistanceForCoreModules", "JSUnresolvedFunction")
@@ -41,6 +41,7 @@ data class KotlinWebpackConfig(
 ) {
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableListOf<RequiredKotlinJsDependency>().also {
+            it.add(versions.kotlinJsTestRunner)
             it.add(versions.webpack)
             it.add(versions.webpackCli)
 
@@ -131,6 +132,7 @@ data class KotlinWebpackConfig(
             appendReport()
             appendProgressReporter()
             appendCssSettings()
+            appendErrorPlugin()
             appendFromConfigDir()
             appendEvaluatedFileReport()
 
@@ -353,6 +355,19 @@ data class KotlinWebpackConfig(
             """
             })(config);
             
+            """.trimIndent()
+        )
+    }
+
+    private fun Appendable.appendErrorPlugin() {
+        //language=ES6
+        appendln(
+            """
+                // noinspection JSUnnecessarySemicolon
+                ;(function(config) {
+                    const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
+                    config.plugins.push(new tcErrorPlugin(tcErrorPlugin))
+                })(config);
             """.trimIndent()
         )
     }
