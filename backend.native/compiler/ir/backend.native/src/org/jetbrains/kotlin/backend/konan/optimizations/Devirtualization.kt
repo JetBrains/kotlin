@@ -97,7 +97,9 @@ internal object Devirtualization {
                 moduleDFG.symbolTable.functionMap.values.filter { it.explicitlyExported } +
                 externalModulesDFG.functionDFGs.keys.filter { it.explicitlyExported }
 
-        // Conservatively assume each associated object could be instantiated.
+        // Conservatively assume each associated object could be called.
+        // Note: for constructors there is additional parameter (<this>) and its type will be added
+        // to instantiating classes since all objects are final types.
         val associatedObjects = mutableListOf<DataFlowIR.FunctionSymbol>()
         context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -898,6 +900,8 @@ internal object Devirtualization {
                 }
                 if (entryPoint == null) {
                     // For library assume all public non-abstract classes could be instantiated.
+                    // Note: for constructors there is additional parameter (<this>) and for associated objects
+                    // its type will be added to instantiating classes since all objects are final types.
                     symbolTable.classMap.values
                             .filterIsInstance<DataFlowIR.Type.Public>()
                             .filter { !it.isAbstract }
@@ -907,20 +911,6 @@ internal object Devirtualization {
                     addInstantiatingClass(symbolTable.mapType(context.irBuiltIns.stringType).resolved())
                     addEdge(concreteClass(symbolTable.mapType(context.irBuiltIns.stringType).resolved()),
                             fieldNode(constraintGraph.arrayItemField))
-                    // Conservatively assume each associated object could be instantiated.
-                    context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitClass(declaration: IrClass) {
-                            context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
-                                assert (it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                                addInstantiatingClass(symbolTable.mapType(it.defaultType).resolved())
-                            }
-                            super.visitClass(declaration)
-                        }
-                    })
                 }
                 rootSet.forEach { createFunctionConstraintGraph(it, true) }
                 while (stack.isNotEmpty()) {

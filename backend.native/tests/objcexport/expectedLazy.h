@@ -205,6 +205,12 @@ __attribute__((swift_name("GH4002Argument")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt35940Kt")))
+@interface KtKt35940Kt : KtBase
++ (NSString *)testKt35940 __attribute__((swift_name("testKt35940()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
