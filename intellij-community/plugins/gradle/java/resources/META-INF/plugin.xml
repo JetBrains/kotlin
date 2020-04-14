@@ -16,6 +16,7 @@
   <depends optional="true" config-file="gradle-maven-integration.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="gradle-coverage-integration.xml">Coverage</depends>
   <depends optional="true" config-file="gradle-groovy-integration.xml">org.intellij.groovy</depends>
+  <depends optional="true" config-file="gradle-properties-integration.xml">com.intellij.properties</depends>
 
   <resource-bundle>messages.GradleInspectionBundle</resource-bundle>
 
@@ -82,7 +83,5 @@
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.ExternalAnnotationsModuleLibrariesService"/>
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.MavenRepositoriesDataService"/>
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.AnnotationProcessingDataService"/>
-
-    <referencesSearch implementation="org.jetbrains.plugins.gradle.findUsages.GradlePropertyReferencesSearcher"/>
   </extensions>
 </idea-plugin>

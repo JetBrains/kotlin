@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <referencesSearch implementation="org.jetbrains.plugins.gradle.findUsages.GradlePropertyReferencesSearcher"/>
+  </extensions>
+</idea-plugin>
