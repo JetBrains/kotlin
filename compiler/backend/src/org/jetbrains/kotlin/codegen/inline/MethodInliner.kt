@@ -73,6 +73,9 @@ class MethodInliner(
         if (!inliningContext.isInliningLambda) {
             inliningContext.root.state.globalInlineContext.recordTypeFromInlineFunction(info.oldClassName)
         }
+        if (info.shouldRegenerate(isSameModule)) {
+            inliningContext.recordRegeneratedAnonymousObject(info.oldClassName)
+        }
         transformations.add(info)
     }
 
@@ -171,7 +174,8 @@ class MethodInliner(
                     val childInliningContext = inliningContext.subInlineWithClassRegeneration(
                         inliningContext.nameGenerator,
                         currentTypeMapping,
-                        inlineCallSiteInfo
+                        inlineCallSiteInfo,
+                        transformationInfo!!
                     )
                     val transformer = transformationInfo!!.createTransformer(
                         childInliningContext, isSameModule, fakeContinuationName
@@ -305,51 +309,33 @@ class MethodInliner(
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
-                    assert(transformationInfo is AnonymousObjectTransformationInfo) {
+                    var info = transformationInfo as? AnonymousObjectTransformationInfo ?: throw AssertionError(
                         "<init> call doesn't correspond to object transformation info for '$owner.$name': $transformationInfo"
+                    )
+                    val objectConstructsItself = inlineCallSiteInfo.ownerClassName == info.oldClassName
+                    if (objectConstructsItself) {
+                        // inline fun f() -> new f$1 -> fun something() in class f$1 -> new f$1
+                        //                   ^-- fetch the info that was created for this instruction
+                        info = inliningContext.parent?.transformationInfo as? AnonymousObjectTransformationInfo
+                            ?: throw AssertionError("anonymous object $owner constructs itself, but we have no info on in")
                     }
-                    val parent = inliningContext.parent
-                    val shouldRegenerate = transformationInfo!!.shouldRegenerate(isSameModule)
-                    val isContinuation = parent != null && parent.isContinuation
-                    if (shouldRegenerate || isContinuation) {
-                        assert(shouldRegenerate || inlineCallSiteInfo.ownerClassName == transformationInfo!!.oldClassName) { "Only coroutines can call their own constructors" }
-
-                        //put additional captured parameters on stack
-                        var info = transformationInfo as AnonymousObjectTransformationInfo
-
-                        val oldInfo = inliningContext.findAnonymousObjectTransformationInfo(owner)
-                        if (oldInfo != null && isContinuation) {
-                            info = oldInfo
-                        }
-
-                        val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
-                                resultNode.desc.endsWith(")" + languageVersionSettings.continuationAsmType().descriptor)
-
+                    if (info.shouldRegenerate(isSameModule)) {
                         for (capturedParamDesc in info.allRecapturedParameters) {
-                            if (capturedParamDesc.fieldName == AsmUtil.THIS && isContinuationCreate) {
-                                // Common inliner logic doesn't support cases when transforming anonymous object can
-                                // be instantiated by itself.
-                                // To support such cases workaround with 'oldInfo' is used.
-                                // But it corresponds to outer context and a bit inapplicable for nested 'create' method context.
-                                // 'This' in outer context corresponds to outer instance in current
-                                visitFieldInsn(
-                                    Opcodes.GETSTATIC, owner,
-                                    FieldRemapper.foldName(AsmUtil.CAPTURED_THIS_FIELD), capturedParamDesc.type.descriptor
-                                )
-                            } else {
-                                visitFieldInsn(
-                                    Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
-                                    FieldRemapper.foldName(capturedParamDesc.fieldName), capturedParamDesc.type.descriptor
-                                )
-                            }
+                            val realDesc = if (objectConstructsItself && capturedParamDesc.fieldName == AsmUtil.THIS) {
+                                // The captures in `info` are relative to the parent context, so a normal `this` there
+                                // is a captured outer `this` here.
+                                CapturedParamDesc(Type.getObjectType(owner), AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type)
+                            } else capturedParamDesc
+                            visitFieldInsn(
+                                Opcodes.GETSTATIC, realDesc.containingLambdaName,
+                                FieldRemapper.foldName(realDesc.fieldName), realDesc.type.descriptor
+                            )
                         }
                         super.visitMethodInsn(opcode, info.newClassName, name, info.newConstructorDescriptor, itf)
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.parent is RegeneratedClassContext) {
-                            inliningContext.parent.typeRemapper.addAdditionalMappings(
-                                transformationInfo!!.oldClassName, transformationInfo!!.newClassName
-                            )
+                            inliningContext.parent.typeRemapper.addAdditionalMappings(info.oldClassName, info.newClassName)
                         }
 
                         transformationInfo = null
@@ -826,8 +812,7 @@ class MethodInliner(
 
     private fun isAnonymousClassThatMustBeRegenerated(type: Type?): Boolean {
         if (type == null || type.sort != Type.OBJECT) return false
-        val info = inliningContext.findAnonymousObjectTransformationInfo(type.internalName)
-        return info != null && info.shouldRegenerate(true)
+        return inliningContext.isRegeneratedAnonymousObject(type.internalName)
     }
 
     private fun buildConstructorInvocation(
@@ -849,7 +834,7 @@ class MethodInliner(
         // inline lambda cannot possibly reference it, while V is not yet bound so regenerating the object while inlining
         // the lambda into f() is pointless.
         val inNonDefaultLambda = inliningContext.isInliningLambda && inliningContext.lambdaInfo !is DefaultLambda
-        val info = AnonymousObjectTransformationInfo(
+        return AnonymousObjectTransformationInfo(
             anonymousType, needReification && !inNonDefaultLambda, lambdaMapping,
             inliningContext.classRegeneration,
             isAlreadyRegenerated(anonymousType),
@@ -858,19 +843,6 @@ class MethodInliner(
             inliningContext.nameGenerator,
             capturesAnonymousObjectThatMustBeRegenerated
         )
-
-        val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType)
-        if (memoizeAnonymousObject == null ||
-            //anonymous object could be inlined in several context without transformation (keeps same class name)
-            // and on further inlining such code some of such cases would be transformed and some not,
-            // so we should distinguish one classes from another more clearly
-            !memoizeAnonymousObject.shouldRegenerate(isSameModule) &&
-            info.shouldRegenerate(isSameModule)
-        ) {
-
-            inliningContext.recordIfNotPresent(anonymousType, info)
-        }
-        return info
     }
 
     private fun isAlreadyRegenerated(owner: String): Boolean {

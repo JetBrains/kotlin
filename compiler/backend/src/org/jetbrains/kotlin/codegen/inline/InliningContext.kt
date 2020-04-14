@@ -27,7 +27,8 @@ class RegeneratedClassContext(
     nameGenerator: NameGenerator,
     typeRemapper: TypeRemapper,
     lambdaInfo: LambdaInfo?,
-    override val callSiteInfo: InlineCallSiteInfo
+    override val callSiteInfo: InlineCallSiteInfo,
+    override val transformationInfo: TransformationInfo
 ) : InliningContext(
     parent, expressionMap, state, nameGenerator, typeRemapper, lambdaInfo, true
 ) {
@@ -48,7 +49,8 @@ open class InliningContext(
 
     var generateAssertField = false
 
-    private val internalNameToAnonymousObjectTransformationInfo = hashMapOf<String, AnonymousObjectTransformationInfo>()
+    open val transformationInfo: TransformationInfo?
+        get() = null
 
     var isContinuation: Boolean = false
 
@@ -57,12 +59,13 @@ open class InliningContext(
     val root: RootInliningContext
         get() = if (isRoot) this as RootInliningContext else parent!!.root
 
-    fun findAnonymousObjectTransformationInfo(internalName: String, searchInParent: Boolean = true): AnonymousObjectTransformationInfo? =
-        internalNameToAnonymousObjectTransformationInfo[internalName]
-            ?: if (searchInParent) parent?.findAnonymousObjectTransformationInfo(internalName, searchInParent) else null
+    private val regeneratedAnonymousObjects = hashSetOf<String>()
 
-    fun recordIfNotPresent(internalName: String, info: AnonymousObjectTransformationInfo) {
-        internalNameToAnonymousObjectTransformationInfo.putIfAbsent(internalName, info)
+    fun isRegeneratedAnonymousObject(internalName: String): Boolean =
+        internalName in regeneratedAnonymousObjects || (parent != null && parent.isRegeneratedAnonymousObject(internalName))
+
+    fun recordRegeneratedAnonymousObject(internalName: String) {
+        regeneratedAnonymousObjects.add(internalName)
     }
 
     fun subInlineLambda(lambdaInfo: LambdaInfo): InliningContext =
@@ -82,10 +85,11 @@ open class InliningContext(
     fun subInlineWithClassRegeneration(
         generator: NameGenerator,
         newTypeMappings: MutableMap<String, String?>,
-        callSiteInfo: InlineCallSiteInfo
+        callSiteInfo: InlineCallSiteInfo,
+        transformationInfo: TransformationInfo
     ): InliningContext = RegeneratedClassContext(
         this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
-        lambdaInfo, callSiteInfo
+        lambdaInfo, callSiteInfo, transformationInfo
     )
 
     @JvmOverloads
