@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.spec.utils.tasks
 
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.spec.checkers.AbstractDiagnosticsTestSpec
+import org.jetbrains.kotlin.spec.checkers.AbstractFirDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.codegen.AbstractBlackBoxCodegenTestSpec
 import org.jetbrains.kotlin.spec.parsing.AbstractParsingTestSpec
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
@@ -45,6 +46,15 @@ fun generateTests() {
                 excludedPattern = excludedFirTestdataPattern
             )
         }
+
+        testClass<AbstractFirDiagnosticsTestSpec> {
+            model(
+                "diagnostics",
+                excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                excludedPattern = excludedFirTestdataPattern
+            )
+        }
+
         testClass<AbstractParsingTestSpec> {
             model(
                 relativeRootPath = "psi",
@@ -59,6 +69,7 @@ fun generateTests() {
 }
 
 fun main() {
+    TestsJsonMapGenerator.buildTestsMapPerSection()
     TestsJsonMapGenerator.buildTestsMapPerSection()
     generateTests()
 }
