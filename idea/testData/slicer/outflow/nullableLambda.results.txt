@@ -13,6 +13,6 @@
 8 												[LAMBDA CALLS] return if (b) <bold>lambda</bold>!!.invoke(receiver) else "" (in bar(String, Boolean,…))
 8 													[LAMBDA CALLS] return if (b) <bold>lambda!!</bold>.invoke(receiver) else "" (in bar(String, Boolean,…))
 8 														return if (b) lambda!!.<bold>invoke(receiver)</bold> else "" (in bar(String, Boolean,…))
-7 															fun <bold>bar(receiver: String, b: Boolean, lambda: (String.() -> String)?): String {</bold>
+7 															<bold>fun bar(receiver: String, b: Boolean, lambda: (String.() -> String)?): String</bold> {
 4 																val v = <bold>bar(p, true, { this })</bold> (in foo(String) on String)
-4 																	val <bold>v = bar(p, true, { this })</bold> (in foo(String) on String)
+4 																	<bold>val v</bold> = bar(p, true, { this }) (in foo(String) on String)

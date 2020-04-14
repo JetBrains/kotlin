@@ -6,4 +6,4 @@
 11 	A a = new <bold>A</bold>();
 10 	constructor() : <bold>super()</bold> (in constructor C())
 14 	val x = <bold>A()</bold> (in test())
-14 		val <bold>x = A()</bold> (in test())
+14 		<bold>val x</bold> = A() (in test())

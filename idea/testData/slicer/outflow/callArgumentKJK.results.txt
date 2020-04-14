@@ -1,5 +1,5 @@
 8 val x = <bold>1</bold> (in K.test())
-8 	val <bold>x = 1</bold> (in K.test())
+8 	<bold>val x</bold> = 1 (in K.test())
 9 		J().foo(<bold>x</bold>) (in K.test())
 2 			void foo(int <bold>n</bold>) {
 3 				int y = <bold>n</bold>;
@@ -7,4 +7,4 @@
 4 						new K().bar(<bold>y</bold>);
 3 							fun bar(<bold>m: Int</bold>) { (in K.bar(Int))
 4 								val z = <bold>m</bold> (in K.bar(Int))
-4 									val <bold>z = m</bold> (in K.bar(Int))
+4 									<bold>val z</bold> = m (in K.bar(Int))

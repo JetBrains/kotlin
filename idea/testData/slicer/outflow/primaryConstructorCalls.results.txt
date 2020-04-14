@@ -5,4 +5,4 @@
 7 	A a = new <bold>A</bold>(1);
 10 	constructor() : <bold>super(1)</bold> (in constructor C())
 14 	val x = <bold>A(1)</bold> (in test())
-14 		val <bold>x = A(1)</bold> (in test())
+14 		<bold>val x</bold> = A(1) (in test())

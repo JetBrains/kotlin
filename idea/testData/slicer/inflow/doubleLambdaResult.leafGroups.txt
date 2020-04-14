@@ -1,7 +1,7 @@
 8 val x = foo(1, <bold>2</bold>) { { it } } (in test())
-8 	val <bold>x = foo(1, 2) { { it } }</bold> (in test())
+8 	<bold>val x</bold> = foo(1, 2) { { it } } (in test())
 8 		val x = <bold>foo(1, 2) { { it } }</bold> (in test())
-3 			fun <bold>foo(a: Int, b: Int, f: (Int) -> (Int) -> Int): Int {</bold>
+3 			<bold>fun foo(a: Int, b: Int, f: (Int) -> (Int) -> Int): Int</bold> {
 4 				return <bold>f(a)(b)</bold> (in foo(Int, Int,…))
 4 					[LAMBDA IN] return <bold>f(a)</bold>(b) (in foo(Int, Int,…))
 4 						[LAMBDA IN] [LAMBDA IN] return <bold>f</bold>(a)(b) (in foo(Int, Int,…))
