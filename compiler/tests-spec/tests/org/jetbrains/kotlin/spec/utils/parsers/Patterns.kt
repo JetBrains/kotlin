@@ -55,7 +55,7 @@ interface BasePatterns {
 }
 
 object NotLinkedSpecTestPatterns : BasePatterns {
-    private const val FILENAME_REGEX = """(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<testNumber>$INTEGER_REGEX)(?:\.fir)?\.kt"""
 
     override val pathPartRegex = SpecTestLinkedType.NOT_LINKED.testDataPath + ps + sectionsInPathRegex
     override val testPathPattern: Pattern =
@@ -65,7 +65,7 @@ object NotLinkedSpecTestPatterns : BasePatterns {
 }
 
 object LinkedSpecTestPatterns : BasePatterns {
-    private const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)(?:\.fir)?\.kt"""
 
     override val pathPartRegex =
         """${SpecTestLinkedType.LINKED.testDataPath}$ps$sectionsInPathRegex${ps}p-(?<paragraphNumber>$INTEGER_REGEX)"""

@@ -35,9 +35,15 @@ fun detectDirsWithTestsMapFileOnly(dirName: String): List<String> {
 }
 
 fun generateTests() {
+    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+
     testGroup(SPEC_TEST_PATH, SPEC_TESTDATA_PATH) {
         testClass<AbstractDiagnosticsTestSpec> {
-            model("diagnostics", excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"))
+            model(
+                "diagnostics",
+                excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                excludedPattern = excludedFirTestdataPattern
+            )
         }
         testClass<AbstractParsingTestSpec> {
             model(

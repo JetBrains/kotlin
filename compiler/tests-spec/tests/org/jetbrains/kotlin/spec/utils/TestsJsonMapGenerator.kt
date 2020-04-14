@@ -51,7 +51,7 @@ object TestsJsonMapGenerator {
         TestArea.values().forEach { testArea ->
             File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/$LINKED_TESTS_PATH").walkTopDown()
                 .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt") return@testFiles
+                    if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
 
                     val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
 
