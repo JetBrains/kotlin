@@ -593,6 +593,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/eqNotEq.kt");
                     }
 
+                    @TestMetadata("namedArguments.kt")
+                    public void testNamedArguments() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/namedArguments.kt");
+                    }
+
                     @TestMetadata("propertyAccessors.kt")
                     public void testPropertyAccessors() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/propertyAccessors.kt");
