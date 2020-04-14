@@ -311,16 +311,6 @@ public final class DaemonListeners implements Disposable {
 
     connection.subscribe(SeverityRegistrar.SEVERITIES_CHANGED_TOPIC, () -> stopDaemonAndRestartAllFiles("Severities changed"));
 
-    if (RefResolveService.ENABLED) {
-      RefResolveService resolveService = RefResolveService.getInstance(project);
-      resolveService.addListener(this, new RefResolveService.Listener() {
-        @Override
-        public void allFilesResolved() {
-          stopDaemon(true, "RefResolveService is up to date");
-        }
-      });
-    }
-
     connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       @Override
       public void facetRenamed(@NotNull Facet facet, @NotNull String oldName) {

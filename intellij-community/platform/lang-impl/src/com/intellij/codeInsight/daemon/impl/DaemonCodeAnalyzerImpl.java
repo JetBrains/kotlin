@@ -841,12 +841,6 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
         dca.myPsiDocumentManager.performLaterWhenAllCommitted(this);
         return;
       }
-      if (RefResolveService.ENABLED &&
-          !RefResolveService.getInstance(myProject).isUpToDate() &&
-          RefResolveService.getInstance(myProject).getQueueSize() == 1) {
-        return; // if the user have just typed in something, wait until the file is re-resolved
-        // (or else it will blink like crazy since unused symbols calculation depends on resolve service)
-      }
 
       Map<FileEditor, HighlightingPass[]> passes = new THashMap<>(activeEditors.size());
       for (FileEditor fileEditor : activeEditors) {
