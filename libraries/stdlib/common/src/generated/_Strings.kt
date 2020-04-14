@@ -708,7 +708,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(de
  */
 @SinceKotlin("1.3")
 public inline fun <V> CharSequence.associateWith(valueSelector: (Char) -> V): Map<Char, V> {
-    val result = LinkedHashMap<Char, V>(mapCapacity(length).coerceAtLeast(16))
+    val result = LinkedHashMap<Char, V>(mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -742,7 +742,7 @@ public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destinatio
  * Returns a new [HashSet] of all characters.
  */
 public fun CharSequence.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>(mapCapacity(length)))
+    return toCollection(HashSet<Char>(mapCapacity(length.coerceAtMost(128))))
 }
 
 /**
@@ -772,7 +772,7 @@ public fun CharSequence.toSet(): Set<Char> {
     return when (length) {
         0 -> emptySet()
         1 -> setOf(this[0])
-        else -> toCollection(LinkedHashSet<Char>(mapCapacity(length)))
+        else -> toCollection(LinkedHashSet<Char>(mapCapacity(length.coerceAtMost(128))))
     }
 }
 

@@ -8,6 +8,7 @@ package test.text
 import kotlin.test.*
 import test.*
 import test.collections.behaviors.iteratorBehavior
+import test.collections.behaviors.setBehavior
 import test.collections.compare
 import kotlin.math.sign
 import kotlin.random.Random
@@ -1650,5 +1651,20 @@ ${"    "}
 
         assertFailsWith<IndexOutOfBoundsException> { "".elementAt(0) }
         assertFailsWith<IndexOutOfBoundsException> { "a c".elementAt(-1) }
+    }
+
+    @Test
+    fun toHashSet() {
+        compare(hashSetOf('A', 'B', 'C'), "ACAABBAC".toHashSet()) { setBehavior() }
+
+        buildString {
+            repeat(100) { append('1') }
+            append('2')
+            repeat(100) { append('3') }
+            append('4')
+            repeat(100) { append('5') }
+        }.let {
+            compare(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet()) { setBehavior() }
+        }
     }
 }

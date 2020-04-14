@@ -4101,7 +4101,7 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UIntArray.associateWith(valueSelector: (UInt) -> V): Map<UInt, V> {
-    val result = LinkedHashMap<UInt, V>()
+    val result = LinkedHashMap<UInt, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -4120,7 +4120,7 @@ public inline fun <V> UIntArray.associateWith(valueSelector: (UInt) -> V): Map<U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map<ULong, V> {
-    val result = LinkedHashMap<ULong, V>()
+    val result = LinkedHashMap<ULong, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -4139,7 +4139,7 @@ public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map<UByte, V> {
-    val result = LinkedHashMap<UByte, V>()
+    val result = LinkedHashMap<UByte, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -4158,7 +4158,7 @@ public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UShortArray.associateWith(valueSelector: (UShort) -> V): Map<UShort, V> {
-    val result = LinkedHashMap<UShort, V>()
+    val result = LinkedHashMap<UShort, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 

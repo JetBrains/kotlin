@@ -8686,7 +8686,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(desti
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public inline fun <K, V> Array<out K>.associateWith(valueSelector: (K) -> V): Map<K, V> {
-    val result = LinkedHashMap<K, V>()
+    val result = LinkedHashMap<K, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8704,7 +8704,7 @@ public inline fun <K, V> Array<out K>.associateWith(valueSelector: (K) -> V): Ma
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> ByteArray.associateWith(valueSelector: (Byte) -> V): Map<Byte, V> {
-    val result = LinkedHashMap<Byte, V>()
+    val result = LinkedHashMap<Byte, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8722,7 +8722,7 @@ public inline fun <V> ByteArray.associateWith(valueSelector: (Byte) -> V): Map<B
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> ShortArray.associateWith(valueSelector: (Short) -> V): Map<Short, V> {
-    val result = LinkedHashMap<Short, V>()
+    val result = LinkedHashMap<Short, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8740,7 +8740,7 @@ public inline fun <V> ShortArray.associateWith(valueSelector: (Short) -> V): Map
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> IntArray.associateWith(valueSelector: (Int) -> V): Map<Int, V> {
-    val result = LinkedHashMap<Int, V>()
+    val result = LinkedHashMap<Int, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8758,7 +8758,7 @@ public inline fun <V> IntArray.associateWith(valueSelector: (Int) -> V): Map<Int
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> LongArray.associateWith(valueSelector: (Long) -> V): Map<Long, V> {
-    val result = LinkedHashMap<Long, V>()
+    val result = LinkedHashMap<Long, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8776,7 +8776,7 @@ public inline fun <V> LongArray.associateWith(valueSelector: (Long) -> V): Map<L
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> FloatArray.associateWith(valueSelector: (Float) -> V): Map<Float, V> {
-    val result = LinkedHashMap<Float, V>()
+    val result = LinkedHashMap<Float, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8794,7 +8794,7 @@ public inline fun <V> FloatArray.associateWith(valueSelector: (Float) -> V): Map
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> DoubleArray.associateWith(valueSelector: (Double) -> V): Map<Double, V> {
-    val result = LinkedHashMap<Double, V>()
+    val result = LinkedHashMap<Double, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8812,7 +8812,7 @@ public inline fun <V> DoubleArray.associateWith(valueSelector: (Double) -> V): M
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> BooleanArray.associateWith(valueSelector: (Boolean) -> V): Map<Boolean, V> {
-    val result = LinkedHashMap<Boolean, V>()
+    val result = LinkedHashMap<Boolean, V>(mapCapacity(size).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -8830,7 +8830,7 @@ public inline fun <V> BooleanArray.associateWith(valueSelector: (Boolean) -> V):
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> CharArray.associateWith(valueSelector: (Char) -> V): Map<Char, V> {
-    val result = LinkedHashMap<Char, V>()
+    val result = LinkedHashMap<Char, V>(mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -9145,7 +9145,7 @@ public fun BooleanArray.toHashSet(): HashSet<Boolean> {
  * Returns a new [HashSet] of all elements.
  */
 public fun CharArray.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>(mapCapacity(size)))
+    return toCollection(HashSet<Char>(mapCapacity(size.coerceAtMost(128))))
 }
 
 /**
@@ -9439,7 +9439,7 @@ public fun CharArray.toSet(): Set<Char> {
     return when (size) {
         0 -> emptySet()
         1 -> setOf(this[0])
-        else -> toCollection(LinkedHashSet<Char>(mapCapacity(size)))
+        else -> toCollection(LinkedHashSet<Char>(mapCapacity(size.coerceAtMost(128))))
     }
 }
 
@@ -11168,9 +11168,7 @@ public infix fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
-    val set = LinkedHashSet<T>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<T>(mapCapacity(size)))
 }
 
 /**
@@ -11179,9 +11177,7 @@ public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun ByteArray.toMutableSet(): MutableSet<Byte> {
-    val set = LinkedHashSet<Byte>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
 }
 
 /**
@@ -11190,9 +11186,7 @@ public fun ByteArray.toMutableSet(): MutableSet<Byte> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun ShortArray.toMutableSet(): MutableSet<Short> {
-    val set = LinkedHashSet<Short>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Short>(mapCapacity(size)))
 }
 
 /**
@@ -11201,9 +11195,7 @@ public fun ShortArray.toMutableSet(): MutableSet<Short> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun IntArray.toMutableSet(): MutableSet<Int> {
-    val set = LinkedHashSet<Int>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Int>(mapCapacity(size)))
 }
 
 /**
@@ -11212,9 +11204,7 @@ public fun IntArray.toMutableSet(): MutableSet<Int> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun LongArray.toMutableSet(): MutableSet<Long> {
-    val set = LinkedHashSet<Long>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Long>(mapCapacity(size)))
 }
 
 /**
@@ -11223,9 +11213,7 @@ public fun LongArray.toMutableSet(): MutableSet<Long> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun FloatArray.toMutableSet(): MutableSet<Float> {
-    val set = LinkedHashSet<Float>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Float>(mapCapacity(size)))
 }
 
 /**
@@ -11234,9 +11222,7 @@ public fun FloatArray.toMutableSet(): MutableSet<Float> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun DoubleArray.toMutableSet(): MutableSet<Double> {
-    val set = LinkedHashSet<Double>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Double>(mapCapacity(size)))
 }
 
 /**
@@ -11245,9 +11231,7 @@ public fun DoubleArray.toMutableSet(): MutableSet<Double> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
-    val set = LinkedHashSet<Boolean>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
 }
 
 /**
@@ -11256,9 +11240,7 @@ public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun CharArray.toMutableSet(): MutableSet<Char> {
-    val set = LinkedHashSet<Char>(mapCapacity(size))
-    for (item in this) set.add(item)
-    return set
+    return toCollection(LinkedHashSet<Char>(mapCapacity(size.coerceAtMost(128))))
 }
 
 /**
