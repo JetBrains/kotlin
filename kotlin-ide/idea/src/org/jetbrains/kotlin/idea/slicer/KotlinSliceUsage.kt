@@ -82,14 +82,14 @@ open class KotlinSliceUsage : SliceUsage {
         val usageInfo = getUsageInfo()
         val range = usageInfo.navigationRange ?: return
         SelectInEditorManager.getInstance(getUsageInfo().project).selectInEditor(file, range.startOffset, range.endOffset, false, false)
-        
+
         if (usageInfo.navigationOffset != range.startOffset) {
             openTextEditor(false) // to position the caret at the identifier
         }
     }
 
     override fun copy(): KotlinSliceUsage {
-        val element = getUsageInfo().element!!
+        val element = getUsageInfo().element ?: error("No more valid usageInfo.element")
         return if (parent == null)
             KotlinSliceUsage(element, params)
         else
