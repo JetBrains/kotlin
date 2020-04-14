@@ -120,6 +120,7 @@ private class KotlinIdeaResolutionException(
         })
         for (element in resolvingWhat.elements.withIndex()) {
             withAttachment("element${element.index}.kt", element.value.text)
+            withAttachment("file${element.index}.kt", element.value.containingFile.text)
         }
     }
 }
