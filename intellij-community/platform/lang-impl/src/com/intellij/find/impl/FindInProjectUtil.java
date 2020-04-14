@@ -12,6 +12,9 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
+import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
@@ -423,7 +426,11 @@ public class FindInProjectUtil {
   }
 
   private static List<PsiElement> getTopLevelRegExpChars(String regExpText, Project project) {
-    @SuppressWarnings("deprecation") PsiFile file = PsiFileFactory.getInstance(project).createFileFromText("A.regexp", regExpText);
+    String regexFileName = "A.regexp";
+    FileType regexFileType = FileTypeRegistry.getInstance().getFileTypeByFileName(regexFileName);
+    if (regexFileType == UnknownFileType.INSTANCE) return Collections.emptyList();
+
+    PsiFile file = PsiFileFactory.getInstance(project).createFileFromText(regexFileName, regexFileType, regExpText);
     List<PsiElement> result = null;
     final PsiElement[] children = file.getChildren();
 
