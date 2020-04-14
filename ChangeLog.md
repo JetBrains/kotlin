@@ -1,5 +1,46 @@
 ## Changelog
 
+## 1.3.72
+
+### Compiler
+
+- [`KT-37107`](https://youtrack.jetbrains.com/issue/KT-37107) kotlinc allows calling default constructor of class with no constructors
+- [`KT-37406`](https://youtrack.jetbrains.com/issue/KT-37406) NI: "UnsupportedOperationException: no descriptor for type constructor of TypeVariable(T)" when compiling `*.gradle.kts` file
+
+### IDE
+
+- [`KT-37483`](https://youtrack.jetbrains.com/issue/KT-37483) Kotlin localisation
+- [`KT-37629`](https://youtrack.jetbrains.com/issue/KT-37629) False positive "Unsupported [literal prefixes and suffixes]" for infix function
+- [`KT-37808`](https://youtrack.jetbrains.com/issue/KT-37808) "Resolve pasted references" dialog freezes UI for 20 seconds when pasting kotlin code
+
+### IDE. Completion
+
+- [`KT-37144`](https://youtrack.jetbrains.com/issue/KT-37144) Completion goes into an infinite loop with Arrow 0.10.4 dependency
+
+### IDE. Debugger
+
+- [`KT-37767`](https://youtrack.jetbrains.com/issue/KT-37767) Debugger, NPE happens while stepping.
+
+### IDE. Editing
+
+- [`KT-35135`](https://youtrack.jetbrains.com/issue/KT-35135) UI freeze: not enough checkCancelled on resolve path
+
+### IDE. Inspections and Intentions
+
+- [`KT-37217`](https://youtrack.jetbrains.com/issue/KT-37217) Replace UseExperimental with OptIn intention removes target prefixes for annotations
+
+### IDE. Native
+
+- [`KT-38079`](https://youtrack.jetbrains.com/issue/KT-38079) IDEA navigates to wrong line of source code from Native stack trace
+
+### IDE. Navigation
+
+- [`KT-37487`](https://youtrack.jetbrains.com/issue/KT-37487) Destructuring declarations are called "destruction declarations" in UI
+
+### Tools. Gradle. Native
+
+- [`KT-37696`](https://youtrack.jetbrains.com/issue/KT-37696) MPP Gradle plugin: False positive parallel execution detection if build started with --continue
+
 ## 1.3.71
 
 ### Compiler
