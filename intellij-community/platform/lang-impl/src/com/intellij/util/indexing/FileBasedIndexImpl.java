@@ -315,9 +315,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     myRegisteredIndexes.waitUntilIndicesAreInitialized();
   }
 
-  /**
-   * @return true if registered index requires full rebuild for some reason, e.g. is just created or corrupted
-   */
   static <K, V> void registerIndexer(@NotNull final FileBasedIndexExtension<K, V> extension, @NotNull IndexConfiguration state,
                                      @NotNull IndicesRegistrationResult registrationStatusSink) throws IOException {
     ID<K, V> name = extension.getName();
@@ -635,7 +632,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       if (currentAccessType != null) {
         if (currentAccessType == dumbModeAccessType) {
           setAccessType = false;
-        } else {
+        }
+        else {
           throw new AssertionError("Reentrant dumb mode ignorance. Current mode: " + currentAccessType + ", Requested mode: " + dumbModeAccessType);
         }
       }
@@ -686,9 +684,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
             if (dumbModeAccessRestricted) {
               throw new ServiceNotReadyException();
             }
-            else {
-              return false;
-            }
+            return false;
           }
           if (dumbModeAccessRestricted || !ActionUtil.isDumbMode(project)) {
             forceUpdate(project, filter, restrictedFile);
@@ -718,7 +714,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return myUpToDateIndicesForUnsavedOrTransactedDocuments.contains(indexId);
   }
 
-  private static void handleDumbMode(@Nullable Project project) {
+  private static void handleDumbMode(@Nullable Project project) throws IndexNotReadyException {
     ProgressManager.checkCanceled();
     throw IndexNotReadyException.create(project == null ? null : DumbServiceImpl.getInstance(project).getDumbModeStartTrace());
   }
@@ -1298,7 +1294,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   private static void markFileIndexed(@Nullable VirtualFile file) {
-    if (ourIndexedFile.get() != null || ourFileToBeIndexed.get() != null) throw new AssertionError("Reentrant indexing");
+    if (ourIndexedFile.get() != null || ourFileToBeIndexed.get() != null) {
+      throw new AssertionError("Reentrant indexing");
+    }
     ourIndexedFile.set(file);
   }
 
@@ -1710,7 +1708,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     DumbModeAccessType dumbModeAccessType = getCurrentDumbModeAccessType();
     if (dumbModeAccessType == null) {
       //throw new IllegalStateException("index access is not allowed in dumb mode");
-      return f -> true;
+      return __ -> true;
     }
 
     if (dumbModeAccessType == DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE) return f -> true;
