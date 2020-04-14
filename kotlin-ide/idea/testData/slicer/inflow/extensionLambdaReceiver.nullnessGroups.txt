@@ -1,4 +1,3 @@
 [NotNull Values]
-6 	val <bold>v = this</bold>
-6 		val <bold>v = this</bold>
-
+6 	val <bold>v = this</bold> (in foo())
+6 		val <bold>v = this</bold> (in foo())

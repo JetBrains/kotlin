@@ -1,47 +1,47 @@
-4 fun String.foo(<bold>p: String</bold>) {
-5 	val v1 = with(<bold>p</bold>) { this }
-LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
-LIB 			(INLINE CALL with) return <bold>receiver</bold>.block()
-LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-5 					[LAMBDA RECEIVER] val v1 = with(p) <bold>{ this }</bold>
-5 						val v1 = with(p) { <bold>this</bold> }
-5 							val v1 = with(p) <bold>{ this }</bold>
-5 								[LAMBDA CALLS] val v1 = with(p) <bold>{ this }</bold>
-LIB 									(INLINE CALL with) [LAMBDA CALLS] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-LIB 										(INLINE CALL with) return receiver.<bold>block()</bold>
-5 											val v1 = <bold>with(p) { this }</bold>
-5 												val <bold>v1 = with(p) { this }</bold>
-7 	val v2 = with(<bold>p</bold>) { bar(this) }
-LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
-LIB 			(INLINE CALL with) return <bold>receiver</bold>.block()
-LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-7 					[LAMBDA RECEIVER] val v2 = with(p) <bold>{ bar(this) }</bold>
-7 						val v2 = with(p) { bar(<bold>this</bold>) }
-14 							fun bar(<bold>s: String</bold>) = s
-14 								fun bar(s: String) = <bold>s</bold>
+4 fun String.foo(<bold>p: String</bold>) { (in foo(String) on String)
+5 	val v1 = with(<bold>p</bold>) { this } (in foo(String) on String)
+LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R { (in with(T, T.() -> R))
+LIB 			(INLINE CALL with) return <bold>receiver</bold>.block() (in with(T, T.() -> R))
+LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+5 					[LAMBDA RECEIVER] val v1 = with(p) <bold>{ this }</bold> (in foo(String) on String)
+5 						val v1 = with(p) { <bold>this</bold> } (in foo(String) on String)
+5 							val v1 = with(p) <bold>{ this }</bold> (in foo(String) on String)
+5 								[LAMBDA CALLS] val v1 = with(p) <bold>{ this }</bold> (in foo(String) on String)
+LIB 									(INLINE CALL with) [LAMBDA CALLS] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+LIB 										(INLINE CALL with) return receiver.<bold>block()</bold> (in with(T, T.() -> R))
+5 											val v1 = <bold>with(p) { this }</bold> (in foo(String) on String)
+5 												val <bold>v1 = with(p) { this }</bold> (in foo(String) on String)
+7 	val v2 = with(<bold>p</bold>) { bar(this) } (in foo(String) on String)
+LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R { (in with(T, T.() -> R))
+LIB 			(INLINE CALL with) return <bold>receiver</bold>.block() (in with(T, T.() -> R))
+LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+7 					[LAMBDA RECEIVER] val v2 = with(p) <bold>{ bar(this) }</bold> (in foo(String) on String)
+7 						val v2 = with(p) { bar(<bold>this</bold>) } (in foo(String) on String)
+14 							fun bar(<bold>s: String</bold>) = s (in bar(String))
+14 								fun bar(s: String) = <bold>s</bold> (in bar(String))
 14 									fun <bold>bar(s: String) = s</bold>
-7 										val v2 = with(p) { <bold>bar(this)</bold> }
-7 											val v2 = with(p) <bold>{ bar(this) }</bold>
-7 												[LAMBDA CALLS] val v2 = with(p) <bold>{ bar(this) }</bold>
-LIB 													(INLINE CALL with) [LAMBDA CALLS] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-LIB 														(INLINE CALL with) return receiver.<bold>block()</bold>
-7 															val v2 = <bold>with(p) { bar(this) }</bold>
-7 																val <bold>v2 = with(p) { bar(this) }</bold>
-9 	val v3 = with(<bold>p</bold>) { this@foo }
-LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
-LIB 			(INLINE CALL with) return <bold>receiver</bold>.block()
-LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-9 					[LAMBDA RECEIVER] val v3 = with(p) <bold>{ this@foo }</bold>
-11 	val v4 = with(<bold>p</bold>, ::zoo)
-LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R {
-LIB 			(INLINE CALL with) return <bold>receiver</bold>.block()
-LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-11 					[LAMBDA RECEIVER] val v4 = with(p, <bold>::zoo</bold>)
-15 						fun zoo(<bold>s: String</bold>) = s
-15 							fun zoo(s: String) = <bold>s</bold>
+7 										val v2 = with(p) { <bold>bar(this)</bold> } (in foo(String) on String)
+7 											val v2 = with(p) <bold>{ bar(this) }</bold> (in foo(String) on String)
+7 												[LAMBDA CALLS] val v2 = with(p) <bold>{ bar(this) }</bold> (in foo(String) on String)
+LIB 													(INLINE CALL with) [LAMBDA CALLS] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+LIB 														(INLINE CALL with) return receiver.<bold>block()</bold> (in with(T, T.() -> R))
+7 															val v2 = <bold>with(p) { bar(this) }</bold> (in foo(String) on String)
+7 																val <bold>v2 = with(p) { bar(this) }</bold> (in foo(String) on String)
+9 	val v3 = with(<bold>p</bold>) { this@foo } (in foo(String) on String)
+LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R { (in with(T, T.() -> R))
+LIB 			(INLINE CALL with) return <bold>receiver</bold>.block() (in with(T, T.() -> R))
+LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+9 					[LAMBDA RECEIVER] val v3 = with(p) <bold>{ this@foo }</bold> (in foo(String) on String)
+11 	val v4 = with(<bold>p</bold>, ::zoo) (in foo(String) on String)
+LIB 		(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R { (in with(T, T.() -> R))
+LIB 			(INLINE CALL with) return <bold>receiver</bold>.block() (in with(T, T.() -> R))
+LIB 				(INLINE CALL with) [LAMBDA RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+11 					[LAMBDA RECEIVER] val v4 = with(p, <bold>::zoo</bold>) (in foo(String) on String)
+15 						fun zoo(<bold>s: String</bold>) = s (in zoo(String))
+15 							fun zoo(s: String) = <bold>s</bold> (in zoo(String))
 15 								fun <bold>zoo(s: String) = s</bold>
-11 									[LAMBDA CALLS] val v4 = with(p, <bold>::zoo</bold>)
-LIB 										(INLINE CALL with) [LAMBDA CALLS] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R {
-LIB 											(INLINE CALL with) return receiver.<bold>block()</bold>
-11 												val v4 = <bold>with(p, ::zoo)</bold>
-11 													val <bold>v4 = with(p, ::zoo)</bold>
+11 									[LAMBDA CALLS] val v4 = with(p, <bold>::zoo</bold>) (in foo(String) on String)
+LIB 										(INLINE CALL with) [LAMBDA CALLS] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
+LIB 											(INLINE CALL with) return receiver.<bold>block()</bold> (in with(T, T.() -> R))
+11 												val v4 = <bold>with(p, ::zoo)</bold> (in foo(String) on String)
+11 													val <bold>v4 = with(p, ::zoo)</bold> (in foo(String) on String)

@@ -1,13 +1,12 @@
-4 var foo: Int = <bold>0</bold>
-10 	val x = <bold>foo</bold>
-4 		var <bold>foo: Int = 0</bold>
-4 			var foo: Int = <bold>0</bold>
+4 var foo: Int = <bold>0</bold> (in A.foo: Int)
+10 	val x = <bold>foo</bold> (in A.test())
+4 		var <bold>foo: Int = 0</bold> (in A)
+4 			var foo: Int = <bold>0</bold> (in A.foo: Int)
 
-11 foo = <bold>1</bold>
-10 	val x = <bold>foo</bold>
-4 		var <bold>foo: Int = 0</bold>
-6 			field = <bold>if (b) value else 0</bold>
-6 				field = if (b) <bold>value</bold> else 0
-5 					set(<bold>value</bold>) {
-11 						foo = <bold>1</bold>
-
+11 foo = <bold>1</bold> (in A.test())
+10 	val x = <bold>foo</bold> (in A.test())
+4 		var <bold>foo: Int = 0</bold> (in A)
+6 			field = <bold>if (b) value else 0</bold> (in A.foo: Int)
+6 				field = if (b) <bold>value</bold> else 0 (in A.foo: Int)
+5 					set(<bold>value</bold>) { (in A.foo: Int)
+11 						foo = <bold>1</bold> (in A.test())

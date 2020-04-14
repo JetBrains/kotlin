@@ -1,26 +1,26 @@
-15 val <bold>x = A()</bold>
-18 	<bold>x</bold>[1]
-6 		operator fun <bold>A</bold>.get(i: Int) = this
-6 			operator fun A.get(i: Int) = <bold>this</bold>
+15 val <bold>x = A()</bold> (in test())
+18 	<bold>x</bold>[1] (in test())
+6 		operator fun <bold>A</bold>.get(i: Int) = this (in get(Int) on A)
+6 			operator fun A.get(i: Int) = <bold>this</bold> (in get(Int) on A)
 6 				operator fun A.<bold>get(i: Int) = this</bold>
-18 					<bold>x[1]</bold>
-20 					<bold>x[1]</bold> += y
-8 						operator fun <bold>A</bold>.plusAssign(a: A) {
-9 							val v = <bold>this</bold>
-9 								val <bold>v = this</bold>
-21 					<bold>x[1]</bold> *= y
-11 						operator fun <bold>A</bold>.times(a: A) = this
-11 							operator fun A.times(a: A) = <bold>this</bold>
+18 					<bold>x[1]</bold> (in test())
+20 					<bold>x[1]</bold> += y (in test())
+8 						operator fun <bold>A</bold>.plusAssign(a: A) { (in plusAssign(A) on A)
+9 							val v = <bold>this</bold> (in plusAssign(A) on A)
+9 								val <bold>v = this</bold> (in plusAssign(A) on A)
+21 					<bold>x[1]</bold> *= y (in test())
+11 						operator fun <bold>A</bold>.times(a: A) = this (in times(A) on A)
+11 							operator fun A.times(a: A) = <bold>this</bold> (in times(A) on A)
 11 								operator fun A.<bold>times(a: A) = this</bold>
-21 									<bold>x[1] *= y</bold>
-22 					<bold>x[1]</bold>++
-12 						operator fun <bold>A</bold>.inc() = this
-12 							operator fun A.inc() = <bold>this</bold>
+21 									<bold>x[1] *= y</bold> (in test())
+22 					<bold>x[1]</bold>++ (in test())
+12 						operator fun <bold>A</bold>.inc() = this (in inc() on A)
+12 							operator fun A.inc() = <bold>this</bold> (in inc() on A)
 12 								operator fun A.<bold>inc() = this</bold>
-22 									<bold>x[1]++</bold>
-12 										DUPLICATE: operator fun <bold>A</bold>.inc() = this
-19 	<bold>x</bold>[1] = y
-20 	<bold>x</bold>[1] += y
-6 		DUPLICATE: operator fun <bold>A</bold>.get(i: Int) = this
-21 	<bold>x</bold>[1] *= y
-22 	<bold>x</bold>[1]++
+22 									<bold>x[1]++</bold> (in test())
+12 										DUPLICATE: operator fun <bold>A</bold>.inc() = this (in inc() on A)
+19 	<bold>x</bold>[1] = y (in test())
+20 	<bold>x</bold>[1] += y (in test())
+6 		DUPLICATE: operator fun <bold>A</bold>.get(i: Int) = this (in get(Int) on A)
+21 	<bold>x</bold>[1] *= y (in test())
+22 	<bold>x</bold>[1]++ (in test())

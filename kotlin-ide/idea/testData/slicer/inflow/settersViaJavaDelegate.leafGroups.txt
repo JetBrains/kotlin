@@ -1,14 +1,13 @@
 6 private String _value = <bold>""</bold>;
-12 	println("Now my name is '$<bold>name</bold>'")
-5 		var <bold>name by D()</bold>
+12 	println("Now my name is '$<bold>name</bold>'") (in AClass.uses())
+5 		var <bold>name by D()</bold> (in AClass)
 9 			return <bold>_value</bold>;
 6 				private String _value = <bold>""</bold>;
 
-5 var name <bold>by D()</bold>
-12 	println("Now my name is '$<bold>name</bold>'")
-5 		var <bold>name by D()</bold>
+5 var name <bold>by D()</bold> (in AClass.name: String!)
+12 	println("Now my name is '$<bold>name</bold>'") (in AClass.uses())
+5 		var <bold>name by D()</bold> (in AClass)
 9 			return <bold>_value</bold>;
 13 				_value = <bold>value</bold>;
 12 					void setValue(@Nullable Object thisRef, @NotNull KProperty<?> property, @NotNull String <bold>value</bold>) {
-5 						var name <bold>by D()</bold>
-
+5 						var name <bold>by D()</bold> (in AClass.name: String!)

@@ -1,6 +1,6 @@
-9 val <bold>v = value</bold>
-9 	val v = <bold>value</bold>
-8 		foo(fun(<bold>value: Int</bold>) {
-8 			[LAMBDA CALLS ARGUMENT #0] foo(<bold>fun(value: Int) {</bold>
-3 				[LAMBDA CALLS ARGUMENT #0] fun foo(<bold>f: (Int) -> Unit</bold>) {
-4 					f(<bold>1</bold>)
+9 val <bold>v = value</bold> (in test())
+9 	val v = <bold>value</bold> (in test())
+8 		foo(fun(<bold>value: Int</bold>) { (in test())
+8 			[LAMBDA CALLS ARGUMENT #0] foo(<bold>fun(value: Int) {</bold> (in test())
+3 				[LAMBDA CALLS ARGUMENT #0] fun foo(<bold>f: (Int) -> Unit</bold>) { (in foo((Int) -> Unit))
+4 					f(<bold>1</bold>) (in foo((Int) -> Unit))

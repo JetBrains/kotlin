@@ -1,8 +1,7 @@
 [NotNull Values]
-8 	val v = <bold>"a"</bold>.property
-3 		var <bold>Any</bold>.property: Int
-8 			val v = <bold>"a"</bold>.property
-9 	<bold>"b"</bold>.property = 2
-3 		var <bold>Any</bold>.property: Int
-9 			<bold>"b"</bold>.property = 2
-
+8 	val v = <bold>"a"</bold>.property (in foo())
+3 		var <bold>Any</bold>.property: Int (in property: Int on Any)
+8 			val v = <bold>"a"</bold>.property (in foo())
+9 	<bold>"b"</bold>.property = 2 (in foo())
+3 		var <bold>Any</bold>.property: Int (in property: Int on Any)
+9 			<bold>"b"</bold>.property = 2 (in foo())

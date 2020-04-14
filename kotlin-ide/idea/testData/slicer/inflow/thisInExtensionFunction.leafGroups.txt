@@ -1,8 +1,7 @@
-8 val x = <bold>""</bold>.extensionFun()
-8 	val <bold>x = "".extensionFun()</bold>
-8 		val x = <bold>"".extensionFun()</bold>
+8 val x = <bold>""</bold>.extensionFun() (in foo())
+8 	val <bold>x = "".extensionFun()</bold> (in foo())
+8 		val x = <bold>"".extensionFun()</bold> (in foo())
 3 			fun Any.<bold>extensionFun(): Any {</bold>
-4 				return <bold>this</bold>
-3 					fun <bold>Any</bold>.extensionFun(): Any {
-8 						val x = <bold>""</bold>.extensionFun()
-
+4 				return <bold>this</bold> (in extensionFun() on Any)
+3 					fun <bold>Any</bold>.extensionFun(): Any { (in extensionFun() on Any)
+8 						val x = <bold>""</bold>.extensionFun() (in foo())

@@ -1,8 +1,8 @@
-7 println(<bold>result</bold>)
-6 	val <bold>result = foo(1)</bold>
-6 		val result = <bold>foo(1)</bold>
+7 println(<bold>result</bold>) (in bar())
+6 	val <bold>result = foo(1)</bold> (in bar())
+6 		val result = <bold>foo(1)</bold> (in bar())
 1 			actual fun <bold>foo(p: Any): Any {</bold>
-2 				return <bold>p</bold>
-1 					actual fun foo(<bold>p: Any</bold>): Any {
-6 						val result = foo(<bold>1</bold>)
+2 				return <bold>p</bold> (in foo(Any))
+1 					actual fun foo(<bold>p: Any</bold>): Any { (in foo(Any))
+6 						val result = foo(<bold>1</bold>) (in bar())
 3 			expect fun <bold>foo(p: Any): Any</bold>

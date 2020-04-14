@@ -1,5 +1,5 @@
-4 open fun foo(<bold>p: String</bold>) {
-5 	val v = <bold>p</bold>
-5 		val <bold>v = p</bold>
-10 	override fun foo(<bold>p: String</bold>) {
-11 		val v = <bold>p</bold> + 1
+4 open fun foo(<bold>p: String</bold>) { (in C.foo(String))
+5 	val v = <bold>p</bold> (in C.foo(String))
+5 		val <bold>v = p</bold> (in C.foo(String))
+10 	override fun foo(<bold>p: String</bold>) { (in D.foo(String))
+11 		val v = <bold>p</bold> + 1 (in D.foo(String))
