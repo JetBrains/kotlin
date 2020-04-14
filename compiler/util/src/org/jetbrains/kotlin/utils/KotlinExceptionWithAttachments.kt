@@ -21,8 +21,8 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
 
-    fun withAttachment(name: String, content: String?): KotlinExceptionWithAttachments {
-        attachments.add(Attachment(name, content ?: "<null>"))
+    fun withAttachment(name: String, content: Any?): KotlinExceptionWithAttachments {
+        attachments.add(Attachment(name, content?.toString() ?: "<null>"))
         return this
     }
 }

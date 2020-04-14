@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.checkWithAttachment
@@ -34,16 +35,20 @@ class ToFromOriginalFileMapper private constructor(
     //TODO: lazy initialization?
 
     init {
-        val originalText = originalFile.text
-        val syntheticText = syntheticFile.text
+        val (originalText, syntheticText) = runReadAction {
+            originalFile.text to syntheticFile.text
+        }
         val originalSubSequence = originalText.take(completionOffset)
         val syntheticSubSequence = syntheticText.take(completionOffset)
         checkWithAttachment(originalSubSequence == syntheticSubSequence, {
             "original subText [len: ${originalSubSequence.length}]" +
-                    " does not match synthetic subText [len: ${syntheticSubSequence.length}]"
+                    " does not match synthetic subText [len: ${syntheticSubSequence.length}], " +
+                    "completionOffset: $completionOffset"
         }) {
-            it.withAttachment("original subText", originalSubSequence.toString())
-                .withAttachment("synthetic subText", syntheticSubSequence.toString())
+            it.withAttachment("original subText.kt", originalSubSequence)
+                .withAttachment("original.kt", originalText)
+                .withAttachment("synthetic subText.kt", syntheticSubSequence)
+                .withAttachment("synthetic.kt", syntheticText)
         }
 
         syntheticLength = syntheticText.length
