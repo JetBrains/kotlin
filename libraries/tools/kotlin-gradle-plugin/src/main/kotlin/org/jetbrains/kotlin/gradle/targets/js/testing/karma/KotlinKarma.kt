@@ -425,6 +425,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private val failedBrowsers: MutableList<String> = mutableListOf()
 
+                    private var previousLine: String = ""
+
                     override fun printNonTestOutput(text: String, type: String?) {
                         val value = text.trimEnd()
                         progressLogger.progress(value)
@@ -435,21 +437,30 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private fun parseConsole(text: String, type: String?) {
 
-                        var actualText = text
+                        val actualType = if (text.trim().startsWith("at ")) {
+                            parseConsole(previousLine, ERROR)
+                            previousLine = ""
+                            ERROR
+                        } else {
+                            previousLine = text
+                            type
+                        }
 
                         val launcherMessage = KARMA_LAUNCHER_MESSAGE.matchEntire(text)
 
-                        if (launcherMessage != null) {
+                        val actualText = if (launcherMessage != null) {
                             val (message) = launcherMessage.destructured
-                            actualText = message
-                            when (type?.toLowerCase()) {
+                            when (actualType?.toLowerCase()) {
                                 WARN, ERROR -> {
                                     processFailedBrowsers(text)
                                 }
                             }
+                            message
+                        } else {
+                            text
                         }
 
-                        type?.let { log.processLogMessage(actualText, it) }
+                        actualType?.let { log.processLogMessage(actualText, it) }
                     }
 
                     private fun processFailedBrowsers(text: String) {
