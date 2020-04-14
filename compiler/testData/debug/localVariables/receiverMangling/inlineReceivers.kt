@@ -17,10 +17,10 @@ fun box() {
 
 // LOCAL VARIABLES
 // TestKt:13:
-// TestKt:3: $this$foo:java.lang.String, count:int
-// TestKt:5: $this$foo:java.lang.String, count:int, x:boolean
-// TestKt:10: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int
-// TestKt:6: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int, $this$block:long, $i$a$-block-TestKt$foo$1:int
-// TestKt:7: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int, $this$block:long, $i$a$-block-TestKt$foo$1:int
-// TestKt:8: $this$foo:java.lang.String, count:int, x:boolean
+// TestKt:3: LV:$this$foo:java.lang.String, LV:count:int
+// TestKt:5: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean
+// TestKt:10: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int
+// TestKt:6: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int, LV:$this$block:long, LV:$i$a$-block-TestKt$foo$1:int
+// TestKt:7: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int, LV:$this$block:long, LV:$i$a$-block-TestKt$foo$1:int
+// TestKt:8: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean
 // TestKt:14:

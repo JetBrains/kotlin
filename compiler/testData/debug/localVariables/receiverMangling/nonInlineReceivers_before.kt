@@ -16,8 +16,8 @@ fun box() {
 
 // LOCAL VARIABLES
 // TestKt:14:
-// TestKt:4: $receiver:java.lang.String, count:int
-// TestKt:6: $receiver:java.lang.String, count:int, x:boolean
-// TestKt:11: block:TestKt$foo$1
-// TestKt:9: $receiver:java.lang.String, count:int, x:boolean
+// TestKt:4: LV:$receiver:java.lang.String, LV:count:int
+// TestKt:6: LV:$receiver:java.lang.String, LV:count:int, LV:x:boolean
+// TestKt:11: LV:block:TestKt$foo$1
+// TestKt:9: LV:$receiver:java.lang.String, LV:count:int, LV:x:boolean
 // TestKt:15:

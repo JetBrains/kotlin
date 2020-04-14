@@ -24,26 +24,26 @@ fun box() {
 // IGNORE_BACKEND: JVM_IR
 // LOCAL VARIABLES
 // TestKt:11:
-// A:3:
-// A:3: x:double, y:java.lang.String, z:char
-// A:3:
+// A:3: F:x:double, F:y:null, F:z:char
+// A:3: F:x:double, F:y:null, F:z:char, LV:x:double, LV:y:java.lang.String, LV:z:char
+// A:3: F:x:double, F:y:java.lang.String, F:z:char
 // TestKt:11:
-// TestKt:5: a:A, block:TestKt$box$1
-// TestKt$box$1:14: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int
-// A:3:
-// A:3: x:double, y:java.lang.String, z:char
-// A:3:
-// TestKt$box$1:14: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int, x:double, y:char
-// TestKt$box$1:15: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int, x:double, y:char, a:double, c:char
-// A:3:
-// A:3: x:double, y:java.lang.String, z:char
-// A:3:
-// TestKt$box$1:15: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int, x:double, y:char, a:double, c:char
-// TestKt$box$1:17: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int, x:double, y:char, a:double, c:char, _:java.lang.String, d:char
+// TestKt:5: LV:a:A, LV:block:TestKt$box$1
+// TestKt$box$1:14: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int
+// A:3: F:x:double, F:y:null, F:z:char
+// A:3: F:x:double, F:y:null, F:z:char, LV:x:double, LV:y:java.lang.String, LV:z:char
+// A:3: F:x:double, F:y:java.lang.String, F:z:char
+// TestKt$box$1:14: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int, LV:x:double, LV:y:char
+// TestKt$box$1:15: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int, LV:x:double, LV:y:char, LV:a:double, LV:c:char
+// A:3: F:x:double, F:y:null, F:z:char
+// A:3: F:x:double, F:y:null, F:z:char, LV:x:double, LV:y:java.lang.String, LV:z:char
+// A:3: F:x:double, F:y:java.lang.String, F:z:char
+// TestKt$box$1:15: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int, LV:x:double, LV:y:char, LV:a:double, LV:c:char
+// TestKt$box$1:17: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int, LV:x:double, LV:y:char, LV:a:double, LV:c:char, LV:_:java.lang.String, LV:d:char
 // TestKt:7:
-// TestKt$box$1:17: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int, x:double, y:char, a:double, c:char, _:java.lang.String, d:char
-// TestKt$box$1:21: $dstr$x$_u24__u24$y:A, $noName_1:java.lang.String, w:int, x:double, y:char, a:double, c:char, _:java.lang.String, d:char
-// TestKt$box$1.invoke(java.lang.Object, java.lang.Object, java.lang.Object)+19:
-// TestKt:5: a:A, block:TestKt$box$1
+// TestKt$box$1:17: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int, LV:x:double, LV:y:char, LV:a:double, LV:c:char, LV:_:java.lang.String, LV:d:char
+// TestKt$box$1:21: F:INSTANCE:TestKt$box$1, F:arity:int, LV:$dstr$x$_u24__u24$y:A, LV:$noName_1:java.lang.String, LV:w:int, LV:x:double, LV:y:char, LV:a:double, LV:c:char, LV:_:java.lang.String, LV:d:char
+// TestKt$box$1.invoke(java.lang.Object, java.lang.Object, java.lang.Object)+19: F:INSTANCE:TestKt$box$1, F:arity:int
+// TestKt:5: LV:a:A, LV:block:TestKt$box$1
 // TestKt:11:
 // TestKt:23:

@@ -287,6 +287,7 @@ class ExpressionCodegen(
 
     private fun writeParameterInLocalVariableTable(startLabel: Label, endLabel: Label) {
         if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return
+        if (irFunction.origin == IrDeclarationOrigin.BRIDGE) return
         if (!irFunction.isStatic) {
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }

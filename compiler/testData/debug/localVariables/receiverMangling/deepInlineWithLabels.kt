@@ -23,18 +23,18 @@ fun box() {
 
 // LOCAL VARIABLES
 // TestKt:19:
-// TestKt:3: $this$foo:java.lang.String, count:int
-// TestKt:5: $this$foo:java.lang.String, count:int, x:boolean
-// TestKt:16: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int
-// TestKt:6: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int, $this$b1:long, $i$a$-block-TestKt$foo$1:int
-// TestKt:7: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean
-// TestKt:16: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $i$f$block:int
-// TestKt:8: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $i$f$block:int, $this$b2:long, $i$a$-block-TestKt$foo$1$1:int
-// TestKt:9: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $i$f$block:int, $this$b2:long, $i$a$-block-TestKt$foo$1$1:int, z:boolean
-// TestKt:16: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $this$b2:long, $i$a$-block-TestKt$foo$1$1:int, z:boolean, $i$f$block:int
-// TestKt:10: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $this$b2:long, $i$a$-block-TestKt$foo$1$1:int, z:boolean, $i$f$block:int, $this$b3:long, $i$a$-block-TestKt$foo$1$1$1:int
-// TestKt:11: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $this$b2:long, $i$a$-block-TestKt$foo$1$1:int, z:boolean, $i$f$block:int, $this$b3:long, $i$a$-block-TestKt$foo$1$1$1:int
-// TestKt:12: $this$foo:java.lang.String, count:int, x:boolean, $this$b1:long, $i$a$-block-TestKt$foo$1:int, y:boolean, $i$f$block:int, $this$b2:long, $i$a$-block-TestKt$foo$1$1:int
-// TestKt:13: $this$foo:java.lang.String, count:int, x:boolean, $i$f$block:int, $this$b1:long, $i$a$-block-TestKt$foo$1:int
-// TestKt:14: $this$foo:java.lang.String, count:int, x:boolean
+// TestKt:3: LV:$this$foo:java.lang.String, LV:count:int
+// TestKt:5: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean
+// TestKt:16: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int
+// TestKt:6: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int
+// TestKt:7: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean
+// TestKt:16: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$i$f$block:int
+// TestKt:8: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$i$f$block:int, LV:$this$b2:long, LV:$i$a$-block-TestKt$foo$1$1:int
+// TestKt:9: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$i$f$block:int, LV:$this$b2:long, LV:$i$a$-block-TestKt$foo$1$1:int, LV:z:boolean
+// TestKt:16: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$this$b2:long, LV:$i$a$-block-TestKt$foo$1$1:int, LV:z:boolean, LV:$i$f$block:int
+// TestKt:10: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$this$b2:long, LV:$i$a$-block-TestKt$foo$1$1:int, LV:z:boolean, LV:$i$f$block:int, LV:$this$b3:long, LV:$i$a$-block-TestKt$foo$1$1$1:int
+// TestKt:11: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$this$b2:long, LV:$i$a$-block-TestKt$foo$1$1:int, LV:z:boolean, LV:$i$f$block:int, LV:$this$b3:long, LV:$i$a$-block-TestKt$foo$1$1$1:int
+// TestKt:12: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int, LV:y:boolean, LV:$i$f$block:int, LV:$this$b2:long, LV:$i$a$-block-TestKt$foo$1$1:int
+// TestKt:13: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean, LV:$i$f$block:int, LV:$this$b1:long, LV:$i$a$-block-TestKt$foo$1:int
+// TestKt:14: LV:$this$foo:java.lang.String, LV:count:int, LV:x:boolean
 // TestKt:20:

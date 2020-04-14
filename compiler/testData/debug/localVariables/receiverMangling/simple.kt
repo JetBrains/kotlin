@@ -7,5 +7,5 @@ fun box() {
 
 // LOCAL VARIABLES
 // TestKt:5:
-// TestKt:2: $this$foo:java.lang.String, a:int
+// TestKt:2: LV:$this$foo:java.lang.String, LV:a:int
 // TestKt:6:

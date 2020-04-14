@@ -24,22 +24,22 @@ fun box() {
 
 // LOCAL VARIABLES
 // TestKt:20:
-// TestKt:4: $receiver:java.lang.String, count:int
-// TestKt:6: $receiver:java.lang.String, count:int, x:boolean
-// TestKt:17: block:TestKt$foo$1
-// TestKt$foo$1:7: $receiver:long
-// TestKt$foo$1:8: $receiver:long, y:boolean
-// TestKt:17: block:TestKt$foo$1$1
-// TestKt$foo$1$1:9: $receiver:long
-// TestKt$foo$1$1:10: $receiver:long, z:boolean
-// TestKt:17: block:TestKt$foo$1$1$1
-// TestKt$foo$1$1:13: $receiver:long
-// TestKt$foo$1$1.invoke(java.lang.Object)+11:
-// TestKt$foo$1$1.invoke(java.lang.Object)+14:
-// TestKt:17: block:TestKt$foo$1$1
-// TestKt$foo$1:14: $receiver:long
-// TestKt$foo$1.invoke(java.lang.Object)+11:
-// TestKt$foo$1.invoke(java.lang.Object)+14:
-// TestKt:17: block:TestKt$foo$1
-// TestKt:15: $receiver:java.lang.String, count:int, x:boolean
+// TestKt:4: LV:$receiver:java.lang.String, LV:count:int
+// TestKt:6: LV:$receiver:java.lang.String, LV:count:int, LV:x:boolean
+// TestKt:17: LV:block:TestKt$foo$1
+// TestKt$foo$1:7: F:receiver$0:java.lang.String, F:$x:boolean, F:$count:int, F:arity:int, LV:$receiver:long
+// TestKt$foo$1:8: F:receiver$0:java.lang.String, F:$x:boolean, F:$count:int, F:arity:int, LV:$receiver:long, LV:y:boolean
+// TestKt:17: LV:block:TestKt$foo$1$1
+// TestKt$foo$1$1:9: F:this$0:TestKt$foo$1, F:$y:boolean, F:arity:int, LV:$receiver:long
+// TestKt$foo$1$1:10: F:this$0:TestKt$foo$1, F:$y:boolean, F:arity:int, LV:$receiver:long, LV:z:boolean
+// TestKt:17: LV:block:TestKt$foo$1$1$1
+// TestKt$foo$1$1:13: F:this$0:TestKt$foo$1, F:$y:boolean, F:arity:int, LV:$receiver:long
+// TestKt$foo$1$1.invoke(java.lang.Object)+11: F:this$0:TestKt$foo$1, F:$y:boolean, F:arity:int
+// TestKt$foo$1$1.invoke(java.lang.Object)+14: F:this$0:TestKt$foo$1, F:$y:boolean, F:arity:int
+// TestKt:17: LV:block:TestKt$foo$1$1
+// TestKt$foo$1:14: F:receiver$0:java.lang.String, F:$x:boolean, F:$count:int, F:arity:int, LV:$receiver:long
+// TestKt$foo$1.invoke(java.lang.Object)+11: F:receiver$0:java.lang.String, F:$x:boolean, F:$count:int, F:arity:int
+// TestKt$foo$1.invoke(java.lang.Object)+14: F:receiver$0:java.lang.String, F:$x:boolean, F:$count:int, F:arity:int
+// TestKt:17: LV:block:TestKt$foo$1
+// TestKt:15: LV:$receiver:java.lang.String, LV:count:int, LV:x:boolean
 // TestKt:21:

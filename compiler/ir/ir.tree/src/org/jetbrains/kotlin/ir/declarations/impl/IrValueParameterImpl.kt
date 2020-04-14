@@ -40,7 +40,8 @@ class IrValueParameterImpl(
     override val type: IrType,
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
-    override val isNoinline: Boolean
+    override val isNoinline: Boolean,
+    override var variableNameHint: String? = null
 ) :
     IrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
     IrValueParameter,

@@ -1,7 +1,7 @@
 // TODO: KT-36987 KT-37093
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 // There should be no $foo$$inlined$map$1$1 class
 
 interface FlowCollector<T> {

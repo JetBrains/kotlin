@@ -112,6 +112,8 @@ class IrBuiltInOperatorValueParameter(override val symbol: IrValueParameterSymbo
     override val isNoinline: Boolean get() = false
     override var defaultValue: IrExpressionBody? by NullValueDelegate()
 
+    override var variableNameHint: String? by NullValueDelegate()
+
     override val name: Name = Name.identifier("arg$index")
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D) =
