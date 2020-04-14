@@ -9,10 +9,7 @@ import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
@@ -207,17 +204,57 @@ private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
     FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
 }
 
-internal fun FirClass<*>.collectCallableNamesFromSupertypes(session: FirSession, result: MutableList<Name> = mutableListOf()): List<Name> {
+private val simpleDeclarationCollector: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = { declaration, map ->
+    when (declaration) {
+        is FirSimpleFunction ->
+            map.putIfAbsent(declaration.name, declaration)
+        is FirVariable<*> ->
+            map.putIfAbsent(declaration.name, declaration)
+    }
+}
+
+internal fun FirClass<*>.collectCallableNamesFromSupertypes(
+    session: FirSession,
+    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = simpleDeclarationCollector
+): Set<Name> {
     for (superTypeRef in superTypeRefs) {
-        superTypeRef.collectCallableNamesFromThisAndSupertypes(session, result)
+        superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
+    }
+    return result.keys
+}
+
+internal fun FirClass<*>.collectContributedFunctionsFromSupertypes(
+    session: FirSession,
+    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = { declaration, map ->
+        if (declaration is FirSimpleFunction && declaration.body != null) {
+            map.putIfAbsent(declaration.name, declaration)
+        }
+    }
+): Map<Name, FirDeclaration> {
+    for (superTypeRef in superTypeRefs) {
+        superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
     }
     return result
 }
 
-private fun FirTypeRef.collectCallableNamesFromThisAndSupertypes(
+fun FirClass<*>.collectDeclarationsFromSupertypes(
     session: FirSession,
-    result: MutableList<Name> = mutableListOf()
-): List<Name> {
+    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = simpleDeclarationCollector
+): Map<Name, FirDeclaration> {
+    for (superTypeRef in superTypeRefs) {
+        superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
+    }
+    return result
+}
+
+private fun FirTypeRef.collectDeclarationsFromThisAndSupertypes(
+    session: FirSession,
+    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = simpleDeclarationCollector
+): Map<Name, FirDeclaration> {
     if (this is FirResolvedTypeRef) {
         val superType = type
         if (superType is ConeClassLikeType) {
@@ -225,16 +262,13 @@ private fun FirTypeRef.collectCallableNamesFromThisAndSupertypes(
                 is FirClassSymbol -> {
                     val superClass = superSymbol.fir as FirClass<*>
                     for (declaration in superClass.declarations) {
-                        when (declaration) {
-                            is FirSimpleFunction -> result += declaration.name
-                            is FirVariable<*> -> result += declaration.name
-                        }
+                        record(declaration, result)
                     }
-                    superClass.collectCallableNamesFromSupertypes(session, result)
+                    superClass.collectDeclarationsFromSupertypes(session, result, record)
                 }
                 is FirTypeAliasSymbol -> {
                     val superAlias = superSymbol.fir
-                    superAlias.expandedTypeRef.collectCallableNamesFromThisAndSupertypes(session, result)
+                    superAlias.expandedTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
                 }
             }
         }
