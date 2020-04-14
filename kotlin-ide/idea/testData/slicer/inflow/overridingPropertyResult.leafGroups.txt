@@ -1,16 +1,16 @@
 8 override val foo = <bold>2</bold> (in B.foo: Int)
-17 	val <bold>y = b.foo</bold> (in test(A, B, C))
-17 		val y = <bold>b.foo</bold> (in test(A, B, C))
+17 	val <bold>y = b.foo</bold> (in test(A, B,…))
+17 		val y = <bold>b.foo</bold> (in test(A, B,…))
 8 			override val <bold>foo = 2</bold> (in B)
 8 				override val foo = <bold>2</bold> (in B.foo: Int)
 
 12 override val foo = <bold>3</bold> (in C.foo: Int)
-17 	val <bold>y = b.foo</bold> (in test(A, B, C))
-17 		val y = <bold>b.foo</bold> (in test(A, B, C))
+17 	val <bold>y = b.foo</bold> (in test(A, B,…))
+17 		val y = <bold>b.foo</bold> (in test(A, B,…))
 12 			override val <bold>foo = 3</bold> (in C)
 12 				override val foo = <bold>3</bold> (in C.foo: Int)
 
 3 return <bold>5</bold>;
-17 	val <bold>y = b.foo</bold> (in test(A, B, C))
-17 		val y = <bold>b.foo</bold> (in test(A, B, C))
+17 	val <bold>y = b.foo</bold> (in test(A, B,…))
+17 		val y = <bold>b.foo</bold> (in test(A, B,…))
 3 			return <bold>5</bold>;

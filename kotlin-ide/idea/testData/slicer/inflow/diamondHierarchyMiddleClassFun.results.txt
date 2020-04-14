@@ -1,5 +1,5 @@
-21 val <bold>y = b.foo()</bold> (in test(A, B, C, D))
-21 	val y = <bold>b.foo()</bold> (in test(A, B, C, D))
+21 val <bold>y = b.foo()</bold> (in test(A, B,…))
+21 	val y = <bold>b.foo()</bold> (in test(A, B,…))
 8 		override fun <bold>foo() = 2</bold> (in B)
 8 			override fun foo() = <bold>2</bold> (in B.foo())
 16 		override fun <bold>foo() = 4</bold> (in D)

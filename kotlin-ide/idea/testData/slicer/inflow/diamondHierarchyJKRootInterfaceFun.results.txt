@@ -1,5 +1,5 @@
-8 val <bold>x = a.foo()</bold> (in test(A, B, C, D))
-8 	val x = <bold>a.foo()</bold> (in test(A, B, C, D))
+8 val <bold>x = a.foo()</bold> (in test(A, B,…))
+8 	val x = <bold>a.foo()</bold> (in test(A, B,…))
 4 		fun <bold>foo() = 1</bold> (in A)
 4 			fun foo() = <bold>1</bold> (in A.foo())
 3 		return <bold>2</bold>;
