@@ -397,6 +397,7 @@ class CollectionTest {
         for (size in 0 until 4) {
             val expected = listOf("", "0", "01", "012", "0123").take(size + 1)
             assertEquals(expected, List(size) { it }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, List(size) { it }.runningFold("") { acc, e -> acc + e })
         }
     }
 
@@ -405,22 +406,23 @@ class CollectionTest {
         for (size in 0 until 4) {
             val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
             assertEquals(expected, List(size) { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" })
+            assertEquals(expected, List(size) { 'a' + it }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" })
         }
     }
 
     @Test
-    fun scanReduce() {
+    fun runningReduce() {
         for (size in 0 until 4) {
             val expected = listOf(0, 1, 3, 6).take(size)
-            assertEquals(expected, List(size) { it }.scanReduce { acc, e -> acc + e })
+            assertEquals(expected, List(size) { it }.runningReduce { acc, e -> acc + e })
         }
     }
 
     @Test
-    fun scanReduceIndexed() {
+    fun runningReduceIndexed() {
         for (size in 0 until 4) {
             val expected = listOf(0, 1, 6, 27).take(size)
-            assertEquals(expected, List(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) })
+            assertEquals(expected, List(size) { it }.runningReduceIndexed { index, acc, e -> index * (acc + e) })
         }
     }
 

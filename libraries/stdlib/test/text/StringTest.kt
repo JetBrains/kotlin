@@ -1359,40 +1359,38 @@ class StringTest {
     @Test
     fun scan() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            assertEquals(
-                listOf("", "0", "01", "012", "0123").take(size + 1),
-                arg1((0 until size).joinToString(separator = "")).scan("") { acc, e -> acc + e }
-            )
+            val source = arg1((0 until size).joinToString(separator = ""))
+            val expected = listOf("", "0", "01", "012", "0123").take(size + 1)
+            assertEquals(expected, source.scan("") { acc, e -> acc + e })
+            assertEquals(expected, source.runningFold("") { acc, e -> acc + e })
         }
     }
 
     @Test
     fun scanIndexed() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            assertEquals(
-                listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1),
-                arg1(('a' until 'a' + size).joinToString(separator = "")).scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
-            )
+            val source = arg1(('a' until 'a' + size).joinToString(separator = ""))
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
+            assertEquals(expected, source.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" })
+            assertEquals(expected, source.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" })
         }
     }
 
     @Test
-    fun scanReduce() = withOneCharSequenceArg { arg1 ->
+    fun runningReduce() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            assertEquals(
-                listOf(0, 1, 3, 6).take(size).map { it.toChar() },
-                arg1((0.toChar() until size.toChar()).joinToString(separator = "")).scanReduce { acc, e -> acc + e.toInt() }
-            )
+            val expected = listOf(0, 1, 3, 6).take(size).map { it.toChar() }
+            val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
+            assertEquals(expected, source.runningReduce { acc, e -> acc + e.toInt() })
         }
     }
 
     @Test
     fun scanReduceIndexed() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            assertEquals(
-                listOf(0, 1, 6, 27).take(size).map { it.toChar() },
-                arg1((0.toChar() until size.toChar()).joinToString(separator = "")).scanReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
-            )
+            val expected = listOf(0, 1, 6, 27).take(size).map { it.toChar() }
+            val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
+            assertEquals(expected, source.runningReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() })
         }
     }
 
