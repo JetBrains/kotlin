@@ -4,14 +4,12 @@
 package com.intellij.find.actions
 
 import com.intellij.find.FindSettings
+import com.intellij.find.usages.SearchTarget
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions
 import com.intellij.find.usages.impl.AllSearchOptions
 import com.intellij.find.usages.impl.buildQuery
-import com.intellij.find.usages.impl.createUsageHandler
 import com.intellij.find.usages.impl.hasTextSearchStrings
-import com.intellij.model.Symbol
-import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -27,40 +25,44 @@ import org.jetbrains.annotations.ApiStatus
 
 internal val LOG: Logger = Logger.getInstance("#com.intellij.find.actions")
 
-fun findUsages(showDialog: Boolean, project: Project, selectedScope: SearchScope, symbol: Symbol) {
-  findUsages(showDialog, project, symbol, symbol.createUsageHandler(project), selectedScope)
-}
-
-private fun <O> findUsages(showDialog: Boolean, project: Project, symbol: Symbol, handler: UsageHandler<O>, selectedScope: SearchScope) {
-  val allOptions = AllSearchOptions(
-    options = UsageOptions.createOptions(true, selectedScope),
-    textSearch = if (symbol.hasTextSearchStrings()) false else null,
-    customOptions = handler.getCustomOptions(UsageHandler.UsageAction.FIND_USAGES)
-  )
-  findUsages(showDialog, project, symbol, handler, allOptions)
+fun findUsages(showDialog: Boolean, project: Project, selectedScope: SearchScope, target: SearchTarget) {
+  findUsages(showDialog, project, target, target.usageHandler, selectedScope)
 }
 
 private fun <O> findUsages(showDialog: Boolean,
                            project: Project,
-                           symbol: Symbol,
+                           target: SearchTarget,
+                           handler: UsageHandler<O>,
+                           selectedScope: SearchScope) {
+  val allOptions = AllSearchOptions(
+    options = UsageOptions.createOptions(true, selectedScope),
+    textSearch = if (target.hasTextSearchStrings()) false else null,
+    customOptions = handler.getCustomOptions(UsageHandler.UsageAction.FIND_USAGES)
+  )
+  findUsages(showDialog, project, target, handler, allOptions)
+}
+
+private fun <O> findUsages(showDialog: Boolean,
+                           project: Project,
+                           target: SearchTarget,
                            handler: UsageHandler<O>,
                            allOptions: AllSearchOptions<O>) {
   if (showDialog) {
     val canReuseTab = canReuseTab(project)
-    val dialog = UsageOptionsDialog(project, getLongDescription(symbol), handler, allOptions, canReuseTab)
+    val dialog = UsageOptionsDialog(project, target.displayString, handler, allOptions, canReuseTab)
     if (!dialog.showAndGet()) {
       // cancelled
       return
     }
-    findUsages(project, symbol, handler, dialog.result())
+    findUsages(project, target, handler, dialog.result())
   }
   else {
-    findUsages(project, symbol, handler, allOptions)
+    findUsages(project, target, handler, allOptions)
   }
 }
 
-internal fun <O> findUsages(project: Project, symbol: Symbol, handler: UsageHandler<O>, allOptions: AllSearchOptions<O>) {
-  val query = buildQuery(project, symbol, handler, allOptions)
+internal fun <O> findUsages(project: Project, target: SearchTarget, handler: UsageHandler<O>, allOptions: AllSearchOptions<O>) {
+  val query = buildQuery(project, target, handler, allOptions)
   val factory = Factory {
     UsageSearcher {
       runSearch(project, query, it)
@@ -73,7 +75,7 @@ internal fun <O> findUsages(project: Project, symbol: Symbol, handler: UsageHand
     isOpenInNewTab = FindSettings.getInstance().isShowResultsInSeparateView || !canReuseTab(project)
   }
   project.service<UsageViewManager>().searchAndShowUsages(
-    arrayOf(SymbolUsageTarget(project, symbol, allOptions)),
+    arrayOf(SearchTarget2UsageTarget(project, target, allOptions)),
     factory,
     false,
     true,
@@ -92,6 +94,8 @@ private fun canReuseTab(project: Project): Boolean {
     !selectedContent.isPinned
   }
 }
+
+internal val SearchTarget.displayString: String? get() = presentation.presentableText
 
 internal fun <O> UsageHandler<O>.getSearchString(allOptions: AllSearchOptions<O>): String {
   return getSearchString(allOptions.options, allOptions.customOptions)

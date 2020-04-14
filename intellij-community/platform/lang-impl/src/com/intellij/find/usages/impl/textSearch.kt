@@ -3,6 +3,7 @@
 
 package com.intellij.find.usages.impl
 
+import com.intellij.find.usages.SearchTarget
 import com.intellij.find.usages.SymbolTextSearcher
 import com.intellij.model.Symbol
 import com.intellij.model.psi.impl.allReferencesInElement
@@ -35,13 +36,7 @@ internal fun Symbol.getTextSearchStrings(): Collection<String> {
   return result
 }
 
-internal fun Symbol.hasTextSearchStrings(): Boolean {
-  @Suppress("UNCHECKED_CAST")
-  val searchers = TEXT_SEARCHERS.forKey(javaClass) as Collection<SymbolTextSearcher<Symbol>>
-  return searchers.any { searcher ->
-    searcher.getStringsToSearch(this).isNotEmpty()
-  }
-}
+internal fun SearchTarget.hasTextSearchStrings(): Boolean = textSearchStrings.isNotEmpty()
 
 internal fun buildTextQuery(project: Project, searchString: String, searchScope: SearchScope): Query<out Usage> {
   val length = searchString.length

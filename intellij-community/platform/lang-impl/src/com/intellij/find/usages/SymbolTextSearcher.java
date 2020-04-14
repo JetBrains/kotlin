@@ -9,12 +9,9 @@ import java.util.Collection;
 /**
  * Implement this interface and register as {@code com.intellij.lang.symbolTextSearcher} extension
  * to enable searching of text occurrences of the symbol.
- * <p>
- * Text doesn't contain references by design (e.g. plain text or markdown),
- * but there might exist occurrences which are feasible to find/rename,
- * e.g fully qualified name of a Java class or package.
- * <p>
- * Returning non-empty collection will enable "Search for text occurrences" checkbox in the UI.
+ * <p/>
+ * It's not necessary to implement this interface if there exist an implementation of {@link SymbolSearchTargetFactory} for some symbol,
+ * since the returned {@link SearchTarget} should have its {@link SearchTarget#getTextSearchStrings} implemented.
  */
 public interface SymbolTextSearcher<S extends Symbol> {
 

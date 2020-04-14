@@ -3,14 +3,10 @@
 
 package com.intellij.find.actions
 
+import com.intellij.find.usages.SearchTarget
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.impl.AllSearchOptions
-import com.intellij.find.usages.impl.createUsageHandler
 import com.intellij.model.Pointer
-import com.intellij.model.Symbol
-import com.intellij.model.presentation.SymbolPresentationService
-import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
-import com.intellij.model.psi.PsiSymbolService
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.actionSystem.DataKey
@@ -32,29 +28,29 @@ import com.intellij.usages.UsageView
 import com.intellij.usages.impl.UsageViewImpl
 import javax.swing.Icon
 
-internal class SymbolUsageTarget<O>(
+internal class SearchTarget2UsageTarget<O>(
   private val project: Project,
-  symbol: Symbol,
+  target: SearchTarget,
   private val allOptions: AllSearchOptions<O>
 ) : UsageTarget, TypeSafeDataProvider, ConfigurableUsageTarget {
 
-  private val myPointer: Pointer<out Symbol> = symbol.createPointer()
+  private val myPointer: Pointer<out SearchTarget> = target.createPointer()
   override fun isValid(): Boolean = myPointer.dereference() != null
 
   // ----- presentation -----
 
-  private var myItemPresentation: ItemPresentation = getItemPresentation(symbol)
+  private var myItemPresentation: ItemPresentation = getItemPresentation(target)
 
   override fun update() {
-    val symbol = myPointer.dereference() ?: return
-    myItemPresentation = getItemPresentation(symbol)
+    val target = myPointer.dereference() ?: return
+    myItemPresentation = getItemPresentation(target)
   }
 
-  private fun getItemPresentation(symbol: Symbol): ItemPresentation {
-    val symbolPresentation = SymbolPresentationService.getInstance().getSymbolPresentation(symbol)
+  private fun getItemPresentation(target: SearchTarget): ItemPresentation {
+    val presentation = target.presentation
     return object : ItemPresentation {
-      override fun getIcon(unused: Boolean): Icon? = symbolPresentation.icon
-      override fun getPresentableText(): String? = symbolPresentation.longDescription
+      override fun getIcon(unused: Boolean): Icon? = presentation.icon
+      override fun getPresentableText(): String? = presentation.presentableText
       override fun getLocationString(): String? = error("must not be called")
     }
   }
@@ -66,11 +62,7 @@ internal class SymbolUsageTarget<O>(
   // ----- Navigatable & NavigationItem -----
   // TODO Symbol navigation
 
-  private val psi: PsiElement?
-    get() {
-      val symbol = myPointer.dereference() ?: return null
-      return PsiSymbolService.getInstance().extractElementFromSymbol(symbol)
-    }
+  private val psi: PsiElement? get() = myPointer.dereference()?.let(::targetPsi)
 
   override fun getName(): String? = (psi as? NavigationItem)?.name
 
@@ -91,8 +83,8 @@ internal class SymbolUsageTarget<O>(
   override fun getShortcut(): KeyboardShortcut? = UsageViewImpl.getShowUsagesWithSettingsShortcut()
 
   override fun getLongDescriptiveName(): String {
-    val symbol = myPointer.dereference() ?: return UsageViewBundle.message("node.invalid")
-    @Suppress("UNCHECKED_CAST") val usageHandler = symbol.createUsageHandler(project) as UsageHandler<O>
+    val target = myPointer.dereference() ?: return UsageViewBundle.message("node.invalid")
+    @Suppress("UNCHECKED_CAST") val usageHandler = target.usageHandler as UsageHandler<O>
     return UsageViewBundle.message(
       "search.title.0.in.1",
       usageHandler.getSearchString(allOptions.options, allOptions.customOptions),
@@ -101,14 +93,14 @@ internal class SymbolUsageTarget<O>(
   }
 
   override fun showSettings() {
-    val symbol = myPointer.dereference() ?: return
-    @Suppress("UNCHECKED_CAST") val usageHandler = symbol.createUsageHandler(project) as UsageHandler<O>
-    val dialog = UsageOptionsDialog(project, getLongDescription(symbol), usageHandler, allOptions, true)
+    val target = myPointer.dereference() ?: return
+    @Suppress("UNCHECKED_CAST") val usageHandler = target.usageHandler as UsageHandler<O>
+    val dialog = UsageOptionsDialog(project, target.displayString, usageHandler, allOptions, true)
     if (!dialog.showAndGet()) {
       return
     }
     val newOptions = dialog.result()
-    findUsages(project, symbol, usageHandler, newOptions)
+    findUsages(project, target, usageHandler, newOptions)
   }
 
   override fun findUsages(): Unit = error("must not be called")

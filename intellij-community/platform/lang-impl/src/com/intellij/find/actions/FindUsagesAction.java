@@ -8,7 +8,7 @@ import com.intellij.find.FindBundle;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindSettings;
 import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.model.Symbol;
+import com.intellij.find.usages.SearchTarget;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -61,9 +61,9 @@ public class FindUsagesAction extends AnAction {
     findShowUsages(project, dataContext, FindBundle.message("find.usages.ambiguous.title"), new UsageVariantHandler() {
 
       @Override
-      public void handleSymbol(@NotNull Symbol symbol) {
+      public void handleTarget(@NotNull SearchTarget target) {
         SearchScope searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().getDefaultScopeName());
-        findUsages(toShowDialog(), project, searchScope, symbol);
+        findUsages(toShowDialog(), project, searchScope, target);
       }
 
       @Override

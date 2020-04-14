@@ -11,13 +11,13 @@ import com.intellij.find.FindManager;
 import com.intellij.find.FindSettings;
 import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
+import com.intellij.find.usages.SearchTarget;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.gotoByName.ModelDiff;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventId;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
-import com.intellij.model.Symbol;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -187,8 +187,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     findShowUsages(project, dataContext, FindBundle.message("show.usages.ambiguous.title"), new UsageVariantHandler() {
 
       @Override
-      public void handleSymbol(@NotNull Symbol symbol) {
-        ShowTargetUsagesActionHandler.showUsages(project, dataContext, symbol);
+      public void handleTarget(@NotNull SearchTarget target) {
+        ShowTargetUsagesActionHandler.showUsages(project, dataContext, target);
       }
 
       @Override
