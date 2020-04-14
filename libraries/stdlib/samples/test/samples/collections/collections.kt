@@ -722,12 +722,21 @@ class Collections {
         }
 
         @Sample
-        fun scanReduce() {
+        fun runningFold() {
             val strings = listOf("a", "b", "c", "d")
-            assertPrints(strings.scanReduce { acc, string -> acc + string }, "[a, ab, abc, abcd]")
-            assertPrints(strings.scanReduceIndexed { index, acc, string -> acc + string + index }, "[a, ab1, ab1c2, ab1c2d3]")
+            assertPrints(strings.runningFold("s") { acc, string -> acc + string }, "[s, sa, sab, sabc, sabcd]")
+            assertPrints(strings.runningFoldIndexed("s") { index, acc, string -> acc + string + index }, "[s, sa0, sa0b1, sa0b1c2, sa0b1c2d3]")
 
-            assertPrints(emptyList<String>().scanReduce { _, _ -> "X" }, "[]")
+            assertPrints(emptyList<String>().runningFold("s") { _, _ -> "X" }, "[s]")
+        }
+
+        @Sample
+        fun runningReduce() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.runningReduce { acc, string -> acc + string }, "[a, ab, abc, abcd]")
+            assertPrints(strings.runningReduceIndexed { index, acc, string -> acc + string + index }, "[a, ab1, ab1c2, ab1c2d3]")
+
+            assertPrints(emptyList<String>().runningReduce { _, _ -> "X" }, "[]")
         }
     }
 

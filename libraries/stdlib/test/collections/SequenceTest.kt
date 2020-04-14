@@ -166,41 +166,35 @@ public class SequenceTest {
     @Test
     fun scan() {
         for (size in 0 until 4) {
-            assertEquals(
-                sequenceOf("", "0", "01", "012").take(size).toList(),
-                indexSequence().scan("") { acc, e -> acc + e }.take(size).toList()
-            )
+            val expected = listOf("_", "_0", "_01", "_012").take(size)
+            assertEquals(expected, indexSequence().scan("_") { acc, e -> acc + e }.take(size).toList())
+            assertEquals(expected, indexSequence().runningFold("_") { acc, e -> acc + e }.take(size).toList())
         }
     }
 
     @Test
     fun scanIndexed() {
         for (size in 0 until 4) {
-            assertEquals(
-                sequenceOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]").take(size).toList(),
-                indexSequence().map { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList()
-            )
+            val source = indexSequence().map { 'a' + it }
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]").take(size)
+            assertEquals(expected, source.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList())
+            assertEquals(expected, source.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList())
         }
     }
 
     @Test
-    fun scanReduce() {
+    fun runningReduce() {
         for (size in 0 until 4) {
             val expected = listOf(0, 1, 3, 6).subList(0, size)
-            assertEquals(
-                sequenceOf(0, 1, 3, 6).take(size).toList(),
-                indexSequence().scanReduce { acc, e -> acc + e }.take(size).toList()
-            )
+            assertEquals(expected, indexSequence().runningReduce { acc, e -> acc + e }.take(size).toList())
         }
     }
 
     @Test
-    fun scanReduceIndexed() {
+    fun runningReduceIndexed() {
         for (size in 0 until 4) {
-            assertEquals(
-                sequenceOf(0, 1, 6, 27).take(size).toList(),
-                indexSequence().scanReduceIndexed { index, acc, e -> index * (acc + e) }.take(size).toList()
-            )
+            val expected = listOf(0, 1, 6, 27).take(size)
+            assertEquals(expected, indexSequence().runningReduceIndexed { index, acc, e -> index * (acc + e) }.take(size).toList())
         }
     }
 

@@ -1142,6 +1142,27 @@ class ArraysTest {
     }
 
     @Test
+    fun runningFold() {
+        for (size in 0 until 4) {
+            val expected = listOf("", "0", "01", "012", "0123").take(size + 1)
+            // Array<T>
+            assertEquals(expected, Array(size) { it }.runningFold("") { acc, e -> acc + e })
+            // Primitive Arrays
+            assertEquals(expected, ByteArray(size) { it.toByte() }.runningFold("") { acc, e -> acc + e })
+            assertEquals(expected, CharArray(size) { '0' + it }.runningFold("") { acc, e -> acc + e })
+            assertEquals(expected, ShortArray(size) { it.toShort() }.runningFold("") { acc, e -> acc + e })
+            assertEquals(expected, IntArray(size) { it }.runningFold("") { acc, e -> acc + e })
+            assertEquals(expected, LongArray(size) { it.toLong() }.runningFold("") { acc, e -> acc + e })
+            assertEquals(expected, FloatArray(size) { it.toFloat() }.runningFold("") { acc, e -> acc + e.toInt() })
+            assertEquals(expected, DoubleArray(size) { it.toDouble() }.runningFold("") { acc, e -> acc + e.toInt() })
+            assertEquals(
+                expected.map { it.map { c -> c.toInt() % 2 == 0 }.joinToString(separator = "") },
+                BooleanArray(size) { it % 2 == 0 }.runningFold("") { acc, e -> acc + e }
+            )
+        }
+    }
+
+    @Test
     fun scanIndexed() {
         for (size in 0 until 4) {
             val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
@@ -1185,92 +1206,137 @@ class ArraysTest {
             )
         }
     }
-
+    
     @Test
-    fun scanReduce() {
+    fun runningFoldIndexed() {
         for (size in 0 until 4) {
-            val expected = listOf(0, 1, 3, 6).take(size)
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
             // Array<T>
             assertEquals(
                 expected,
-                Array(size) { it }.scanReduce { acc, e -> acc + e }
+                Array(size) { 'a' + it }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
             )
             // Primitive Arrays
             assertEquals(
-                expected.map { it.toByte() },
-                ByteArray(size) { it.toByte() }.scanReduce { acc, e -> (acc + e).toByte() }
-            )
-            assertEquals(
-                expected.map { it.toChar() },
-                CharArray(size) { it.toChar() }.scanReduce { acc, e -> acc + e.toInt() }
-            )
-            assertEquals(
-                expected.map { it.toShort() },
-                ShortArray(size) { it.toShort() }.scanReduce { acc, e -> (acc + e).toShort() }
+                expected,
+                ByteArray(size) { it.toByte() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
                 expected,
-                IntArray(size) { it }.scanReduce { acc, e -> acc + e }
+                CharArray(size) { it.toChar() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.map { it.toLong() },
-                LongArray(size) { it.toLong() }.scanReduce { acc, e -> acc + e }
+                expected,
+                ShortArray(size) { it.toShort() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.map { it.toFloat() },
-                FloatArray(size) { it.toFloat() }.scanReduce { acc, e -> acc + e.toInt() }
+                expected,
+                IntArray(size) { it }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e}]" }
             )
             assertEquals(
-                expected.map { it.toDouble() },
-                DoubleArray(size) { it.toDouble() }.scanReduce { acc, e -> acc + e.toInt() }
+                expected,
+                LongArray(size) { it.toLong() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.indices.map { it % 2 == 0 },
-                BooleanArray(size) { true }.scanReduce { acc, e -> acc != e }
+                expected,
+                FloatArray(size) { it.toFloat() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                DoubleArray(size) { it.toDouble() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected.map { it.map { c -> if (c.isAsciiLetter()) c.toInt() % 2 != 0 else c }.joinToString(separator = "") },
+                BooleanArray(size) { it % 2 == 0 }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
             )
         }
     }
 
     @Test
-    fun scanReduceIndexed() {
+    fun runningReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).take(size)
+            // Array<T>
+            assertEquals(
+                expected,
+                Array(size) { it }.runningReduce { acc, e -> acc + e }
+            )
+            // Primitive Arrays
+            assertEquals(
+                expected.map { it.toByte() },
+                ByteArray(size) { it.toByte() }.runningReduce { acc, e -> (acc + e).toByte() }
+            )
+            assertEquals(
+                expected.map { it.toChar() },
+                CharArray(size) { it.toChar() }.runningReduce { acc, e -> acc + e.toInt() }
+            )
+            assertEquals(
+                expected.map { it.toShort() },
+                ShortArray(size) { it.toShort() }.runningReduce { acc, e -> (acc + e).toShort() }
+            )
+            assertEquals(
+                expected,
+                IntArray(size) { it }.runningReduce { acc, e -> acc + e }
+            )
+            assertEquals(
+                expected.map { it.toLong() },
+                LongArray(size) { it.toLong() }.runningReduce { acc, e -> acc + e }
+            )
+            assertEquals(
+                expected.map { it.toFloat() },
+                FloatArray(size) { it.toFloat() }.runningReduce { acc, e -> acc + e.toInt() }
+            )
+            assertEquals(
+                expected.map { it.toDouble() },
+                DoubleArray(size) { it.toDouble() }.runningReduce { acc, e -> acc + e.toInt() }
+            )
+            assertEquals(
+                expected.indices.map { it % 2 == 0 },
+                BooleanArray(size) { true }.runningReduce { acc, e -> acc != e }
+            )
+        }
+    }
+
+    @Test
+    fun runningReduceIndexed() {
         for (size in 0 until 4) {
             val expected = listOf(0, 1, 6, 27).take(size)
             // Array<T>
             assertEquals(
                 expected,
-                Array(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+                Array(size) { it }.runningReduceIndexed { index, acc, e -> index * (acc + e) }
             )
             // Primitive Arrays
             assertEquals(
                 expected.map { it.toByte() },
-                ByteArray(size) { it.toByte() }.scanReduceIndexed { index, acc, e -> (index * (acc + e)).toByte() })
+                ByteArray(size) { it.toByte() }.runningReduceIndexed { index, acc, e -> (index * (acc + e)).toByte() })
             assertEquals(
                 expected.map { it.toChar() },
-                CharArray(size) { it.toChar() }.scanReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
+                CharArray(size) { it.toChar() }.runningReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
             )
             assertEquals(
                 expected.map { it.toShort() },
-                ShortArray(size) { it.toShort() }.scanReduceIndexed { index, acc, e -> (index * (acc + e)).toShort() }
+                ShortArray(size) { it.toShort() }.runningReduceIndexed { index, acc, e -> (index * (acc + e)).toShort() }
             )
             assertEquals(
                 expected,
-                IntArray(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+                IntArray(size) { it }.runningReduceIndexed { index, acc, e -> index * (acc + e) }
             )
             assertEquals(
                 expected.map { it.toLong() },
-                LongArray(size) { it.toLong() }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+                LongArray(size) { it.toLong() }.runningReduceIndexed { index, acc, e -> index * (acc + e) }
             )
             assertEquals(
                 expected.map { it.toFloat() },
-                FloatArray(size) { it.toFloat() }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+                FloatArray(size) { it.toFloat() }.runningReduceIndexed { index, acc, e -> index * (acc + e) }
             )
             assertEquals(
                 expected.map { it.toDouble() },
-                DoubleArray(size) { it.toDouble() }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+                DoubleArray(size) { it.toDouble() }.runningReduceIndexed { index, acc, e -> index * (acc + e) }
             )
             assertEquals(
                 expected.indices.map { it % 2 == 0 },
-                BooleanArray(size) { true }.scanReduceIndexed { index, acc, e -> acc != e && index % 2 == 0 }
+                BooleanArray(size) { true }.runningReduceIndexed { index, acc, e -> acc != e && index % 2 == 0 }
             )
         }
     }

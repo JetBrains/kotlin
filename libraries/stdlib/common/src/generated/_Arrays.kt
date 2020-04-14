@@ -14986,11 +14986,10 @@ public inline fun CharArray.reduceRightOrNull(operation: (Char, acc: Char) -> Ch
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) -> R): List<R> {
+@SinceKotlin("1.4")
+public inline fun <T, R> Array<out T>.runningFold(initial: R, operation: (acc: R, T) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15010,12 +15009,11 @@ public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) ->
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R): List<R> {
+public inline fun <R> ByteArray.runningFold(initial: R, operation: (acc: R, Byte) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15035,12 +15033,11 @@ public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R)
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> R): List<R> {
+public inline fun <R> ShortArray.runningFold(initial: R, operation: (acc: R, Short) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15060,12 +15057,11 @@ public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> 
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): List<R> {
+public inline fun <R> IntArray.runningFold(initial: R, operation: (acc: R, Int) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15085,12 +15081,11 @@ public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): 
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R): List<R> {
+public inline fun <R> LongArray.runningFold(initial: R, operation: (acc: R, Long) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15110,12 +15105,11 @@ public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R)
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> R): List<R> {
+public inline fun <R> FloatArray.runningFold(initial: R, operation: (acc: R, Float) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15135,12 +15129,11 @@ public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> 
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -> R): List<R> {
+public inline fun <R> DoubleArray.runningFold(initial: R, operation: (acc: R, Double) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15160,12 +15153,11 @@ public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean) -> R): List<R> {
+public inline fun <R> BooleanArray.runningFold(initial: R, operation: (acc: R, Boolean) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15185,12 +15177,11 @@ public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean)
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
+public inline fun <R> CharArray.runningFold(initial: R, operation: (acc: R, Char) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15211,11 +15202,10 @@ public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R)
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
+@SinceKotlin("1.4")
+public inline fun <T, R> Array<out T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15236,12 +15226,11 @@ public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index:
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): List<R> {
+public inline fun <R> ByteArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15262,12 +15251,11 @@ public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): List<R> {
+public inline fun <R> ShortArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15288,12 +15276,11 @@ public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): List<R> {
+public inline fun <R> IntArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15314,12 +15301,11 @@ public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, a
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): List<R> {
+public inline fun <R> LongArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15340,12 +15326,11 @@ public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): List<R> {
+public inline fun <R> FloatArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15366,12 +15351,11 @@ public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): List<R> {
+public inline fun <R> DoubleArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15392,12 +15376,11 @@ public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): List<R> {
+public inline fun <R> BooleanArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15418,12 +15401,11 @@ public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: In
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <R> CharArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
+public inline fun <R> CharArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
     if (isEmpty()) return listOf(initial)
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
@@ -15443,11 +15425,11 @@ public inline fun <R> CharArray.scanIndexed(initial: R, operation: (index: Int, 
  * 
  * @param [operation] function that takes current accumulator value and the element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public inline fun <S, T : S> Array<out T>.scanReduce(operation: (acc: S, T) -> S): List<S> {
+public inline fun <S, T : S> Array<out T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
     if (isEmpty()) return emptyList()
     var accumulator: S = this[0]
     val result = ArrayList<S>(size).apply { add(accumulator) }
@@ -15464,12 +15446,11 @@ public inline fun <S, T : S> Array<out T>.scanReduce(operation: (acc: S, T) -> S
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun ByteArray.scanReduce(operation: (acc: Byte, Byte) -> Byte): List<Byte> {
+public inline fun ByteArray.runningReduce(operation: (acc: Byte, Byte) -> Byte): List<Byte> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Byte>(size).apply { add(accumulator) }
@@ -15486,12 +15467,11 @@ public inline fun ByteArray.scanReduce(operation: (acc: Byte, Byte) -> Byte): Li
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun ShortArray.scanReduce(operation: (acc: Short, Short) -> Short): List<Short> {
+public inline fun ShortArray.runningReduce(operation: (acc: Short, Short) -> Short): List<Short> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Short>(size).apply { add(accumulator) }
@@ -15508,12 +15488,11 @@ public inline fun ShortArray.scanReduce(operation: (acc: Short, Short) -> Short)
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun IntArray.scanReduce(operation: (acc: Int, Int) -> Int): List<Int> {
+public inline fun IntArray.runningReduce(operation: (acc: Int, Int) -> Int): List<Int> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Int>(size).apply { add(accumulator) }
@@ -15530,12 +15509,11 @@ public inline fun IntArray.scanReduce(operation: (acc: Int, Int) -> Int): List<I
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun LongArray.scanReduce(operation: (acc: Long, Long) -> Long): List<Long> {
+public inline fun LongArray.runningReduce(operation: (acc: Long, Long) -> Long): List<Long> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Long>(size).apply { add(accumulator) }
@@ -15552,12 +15530,11 @@ public inline fun LongArray.scanReduce(operation: (acc: Long, Long) -> Long): Li
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun FloatArray.scanReduce(operation: (acc: Float, Float) -> Float): List<Float> {
+public inline fun FloatArray.runningReduce(operation: (acc: Float, Float) -> Float): List<Float> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Float>(size).apply { add(accumulator) }
@@ -15574,12 +15551,11 @@ public inline fun FloatArray.scanReduce(operation: (acc: Float, Float) -> Float)
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun DoubleArray.scanReduce(operation: (acc: Double, Double) -> Double): List<Double> {
+public inline fun DoubleArray.runningReduce(operation: (acc: Double, Double) -> Double): List<Double> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Double>(size).apply { add(accumulator) }
@@ -15596,12 +15572,11 @@ public inline fun DoubleArray.scanReduce(operation: (acc: Double, Double) -> Dou
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun BooleanArray.scanReduce(operation: (acc: Boolean, Boolean) -> Boolean): List<Boolean> {
+public inline fun BooleanArray.runningReduce(operation: (acc: Boolean, Boolean) -> Boolean): List<Boolean> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Boolean>(size).apply { add(accumulator) }
@@ -15618,12 +15593,11 @@ public inline fun BooleanArray.scanReduce(operation: (acc: Boolean, Boolean) -> 
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun CharArray.scanReduce(operation: (acc: Char, Char) -> Char): List<Char> {
+public inline fun CharArray.runningReduce(operation: (acc: Char, Char) -> Char): List<Char> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Char>(size).apply { add(accumulator) }
@@ -15644,11 +15618,10 @@ public inline fun CharArray.scanReduce(operation: (acc: Char, Char) -> Char): Li
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun <S, T : S> Array<out T>.scanReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
+@SinceKotlin("1.4")
+public inline fun <S, T : S> Array<out T>.runningReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
     if (isEmpty()) return emptyList()
     var accumulator: S = this[0]
     val result = ArrayList<S>(size).apply { add(accumulator) }
@@ -15666,12 +15639,11 @@ public inline fun <S, T : S> Array<out T>.scanReduceIndexed(operation: (index: I
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun ByteArray.scanReduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): List<Byte> {
+public inline fun ByteArray.runningReduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): List<Byte> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Byte>(size).apply { add(accumulator) }
@@ -15689,12 +15661,11 @@ public inline fun ByteArray.scanReduceIndexed(operation: (index: Int, acc: Byte,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun ShortArray.scanReduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): List<Short> {
+public inline fun ShortArray.runningReduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): List<Short> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Short>(size).apply { add(accumulator) }
@@ -15712,12 +15683,11 @@ public inline fun ShortArray.scanReduceIndexed(operation: (index: Int, acc: Shor
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun IntArray.scanReduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): List<Int> {
+public inline fun IntArray.runningReduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): List<Int> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Int>(size).apply { add(accumulator) }
@@ -15735,12 +15705,11 @@ public inline fun IntArray.scanReduceIndexed(operation: (index: Int, acc: Int, I
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun LongArray.scanReduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): List<Long> {
+public inline fun LongArray.runningReduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): List<Long> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Long>(size).apply { add(accumulator) }
@@ -15758,12 +15727,11 @@ public inline fun LongArray.scanReduceIndexed(operation: (index: Int, acc: Long,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun FloatArray.scanReduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): List<Float> {
+public inline fun FloatArray.runningReduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): List<Float> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Float>(size).apply { add(accumulator) }
@@ -15781,12 +15749,11 @@ public inline fun FloatArray.scanReduceIndexed(operation: (index: Int, acc: Floa
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun DoubleArray.scanReduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): List<Double> {
+public inline fun DoubleArray.runningReduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): List<Double> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Double>(size).apply { add(accumulator) }
@@ -15804,12 +15771,11 @@ public inline fun DoubleArray.scanReduceIndexed(operation: (index: Int, acc: Dou
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun BooleanArray.scanReduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): List<Boolean> {
+public inline fun BooleanArray.runningReduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): List<Boolean> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Boolean>(size).apply { add(accumulator) }
@@ -15827,12 +15793,11 @@ public inline fun BooleanArray.scanReduceIndexed(operation: (index: Int, acc: Bo
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun CharArray.scanReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
+public inline fun CharArray.runningReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
     if (isEmpty()) return emptyList()
     var accumulator = this[0]
     val result = ArrayList<Char>(size).apply { add(accumulator) }
@@ -15841,6 +15806,479 @@ public inline fun CharArray.scanReduceIndexed(operation: (index: Int, acc: Char,
         result.add(accumulator)
     }
     return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original array and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <R> CharArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Array<out T>.scanReduce(operation: (acc: S, T) -> S): List<S> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.scanReduce(operation: (acc: Byte, Byte) -> Byte): List<Byte> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.scanReduce(operation: (acc: Short, Short) -> Short): List<Short> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun IntArray.scanReduce(operation: (acc: Int, Int) -> Int): List<Int> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun LongArray.scanReduce(operation: (acc: Long, Long) -> Long): List<Long> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.scanReduce(operation: (acc: Float, Float) -> Float): List<Float> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.scanReduce(operation: (acc: Double, Double) -> Double): List<Double> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.scanReduce(operation: (acc: Boolean, Boolean) -> Boolean): List<Boolean> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharArray.scanReduce(operation: (acc: Char, Char) -> Char): List<Char> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Array<out T>.scanReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.scanReduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): List<Byte> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.scanReduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): List<Short> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun IntArray.scanReduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): List<Int> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun LongArray.scanReduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): List<Long> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.scanReduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): List<Float> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.scanReduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): List<Double> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.scanReduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): List<Boolean> {
+    return runningReduceIndexed(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharArray.scanReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
+    return runningReduceIndexed(operation)
 }
 
 /**
