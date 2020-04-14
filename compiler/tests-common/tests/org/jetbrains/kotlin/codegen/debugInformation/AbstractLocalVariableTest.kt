@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.codegen.debugInformation
 
+import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.LocalVariable
 import com.sun.jdi.StackFrame
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.event.Event
 import com.sun.jdi.event.LocatableEvent
+import com.sun.jdi.event.MethodEntryEvent
 import junit.framework.TestCase
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -41,13 +43,18 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
 
     override fun storeStep(loggedItems: ArrayList<Any>, event: Event) {
         waitUntil { (event as LocatableEvent).thread().isSuspended }
-        val visibleVars = (event as LocatableEvent)
+        val frame = (event as LocatableEvent)
             .thread()
             .frame(0)
-            .visibleVariables()
-            .map { variable -> toRecord(event.thread().frame(0), variable) }
-            .joinToString(", ")
-        loggedItems.add("${event.location()}: $visibleVars".trim())
+        try {
+            val visibleVars = frame.visibleVariables()
+                .map { variable -> toRecord(event.thread().frame(0), variable) }
+                .joinToString(", ")
+            loggedItems.add("${event.location()}: $visibleVars".trim())
+        } catch (e: AbsentInformationException) {
+            loggedItems.add(("${event.location()}: JDI Exception, no local variable information for method ${event.location().method()}").trim())
+        }
+
     }
 
     override fun checkResult(wholeFile: File, loggedItems: List<Any>) {
