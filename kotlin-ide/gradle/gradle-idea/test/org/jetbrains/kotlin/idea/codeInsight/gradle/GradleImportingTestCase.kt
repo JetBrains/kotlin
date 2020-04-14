@@ -15,10 +15,11 @@
  */
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-import com.intellij.compiler.server.BuildManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
@@ -28,19 +29,28 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.VfsTestUtil
+import com.intellij.util.ArrayUtilRt
 import com.intellij.util.PathUtil
+import com.intellij.util.SmartList
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
+import org.gradle.StartParameter
 import org.gradle.util.GradleVersion
 import org.gradle.wrapper.GradleWrapperMain
+import org.gradle.wrapper.PathAssembler
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
@@ -52,7 +62,9 @@ import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.gradle.util.GradleUtil
 import org.jetbrains.plugins.groovy.GroovyFileType
 import org.junit.AfterClass
 import org.junit.Assume.assumeThat
@@ -67,6 +79,8 @@ import java.io.IOException
 import java.io.StringWriter
 import java.net.URISyntaxException
 import java.util.*
+import java.util.zip.ZipException
+import java.util.zip.ZipFile
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
@@ -74,6 +88,8 @@ import java.util.*
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     protected var sdkCreationChecker : KotlinSdkCreationChecker? = null
+
+    private val removedSdks: MutableList<Sdk> = SmartList()
 
     @JvmField
     @Rule
@@ -112,6 +128,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         super.setUp()
         assumeTrue(isApplicableTest())
         assumeThat(gradleVersion, versionMatcherRule.matcher)
+        removedSdks.clear()
         runWrite {
             val jdkTable = getProjectJdkTableSafe()
             jdkTable.findJdk(GRADLE_JDK_NAME)?.let {
@@ -127,36 +144,65 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         myProjectSettings = GradleProjectSettings().apply {
             this.isUseQualifiedModuleNames = false
         }
+        System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
+
+        val distribution = WriteAction.computeAndWait<PathAssembler.LocalDistribution, Throwable> { configureWrapper() }
+
+        val allowedRoots = ArrayList<String>()
+        collectAllowedRoots(allowedRoots, distribution)
+        if (!allowedRoots.isEmpty()) {
+            VfsRootAccess.allowRootAccess(myTestFixture.testRootDisposable, *ArrayUtilRt.toStringArray(allowedRoots))
+        }
 
         GradleSettings.getInstance(myProject).gradleVmOptions =
             "${jvmHeapArgsByGradleVersion(gradleVersion)} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${System.getProperty("user.dir")}"
 
-        System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
-        configureWrapper()
         sdkCreationChecker = KotlinSdkCreationChecker()
     }
 
     override fun tearDown() {
-        try {
-            runWrite {
-                val old = getProjectJdkTableSafe().findJdk(GRADLE_JDK_NAME)
-                if (old != null) {
-                    SdkConfigurationUtil.removeSdk(old)
-                }
-            }
-
-            Messages.setTestDialog(TestDialog.DEFAULT)
-            FileUtil.delete(BuildManager.getInstance().buildSystemDirectory.toFile())
-            sdkCreationChecker?.removeNewKotlinSdk()
-        } finally {
-            super.tearDown()
+        if (myJdkHome == null) {
+            //super.setUp() wasn't called
+            return
         }
+        RunAll(
+            ThrowableRunnable {
+                runWrite {
+                    Arrays.stream(ProjectJdkTable.getInstance().allJdks).forEach { jdk: Sdk ->
+                        ProjectJdkTable.getInstance().removeJdk(jdk)
+                    }
+                    for (sdk in removedSdks) {
+                        SdkConfigurationUtil.addSdk(sdk)
+                    }
+                    removedSdks.clear()
+                }
+            },
+            ThrowableRunnable {
+                Messages.setTestDialog(TestDialog.DEFAULT)
+                deleteBuildSystemDirectory()
+                // was FileUtil.delete(BuildManager.getInstance().buildSystemDirectory.toFile())
+                sdkCreationChecker?.removeNewKotlinSdk()
+            },
+            ThrowableRunnable {
+                super.tearDown()
+            }
+        ).run()
     }
 
     override fun collectAllowedRoots(roots: MutableList<String>) {
+        super.collectAllowedRoots(roots)
         roots.add(myJdkHome)
         roots.addAll(ExternalSystemTestCase.collectRootsInside(myJdkHome))
         roots.add(PathManager.getConfigPath())
+    }
+
+    protected open fun collectAllowedRoots(
+        roots: MutableList<String>,
+        distribution: PathAssembler.LocalDistribution?
+    ) {
+        //Note: could be required to use:
+        //Environment.getEnvVariable("JAVA_HOME")
+        roots.add(myJdkHome)
     }
 
     override fun getName(): String {
@@ -165,9 +211,10 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     override fun getExternalSystemConfigFileName(): String = "build.gradle"
 
-    protected fun importProjectUsingSingeModulePerGradleProject() {
-        myProjectSettings.isResolveModulePerSourceSet = false
-        importProject()
+    @Throws(IOException::class)
+    protected open fun importProjectUsingSingeModulePerGradleProject(config: String? = null) {
+        currentExternalProjectSettings.isResolveModulePerSourceSet = false
+        importProject(config)
     }
 
     override fun importProject() {
@@ -185,28 +232,43 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         super.importProject()
     }
 
-    override fun importProject(@NonNls @Language("Groovy") config: String) {
-        super.importProject(
-            """
-                allprojects {
-                    repositories {
-                        maven {
-                            url 'https://maven.labs.intellij.net/repo1'
-                        }
-                    }
-                }
+    @Throws(IOException::class)
+    override fun importProject(@NonNls @Language("Groovy") config: String?) {
+        var config = config
+        config = injectRepo(config)
+        super.importProject(config)
+    }
 
-                $config
-                """.trimIndent()
-        )
+    protected open fun injectRepo(@NonNls @Language("Groovy") config: String?): String {
+        var config = config ?: ""
+        config = """allprojects {
+          repositories {
+            maven {
+                url 'https://repo.labs.intellij.net/repo1'
+            }
+        }}
+        $config"""
+        return config
+    }
+
+
+    override fun createImportSpec(): ImportSpec? {
+        val importSpecBuilder = ImportSpecBuilder(super.createImportSpec())
+        importSpecBuilder.withArguments("--stacktrace")
+        return importSpecBuilder.build()
     }
 
     override fun getCurrentExternalProjectSettings(): GradleProjectSettings = myProjectSettings
 
     override fun getExternalSystemId(): ProjectSystemId = GradleConstants.SYSTEM_ID
 
+    @Throws(IOException::class)
+    protected open fun createSettingsFile(@NonNls @Language("Groovy") content: String?): VirtualFile? {
+        return createProjectSubFile("settings.gradle", content)
+    }
+
     @Throws(IOException::class, URISyntaxException::class)
-    private fun configureWrapper() {
+    private fun configureWrapper(): PathAssembler.LocalDistribution {
         val distributionUri = AbstractModelBuilderTest.DistributionLocator().getDistributionFor(GradleVersion.version(gradleVersion))
 
         myProjectSettings.distributionType = DistributionType.DEFAULT_WRAPPED
@@ -228,6 +290,27 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         properties.store(writer, null)
 
         createProjectSubFile("gradle/wrapper/gradle-wrapper.properties", writer.toString())
+
+        val wrapperConfiguration =
+            GradleUtil.getWrapperConfiguration(projectPath)
+        val localDistribution = PathAssembler(
+            StartParameter.DEFAULT_GRADLE_USER_HOME
+        ).getDistribution(wrapperConfiguration)
+
+        val zip = localDistribution.zipFile
+        try {
+            if (zip.exists()) {
+                val zipFile = ZipFile(zip)
+                zipFile.close()
+            }
+        } catch (e: ZipException) {
+            e.printStackTrace()
+            println("Corrupted file will be removed: " + zip.path)
+            FileUtil.delete(zip)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return localDistribution
     }
 
     protected open fun testDataDirName(): String = ""
@@ -290,13 +373,16 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             }
     }
 
-
     private fun runWrite(f: () -> Unit) {
         object : WriteAction<Any>() {
             override fun run(result: Result<Any>) {
                 f()
             }
         }.execute()
+    }
+
+    protected open fun enableGradleDebugWithSuspend() {
+        GradleSystemSettings.getInstance().gradleVmOptions = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
     }
 
     companion object {
