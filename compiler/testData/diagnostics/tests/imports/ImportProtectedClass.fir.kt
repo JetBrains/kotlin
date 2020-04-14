@@ -7,7 +7,7 @@ open class Foo {
 }
 
 class Bar: Foo() {
-    protected fun foo(): Nested? = null
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>protected fun foo(): Nested? = null<!>
 }
 
 private fun foo(): Nested? = null

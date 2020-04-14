@@ -12,7 +12,7 @@ class Outer : Trait {
             val s = super@Outer.bar()
             
             inner class Inner {
-                val t = this@Local
+                <!EXPOSED_PROPERTY_TYPE!>val t = this@Local<!>
                 val s = super@Local.<!UNRESOLVED_REFERENCE!>bar<!>()
                 
                 val tt = this@Outer

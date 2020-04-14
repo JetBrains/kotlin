@@ -14,5 +14,5 @@ package p1
 
 import p2.*
 
-val x: X = X()
-val y: Y = <!INAPPLICABLE_CANDIDATE!>Y<!>()
+<!EXPOSED_PROPERTY_TYPE!>val x: X = X()<!>
+<!EXPOSED_PROPERTY_TYPE!>val y: Y = <!INAPPLICABLE_CANDIDATE!>Y<!>()<!>

@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -111,8 +109,8 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         }
     }
 
-    private inline fun <reified E : PsiElement> DiagnosticReporter.reportExposure(
-        error: DiagnosticFactory3<E, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>,
+    private inline fun <reified E : FirSourceElement, P : PsiElement> DiagnosticReporter.reportExposure(
+        error: FirDiagnosticFactory3<E, P, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>,
         restrictingDeclaration: DeclarationWithRelation,
         elementVisibility: FirEffectiveVisibility,
         restrictingVisibility: FirEffectiveVisibility,
@@ -120,8 +118,8 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
     ) {
         source?.let {
             report(
-                error.onSource(
-                    it,
+                error.on(
+                    it as E,
                     elementVisibility,
                     restrictingDeclaration,
                     restrictingVisibility

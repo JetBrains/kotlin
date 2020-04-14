@@ -2,7 +2,7 @@ internal open class My
 
 abstract class Your {
     // invalid, List<My> is effectively internal
-    abstract fun give(): List<My>
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>abstract fun give(): List<My><!>
 }
 
 // invalid, List<My> is effectively internal

@@ -14,7 +14,7 @@ private fun <E> foobar() = {
     }
 
     class Derived : LocalOuter<Double, Short>() {
-        fun foo(): LocalInner<Long> = null!!
+        <!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(): LocalInner<Long> = null!!<!>
         fun bar(): LocalAlias<Char> = null!!
     }
 
@@ -31,7 +31,7 @@ private fun noParameters() = {
     }
 
     class Derived2 : LocalOuter2<Double, Short>() {
-        fun foo(): LocalInner2<Long> = null!!
+        <!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(): LocalInner2<Long> = null!!<!>
         fun bar(): LocalAlias2<Char> = null!!
     }
 
