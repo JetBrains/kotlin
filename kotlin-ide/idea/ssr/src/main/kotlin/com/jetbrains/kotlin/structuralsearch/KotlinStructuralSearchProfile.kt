@@ -7,18 +7,21 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralSearchProfile
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
+import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun getLexicalNodesFilter(): NodeFilter {
@@ -55,9 +58,48 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
-        val tree = super.createPatternTree(text, context, fileType, language, contextId, project, physical)
-        if (tree.isNotEmpty()) println(DebugUtil.psiToString(tree[0].parent, false))
-        return tree
+        when (context) {
+            PatternTreeContext.Block -> {
+                val fragment = KtPsiFactory(project).createBlockCodeFragment(text, null)
+                val result = getNonWhitespaceChildren(fragment)
+                if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
+                // TODO: Do not always redirect to [PatternTreeContext.Expression]
+                return createPatternTree(
+                    text,
+                    PatternTreeContext.Expression,
+                    fileType,
+                    language,
+                    contextId,
+                    project,
+                    physical
+                )
+            }
+            PatternTreeContext.Expression -> {
+                val fragment = KtPsiFactory(project).createExpressionCodeFragment(text, null)
+                val content = fragment.getContentElement() ?: return PsiElement.EMPTY_ARRAY
+                return arrayOf(content)
+            }
+            else -> return arrayOf(
+                PsiFileFactory.getInstance(project).createFileFromText("__dummy.kt", KotlinFileType.INSTANCE, text)
+            )
+        }
+    }
+
+    companion object {
+
+        fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
+            var element = fragment.firstChild
+            val result: MutableList<PsiElement> =
+                SmartList()
+            while (element != null) {
+                if (element !is PsiWhiteSpace) {
+                    result.add(element)
+                }
+                element = element.nextSibling
+            }
+            return result
+        }
+
     }
 
 }

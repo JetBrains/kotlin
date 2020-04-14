@@ -6,7 +6,7 @@ import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
-import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtExpression
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
 
@@ -22,8 +22,11 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
-    inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer {
+    inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer
 
+    override fun visitElement(element: PsiElement) {
+        myCompilingVisitor.handle(element)
+        super.visitElement(element)
     }
 
 }
