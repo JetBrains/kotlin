@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.render
@@ -165,7 +166,8 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 private fun throwTwiceVisitingError(element: FirElement) {
     if (element is FirTypeRef || element is FirNoReceiverExpression || element is FirTypeParameter ||
         element is FirEmptyContractDescription || element is FirEmptyControlFlowGraphReference ||
-        element is FirStubReference || element.isExtensionFunctionAnnotation || element is FirEmptyArgumentList
+        element is FirStubReference || element.isExtensionFunctionAnnotation || element is FirEmptyArgumentList ||
+        element is FirStubStatement
     ) {
         return
     }
