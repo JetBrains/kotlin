@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 class LocationCache(val context: DefaultExecutionContext) {
     private val classesByName = ClassesByNameProvider.createCache(context.vm.allClasses())
 
-    fun createLocation(stackTraceElement: StackTraceElement): Location = findLocation(
+    fun createLocation(stackTraceElement: StackTraceElement): Location = createLocation(
         ContainerUtil.getFirstItem(classesByName[stackTraceElement.className]),
         stackTraceElement.methodName,
         stackTraceElement.lineNumber
     )
 
-    private fun findLocation(
+    fun createLocation(
         type: ReferenceType?,
         methodName: String,
         line: Int

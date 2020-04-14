@@ -9,10 +9,9 @@ import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.CoroutineFrameBuilder
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.isPreFlight
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.getSafe
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -26,18 +25,15 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
     }
 
     override fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences) {
-        val asyncStackTraceProvider = getAsyncStackTraceProvider()
-        if (asyncStackTraceProvider == null) {
-            finish()
-            return
-        }
-
         doOnBreakpoint {
             val frameProxy = this.frameProxy
             if (frameProxy != null) {
                 try {
-                    val coroutineInfoData =
-                        asyncStackTraceProvider.lookupForResumeContinuation(frameProxy, this, emptyList())?.coroutineInfoData
+                    val sem = frameProxy.location().isPreFlight()
+                    val coroutineInfoData = if (sem.isCoroutineFound())
+                        CoroutineFrameBuilder.lookupContinuation(this, frameProxy, sem)?.coroutineInfoData
+                    else
+                        null
                     if (coroutineInfoData != null && coroutineInfoData.stackTrace.isNotEmpty()) {
                         print(renderAsyncStackTrace(coroutineInfoData.stackTrace), ProcessOutputTypes.SYSTEM)
                     } else {
@@ -54,23 +50,6 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
 
             resume(this)
         }
-    }
-
-    private fun getAsyncStackTraceProvider(): CoroutineAsyncStackTraceProvider? {
-        val area = Extensions.getArea(null)
-        if (!area.hasExtensionPoint(ASYNC_STACKTRACE_EP_NAME)) {
-            System.err.println("$ASYNC_STACKTRACE_EP_NAME extension point is not found (probably old IDE version)")
-            return null
-        }
-
-        val extensionPoint = area.getExtensionPoint<Any>(ASYNC_STACKTRACE_EP_NAME)
-        val provider = extensionPoint.extensions.firstIsInstanceOrNull<CoroutineAsyncStackTraceProvider>()
-
-        if (provider == null) {
-            System.err.println("Kotlin coroutine async stack trace provider is not found")
-        }
-
-        return provider
     }
 
     private fun Throwable.stackTraceAsString(): String {

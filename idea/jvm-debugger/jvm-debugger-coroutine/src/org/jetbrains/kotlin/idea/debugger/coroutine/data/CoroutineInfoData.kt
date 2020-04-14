@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.ThreadReference
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.LocationCache
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.isAbstractCoroutine
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
-import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 /**
  * Represents state of a coroutine.
@@ -19,10 +16,10 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
  */
 data class CoroutineInfoData(
     val key: CoroutineNameIdState,
-    val stackTrace: MutableList<CoroutineStackFrameItem>,
+    val stackTrace: List<CoroutineStackFrameItem>,
     val creationStackTrace: List<CreationCoroutineStackFrameItem>,
     val activeThread: ThreadReference? = null, // for suspended coroutines should be null
-    val lastObservedFrameFieldRef: ObjectReference? = null
+    val lastObservedFrame: ObjectReference? = null
 ) {
     fun isSuspended() = key.state == State.SUSPENDED
 
@@ -32,66 +29,22 @@ data class CoroutineInfoData(
 
     fun isRunning() = key.state == State.RUNNING
 
+    fun topRestoredFrame() = stackTrace.firstOrNull()
+
+    fun topFrameVariables() = stackTrace.firstOrNull()?.spilledVariables ?: emptyList()
+
+    fun restoredStackTrace(mode: SuspendExitMode): List<CoroutineStackFrameItem> =
+        if (stackTrace.isNotEmpty() && stackTrace.first().isInvokeSuspend())
+            stackTrace.drop(1)
+        else if (mode == SuspendExitMode.SUSPEND_METHOD_PARAMETER)
+            stackTrace.drop(1)
+        else
+            stackTrace
+
     companion object {
         val log by logger
         const val DEFAULT_COROUTINE_NAME = "coroutine"
         const val DEFAULT_COROUTINE_STATE = "UNKNOWN"
-
-        fun lookup(
-            input: ObjectReference?,
-            context: DefaultExecutionContext,
-            stackFrameItems: List<CoroutineStackFrameItem>
-        ): CoroutineInfoData? {
-            val locationCache = LocationCache(context)
-            val creationStackTrace = mutableListOf<CreationCoroutineStackFrameItem>()
-            val realState = if (input?.type()?.isAbstractCoroutine() ?: false) {
-                state(input, context) ?: return null
-            } else {
-                val ci = DebugProbesImpl(context).getCoroutineInfo(input, context)
-                if (ci != null) {
-                    if (ci.creationStackTrace != null)
-                        for (frame in ci.creationStackTrace.mapNotNull { it.stackTraceElement() }) {
-                            creationStackTrace.add(CreationCoroutineStackFrameItem(frame, locationCache.createLocation(frame)))
-                        }
-                    CoroutineNameIdState.instance(ci)
-                } else {
-                    log.warn("Coroutine information not found, ${input?.type()} is not subtype of AbstractCoroutine as expected.")
-                    CoroutineNameIdState(DEFAULT_COROUTINE_NAME, "-1", State.UNKNOWN, null)
-                }
-            }
-            return CoroutineInfoData(realState, stackFrameItems.toMutableList(), creationStackTrace)
-        }
-
-        fun state(value: ObjectReference?, context: DefaultExecutionContext): CoroutineNameIdState? {
-            value ?: return null
-            val reference = JavaLangMirror(context)
-            val standaloneCoroutine = StandaloneCoroutine(context)
-            val standAloneCoroutineMirror = standaloneCoroutine.mirror(value, context)
-            if (standAloneCoroutineMirror?.context is MirrorOfCoroutineContext) {
-                val id = standAloneCoroutineMirror.context.id
-                val name = standAloneCoroutineMirror.context.name ?: DEFAULT_COROUTINE_NAME
-                val toString = reference.string(value, context)
-                val r = """\w+\{(\w+)\}\@([\w\d]+)""".toRegex()
-                val matcher = r.toPattern().matcher(toString)
-                if (matcher.matches()) {
-                    val state = stateOf(matcher.group(1))
-                    val hexAddress = matcher.group(2)
-                    return CoroutineNameIdState(name, id?.toString() ?: hexAddress, state, standAloneCoroutineMirror.context.dispatcher)
-                }
-            }
-            return null
-        }
-
-        private fun stateOf(state: String?): State =
-            when (state) {
-                "Active" -> State.RUNNING
-                "Cancelling" -> State.SUSPENDED_CANCELLING
-                "Completing" -> State.SUSPENDED_COMPLETING
-                "Cancelled" -> State.CANCELLED
-                "Completed" -> State.COMPLETED
-                "New" -> State.NEW
-                else -> State.UNKNOWN
-            }
     }
 }
 

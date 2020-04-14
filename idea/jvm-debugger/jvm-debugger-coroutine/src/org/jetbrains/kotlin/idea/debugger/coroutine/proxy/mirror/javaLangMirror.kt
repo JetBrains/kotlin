@@ -61,21 +61,33 @@ class JavaLangMirror(context: DefaultExecutionContext) {
         (instance.getValue(declaringClassFieldRef) as? StringReference)?.value() ?: ""
 }
 
-class JavaUtilList(context: DefaultExecutionContext) :
-    BaseMirror<MirrorOfJavaLangList>("java.util.List", context) {
+class JavaUtilAbstractCollection(context: DefaultExecutionContext) :
+    BaseMirror<MirrorOfJavaLangAbstractCollection>("java.util.AbstractCollection", context) {
+    val abstractList = JavaUtilAbstractList(context)
     val sizeMethod = makeMethod("size")
-    val getMethod = makeMethod("get")
 
-    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfJavaLangList? {
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfJavaLangAbstractCollection? {
         val list = mutableListOf<ObjectReference>()
         val size = intValue(value, sizeMethod, context) ?: 0
-        for (it in 0 until size) {
-            val reference = objectValue(value, getMethod, context, context.vm.mirrorOf(it)) ?: continue
+        for (index in 0 until size) {
+            val reference =  abstractList.get(value, index, context) ?: continue
             list.add(reference)
         }
-        return MirrorOfJavaLangList(value, list)
+        return MirrorOfJavaLangAbstractCollection(value, list)
     }
 }
 
-data class MirrorOfJavaLangList(val that: ObjectReference, val values: List<ObjectReference>)
+class JavaUtilAbstractList(context: DefaultExecutionContext) :
+    BaseMirror<ObjectReference>("java.util.AbstractList", context) {
+    val getMethod = makeMethod("get")
+
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext) =
+        null
+
+    fun get(value: ObjectReference, index: Int, context: DefaultExecutionContext): ObjectReference? =
+        objectValue(value, getMethod, context, context.vm.mirrorOf(index))
+}
+
+
+data class MirrorOfJavaLangAbstractCollection(val that: ObjectReference, val values: List<ObjectReference>)
 

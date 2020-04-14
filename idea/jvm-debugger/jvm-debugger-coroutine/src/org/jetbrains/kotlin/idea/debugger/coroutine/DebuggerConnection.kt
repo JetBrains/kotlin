@@ -100,5 +100,3 @@ class DebuggerConnection(
         return ui.createContent(param.id, param.component, param.displayName, param.icon, param.parentComponent)
     }
 }
-
-fun coroutineDebuggerTraceEnabled() = Registry.`is`("kotlin.debugger.coroutines.trace")

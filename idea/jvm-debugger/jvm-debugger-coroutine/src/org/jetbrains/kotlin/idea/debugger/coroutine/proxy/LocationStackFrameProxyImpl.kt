@@ -17,6 +17,5 @@ class LocationStackFrameProxyImpl(val location: Location, frame: StackFrameProxy
     }
 }
 
-
 class SkipCoroutineStackFrameProxyImpl(frame: StackFrameProxyImpl) :
     StackFrameProxyImpl(frame.threadProxy(), frame.stackFrame, frame.indexFromBottom)

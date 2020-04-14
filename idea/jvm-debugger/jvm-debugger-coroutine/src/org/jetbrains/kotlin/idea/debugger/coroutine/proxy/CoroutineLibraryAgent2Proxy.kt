@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
-import com.intellij.debugger.engine.DebugProcess
-import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.jdi.ClassesByNameProvider
-import com.intellij.debugger.jdi.GeneratedLocation
-import com.intellij.util.containers.ContainerUtil
-import com.sun.jdi.*
+import com.intellij.xdebugger.frame.XNamedValue
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.CoroutineContext
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.DebugMetadata
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.DebugProbesImpl
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.JavaLangMirror
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.MirrorOfCoroutineInfo
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.isCreationSeparatorFrame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
@@ -24,6 +19,7 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
     val log by logger
     private val debugProbesImpl = DebugProbesImpl(executionContext)
     private val locationCache = LocationCache(executionContext)
+    private val debugMetadata: DebugMetadata? = DebugMetadata.instance(executionContext)
 
     override fun dumpCoroutinesInfo(): List<CoroutineInfoData> {
         val result = debugProbesImpl.dumpCoroutinesInfo(executionContext)
@@ -33,10 +29,14 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
     fun mapToCoroutineInfoData(mirror: MirrorOfCoroutineInfo): CoroutineInfoData? {
         val cnis = CoroutineNameIdState.instance(mirror)
         val stackTrace = mirror.enchancedStackTrace?.mapNotNull { it.stackTraceElement() } ?: emptyList()
-        var stackFrames = findStackFrames(stackTrace)
+        val variables: List<XNamedValue> = mirror.lastObservedFrame?.let {
+            val spilledVariables = debugMetadata?.baseContinuationImpl?.mirror(it, executionContext)
+            spilledVariables?.spilledValues(executionContext)
+        } ?: emptyList()
+        var stackFrames = findStackFrames(stackTrace, variables)
         return CoroutineInfoData(
             cnis,
-            stackFrames.restoredStackFrames.toMutableList(),
+            stackFrames.restoredStackFrames,
             stackFrames.creationStackFrames,
             mirror.lastObservedThread,
             mirror.lastObservedFrame
@@ -52,13 +52,18 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
         }
     }
 
-    private fun findStackFrames(frames: List<StackTraceElement>): CoroutineStackFrames {
+    private fun findStackFrames(
+        frames: List<StackTraceElement>,
+        variables: List<XNamedValue>
+    ): CoroutineStackFrames {
         val index = frames.indexOfFirst { it.isCreationSeparatorFrame() }
-        return CoroutineStackFrames(frames.take(index).map {
-            SuspendCoroutineStackFrameItem(it, locationCache.createLocation(it))
-        }, frames.subList(index + 1, frames.size).map {
-            CreationCoroutineStackFrameItem(it, locationCache.createLocation(it))
-        })
+        val restoredStackFrames = frames.take(index).map {
+            SuspendCoroutineStackFrameItem(it, locationCache.createLocation(it), variables)
+        }
+        val creationStackFrames = frames.subList(index + 1, frames.size).mapIndexed { ix, it ->
+            CreationCoroutineStackFrameItem(it, locationCache.createLocation(it), ix == 0)
+        }
+        return CoroutineStackFrames(restoredStackFrames, creationStackFrames)
     }
 
     data class CoroutineStackFrames(
