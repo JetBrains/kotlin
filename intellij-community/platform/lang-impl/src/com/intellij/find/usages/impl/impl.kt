@@ -10,7 +10,7 @@ import com.intellij.openapi.util.ClassExtension
 import com.intellij.usages.Usage
 import com.intellij.util.Query
 
-private val EXTENSION = ClassExtension<SymbolUsageHandlerFactory<*>>("com.intellij.lang.symbolUsagesHandler")
+private val EXTENSION = ClassExtension<SymbolUsageHandlerFactory<*>>("com.intellij.lang.symbolUsageHandler")
 
 internal fun Symbol.createUsageHandler(project: Project): UsageHandler<*> {
   for (factory in EXTENSION.forKey(this.javaClass)) {

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import static org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
 /**
- * Implement this interface and register as {@code com.intellij.lang.symbolUsagesHandler} extension
+ * Implement this interface and register as {@code com.intellij.lang.symbolUsageHandler} extension
  * to customize search options and/or search query for the symbol.
  *
  * @see SymbolTextSearcher
