@@ -75,13 +75,14 @@ internal fun Project.execWithErrorLogger(description: String, body: (ExecAction)
     body(exec)
     return project!!.operation(description) {
         progress(description)
+        val client = TeamCityMessageCommonClient(logger, this)
         exec.standardOutput = TCServiceMessageOutputStreamHandler(
-            client = TeamCityMessageCommonClient(logger, this),
+            client = client,
             onException = { },
             logger = logger
         )
         exec.errorOutput = TCServiceMessageOutputStreamHandler(
-            client = TeamCityMessageCommonClient(logger, this),
+            client = client,
             onException = { },
             logger = logger
         )
@@ -89,9 +90,7 @@ internal fun Project.execWithErrorLogger(description: String, body: (ExecAction)
         val result = exec.execute()
         if (result.exitValue != 0) {
             error(
-                """
-                Process '$description' returns ${result.exitValue}
-                """.trimIndent()
+                client.testFailedMessage()
             )
         }
         result

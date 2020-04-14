@@ -10,12 +10,15 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import org.gradle.api.logging.Logger
 import org.gradle.internal.logging.progress.ProgressLogger
+import org.jetbrains.kotlin.gradle.utils.clearAnsiColor
 import java.text.ParseException
 
 class TeamCityMessageCommonClient(
     private val log: Logger,
     private val progressLogger: ProgressLogger
 ) : ServiceMessageParserCallback {
+
+    private val errors = mutableListOf<String>()
 
     private val stackTraceProcessor = TeamCityMessageStackTraceProcessor()
 
@@ -29,6 +32,11 @@ class TeamCityMessageCommonClient(
         }
     }
 
+    internal fun testFailedMessage(): String {
+        return errors
+            .joinToString("\n")
+    }
+
     private fun printMessage(text: String, type: String?) {
         val value = text.trimEnd()
         progressLogger.progress(value)
@@ -39,6 +47,10 @@ class TeamCityMessageCommonClient(
             if (line != null) {
                 printMessage(line, actualType)
             }
+        }
+
+        when (actualType) {
+            ERROR, WARN -> errors.add(value.clearAnsiColor())
         }
 
         actualType?.let { log.processLogMessage(value, it) }
