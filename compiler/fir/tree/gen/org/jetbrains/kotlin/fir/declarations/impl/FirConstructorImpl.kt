@@ -52,6 +52,7 @@ internal class FirConstructorImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
+        typeParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
@@ -63,6 +64,7 @@ internal class FirConstructorImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
+        typeParameters.transformInplace(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         transformStatus(transformer, data)

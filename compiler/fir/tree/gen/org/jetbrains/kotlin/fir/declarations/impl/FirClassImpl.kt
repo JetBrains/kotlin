@@ -53,7 +53,6 @@ internal class FirClassImpl(
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
-        (declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         superTypeRefs.forEach { it.accept(visitor, data) }
         controlFlowGraphReference.accept(visitor, data)
@@ -63,7 +62,6 @@ internal class FirClassImpl(
         transformAnnotations(transformer, data)
         typeParameters.transformInplace(transformer, data)
         transformStatus(transformer, data)
-        (declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.transformInplace(transformer, data)
         declarations.transformInplace(transformer, data)
         companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         superTypeRefs.transformInplace(transformer, data)

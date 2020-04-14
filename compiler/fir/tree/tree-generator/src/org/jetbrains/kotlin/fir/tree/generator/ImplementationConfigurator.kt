@@ -19,16 +19,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
     private fun configure() = with(FirTreeBuilder) {
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
-            default("typeParameters") {
-                needAcceptAndTransform = false
-            }
         }
 
         impl(constructor, "FirPrimaryConstructor") {
             defaultTrue("isPrimary", withGetter = true)
-            default("typeParameters") {
-                needAcceptAndTransform = false
-            }
         }
 
         impl(typeParameterRef, "FirOuterClassTypeParameterRef")

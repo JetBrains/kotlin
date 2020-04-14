@@ -147,9 +147,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 }
 
                                 else -> {
-                                    if (type in setOf("FirClassImpl", "FirSealedClassImpl") && field.name == "declarations") {
-                                        println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.forEach { it.accept(visitor, data) }")
-                                    }
                                     if (type == "FirWhenExpressionImpl" && field.name == "subject") {
                                         println(
                                             """
@@ -220,11 +217,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             }
 
                             field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
-
-                            type in setOf("FirClassImpl", "FirSealedClassImpl") && field.name == "declarations" -> {
-                                println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.transformInplace(transformer, data)")
-                                println("declarations.transformInplace(transformer, data)")
-                            }
 
                             field.name == "companionObject" -> {
                                 println("companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }")
