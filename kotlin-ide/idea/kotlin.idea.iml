@@ -84,6 +84,11 @@
     <orderEntry type="module" module-name="kotlin.maven" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.uast.uast-kotlin" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.uast.uast-kotlin-idea" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.sam-with-receiver" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.noarg" scope="TEST" />
+    <orderEntry type="module" module-name="kotlinx-serialization" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.evaluation" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.allopen" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>
