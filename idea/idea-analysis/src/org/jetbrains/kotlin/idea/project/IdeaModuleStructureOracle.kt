@@ -10,8 +10,14 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.sourceType
 import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.CompositePackageMemberScopeProvider
 import org.jetbrains.kotlin.resolve.ModulePath
 import org.jetbrains.kotlin.resolve.ModuleStructureOracle
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.util.*
 
 class IdeaModuleStructureOracle : ModuleStructureOracle {
@@ -78,8 +84,19 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
 
     private class ModuleInfoPath(val nodes: List<ModuleInfo>)
 
-    private fun ModuleInfoPath.toModulePath(): ModulePath =
-        ModulePath(nodes.mapNotNull { it.unwrapModuleSourceInfo()?.toDescriptor() })
+    private fun ModuleInfoPath.toModulePath(): ModulePath {
+        val scopesInPath = nodes.mapNotNull {
+            if (it is PackOfAndroidModules)
+                it.toProvider()
+            else
+                it.unwrapModuleSourceInfo()?.toDescriptor()
+        }
+        return ModulePath(scopesInPath)
+    }
+
+    private fun ModuleInfo.hackAndroidModules(): ModuleInfo {
+
+    }
 }
 
 private val ModuleDescriptor.moduleInfo: ModuleInfo?
@@ -93,3 +110,22 @@ private fun ModuleSourceInfo.successorsInDependsOnGraph(): List<ModuleSourceInfo
     return module.implementedModules.mapNotNull { it.toInfo(sourceType) }
 }
 
+private class PackOfAndroidModules(val androidInfos: List<ModuleInfo>) : ModuleInfo {
+    fun toProvider(): CompositePackageMemberScopeProvider? {
+        val individualProviders = androidInfos.mapNotNull { it.unwrapModuleSourceInfo()?.toDescriptor() }
+        return if (individualProviders.isEmpty()) null else CompositePackageMemberScopeProvider(individualProviders)
+    }
+
+    override val name: Name
+        get() = error("Should not be called")
+
+    override fun dependencies(): List<ModuleInfo> {
+        error("Should not be called")
+    }
+
+    override val platform: TargetPlatform
+        get() = error("Should not be called")
+
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = error("Should not be called")
+}

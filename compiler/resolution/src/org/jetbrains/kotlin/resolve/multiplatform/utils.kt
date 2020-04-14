@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.PackageViewProvider
+import org.jetbrains.kotlin.resolve.PackageMemberScopeProvider
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -25,7 +25,7 @@ internal val DeclarationDescriptorWithSource.couldHaveASource: Boolean
                 this is DeserializedClassDescriptor
 
 internal fun CallableMemberDescriptor.findNamesakesFromModule(
-    module: PackageViewProvider
+    module: PackageMemberScopeProvider
 ): Collection<CallableMemberDescriptor> {
     val scopes = when (val containingDeclaration = containingDeclaration) {
         is PackageFragmentDescriptor -> {
@@ -60,7 +60,7 @@ internal fun CallableMemberDescriptor.findNamesakesFromModule(
 }
 
 internal fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
-    module: PackageViewProvider,
+    module: PackageMemberScopeProvider,
     includeDependencies: Boolean = false
 ): Collection<ClassifierDescriptorWithTypeParameters> {
     val classId = classId ?: return emptyList()

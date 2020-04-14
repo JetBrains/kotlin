@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PackageViewProvider
+import org.jetbrains.kotlin.resolve.PackageMemberScopeProvider
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-interface ModuleDescriptor : DeclarationDescriptor, PackageViewProvider {
+interface ModuleDescriptor : DeclarationDescriptor, PackageMemberScopeProvider {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
     val builtIns: KotlinBuiltIns
@@ -41,6 +42,16 @@ interface ModuleDescriptor : DeclarationDescriptor, PackageViewProvider {
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitModuleDeclaration(this, data)
     }
+
+    fun getPackage(fqName: FqName): PackageViewDescriptor
+    override fun getPackageScope(fqName: FqName): MemberScope = getPackage(fqName).memberScope
+
+    fun getPackageWithoutDependencies(fqName: FqName): PackageViewDescriptor
+    override fun getPackageScopeWithoutDependencies(fqName: FqName): MemberScope = getPackageWithoutDependencies(fqName).memberScope
+
+    fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
+
+    fun getSubPackagesOfWithoutDependencies(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
     /**
      * @return dependency modules in the same order in which this module depends on them. Does not include `this`

@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 interface ModuleStructureOracle {
     // May be faster than `findAllImplementingModules(module).isNotEmpty()`
@@ -29,6 +34,22 @@ interface ModuleStructureOracle {
     }
 }
 
-class ModulePath(val nodes: List<ModuleDescriptor>) {
-    constructor(vararg nodes: ModuleDescriptor) : this(nodes.toList())
+class ModulePath(val nodes: List<PackageMemberScopeProvider>) {
+    constructor(vararg nodes: PackageMemberScopeProvider) : this(nodes.toList())
+}
+
+class CompositePackageMemberScopeProvider(private val providers: List<PackageMemberScopeProvider>) : PackageMemberScopeProvider {
+    override fun getPackageScope(fqName: FqName): MemberScope {
+        return ChainedMemberScope(
+            "composite scope",
+            providers.map { it.getPackageScope(fqName) }
+        )
+    }
+
+    override fun getPackageScopeWithoutDependencies(fqName: FqName): MemberScope {
+        return ChainedMemberScope(
+            "composite scope",
+            providers.map { it.getPackageScopeWithoutDependencies(fqName) }
+        )
+    }
 }

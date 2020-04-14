@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.multiplatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.PackageViewProvider
+import org.jetbrains.kotlin.resolve.PackageMemberScopeProvider
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.*
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
-internal class ExpectedActualCompatibilityChecker(private val packageViewProviderWithPlatformDependencies: PackageViewProvider) {
+internal class ExpectedActualCompatibilityChecker(private val packageMemberScopeProviderWithPlatformDependencies: PackageMemberScopeProvider) {
     internal fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         assert(a.name == other.name) { "This function should be invoked only for declarations with the same name: $a, $other" }
@@ -174,7 +174,7 @@ internal class ExpectedActualCompatibilityChecker(private val packageViewProvide
         return expected is ClassifierDescriptorWithTypeParameters &&
                 expected.isExpect &&
                 actual is ClassifierDescriptorWithTypeParameters &&
-                expected.findClassifiersFromModule(packageViewProviderWithPlatformDependencies).any { classifier ->
+                expected.findClassifiersFromModule(packageMemberScopeProviderWithPlatformDependencies).any { classifier ->
                     // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                     // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
                     // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias

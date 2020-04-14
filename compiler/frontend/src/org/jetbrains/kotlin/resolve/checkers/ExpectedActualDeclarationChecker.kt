@@ -132,7 +132,7 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        moduleDescriptors: Collection<ModuleDescriptor>
+        moduleDescriptors: Collection<PackageMemberScopeProvider>
     ) {
         val compatibility = moduleDescriptors
             .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it) }
@@ -161,7 +161,7 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        implementingModules: Collection<ModuleDescriptor>,
+        implementingModules: Collection<PackageMemberScopeProvider>,
         expectActualTracker: ExpectActualTracker
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
@@ -182,7 +182,7 @@ class ExpectedActualDeclarationChecker(
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, implementingModules.last(), incompatibility))
+            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, implementingModules.last() as ModuleDescriptor, incompatibility))
             return
         }
 
@@ -225,7 +225,7 @@ class ExpectedActualDeclarationChecker(
         descriptor: MemberDescriptor,
         trace: BindingTrace,
         checkActual: Boolean,
-        implementedModules: Collection<ModuleDescriptor>
+        implementedModules: Collection<PackageMemberScopeProvider>
     ) {
         val compatibility = implementedModules
             .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
@@ -444,8 +444,10 @@ class ExpectedActualDeclarationChecker(
          *  a) CombinedModuleInfo doesn't work good with hierarchies anyways
          *  b) Hierarchies work good with HMPP, and we never create CombinedModuleInfo when HMPP is enabled
          */
-        private fun Collection<ModuleDescriptor>.retainOnlyCombinedModuleDescriptorsIfNecessary(): Collection<ModuleDescriptor> {
-            val combinedModuleDescriptorsIfAny = filter { it.getCapability(CombinedModuleInfo.IS_COMBINED_CAPABILITY) == true }
+        private fun Collection<PackageMemberScopeProvider>.retainOnlyCombinedModuleDescriptorsIfNecessary(): Collection<PackageMemberScopeProvider> {
+            val combinedModuleDescriptorsIfAny = filter {
+                it is ModuleDescriptor && it.getCapability(CombinedModuleInfo.IS_COMBINED_CAPABILITY) == true
+            }
             return if (combinedModuleDescriptorsIfAny.isNotEmpty()) combinedModuleDescriptorsIfAny else this
         }
 
