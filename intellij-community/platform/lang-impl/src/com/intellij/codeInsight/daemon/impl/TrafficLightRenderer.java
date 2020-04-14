@@ -405,7 +405,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           detailsBuilder.append("Complete results will be available after indexing");
         }
         else {
-          title = DaemonBundle.message("analysis.completed");
+          title = "";
         }
       }
       else {
@@ -451,21 +451,22 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
         //noinspection ConstantConditions
         return status.errorAnalyzingFinished ? result :
-               result.withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
+               result.withAnalyzingType(AnalyzingType.PARTIAL).
+               withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
       }
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
                                   DaemonBundle.message("no.analysis.performed"),
                                   status.reasonWhyDisabled, this::createUIController).
-          withStandardStatus(StandardStatus.OFF);
+          withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.off"), null));
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   DaemonBundle.message("analysis.suspended"),
                                   status.reasonWhySuspended, this::createUIController).
-          withExpandedStatus(Collections.singletonList(new StatusItem(status.heavyProcessType != null ?
-                                                                      status.heavyProcessType.toString() :
-                                                                      EditorBundle.message("iw.status.paused"), null)));
+          withExpandedStatus(new StatusItem(status.heavyProcessType != null ?
+                                            status.heavyProcessType.toString() :
+                                            DaemonBundle.message("iw.status.paused"), null));
       }
       if (status.errorAnalyzingFinished) {
         return new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
@@ -474,7 +475,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
       //noinspection ConstantConditions
       return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::createUIController).
-        withStandardStatus(StandardStatus.ANALYZING).
+        withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.analyzing"), null)).
+        withAnalyzingType(AnalyzingType.EMPTY).
         withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
     }
   }
