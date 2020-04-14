@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 
 import com.sun.jdi.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class DebugProbesImpl(context: DefaultExecutionContext) :
+class DebugProbesImpl internal constructor(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfDebugProbesImpl>("kotlinx.coroutines.debug.internal.DebugProbesImpl", context) {
-    val javaLangListMirror = JavaUtilList(context)
+    val javaLangListMirror = JavaUtilAbstractCollection(context)
     val stackTraceElement = StackTraceElement(context)
     val coroutineInfo = CoroutineInfo(this, context)
+    val debugProbesCoroutineOwner = DebugProbesImpl_CoroutineOwner(coroutineInfo, context)
     val instance = staticObjectValue("INSTANCE")
     val isInstalledMethod = makeMethod("isInstalled\$kotlinx_coroutines_debug", "()Z")
     val isInstalledValue = booleanValue(instance, isInstalledMethod, context)
@@ -41,20 +43,46 @@ class DebugProbesImpl(context: DefaultExecutionContext) :
         return referenceList.values.mapNotNull { coroutineInfo.mirror(it, context) }
     }
 
-    fun getCoroutineInfo(input: ObjectReference?, context: DefaultExecutionContext): MirrorOfCoroutineInfo? {
-        // kotlinx.coroutines.debug.internal.DebugProbesImpl$CoroutineOwner
-        val delegate = input?.referenceType()?.fieldByName("info") ?: return null
-        val coroutine = input.getValue(delegate) as? ObjectReference
-        return coroutineInfo.mirror(coroutine, context)
+    fun getCoroutineInfo(value: ObjectReference?, context: DefaultExecutionContext): MirrorOfCoroutineInfo? {
+        val coroutineOwner = debugProbesCoroutineOwner.mirror(value, context)
+        return coroutineOwner?.coroutineInfo
+    }
+
+    companion object {
+        fun instance(context: DefaultExecutionContext) =
+            try {
+                DebugProbesImpl(context)
+            } catch (e: IllegalStateException) {
+                null
+            }
     }
 }
+
+class DebugProbesImpl_CoroutineOwner(val coroutineInfo: CoroutineInfo, context: DefaultExecutionContext) :
+    BaseMirror<MirrorOfCoroutineOwner>(COROUTINE_OWNER_CLASS_NAME, context) {
+    private val infoField = makeField("info")
+
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCoroutineOwner? {
+        val info = objectValue(value, infoField)
+        return MirrorOfCoroutineOwner(value, coroutineInfo.mirror(info, context))
+    }
+
+    companion object {
+        const val COROUTINE_OWNER_CLASS_NAME = "kotlinx.coroutines.debug.internal.DebugProbesImpl\$CoroutineOwner"
+
+        fun instanceOf(value: ObjectReference?) =
+            value?.let { it.referenceType().isSubTypeOrSame(COROUTINE_OWNER_CLASS_NAME) } ?: false
+    }
+}
+
+data class MirrorOfCoroutineOwner(val that: ObjectReference, val coroutineInfo: MirrorOfCoroutineInfo?)
 
 data class MirrorOfDebugProbesImpl(val that: ObjectReference, val instance: ObjectReference?, val isInstalled: Boolean?)
 
 class CoroutineInfo(val debugProbesImplMirror: DebugProbesImpl, context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCoroutineInfo>("kotlinx.coroutines.debug.CoroutineInfo", context) {
     val javaLangMirror = JavaLangMirror(context)
-    val javaLangListMirror = JavaUtilList(context)
+    val javaLangListMirror = JavaUtilAbstractCollection(context)
     private val coroutineContextMirror = CoroutineContext(context)
     private val coroutineStackFrameMirror = CoroutineStackFrame(context)
     private val stackTraceElement = StackTraceElement(context)
@@ -182,6 +210,9 @@ data class MirrorOfStackTraceElement(
     val lineNumber: Int?,
     val format: Byte?
 ) {
+    fun isInvokeSuspend() =
+        "invokeSuspend" == methodName
+
     fun stackTraceElement() =
         java.lang.StackTraceElement(
             declaringClass,

@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.util
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.DefaultLogger
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebugSessionListener
+import org.apache.log4j.Level
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import javax.swing.Icon
 import javax.swing.JComponent
 import kotlin.properties.ReadOnlyProperty
@@ -33,8 +37,9 @@ class LoggerDelegate : ReadOnlyProperty<Any, Logger> {
     lateinit var logger: Logger
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Logger {
-        if (!::logger.isInitialized)
+        if (!::logger.isInitialized) {
             logger = Logger.getInstance(thisRef.javaClass)
+        }
         return logger
     }
 }

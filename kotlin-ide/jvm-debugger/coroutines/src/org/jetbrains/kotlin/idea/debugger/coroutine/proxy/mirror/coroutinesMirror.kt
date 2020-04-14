@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 
 import com.sun.jdi.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.isSubTypeOrSame
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
@@ -24,8 +24,8 @@ abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext)
     fun makeMethod(methodName: String, signature: String): Method? =
         cls?.let { it.methodsByName(methodName, signature).single() }
 
-    fun isCompatible(value: ObjectReference) =
-        value.referenceType().isSubTypeOrSame(name)
+    fun isCompatible(value: ObjectReference?) =
+        value?.let { it.referenceType().isSubTypeOrSame(name) } ?: false
 
     fun mirror(value: ObjectReference?, context: DefaultExecutionContext): T? {
         value ?: return null
@@ -56,16 +56,24 @@ abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext)
         }
 
     fun stringValue(value: ObjectReference, field: Field?) =
-        (value.getValue(field) as? StringReference)?.value()
+        field?.let {
+            (value.getValue(it) as? StringReference)?.value()
+        }
 
     fun byteValue(value: ObjectReference, field: Field?) =
-        (value.getValue(field) as? ByteValue)?.value()
+        field?.let {
+            (value.getValue(it) as? ByteValue)?.value()
+        }
 
     fun threadValue(value: ObjectReference, field: Field?) =
-        value.getValue(field) as? ThreadReference
+        field?.let {
+            value.getValue(it) as? ThreadReference
+        }
 
     fun stringValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext) =
-        method?.let { (context.invokeMethod(value, it, emptyList()) as? StringReference)?.value() }
+        method?.let {
+            (context.invokeMethod(value, it, emptyList()) as? StringReference)?.value()
+        }
 
     fun objectValue(value: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
         value?.let {

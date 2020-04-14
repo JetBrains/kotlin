@@ -181,7 +181,7 @@ class SimpleColoredTextIconPresentationRenderer {
         SimpleColoredTextIcon(
             AllIcons.Debugger.ThreadSuspended,
             true,
-            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.frame", infoData.key.name)
+            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.trace")
         )
 
     fun renderErrorNode(error: String) =

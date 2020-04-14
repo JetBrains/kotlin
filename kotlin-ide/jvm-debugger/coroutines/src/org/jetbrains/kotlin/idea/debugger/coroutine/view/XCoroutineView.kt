@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.view
 
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.JavaExecutionStack
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.jdi.ClassesByNameProvider
-import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.ide.CommonActionsManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -36,6 +32,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
 import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.VersionedImplementationProvider
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.CoroutineFrameBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackFrameItem
@@ -214,18 +211,14 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
 
         override fun computeChildren(node: XCompositeNode) {
             managerThreadExecutor.on(suspendContext).schedule {
-                val debugProbesProxy = CoroutineDebugProbesProxy(suspendContext)
                 val children = XValueChildrenList()
-                var stackFrames = debugProbesProxy.frameBuilder().build(infoData)
-                val creationStack = mutableListOf<CreationCoroutineStackFrameItem>()
-                for (frame in stackFrames) {
-                    if (frame is CreationCoroutineStackFrameItem)
-                        creationStack.add(frame)
-                    else
-                        children.add(CoroutineFrameValue(infoData, frame))
+                val doubleFrameList = CoroutineFrameBuilder.build(infoData, suspendContext)
+                doubleFrameList?.stackTrace?.forEach {
+                    children.add(CoroutineFrameValue(infoData, it))
                 }
-                if (creationStack.isNotEmpty())
-                    children.add(CreationFramesContainer(infoData, creationStack))
+                doubleFrameList?.creationStackTrace?.let {
+                    children.add(CreationFramesContainer(infoData, it))
+                }
                 node.addChildren(children, true)
             }
         }

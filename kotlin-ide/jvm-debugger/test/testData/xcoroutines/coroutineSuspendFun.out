@@ -1,0 +1,47 @@
+LineBreakpoint created at coroutineSuspendFun.kt:30
+Run Java
+Connected to the target VM
+coroutineSuspendFun.kt:30
+Thread stack trace:
+	c:30, CoroutineSuspendFunKt (continuation)
+		($completion, c, paramB)
+	b:24, CoroutineSuspendFunKt (continuation)
+		($completion, $continuation, $result, b, paramA)
+	a:17, continuation.CoroutineSuspendFunKt
+		(a)
+	invokeSuspend:11, continuation.CoroutineSuspendFunKt$main$1
+		($this$runBlocking)
+	resumeWith:33, kotlin.coroutines.jvm.internal.BaseContinuationImpl
+		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
+	run:56, kotlinx.coroutines.DispatchedTask
+		($i$a$-withCoroutineContext-DispatchedTask$run$1, $i$f$withCoroutineContext, context, continuation, countOrElement$iv, delegate, exception, fatalException, job, oldValue$iv, state, taskContext, this)
+	processNextEvent:272, kotlinx.coroutines.EventLoopImplBase
+		(delayed, this)
+	joinBlocking:79, kotlinx.coroutines.BlockingCoroutine
+		(this)
+	runBlocking:54, kotlinx.coroutines.BuildersKt__BuildersKt
+		(block, context, contextInterceptor, coroutine, currentThread, eventLoop, newContext)
+	runBlocking:1, kotlinx.coroutines.BuildersKt
+		()
+	runBlocking$default:36, kotlinx.coroutines.BuildersKt__BuildersKt
+		()
+	runBlocking$default:1, kotlinx.coroutines.BuildersKt
+		()
+	main:10, continuation.CoroutineSuspendFunKt
+		(main)
+	main:-1, continuation.CoroutineSuspendFunKt
+		()
+Creation stack frame
+	createCoroutineUnintercepted:116, kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsJvmKt
+		()
+	startCoroutineCancellable:26, kotlinx.coroutines.intrinsics.CancellableKt
+		()
+	runBlocking$default:1, kotlinx.coroutines.BuildersKt
+		()
+	main:10, continuation.CoroutineSuspendFunKt
+		()
+	main:-1, continuation.CoroutineSuspendFunKt
+		()
+Disconnected from the target VM
+
+Process finished with exit code 0
