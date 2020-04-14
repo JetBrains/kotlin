@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
+package org.jetbrains.kotlin.idea.debugger.coroutine.util
 
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
@@ -17,9 +17,11 @@ import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.XSourcePosition
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineBuilder
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.SuspendExitMode
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
+
+const val CREATION_STACK_TRACE_SEPARATOR = "\b\b\b" // the "\b\b\b" is used as creation stacktrace separator in kotlinx.coroutines
 
 fun Method.isInvokeSuspend(): Boolean =
     name() == "invokeSuspend" && signature() == "(Ljava/lang/Object;)Ljava/lang/Object;"
@@ -30,12 +32,21 @@ fun Method.isContinuation() =
 fun Method.isSuspendLambda() =
     isInvokeSuspend() && declaringType().isSuspendLambda()
 
+fun Method.hasContinuationParameter() =
+    signature().contains("Lkotlin/coroutines/Continuation;)")
+
 fun Method.isResumeWith() =
     name() == "resumeWith" && signature() == "(Ljava/lang/Object;)V" && (declaringType().isSuspendLambda() || declaringType().isContinuation())
 
-fun Location.isPreFlight(): Boolean {
-    val method = safeMethod() ?: return false
-    return method.isSuspendLambda() || method.isContinuation()
+fun Location.isPreFlight(): SuspendExitMode {
+    val method = safeMethod() ?: return SuspendExitMode.NONE
+    if (method.isSuspendLambda())
+        return SuspendExitMode.SUSPEND_LAMBDA
+    else if (method.hasContinuationParameter())
+        return SuspendExitMode.SUSPEND_METHOD_PARAMETER
+    else if (method.isInvokeSuspend() && safeLineNumber() == -1)
+        return SuspendExitMode.SUSPEND_METHOD
+    return SuspendExitMode.NONE
 }
 
 fun ReferenceType.isContinuation() =
@@ -53,8 +64,8 @@ fun Type.isSubTypeOrSame(className: String) =
 fun ReferenceType.isSuspendLambda() =
     SUSPEND_LAMBDA_CLASSES.any { isSubtype(it) }
 
-fun Location.isPreExitFrame() =
-    safeMethod()?.isResumeWith() ?: false
+fun Location.isInvokeSuspend() =
+    safeMethod()?.isInvokeSuspend() ?: false
 
 fun StackFrameProxyImpl.variableValue(variableName: String): ObjectReference? {
     val continuationVariable = safeVisibleVariableByName(variableName) ?: return null
@@ -64,8 +75,8 @@ fun StackFrameProxyImpl.variableValue(variableName: String): ObjectReference? {
 fun StackFrameProxyImpl.completionVariableValue(): ObjectReference? =
     variableValue("completion")
 
-fun StackFrameProxyImpl.completion1VariableValue(): ObjectReference? =
-    variableValue("completion")
+fun StackFrameProxyImpl.continuationVariableValue(): ObjectReference? =
+    variableValue("\$continuation")
 
 fun StackFrameProxyImpl.thisVariableValue(): ObjectReference? =
     this.thisObject()
@@ -86,7 +97,7 @@ fun hasGetCoroutineSuspended(frames: List<StackFrameProxyImpl>) =
     frames.indexOfFirst { it.safeLocation()?.safeMethod()?.isGetCOROUTINE_SUSPENDED() == true }
 
 fun StackTraceElement.isCreationSeparatorFrame() =
-    className.startsWith(CoroutineBuilder.CREATION_STACK_TRACE_SEPARATOR)
+    className.startsWith(CREATION_STACK_TRACE_SEPARATOR)
 
 fun StackTraceElement.findPosition(project: Project): XSourcePosition? =
     getPosition(project, className, lineNumber)
@@ -108,17 +119,6 @@ private fun getPosition(project: Project, className: String, lineNumber: Int): X
     val localLineNumber = if (lineNumber > 0) lineNumber - 1 else return null
     return XDebuggerUtil.getInstance().createPosition(classFile, localLineNumber)
 }
-/**
- * Finds previous Continuation for this Continuation (completion field in BaseContinuationImpl)
- * @return null if given ObjectReference is not a BaseContinuationImpl instance or completion is null
- */
-fun getNextFrame(context: DefaultExecutionContext, continuation: ObjectReference): ObjectReference? {
-    if (!continuation.type().isBaseContinuationImpl())
-        return null
-    val type = continuation.type() as ClassType
-    val next = type.concreteMethodByName("getCompletion", "()Lkotlin/coroutines/Continuation;")
-    return context.invokeMethod(continuation, next, emptyList()) as? ObjectReference
-}
 
 fun SuspendContextImpl.executionContext() =
     invokeInManagerThread { DefaultExecutionContext(EvaluationContextImpl(this, this.frameProxy)) }
@@ -134,3 +134,8 @@ fun SuspendContextImpl.supportsEvaluation() =
 
 fun XDebugSession.suspendContextImpl() =
     suspendContext as SuspendContextImpl
+
+fun threadAndContextSupportsEvaluation(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl?) =
+    suspendContext.invokeInManagerThread {
+        suspendContext.supportsEvaluation() && frameProxy?.threadProxy()?.supportsEvaluation() ?: false
+    } ?: false

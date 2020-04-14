@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.openapi.util.registry.Registry
-import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineBuilder
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.CoroutineFrameBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoCache
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.executionContext
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
@@ -44,8 +44,6 @@ class CoroutineDebugProbesProxy(val suspendContext: SuspendContextImpl) {
             return CoroutineNoLibraryProxy(executionContext)
         return null
     }
-
-    fun frameBuilder() = CoroutineBuilder(suspendContext)
 }
 
 fun standaloneCoroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines.standalone")
