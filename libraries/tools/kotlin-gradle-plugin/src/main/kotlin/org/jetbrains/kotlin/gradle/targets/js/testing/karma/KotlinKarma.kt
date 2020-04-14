@@ -69,6 +69,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         config.reporters.add("karma-kotlin-reporter")
 
         confJsWriters.add {
+            // Not all log events goes through this appender
+            // For example Error in config file
             //language=ES6
             it.appendln(
                 """
@@ -78,7 +80,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                 config.loggers = [
                     {
                         type: 'kotlin-test-js-runner/tc-log-appender.js',
-                        layout: { type: 'pattern', pattern: '%[[%c]: %]%m' }
+                        //default layout
+                        layout: { type: 'pattern', pattern: '%[%d{DATE}:%p [%c]: %]%m' }
                     }
                 ]
             """.trimIndent()
@@ -445,8 +448,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         val launcherMessage = KARMA_MESSAGE.matchEntire(text)
 
                         val actualText = if (launcherMessage != null) {
-                            val (_, message) = launcherMessage.destructured
-                            when (actualType?.toLowerCase()) {
+                            val (logLevel, message) = launcherMessage.destructured
+                            actualType = logLevel.toLowerCase()
+                            when (actualType) {
                                 WARN, ERROR -> {
                                     processFailedBrowsers(text)
                                 }
