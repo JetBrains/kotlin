@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import java.awt.Font
 
 // Based on com.intellij.slicer.SliceUsageCellRenderer
 object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
@@ -37,6 +38,10 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             var attributes = textChunk.simpleAttributesIgnoreBackground
             if (isDereference) {
                 attributes = attributes.derive(attributes.style, JBColor.LIGHT_GRAY, attributes.bgColor, attributes.waveColor)
+            }
+
+            if (attributes.fontStyle == Font.BOLD) {
+                attributes = attributes.derive(attributes.style or SimpleTextAttributes.STYLE_UNDERLINE, null, null, null)
             }
 
             append(textChunk.text, attributes)
