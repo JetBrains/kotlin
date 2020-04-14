@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
@@ -358,7 +359,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 continue
             }
             if (isSuperCall && !current.parentAsClass.isInterface &&
-                current.resolveFakeOverride()?.isCompiledToJvmDefault(context.state.jvmDefaultMode) != true
+                current.resolveFakeOverride()?.run {
+                    isMethodOfAny() || !isCompiledToJvmDefault(context.state.jvmDefaultMode)
+                } == true
             ) {
                 return current
             }

@@ -409,6 +409,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/superFlagInMultiFileFacade.kt");
     }
 
+    @TestMetadata("superToString.kt")
+    public void testSuperToString() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/superToString.kt");
+    }
+
     @TestMetadata("suspendCoroutineUninterceptedOrReturn.kt")
     public void testSuspendCoroutineUninterceptedOrReturn() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/suspendCoroutineUninterceptedOrReturn.kt");
