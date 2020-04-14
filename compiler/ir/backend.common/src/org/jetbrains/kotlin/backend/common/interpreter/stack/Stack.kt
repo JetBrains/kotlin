@@ -9,12 +9,20 @@ import org.jetbrains.kotlin.backend.common.interpreter.ExecutionResult
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileEntry
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 interface Stack {
     suspend fun newFrame(
         asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: suspend () -> ExecutionResult
     ): ExecutionResult
+
+    fun setCurrentFrameName(irFunction: IrFunction)
+    fun getStackTrace(): List<String>
 
     fun clean()
     fun addVar(variable: Variable)
@@ -47,6 +55,18 @@ class StackImpl : Stack {
     private fun removeLastFrame() {
         if (frameList.size > 1 && getCurrentFrame().hasReturnValue()) frameList[frameList.lastIndex - 1].pushReturnValue(getCurrentFrame())
         frameList.removeAt(frameList.lastIndex)
+    }
+
+    override fun setCurrentFrameName(irFunction: IrFunction) {
+        val fileName = irFunction.file.name
+        val fileNameCapitalized = fileName.replace(".kt", "Kt").capitalize()
+        val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
+        getCurrentFrame().frameEntryPoint = "at $fileNameCapitalized.${irFunction.fqNameWhenAvailable}($fileName:$lineNum)"
+    }
+
+    override fun getStackTrace(): List<String> {
+        // TODO implement some sort of cache
+        return frameList.mapNotNull { it.frameEntryPoint }
     }
 
     override fun clean() {
@@ -92,7 +112,8 @@ class StackImpl : Stack {
 }
 
 private class FrameContainer(current: Frame = InterpreterFrame()) {
-    private var innerStack = mutableListOf(current)
+    var frameEntryPoint: String? = null
+    private val innerStack = mutableListOf(current)
     private fun getTopFrame() = innerStack.first()
 
     fun addSubFrame(frame: Frame) {

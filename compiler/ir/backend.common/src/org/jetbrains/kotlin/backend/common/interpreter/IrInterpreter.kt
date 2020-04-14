@@ -36,7 +36,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val illegalArgumentException = irExceptions.first { it.name.asString() == IllegalArgumentException::class.java.simpleName }
 
     private val stack = StackImpl()
-    private val stackTrace = mutableListOf<String>()
     private var commandCount = 0
 
     private val mapOfEnums = mutableMapOf<Pair<IrClass, String>, Complex>()
@@ -129,34 +128,21 @@ class IrInterpreter(irModule: IrModuleFragment) {
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
-            stack.pushReturnValue(ExceptionState(e, irExceptionClass, stackTrace))
+            stack.pushReturnValue(ExceptionState(e, irExceptionClass, stack.getStackTrace()))
             return Exception
         }
     }
 
     // this method is used to get stack trace after exception
     private suspend fun interpretFunction(irFunction: IrFunctionImpl): ExecutionResult {
-        return try {
-            yield()
+        yield()
 
-            if (irFunction.fileOrNull != null) {
-                val fileName = irFunction.file.name
-                val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
-                stackTrace += "at ${fileName.replace(".kt", "Kt").capitalize()}.${irFunction.fqNameForIrSerialization}($fileName:$lineNum)"
-            }
+        if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
 
-            if (stackTrace.size == MAX_STACK_SIZE) {
-                throw StackOverflowError("")
-            }
+        if (stack.getStackTrace().size == MAX_STACK_SIZE) throw StackOverflowError("")
 
-            when (val kind = (irFunction.body as? IrSyntheticBody)?.kind) {
-                IrSyntheticBodyKind.ENUM_VALUES, IrSyntheticBodyKind.ENUM_VALUEOF -> handleIntrinsicMethods(irFunction)
-                null -> irFunction.body?.interpret() ?: throw InterpreterException("Ir function must be with body")
-                else -> throw InterpreterException("Unsupported IrSyntheticBodyKind $kind")
-            }
-        } finally {
-            if (irFunction.fileOrNull != null) stackTrace.removeAt(stackTrace.lastIndex)
-        }
+        if (irFunction.body is IrSyntheticBody) return handleIntrinsicMethods(irFunction)
+        return irFunction.body?.interpret() ?: throw InterpreterException("Ir function must be with body")
     }
 
     private suspend fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
@@ -202,7 +188,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     .singleOrNull { it.name.asString() == enumEntryName }
                 if (enumEntry == null) {
                     val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
-                    stack.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
+                    stack.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stack.getStackTrace()))
                     return Exception
                 } else {
                     enumEntry.interpret().check { return it }
@@ -682,7 +668,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameForIrSerialization
                     val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
                     val message = "$convertibleClassName cannot be cast to $castClassName"
-                    stack.pushReturnValue(ExceptionState(ClassCastException(message), classCastException, stackTrace))
+                    stack.pushReturnValue(ExceptionState(ClassCastException(message), classCastException, stack.getStackTrace()))
                     return Exception
                 }
             }
@@ -759,8 +745,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretThrow(expression: IrThrow): ExecutionResult {
         expression.value.interpret().check { return it }
         when (val exception = stack.popReturnValue()) {
-            is Common -> stack.pushReturnValue(ExceptionState(exception, stackTrace))
-            is Wrapper -> stack.pushReturnValue(ExceptionState(exception, stackTrace))
+            is Common -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
+            is Wrapper -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
             is ExceptionState -> stack.pushReturnValue(exception)
             else -> throw InterpreterException("${exception::class} cannot be used as exception state")
         }
