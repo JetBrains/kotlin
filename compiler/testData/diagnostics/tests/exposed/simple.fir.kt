@@ -6,18 +6,18 @@ public interface Your: My {
     fun <T: Base> foo(): T
 }
 
-public class Derived<T: My>(val x: My): Base() {
+public class Derived<T: My>(<!EXPOSED_PARAMETER_TYPE, EXPOSED_PROPERTY_TYPE!>val x: My<!>): Base() {
 
-    constructor(xx: My?, x: My): this(xx ?: x)
+    constructor(<!EXPOSED_PARAMETER_TYPE!>xx: My?<!>, <!EXPOSED_PARAMETER_TYPE!>x: My<!>): this(xx ?: x)
 
-    val y: Base? = null
+    <!EXPOSED_PROPERTY_TYPE!>val y: Base? = null<!>
 
-    val My.z: Int
+    val <!EXPOSED_RECEIVER_TYPE!>My<!>.z: Int
         get() = 42
 
-    fun foo(m: My): My = m
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(<!EXPOSED_PARAMETER_TYPE!>m: My<!>): My = m<!>
 
-    fun My.bar(): My = this
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>fun <!EXPOSED_RECEIVER_TYPE!>My<!>.bar(): My = this<!>
 }
 
 

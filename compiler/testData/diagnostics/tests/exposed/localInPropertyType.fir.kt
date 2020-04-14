@@ -2,27 +2,27 @@ class My<T>(val value: T)
 
 open class Base
 
-val invalid1 = run {
+<!EXPOSED_PROPERTY_TYPE!>val invalid1 = run {
     class Local
     My(Local())
-}
+}<!>
 
 val invalid2 = My(object {})
 
 val invalid3 = My(object : Base() {})
 
-val invalid4 = run {
+<!EXPOSED_PROPERTY_TYPE!>val invalid4 = run {
     class Local
     My(My(Local()))
-}
+}<!>
 
-val invalid5 = run {
+<!EXPOSED_PROPERTY_TYPE!>val invalid5 = run {
     fun invalid5a() = run {
         class Local
         Local()
     }
     My(invalid5a())
-}
+}<!>
 
 // Valid: effectively Any
 val valid1 = object {}

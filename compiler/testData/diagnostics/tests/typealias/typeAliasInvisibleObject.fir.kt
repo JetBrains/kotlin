@@ -4,5 +4,5 @@ class C {
 
 typealias CAlias = C
 
-val test1 = CAlias
-val test1a = C
+<!EXPOSED_PROPERTY_TYPE!>val test1 = CAlias<!>
+<!EXPOSED_PROPERTY_TYPE!>val test1a = C<!>

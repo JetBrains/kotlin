@@ -3,8 +3,8 @@ interface Your
 class My {
     internal val x = object : Your {}
 
-    internal fun foo() = {
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>internal fun foo() = {
         class Local
         Local()
-    }()
+    }()<!>
 }
