@@ -84,7 +84,7 @@ public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2 {
-    synthetic final field $this$inlined: FlowCollector
+    synthetic final field $this$flow$inlined: FlowCollector
     inner class TcoContinuationKt$foo$$inlined$map$1$2
     inner class TcoContinuationKt$foo$$inlined$map$1$2$1
     public method <init>(p0: FlowCollector): void
@@ -130,7 +130,7 @@ public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$1$2 {
-    synthetic final field $this$inlined: FlowCollector
+    synthetic final field $this$flow$inlined: FlowCollector
     synthetic final field $transformer$inlined$1: kotlin.jvm.functions.Function2
     inner class TcoContinuationKt$map$$inlined$transform$1$2
     inner class TcoContinuationKt$map$$inlined$transform$1$2$1
@@ -185,7 +185,7 @@ public final class TcoContinuationKt$transform$lambda-1$$inlined$collect$1$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$lambda-1$$inlined$collect$1 {
-    synthetic final field $this$inlined: FlowCollector
+    synthetic final field $this$flow$inlined: FlowCollector
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
     inner class TcoContinuationKt$transform$lambda-1$$inlined$collect$1
     inner class TcoContinuationKt$transform$lambda-1$$inlined$collect$1$1

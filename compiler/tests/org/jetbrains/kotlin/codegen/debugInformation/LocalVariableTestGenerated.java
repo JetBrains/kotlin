@@ -181,5 +181,61 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
         public void testSimpleCapturedReceiverWithParens() throws Exception {
             runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithParens.kt");
         }
+
+        @TestMetadata("compiler/testData/debug/localVariables/receiverMangling/simple")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(BlockJUnit4ClassRunner.class)
+        public static class Simple extends AbstractLocalVariableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            @Test
+            public void testAllFilesPresentInSimple() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("capturedReceiverField_after.kt")
+            public void testCapturedReceiverField_after() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/capturedReceiverField_after.kt");
+            }
+
+            @Test
+            @TestMetadata("capturedReceiverField_before.kt")
+            public void testCapturedReceiverField_before() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/capturedReceiverField_before.kt");
+            }
+
+            @Test
+            @TestMetadata("capturedThisField.kt")
+            public void testCapturedThisField() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/capturedThisField.kt");
+            }
+
+            @Test
+            @TestMetadata("labeledThisParameterFunctionExpression.kt")
+            public void testLabeledThisParameterFunctionExpression() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/labeledThisParameterFunctionExpression.kt");
+            }
+
+            @Test
+            @TestMetadata("labeledThisParameterLabel.kt")
+            public void testLabeledThisParameterLabel() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/labeledThisParameterLabel.kt");
+            }
+
+            @Test
+            @TestMetadata("labeledThisParameterReference.kt")
+            public void testLabeledThisParameterReference() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/labeledThisParameterReference.kt");
+            }
+
+            @Test
+            @TestMetadata("receiverParameterName.kt")
+            public void testReceiverParameterName() throws Exception {
+                runTest("compiler/testData/debug/localVariables/receiverMangling/simple/receiverParameterName.kt");
+            }
+        }
     }
 }

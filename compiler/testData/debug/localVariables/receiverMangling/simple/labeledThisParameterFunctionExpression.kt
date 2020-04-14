@@ -8,7 +8,6 @@ fun box() {
 }
 
 // IGNORE_BACKEND: JVM_IR
-
 // LOCAL VARIABLES
 // TestKt:4: JDI Exception, no local variable information for method TestKt.box()
 // TestKt:5: JDI Exception, no local variable information for method TestKt.box()

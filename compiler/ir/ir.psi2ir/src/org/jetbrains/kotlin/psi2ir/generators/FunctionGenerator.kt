@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
@@ -22,10 +23,12 @@ import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
 
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
@@ -315,8 +318,41 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         receiverParameterDescriptor: ReceiverParameterDescriptor,
         ktElement: KtPureElement?,
         irOwnerElement: IrElement
-    ): IrValueParameter =
-        declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
+    ): IrValueParameter {
+        val parameter = declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
+
+        if (ktElement is KtFunctionLiteral) {
+            parameter.variableNameHint = getCallLabelForLambdaArgument(ktElement, this.context.bindingContext)?.let {
+                it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
+            }
+        }
+
+        return parameter
+    }
+
+    private fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
+        val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return null
+        val lambdaExpressionParent = lambdaExpression.parent
+
+        if (lambdaExpressionParent is KtLabeledExpression) {
+            lambdaExpressionParent.name?.let { return it }
+        }
+
+        val callExpression = when (val argument = lambdaExpression.parent) {
+            is KtLambdaArgument -> {
+                argument.parent as? KtCallExpression ?: return null
+            }
+            is KtValueArgument -> {
+                val valueArgumentList = argument.parent as? KtValueArgumentList ?: return null
+                valueArgumentList.parent as? KtCallExpression ?: return null
+            }
+            else -> return null
+        }
+
+        val call = callExpression.getResolvedCall(bindingContext) ?: return null
+        return call.resultingDescriptor.name.asString()
+    }
+
 
     private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement) =
         context.symbolTable.declareValueParameter(

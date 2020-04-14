@@ -736,7 +736,12 @@ class LocalDeclarationsLowering(
                 throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
             }
 
-            newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, localClassContext, oldDeclaration, newDeclaration)
+            newDeclaration.valueParameters += createTransformedValueParameters(
+                capturedValues,
+                localClassContext,
+                oldDeclaration,
+                newDeclaration
+            )
             newDeclaration.recordTransformedValueParameters(constructorContext)
 
             newDeclaration.metadata = oldDeclaration.metadata
@@ -803,14 +808,19 @@ class LocalDeclarationsLowering(
         }
 
         private fun Name.stripSpecialMarkers(): String =
-            if (isSpecial) asString().substring(1, asString().length - 1) else asString()
+            asString().substring(1, asString().length - 1)
 
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, existing: MutableSet<Name>): Name {
             val base = if (declaration.name.isSpecial)
                 declaration.name.stripSpecialMarkers()
             else
                 declaration.name.asString()
-            var chosen = base.synthesizedName
+            var chosen =
+                if (declaration.descriptor is ReceiverParameterDescriptor && declaration.name.asString().startsWith("$")) {
+                    declaration.name
+                } else {
+                    base.synthesizedName
+                }
             var suffix = 0
             while (!existing.add(chosen))
                 chosen = "$base$${++suffix}".synthesizedName
@@ -867,7 +877,8 @@ class LocalDeclarationsLowering(
 
                     if (declaration.visibility == Visibilities.LOCAL) {
                         val scopeWithIr =
-                            (currentClass ?: enclosingClassScope ?: enclosingFileScope /*file is required for K/N cause file declarations are not split by classes*/
+                            (currentClass ?: enclosingClassScope
+                            ?: enclosingFileScope /*file is required for K/N cause file declarations are not split by classes*/
                             ?: error("No scope for ${declaration.dump()}"))
                         localFunctions[declaration] =
                             LocalFunctionContext(

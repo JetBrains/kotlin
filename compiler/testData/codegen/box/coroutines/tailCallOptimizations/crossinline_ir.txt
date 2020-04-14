@@ -33,7 +33,7 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2 {
-    synthetic final field $this$inlined: Sink
+    synthetic final field $this$source$inlined: Sink
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2$1
     public method <init>(p0: Sink): void
@@ -145,7 +145,7 @@ public final class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field $this$inlined: Sink
+    synthetic final field $this$source$inlined: Sink
     inner class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1
     inner class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1$1
     public method <init>(p0: kotlin.jvm.functions.Function1, p1: Sink): void

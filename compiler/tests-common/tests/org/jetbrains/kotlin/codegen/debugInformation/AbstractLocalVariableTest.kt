@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.codegen.debugInformation
 
-import com.sun.jdi.AbsentInformationException
-import com.sun.jdi.LocalVariable
-import com.sun.jdi.StackFrame
-import com.sun.jdi.VirtualMachine
+import com.sun.jdi.*
 import com.sun.jdi.event.Event
 import com.sun.jdi.event.LocatableEvent
 import com.sun.jdi.event.MethodEntryEvent
@@ -47,10 +44,12 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
             .thread()
             .frame(0)
         try {
+            val visibleInstanceFields = frame.thisObject()?.referenceType()?.visibleFields()
+                ?.map { field -> toRecord(event.thread().frame(0), field) }
+                ?: listOf()
             val visibleVars = frame.visibleVariables()
                 .map { variable -> toRecord(event.thread().frame(0), variable) }
-                .joinToString(", ")
-            loggedItems.add("${event.location()}: $visibleVars".trim())
+            loggedItems.add("${event.location()}: ${(visibleInstanceFields + visibleVars).joinToString(", ")}".trim())
         } catch (e: AbsentInformationException) {
             loggedItems.add(("${event.location()}: JDI Exception, no local variable information for method ${event.location().method()}").trim())
         }
@@ -70,7 +69,11 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
     }
 
     private fun toRecord(frame: StackFrame, variable: LocalVariable): String {
-        return "${variable.name()}:${frame.getValue(variable)?.type()?.name() ?: "null"}"
+        return "LV:${variable.name()}:${frame.getValue(variable)?.type()?.name() ?: "null"}"
+    }
+
+    private fun toRecord(frame: StackFrame, field: Field): String {
+        return "F:${field.name()}:${frame.thisObject().getValue(field)?.type()?.name() ?: "null"}"
     }
 
     private fun waitUntil(condition: () -> Boolean) {
