@@ -27,7 +27,9 @@ object ErrorsNative {
     @JvmField
     val VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
     @JvmField
-    val ENUM_THREAD_LOCAL_INAPPLICABLE = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    val INAPPLICABLE_THREAD_LOCAL = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    @JvmField
+    val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
     @JvmField
     val VARIABLE_IN_ENUM = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
     init {
