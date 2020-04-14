@@ -8,6 +8,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.NlsContext
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.ApiStatus
 import java.util.function.Predicate
@@ -33,7 +35,7 @@ fun install(filterable: Filterable<ExecutionNode>) {
 }
 
 @ApiStatus.Experimental
-open class FilterToggleAction constructor(text: String,
+open class FilterToggleAction constructor(text: @NlsContexts.Command String,
                                           private val stateKey: String?,
                                           private val filterable: Filterable<ExecutionNode>,
                                           private val filter: Predicate<ExecutionNode>,

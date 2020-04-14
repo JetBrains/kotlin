@@ -15,6 +15,7 @@
  */
 package com.intellij.build.events.impl;
 
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.Failure;
 import com.intellij.notification.Notification;
 import com.intellij.pom.Navigatable;
@@ -38,24 +39,29 @@ public class FailureImpl implements Failure {
   @Nullable
   private final Navigatable myNavigatable;
 
-  public FailureImpl(String message, Throwable error) {
+  public FailureImpl(@BuildEventsNls.Message String message, Throwable error) {
     this(message, null, Collections.emptyList(), error, null, null);
   }
 
-  public FailureImpl(String message, Throwable error, @Nullable Notification notification, @Nullable Navigatable navigatable) {
+  public FailureImpl(@BuildEventsNls.Message String message,
+                     Throwable error,
+                     @Nullable Notification notification,
+                     @Nullable Navigatable navigatable) {
     this(message, null, Collections.emptyList(), error, notification, navigatable);
   }
 
-  public FailureImpl(String message, String description) {
+  public FailureImpl(@BuildEventsNls.Message String message, @BuildEventsNls.Description String description) {
     this(message, description, Collections.emptyList(), null, null, null);
   }
 
-  public FailureImpl(String message, String description, List<? extends Failure> causes) {
+  public FailureImpl(@BuildEventsNls.Message String message,
+                     @BuildEventsNls.Description String description,
+                     List<? extends Failure> causes) {
     this(message, description, causes, null, null, null);
   }
 
-  private FailureImpl(String message,
-                      String description,
+  private FailureImpl(@BuildEventsNls.Message String message,
+                      @BuildEventsNls.Description String description,
                       List<? extends Failure> causes,
                       @Nullable Throwable error,
                       @Nullable Notification notification,

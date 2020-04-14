@@ -1,6 +1,7 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -18,7 +19,7 @@ public class BuildContentDescriptor extends RunContentDescriptor {
   public BuildContentDescriptor(@Nullable ExecutionConsole executionConsole,
                                 @Nullable ProcessHandler processHandler,
                                 @NotNull JComponent component,
-                                String displayName) {
+                                @BuildEventsNls.Title String displayName) {
     super(executionConsole, processHandler, component, displayName);
   }
 

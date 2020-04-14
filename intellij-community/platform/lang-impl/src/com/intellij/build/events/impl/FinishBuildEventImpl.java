@@ -15,6 +15,7 @@
  */
 package com.intellij.build.events.impl;
 
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.EventResult;
 import com.intellij.build.events.FinishBuildEvent;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class FinishBuildEventImpl extends FinishEventImpl implements FinishBuild
   public FinishBuildEventImpl(@NotNull Object eventId,
                               @Nullable Object parentId,
                               long eventTime,
-                              @NotNull String message,
+                              @NotNull @BuildEventsNls.Message String message,
                               @NotNull EventResult result) {
     super(eventId, parentId, eventTime, message, result);
   }

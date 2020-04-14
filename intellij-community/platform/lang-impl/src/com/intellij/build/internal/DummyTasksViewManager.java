@@ -4,6 +4,7 @@ package com.intellij.build.internal;
 import com.intellij.build.TasksViewManager;
 import com.intellij.build.events.BuildEvent;
 import com.intellij.build.events.FinishBuildEvent;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ public class DummyTasksViewManager extends TasksViewManager {
   @NotNull
   @Override
   protected String getViewName() {
-    return "Tasks";
+    return LangBundle.message("tasks.view.title");
   }
 
   @Override

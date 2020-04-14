@@ -25,6 +25,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,10 @@ public class DefaultBuildDescriptor implements BuildDescriptor {
   private @Nullable ExecutionEnvironment myExecutionEnvironment;
   private @Nullable Supplier<RunContentDescriptor> myContentDescriptorSupplier;
 
-  public DefaultBuildDescriptor(@NotNull Object id, @NotNull String title, @NotNull String workingDir, long startTime) {
+  public DefaultBuildDescriptor(@NotNull Object id,
+                                @NotNull @Nls(capitalization = Nls.Capitalization.Title) String title,
+                                @NotNull String workingDir,
+                                long startTime) {
     myId = id;
     myTitle = title;
     myWorkingDir = workingDir;

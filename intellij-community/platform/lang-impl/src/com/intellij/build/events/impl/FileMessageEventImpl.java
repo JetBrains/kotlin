@@ -3,6 +3,7 @@ package com.intellij.build.events.impl;
 
 import com.intellij.build.FileNavigatable;
 import com.intellij.build.FilePosition;
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.FileMessageEvent;
 import com.intellij.build.events.FileMessageEventResult;
 import com.intellij.openapi.project.Project;
@@ -21,9 +22,9 @@ public class FileMessageEventImpl extends MessageEventImpl implements FileMessag
 
   public FileMessageEventImpl(@NotNull Object parentId,
                               @NotNull Kind kind,
-                              @Nullable String group,
-                              @NotNull String message,
-                              @Nullable String detailedMessage,
+                              @Nullable @BuildEventsNls.Title String group,
+                              @NotNull @BuildEventsNls.Message String message,
+                              @Nullable @BuildEventsNls.Description String detailedMessage,
                               @NotNull FilePosition filePosition) {
     super(parentId, kind, group, message, detailedMessage);
     myFilePosition = filePosition;

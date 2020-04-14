@@ -78,7 +78,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   }
 
   @NotNull
-  @Nls
+  @Nls(capitalization = Nls.Capitalization.Title)
   protected abstract String getViewName();
 
   protected Map<BuildDescriptor, BuildView> getBuildsMap() {

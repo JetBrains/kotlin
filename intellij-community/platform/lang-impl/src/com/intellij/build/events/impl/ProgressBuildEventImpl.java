@@ -15,7 +15,11 @@
  */
 package com.intellij.build.events.impl;
 
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.ProgressBuildEvent;
+import com.intellij.openapi.util.NlsContext;
+import com.intellij.openapi.util.NlsContexts;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +35,8 @@ public class ProgressBuildEventImpl extends AbstractBuildEvent implements Progre
   public ProgressBuildEventImpl(@NotNull Object eventId,
                                 @Nullable Object parentId,
                                 long eventTime,
-                                @NotNull String message,
+                                @NlsContexts.ProgressTitle
+                                @NotNull @NlsContexts.ProgressText String message,
                                 long total,
                                 long progress,
                                 @NotNull String unit) {

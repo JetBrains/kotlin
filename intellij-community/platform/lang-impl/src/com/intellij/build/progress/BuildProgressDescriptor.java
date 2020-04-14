@@ -2,12 +2,14 @@
 package com.intellij.build.progress;
 
 import com.intellij.build.BuildDescriptor;
+import com.intellij.build.events.BuildEventsNls;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Experimental
 public interface BuildProgressDescriptor {
   @NotNull
+  @BuildEventsNls.Title
   String getTitle();
 
   @NotNull

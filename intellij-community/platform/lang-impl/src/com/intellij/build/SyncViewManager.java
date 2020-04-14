@@ -4,6 +4,7 @@ package com.intellij.build;
 import com.intellij.build.progress.BuildProgress;
 import com.intellij.build.progress.BuildProgressDescriptor;
 import com.intellij.build.progress.BuildRootProgressImpl;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.ApiStatus;
@@ -20,7 +21,7 @@ public class SyncViewManager extends AbstractViewManager {
   @NotNull
   @Override
   public String getViewName() {
-    return "Sync";
+    return LangBundle.message("sync.view.title");
   }
 
   @ApiStatus.Experimental

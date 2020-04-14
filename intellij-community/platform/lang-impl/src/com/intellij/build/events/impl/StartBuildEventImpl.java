@@ -18,14 +18,17 @@ package com.intellij.build.events.impl;
 import com.intellij.build.BuildDescriptor;
 import com.intellij.build.BuildViewSettingsProvider;
 import com.intellij.build.DefaultBuildDescriptor;
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.StartBuildEvent;
 import com.intellij.build.process.BuildProcessHandler;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +43,7 @@ public class StartBuildEventImpl extends StartEventImpl implements StartBuildEve
   private final @NotNull DefaultBuildDescriptor myBuildDescriptor;
   private @Nullable BuildViewSettingsProvider myBuildViewSettingsProvider;
 
-  public StartBuildEventImpl(@NotNull BuildDescriptor descriptor, @NotNull String message) {
+  public StartBuildEventImpl(@NotNull BuildDescriptor descriptor, @NotNull @BuildEventsNls.Message  String message) {
     super(descriptor.getId(), null, descriptor.getStartTime(), message);
     myBuildDescriptor =
       descriptor instanceof DefaultBuildDescriptor ? (DefaultBuildDescriptor)descriptor : new DefaultBuildDescriptor(descriptor);

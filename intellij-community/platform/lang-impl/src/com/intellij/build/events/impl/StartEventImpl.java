@@ -15,6 +15,7 @@
  */
 package com.intellij.build.events.impl;
 
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.StartEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class StartEventImpl extends AbstractBuildEvent implements StartEvent {
 
-  public StartEventImpl(@NotNull Object eventId, @Nullable Object parentId, long eventTime, @NotNull String message) {
+  public StartEventImpl(@NotNull Object eventId, @Nullable Object parentId, long eventTime, @NotNull @BuildEventsNls.Message String message) {
     super(eventId, parentId, eventTime, message);
   }
 }

@@ -3,6 +3,7 @@ package com.intellij.build.progress;
 
 import com.intellij.build.BuildBundle;
 import com.intellij.build.BuildProgressListener;
+import com.intellij.build.events.BuildEventsNls;
 import com.intellij.build.events.FinishBuildEvent;
 import com.intellij.build.events.FinishEvent;
 import com.intellij.build.events.StartEvent;
@@ -38,7 +39,7 @@ public class BuildRootProgressImpl extends BuildProgressImpl {
 
   @NotNull
   @Override
-  public BuildProgress<BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message) {
+  public BuildProgress<BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull @BuildEventsNls.Message String message) {
     assertStarted();
     FinishEvent event = new FinishBuildEventImpl(getId(), null, timeStamp, message, new SuccessResultImpl(isUpToDate));
     myListener.onEvent(getBuildId(), event);
@@ -53,7 +54,7 @@ public class BuildRootProgressImpl extends BuildProgressImpl {
 
   @NotNull
   @Override
-  public BuildRootProgressImpl fail(long timeStamp, @NotNull String message) {
+  public BuildRootProgressImpl fail(long timeStamp, @NotNull @BuildEventsNls.Message String message) {
     assertStarted();
     FinishBuildEvent event = new FinishBuildEventImpl(getId(), null, timeStamp, message, new FailureResultImpl());
     myListener.onEvent(getBuildId(), event);
