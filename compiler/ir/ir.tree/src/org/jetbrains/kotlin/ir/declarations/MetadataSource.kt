@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 
 interface MetadataSource {
-    class Class(val descriptor: ClassDescriptor) : MetadataSource
+    open class Class(val descriptor: ClassDescriptor) : MetadataSource
 
     class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource
 
-    class Function(val descriptor: FunctionDescriptor) : MetadataSource
+    open class Function(val descriptor: FunctionDescriptor) : MetadataSource
 
-    class Property(val descriptor: PropertyDescriptor) : MetadataSource
+    open class Property(val descriptor: PropertyDescriptor) : MetadataSource
 }

@@ -187,7 +187,7 @@ class Fir2IrClassifierStorage(
                     isExpect = regularClass.isExpect,
                     isFun = false // TODO FirRegularClass.isFun
                 ).apply {
-                    metadata = MetadataSource.Class(descriptor)
+                    metadata = FirMetadataSource.Class(regularClass, descriptor)
                     descriptor.bind(this)
                 }
             }
@@ -222,7 +222,7 @@ class Fir2IrClassifierStorage(
                     isCompanion = false, isInner = false, isData = false,
                     isExternal = false, isInline = false, isExpect = false, isFun = false
                 ).apply {
-                    metadata = MetadataSource.Class(descriptor)
+                    metadata = FirMetadataSource.Class(anonymousObject, descriptor)
                     descriptor.bind(this)
                     setThisReceiver(anonymousObject.typeParameters)
                     if (irParent != null) {
