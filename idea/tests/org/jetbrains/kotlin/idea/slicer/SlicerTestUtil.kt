@@ -68,22 +68,31 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
                     } else {
                         append(chunks.first().render() + " ")
                     }
-                    append("\t".repeat(indent))
+
+                    repeat(indent) { append('\t') }
+
                     if (usage is KotlinSliceDereferenceUsage) {
                         append("DEREFERENCE: ")
                     }
+
                     if (usage is KotlinSliceUsage) {
                         usage.mode.inlineCallStack.forEach {
                             append("(INLINE CALL ${it.function?.name}) ")
                         }
                         usage.mode.behaviourStack.reversed().joinTo(this, separator = "") { it.testPresentationPrefix }
                     }
-                    chunks.slice(1 until chunks.size).joinTo(
-                        this,
-                        separator = "",
-                        prefix = if (isDuplicated) "DUPLICATE: " else "",
-                        postfix = "\n"
-                    ) { it.render() }
+
+                    if (isDuplicated) {
+                        append("DUPLICATE: ")
+                    }
+
+                    chunks.slice(1 until chunks.size).joinTo(this, separator = "") { it.render() }
+
+                    KotlinSliceUsageCellRenderer.containerSuffix(usage)?.let {
+                        append(" ($it)")
+                    }
+
+                    append("\n")
                 }
             }
 

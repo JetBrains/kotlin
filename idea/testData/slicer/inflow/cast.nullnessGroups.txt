@@ -1,4 +1,3 @@
 [NotNull Values]
-4 	val <bold>x = o as String</bold>
-4 		val <bold>x = o as String</bold>
-
+4 	val <bold>x = o as String</bold> (in test(Any))
+4 		val <bold>x = o as String</bold> (in test(Any))

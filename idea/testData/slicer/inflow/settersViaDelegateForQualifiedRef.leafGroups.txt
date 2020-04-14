@@ -1,30 +1,29 @@
-6 private var _value: String = <bold>""</bold>
-27 	println("My name is '${a.<bold>name</bold>}'")
-14 		var <bold>name by Delegate()</bold>
-7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold>
-7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold>
-6 					private var <bold>_value: String = ""</bold>
-6 						private var _value: String = <bold>""</bold>
+6 private var _value: String = <bold>""</bold> (in Delegate._value: String)
+27 	println("My name is '${a.<bold>name</bold>}'") (in main(Array<String>))
+14 		var <bold>name by Delegate()</bold> (in AClass)
+7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold> (in Delegate)
+7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold> (in Delegate.getValue(Any?, KProperty<*>))
+6 					private var <bold>_value: String = ""</bold> (in Delegate)
+6 						private var _value: String = <bold>""</bold> (in Delegate._value: String)
 
-20 name = <bold>"bye"</bold>
-27 	println("My name is '${a.<bold>name</bold>}'")
-14 		var <bold>name by Delegate()</bold>
-7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold>
-7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold>
-6 					private var <bold>_value: String = ""</bold>
-9 						_value = <bold>value</bold>
-8 							operator fun setValue(thisRef: Any?, property: KProperty<*>, <bold>value: String</bold>) {
-20 								name = <bold>"bye"</bold>
+20 name = <bold>"bye"</bold> (in AClass.uses())
+27 	println("My name is '${a.<bold>name</bold>}'") (in main(Array<String>))
+14 		var <bold>name by Delegate()</bold> (in AClass)
+7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold> (in Delegate)
+7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold> (in Delegate.getValue(Any?, KProperty<*>))
+6 					private var <bold>_value: String = ""</bold> (in Delegate)
+9 						_value = <bold>value</bold> (in Delegate.setValue(Any?, KProperty<*>, String))
+8 							operator fun setValue(thisRef: Any?, property: KProperty<*>, <bold>value: String</bold>) { (in Delegate.setValue(Any?, KProperty<*>, String))
+20 								name = <bold>"bye"</bold> (in AClass.uses())
 
-26 val a = AClass(<bold>"hello"</bold>)
-27 	println("My name is '${a.<bold>name</bold>}'")
-14 		var <bold>name by Delegate()</bold>
-7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold>
-7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold>
-6 					private var <bold>_value: String = ""</bold>
-9 						_value = <bold>value</bold>
-8 							operator fun setValue(thisRef: Any?, property: KProperty<*>, <bold>value: String</bold>) {
-16 								name = <bold>name1</bold>
-13 									class AClass(<bold>name1: String</bold>){
-26 										val a = AClass(<bold>"hello"</bold>)
-
+26 val a = AClass(<bold>"hello"</bold>) (in main(Array<String>))
+27 	println("My name is '${a.<bold>name</bold>}'") (in main(Array<String>))
+14 		var <bold>name by Delegate()</bold> (in AClass)
+7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold> (in Delegate)
+7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold> (in Delegate.getValue(Any?, KProperty<*>))
+6 					private var <bold>_value: String = ""</bold> (in Delegate)
+9 						_value = <bold>value</bold> (in Delegate.setValue(Any?, KProperty<*>, String))
+8 							operator fun setValue(thisRef: Any?, property: KProperty<*>, <bold>value: String</bold>) { (in Delegate.setValue(Any?, KProperty<*>, String))
+16 								name = <bold>name1</bold> (in AClass)
+13 									class AClass(<bold>name1: String</bold>){ (in AClass(String))
+26 										val a = AClass(<bold>"hello"</bold>) (in main(Array<String>))

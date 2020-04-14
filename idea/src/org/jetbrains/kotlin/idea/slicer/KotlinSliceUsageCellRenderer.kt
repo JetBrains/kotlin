@@ -47,26 +47,36 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             append(behaviour.slicePresentationPrefix, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
         }
 
+        containerSuffix(sliceUsage)?.let {
+            append(" ")
+            append(it, SimpleTextAttributes.GRAY_ATTRIBUTES)
+        }
+    }
+
+    fun containerSuffix(sliceUsage: SliceUsage): String? {
         val declaration = sliceUsage.element?.parents?.firstOrNull {
             it is KtClass ||
                     it is KtObjectDeclaration && !it.isObjectLiteral() ||
                     it is KtNamedFunction && !it.isLocal ||
                     it is KtProperty && !it.isLocal ||
                     it is KtConstructor<*>
-        } as? KtDeclaration ?: return
+        } as? KtDeclaration ?: return null
 
-        append(KotlinBundle.message("slicer.text.in", ""), SimpleTextAttributes.GRAY_ATTRIBUTES)
+        return buildString {
+            append(KotlinBundle.message("slicer.text.in", ""))
+            append(" ")
 
-        val descriptor = declaration.unsafeResolveToDescriptor()
+            val descriptor = declaration.unsafeResolveToDescriptor()
 
-        if (!descriptor.isExtension && descriptor !is ConstructorDescriptor && !descriptor.isCompanionObject()) {
-            val containingClassifier = descriptor.containingDeclaration as? ClassifierDescriptor
-            if (containingClassifier != null) {
-                append(descriptorRenderer.render(containingClassifier), SimpleTextAttributes.GRAY_ATTRIBUTES)
-                append(".", SimpleTextAttributes.GRAY_ATTRIBUTES)
+            if (!descriptor.isExtension && descriptor !is ConstructorDescriptor && !descriptor.isCompanionObject()) {
+                val containingClassifier = descriptor.containingDeclaration as? ClassifierDescriptor
+                if (containingClassifier != null) {
+                    append(descriptorRenderer.render(containingClassifier))
+                    append(".")
+                }
             }
-        }
 
-        append(descriptorRenderer.render(descriptor), SimpleTextAttributes.GRAY_ATTRIBUTES)
+            append(descriptorRenderer.render(descriptor))
+        }
     }
 }

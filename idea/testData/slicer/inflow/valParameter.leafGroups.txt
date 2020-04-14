@@ -1,17 +1,16 @@
 2 D(int <bold>n</bold>) {
-3 	open class A(val <bold>n: Int</bold>)
+3 	open class A(val <bold>n: Int</bold>) (in A(Int))
 3 		super(<bold>n</bold>);
 2 			D(int <bold>n</bold>) {
 
-5 class B : A(<bold>1</bold>)
-3 	open class A(val <bold>n: Int</bold>)
-5 		class B : A(<bold>1</bold>)
+5 class B : A(<bold>1</bold>) (in B)
+3 	open class A(val <bold>n: Int</bold>) (in A(Int))
+5 		class B : A(<bold>1</bold>) (in B)
 
-8 val z = A(<bold>2</bold>).n
-3 	open class A(val <bold>n: Int</bold>)
-8 		val z = A(<bold>2</bold>).n
+8 val z = A(<bold>2</bold>).n (in test())
+3 	open class A(val <bold>n: Int</bold>) (in A(Int))
+8 		val z = A(<bold>2</bold>).n (in test())
 
 7 A a = new A(<bold>3</bold>);
-3 	open class A(val <bold>n: Int</bold>)
+3 	open class A(val <bold>n: Int</bold>) (in A(Int))
 7 		A a = new A(<bold>3</bold>);
-

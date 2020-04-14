@@ -1,48 +1,48 @@
-4 fun foo(<bold>p: String</bold>) {
-5 	val v1 = <bold>p</bold>.let { value -> bar(value) }
-LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
-LIB 			(INLINE CALL let) return block(<bold>this</bold>)
-LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-5 					[LAMBDA PARAMETER #0] val v1 = p.let <bold>{ value -> bar(value) }</bold>
-5 						val v1 = p.let { <bold>value</bold> -> bar(value) }
-5 							val v1 = p.let { value -> bar(<bold>value</bold>) }
-17 								fun bar(<bold>s: String</bold>) = s
-17 									fun bar(s: String) = <bold>s</bold>
+4 fun foo(<bold>p: String</bold>) { (in foo(String))
+5 	val v1 = <bold>p</bold>.let { value -> bar(value) } (in foo(String))
+LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R { (in let((T) -> R) on T)
+LIB 			(INLINE CALL let) return block(<bold>this</bold>) (in let((T) -> R) on T)
+LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+5 					[LAMBDA PARAMETER #0] val v1 = p.let <bold>{ value -> bar(value) }</bold> (in foo(String))
+5 						val v1 = p.let { <bold>value</bold> -> bar(value) } (in foo(String))
+5 							val v1 = p.let { value -> bar(<bold>value</bold>) } (in foo(String))
+17 								fun bar(<bold>s: String</bold>) = s (in bar(String))
+17 									fun bar(s: String) = <bold>s</bold> (in bar(String))
 17 										fun <bold>bar(s: String) = s</bold>
-5 											val v1 = p.let { value -> <bold>bar(value)</bold> }
-5 												val v1 = p.let <bold>{ value -> bar(value) }</bold>
-5 													[LAMBDA CALLS] val v1 = p.let <bold>{ value -> bar(value) }</bold>
-LIB 														(INLINE CALL let) [LAMBDA CALLS] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-LIB 															(INLINE CALL let) return <bold>block(this)</bold>
-5 																val v1 = p.<bold>let { value -> bar(value) }</bold>
-5 																	val <bold>v1 = p.let { value -> bar(value) }</bold>
-7 	val v2 = <bold>p</bold>.let { it }
-LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
-LIB 			(INLINE CALL let) return block(<bold>this</bold>)
-LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-7 					[LAMBDA PARAMETER #0] val v2 = p.let <bold>{ it }</bold>
-7 						val v2 = p.let { <bold>it</bold> }
-7 							val v2 = p.let <bold>{ it }</bold>
-7 								[LAMBDA CALLS] val v2 = p.let <bold>{ it }</bold>
-LIB 									(INLINE CALL let) [LAMBDA CALLS] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-LIB 										(INLINE CALL let) return <bold>block(this)</bold>
-7 											val v2 = p.<bold>let { it }</bold>
-7 												val <bold>v2 = p.let { it }</bold>
-9 	val v3 = <bold>p</bold>.let {
-LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
-LIB 			(INLINE CALL let) return block(<bold>this</bold>)
-LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-9 					[LAMBDA PARAMETER #0] val v3 = p.let <bold>{</bold>
-14 	val v4 = <bold>p</bold>.let(::zoo)
-LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R {
-LIB 			(INLINE CALL let) return block(<bold>this</bold>)
-LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-14 					[LAMBDA PARAMETER #0] val v4 = p.let(<bold>::zoo</bold>)
-18 						fun zoo(<bold>s: String</bold>) = s
-18 							fun zoo(s: String) = <bold>s</bold>
+5 											val v1 = p.let { value -> <bold>bar(value)</bold> } (in foo(String))
+5 												val v1 = p.let <bold>{ value -> bar(value) }</bold> (in foo(String))
+5 													[LAMBDA CALLS] val v1 = p.let <bold>{ value -> bar(value) }</bold> (in foo(String))
+LIB 														(INLINE CALL let) [LAMBDA CALLS] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+LIB 															(INLINE CALL let) return <bold>block(this)</bold> (in let((T) -> R) on T)
+5 																val v1 = p.<bold>let { value -> bar(value) }</bold> (in foo(String))
+5 																	val <bold>v1 = p.let { value -> bar(value) }</bold> (in foo(String))
+7 	val v2 = <bold>p</bold>.let { it } (in foo(String))
+LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R { (in let((T) -> R) on T)
+LIB 			(INLINE CALL let) return block(<bold>this</bold>) (in let((T) -> R) on T)
+LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+7 					[LAMBDA PARAMETER #0] val v2 = p.let <bold>{ it }</bold> (in foo(String))
+7 						val v2 = p.let { <bold>it</bold> } (in foo(String))
+7 							val v2 = p.let <bold>{ it }</bold> (in foo(String))
+7 								[LAMBDA CALLS] val v2 = p.let <bold>{ it }</bold> (in foo(String))
+LIB 									(INLINE CALL let) [LAMBDA CALLS] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+LIB 										(INLINE CALL let) return <bold>block(this)</bold> (in let((T) -> R) on T)
+7 											val v2 = p.<bold>let { it }</bold> (in foo(String))
+7 												val <bold>v2 = p.let { it }</bold> (in foo(String))
+9 	val v3 = <bold>p</bold>.let { (in foo(String))
+LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R { (in let((T) -> R) on T)
+LIB 			(INLINE CALL let) return block(<bold>this</bold>) (in let((T) -> R) on T)
+LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+9 					[LAMBDA PARAMETER #0] val v3 = p.let <bold>{</bold> (in foo(String))
+14 	val v4 = <bold>p</bold>.let(::zoo) (in foo(String))
+LIB 		(INLINE CALL let) public inline fun <T, R> <bold>T</bold>.let(block: (T) -> R): R { (in let((T) -> R) on T)
+LIB 			(INLINE CALL let) return block(<bold>this</bold>) (in let((T) -> R) on T)
+LIB 				(INLINE CALL let) [LAMBDA PARAMETER #0] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+14 					[LAMBDA PARAMETER #0] val v4 = p.let(<bold>::zoo</bold>) (in foo(String))
+18 						fun zoo(<bold>s: String</bold>) = s (in zoo(String))
+18 							fun zoo(s: String) = <bold>s</bold> (in zoo(String))
 18 								fun <bold>zoo(s: String) = s</bold>
-14 									[LAMBDA CALLS] val v4 = p.let(<bold>::zoo</bold>)
-LIB 										(INLINE CALL let) [LAMBDA CALLS] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R {
-LIB 											(INLINE CALL let) return <bold>block(this)</bold>
-14 												val v4 = p.<bold>let(::zoo)</bold>
-14 													val <bold>v4 = p.let(::zoo)</bold>
+14 									[LAMBDA CALLS] val v4 = p.let(<bold>::zoo</bold>) (in foo(String))
+LIB 										(INLINE CALL let) [LAMBDA CALLS] public inline fun <T, R> T.let(<bold>block: (T) -> R</bold>): R { (in let((T) -> R) on T)
+LIB 											(INLINE CALL let) return <bold>block(this)</bold> (in let((T) -> R) on T)
+14 												val v4 = p.<bold>let(::zoo)</bold> (in foo(String))
+14 													val <bold>v4 = p.let(::zoo)</bold> (in foo(String))
