@@ -425,7 +425,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private val failedBrowsers: MutableList<String> = mutableListOf()
 
-                    private var previousLine: String = ""
+                    private var stackTraceProcessor = TeamCityMessageStackTraceProcessor()
 
                     override fun printNonTestOutput(text: String, type: String?) {
                         val value = text.trimEnd()
@@ -436,19 +436,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private fun parseConsole(text: String, type: String?) {
 
-                        val actualType = if (text.trim().startsWith("at ")) {
-                            parseConsole(previousLine, ERROR)
-                            previousLine = ""
-                            ERROR
-                        } else {
-                            previousLine = text
-                            type
+                        var actualType = type
+                        stackTraceProcessor.process(text) { line ->
+                            actualType = ERROR
+                            line?.let { parseConsole(it, actualType) }
                         }
 
-                        val launcherMessage = KARMA_LAUNCHER_MESSAGE.matchEntire(text)
+                        val launcherMessage = KARMA_MESSAGE.matchEntire(text)
 
                         val actualText = if (launcherMessage != null) {
-                            val (message) = launcherMessage.destructured
+                            val (_, message) = launcherMessage.destructured
                             when (actualType?.toLowerCase()) {
                                 WARN, ERROR -> {
                                     processFailedBrowsers(text)
@@ -542,5 +539,5 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 }
 
-private val KARMA_LAUNCHER_MESSAGE = "^.*\\[launcher]: ([\\w\\W]*)\$"
+private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
     .toRegex()
