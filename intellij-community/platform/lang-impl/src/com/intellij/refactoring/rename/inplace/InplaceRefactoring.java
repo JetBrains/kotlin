@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.*;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
@@ -57,6 +58,7 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.DottedBorder;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.util.CommonProcessors;
@@ -143,7 +145,7 @@ public abstract class InplaceRefactoring {
 
   public static void unableToStartWarning(Project project, Editor editor) {
     final StartMarkAction startMarkAction = StartMarkAction.canStart(project);
-    final String message = startMarkAction.getCommandName() + " is not finished yet.";
+    final String message = IdeBundle.message("dialog.message.command.not.finished.yet", startMarkAction.getCommandName());
     final Document oldDocument = startMarkAction.getDocument();
     if (editor == null || oldDocument != editor.getDocument()) {
       final int exitCode = Messages.showYesNoDialog(project, message,
@@ -537,7 +539,7 @@ public abstract class InplaceRefactoring {
 
     final Color bg = previewEditor.getColorsScheme().getColor(EditorColors.CARET_ROW_COLOR);
     previewEditor.setBackgroundColor(bg);
-    previewEditor.setBorder(BorderFactory.createCompoundBorder(new DottedBorder(Color.gray), new LineBorder(bg, 2)));
+    previewEditor.setBorder(BorderFactory.createCompoundBorder(new DottedBorder(JBColor.GRAY), new LineBorder(bg, 2)));
 
     return previewEditor;
   }
