@@ -1132,13 +1132,27 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
   }
 
+  public static final class FileIndexingStatistics {
+
+    public final long totalTime;
+    public final Map<ID<?, ?>, Long> perIndexerTimes;
+
+    public FileIndexingStatistics(long totalTime, @NotNull Map<ID<?, ?>, Long> perIndexerTimes) {
+      this.totalTime = totalTime;
+      this.perIndexerTimes = perIndexerTimes;
+    }
+  }
+
   @ApiStatus.Internal
-  public void indexFileContent(@Nullable Project project, @NotNull CachedFileContent content) {
+  @NotNull
+  public FileIndexingStatistics indexFileContent(@Nullable Project project, @NotNull CachedFileContent content) {
     ProgressManager.checkCanceled();
     VirtualFile file = content.getVirtualFile();
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 
     boolean setIndexedStatus = true;
+    Map<ID<?, ?>, Long> indexerTimes = Collections.emptyMap();
+    long startTime = System.currentTimeMillis();
     try {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
       // in this case we consider that current indexing (out of roots backed CacheUpdater) will cover its content
@@ -1153,7 +1167,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         }
       }
       else {
-        setIndexedStatus = doIndexFileContent(project, content);
+        Pair<Boolean, Map<ID<?, ?>, Long>> pair = doIndexFileContent(project, content);
+        setIndexedStatus = pair.first;
+        indexerTimes = pair.second;
       }
     }
     finally {
@@ -1162,12 +1178,16 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
     getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
     if (file instanceof VirtualFileSystemEntry && setIndexedStatus) ((VirtualFileSystemEntry)file).setFileIndexed(true);
+    return new FileIndexingStatistics(System.currentTimeMillis() - startTime, indexerTimes);
   }
 
-  private boolean doIndexFileContent(@Nullable Project project, final @NotNull CachedFileContent content) {
+  @NotNull
+  private Pair<Boolean, Map<ID<?, ?>, Long>> doIndexFileContent(@Nullable Project project, final @NotNull CachedFileContent content) {
     ProgressManager.checkCanceled();
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
+    Map<ID<?, ?>, Long> perIndexerTimes = new HashMap<>();
+
     getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
       ProgressManager.checkCanceled();
 
@@ -1190,19 +1210,23 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
       int inputId = Math.abs(getFileId(file));
       Set<ID<?, ?>> currentIndexedStates = new THashSet<>(IndexingStamp.getNontrivialFileIndexedStates(inputId));
-
-      final List<ID<?, ?>> affectedIndexCandidates = getAffectedIndexCandidates(file);
+      List<ID<?, ?>> affectedIndexCandidates = getAffectedIndexCandidates(file);
       //noinspection ForLoopReplaceableByForEach
       for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
         try {
           ProgressManager.checkCanceled();
           final ID<?, ?> indexId = affectedIndexCandidates.get(i);
-          if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
-            ProgressManager.checkCanceled();
-            if (!updateSingleIndex(indexId, file, inputId, fc)) {
-              setIndexedStatus.set(Boolean.FALSE);
+          long startTime = System.currentTimeMillis();
+          try {
+            if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
+              ProgressManager.checkCanceled();
+              if (!updateSingleIndex(indexId, file, inputId, fc)) {
+                setIndexedStatus.set(Boolean.FALSE);
+              }
+              currentIndexedStates.remove(indexId);
             }
-            currentIndexedStates.remove(indexId);
+          } finally {
+            perIndexerTimes.put(indexId, System.currentTimeMillis() - startTime);
           }
         }
         catch (ProcessCanceledException e) {
@@ -1215,17 +1239,22 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         psiFile.putUserData(PsiFileImpl.BUILDING_STUB, null);
       }
 
-      for(ID<?, ?> indexId : currentIndexedStates) {
+      for (ID<?, ?> indexId : currentIndexedStates) {
         ProgressManager.checkCanceled();
-        if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
-          ProgressManager.checkCanceled();
-          if (!updateSingleIndex(indexId, file, inputId, null)) {
-            setIndexedStatus.set(Boolean.FALSE);
+        long startTime = System.currentTimeMillis();
+        try {
+          if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
+            ProgressManager.checkCanceled();
+            if (!updateSingleIndex(indexId, file, inputId, null)) {
+              setIndexedStatus.set(Boolean.FALSE);
+            }
           }
+        } finally {
+          perIndexerTimes.put(indexId, System.currentTimeMillis() - startTime);
         }
       }
     });
-    return setIndexedStatus.get();
+    return Pair.create(setIndexedStatus.get(), perIndexerTimes);
   }
 
   public boolean isIndexingCandidate(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {

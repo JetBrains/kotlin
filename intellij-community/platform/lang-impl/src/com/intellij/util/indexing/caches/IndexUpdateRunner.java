@@ -4,6 +4,8 @@ package com.intellij.util.indexing.caches;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -21,20 +23,19 @@ import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.diagnostic.PerThreadTime;
 import com.intellij.util.progress.SubTaskProgressIndicator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @ApiStatus.Internal
 public final class IndexUpdateRunner {
@@ -61,9 +62,10 @@ public final class IndexUpdateRunner {
     myNumberOfIndexingThreads = numberOfIndexingThreads;
   }
 
-  public void indexFiles(@NotNull Project project,
-                         @NotNull Collection<VirtualFile> files,
-                         @NotNull ProgressIndicator indicator) {
+  @NotNull
+  public IndexingStatistics indexFiles(@NotNull Project project,
+                                       @NotNull Collection<VirtualFile> files,
+                                       @NotNull ProgressIndicator indicator) {
     indicator.checkCanceled();
     indicator.setIndeterminate(false);
 
@@ -93,6 +95,14 @@ public final class IndexUpdateRunner {
     }
 
     indicator.checkCanceled();
+
+    return new IndexingStatistics(
+      indexingJob.myIndexingTime,
+      indexingJob.myContentLoadingTime,
+      new HashMap<>(indexingJob.myTimesPerIndexer),
+      new HashMap<>(indexingJob.myTimesPerFileType),
+      new HashMap<>(indexingJob.myNumberOfFilesPerFileType)
+    );
   }
 
   private void processIndexJobsWhileUserIsInactive(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
@@ -143,6 +153,7 @@ public final class IndexUpdateRunner {
 
   private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob,
                                                  @NotNull ProgressIndicator writeActionIndicator) throws ProcessCanceledException {
+    long contentLoadingStartTime = System.currentTimeMillis();
     CachedFileContentToken token;
     try {
       token = loadNextContent(indexingJob, writeActionIndicator);
@@ -157,6 +168,10 @@ public final class IndexUpdateRunner {
       logFailedToLoadContentException(e);
       return;
     }
+    finally {
+      indexingJob.myContentLoadingTime.addTimeSpentInCurrentThread(System.currentTimeMillis() - contentLoadingStartTime);
+    }
+
 
     if (token == null) {
       indexingJob.myIsFinished.set(true);
@@ -165,7 +180,12 @@ public final class IndexUpdateRunner {
 
     try {
       CachedFileContent fileContent = token.getContent();
-      indexOneFileOfJobIfUserIsInactive(indexingJob, writeActionIndicator, fileContent);
+      long indexingStartTime = System.currentTimeMillis();
+      try {
+        indexOneFileOfJobIfUserIsInactive(indexingJob, writeActionIndicator, fileContent);
+      } finally {
+        indexingJob.myIndexingTime.addTimeSpentInCurrentThread(System.currentTimeMillis() - indexingStartTime);
+      }
       token.release();
       indexingJob.oneMoreFileProcessed();
     }
@@ -234,14 +254,21 @@ public final class IndexUpdateRunner {
     indexingJob.setLocationBeingIndexed(fileContent.getVirtualFile());
     if (!fileContent.isDirectory() && !Boolean.TRUE.equals(fileContent.getUserData(FAILED_TO_INDEX))) {
       try {
+        AtomicReference<FileBasedIndexImpl.FileIndexingStatistics> fileStatistics = new AtomicReference<>();
         Runnable readAction = () -> {
           if (project.isDisposed() || writeActionIndicator.isCanceled()) {
             throw new ProcessCanceledException();
           }
-          ProgressManager.getInstance().runProcess(() -> myFileBasedIndex.indexFileContent(project, fileContent), writeActionIndicator);
+          FileBasedIndexImpl.FileIndexingStatistics statistics = ProgressManager.getInstance().runProcess(
+            () -> myFileBasedIndex.indexFileContent(project, fileContent), writeActionIndicator
+          );
+          fileStatistics.set(statistics);
         };
         if (!ApplicationManagerEx.getApplicationEx().tryRunReadAction(readAction)) {
           throw new ProcessCanceledException();
+        }
+        if (fileStatistics.get() != null) {
+          addFileStatistics(fileContent, indexingJob, fileStatistics.get());
         }
       }
       catch (ProcessCanceledException e) {
@@ -253,6 +280,33 @@ public final class IndexUpdateRunner {
                                      "To reindex this file IDEA has to be restarted", e);
       }
     }
+  }
+
+  private static void addFileStatistics(@NotNull CachedFileContent fileContent,
+                                        @NotNull IndexingJob indexingJob,
+                                        @NotNull FileBasedIndexImpl.FileIndexingStatistics fileStatistics) {
+    VirtualFile virtualFile = fileContent.getVirtualFile();
+    byte[] fileBytes;
+    try {
+      fileBytes = fileContent.getBytes();
+    }
+    catch (IOException e) {
+      // Must not happen but let's play safe.
+      FileBasedIndexImpl.LOG.warn("Failed to record statistics for file " + virtualFile.getUrl() + ". " +
+                                  "Its content wasn't loaded " + e.getMessage());
+      return;
+    }
+    fileStatistics.perIndexerTimes.forEach((indexId, time) -> {
+      indexingJob.myTimesPerIndexer
+        .computeIfAbsent(indexId.getName(), (__) -> new PerThreadTime())
+        .addTimeSpentInCurrentThread(time);
+    });
+    FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(virtualFile, fileBytes);
+    String fileTypeName = fileType.getName();
+    indexingJob.myNumberOfFilesPerFileType.compute(fileTypeName, (__, currentNumber) -> (currentNumber != null ? currentNumber : 0) + 1);
+    indexingJob.myTimesPerFileType
+      .computeIfAbsent(fileTypeName, (__) -> new PerThreadTime())
+      .addTimeSpentInCurrentThread(fileStatistics.totalTime);
   }
 
   @NotNull
@@ -283,6 +337,26 @@ public final class IndexUpdateRunner {
     return file.getPath();
   }
 
+  public static class IndexingStatistics {
+    public final PerThreadTime indexingTime;
+    public final PerThreadTime contentLoadingTime;
+    public final Map<String, PerThreadTime> timesPerIndexer;
+    public final Map<String, PerThreadTime> timesPerFileType;
+    public final Map<String, Integer> numberOfFilesPerFileType;
+
+    public IndexingStatistics(@NotNull PerThreadTime indexingTime,
+                              @NotNull PerThreadTime contentLoadingTime,
+                              @NotNull Map<String, PerThreadTime> timesPerIndexer,
+                              @NotNull Map<String, PerThreadTime> timesPerFileType,
+                              @NotNull Map<String, Integer> numberOfFilesPerFileType) {
+      this.indexingTime = indexingTime;
+      this.contentLoadingTime = contentLoadingTime;
+      this.timesPerIndexer = timesPerIndexer;
+      this.timesPerFileType = timesPerFileType;
+      this.numberOfFilesPerFileType = numberOfFilesPerFileType;
+    }
+  }
+
   private static class IndexingJob {
     public final Project myProject;
     public final CachedFileContentQueue myFileContentQueue;
@@ -291,6 +365,12 @@ public final class IndexUpdateRunner {
     public final AtomicInteger myNumberOfFilesProcessed;
     public final int myTotalFiles;
     public final AtomicBoolean myIsFinished = new AtomicBoolean();
+
+    public final ConcurrentMap<String, PerThreadTime> myTimesPerIndexer = new ConcurrentHashMap<>();
+    public final ConcurrentMap<String, PerThreadTime> myTimesPerFileType = new ConcurrentHashMap<>();
+    public final ConcurrentMap<String, Integer> myNumberOfFilesPerFileType = new ConcurrentHashMap<>();
+    public final PerThreadTime myContentLoadingTime = new PerThreadTime();
+    public final PerThreadTime myIndexingTime = new PerThreadTime();
 
     private IndexingJob(@NotNull Project project,
                         @NotNull CachedFileContentQueue queue,

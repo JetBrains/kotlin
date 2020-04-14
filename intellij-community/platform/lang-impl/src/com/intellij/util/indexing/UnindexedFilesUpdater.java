@@ -23,9 +23,13 @@ import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.concurrency.NonUrgentExecutor;
 import com.intellij.util.containers.ConcurrentBitSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.caches.IndexUpdateRunner;
+import com.intellij.util.indexing.diagnostic.IndexDiagnosticDumper;
+import com.intellij.util.indexing.diagnostic.PerThreadTime;
+import com.intellij.util.indexing.diagnostic.ProjectIndexingHistory;
 import com.intellij.util.indexing.roots.IndexableFilesProvider;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.progress.ConcurrentTasksProgressManager;
@@ -67,6 +71,8 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
   private void updateUnindexedFiles(ProgressIndicator indicator) {
     if (!IndexInfrastructure.hasIndices()) return;
+    ProjectIndexingHistory projectIndexingHistory = new ProjectIndexingHistory(myProject.getName());
+    projectIndexingHistory.getTimes().setStartIndexing(now());
 
     if (myStartSuspended) {
       ProgressSuspender suspender = ProgressSuspender.getSuspender(indicator);
@@ -81,9 +87,13 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     indicator.setIndeterminate(true);
     indicator.setText(IndexingBundle.message("progress.indexing.scanning"));
 
+    projectIndexingHistory.getTimes().setStartPushProperties(now());
+
     PerformanceWatcher.Snapshot snapshot = PerformanceWatcher.takeSnapshot();
     myPusher.pushAllPropertiesNow();
     boolean trackResponsiveness = !ApplicationManager.getApplication().isUnitTestMode();
+
+    projectIndexingHistory.getTimes().setEndPushProperties(now());
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Pushing properties");
 
@@ -91,11 +101,19 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     snapshot = PerformanceWatcher.takeSnapshot();
 
+    projectIndexingHistory.getTimes().setStartIndexExtensions(now());
+
     FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.processIndexingProject(myProject, indicator));
+
+    projectIndexingHistory.getTimes().setEndIndexExtensions(now());
+
+    projectIndexingHistory.getTimes().setStartScanFiles(now());
 
     List<IndexableFilesProvider> orderedProviders = myIndex.getOrderedIndexableFilesProviders(myProject);
 
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = collectIndexableFilesConcurrently(myProject, indicator, orderedProviders);
+
+    projectIndexingHistory.getTimes().setEndScanFiles(now());
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Indexable file iteration");
 
@@ -133,13 +151,60 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       concurrentTasksProgressManager.setText(provider.getIndexingProgressText());
       SubTaskProgressIndicator subTaskIndicator = concurrentTasksProgressManager.createSubTaskIndicator(providerFiles.size());
       try {
-        indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
+        long startTime = System.currentTimeMillis();
+        IndexUpdateRunner.IndexingStatistics indexStatistics = indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
+        long totalTime = System.currentTimeMillis() - startTime;
+        FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(
+          provider.getDebugName(),
+          totalTime,
+          indexStatistics.indexingTime,
+          indexStatistics.contentLoadingTime,
+          indexStatistics.timesPerIndexer,
+          indexStatistics.timesPerFileType,
+          indexStatistics.numberOfFilesPerFileType
+        );
+        projectIndexingHistory.getProviderStatistics().add(statistics);
       } finally {
         subTaskIndicator.finished();
       }
     }
 
+    projectIndexingHistory.getTimes().setEndIndexing(now());
+
+    NonUrgentExecutor.getInstance().execute(() -> {
+      IndexDiagnosticDumper.INSTANCE.dumpProjectIndexingHistoryToLogSubdirectory(projectIndexingHistory);
+    });
+
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Unindexed files update");
+  }
+
+  private static long now() {
+    return System.currentTimeMillis();
+  }
+
+  public static class FileProviderIndexStatistics {
+    public final String providerDebugName;
+    public final long totalTime;
+    public final PerThreadTime indexingTime;
+    public final PerThreadTime contentLoadingTime;
+    public final Map<String, PerThreadTime> timesPerIndexer;
+    public final Map<String, PerThreadTime> timesPerFileType;
+    public final Map<String, Integer> numberOfFilesPerFileType;
+
+    public FileProviderIndexStatistics(@NotNull String providerDebugName,
+                                       long totalTime,
+                                       @NotNull PerThreadTime indexingTime,
+                                       @NotNull PerThreadTime contentLoadingTime,
+                                       @NotNull Map<String, PerThreadTime> timesPerIndexer,
+                                       @NotNull Map<String, PerThreadTime> timesPerFileType, Map<String, Integer> numberOfFilesPerFileType) {
+      this.providerDebugName = providerDebugName;
+      this.totalTime = totalTime;
+      this.indexingTime = indexingTime;
+      this.contentLoadingTime = contentLoadingTime;
+      this.timesPerIndexer = timesPerIndexer;
+      this.timesPerFileType = timesPerFileType;
+      this.numberOfFilesPerFileType = numberOfFilesPerFileType;
+    }
   }
 
   @NotNull
