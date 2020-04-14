@@ -65,7 +65,7 @@ internal class ClassMemberGenerator(
             // Add synthetic members *before* fake override generations.
             // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
             if (irClass.isData && klass.getPrimaryConstructorIfAny() != null) {
-                processedCallableNames += DataClassMembersGenerator(components).generateDataClassMembers(irClass)
+                processedCallableNames += DataClassMembersGenerator(components).generateDataClassMembers(klass, irClass)
             }
             with(fakeOverrideGenerator) { irClass.addFakeOverrides(klass, processedCallableNames) }
             klass.declarations.forEach {
