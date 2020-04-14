@@ -172,7 +172,6 @@ abstract class AbstractIncrementalJpsTest(
                 BuilderRegistry.getInstance(),
                 myBuildParams,
                 CanceledStatus.NULL,
-                mockConstantSearch,
                 true
             )
             val buildResult = BuildResult()
