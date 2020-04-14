@@ -1,6 +1,7 @@
 // !JVM_DEFAULT_MODE: enable
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
 // JVM_TARGET: 1.8
 // WITH_REFLECT
 // FULL_JDK
@@ -50,5 +51,5 @@ fun checkNoMethod(clazz: Class<*>, name: String) {
     catch (e: NoSuchMethodException) {
         return
     }
-    throw AssertionError("fail " + clazz)
+    throw AssertionError("fail: method $name was found in " + clazz)
 }

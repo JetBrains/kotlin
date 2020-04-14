@@ -276,11 +276,13 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
                 // TODO: Support jvm assertions
                 if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
+                val targets = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fullFileText, "// JVM_TARGET:")
+                    .also { it.remove(JvmTarget.JVM_1_6.description) }
 
-                // TODO: support JVM 8 test with D8
-                if (fullFileText.contains("// JVM_TARGET")) continue
-
-                val isJvm8Target = false
+                val isJvm8Target =
+                    if (targets.isEmpty()) false
+                    else if (targets.contains(JvmTarget.JVM_1_8.description) && targets.size == 1) true
+                    else continue //TODO: support other targets on Android
 
                 // TODO: support SKIP_JDK6 on new platforms
                 if (fullFileText.contains("// SKIP_JDK6")) continue

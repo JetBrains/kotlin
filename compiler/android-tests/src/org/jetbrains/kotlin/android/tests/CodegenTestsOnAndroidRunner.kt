@@ -102,7 +102,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 testCases.forEach { aCase -> suite.addTest(aCase) }
                 Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw RuntimeException("Can't parse test results in $reportFolder\n$resultOutput", e)
         }
     }

@@ -1,5 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+ext {
+    isD8Enabled = project.findProperty('android.enableD8').toBoolean()
+}
 buildscript {
     repositories {
         google()
@@ -58,6 +60,12 @@ android {
         resultsDir = "build/test/results"
     }
 
+    if (isD8Enabled) {
+        compileOptions {
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+        }
+    }
 
     flavorDimensions "box"
 
@@ -76,6 +84,17 @@ android {
 
         reflect0 {
             dimension "box"
+        }
+
+
+        if (isD8Enabled) {
+            jvm80 {
+                dimension "box"
+            }
+
+            reflectjvm80 {
+                dimension "box"
+            }
         }
     }
 
