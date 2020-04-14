@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
+import com.intellij.openapi.Disposable
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
@@ -29,7 +31,9 @@ import kotlin.script.experimental.jvm.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
-class ScriptCliCompilationTest : KtUsefulTestCase() {
+class ScriptCliCompilationTest : TestCase() {
+
+    protected val testRootDisposable: Disposable = TestDisposable()
 
     fun testPrerequisites() {
         Assert.assertTrue(thisClasspath.isNotEmpty())

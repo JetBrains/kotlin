@@ -223,4 +223,14 @@ internal fun <R> withDisposable(body: (Disposable) -> R) {
     }
 }
 
+class TestDisposable : Disposable {
+    @Volatile
+    var isDisposed = false
+        private set
+
+    override fun dispose() {
+        isDisposed = true
+    }
+}
+
 
