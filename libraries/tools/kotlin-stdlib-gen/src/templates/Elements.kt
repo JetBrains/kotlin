@@ -292,7 +292,7 @@ object Elements : TemplateGroupBase() {
             on(Platform.JS) {
                 inline(Inline.No)
 
-                val size = if (f == CharSequences) "length" else "size"
+                val size = f.code.size
                 body {
                     """
                     return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
@@ -944,11 +944,10 @@ object Elements : TemplateGroupBase() {
         }
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
             body {
-                val size = if (family == CharSequences) "length" else "size"
                 """
                 if (isEmpty())
                     throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
-                return get(random.nextInt($size))
+                return get(random.nextInt(${f.code.size}))
                 """
             }
         }

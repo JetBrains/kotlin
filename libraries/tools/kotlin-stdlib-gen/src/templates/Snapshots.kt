@@ -162,7 +162,7 @@ object Snapshots : TemplateGroupBase() {
         }
         body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
-            return when (${ if (f == CharSequences) "length" else "size" }) {
+            return when (${f.code.size}) {
                 0 -> emptyList()
                 1 -> listOf(this[0])
                 else -> this.toMutableList()
