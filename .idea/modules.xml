@@ -2042,6 +2042,7 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/completion/kotlin.completion.iml" filepath="$PROJECT_DIR$/kotlin/completion/kotlin.completion.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/core/kotlin.core.iml" filepath="$PROJECT_DIR$/kotlin/core/kotlin.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" filepath="$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/formatter/kotlin.formatter.iml" filepath="$PROJECT_DIR$/kotlin/formatter/kotlin.formatter.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" filepath="$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/generators/test-generator/kotlin.generators.test-generator.iml" filepath="$PROJECT_DIR$/kotlin/generators/test-generator/kotlin.generators.test-generator.iml" />
