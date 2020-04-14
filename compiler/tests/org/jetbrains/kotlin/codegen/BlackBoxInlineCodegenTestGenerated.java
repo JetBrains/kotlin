@@ -3953,6 +3953,16 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchStackTransform.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("twiceRegeneratedAnonymousObject.kt")
+        public void testTwiceRegeneratedAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/twiceRegeneratedAnonymousObject.kt");
+        }
+
+        @TestMetadata("twiceRegeneratedSuspendLambda.kt")
+        public void testTwiceRegeneratedSuspendLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/twiceRegeneratedSuspendLambda.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
