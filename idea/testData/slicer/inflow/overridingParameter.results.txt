@@ -5,4 +5,4 @@
 9 			class C : B(<bold>1</bold>) { (in C)
 7 		return <bold>5</bold>;
 10 		override val <bold>foo = 3</bold> (in C)
-10 			override val foo = <bold>3</bold> (in C.foo: Int)
+10 			override val foo = <bold>3</bold> (in C.foo)

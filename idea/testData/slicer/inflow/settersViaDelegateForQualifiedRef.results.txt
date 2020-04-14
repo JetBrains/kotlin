@@ -3,7 +3,7 @@
 7 		operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold> (in Delegate)
 7 			operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold> (in Delegate.getValue(Any?, KProperty<*>))
 6 				private var <bold>_value: String = ""</bold> (in Delegate)
-6 					private var _value: String = <bold>""</bold> (in Delegate._value: String)
+6 					private var _value: String = <bold>""</bold> (in Delegate._value)
 9 					_value = <bold>value</bold> (in Delegate.setValue(Any?, KProperty<*>,…))
 8 						operator fun setValue(thisRef: Any?, property: KProperty<*>, <bold>value: String</bold>) { (in Delegate.setValue(Any?, KProperty<*>,…))
 16 							name = <bold>name1</bold> (in AClass)

@@ -1,4 +1,4 @@
-10 override val foo = <bold>3</bold> (in C.foo: Int)
+10 override val foo = <bold>3</bold> (in C.foo)
 10 	override val <bold>foo = 3</bold> (in C)
 14 		val x = a.<bold>foo</bold> (in test(A, B,…))
 14 			val <bold>x = a.foo</bold> (in test(A, B,…))

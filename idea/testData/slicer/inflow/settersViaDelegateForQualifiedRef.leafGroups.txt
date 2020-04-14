@@ -1,10 +1,10 @@
-6 private var _value: String = <bold>""</bold> (in Delegate._value: String)
+6 private var _value: String = <bold>""</bold> (in Delegate._value)
 27 	println("My name is '${a.<bold>name</bold>}'") (in main(Array<String>))
 14 		var <bold>name by Delegate()</bold> (in AClass)
 7 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = _value</bold> (in Delegate)
 7 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>_value</bold> (in Delegate.getValue(Any?, KProperty<*>))
 6 					private var <bold>_value: String = ""</bold> (in Delegate)
-6 						private var _value: String = <bold>""</bold> (in Delegate._value: String)
+6 						private var _value: String = <bold>""</bold> (in Delegate._value)
 
 20 name = <bold>"bye"</bold> (in AClass.uses())
 27 	println("My name is '${a.<bold>name</bold>}'") (in main(Array<String>))

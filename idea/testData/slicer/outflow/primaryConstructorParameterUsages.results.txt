@@ -1,5 +1,5 @@
 3 class A(<bold>n: Int</bold>) { (in A(Int))
-4 	val x = <bold>n</bold> (in A.x: Int)
+4 	val x = <bold>n</bold> (in A.x)
 4 		val <bold>x = n</bold> (in A)
 9 	y = <bold>n</bold> (in A)
 6 		val <bold>y: Int</bold> (in A)
