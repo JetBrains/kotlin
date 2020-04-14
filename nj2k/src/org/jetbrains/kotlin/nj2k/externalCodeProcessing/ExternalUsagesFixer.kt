@@ -56,20 +56,12 @@ internal class ExternalUsagesFixer(private val usages: List<JKMemberInfoWithUsag
 
     private fun JKMethodData.fix(javaUsages: List<PsiElement>, kotlinUsages: List<KtElement>) {
         usedAsAccessorOfProperty?.let { property ->
-            val ktProperty = property.kotlinElement
             val accessorKind =
                 if (javaElement.name.startsWith("set")) AccessorKind.SETTER
                 else AccessorKind.GETTER
 
             kotlinUsages.forEach { usage ->
                 conversions += AccessorToPropertyKotlinExternalConversion(property.name, accessorKind, usage)
-            }
-
-            if (ktProperty != null
-                && javaUsages.isNotEmpty()
-                && ktProperty.isSimpleProperty()
-            ) javaUsages.forEach { usage ->
-                conversions += AccessorToPropertyJavaExternalConversion(property.name, accessorKind, usage)
             }
         }
         if (javaUsages.isNotEmpty() && isStatic) {
