@@ -1,0 +1,6 @@
+FILE: debugExpressionType.kt
+    public final fun foo(x1: R|kotlin/String|, x2: R|kotlin/collections/Collection<kotlin/CharSequence>|, x3: R|kotlin/collections/MutableMap<out kotlin/CharSequence, in kotlin/collections/MutableList<*>>|): R|kotlin/Unit| {
+        R|<local>/x1|
+        R|<local>/x2|
+        R|<local>/x3|
+    }

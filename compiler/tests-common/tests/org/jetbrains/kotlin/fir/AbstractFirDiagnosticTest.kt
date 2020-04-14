@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -31,6 +33,9 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -124,6 +129,14 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
         object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {
+                if (element is FirExpression) {
+                    result.addIfNotNull(
+                        createExpressionTypeDiagnosticIfExpected(
+                            element, diagnosedRangesToDiagnosticNames
+                        )
+                    )
+                }
+
                 element.acceptChildren(this)
             }
 
@@ -139,45 +152,66 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         return result
     }
 
-    fun createCallDiagnosticIfExpected(
+    fun createExpressionTypeDiagnosticIfExpected(
+        element: FirExpression,
+        diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
+    ): FirDiagnosticWithParameters1<FirSourceElement, String>? =
+        DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
+            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.originalType)
+        }
+
+    private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {
+        val type = coneTypeSafe<ConeKotlinType>() ?: return "Type is unknown"
+        val rendered = type.renderForDebugInfo()
+        val originalTypeRendered = originalTypeRef?.coneTypeSafe<ConeKotlinType>()?.renderForDebugInfo() ?: return rendered
+
+        return "$rendered & $originalTypeRendered"
+    }
+
+    private fun createCallDiagnosticIfExpected(
         element: FirElement,
         reference: FirNamedReference,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
+    ): FirDiagnosticWithParameters1<FirSourceElement, String>? =
+        DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
+
+            val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
+            val fqName = resolvedSymbol?.fqNameUnsafe()
+            Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
+        }
+
+    private fun DebugInfoDiagnosticFactory1.createDebugInfoDiagnostic(
+        element: FirElement,
+        diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>,
+        argument: () -> String,
     ): FirDiagnosticWithParameters1<FirSourceElement, String>? {
-        val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
         val sourceElement = element.source ?: return null
+        if (diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]?.contains(this.name) != true) return null
 
-        val factory = DebugInfoDiagnosticFactory1.CALL
-        if (diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]?.contains(factory.name) != true) return null
-
-        val fqName = resolvedSymbol?.fqNameUnsafe()
-
-        val argument = Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
-
+        val argumentText = argument()
         return when (sourceElement) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters1(
                 sourceElement,
-                argument,
-                factory.severity,
+                argumentText,
+                severity,
                 FirDiagnosticFactory1(
-                    factory.name,
-                    factory.severity,
-                    factory
+                    name,
+                    severity,
+                    this
                 )
             )
             is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
                 sourceElement,
-                argument,
-                factory.severity,
+                argumentText,
+                severity,
                 FirDiagnosticFactory1<FirSourceElement, PsiElement, String>(
-                    factory.name,
-                    factory.severity,
-                    factory
+                    name,
+                    severity,
+                    this
                 )
             )
         }
     }
-
 
     private fun AbstractFirBasedSymbol<*>.fqNameUnsafe(): FqNameUnsafe? = when (this) {
         is FirClassLikeSymbol<*> -> classId.asSingleFqName().toUnsafe()
