@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
@@ -63,9 +64,11 @@ class Wrapper private constructor(
             return Wrapper(objectValue, irClass)
         }
 
-        fun getConstructorMethod(irConstructor: IrFunction): MethodHandle {
-            val methodType = irConstructor.getMethodType()
+        fun getConstructorMethod(irConstructor: IrFunction): MethodHandle? {
+            val intrinsicValue = irConstructor.parentAsClass.getEvaluateIntrinsicValue()
+            if (intrinsicValue == "kotlin.Char" || intrinsicValue == "kotlin.Long") return null
 
+            val methodType = irConstructor.getMethodType()
             return MethodHandles.lookup().findConstructor(irConstructor.returnType.getClass(true), methodType)
         }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterMethodNotFoundException
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterTimeOutException
+import org.jetbrains.kotlin.backend.common.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -32,8 +33,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val irBuiltIns = irModule.irBuiltins
     private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
-    private val classCastException = irExceptions.first { it.name.asString() == ClassCastException::class.java.simpleName }
-    private val illegalArgumentException = irExceptions.first { it.name.asString() == IllegalArgumentException::class.java.simpleName }
 
     private val stack = StackImpl()
     private var commandCount = 0
@@ -154,71 +153,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun handleIntrinsicMethods(irFunction: IrFunction): ExecutionResult {
-        when (irFunction.name.asString()) {
-            "emptyArray" -> {
-                val result = emptyArray<Any?>()
-                stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
-            }
-            "arrayOf" -> {
-                val result = irFunction.getArgsForMethodInvocation(stack.getAll()).toTypedArray()
-                stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
-            }
-            "arrayOfNulls" -> {
-                val size = stack.getVariableState(irFunction.valueParameters.first().descriptor).asInt()
-                val result = arrayOfNulls<Any?>(size)
-                stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
-            }
-            "values", "enumValues" -> {
-                val enumClass =
-                    (irFunction.parent as? IrClass) ?: stack.getVariableState(irFunction.typeParameters.first().descriptor).irClass
-                val enumEntries = enumClass.declarations
-                    .filterIsInstance<IrEnumEntry>()
-                    .map { entry ->
-                        entry.interpret().check { return it }
-                        stack.popReturnValue() as Common
-                    }
-                stack.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
-            }
-            "valueOf", "enumValueOf" -> {
-                val enumClass =
-                    (irFunction.parent as? IrClass) ?: stack.getVariableState(irFunction.typeParameters.first().descriptor).irClass
-                val enumEntryName = stack.getVariableState(irFunction.valueParameters.first().descriptor).asString()
-                val enumEntry = enumClass.declarations
-                    .filterIsInstance<IrEnumEntry>()
-                    .singleOrNull { it.name.asString() == enumEntryName }
-                if (enumEntry == null) {
-                    val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
-                    stack.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stack.getStackTrace()))
-                    return Exception
-                } else {
-                    enumEntry.interpret().check { return it }
-                }
-            }
-            "replace" -> {
-                val states = stack.getAll().map { it.state }
-                val regex = states.filterIsInstance<Wrapper>().single().value as Regex
-                val input = states.filterIsInstance<Primitive<*>>().single().asString()
-                val transform = states.filterIsInstance<Lambda>().single().irFunction
-                val matchResultParameter = transform.valueParameters.single()
-                val result = regex.replace(input) {
-                    val itAsState = Variable(matchResultParameter.descriptor, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
-                    runBlocking { stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() } }//.check { return it }
-                    stack.popReturnValue().asString()
-                    //TODO("replace not implemented")
-                }
-                stack.pushReturnValue(result.toState(irBuiltIns.stringType))
-            }
-            "hashCode" -> {
-                if (irFunction.parentAsClass.isEnumClass) {
-                    calculateBuiltIns(irFunction.getLastOverridden() as IrSimpleFunction)
-                } else {
-                    throw InterpreterException("Hash code function intrinsic is supported only for enum class")
-                }
-            }
-            else -> throw InterpreterException("Unsupported intrinsic ${irFunction.name}")
-        }
-
-        return Next
+        return IntrinsicEvaluator().evaluate(irFunction, stack) { this.interpret() }
     }
 
     private suspend fun calculateAbstract(irFunction: IrFunction): ExecutionResult {
@@ -419,42 +354,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val parent = owner.parent as IrClass
         if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            return when (owner.parentAsClass.getEvaluateIntrinsicValue()) {
-                "kotlin.Long" -> {
-                    val low = valueArguments[0].state.asInt()
-                    val high = valueArguments[1].state.asInt()
-                    stack.pushReturnValue((high.toLong().shl(32) + low).toState(irBuiltIns.longType))
-                    Next
-                }
-                "kotlin.Char" -> {
-                    val value = valueArguments[0].state.asInt()
-                    stack.pushReturnValue(value.toChar().toState(irBuiltIns.charType))
-                    Next
-                }
-                else -> stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
-            }
+            return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
         }
 
         if (parent.defaultType.isArray() || parent.defaultType.isPrimitiveArray()) {
             // array constructor doesn't have body so must be treated separately
-            val arrayConstructor = irBuiltIns.primitiveArrays.first().constructors.single { it.owner.valueParameters.size == 2 }
-            val sizeDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "size" }.descriptor
-            val size = valueArguments[0].state.asInt()
-
-            val arrayValue = MutableList<Any>(size) { 0 }
-            if (owner.valueParameters.size == 2) {
-                val initDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "init" }.descriptor
-                val initLambda = valueArguments[1].state as Lambda
-                val indexDescriptor = initLambda.irFunction.valueParameters.single().descriptor
-                for (i in 0 until size) {
-                    stack.newFrame(initPool = listOf(Variable(indexDescriptor, i.toState(irBuiltIns.intType)))) {
-                        initLambda.irFunction.body!!.interpret()
-                    }.check(ReturnLabel.RETURN) { return it } // TODO throw exception if label != RETURN
-                    arrayValue[i] = stack.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
-                }
-            }
-            stack.pushReturnValue(arrayValue.toPrimitiveStateArray(parent.defaultType))
-            return Next
+            return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
         }
 
         val state = Common(parent)
@@ -665,11 +570,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 if (!stack.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
-                    val convertibleClassName = stack.popReturnValue().irClass.fqNameForIrSerialization
-                    val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
-                    val message = "$convertibleClassName cannot be cast to $castClassName"
-                    stack.pushReturnValue(ExceptionState(ClassCastException(message), classCastException, stack.getStackTrace()))
-                    return Exception
+                    val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
+                    val castClassName = expression.type.classOrNull?.owner?.fqNameWhenAvailable
+                    throw ClassCastException("$convertibleClassName cannot be cast to $castClassName")
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
