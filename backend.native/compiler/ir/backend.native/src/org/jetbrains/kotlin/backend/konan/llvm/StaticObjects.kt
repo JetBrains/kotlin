@@ -32,15 +32,9 @@ private fun StaticData.arrayHeader(typeInfo: ConstPointer, length: Int): Struct 
 }
 
 internal fun StaticData.createKotlinStringLiteral(value: String): ConstPointer {
-    val name = "kstr:" + value.globalHashBase64
     val elements = value.toCharArray().map(::Char16)
-
     val objRef = createConstKotlinArray(context.ir.symbols.string.owner, elements)
-
-    val res = createAlias(name, objRef)
-    LLVMSetLinkage(res.llvm, LLVMLinkage.LLVMWeakAnyLinkage)
-
-    return res
+    return objRef
 }
 
 private fun StaticData.createRef(objHeaderPtr: ConstPointer) = objHeaderPtr.bitcast(kObjHeaderPtr)
