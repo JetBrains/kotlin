@@ -19,11 +19,13 @@ import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.HyperlinkInfoFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.ToIntFunction;
 
 public class HyperlinkInfoFactoryImpl extends HyperlinkInfoFactory {
@@ -42,5 +44,10 @@ public class HyperlinkInfoFactoryImpl extends HyperlinkInfoFactory {
                                                         @NotNull Project project,
                                                         @Nullable ToIntFunction<? super PsiFile> columnFinder) {
     return new MultipleFilesHyperlinkInfo(files, line, project, columnFinder);
+  }
+
+  @Override
+  public @NotNull HyperlinkInfo createMultiplePsiElementHyperlinkInfo(@NotNull Map<? extends VirtualFile, ? extends PsiElement> fileToElement) {
+    return new MultiPsiElementHyperlinkInfo(fileToElement);
   }
 }
