@@ -1,15 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
@@ -29,6 +26,10 @@ open class KotlinNpmInstallTask : DefaultTask() {
     val packageJsonFiles: Collection<File>
         get() = resolutionManager.packageJsonFiles
 
+    @get:InputFile
+    val rootPackageJson: File
+        get() = nodeJs.rootPackageJson
+
     // avoid using node_modules as output directory, as it is significantly slows down build
     @get:OutputFile
     val nodeModulesState: File
@@ -40,7 +41,15 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        resolutionManager.install()
+        val npmResolutions = resolutionManager.requireInstalled()
+            .projects
+            .values
+        nodeJs.packageManager.resolveRootProject(
+            project,
+            npmResolutions.flatMap { it.npmProjects },
+            false,
+            args
+        )
     }
 
     companion object {

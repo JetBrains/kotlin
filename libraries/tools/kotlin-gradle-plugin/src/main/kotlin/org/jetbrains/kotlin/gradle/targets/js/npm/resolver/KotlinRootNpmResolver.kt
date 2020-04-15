@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,7 +42,7 @@ internal class KotlinRootNpmResolver internal constructor(
     val gradleNodeModules = GradleNodeModulesCache(nodeJs)
     val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
     val packageJsonUmbrella = rootProject.registerTask(PACKAGE_JSON_UMBRELLA_TASK_NAME, Task::class.java) {}
-    private val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
+    val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
@@ -86,7 +86,7 @@ internal class KotlinRootNpmResolver internal constructor(
     }
 
     /**
-     * Don't use directly, use [NodeJsRootExtension.resolveIfNeeded] instead.
+     * Don't use directly, use [KotlinNpmResolutionManager.installIfNeeded] instead.
      */
     internal fun close(forceUpToDate: Boolean): KotlinRootNpmResolution {
         check(!closed)
@@ -108,14 +108,12 @@ internal class KotlinRootNpmResolver internal constructor(
         }
         val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
-        nodeJs.packageManager.resolveRootProject(
+        nodeJs.packageManager.prepareRootProject(
             rootProject,
             allNpmPackages,
             upToDate,
             nodeJs.npmInstallTask.args
         )
-
-        nodeJs.rootNodeModulesStateFile.writeText(System.currentTimeMillis().toString())
 
         upToDateChecks.forEach { it.commit() }
 

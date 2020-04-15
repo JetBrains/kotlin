@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -84,8 +84,19 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         )
 
     internal sealed class ResolutionState {
-        class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState()
-        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState()
+        abstract val npmProjects: List<NpmProject>
+
+        class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = resolver.compilations.map { it.npmProject }
+
+        }
+
+        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = resolved.projects.values.flatMap { it.npmProjects.map { it.npmProject } }
+
+        }
     }
 
     @Incubating
@@ -100,7 +111,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         installIfNeeded(requireUpToDateReason = reason)[project]
 
     internal val packageJsonFiles: Collection<File>
-        get() = (state as ResolutionState.Configuring).resolver.compilations.map { it.npmProject.packageJsonFile }
+        get() = state.npmProjects.map { it.packageJsonFile }
 
     /**
      * @param requireUpToDateReason Check that project already resolved,
