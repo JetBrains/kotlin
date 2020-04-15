@@ -1,11 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.actions;
 
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IntRef;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
@@ -43,13 +40,5 @@ class ShowUsagesParameters {
 
   static @NotNull ShowUsagesParameters initial(@NotNull Project project, @Nullable Editor editor, @NotNull RelativePoint popupPosition) {
     return new ShowUsagesParameters(project, editor, popupPosition, new IntRef(0), getUsagesPageSize());
-  }
-
-  static @NotNull ShowUsagesParameters initial(@NotNull Project project, @NotNull DataContext dataContext) {
-    return initial(
-      project,
-      dataContext.getData(CommonDataKeys.EDITOR),
-      JBPopupFactory.getInstance().guessBestPopupLocation(dataContext)
-    );
   }
 }

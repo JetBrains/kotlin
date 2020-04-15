@@ -184,20 +184,35 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   }
 
   private static void showSymbolUsages(@NotNull Project project, @NotNull DataContext dataContext) {
-    findShowUsages(project, dataContext, FindBundle.message("show.usages.ambiguous.title"), new UsageVariantHandler() {
+    Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+    RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(dataContext);
+    SearchScope searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().getDefaultScopeName());
+    findShowUsages(
+      project, dataContext, FindBundle.message("show.usages.ambiguous.title"),
+      createVariantHandler(project, editor, popupPosition, searchScope)
+    );
+  }
+
+  @NotNull
+  private static UsageVariantHandler createVariantHandler(@NotNull Project project,
+                                                          @Nullable Editor editor,
+                                                          @NotNull RelativePoint popupPosition,
+                                                          @NotNull SearchScope searchScope) {
+    return new UsageVariantHandler() {
 
       @Override
       public void handleTarget(@NotNull SearchTarget target) {
-        ShowTargetUsagesActionHandler.showUsages(project, dataContext, target);
+        ShowTargetUsagesActionHandler.showUsages(
+          project, searchScope, target,
+          ShowUsagesParameters.initial(project, editor, popupPosition)
+        );
       }
 
       @Override
       public void handlePsi(@NotNull PsiElement element) {
-        Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
-        RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(dataContext);
         startFindUsages(element, popupPosition, editor);
       }
-    });
+    };
   }
 
   private static void showPsiUsages(@NotNull Project project, @NotNull AnActionEvent e, @NotNull RelativePoint popupPosition) {

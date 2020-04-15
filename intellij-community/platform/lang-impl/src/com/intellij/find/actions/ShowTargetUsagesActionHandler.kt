@@ -1,15 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.actions
 
-import com.intellij.find.FindSettings
-import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.usages.SearchTarget
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions.createOptions
 import com.intellij.find.usages.impl.AllSearchOptions
 import com.intellij.find.usages.impl.buildQuery
 import com.intellij.find.usages.impl.hasTextSearchStrings
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.SearchScope
 import com.intellij.usages.UsageSearchPresentation
@@ -62,10 +59,8 @@ internal data class ShowTargetUsagesActionHandler<O>(
   companion object {
 
     @JvmStatic
-    fun showUsages(project: Project, dataContext: DataContext, target: SearchTarget) {
-      val searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().defaultScopeName)
-      val showUsagesActionHandler = createActionHandler(project, searchScope, target, target.usageHandler)
-      ShowUsagesAction.showElementUsages(ShowUsagesParameters.initial(project, dataContext), showUsagesActionHandler)
+    fun showUsages(project: Project, searchScope: SearchScope, target: SearchTarget, parameters: ShowUsagesParameters) {
+      ShowUsagesAction.showElementUsages(parameters, createActionHandler(project, searchScope, target, target.usageHandler))
     }
 
     private fun <O> createActionHandler(project: Project,
