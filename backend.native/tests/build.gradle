@@ -3981,8 +3981,9 @@ if (isAppleTarget(project)) {
                     dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
+                dependsOn konanArtifacts[libraryName].getByTarget(target.name)
                 libraries {
-                    artifact libraryName
+                    file konanArtifacts[libraryName].getArtifactByTarget(target.name)
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
@@ -4030,8 +4031,9 @@ if (isAppleTarget(project)) {
                     dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
+                dependsOn konanArtifacts[libraryName].getByTarget(target.name)
                 libraries {
-                    artifact libraryName
+                    file konanArtifacts[libraryName].getArtifactByTarget(target.name)
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
