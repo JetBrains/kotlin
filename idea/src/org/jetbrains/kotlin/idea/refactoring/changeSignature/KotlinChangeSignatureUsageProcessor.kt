@@ -95,6 +95,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     private var initializedOriginalDescriptor: Boolean = false
 
     override fun findUsages(info: ChangeInfo): Array<UsageInfo> {
+        if (!canHandle(info)) return UsageInfo.EMPTY_ARRAY
+
         initializedOriginalDescriptor = false
 
         val result = HashSet<UsageInfo>()
@@ -114,6 +116,11 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         return result.toTypedArray()
     }
+
+    private fun canHandle(changeInfo: ChangeInfo) =
+        changeInfo is KotlinChangeInfo
+                || changeInfo is KotlinChangeInfoWrapper
+                || changeInfo is JavaChangeInfo
 
     private fun findAllMethodUsages(changeInfo: KotlinChangeInfo, result: MutableSet<UsageInfo>) {
         loop@ for (functionUsageInfo in changeInfo.getAffectedCallables()) {
