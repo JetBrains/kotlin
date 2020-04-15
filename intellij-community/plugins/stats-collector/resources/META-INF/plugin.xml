@@ -27,7 +27,8 @@
   </extensionPoints>
 
   <actions>
-    <action id="DumpMLCompletionFeatures" class="com.intellij.completion.actions.DumpMLCompletionFeatures">
+    <action id="DumpMLCompletionFeatures"
+            class="com.intellij.completion.actions.MLCompletionFeaturesUtil$CopyFeaturesToClipboard">
       <keyboard-shortcut keymap="$default" first-keystroke="alt M" second-keystroke="L"/>
     </action>
   </actions>
