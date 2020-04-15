@@ -146,6 +146,30 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
   }
 
   @Test
+  fun `test gradle properties resolution (Idea gradle user home properties)`() {
+    withServiceGradleUserHome {
+      withGradleProperties(gradleUserHome, java = earliestSdk) {
+        assertGradleProperties(java = earliestSdk)
+        withGradleProperties(externalProjectPath, java = latestSdk) {
+          assertGradleProperties(java = earliestSdk)
+        }
+      }
+      withGradleProperties(gradleUserHome, java = latestSdk) {
+        assertGradleProperties(java = latestSdk)
+        withGradleProperties(externalProjectPath, java = null) {
+          assertGradleProperties(java = latestSdk)
+        }
+      }
+      withGradleProperties(gradleUserHome, java = null) {
+        assertGradleProperties(java = null)
+        withGradleProperties(externalProjectPath, java = latestSdk) {
+          assertGradleProperties(java = latestSdk)
+        }
+      }
+    }
+  }
+
+  @Test
   fun `test gradle properties resolution (GRADLE_USER_HOME overrides user_home)`() {
     environment.properties(USER_HOME to userHome)
     environment.variables(SYSTEM_DIRECTORY_PATH_KEY to gradleUserHome)

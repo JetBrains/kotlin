@@ -16,6 +16,7 @@ import com.intellij.util.SystemProperties
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
 import java.io.File
 import java.util.*
 
@@ -142,6 +143,17 @@ abstract class GradleJdkResolutionTestCase : SdkTestCase() {
   fun assertGradleProperties(java: TestSdk?) {
     val actualProperties = getGradleProperties(externalProjectPath)
     assertEquals(java?.homePath, actualProperties.javaHomeProperty?.value)
+  }
+
+  fun withServiceGradleUserHome(action: () -> Unit) {
+    val systemSettings = GradleSystemSettings.getInstance()
+    val serviceDirectoryPath = systemSettings.serviceDirectoryPath
+    systemSettings.serviceDirectoryPath = gradleUserHome
+    try {
+      action()
+    } finally {
+      systemSettings.serviceDirectoryPath = serviceDirectoryPath
+    }
   }
 
   fun withGradleProperties(parentDirectory: String, java: TestSdk?, action: () -> Unit) {
