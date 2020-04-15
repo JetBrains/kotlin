@@ -215,7 +215,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
     private fun AbstractFirBasedSymbol<*>.fqNameUnsafe(): FqNameUnsafe? = when (this) {
         is FirClassLikeSymbol<*> -> classId.asSingleFqName().toUnsafe()
-        is FirCallableSymbol<*> -> callableId.asFqName().toUnsafe()
+        is FirCallableSymbol<*> -> callableId.asFqNameForDebugInfo().toUnsafe()
         else -> null
     }
 

@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -80,7 +80,18 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun callableIdForName(name: Name, local: Boolean = false) =
         when {
-            local -> CallableId(name)
+            local -> {
+                val pathFqName =
+                    context.firFunctionTargets.fold(
+                        if (context.className == FqName.ROOT) context.packageFqName else context.currentClassId.asSingleFqName()
+                    ) { result, firFunctionTarget ->
+                        if (firFunctionTarget.isLambda || firFunctionTarget.labelName == null)
+                            result
+                        else
+                            result.child(Name.identifier(firFunctionTarget.labelName!!))
+                    }
+                CallableId(name, pathFqName)
+            }
             context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
             context.className.shortName() === ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
             else -> CallableId(context.packageFqName, context.className, name)
