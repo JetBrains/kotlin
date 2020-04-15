@@ -551,10 +551,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     int leftPadding = 8;
     int definitionTopPadding = 4;
     String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
-    editorKit.getStyleSheet().addRule("tt {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule(".pre {font-family:\"" + editorFontName + "\"}");
+    editorKit.getStyleSheet().addRule("tt {font-family:\"" + editorFontName + "\"; font-size: 96%;}");
+    editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"; font-size: 96%;}");
+    editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"; font-size: 96%;}");
+    editorKit.getStyleSheet().addRule(".pre {font-family:\"" + editorFontName + "\"; font-size: 96%;}");
     editorKit.getStyleSheet().addRule("html { padding-bottom: 8px; }");
     editorKit.getStyleSheet().addRule("h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }");
     editorKit.getStyleSheet().addRule("a { color: #" + ColorUtil.toHex(getLinkColor()) + "; text-decoration: none;}");
