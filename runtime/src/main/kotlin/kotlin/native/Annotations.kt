@@ -32,24 +32,9 @@ public annotation class Retain
 public annotation class RetainForTarget(val target: String)
 
 
-// TODO: merge with [kotlin.jvm.Throws]
-/**
- * This annotation indicates what exceptions should be declared by a function when compiled to a platform method.
- *
- * When compiling to Objective-C/Swift framework, functions having or inheriting
- * this annotation are represented as `NSError*`-producing methods in Objective-C
- * and as `throws` methods in Swift.
- *
- * When Kotlin function called from Swift/Objective-C code throws an exception
- * which is an instance of one of the [exceptionClasses] or their subclasses,
- * it is propagated as `NSError`. Other Kotlin exceptions reaching Swift/Objective-C
- * are considered unhandled and cause program termination.
- *
- * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
- */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
-@Retention(AnnotationRetention.BINARY)
-public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
+/** @suppress */
+@Deprecated("Use common kotlin.Throws annotation instead.", ReplaceWith("kotlin.Throws"), DeprecationLevel.WARNING)
+public typealias Throws = kotlin.Throws
 
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
