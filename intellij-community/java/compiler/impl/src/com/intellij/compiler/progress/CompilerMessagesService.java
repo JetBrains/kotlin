@@ -196,10 +196,13 @@ public class CompilerMessagesService implements BuildViewService {
         final Project project = myProject;
         if (!project.isDisposed()) {
           synchronized (myMessageViewLock) {
-            if (myErrorTreeView == null && MessageView.SERVICE.getInstance(project).getContentManager().getContentCount() > 0) {
-              // only do something if there are already contans from previous compilations present
-              // this will add the new content for this task and clear messages from previous compilations
-              openMessageView(sessionId);
+            if (myErrorTreeView == null) {
+              MessageView messageView = project.getServiceIfCreated(MessageView.class);
+              if (messageView != null && messageView.getContentManager().getContentCount() > 0) {
+                // only do something if there are already contains from previous compilations present
+                // this will add the new content for this task and clear messages from previous compilations
+                openMessageView(sessionId);
+              }
             }
           }
         }
