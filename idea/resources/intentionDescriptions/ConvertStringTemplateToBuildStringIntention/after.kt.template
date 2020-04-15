@@ -1,0 +1,5 @@
+buildString {
+    append("Something(")
+    append(foo)
+    append(")")
+}

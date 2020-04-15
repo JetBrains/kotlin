@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun test(foo: String, bar: Int) {
+    val s = buildString {
+        append(foo)
+        append(bar)
+        append("aaa\nbbb")
+    }
+}
