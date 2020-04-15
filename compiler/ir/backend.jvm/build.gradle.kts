@@ -5,6 +5,9 @@ plugins {
 
 dependencies {
     compile(project(":kotlin-annotations-jvm"))
+    compile(project(":compiler:fir:fir-serialization"))
+    compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:fir:fir2ir:jvm-backend"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:ir.tree"))
     compile(project(":compiler:ir.psi2ir"))

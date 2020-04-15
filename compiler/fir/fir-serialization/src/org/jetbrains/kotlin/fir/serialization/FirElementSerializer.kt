@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -51,7 +53,8 @@ class FirElementSerializer private constructor(
 ) {
     private val contractSerializer = FirContractSerializer()
 
-    fun classProto(klass: FirClass<*>): ProtoBuf.Class.Builder {
+    fun classProto(irClass: IrClass): ProtoBuf.Class.Builder {
+        val klass = (irClass.metadata as FirMetadataSource.Class).klass
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -143,7 +146,7 @@ class FirElementSerializer private constructor(
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(klass))
 
-        extension.serializeClass(klass, builder, versionRequirementTable, this)
+        extension.serializeClass(irClass, builder, versionRequirementTable, this)
 
         writeVersionRequirementForInlineClasses(klass, builder, versionRequirementTable)
 
@@ -545,11 +548,11 @@ class FirElementSerializer private constructor(
                 fillFromPossiblyInnerType(builder, type)
             }
             is ConeTypeParameterType -> {
-                // TODO: type parameter containing declaration?
-                if (false /*descriptor.containingDeclaration === containingDeclaration*/) {
-                    //builder.typeParameterName = getSimpleNameIndex(descriptor.name)
+                val typeParameter = type.lookupTag.typeParameterSymbol.fir
+                if (typeParameter in (containingDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList()) {
+                    builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
                 } else {
-                    builder.typeParameter = getTypeParameterId(type.lookupTag.typeParameterSymbol.fir)
+                    builder.typeParameter = getTypeParameterId(typeParameter)
                 }
             }
         }
@@ -636,7 +639,7 @@ class FirElementSerializer private constructor(
             typeTable, versionRequirementTable, serializeTypeTableToFunction = false
         )
 
-    private val stringTable: FirElementAwareStringTable
+    val stringTable: FirElementAwareStringTable
         get() = extension.stringTable
 
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()

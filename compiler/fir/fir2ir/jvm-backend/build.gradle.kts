@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir2ir"))
+    compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend"))
 

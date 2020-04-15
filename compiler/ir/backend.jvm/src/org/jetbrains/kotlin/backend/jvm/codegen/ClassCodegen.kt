@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
@@ -204,7 +205,11 @@ abstract class ClassCodegen protected constructor(
     companion object {
         fun getOrCreate(irClass: IrClass, context: JvmBackendContext, parentFunction: IrFunction? = null): ClassCodegen =
             context.classCodegens.getOrPut(irClass) {
-                DescriptorBasedClassCodegen(irClass, context, parentFunction)
+                if (irClass.metadata is FirMetadataSource) {
+                    FirBasedClassCodegen(irClass, context, parentFunction)
+                } else {
+                    DescriptorBasedClassCodegen(irClass, context, parentFunction)
+                }
             }.also {
                 assert(parentFunction == null || it.parentFunction == parentFunction) {
                     "inconsistent parent function for ${irClass.render()}:\n" +
@@ -216,6 +221,8 @@ abstract class ClassCodegen protected constructor(
         private fun JvmClassSignature.hasInvalidName() =
             name.splitToSequence('/').any { identifier -> identifier.any { it in JvmSimpleNameBacktickChecker.INVALID_CHARS } }
     }
+
+    protected abstract fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String)
 
     private fun generateField(field: IrField) {
         if (field.isFakeOverride) return
@@ -244,10 +251,7 @@ abstract class ClassCodegen protected constructor(
             }.genAnnotations(field, fieldType, field.type)
         }
 
-        val descriptor = field.metadata?.descriptor
-        if (descriptor != null) {
-            state.globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
-        }
+        bindFieldMetadata(field, fieldType, fieldName)
     }
 
     private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
@@ -265,6 +269,8 @@ abstract class ClassCodegen protected constructor(
         node.accept(copy)
         return SMAPAndMethodNode(copy, smap)
     }
+
+    protected abstract fun bindMethodMetadata(method: IrFunction, signature: Method)
 
     private fun generateMethod(method: IrFunction, classSMAP: DefaultSourceMapper) {
         if (method.isFakeOverride) {
@@ -299,24 +305,7 @@ abstract class ClassCodegen protected constructor(
         jvmSignatureClashDetector.trackMethod(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
 
         val signature = Method(node.name, node.desc)
-        when (val metadata = method.metadata) {
-            is MetadataSource.Property -> {
-                // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
-                // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
-                // TODO: fix origin somehow, because otherwise $annotations methods in interfaces also don't have ACC_SYNTHETIC
-                assert(method.name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)) { method.dump() }
-
-                state.globalSerializationBindings.put(
-                    JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY, metadata.descriptor, signature
-                )
-            }
-            is MetadataSource.Function -> {
-                visitor.serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor, signature)
-            }
-            null -> {
-            }
-            else -> error("Incorrect metadata source $metadata for:\n${method.dump()}")
-        }
+        bindMethodMetadata(method, signature)
     }
 
     private fun generateInnerAndOuterClasses() {

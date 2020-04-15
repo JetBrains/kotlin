@@ -10,35 +10,58 @@ import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
+import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isFileClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class DescriptorBasedClassCodegen internal constructor(
+class FirBasedClassCodegen internal constructor(
     irClass: IrClass,
     context: JvmBackendContext,
     parentFunction: IrFunction? = null
 ) : ClassCodegen(irClass, context, parentFunction) {
 
-    private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)
-    private val serializer: DescriptorSerializer? =
+    private val session = (irClass.metadata as FirMetadataSource).session
+
+    private val serializerExtension = FirJvmSerializerExtension(session, visitor.serializationBindings, state, typeMapper)
+    private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
-            is MetadataSource.Class -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parentClassCodegen as? DescriptorBasedClassCodegen)?.serializer
+            is FirMetadataSource.Class -> FirElementSerializer.create(
+                metadata.klass, serializerExtension, (parentClassCodegen as? FirBasedClassCodegen)?.serializer
             )
-            is MetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
-            is MetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
+            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension)
             else -> null
         }
+
+    private fun FirFunction<*>.copyToFreeAnonymousFunction(): FirAnonymousFunction {
+        val function = this
+        return buildAnonymousFunction {
+            session = function.session
+            symbol = FirAnonymousFunctionSymbol()
+            returnTypeRef = function.returnTypeRef
+            receiverTypeRef = function.receiverTypeRef
+            isLambda = false
+            valueParameters.addAll(function.valueParameters)
+            typeParameters.addAll(function.typeParameters.filterIsInstance<FirTypeParameter>())
+        }
+    }
 
     override fun generateKotlinMetadataAnnotation() {
 
@@ -56,42 +79,22 @@ class DescriptorBasedClassCodegen internal constructor(
         }
 
         when (val metadata = irClass.metadata) {
-            is MetadataSource.Class -> {
-                val classProto = serializer!!.classProto(metadata.descriptor).build()
+            is FirMetadataSource.Class -> {
+                val classProto = serializer!!.classProto(irClass).build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, extraFlags) {
-                    AsmUtil.writeAnnotationData(it, serializer, classProto)
+                    AsmUtil.writeAnnotationData(it, classProto, serializer.stringTable as JvmStringTable)
                 }
 
                 assert(irClass !in context.classNameOverride) {
                     "JvmPackageName is not supported for classes: ${irClass.render()}"
                 }
             }
-            is MetadataSource.File -> {
-                val packageFqName = irClass.getPackageFragment()!!.fqName
-                val packageProto = serializer!!.packagePartProto(packageFqName, metadata.descriptors)
-
-                serializerExtension.serializeJvmPackage(packageProto, type)
-
-                val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
-                val kind = if (facadeClassName != null) KotlinClassHeader.Kind.MULTIFILE_CLASS_PART else KotlinClassHeader.Kind.FILE_FACADE
-                writeKotlinMetadata(visitor, state, kind, extraFlags) { av ->
-                    AsmUtil.writeAnnotationData(av, serializer, packageProto.build())
-
-                    if (facadeClassName != null) {
-                        av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
-                    }
-
-                    if (irClass in context.classNameOverride) {
-                        av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
-                    }
-                }
-            }
-            is MetadataSource.Function -> {
-                val fakeDescriptor = createFreeFakeLambdaDescriptor(metadata.descriptor)
-                val functionProto = serializer!!.functionProto(fakeDescriptor)?.build()
+            is FirMetadataSource.Function -> {
+                val fakeAnonymousFunction = metadata.function.copyToFreeAnonymousFunction()
+                val functionProto = serializer!!.functionProto(fakeAnonymousFunction)?.build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, extraFlags) {
                     if (functionProto != null) {
-                        AsmUtil.writeAnnotationData(it, serializer, functionProto)
+                        AsmUtil.writeAnnotationData(it, functionProto, serializer.stringTable as JvmStringTable)
                     }
                 }
             }
@@ -114,18 +117,18 @@ class DescriptorBasedClassCodegen internal constructor(
 
     override fun bindMethodMetadata(method: IrFunction, signature: Method) {
         when (val metadata = method.metadata) {
-            is MetadataSource.Property -> {
+            is FirMetadataSource.Variable -> {
                 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
                 // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
                 // TODO: fix origin somehow, because otherwise $annotations methods in interfaces also don't have ACC_SYNTHETIC
                 assert(method.name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)) { method.dump() }
 
                 state.globalSerializationBindings.put(
-                    JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY, metadata.descriptor, signature
+                    FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, metadata.variable, signature
                 )
             }
-            is MetadataSource.Function -> {
-                visitor.serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor, signature)
+            is FirMetadataSource.Function -> {
+                visitor.serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.function, signature)
             }
             null -> {
             }
@@ -134,9 +137,6 @@ class DescriptorBasedClassCodegen internal constructor(
     }
 
     override fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String) {
-        val descriptor = field.metadata?.descriptor
-        if (descriptor != null) {
-            state.globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
-        }
+        // TODO
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -35,7 +36,7 @@ abstract class FirSerializerExtension {
     }
 
     open fun serializeClass(
-        klass: FirClass<*>,
+        klass: IrClass,
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
