@@ -1,6 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
-
 fun f1(): () -> Result<String> {
     return {
         runCatching {
