@@ -2,6 +2,7 @@
 package com.intellij.completion.actions
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
@@ -37,8 +38,8 @@ object MLCompletionFeaturesUtil {
 
   class CopyFeaturesToClipboard : AnAction() {
     companion object {
-      private val LOG = Logger.getInstance(CopyFeaturesToClipboard::class.java)
-      private val gson: Gson = Gson()
+      private val LOG: Logger = Logger.getInstance(CopyFeaturesToClipboard::class.java)
+      private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     }
 
     override fun actionPerformed(e: AnActionEvent) {
