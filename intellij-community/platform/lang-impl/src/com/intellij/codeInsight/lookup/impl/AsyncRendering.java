@@ -4,7 +4,6 @@ package com.intellij.codeInsight.lookup.impl;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
-import com.intellij.codeInsight.lookup.RealLookupElementPresentation;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -15,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.CancellablePromise;
 
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -42,11 +42,12 @@ public class AsyncRendering {
     });
   }
 
+  @NotNull
   LookupElementPresentation getLastComputed(@NotNull LookupElement element) {
-    return element.getUserData(LAST_COMPUTED_PRESENTATION);
+    return Objects.requireNonNull(element.getUserData(LAST_COMPUTED_PRESENTATION));
   }
 
-  private static void rememberPresentation(LookupElement element, LookupElementPresentation presentation) {
+  static void rememberPresentation(LookupElement element, LookupElementPresentation presentation) {
     element.putUserData(LAST_COMPUTED_PRESENTATION, presentation);
   }
 
@@ -66,7 +67,7 @@ public class AsyncRendering {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private void renderInBackground(LookupElement element, LookupElementRenderer renderer, Ref<CancellablePromise<?>> promiseRef) {
-    RealLookupElementPresentation presentation = new RealLookupElementPresentation();
+    LookupElementPresentation presentation = new LookupElementPresentation();
     renderer.renderElement(element, presentation);
 
     rememberPresentation(element, presentation);
@@ -77,7 +78,7 @@ public class AsyncRendering {
     }
   }
 
-  private void scheduleLookupUpdate(LookupElement element, RealLookupElementPresentation presentation) {
+  private void scheduleLookupUpdate(LookupElement element, LookupElementPresentation presentation) {
     if (myLookup.myCellRenderer.updateLookupWidth(element, presentation)) {
       myToResize.set(true);
     }

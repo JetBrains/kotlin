@@ -4,7 +4,6 @@ package com.intellij.codeInsight.lookup.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.lookup.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -13,7 +12,6 @@ import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
@@ -127,10 +125,6 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     int allowedWidth = list.getWidth() - calcSpacing(myNameComponent, myEmptyIcon) - calcSpacing(myTailComponent, null) - calcSpacing(myTypeLabel, null);
 
     LookupElementPresentation presentation = myAsyncRendering.getLastComputed(item);
-    if (presentation == null) {
-      presentation = new RealLookupElementPresentation();
-      renderLookupElement(item, presentation);
-    }
 
     myNameComponent.clear();
     myNameComponent.setBackground(background);
@@ -194,28 +188,6 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     AccessibleContextUtil.setCombinedName(myPanel, myNameComponent, "", myTailComponent, " - ", myTypeLabel);
     AccessibleContextUtil.setCombinedDescription(myPanel, myNameComponent, "", myTailComponent, " - ", myTypeLabel);
     return myPanel;
-  }
-
-  private static void renderLookupElement(LookupElement item, LookupElementPresentation presentation) {
-    ApplicationManager.getApplication().runReadAction(() -> {
-      if (item.isValid()) {
-        try {
-          item.renderElement(presentation);
-        }
-        catch (ProcessCanceledException e) {
-          LOG.info(e);
-          presentation.setItemTextForeground(JBColor.RED);
-          presentation.setItemText("Error occurred, see the log in Help | Show Log");
-        }
-        catch (Exception | Error e) {
-          LOG.error(e);
-        }
-      }
-      else {
-        presentation.setItemTextForeground(JBColor.RED);
-        presentation.setItemText("Invalid");
-      }
-    });
   }
 
   @VisibleForTesting
@@ -512,7 +484,10 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     }
   }
 
-  void scheduleExpensiveRendering(@NotNull LookupElement element) {
+  void itemAdded(@NotNull LookupElement element, @NotNull LookupElementPresentation fastPresentation) {
+    updateLookupWidth(element, fastPresentation);
+    AsyncRendering.rememberPresentation(element, fastPresentation);
+
     LookupElementRenderer<? extends LookupElement> renderer = element.getExpensiveRenderer();
     if (renderer != null) {
       myAsyncRendering.scheduleRendering(element, renderer);
