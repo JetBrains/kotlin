@@ -16,41 +16,48 @@
 
 package org.jetbrains.kotlin.cli
 
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
+import org.jetbrains.kotlin.utils.addToStdlib.cast
+import java.io.*
+import java.util.concurrent.TimeUnit
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
-            executableName: String,
-            vararg args: String,
-            expectedStdout: String = "",
-            expectedStderr: String = "",
-            expectedExitCode: Int = 0,
-            workDirectory: File? = null
+        executableName: String,
+        vararg args: String,
+        expectedStdout: String = "",
+        expectedStderr: String = "",
+        expectedExitCode: Int = 0,
+        workDirectory: File? = null
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
         assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
 
-        val cmd = GeneralCommandLine(launcherFile.absolutePath, *args)
-        workDirectory?.let(cmd::withWorkDirectory)
-        val processOutput = ExecUtil.execAndGetOutput(cmd)
-        val stdout = StringUtil.convertLineSeparators(processOutput.stdout)
-        val stderr = StringUtil.convertLineSeparators(processOutput.stderr).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
-        val exitCode = processOutput.exitCode
-
+        // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
+        // So, use ProcessBuilder instead.
+        val pb = ProcessBuilder(
+            launcherFile.absolutePath,
+            // In cmd, `=` is delimeter, so we need to surround parameter with quotes.
+            *quoteIfNeeded(args)
+        )
+        pb.directory(workDirectory)
+        pb.environment().remove("_KOTLIN_RUNNER") // FIXME: HACK
+        val process = pb.start()
+        val stdout = StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() })
+        val stderr = StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() })
+            .replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
+        process.waitFor(10, TimeUnit.SECONDS)
+        val exitCode = process.exitValue()
         try {
             assertEquals(expectedStdout, stdout)
             assertEquals(expectedStderr, stderr)
             assertEquals(expectedExitCode, exitCode)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             System.err.println("exit code $exitCode")
             System.err.println("=== STDOUT ===")
             System.err.println(stdout)
@@ -60,22 +67,28 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         }
     }
 
+    private fun quoteIfNeeded(args: Array<out String>): Array<String> =
+        if (SystemInfo.isWindows) args.map {
+            if (it.contains('=') || it.contains(" ") || it.contains(";") || it.contains(",")) "\"$it\"" else it
+        }.toTypedArray()
+        else args.cast()
+
     private val testDataDirectory: String
         get() = KotlinTestUtils.getTestDataPathBase() + "/launcher"
 
     fun testKotlincSimple() {
         runProcess(
-                "kotlinc",
-                "$testDataDirectory/helloWorld.kt",
-                "-d", tmpdir.path
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path
         )
     }
 
     fun testKotlincJvmSimple() {
         runProcess(
-                "kotlinc-jvm",
-                "$testDataDirectory/helloWorld.kt",
-                "-d", tmpdir.path
+            "kotlinc-jvm",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path
         )
     }
 
@@ -108,45 +121,45 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 
     fun testKotlincJsSimple() {
         runProcess(
-                "kotlinc-js",
-                "$testDataDirectory/emptyMain.kt",
-                "-output", File(tmpdir, "out.js").path
+            "kotlinc-js",
+            "$testDataDirectory/emptyMain.kt",
+            "-output", File(tmpdir, "out.js").path
         )
     }
 
     fun testKotlinNoReflect() {
         runProcess(
-                "kotlinc",
-                "$testDataDirectory/reflectionUsage.kt",
-                "-d", tmpdir.path
+            "kotlinc",
+            "$testDataDirectory/reflectionUsage.kt",
+            "-d", tmpdir.path
         )
 
         runProcess(
-                "kotlin",
-                "-cp", tmpdir.path,
-                "-no-reflect",
-                "ReflectionUsageKt",
-                expectedStdout = "no reflection"
+            "kotlin",
+            "-cp", tmpdir.path,
+            "-no-reflect",
+            "ReflectionUsageKt",
+            expectedStdout = "no reflection"
         )
     }
 
     fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
         runProcess(
-                "kotlinc",
-                "$testDataDirectory/helloWorld.kt",
-                "-d", tmpdir.path
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path
         )
 
         runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
 
         val emptyDir = KotlinTestUtils.tmpDirForTest(this)
         runProcess(
-                "kotlin",
-                "-cp", emptyDir.path,
-                "test.HelloWorldKt",
-                expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
-                expectedExitCode = 1,
-                workDirectory = tmpdir
+            "kotlin",
+            "-cp", emptyDir.path,
+            "test.HelloWorldKt",
+            expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
+            expectedExitCode = 1,
+            workDirectory = tmpdir
         )
     }
 
@@ -176,5 +189,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
 
         runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
+    }
+
+    fun testProperty() {
+        runProcess("kotlinc", "$testDataDirectory/property.kt", "-d", tmpdir.path)
+
+        runProcess(
+            "kotlin", "PropertyKt", "-Dresult=OK",
+            workDirectory = tmpdir, expectedStdout = "OK\n"
+        )
     }
 }

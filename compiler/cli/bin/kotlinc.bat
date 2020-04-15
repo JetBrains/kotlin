@@ -27,9 +27,27 @@ if "%_JAVACMD%"=="" set _JAVACMD=java
 rem We use the value of the JAVA_OPTS environment variable if defined
 if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx256M -Xms32M
 
-if not "%_KOTLIN_RUNNER%"=="" (
+rem Iterate through arguments and split them into java and kotlin ones
+:loop
+set _arg=%~1
+if "%_arg%" == "" goto loopend
+
+if "%_arg:~0,2%"=="-J" (
+  set JAVA_OPTS=%JAVA_OPTS% "%_arg:~2%"
+) else (
+  if "%_arg:~0,2%"=="-D" (
+    set JAVA_OPTS=%JAVA_OPTS% "%_arg%"
+  ) else (
+    set KOTLIN_OPTS=%KOTLIN_OPTS% "%_arg%"
+  )
+)
+shift
+goto loop
+:loopend
+
+if "%_KOTLIN_RUNNER%"=="1" (
   "%_JAVACMD%" %JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
-    org.jetbrains.kotlin.runner.Main %*
+    org.jetbrains.kotlin.runner.Main %KOTLIN_OPTS%
 ) else (
   SET _ADDITIONAL_CLASSPATH=
 
@@ -39,7 +57,7 @@ if not "%_KOTLIN_RUNNER%"=="" (
 
   "%_JAVACMD%" %JAVA_OPTS% -noverify -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
     org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar%_ADDITIONAL_CLASSPATH%" ^
-    %_KOTLIN_COMPILER% %*
+    %_KOTLIN_COMPILER% %KOTLIN_OPTS%
 )
 
 exit /b %ERRORLEVEL%
