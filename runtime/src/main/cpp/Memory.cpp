@@ -1940,11 +1940,6 @@ OBJ_GETTER(allocInstance, const TypeInfo* type_info) {
 #endif  // USE_GC
   auto container = ObjectContainer(state, type_info);
   ObjHeader* obj = container.GetPlace();
-#if USE_CYCLIC_GC
-  if ((obj->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
-    cyclicAddAtomicRoot(obj);
-  }
-#endif  // USE_CYCLIC_GC
 #if USE_GC
   if (Strict) {
     rememberNewContainer(container.header());
@@ -1952,6 +1947,14 @@ OBJ_GETTER(allocInstance, const TypeInfo* type_info) {
     makeShareable(container.header());
   }
 #endif  // USE_GC
+#if USE_CYCLIC_GC
+  if ((obj->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
+    // Note: this should be performed after [rememberNewContainer] (above).
+    // Otherwise cyclic collector can observe this atomic root with RC = 0,
+    // thus consider it garbage and then zero it after initialization.
+    cyclicAddAtomicRoot(obj);
+  }
+#endif  // USE_CYCLIC_GC
   RETURN_OBJ(obj);
 }
 
