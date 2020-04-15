@@ -451,10 +451,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                         val actualText = if (launcherMessage != null) {
                             val (logLevel, message) = launcherMessage.destructured
                             actualType = LogType.byValueOrNull(logLevel.toLowerCase())
-                            when (actualType) {
-                                LogType.WARN, LogType.ERROR -> {
-                                    processFailedBrowsers(text)
-                                }
+                            if (actualType?.isErrorLike() == true) {
+                                processFailedBrowsers(text)
                             }
                             message
                         } else {

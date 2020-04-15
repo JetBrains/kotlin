@@ -48,8 +48,8 @@ class TeamCityMessageCommonClient(
 
         if (inStackTrace) return
 
-        when (type) {
-            LogType.ERROR, LogType.WARN -> errors.add(value.clearAnsiColor())
+        if (type?.isErrorLike() == true) {
+            errors.add(value.clearAnsiColor())
         }
 
         type?.let { log.processLogMessage(value, it) }

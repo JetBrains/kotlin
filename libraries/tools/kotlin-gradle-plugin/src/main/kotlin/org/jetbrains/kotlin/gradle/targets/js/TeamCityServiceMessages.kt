@@ -66,6 +66,10 @@ enum class LogType(val value: String) {
     DEBUG("debug"),
     LOG("log");
 
+    fun isErrorLike(): Boolean {
+        return this == ERROR || this == WARN
+    }
+
     companion object {
         fun byValueOrNull(value: String?): LogType? {
             if (value == null) return null
