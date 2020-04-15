@@ -3,12 +3,13 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.structuralsearch.Matcher
 import com.intellij.structuralsearch.inspection.highlightTemplate.SSBasedInspection
 import com.intellij.structuralsearch.plugin.ui.SearchConfiguration
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.util.*
 
 @Suppress("UnstableApiUsage")
-abstract class KotlinSSTest : BasePlatformTestCase() {
+abstract class KotlinSSTest : LightJavaCodeInsightFixtureTestCase() {
 
     protected fun doTest(pattern: String) {
         myFixture.configureByFile(getTestName(true) + ".kt")
@@ -28,13 +29,13 @@ abstract class KotlinSSTest : BasePlatformTestCase() {
     }
 
     override fun getTestDataPath(): String {
-        return "src/test/resources/$basePath"
+        return "src/test/resources/$basePath/"
     }
 
-    override fun getBasePath(): String {
-        return "${testDataFolder()}/"
+    /*override fun getProjectDescriptor(): LightProjectDescriptor {
+        return KtSSProjectDescriptor()
     }
 
-    abstract fun testDataFolder(): String
+    internal class KtSSProjectDescriptor : LightProjectDescriptor()*/
 
 }
