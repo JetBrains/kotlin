@@ -20,7 +20,7 @@ fun main() {
         fun foo(x: Int) = inner.w
         fun bar(y: Int) = this.hashCode() + y > 0
 
-        <!EXPOSED_PROPERTY_TYPE!>val inner = Inner()<!>
+        val inner = Inner()
 
         inner class Inner {
             val w get() = z

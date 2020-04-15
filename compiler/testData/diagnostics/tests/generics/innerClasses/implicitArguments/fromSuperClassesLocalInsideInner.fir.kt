@@ -16,7 +16,7 @@ class Outer<T> {
             }
 
             class Derived : LocalOuter<Double, Short>() {
-                <!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(): LocalInner<Long> = null!!<!>
+                fun foo(): LocalInner<Long> = null!!
                 fun bar(): LocalAlias<Char> = null!!
             }
 
@@ -33,7 +33,7 @@ class Outer<T> {
             }
 
             class Derived2 : LocalOuter2<Double, Short>() {
-                <!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(): LocalInner2<Long> = null!!<!>
+                fun foo(): LocalInner2<Long> = null!!
                 fun bar(): LocalAlias2<Char> = null!!
             }
             Derived2()

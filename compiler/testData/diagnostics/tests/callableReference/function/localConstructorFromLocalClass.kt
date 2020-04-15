@@ -5,7 +5,7 @@ fun main() {
     class A
 
     class B {
-        <!EXPOSED_PROPERTY_TYPE!>val x = ::A<!>
-        <!EXPOSED_PROPERTY_TYPE!>val f: KFunction0<A> = x<!>
+        val x = ::A
+        val f: KFunction0<A> = x
     }
 }
