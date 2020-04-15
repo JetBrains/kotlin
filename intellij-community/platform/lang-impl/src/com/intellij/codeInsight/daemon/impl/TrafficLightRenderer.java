@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
+import com.intellij.UtilBundle;
 import com.intellij.analysis.problemsView.inspection.ProblemsViewToolWindowFactory;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -336,7 +337,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         statusExtraLine = "Complete results will be available after indexing";
       }
       else {
-        statusLabel = DaemonBundle.message("analysis.completed");
+        statusLabel = "";
       }
       progressBarsCompleted = Boolean.TRUE;
     }
@@ -395,26 +396,21 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       List<StatusItem> statusItems = new ArrayList<>();
       Icon mainIcon = null;
 
-      String title;
-      StringBuilder detailsBuilder = new StringBuilder();
-
+      String title = "";
+      String details = "";
+      boolean isDumb = DumbService.isDumb(myProject);
       if (status.errorAnalyzingFinished) {
-        boolean isDumb = DumbService.isDumb(myProject);
         if (isDumb) {
           title = DaemonBundle.message("shallow.analysis.completed");
-          detailsBuilder.append("Complete results will be available after indexing");
-        }
-        else {
-          title = "";
+          details = DaemonBundle.message("shallow.analysis.completed.details");
         }
       }
       else {
         title = DaemonBundle.message("performing.code.analysis");
       }
 
-      int currentSeverityErrors = 0;
       int[] errorCount = status.errorCount;
-      for (int i = errorCount.length-1; i >= 0; i--) {
+      for (int i = errorCount.length - 1; i >= 0; i--) {
         int count = errorCount[i];
         if (count > 0) {
           HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
@@ -422,14 +418,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           if (count > 1) {
             name = StringUtil.pluralize(name);
           }
-          if (currentSeverityErrors > 0) {
-            detailsBuilder.append(", ");
-          }
-          detailsBuilder.append(count).append(" ").append(name);
-          currentSeverityErrors += count;
 
           Icon icon = mySeverityRegistrar.getRendererIconByIndex(i);
-          statusItems.add(new StatusItem(Integer.toString(status.errorCount[i]), icon));
+          statusItems.add(new StatusItem(Integer.toString(count), icon, name));
 
           if (mainIcon == null) {
             mainIcon = icon;
@@ -438,14 +429,10 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       }
 
       if (statusItems.size() > 0) {
-        if (!status.errorAnalyzingFinished) {
-          detailsBuilder.append(" ").append(DaemonBundle.message("found.so.far"));
-        }
-
         if (mainIcon == null) {
           mainIcon = AllIcons.General.InspectionsOK;
         }
-        AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, detailsBuilder.toString(), this::createUIController).
+        AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, "", this::createUIController).
           withNavigation().
           withExpandedStatus(statusItems);
 
@@ -458,7 +445,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
                                   DaemonBundle.message("no.analysis.performed"),
                                   status.reasonWhyDisabled, this::createUIController).
-          withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.off"), null));
+          withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.off")));
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
@@ -466,16 +453,20 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
                                   status.reasonWhySuspended, this::createUIController).
           withExpandedStatus(new StatusItem(status.heavyProcessType != null ?
                                             status.heavyProcessType.toString() :
-                                            DaemonBundle.message("iw.status.paused"), null));
+                                            DaemonBundle.message("iw.status.paused")));
       }
       if (status.errorAnalyzingFinished) {
-        return new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
-                                  detailsBuilder.toString(), this::createUIController);
+        return isDumb ?
+          new AnalyzerStatus(AllIcons.General.InspectionsPause, title, details, this::createUIController).
+            withExpandedStatus(new StatusItem(UtilBundle.message("heavyProcess.type.index"))) :
+          new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
+                                  details, this::createUIController);
       }
 
       //noinspection ConstantConditions
-      return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::createUIController).
-        withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.analyzing"), null)).
+      return new AnalyzerStatus(AllIcons.General.InspectionsEye, title,
+                                details, this::createUIController).
+        withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.analyzing"))).
         withAnalyzingType(AnalyzingType.EMPTY).
         withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
     }
