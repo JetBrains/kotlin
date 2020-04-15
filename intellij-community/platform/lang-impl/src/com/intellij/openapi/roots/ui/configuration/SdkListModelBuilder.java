@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.google.common.collect.ImmutableList;
@@ -18,12 +18,14 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel.
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.Map;
@@ -270,7 +272,11 @@ public final class SdkListModelBuilder {
 
     if (item instanceof SuggestedItem) {
       SuggestedItem suggestedItem = (SuggestedItem)item;
-      mySdkModel.addSdk(suggestedItem.getSdkType(), suggestedItem.getHomePath(), onNewSdkAdded);
+      String homePath = suggestedItem.getHomePath();
+      // IDEA-237709
+      // make sure VFS has the right image of our SDK to avoid empty SDK from being created
+      VfsUtil.markDirtyAndRefresh(false, true, true, new File(homePath));
+      mySdkModel.addSdk(suggestedItem.getSdkType(), homePath, onNewSdkAdded);
       return true;
     }
 
