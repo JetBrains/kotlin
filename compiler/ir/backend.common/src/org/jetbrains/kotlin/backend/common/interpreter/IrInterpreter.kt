@@ -37,7 +37,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val stack = StackImpl()
     private var commandCount = 0
 
-    private val mapOfEnums = mutableMapOf<Pair<IrClass, String>, Complex>()
+    companion object {
+        private val mapOfEnums = mutableMapOf<String, Complex>()
+        private val mapOfObjects = mutableMapOf<String, Complex>()
+    }
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -518,31 +521,40 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun interpretGetObjectValue(expression: IrGetObjectValue): ExecutionResult {
         val owner = expression.symbol.owner
-        if (owner.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            stack.pushReturnValue(Wrapper.getCompanionObject(owner))
-            return Next
+        val objectSignature = owner.fqNameWhenAvailable.toString()
+        mapOfObjects[objectSignature]?.let { return Next.apply { stack.pushReturnValue(it) } }
+
+        val objectState = when {
+            owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(owner)
+            else -> Common(owner).apply { setSuperClassRecursive() }
         }
-        stack.pushReturnValue(Common(owner).apply { setSuperClassRecursive() })
+        mapOfObjects[objectSignature] = objectState
+        stack.pushReturnValue(objectState)
         return Next
     }
 
     private suspend fun interpretGetEnumValue(expression: IrGetEnumValue): ExecutionResult {
         val enumEntry = expression.symbol.owner
-        val enumSignature = Pair(enumEntry.parentAsClass, enumEntry.name.asString())
+        val enumSignature = enumEntry.fqNameWhenAvailable.toString()
         mapOfEnums[enumSignature]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
         val enumClass = enumEntry.symbol.owner.parentAsClass
-        if (enumClass.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
-            val enumName = Variable(valueOfFun.valueParameters.first().descriptor, enumEntry.name.asString().toState(irBuiltIns.stringType))
-            return stack.newFrame(initPool = listOf(enumName)) {
-                Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun)
-            }.apply { if (this.returnLabel == ReturnLabel.NEXT) mapOfEnums[enumSignature] = stack.peekReturnValue() as Wrapper }
+        val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
+        enumClass.declarations.filterIsInstance<IrEnumEntry>().forEach {
+            val executionResult = when {
+                enumClass.hasAnnotation(evaluateIntrinsicAnnotation) -> {
+                    val enumEntryName = it.name.asString().toState(irBuiltIns.stringType)
+                    val enumNameAsVariable = Variable(valueOfFun.valueParameters.first().descriptor, enumEntryName)
+                    stack.newFrame(initPool = listOf(enumNameAsVariable)) { Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun) }
+                }
+                else -> interpretEnumEntry(it)
+            }
+            executionResult.check { result -> return result }
+            mapOfEnums[it.fqNameWhenAvailable.toString()] = stack.popReturnValue() as Complex
         }
-        // TODO extract common code
-        return interpretEnumEntry(enumEntry).apply {
-            if (this.returnLabel == ReturnLabel.NEXT) mapOfEnums[enumSignature] = stack.peekReturnValue() as Common
-        }
+
+        stack.pushReturnValue(mapOfEnums[enumSignature]!!)
+        return Next
     }
 
     private suspend fun interpretEnumEntry(enumEntry: IrEnumEntry): ExecutionResult {
