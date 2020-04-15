@@ -7,7 +7,6 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.patterns.uast.injectionHostUExpression
 import com.intellij.psi.*
@@ -15,6 +14,7 @@ import com.intellij.psi.impl.source.resolve.reference.PsiReferenceContributorEP
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistryImpl
 import com.intellij.psi.util.PropertyUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -36,11 +36,7 @@ class KotlinUastReferencesTest : KotlinLightCodeInsightFixtureTestCase() {
     @Test
     fun `test original getter is visible when reference is under renaming`() {
         KotlinTestUtils.runTest(this) {
-            registerReferenceProviders(testRootDisposable) {
-                registerUastReferenceProvider(injectionHostUExpression(), uastInjectionHostReferenceProvider { _, psiLanguageInjectionHost ->
-                    arrayOf(GetterReference("KotlinBean", psiLanguageInjectionHost))
-                })
-            }
+            registerReferenceContributor(testRootDisposable, MockPsiReferenceContributor::class.java)
 
             myFixture.configureByText(
                 "KotlinBean.kt", """
@@ -91,34 +87,33 @@ private class GetterReference(
     override fun getVariants(): Array<Any> = emptyArray()
 }
 
-
-fun registerReferenceProviders(disposable: Disposable, registerContributors: PsiReferenceRegistrar.() -> Unit) {
-    registerReferenceContributor(object : PsiReferenceContributor() {
-        override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) = registrar.registerContributors()
-    }, disposable)
+class MockPsiReferenceContributor : PsiReferenceContributor() {
+    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+        registrar.registerUastReferenceProvider(
+            injectionHostUExpression(),
+            uastInjectionHostReferenceProvider { _, psiLanguageInjectionHost ->
+                arrayOf(GetterReference("KotlinBean", psiLanguageInjectionHost))
+            })
+    }
 }
 
-fun registerReferenceContributor(contributor: PsiReferenceContributor, disposable: Disposable) {
-    error("PsiReferenceContributorEP is final in 193 platform")
-//    val referenceContributorEp = Extensions.getArea(null).getExtensionPoint<PsiReferenceContributorEP>(PsiReferenceContributor.EP_NAME.name)
-//
-//    val contributorEp = object : PsiReferenceContributorEP() {
-//        override fun getInstance(): PsiReferenceContributor = contributor
-//    }
-//
-//    referenceContributorEp.registerExtension(contributorEp)
-//
-//    val application = ApplicationManager.getApplication()
-//
-//    //we need a fresh ReferenceProvidersRegistry after updating ReferenceContributors
-//    val oldReferenceProviderRegistry =
-//        application.picoContainer.getComponentInstance(ReferenceProvidersRegistry::class.java) as ReferenceProvidersRegistry
-//    application.registerServiceInstance(ReferenceProvidersRegistry::class.java, ReferenceProvidersRegistryImpl())
-//
-//    Disposer.register(disposable, Disposable {
-//        referenceContributorEp.unregisterExtension(contributorEp)
-//        application.registerServiceInstance(ReferenceProvidersRegistry::class.java, oldReferenceProviderRegistry)
-//    })
+fun registerReferenceContributor(disposable: Disposable, clazz: Class<out PsiReferenceContributor>) {
+    ExtensionTestUtil.maskExtensions(PsiReferenceContributor.EP_NAME,
+                                     listOf(PsiReferenceContributorEP().apply {
+                                         implementationClass = clazz.name
+                                     }
+                                     ), disposable)
+
+    val application = ApplicationManager.getApplication()
+
+    //we need a fresh ReferenceProvidersRegistry after updating ReferenceContributors
+    val oldReferenceProviderRegistry =
+        application.picoContainer.getComponentInstance(ReferenceProvidersRegistry::class.java) as ReferenceProvidersRegistry
+    application.registerServiceInstance(ReferenceProvidersRegistry::class.java, ReferenceProvidersRegistryImpl())
+
+    Disposer.register(disposable, Disposable {
+        application.registerServiceInstance(ReferenceProvidersRegistry::class.java, oldReferenceProviderRegistry)
+    })
 
 }
 
