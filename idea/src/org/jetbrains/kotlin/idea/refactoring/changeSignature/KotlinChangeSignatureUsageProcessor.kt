@@ -21,7 +21,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.containers.HashSet
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
@@ -99,7 +98,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         initializedOriginalDescriptor = false
 
-        val result = HashSet<UsageInfo>()
+        val result = hashSetOf<UsageInfo>()
 
         result.add(OriginalJavaMethodDescriptorWrapper(info.method))
 
@@ -163,7 +162,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val body = element.getDeclarationBody() ?: return
         val callerDescriptor = element.resolveToDescriptorIfAny() ?: return
         val context = body.analyze()
-        val newParameterNames = changeInfo.getNonReceiverParameters().mapTo(HashSet<String>()) { it.name }
+        val newParameterNames = changeInfo.getNonReceiverParameters().mapTo(hashSetOf()) { it.name }
         body.accept(
             object : KtTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
@@ -535,7 +534,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         val ktChangeInfo = info.delegate!!
 
-        val parameterNames = HashSet<String>()
+        val parameterNames = hashSetOf<String>()
         val function = info.method
         val bindingContext = (function as KtElement).analyze(BodyResolveMode.FULL)
         val oldDescriptor = ktChangeInfo.originalBaseFunctionDescriptor
