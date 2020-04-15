@@ -155,15 +155,11 @@ public class DocRenderItem {
         IconVisibilityController iconVisibilityController = new IconVisibilityController();
         editor.addEditorMouseListener(iconVisibilityController, connection);
         editor.addEditorMouseMotionListener(iconVisibilityController, connection);
-        editor.getScrollingModel().addVisibleAreaListener(iconVisibilityController);
+        editor.getScrollingModel().addVisibleAreaListener(iconVisibilityController, connection);
         Disposer.register(connection, iconVisibilityController);
 
         VisibleAreaListener visibleAreaListener = new MyVisibleAreaListener(editor);
-        editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
-        Disposer.register(connection, () -> {
-          editor.getScrollingModel().removeVisibleAreaListener(iconVisibilityController);
-          editor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener);
-        });
+        editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener, connection);
 
         editor.putUserData(LISTENERS_DISPOSABLE, connection);
       }
