@@ -47,7 +47,10 @@ object MLCompletionFeaturesUtil {
       val lookup = LookupManager.getActiveLookup(editor) as? LookupImpl ?: return
       val result = mapOf(
         "common" to getCommonFeatures(lookup),
-        "elements" to lookup.items.map { getElementFeatures(lookup, it) }
+        "elements" to lookup.items.associate {
+          val elementFeatures = getElementFeatures(lookup, it)
+          elementFeatures.id to elementFeatures.features
+        }
       )
       val json = gson.toJson(result)
 
