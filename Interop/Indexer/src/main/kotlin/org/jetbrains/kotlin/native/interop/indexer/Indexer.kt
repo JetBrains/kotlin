@@ -688,7 +688,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
     private fun convertFunctionType(type: CValue<CXType>): Type {
         val kind = type.kind
-        assert(kind == CXType_Unexposed || kind == CXType_FunctionProto)
+        assert(kind == CXType_Unexposed || kind == CXType_FunctionProto || kind == CXType_FunctionNoProto) { kind }
 
         if (clang_isFunctionTypeVariadic(type) != 0) {
             return VoidType // make this function pointer opaque.
