@@ -15,7 +15,7 @@ class Outer {
     typealias TestPrivate6 = L<TestPrivate1>
 
     <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>typealias TestProtected1 = Protected<!>
-    <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>protected typealias TestProtected2 = Protected<!>
+    protected typealias TestProtected2 = Protected
     <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>internal typealias TestProtected3 = Protected<!>
     private typealias TestProtected4 = Protected
     <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>typealias TestProtected5 = L<Protected><!>
