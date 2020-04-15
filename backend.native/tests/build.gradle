@@ -883,9 +883,7 @@ task worker_bound_reference0(type: KonanLocalTest) {
 }
 
 task worker_bound_reference1(type: KonanLocalTest) {
-    // enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    // TODO: These tests are flaky. Fix them.
-    enabled = false
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     source = "runtime/concurrent/worker_bound_reference1.kt"
 }
 
