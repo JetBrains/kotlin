@@ -18,6 +18,8 @@ class TeamCityMessageCommonClient(
     private val progressLogger: ProgressLogger
 ) : ServiceMessageParserCallback {
 
+    var afterMessage = false
+
     private val errors = mutableListOf<String>()
 
     private val stackTraceProcessor = TeamCityMessageStackTraceProcessor()
@@ -30,6 +32,8 @@ class TeamCityMessageCommonClient(
         when (message) {
             is Message -> printMessage(message.text, LogType.byValueOrNull(message.attributes["type"]))
         }
+
+        afterMessage = true
     }
 
     internal fun testFailedMessage(): String {
@@ -41,7 +45,14 @@ class TeamCityMessageCommonClient(
         val value = text.trimEnd()
         progressLogger.progress(value)
 
-        val inStackTrace = stackTraceProcessor.process(text) { line, logType ->
+        val actualText = if (afterMessage)
+            when {
+                value.startsWith("\r\n") -> value.removePrefix("\r\n")
+                else -> value.removePrefix("\n")
+            }
+        else value
+
+        val inStackTrace = stackTraceProcessor.process(actualText) { line, logType ->
             log.processLogMessage(line, logType)
             errors.add(line.clearAnsiColor())
         }
@@ -49,10 +60,10 @@ class TeamCityMessageCommonClient(
         if (inStackTrace) return
 
         if (type?.isErrorLike() == true) {
-            errors.add(value.clearAnsiColor())
+            errors.add(actualText.clearAnsiColor())
         }
 
-        type?.let { log.processLogMessage(value, it) }
+        type?.let { log.processLogMessage(actualText, it) }
     }
 
     override fun regularText(text: String) {
