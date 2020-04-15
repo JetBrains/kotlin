@@ -272,8 +272,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
 
         return stack.newFrame(asSubFrame = true, initPool = pool) {
-            for ((i, valueArgument) in valueArguments.withIndex()) { // TODO zip
-                (valueArgument ?: defaultValues[i])!!.interpret().check { return@newFrame it }
+            for (i in valueArguments.indices) {
+                (valueArguments[i] ?: defaultValues[i])!!.interpret().check { return@newFrame it }
                 with(Variable(valueParametersDescriptors[i], stack.popReturnValue())) {
                     stack.addVar(this)
                     pool.add(this)
@@ -636,18 +636,20 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretTry(expression: IrTry): ExecutionResult {
-        var executionResult = expression.tryResult.interpret()
-        if (executionResult.returnLabel == ReturnLabel.EXCEPTION) {
+        try {
+            expression.tryResult.interpret().check(ReturnLabel.EXCEPTION) { return it } // if not exception -> return
             val exception = stack.peekReturnValue() as ExceptionState
             for (catchBlock in expression.catches) {
                 if (exception.isSubtypeOf(catchBlock.catchParameter.type.classOrNull!!.owner)) {
-                    executionResult = catchBlock.interpret()
+                    catchBlock.interpret().check { return it }
                     break
                 }
             }
+        } finally {
+            expression.finallyExpression?.interpret()?.check { return it }
         }
-        // TODO check flow correctness; should I return finally result code if in catch there was an exception?
-        return expression.finallyExpression?.interpret() ?: executionResult
+
+        return Next
     }
 
     private suspend fun interpretCatch(expression: IrCatch): ExecutionResult {
