@@ -65,7 +65,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   private static class AsyncState {
     private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, Void, FileContent>> myIndices = new THashMap<>();
-    private final Map<StubIndexKey<?, ?>, TObjectHashingStrategy<?>> myKeyHashingStrategies = new THashMap<>();
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
 
@@ -232,23 +231,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
           }
         }
 
-        TObjectHashingStrategy<K> keyHashingStrategy = new TObjectHashingStrategy<K>() {
-          private final KeyDescriptor<K> descriptor = extension.getKeyDescriptor();
-
-          @Override
-          public int computeHashCode(K object) {
-            return descriptor.getHashCode(object);
-          }
-
-          @Override
-          public boolean equals(K o1, K o2) {
-            return descriptor.isEqual(o1, o2);
-          }
-        };
-
         synchronized (state) {
           state.myIndices.put(indexKey, index);
-          state.myKeyHashingStrategies.put(indexKey, keyHashingStrategy);
         }
         break;
       }
@@ -262,13 +246,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         onExceptionInstantiatingIndex(indexKey, version, indexRootDir, e);
       }
     }
-  }
-
-  @Override
-  @NotNull
-  <K> TObjectHashingStrategy<K> getKeyHashingStrategy(StubIndexKey<K, ?> stubIndexKey) {
-    //noinspection unchecked
-    return (TObjectHashingStrategy<K>)getAsyncState().myKeyHashingStrategies.get(stubIndexKey);
   }
 
   private static <K> void onExceptionInstantiatingIndex(@NotNull StubIndexKey<K, ?> indexKey,
@@ -364,7 +341,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     in.readFully(buffer);
     UnsyncByteArrayInputStream indexIs = new UnsyncByteArrayInputStream(buffer);
     DataInputStream indexDis = new DataInputStream(indexIs);
-    TObjectHashingStrategy<K> hashingStrategy = getKeyHashingStrategy(stubIndexKey);
+    TObjectHashingStrategy<K> hashingStrategy = StubKeyHashingStrategyCache.INSTANCE.getKeyHashingStrategy(stubIndexKey);
     Map<K, StubIdList> result = new THashMap<>(hashingStrategy);
     while (indexDis.available() > 0) {
       K key = keyDescriptor.read(indexDis);
@@ -627,6 +604,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   private void clearState() {
+    StubKeyHashingStrategyCache.INSTANCE.clear();
     myCachedStubIds.clear();
     myStateFuture = null;
     myState = null;
