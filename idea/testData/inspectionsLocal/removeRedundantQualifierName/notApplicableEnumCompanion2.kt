@@ -1,18 +1,17 @@
 // PROBLEM: none
-// WITH_RUNTIME
-package com.apurebase.test
+package foo.bar
 
-import com.apurebase.test.QueryOperation.*
+import foo.bar.MyEnum.*
 
-enum class QueryOperation(val id: Int) {
-    Equals(1),
-    Like(2);
+enum class MyEnum(val id: Int) {
+    A(1),
+    B(2);
 
     companion object O {
-        fun from(name: String) = values().firstOrNull { it.name == name }
+        fun baz() = ""
     }
 }
 
-fun test(value1: String?) {
-    value1?.let(<caret>QueryOperation.O::from)
+fun test() {
+    <caret>MyEnum.O::baz
 }

@@ -13,5 +13,5 @@ enum class MyEnum(val id: Int) {
 }
 
 fun test() {
-    <caret>MyEnum.Companion::baz
+    <caret>MyEnum.Companion.baz()
 }
