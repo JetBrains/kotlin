@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 // SKIP_TXT
 
 /*
@@ -73,11 +73,11 @@ import libPackageCase2Explicit.emptyArray
 class Case2(){
 
     fun case1_0() {
-        fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+        fun <T> Case2.emptyArray(): Array<T> = TODO()
         <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.case1_0.emptyArray; typeCall: extension function")!>emptyArray<Int>()<!>
 
         fun case1_1() {
-            fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+            fun <T> Case2.emptyArray(): Array<T> = TODO()
             <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.case1_0.case1_1.emptyArray; typeCall: extension function")!>emptyArray<Int>()<!>
         }
     }
@@ -85,7 +85,7 @@ class Case2(){
     val Case2.emptyArray: A
         get() = A()
 
-    fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+    fun <T> Case2.emptyArray(): Array<T> = TODO()
 
     fun case2_0(){
         <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.emptyArray; typeCall: extension function")!>emptyArray<Int>()<!>
@@ -103,7 +103,7 @@ import testsCase2.*
 val Case2.emptyArray: A
     get() = A()
 public fun <T> emptyArray(): Array<T> = TODO()
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case2.emptyArray(): Array<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 2
@@ -111,7 +111,7 @@ fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>empt
 package libPackageCase2Explicit
 import testsCase2.*
 
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case2.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 
@@ -119,7 +119,7 @@ public fun <T> emptyArray(): Array<T> = TODO()
 // TESTCASE NUMBER: 2
 
 package testsCase2
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case2.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 
@@ -168,7 +168,7 @@ import testsCase3.*
 val Case3.emptyArray: A
     get() = A()
 public fun <T> emptyArray(): Array<T> = TODO()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case3.emptyArray(): Array<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 3
@@ -176,14 +176,14 @@ fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>empt
 package libPackageCase3Explicit
 import testsCase3.*
 
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case3.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 
 // FILE: LibtestsPack.kt
 // TESTCASE NUMBER: 3
 package testsCase3
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case3.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 

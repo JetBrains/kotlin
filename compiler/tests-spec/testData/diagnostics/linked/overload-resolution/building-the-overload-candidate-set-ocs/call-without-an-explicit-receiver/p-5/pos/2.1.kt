@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_SHADOWED_BY_MEMBER
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_SHADOWED_BY_MEMBER -EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 // SKIP_TXT
 
 /*
@@ -114,13 +114,13 @@ import libPackageCase3.*
 import libPackageCase3Explicit.emptyArray
 
 class Case3(){
-    fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+    fun <T> Case3.emptyArray(): Array<T> = TODO()
 
     val emptyArray: A
         get() = A()
 
     fun case1() {
-        fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+        fun <T> Case3.emptyArray(): Array<T> = TODO()
 
         <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>emptyArray<Int>()<!>
     }
@@ -137,7 +137,7 @@ import testsCase3.*
 val Case3.emptyArray: A
     get() = A()
 public fun <T> emptyArray(): Array<T> = TODO()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case3.emptyArray(): Array<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 3
@@ -147,7 +147,7 @@ import testsCase3.*
 
 val Case3.emptyArray: A
     get() = A()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case3.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 
@@ -158,7 +158,7 @@ package testsCase3
 val Case3.emptyArray: A
     get() = A()
 
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>emptyArray<!>(): Array<T> = TODO()
+fun <T> Case3.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 

@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 // SKIP_TXT
 
 /*
@@ -71,11 +71,11 @@ import libPackageCase2Explicit.listOf
 class Case2() {
 
     fun case1_0() {
-        fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+        fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
         <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.case1_0.listOf; typeCall: extension function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
 
         fun case1_1() {
-            fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+            fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
             <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.case1_0.case1_1.listOf; typeCall: extension function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
         }
     }
@@ -83,7 +83,7 @@ class Case2() {
     val Case2.listOf: A
         get() = A()
 
-    fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T =
+    fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T =
     { TODO() }): List<T> = TODO()
 
     fun case2_0() {
@@ -105,7 +105,7 @@ val Case2.listOf: A
     get() = A()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 2
@@ -113,7 +113,7 @@ fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>list
 package libPackageCase2Explicit
 import testsCase2.*
 
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
@@ -121,7 +121,7 @@ public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }):
 // TESTCASE NUMBER: 2
 
 package testsCase2
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
@@ -173,7 +173,7 @@ val Case3.listOf: A
     get() = A()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 3
@@ -181,14 +181,14 @@ fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>list
 package libPackageCase3Explicit
 import testsCase3.*
 
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 // FILE: LibtestsPack.kt
 // TESTCASE NUMBER: 3
 package testsCase3
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 

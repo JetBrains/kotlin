@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
 /*
@@ -28,7 +28,7 @@ class A() {
 package sentence3
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "pack scope extension fun foo"
+infix fun A.foo(x: ()->Int) = "pack scope extension fun foo"
 
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
@@ -37,7 +37,7 @@ package sentence3
 import libPackage.A
 
 class Case1() {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "local extension fun foo"
+    infix fun A.foo(x: ()->Int) = "local extension fun foo"
 
     fun case1() {
         val a = A()
@@ -52,7 +52,7 @@ package sentence3
 import libPackage.A
 
 interface Case2 {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "local extension fun foo"
+    infix fun A.foo(x: ()->Int) = "local extension fun foo"
 
     fun case2() {
         val a = A()
@@ -66,11 +66,11 @@ interface Case2 {
 package testPack
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my package scope top level trim"
+infix fun A.foo(x: ()->Int) = "my package scope top level trim"
 
 
 fun case3() {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my local scope trim"
+    infix fun A.foo(x: ()->Int) = "my local scope trim"
 
     val a = A()
     <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>a foo {1}<!>
@@ -82,15 +82,15 @@ fun case3() {
 package testPackNew
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my package scope top level trim"
+infix fun A.foo(x: ()->Int) = "my package scope top level trim"
 
 
 fun case4() {
 
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my local trim"
+    infix fun A.foo(x: ()->Int) = "my local trim"
 
     fun subfun() {
-        infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my local trim"
+        infix fun A.foo(x: ()->Int) = "my local trim"
         val a = A()
         <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>a foo {1}<!>
         <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>A() foo {1}<!>

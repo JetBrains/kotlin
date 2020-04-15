@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
 /*
@@ -26,7 +26,7 @@ class A() {
 package sentence3
 import libPackage.A
 
-fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "pack scope extension fun foo"
+fun A.foo(x: Int) = "pack scope extension fun foo"
 
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
@@ -35,7 +35,7 @@ package sentence3
 import libPackage.A
 
 class Case1() {
-    fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "local extension fun foo"
+    fun A.foo(x: Int) = "local extension fun foo"
 
     fun case1() {
         val a = A()
@@ -50,7 +50,7 @@ package sentence3
 import libPackage.A
 
 interface Case2 {
-    fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "local extension fun foo"
+    fun A.foo(x: Int) = "local extension fun foo"
 
     fun case2() {
         val a = A()
@@ -64,11 +64,11 @@ interface Case2 {
 package testPack
 import libPackage.A
 
-fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my package scope top level contains"
+fun A.foo(x: Int) = "my package scope top level contains"
 
 
 fun case3() {
-    fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) ="my local scope contains"
+    fun A.foo(x: Int) ="my local scope contains"
 
     val a = A()
     a <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
@@ -80,15 +80,15 @@ fun case3() {
 package testPackNew
 import libPackage.A
 
-fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my package scope top level contains"
+fun A.foo(x: Int) = "my package scope top level contains"
 
 
 fun case4() {
 
-    fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my local contains"
+    fun A.foo(x: Int) = "my local contains"
 
     fun subfun() {
-        fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my local contains"
+        fun A.foo(x: Int) = "my local contains"
         val a = A()
         a <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
         A() <!INFIX_MODIFIER_REQUIRED!>foo<!> 1

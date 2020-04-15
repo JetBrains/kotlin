@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
 /*
@@ -27,7 +27,7 @@ class A() {
 
 package sentence3
 import libPackage.A
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "pack scope extension fun foo"
+infix fun A.foo(x: Int) = "pack scope extension fun foo"
 
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
@@ -36,7 +36,7 @@ package sentence3
 import libPackage.A
 
 class Case1() {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "local extension fun foo"
+    infix fun A.foo(x: Int) = "local extension fun foo"
 
     fun case1() {
         val a = A()
@@ -51,7 +51,7 @@ package sentence3
 import libPackage.A
 
 interface Case2 {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "local extension fun foo"
+    infix fun A.foo(x: Int) = "local extension fun foo"
 
     fun case2() {
         val a = A()
@@ -65,11 +65,11 @@ interface Case2 {
 package testPack
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my package scope top level contains"
+infix fun A.foo(x: Int) = "my package scope top level contains"
 
 
 fun case3() {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my local scope contains"
+    infix fun A.foo(x: Int) = "my local scope contains"
 
     val a = A()
     <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>a foo 1<!>
@@ -81,15 +81,15 @@ fun case3() {
 package testPackNew
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my package scope top level contains"
+infix fun A.foo(x: Int) = "my package scope top level contains"
 
 
 fun case4() {
 
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my local contains"
+    infix fun A.foo(x: Int) = "my local contains"
 
     fun subfun() {
-        infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: Int) = "my local contains"
+        infix fun A.foo(x: Int) = "my local contains"
         val a = A()
         <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>a foo 1<!>
         <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>A() foo 1<!>
