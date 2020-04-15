@@ -26,8 +26,6 @@
     <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
-    <orderEntry type="library" name="kotlinc.kotlin-preloader" level="project" />
-    <orderEntry type="library" name="kotlinc.kotlin-daemon-client" level="project" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.jps.build" />
