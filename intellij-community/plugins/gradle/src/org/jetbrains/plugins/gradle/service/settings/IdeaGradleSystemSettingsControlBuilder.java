@@ -145,7 +145,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   @Override
   public void apply(@NotNull GradleSettings settings) {
     if (myServiceDirectoryPathField != null) {
-      settings.setServiceDirectoryPath(ExternalSystemApiUtil.normalizePath(myServiceDirectoryPathField.getText()));
+      String serviceDirectoryPath = trimIfPossible(myServiceDirectoryPathField.getText());
+      settings.setServiceDirectoryPath(ExternalSystemApiUtil.normalizePath(serviceDirectoryPath));
     }
     if (myGradleVmOptionsField != null) {
       settings.setGradleVmOptions(trimIfPossible(myGradleVmOptionsField.getText()));
