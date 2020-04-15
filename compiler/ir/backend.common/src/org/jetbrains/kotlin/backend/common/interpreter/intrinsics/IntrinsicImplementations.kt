@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 
-sealed class IntrinsicBase : Intrinsic
+sealed class IntrinsicBase {
+    abstract fun equalTo(irFunction: IrFunction): Boolean
+    abstract suspend fun evaluate(irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult
+}
 
 object EmptyArray : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
