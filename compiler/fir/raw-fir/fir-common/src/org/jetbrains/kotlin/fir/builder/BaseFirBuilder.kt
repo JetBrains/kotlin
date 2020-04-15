@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -662,6 +660,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         private fun generateComponentAccess(parameterSource: FirSourceElement?, firProperty: FirProperty) =
             buildQualifiedAccessExpression {
                 source = parameterSource
+                typeRef = firProperty.returnTypeRef
                 dispatchReceiver = buildThisReceiverExpression {
                     calleeReference = buildImplicitThisReference {
                         boundSymbol = classBuilder.symbol
@@ -682,7 +681,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
                 val parameterSource = sourceNode?.toFirSourceElement()
-                val target = FirFunctionTarget(labelName = null, isLambda = false)
                 val componentFunction = buildSimpleFunction {
                     source = parameterSource
                     session = this@DataClassMembersGenerator.session
@@ -692,14 +690,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
 
-                    val returnExpression = buildReturnExpression {
-                        source = parameterSource
-                        result = generateComponentAccess(parameterSource, firProperty)
-                        this.target = target
-                    }
-                    body = buildSingleExpressionBlock(returnExpression)
-                }.also {
-                    target.bind(it)
+                    // Refer to FIR backend ClassMemberGenerator for body generation.
                 }
                 classBuilder.addDeclaration(componentFunction)
             }
@@ -708,7 +699,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         private val copyName = Name.identifier("copy")
 
         private fun generateCopyFunction() {
-            val target = FirFunctionTarget(labelName = null, isLambda = false)
             classBuilder.addDeclaration(
                 buildSimpleFunction {
                     source = this@DataClassMembersGenerator.source.toFirSourceElement()
@@ -732,27 +722,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             isVararg = false
                         }
                     }
-
-                    // TODO: Handle generic types.
-                    val initCallExpression = buildFunctionCall {
-                        argumentList = buildArgumentList {
-                            for ((ktParameter, firProperty) in zippedParameters) {
-                                val parameterSource = ktParameter?.toFirSourceElement()
-                                arguments += generateComponentAccess(parameterSource, firProperty)
-                            }
-                        }
-                        calleeReference = buildResolvedNamedReference {
-                            name = primaryConstructor.symbol.callableId.callableName
-                            resolvedSymbol = primaryConstructor.symbol
-                        }
-                    }
-                    val returnExpression = buildReturnExpression {
-                        result = initCallExpression
-                        this.target = target
-                    }
-                    body = buildSingleExpressionBlock(returnExpression)
-                }.also {
-                    target.bind(it)
+                    // Refer to FIR backend ClassMemberGenerator for body generation.
                 }
             )
         }

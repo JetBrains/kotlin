@@ -36,32 +36,30 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test declared in <root>.Test'
-          CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=T of <root>.Test origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.component1' type=<root>.Test<T of <root>.Test> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test visibility:private [final]' type=T of <root>.Test origin=null
+            receiver: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.component1' type=<root>.Test<T of <root>.Test> origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test<T of <root>.Test>) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.Test'
-          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.component2' type=<root>.Test<T of <root>.Test> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+            receiver: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.component2' type=<root>.Test<T of <root>.Test> origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test<T of <root>.Test>, x:T of <root>.Test, y:kotlin.String) returnType:<root>.Test<T of <root>.Test>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test
         EXPRESSION_BODY
-          CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=T of <root>.Test origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test visibility:private [final]' type=T of <root>.Test origin=null
+            receiver: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
       VALUE_PARAMETER name:y index:1 type:kotlin.String
         EXPRESSION_BODY
-          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+            receiver: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test, y: kotlin.String): <root>.Test<T of <root>.Test> declared in <root>.Test'
           CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Test, y: kotlin.String) [primary] declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
-            <class: T>: <none>
-            x: CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
-            y: CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.copy' type=<root>.Test<T of <root>.Test> origin=null
+            <class: T>: kotlin.Any
+            x: GET_VAR 'x: T of <root>.Test declared in <root>.Test.copy' type=T of <root>.Test origin=null
+            y: GET_VAR 'y: kotlin.String declared in <root>.Test.copy' type=kotlin.String origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test<T of <root>.Test>
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

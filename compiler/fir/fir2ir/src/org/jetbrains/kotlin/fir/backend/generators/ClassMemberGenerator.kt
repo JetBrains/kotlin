@@ -120,11 +120,24 @@ internal class ClassMemberGenerator(
                     irFunction.body = body
                 }
             } else if (irFunction !is IrConstructor) {
-                if (irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
-                    val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
-                    irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
-                } else {
-                    irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                when {
+                    irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
+                        val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
+                        irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
+                    }
+                    irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
+                        when {
+                            DataClassMembersGenerator.isComponentN(irFunction) ->
+                                DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction)
+                            DataClassMembersGenerator.isCopy(irFunction) ->
+                                DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction)
+                            else ->
+                                irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                        }
+                    }
+                    else -> {
+                        irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                    }
                 }
             }
             if (irFunction !is IrConstructor || !irFunction.isPrimary) {
