@@ -248,6 +248,11 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/init.kt");
         }
 
+        @TestMetadata("labelForInfix.kt")
+        public void testLabelForInfix() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/labelForInfix.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/lambda.kt");

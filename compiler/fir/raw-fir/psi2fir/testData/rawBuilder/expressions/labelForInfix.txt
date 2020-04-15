@@ -1,0 +1,10 @@
+FILE: labelForInfix.kt
+    public? final? fun main(): R|kotlin/Unit| {
+        foo@fun <implicit>.<anonymous>(): <implicit> {
+            length#
+        }
+        .foo#(foo@fun <implicit>.<anonymous>(): <implicit> {
+            bar#()
+        }
+        )
+    }

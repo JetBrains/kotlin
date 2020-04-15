@@ -228,6 +228,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/analysis-tests/testData/resolve/javaStaticScopeInheritance.kt");
     }
 
+    @TestMetadata("labelAndReceiverForInfix.kt")
+    public void testLabelAndReceiverForInfix() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
+    }
+
     @TestMetadata("lambdaArgInScopeFunction.kt")
     public void testLambdaArgInScopeFunction() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/lambdaArgInScopeFunction.kt");

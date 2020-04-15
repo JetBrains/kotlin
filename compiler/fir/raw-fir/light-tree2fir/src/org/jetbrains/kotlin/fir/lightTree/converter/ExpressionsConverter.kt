@@ -137,7 +137,7 @@ class ExpressionsConverter(
             receiverTypeRef = implicitType
             symbol = FirAnonymousFunctionSymbol()
             isLambda = true
-            label = context.firLabels.pop() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
+            label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
                 buildLabel { name = it.asString() }
             }
             target = FirFunctionTarget(labelName = label?.name, isLambda = true)
@@ -203,7 +203,6 @@ class ExpressionsConverter(
         var isLeftArgument = true
         lateinit var operationTokenName: String
         var leftArgNode: LighterASTNode? = null
-        var rightArgAsFir: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No right operand", DiagnosticKind.Syntax))
         var rightArg: LighterASTNode? = null
         var operationReferenceSource: FirLightSourceElement? = null
         binaryExpression.forEachChildren {
@@ -217,7 +216,6 @@ class ExpressionsConverter(
                     if (isLeftArgument) {
                         leftArgNode = it
                     } else {
-                        rightArgAsFir = getAsFirExpression(it, "No right operand")
                         rightArg = it
                     }
                 }
@@ -226,7 +224,23 @@ class ExpressionsConverter(
 
         val baseSource = binaryExpression.toFirSourceElement()
         val operationToken = operationTokenName.getOperationSymbol()
+        if (operationToken == IDENTIFIER) {
+            context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
+        }
+
+        val rightArgAsFir =
+            if (rightArg != null)
+                getAsFirExpression<FirExpression>(rightArg, "No right operand")
+            else
+                buildErrorExpression(null, ConeSimpleDiagnostic("No right operand", DiagnosticKind.Syntax))
+
         val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
+
+        if (operationToken == IDENTIFIER) {
+            // No need for the callee name since arguments are already generated
+            context.calleeNamesForLambda.removeLast()
+        }
+
         when (operationToken) {
             ELVIS ->
                 return leftArgAsFir.generateNotNullOrOther(baseSession, rightArgAsFir, "elvis", baseSource)
@@ -544,9 +558,9 @@ class ExpressionsConverter(
                 this.source = source
                 this.calleeReference = calleeReference
 
-                context.firFunctionCalls += this
+                context.calleeNamesForLambda += calleeReference.name
                 this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) }, stubMode)
-                context.firFunctionCalls.removeLast()
+                context.calleeNamesForLambda.removeLast()
             }
         } else {
             FirQualifiedAccessExpressionBuilder().apply {

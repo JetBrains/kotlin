@@ -911,7 +911,7 @@ class RawFirBuilder(
                     }
                 }
                 val expressionSource = expression.toFirSourceElement()
-                label = context.firLabels.pop() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
+                label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
                     buildLabel {
                         source = expressionSource
                         name = it.asString()
@@ -1472,9 +1472,21 @@ class RawFirBuilder(
 
         override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): FirElement {
             val operationToken = expression.operationToken
+
+            if (operationToken == IDENTIFIER) {
+                context.calleeNamesForLambda += expression.operationReference.getReferencedNameAsName()
+            }
+
             val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
+
+            if (operationToken == IDENTIFIER) {
+                // No need for the callee name since arguments are already generated
+                context.calleeNamesForLambda.removeLast()
+            }
+
             val source = expression.toFirSourceElement()
+
             when (operationToken) {
                 ELVIS ->
                     return leftArgument.generateNotNullOrOther(baseSession, rightArgument, "elvis", source)
@@ -1617,9 +1629,9 @@ class RawFirBuilder(
                 FirFunctionCallBuilder().apply {
                     this.source = source
                     this.calleeReference = calleeReference
-                    context.firFunctionCalls += this
+                    context.calleeNamesForLambda += calleeReference.name
                     expression.extractArgumentsTo(this)
-                    context.firFunctionCalls.removeLast()
+                    context.calleeNamesForLambda.removeLast()
                 }
             }
 
