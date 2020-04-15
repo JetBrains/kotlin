@@ -37,7 +37,7 @@ fun AbstractFirRegularClassBuilder.generateValuesFunction(session: FirSession, p
             type = ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagImpl(StandardClassIds.Array),
                 arrayOf(
-                    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this@generateValuesFunction.symbol.classId), emptyArray(), isNullable = false)
+                    ConeClassLikeTypeImpl(this@generateValuesFunction.symbol.toLookupTag(), emptyArray(), isNullable = false)
                 ),
                 isNullable = false
             )
@@ -59,7 +59,7 @@ fun AbstractFirRegularClassBuilder.generateValueOfFunction(session: FirSession, 
         returnTypeRef = buildResolvedTypeRef {
             source = this@generateValueOfFunction.source
             type = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(this@generateValueOfFunction.symbol.classId),
+                this@generateValueOfFunction.symbol.toLookupTag(),
                 emptyArray(),
                 isNullable = false
             )
