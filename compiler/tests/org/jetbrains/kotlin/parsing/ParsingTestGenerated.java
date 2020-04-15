@@ -2742,6 +2742,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             public void testRawStringsWithManyQuotes() throws Exception {
                 runTest("compiler/testData/psi/stringTemplates/RawStringsWithManyQuotes.kt");
             }
+
+            @TestMetadata("StringTemplateWithTryWithoutBlockInLongEntry.kt")
+            public void testStringTemplateWithTryWithoutBlockInLongEntry() throws Exception {
+                runTest("compiler/testData/psi/stringTemplates/StringTemplateWithTryWithoutBlockInLongEntry.kt");
+            }
+
+            @TestMetadata("StringTemplateWithTryWithoutBlockInShortEntry.kt")
+            public void testStringTemplateWithTryWithoutBlockInShortEntry() throws Exception {
+                runTest("compiler/testData/psi/stringTemplates/StringTemplateWithTryWithoutBlockInShortEntry.kt");
+            }
         }
     }
 

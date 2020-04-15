@@ -1,0 +1,32 @@
+KtFile: StringTemplateWithTryWithoutBlockInShortEntry.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('println')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                PsiErrorElement:Keyword cannot be used as a reference
+                  PsiElement(try)('try')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
