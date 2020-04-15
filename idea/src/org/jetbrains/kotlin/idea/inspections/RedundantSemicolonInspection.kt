@@ -90,9 +90,13 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 return false
             }
 
-            val prevNameReference = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtNameReferenceExpression
-            if (prevNameReference != null && prevNameReference.text in softModifierKeywords
-                && semicolon.getNextSiblingIgnoringWhitespaceAndComments() is KtDeclaration
+            val prevSibling = semicolon.getPrevSiblingIgnoringWhitespaceAndComments()
+            val nextSibling = semicolon.getNextSiblingIgnoringWhitespaceAndComments()
+            if (prevSibling.safeAs<KtNameReferenceExpression>()?.text in softModifierKeywords &&
+                nextSibling is KtDeclaration
+            ) return false
+            if (nextSibling.safeAs<KtPrefixExpression>()?.operationToken == KtTokens.EXCL &&
+                semicolon.prevLeaf()?.getStrictParentOfType<KtTypeReference>() != null
             ) return false
 
             return true
