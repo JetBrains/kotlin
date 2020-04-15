@@ -165,6 +165,11 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return (CollectionListModel<LookupElement>)myList.getModel();
   }
 
+  @SuppressWarnings("unused") // used plugins
+  public LookupArranger getArranger() {
+    return myArranger;
+  }
+
   public void setArranger(LookupArranger arranger) {
     myArranger = arranger;
   }
