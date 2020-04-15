@@ -338,13 +338,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(callableMemberDeclaration, "F", constructor)
             +annotations
             +symbol("FirConstructorSymbol")
-            +field("delegatedConstructor", delegatedConstructorCall, nullable = true)
+            +field("delegatedConstructor", delegatedConstructorCall, nullable = true).withTransform()
             +body(nullable = true)
             +booleanField("isPrimary")
         }
 
         delegatedConstructorCall.configure {
-            +field("constructedTypeRef", typeRef)
+            +field("constructedTypeRef", typeRef, withReplace = true)
             generateBooleanFields("this", "super")
         }
 

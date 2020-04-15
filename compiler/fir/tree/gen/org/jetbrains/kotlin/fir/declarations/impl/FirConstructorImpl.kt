@@ -69,7 +69,7 @@ internal class FirConstructorImpl(
         transformValueParameters(transformer, data)
         transformStatus(transformer, data)
         transformAnnotations(transformer, data)
-        delegatedConstructor = delegatedConstructor?.transformSingle(transformer, data)
+        transformDelegatedConstructor(transformer, data)
         body = body?.transformSingle(transformer, data)
         return this
     }
@@ -101,6 +101,11 @@ internal class FirConstructorImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        delegatedConstructor = delegatedConstructor?.transformSingle(transformer, data)
         return this
     }
 
