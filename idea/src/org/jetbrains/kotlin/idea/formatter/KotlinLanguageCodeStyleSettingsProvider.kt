@@ -20,7 +20,6 @@ import kotlin.reflect.KProperty
 class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
     override fun getConfigurableDisplayName(): String = KotlinBundle.message("codestyle.name.kotlin")
-    override fun getDisplayPriority(): DisplayPriority = DisplayPriority.COMMON_SETTINGS
     override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable =
         object : CodeStyleAbstractConfigurable(settings, modelSettings, KotlinLanguage.NAME) {
             override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel =
