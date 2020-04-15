@@ -453,6 +453,29 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
                 public void testSuperPropAccessFromInterface2() throws Exception {
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
                 }
+
+                @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class DelegationBy extends AbstractIrCompileKotlinAgainstKotlinTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInDelegationBy() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
+                    }
+
+                    @TestMetadata("simpleProperty.kt")
+                    public void testSimpleProperty() throws Exception {
+                        runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop")

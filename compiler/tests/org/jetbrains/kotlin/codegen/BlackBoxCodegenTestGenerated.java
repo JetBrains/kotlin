@@ -16272,6 +16272,29 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 public void testSimpleFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/simpleFunction.kt");
                 }
+
+                @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class DelegationBy extends AbstractBlackBoxCodegenTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInDelegationBy() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
+                    }
+
+                    @TestMetadata("simpleProperty.kt")
+                    public void testSimpleProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/compatibility")
@@ -16505,6 +16528,29 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("simpleFunction.kt")
                 public void testSimpleFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/simpleFunction.kt");
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class DelegationBy extends AbstractBlackBoxCodegenTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInDelegationBy() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy/simple.kt");
+                    }
+
+                    @TestMetadata("simpleProperty.kt")
+                    public void testSimpleProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy/simpleProperty.kt");
+                    }
                 }
             }
 
