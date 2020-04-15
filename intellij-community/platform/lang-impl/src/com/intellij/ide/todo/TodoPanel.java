@@ -123,12 +123,6 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
   }
 
   public static class GroupByActionGroup extends DefaultActionGroup {
-    {
-      getTemplatePresentation().setIcon(AllIcons.Actions.GroupBy);
-      getTemplatePresentation().setText(IdeBundle.messagePointer("group.group.by"));
-      setPopup(true);
-    }
-
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         JBPopupFactory.getInstance()
