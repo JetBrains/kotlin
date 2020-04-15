@@ -4,7 +4,6 @@ package com.intellij.util.indexing;
 import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
@@ -34,12 +33,11 @@ import java.util.Set;
 import static com.intellij.serviceContainer.ComponentManagerImplKt.handleComponentError;
 
 class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
-  private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false, null, null,
-                                                                               null, PluginManagerCore.CORE_ID);
+  private static final NotificationGroup NOTIFICATIONS = NotificationGroup.balloonGroup("Indexing", PluginManagerCore.CORE_ID);
   private static final Logger LOG = Logger.getInstance(FileBasedIndexDataInitialization.class);
 
   private final IndexConfiguration state = new IndexConfiguration();
-  private final IndicesRegistrationResult registrationResultSink = new IndicesRegistrationResult();
+  private final IndexVersionRegistrationSink registrationResultSink = new IndexVersionRegistrationSink();
   private boolean currentVersionCorrupted;
   private final FileBasedIndexImpl myFileBasedIndex;
 
@@ -121,26 +119,13 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
     try {
       state.finalizeFileTypeMappingForIndices();
 
-      String changedIndicesText = registrationResultSink.changedIndices();
-      String rebuildNotification = null;
-
-      if (currentVersionCorrupted) {
-        rebuildNotification = IndexingBundle.message("index.corrupted.notification.text");
-      }
-      else if (!changedIndicesText.isEmpty()) {
-        rebuildNotification = IndexingBundle.message("index.format.changed.notification.text", changedIndicesText);
-      }
+      showChangedIndexesNotification();
 
       registrationResultSink.logChangedAndFullyBuiltIndices(
         FileBasedIndexImpl.LOG,
-        "Indices to be rebuilt after version change:",
-        currentVersionCorrupted ? "Indices to be rebuilt after corruption:":"Indices to be built:"
+        "Indexes to be rebuilt after version change:",
+        currentVersionCorrupted ? "Indexes to be rebuilt after corruption:" : "Indices to be built:"
       );
-      if (rebuildNotification != null
-          && !ApplicationManager.getApplication().isHeadlessEnvironment()
-          && Registry.is("ide.showIndexRebuildMessage")) {
-        NOTIFICATIONS.createNotification(IndexingBundle.message("index.rebuild.notification.title"), rebuildNotification, NotificationType.INFORMATION, null).notify(null);
-      }
 
       state.freeze();
       myFileBasedIndex.getRegisteredIndexes().setState(state); // memory barrier
@@ -164,6 +149,23 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
       myFileBasedIndex.getRegisteredIndexes().ensureLoadedIndexesUpToDate();
       myFileBasedIndex.getRegisteredIndexes().markInitialized();  // this will ensure that all changes to component's state will be visible to other threads
       saveRegisteredIndicesAndDropUnregisteredOnes(state.getIndexIDs());
+    }
+  }
+
+  private void showChangedIndexesNotification() {
+    if (ApplicationManager.getApplication().isHeadlessEnvironment() || !Registry.is("ide.showIndexRebuildMessage")) return;
+
+    String rebuildNotification = null;
+
+    if (currentVersionCorrupted) {
+      rebuildNotification = IndexingBundle.message("index.corrupted.notification.text");
+    }
+    else if (registrationResultSink.hasChangedIndexes()) {
+      rebuildNotification = IndexingBundle.message("index.format.changed.notification.text", registrationResultSink.changedIndices());
+    }
+
+    if (rebuildNotification != null) {
+      NOTIFICATIONS.createNotification(IndexingBundle.message("index.rebuild.notification.title"), rebuildNotification, NotificationType.INFORMATION, null).notify(null);
     }
   }
 

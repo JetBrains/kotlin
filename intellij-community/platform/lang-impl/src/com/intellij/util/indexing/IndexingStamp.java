@@ -148,23 +148,76 @@ public class IndexingStamp {
 
   private static final int OUR_INDICES_TIMESTAMP_INCREMENT = SystemProperties.getIntProperty("idea.indices.timestamp.resolution", 1);
 
-  public static boolean versionDiffers(@NotNull ID<?,?> indexId, final int currentIndexVersion) {
+  public static IndexVersionDiff versionDiffers(@NotNull ID<?,?> indexId, int currentIndexVersion) {
     IndexVersion version = getIndexVersion(indexId);
+    if (version.myIndexVersion == -1) return new IndexVersionDiff.InitialBuild(currentIndexVersion);
+
     if (version.myIndexVersion != currentIndexVersion) {
-      FileBasedIndexImpl.LOG.info("index version changed for '" + indexId + "'; old = " + version.myIndexVersion + ", new = " + currentIndexVersion);
-      return true;
+      return new IndexVersionDiff.VersionChanged(version.myIndexVersion, currentIndexVersion, "index version");
     }
+
     if (version.myCommonIndicesVersion != VERSION) {
-      FileBasedIndexImpl.LOG.info("common index version changed for '" + indexId + "'; old = " + version.myIndexVersion + ", new = " + currentIndexVersion);
-      return true;
+      return new IndexVersionDiff.VersionChanged(version.myCommonIndicesVersion, VERSION, "common index version");
     }
+
     if (version.myVfsCreationStamp != ourVfsCreationStamp) {
-      FileBasedIndexImpl.LOG.info("vfs creation stamp changed; old = " + version.myIndexVersion + ", new = " + currentIndexVersion);
-      return true;
+      return new IndexVersionDiff.VersionChanged(version.myVfsCreationStamp, ourVfsCreationStamp, "vfs creation stamp");
     }
-    return false;
+
+    return IndexVersionDiff.UP_TO_DATE;
   }
-  
+
+  public interface IndexVersionDiff {
+    @NotNull
+    String getLogText();
+
+    IndexVersionDiff UP_TO_DATE = new IndexVersionDiff() {
+      @Override
+      public @NotNull String getLogText() {
+        return "";
+      }
+    };
+
+    class InitialBuild implements IndexVersionDiff {
+      private final int myVersion;
+
+      public InitialBuild(int version) {myVersion = version;}
+
+      @Override
+      public @NotNull String getLogText() {
+        return "(v = " + myVersion + ")";
+      }
+    }
+
+    class CorruptedRebuild implements IndexVersionDiff {
+      private final int myVersion;
+
+      public CorruptedRebuild(int version) {myVersion = version;}
+
+      @Override
+      public @NotNull String getLogText() {
+        return "(corrupted, v = " + myVersion + ")";
+      }
+    }
+
+    class VersionChanged implements IndexVersionDiff {
+      private final long myPreviousVersion;
+      private final long myActualVersion;
+      private final String myVersionType;
+
+      public VersionChanged(long previousVersion, long actualVersion, String type) {
+        myPreviousVersion = previousVersion;
+        myActualVersion = actualVersion;
+        myVersionType = type;
+      }
+
+      @Override
+      public @NotNull String getLogText() {
+        return "(" + myVersionType + " : " + myPreviousVersion + " -> " + myActualVersion + ")";
+      }
+    }
+  }
+
   public static long getIndexCreationStamp(@NotNull ID<?, ?> indexName) {
     IndexVersion version = getIndexVersion(indexName);
     return version.myModificationCount;

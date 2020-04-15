@@ -13,7 +13,7 @@ class FileBasedIndexFileTypeListener implements FileTypeListener {
   public void fileTypesChanged(@NotNull final FileTypeEvent event) {
     Set<ID<?, ?>> indexesToRebuild = new THashSet<>();
     for (FileBasedIndexExtension<?, ?> extension : FileBasedIndexExtension.EXTENSION_POINT_NAME.getExtensionList()) {
-      if (IndexingStamp.versionDiffers(extension.getName(), FileBasedIndexImpl.getIndexExtensionVersion(extension))) {
+      if (IndexingStamp.versionDiffers(extension.getName(), FileBasedIndexImpl.getIndexExtensionVersion(extension)) != IndexingStamp.IndexVersionDiff.UP_TO_DATE) {
         indexesToRebuild.add(extension.getName());
       }
     }

@@ -316,17 +316,16 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   static <K, V> void registerIndexer(@NotNull final FileBasedIndexExtension<K, V> extension, @NotNull IndexConfiguration state,
-                                     @NotNull IndicesRegistrationResult registrationStatusSink) throws IOException {
+                                     @NotNull IndexVersionRegistrationSink registrationStatusSink) throws IOException {
     ID<K, V> name = extension.getName();
     int version = getIndexExtensionVersion(extension);
 
     final File versionFile = IndexInfrastructure.getVersionFile(name);
 
-    if (IndexingStamp.versionDiffers(name, version)) {
+    IndexingStamp.IndexVersionDiff diff = IndexingStamp.versionDiffers(name, version);
+    registrationStatusSink.setIndexVersionDiff(name, diff);
+    if (diff != IndexingStamp.IndexVersionDiff.UP_TO_DATE) {
       final boolean versionFileExisted = versionFile.exists();
-
-      if (versionFileExisted) registrationStatusSink.registerIndexAsChanged(name);
-      else registrationStatusSink.registerIndexAsInitiallyBuilt(name);
 
       if (extension.hasSnapshotMapping() && versionFileExisted) {
         FileUtil.deleteWithRenaming(IndexInfrastructure.getPersistentIndexRootDir(name));
@@ -344,17 +343,15 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       } catch (Exception e) {
         LOG.error(e);
       }
-
-    } else {
-      registrationStatusSink.registerIndexAsUptoDate(name);
     }
 
-    initIndexStorage(extension, version, state);
+    initIndexStorage(extension, version, state, registrationStatusSink);
   }
 
   private static <K, V> void initIndexStorage(@NotNull FileBasedIndexExtension<K, V> extension,
                                               int version,
-                                              @NotNull IndexConfiguration state)
+                                              @NotNull IndexConfiguration state,
+                                              @NotNull IndexVersionRegistrationSink registrationStatusSink)
     throws IOException {
     VfsAwareIndexStorage<K, V> storage = null;
     final ID<K, V> name = extension.getName();
@@ -415,6 +412,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         if (extension.hasSnapshotMapping() && (!contentHashesEnumeratorOk || instantiatedStorage)) {
           FileUtil.deleteWithRenaming(IndexInfrastructure.getPersistentIndexRootDir(name)); // todo there is possibility of corruption of storage and content hashes
         }
+        registrationStatusSink.setIndexVersionDiff(name, new IndexingStamp.IndexVersionDiff.CorruptedRebuild(version));
         IndexingStamp.rewriteVersion(name, version);
       }
     }

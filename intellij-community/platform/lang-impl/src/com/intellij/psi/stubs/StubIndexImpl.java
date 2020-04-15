@@ -168,7 +168,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
   private static <K> void registerIndexer(@NotNull final StubIndexExtension<K, ?> extension, final boolean forceClean,
-                                          @NotNull AsyncState state, @NotNull IndicesRegistrationResult registrationResultSink)
+                                          @NotNull AsyncState state, @NotNull IndexVersionRegistrationSink registrationResultSink)
     throws IOException {
     final StubIndexKey<K, ?> indexKey = extension.getKey();
     final int version = extension.getVersion();
@@ -179,7 +179,12 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
     final File indexRootDir = IndexInfrastructure.getIndexRootDir(indexKey);
 
-    if (forceClean || IndexingStamp.versionDiffers(indexKey, version)) {
+    IndexingStamp.IndexVersionDiff versionDiff = forceClean
+                                                 ? new IndexingStamp.IndexVersionDiff.InitialBuild(version)
+                                                 : IndexingStamp.versionDiffers(indexKey, version);
+
+    registrationResultSink.setIndexVersionDiff(indexKey, versionDiff);
+    if (versionDiff != IndexingStamp.IndexVersionDiff.UP_TO_DATE) {
       final File versionFile = IndexInfrastructure.getVersionFile(indexKey);
       final boolean versionFileExisted = versionFile.exists();
 
@@ -188,8 +193,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       boolean indexRootHasChildren = children != null && children.length > 0;
       boolean needRebuild = !forceClean && (versionFileExisted || indexRootHasChildren);
 
-      if (needRebuild) registrationResultSink.registerIndexAsChanged(indexKey);
-      else registrationResultSink.registerIndexAsInitiallyBuilt(indexKey);
       if (indexRootHasChildren) FileUtil.deleteWithRenaming(indexRootDir);
       IndexingStamp.rewriteVersion(indexKey, version); // todo snapshots indices
 
@@ -202,10 +205,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       } catch (Exception e) {
         LOG.error(e);
       }
-
-    } else {
-      registrationResultSink.registerIndexAsUptoDate(indexKey);
     }
+
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = getStubUpdatingIndex();
     ReadWriteLock lock = stubUpdatingIndex.getLock();
 
@@ -252,7 +253,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         break;
       }
       catch (IOException e) {
-        registrationResultSink.registerIndexAsInitiallyBuilt(indexKey);
+        registrationResultSink.setIndexVersionDiff(indexKey, new IndexingStamp.IndexVersionDiff.CorruptedRebuild(version));
         onExceptionInstantiatingIndex(indexKey, version, indexRootDir, e);
       }
       catch (RuntimeException e) {
@@ -761,7 +762,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   private class StubIndexInitialization extends IndexInfrastructure.DataInitialization<AsyncState> {
     private final AsyncState state = new AsyncState();
-    private final IndicesRegistrationResult indicesRegistrationSink = new IndicesRegistrationResult();
+    private final IndexVersionRegistrationSink indicesRegistrationSink = new IndexVersionRegistrationSink();
 
     @Override
     protected void prepare() {
@@ -791,14 +792,11 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     protected AsyncState finish() {
       dropUnregisteredIndices(state);
 
-      StringBuilder updated = new StringBuilder();
-      String updatedIndices = indicesRegistrationSink.changedIndices();
-      if (!updatedIndices.isEmpty()) updated.append(updatedIndices);
       indicesRegistrationSink.logChangedAndFullyBuiltIndices(LOG, "Following stub indices will be updated:",
                                                              "Following stub indices will be built:");
 
-      if (updated.length() > 0) {
-        final Throwable e = new Throwable(updated.toString());
+      if (indicesRegistrationSink.hasChangedIndexes()) {
+        final Throwable e = new Throwable(indicesRegistrationSink.changedIndices());
         // avoid direct forceRebuild as it produces dependency cycle (IDEA-105485)
         AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).later().submit(() -> forceRebuild(e));
       }
