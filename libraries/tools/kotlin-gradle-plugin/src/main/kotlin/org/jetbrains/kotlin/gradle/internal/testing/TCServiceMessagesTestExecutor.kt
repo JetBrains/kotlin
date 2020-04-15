@@ -37,7 +37,7 @@ class TCServiceMessagesTestExecutor(
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreRunFailures: Boolean
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
-    lateinit var execHandle: ExecHandle
+    private lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
     var shouldStop = false
 
