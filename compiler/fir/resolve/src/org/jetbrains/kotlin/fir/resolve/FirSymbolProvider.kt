@@ -72,6 +72,7 @@ fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Na
     val result = mutableListOf<FirCallableSymbol<*>>()
     declaredMemberScope.processFunctionsByName(name, result::add)
     declaredMemberScope.processPropertiesByName(name, result::add)
+    if (name == classId.shortClassName) declaredMemberScope.processDeclaredConstructors(result::add)
 
     return result
 }
