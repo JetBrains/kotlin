@@ -199,17 +199,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             """.trimIndent()
             )
 
-            //language=ES6
-            it.appendln(
-                """
-                // noinspection JSUnnecessarySemicolon
-                ;(function(config) {
-                    const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
-                    config.plugins.push(new tcErrorPlugin(tcErrorPlugin))
-                })(config);
-            """.trimIndent()
-            )
-
             it.appendln("   return config;")
             it.appendln("}")
             it.appendln()
