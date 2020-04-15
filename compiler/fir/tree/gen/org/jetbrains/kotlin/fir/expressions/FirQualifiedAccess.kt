@@ -27,6 +27,10 @@ interface FirQualifiedAccess : FirQualifiedAccessWithoutCallee, FirResolvable {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference)
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
     override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccess

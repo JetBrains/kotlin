@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
+import org.jetbrains.kotlin.fir.tree.generator.util.get
 
 import java.io.File
 
@@ -84,11 +84,18 @@ fun SmartPrinter.printElement(element: Element) {
             override()
             println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
 
-            fields.filter { it.withReplace }.forEach {
+            fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null) {
                 println()
                 abstract()
-                if (it.fromParent) print("override ")
-                println(it.replaceFunctionDeclaration())
+                if (override) print("override ")
+                println(replaceFunctionDeclaration(overridenType))
+            }
+
+            allFields.filter { it.withReplace }.forEach {
+                it.replaceDeclaration(overridenFields[it, it])
+                for (overridenType in it.overridenTypes) {
+                    it.replaceDeclaration(true, overridenType)
+                }
             }
 
             for (field in allFields) {

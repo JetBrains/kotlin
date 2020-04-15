@@ -85,6 +85,10 @@ internal class FirWhenExpressionImpl(
         typeRef = newTypeRef
     }
 
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        calleeReference = newCalleeReference
+    }
+
     override fun replaceIsExhaustive(newIsExhaustive: Boolean) {
         isExhaustive = newIsExhaustive
     }

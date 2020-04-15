@@ -75,5 +75,9 @@ internal class FirExpressionWithSmartcastImpl(
         throw IllegalStateException()
     }
 
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        throw IllegalStateException()
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

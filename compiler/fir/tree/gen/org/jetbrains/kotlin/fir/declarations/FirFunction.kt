@@ -37,6 +37,12 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
 
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
     fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<F>

@@ -302,22 +302,30 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 }
             }
 
-            for (field in allFields.filter { it.withReplace }) {
+            fun generateReplace(field: Field, overridenType: Importable? = null, body: () -> Unit) {
                 println()
                 abstract()
-                print("override ${field.replaceFunctionDeclaration()}")
+                print("override ${field.replaceFunctionDeclaration(overridenType)}")
                 if (isInterface || isAbstract) {
                     println()
-                    continue
+                    return
                 }
                 print(" {")
                 if (!field.isMutable) {
                     println("}")
-                    continue
+                    return
                 }
                 println()
                 withIndent {
-                    val newValue = "new${field.name.capitalize()}"
+                    body()
+                }
+                println("}")
+            }
+
+            for (field in allFields.filter { it.withReplace }) {
+                val capitalizedFieldName = field.name.capitalize()
+                val newValue = "new$capitalizedFieldName"
+                generateReplace(field) {
                     when {
                         field.withGetter -> {}
 
@@ -331,7 +339,13 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         }
                     }
                 }
-                println("}")
+
+                for (overridenType in field.overridenTypes) {
+                    generateReplace(field, overridenType) {
+                        println("require($newValue is ${field.typeWithArguments})")
+                        println("replace$capitalizedFieldName($newValue)")
+                    }
+                }
             }
         }
         println("}")

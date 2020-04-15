@@ -26,6 +26,10 @@ abstract class FirAnnotationCall : FirExpression(), FirCall {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
 
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
+
     abstract fun replaceResolved(newResolved: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall

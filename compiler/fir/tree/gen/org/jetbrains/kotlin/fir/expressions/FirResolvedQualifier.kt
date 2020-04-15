@@ -31,6 +31,8 @@ abstract class FirResolvedQualifier : FirExpression() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
 
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
     abstract fun replaceSafe(newSafe: Boolean)
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)

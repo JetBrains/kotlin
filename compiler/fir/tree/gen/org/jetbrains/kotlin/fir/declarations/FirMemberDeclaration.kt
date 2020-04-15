@@ -26,6 +26,8 @@ interface FirMemberDeclaration : FirDeclaration, FirAnnotationContainer {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
 
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
 
     fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration

@@ -26,6 +26,10 @@ abstract class FirTryExpression : FirExpression(), FirResolvable {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTryExpression(this, data)
 
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTryExpression
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirTryExpression

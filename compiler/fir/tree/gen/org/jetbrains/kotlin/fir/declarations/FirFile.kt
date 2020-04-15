@@ -30,5 +30,7 @@ abstract class FirFile : FirPureAbstractElement(), FirAnnotationContainer, FirDe
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
 
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
 }

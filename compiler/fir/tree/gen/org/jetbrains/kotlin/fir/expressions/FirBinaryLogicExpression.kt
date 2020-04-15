@@ -24,6 +24,8 @@ abstract class FirBinaryLogicExpression : FirExpression() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBinaryLogicExpression(this, data)
 
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
 
     abstract fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression

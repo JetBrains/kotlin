@@ -41,6 +41,8 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
 
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass

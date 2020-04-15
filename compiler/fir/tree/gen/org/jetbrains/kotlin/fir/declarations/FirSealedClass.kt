@@ -42,6 +42,10 @@ abstract class FirSealedClass : FirRegularClass() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSealedClass(this, data)
 
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
+
     abstract fun replaceInheritors(newInheritors: List<ClassId>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSealedClass

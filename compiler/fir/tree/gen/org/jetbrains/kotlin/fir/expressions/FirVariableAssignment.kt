@@ -30,6 +30,10 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariableAssignment(this, data)
 
+    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignment

@@ -104,4 +104,8 @@ internal class FirVariableAssignmentImpl(
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
     }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        calleeReference = newCalleeReference
+    }
 }

@@ -22,5 +22,9 @@ abstract class FirArrayOfCall : FirExpression(), FirCall {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArrayOfCall(this, data)
 
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirArrayOfCall
 }
