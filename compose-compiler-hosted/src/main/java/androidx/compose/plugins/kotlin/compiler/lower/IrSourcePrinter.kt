@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInOperator
 import org.jetbrains.kotlin.ir.descriptors.IrSimpleBuiltinOperatorDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -121,6 +122,22 @@ fun IrElement.dumpSrc(): String {
         .replace(Regex("%tab%", RegexOption.MULTILINE), "")
             // remove empty lines
         .replace(Regex("\\n(\\s)*$", RegexOption.MULTILINE), "")
+            // replace source keys for start group calls
+        .replace(
+            Regex(
+                "(\\\$composer\\.start(Restart|Movable|Replaceable)Group\\()(\\d+)(\\))"
+            )
+        ) {
+            "${it.groupValues[1]}<>${it.groupValues[4]}"
+        }
+            // replace source keys for joinKey calls
+        .replace(
+            Regex(
+                "(\\\$composer\\.joinKey\\()(\\d+)"
+            )
+        ) {
+            "${it.groupValues[1]}<>"
+        }
             // brackets with comma on new line
         .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
@@ -258,8 +275,7 @@ private class IrSourcePrinterVisitor(
         val function = expression.symbol.owner
         val name = function.name.asString()
         val descriptor = function.descriptor
-        val isOperator = descriptor.isOperator ||
-                descriptor is IrSimpleBuiltinOperatorDescriptorImpl
+        val isOperator = descriptor.isOperator || function is IrBuiltInOperator
         val isInfix = descriptor.isInfix
         if (isOperator) {
             if (name == "not") {
@@ -271,7 +287,7 @@ private class IrSourcePrinterVisitor(
                 val arg = expression.dispatchReceiver!!
                 if (arg is IrCall) {
                     val fn = arg.symbol.owner
-                    if (fn.descriptor is IrSimpleBuiltinOperatorDescriptorImpl) {
+                    if (fn is IrBuiltInOperator) {
                         when (fn.name.asString()) {
                             "equals",
                             "EQEQ",
