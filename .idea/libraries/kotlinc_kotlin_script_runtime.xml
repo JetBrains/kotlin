@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="kotlinc.kotlin-script-runtime">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-script-runtime.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-script-runtime/1.4-SNAPSHOT/kotlin-script-runtime-1.4-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-script-runtime-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-script-runtime/1.4-SNAPSHOT/kotlin-script-runtime-1.4-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

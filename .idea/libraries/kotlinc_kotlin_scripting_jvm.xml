@@ -1,9 +1,11 @@
 <component name="libraryTable">
   <library name="kotlinc.kotlin-scripting-jvm">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-scripting-jvm.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-scripting-jvm/1.4-SNAPSHOT/kotlin-scripting-jvm-1.4-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-scripting-jvm/1.4-SNAPSHOT/kotlin-scripting-jvm-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

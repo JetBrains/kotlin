@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="kotlinc.kotlin-build-common-tests">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-build-common-tests-for-ide/1.4-SNAPSHOT/kotlin-build-common-tests-for-ide-1.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-build-common-tests-for-ide/1.4-SNAPSHOT/kotlin-build-common-tests-for-ide-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="kotlinc.kotlin-daemon-client">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlin-daemon-client.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

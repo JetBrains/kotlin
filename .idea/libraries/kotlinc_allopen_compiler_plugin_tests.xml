@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="kotlinc.allopen-compiler-plugin-tests">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/allopen-compiler-plugin-tests-for-ide/1.4-SNAPSHOT/allopen-compiler-plugin-tests-for-ide-1.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/allopen-compiler-plugin-tests-for-ide/1.4-SNAPSHOT/allopen-compiler-plugin-tests-for-ide-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

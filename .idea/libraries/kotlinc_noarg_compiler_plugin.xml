@@ -1,9 +1,11 @@
 <component name="libraryTable">
   <library name="kotlinc.noarg-compiler-plugin">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/noarg-compiler-plugin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/noarg-compiler-plugin-for-ide/1.4-SNAPSHOT/noarg-compiler-plugin-for-ide-1.4-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/noarg-compiler-plugin-for-ide/1.4-SNAPSHOT/noarg-compiler-plugin-for-ide-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
