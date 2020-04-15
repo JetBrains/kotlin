@@ -139,4 +139,6 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun pushReturnValue(state: State) = getTopFrame().pushReturnValue(state)
     fun popReturnValue() = getTopFrame().popReturnValue()
     fun peekReturnValue() = getTopFrame().peekReturnValue()
+
+    override fun toString() = frameEntryPoint ?: "Not defined"
 }

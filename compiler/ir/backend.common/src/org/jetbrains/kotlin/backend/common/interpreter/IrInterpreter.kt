@@ -107,6 +107,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrTypeOperatorCall -> interpretTypeOperatorCall(this)
                 is IrBranch -> interpretBranch(this)
                 is IrWhileLoop -> interpretWhile(this)
+                is IrDoWhileLoop -> interpretDoWhile(this)
                 is IrWhen -> interpretWhen(this)
                 is IrBreak -> interpretBreak(this)
                 is IrContinue -> interpretContinue(this)
@@ -444,13 +445,26 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
-        var executionResult: ExecutionResult
         while (true) {
-            executionResult = expression.condition.interpret().check { return it }
-            val condition = stack.popReturnValue().asBooleanOrNull()
-            if (condition != true) break else expression.body?.interpret()?.check { return it } ?: return Next
+            expression.condition.interpret().check { return it }
+            if (stack.popReturnValue().asBooleanOrNull() != true) break
+            expression.body?.interpret()?.check { return it }
         }
-        return executionResult
+        return Next
+    }
+
+    private suspend fun interpretDoWhile(expression: IrDoWhileLoop): ExecutionResult {
+        do {
+            // pool from body must be seen to condition expression, so must create temp frame here
+            stack.newFrame(asSubFrame = true) {
+                expression.body?.interpret()?.check { return@newFrame it }
+                expression.condition.interpret().check { return@newFrame it }
+                Next
+            }.check { return it }
+
+            if (stack.popReturnValue().asBooleanOrNull() != true) break
+        } while (true)
+        return Next
     }
 
     private suspend fun interpretWhen(expression: IrWhen): ExecutionResult {
@@ -707,6 +721,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretComposite(expression: IrComposite): ExecutionResult {
         return when (expression.origin) {
             IrStatementOrigin.DESTRUCTURING_DECLARATION -> interpretStatements(expression.statements)
+            null -> interpretStatements(expression.statements) // is null for body of do while loop
             else -> TODO("${expression.origin} not implemented")
         }
     }
