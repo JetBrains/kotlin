@@ -430,28 +430,29 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private var stackTraceProcessor = TeamCityMessageStackTraceProcessor()
 
-                    override fun printNonTestOutput(text: String, type: String?) {
+                    override fun printNonTestOutput(text: String, type: LogType?) {
                         val value = text.trimEnd()
                         progressLogger.progress(value)
 
                         parseConsole(value, type)
                     }
 
-                    private fun parseConsole(text: String, type: String?) {
+                    private fun parseConsole(text: String, type: LogType?) {
 
                         var actualType = type
-                        stackTraceProcessor.process(text) { line ->
-                            actualType = ERROR
-                            line?.let { parseConsole(it, actualType) }
+                        val inStackTrace = stackTraceProcessor.process(text) { line, logType ->
+                            log.processLogMessage(line, logType)
                         }
+
+                        if (inStackTrace) return
 
                         val launcherMessage = KARMA_MESSAGE.matchEntire(text)
 
                         val actualText = if (launcherMessage != null) {
                             val (logLevel, message) = launcherMessage.destructured
-                            actualType = logLevel.toLowerCase()
+                            actualType = LogType.byValueOrNull(logLevel.toLowerCase())
                             when (actualType) {
-                                WARN, ERROR -> {
+                                LogType.WARN, LogType.ERROR -> {
                                     processFailedBrowsers(text)
                                 }
                             }

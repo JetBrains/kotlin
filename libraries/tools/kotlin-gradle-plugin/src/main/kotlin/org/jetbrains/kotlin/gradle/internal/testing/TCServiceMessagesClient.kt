@@ -15,6 +15,7 @@ import org.gradle.api.tasks.testing.TestResult.ResultType.*
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.targets.js.LogType
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.slf4j.Logger
 import java.text.ParseException
@@ -85,7 +86,7 @@ internal open class TCServiceMessagesClient(
                 }
             }
             is TestSuiteFinished -> close(message.ts, getSuiteName(message))
-            is Message -> printNonTestOutput(message.text, message.attributes["type"])
+            is Message -> printNonTestOutput(message.text, LogType.byValueOrNull(message.attributes["type"]))
             else -> Unit
         }
 
@@ -115,7 +116,7 @@ internal open class TCServiceMessagesClient(
         afterMessage = false
     }
 
-    protected open fun printNonTestOutput(text: String, type: String? = null) {
+    protected open fun printNonTestOutput(text: String, type: LogType? = null) {
         print(text)
     }
 

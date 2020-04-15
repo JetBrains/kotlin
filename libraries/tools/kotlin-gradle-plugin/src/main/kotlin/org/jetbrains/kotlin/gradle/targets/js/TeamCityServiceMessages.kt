@@ -11,7 +11,7 @@ import org.slf4j.Logger as SlfLogger
 
 internal fun SlfLogger.processLogMessage(
     message: String,
-    type: String
+    type: LogType
 ) {
     processLogMessageInternal(
         message = message,
@@ -26,7 +26,7 @@ internal fun SlfLogger.processLogMessage(
 
 internal fun GradleLogger.processLogMessage(
     message: String,
-    type: String
+    type: LogType
 ) {
     processLogMessageInternal(
         message = message,
@@ -40,27 +40,36 @@ internal fun GradleLogger.processLogMessage(
 
 private fun processLogMessageInternal(
     message: String,
-    type: String,
+    type: LogType,
     error: (text: String) -> Unit,
     warn: (text: String) -> Unit,
     info: (text: String) -> Unit,
     debug: (text: String) -> Unit
 ) {
     val nonColoredMessage = message.clearAnsiColor()
-    when (type.toLowerCase()) {
-        WARN -> {
+    when (type) {
+        LogType.WARN -> {
             warn(nonColoredMessage)
         }
-        ERROR -> {
+        LogType.ERROR -> {
             error(nonColoredMessage)
         }
-        INFO, LOG -> info(nonColoredMessage)
-        DEBUG -> debug(nonColoredMessage)
+        LogType.INFO, LogType.LOG -> info(nonColoredMessage)
+        LogType.DEBUG -> debug(nonColoredMessage)
     }
 }
 
-internal const val ERROR = "error"
-internal const val WARN = "warn"
-internal const val INFO = "info"
-internal const val DEBUG = "debug"
-internal const val LOG = "log"
+enum class LogType(val value: String) {
+    ERROR("error"),
+    WARN("warn"),
+    INFO("info"),
+    DEBUG("debug"),
+    LOG("log");
+
+    companion object {
+        fun byValueOrNull(value: String?): LogType? {
+            if (value == null) return null
+            return values().singleOrNull { it.value == value }
+        }
+    }
+}

@@ -28,7 +28,7 @@ class TeamCityMessageCommonClient(
 
     override fun serviceMessage(message: ServiceMessage) {
         when (message) {
-            is Message -> printMessage(message.text, message.attributes["type"])
+            is Message -> printMessage(message.text, LogType.byValueOrNull(message.attributes["type"]))
         }
     }
 
@@ -37,23 +37,22 @@ class TeamCityMessageCommonClient(
             .joinToString("\n")
     }
 
-    private fun printMessage(text: String, type: String?) {
+    private fun printMessage(text: String, type: LogType?) {
         val value = text.trimEnd()
         progressLogger.progress(value)
 
-        var actualType = type
-        stackTraceProcessor.process(text) { line ->
-            actualType = ERROR
-            if (line != null) {
-                printMessage(line, actualType)
-            }
+        val inStackTrace = stackTraceProcessor.process(text) { line, logType ->
+            log.processLogMessage(line, logType)
+            errors.add(line.clearAnsiColor())
         }
 
-        when (actualType) {
-            ERROR, WARN -> errors.add(value.clearAnsiColor())
+        if (inStackTrace) return
+
+        when (type) {
+            LogType.ERROR, LogType.WARN -> errors.add(value.clearAnsiColor())
         }
 
-        actualType?.let { log.processLogMessage(value, it) }
+        type?.let { log.processLogMessage(value, it) }
     }
 
     override fun regularText(text: String) {

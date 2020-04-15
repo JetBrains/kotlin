@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.js
 internal class TeamCityMessageStackTraceProcessor {
     private var firstLine: String? = null
 
-    fun process(text: String, firstLineAction: (String?) -> Unit) {
-        firstLine = if (text.trim().startsWith("at ")) {
-            // firstLineAction can have side effects
-            // that's why important to call it even with null line
-            firstLineAction(firstLine)
-            null
+    fun process(text: String, action: (String, LogType) -> Unit): Boolean {
+        return if (text.trim().startsWith("at ")) {
+            firstLine?.let {
+                action(it, LogType.ERROR)
+            }
+            firstLine = null
+            action(text, LogType.ERROR)
+            true
         } else {
-            text
+            firstLine = text
+            false
         }
     }
 }
