@@ -26,6 +26,12 @@
     </extensionPoint>
   </extensionPoints>
 
+  <actions>
+    <action id="DumpMLCompletionFeatures" class="com.intellij.completion.actions.DumpMLCompletionFeatures">
+      <keyboard-shortcut keymap="$default" first-keystroke="alt M" second-keystroke="L"/>
+    </action>
+  </actions>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationInitializedListener implementation="com.intellij.stats.completion.CompletionTrackerInitializer"/>
     <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
