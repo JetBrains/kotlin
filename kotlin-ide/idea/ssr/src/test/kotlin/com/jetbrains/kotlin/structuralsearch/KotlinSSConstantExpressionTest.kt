@@ -3,9 +3,13 @@ package com.jetbrains.kotlin.structuralsearch
 class KotlinSSConstantExpressionTest : KotlinSSTest() {
     override fun getBasePath() = "constantExpression"
 
-    fun testInteger() { doTest("1") }
+    fun testNull() { doTest("null") }
 
     fun testBoolean() { doTest("true") }
 
-    fun testString() { doTest("\"1\"") }
+    fun testInteger() { doTest("1") }
+
+    fun testFloat() { doTest("1.0f") }
+
+    fun testCharacter() { doTest("'a'") }
 }
