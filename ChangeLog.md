@@ -545,6 +545,115 @@
 - [`KT-35414`](https://youtrack.jetbrains.com/issue/KT-35414) Switch for `-Xexpression` to `-expression`/`-e` cli argument syntax for JVM cli compiler in 1.4
 
 
+## 1.3.72
+
+### Compiler
+
+- [`KT-37107`](https://youtrack.jetbrains.com/issue/KT-37107) kotlinc allows calling default constructor of class with no constructors
+- [`KT-37406`](https://youtrack.jetbrains.com/issue/KT-37406) NI: "UnsupportedOperationException: no descriptor for type constructor of TypeVariable(T)" when compiling `*.gradle.kts` file
+
+### IDE
+
+- [`KT-37483`](https://youtrack.jetbrains.com/issue/KT-37483) Kotlin localisation
+- [`KT-37629`](https://youtrack.jetbrains.com/issue/KT-37629) False positive "Unsupported [literal prefixes and suffixes]" for infix function
+- [`KT-37808`](https://youtrack.jetbrains.com/issue/KT-37808) "Resolve pasted references" dialog freezes UI for 20 seconds when pasting kotlin code
+
+### IDE. Completion
+
+- [`KT-37144`](https://youtrack.jetbrains.com/issue/KT-37144) Completion goes into an infinite loop with Arrow 0.10.4 dependency
+
+### IDE. Debugger
+
+- [`KT-37767`](https://youtrack.jetbrains.com/issue/KT-37767) Debugger, NPE happens while stepping.
+
+### IDE. Editing
+
+- [`KT-35135`](https://youtrack.jetbrains.com/issue/KT-35135) UI freeze: not enough checkCancelled on resolve path
+
+### IDE. Inspections and Intentions
+
+- [`KT-37217`](https://youtrack.jetbrains.com/issue/KT-37217) Replace UseExperimental with OptIn intention removes target prefixes for annotations
+
+### IDE. Native
+
+- [`KT-38079`](https://youtrack.jetbrains.com/issue/KT-38079) IDEA navigates to wrong line of source code from Native stack trace
+
+### IDE. Navigation
+
+- [`KT-37487`](https://youtrack.jetbrains.com/issue/KT-37487) Destructuring declarations are called "destruction declarations" in UI
+
+### Tools. Gradle. Native
+
+- [`KT-37696`](https://youtrack.jetbrains.com/issue/KT-37696) MPP Gradle plugin: False positive parallel execution detection if build started with --continue
+
+## 1.3.71
+
+### Compiler
+
+- [`KT-36095`](https://youtrack.jetbrains.com/issue/KT-36095) 201: False positive OVERLOAD_RESOLUTION_AMBIGUITY with Java `Enum.valueOf` and `Enum.values()` reference
+- [`KT-37040`](https://youtrack.jetbrains.com/issue/KT-37040) 'No explicit visibility in API mode' should not be reported on enum members
+- [`KT-37204`](https://youtrack.jetbrains.com/issue/KT-37204) AssertionError: "No delegated property metadata owner for" with lazy inside inline function
+
+### Docs & Examples
+
+- [`KT-37029`](https://youtrack.jetbrains.com/issue/KT-37029) Kotlin full stack app demo: update all involving versions to work with 1.3.70 release
+
+### IDE
+
+- [`KT-34759`](https://youtrack.jetbrains.com/issue/KT-34759) "PSI and index do not match" and high CPU usage when the library has `enum` with elements in quotes and `internal lazy val` in another part of code
+- [`KT-37200`](https://youtrack.jetbrains.com/issue/KT-37200) StackOverflowError in LightMethodBuilder.equals when analysing Kotlin files
+- [`KT-37229`](https://youtrack.jetbrains.com/issue/KT-37229) java.lang.NoSuchMethodError: 'com.intellij.psi.impl.light.LightJavaModule, com.intellij.psi.impl.light.LightJavaModule.findModule after updating kotlin plugin to 1.3.70
+- [`KT-37273`](https://youtrack.jetbrains.com/issue/KT-37273) No error in editor when typing unresolved reference in super constructor lambda
+- [`KT-37414`](https://youtrack.jetbrains.com/issue/KT-37414) Not all imports are added on paste if code is formatted after paste
+- [`KT-37553`](https://youtrack.jetbrains.com/issue/KT-37553) Run inspections after general highlight pass
+
+### IDE. Code Style, Formatting
+
+- [`KT-37545`](https://youtrack.jetbrains.com/issue/KT-37545) Continuation indent for method's parameter changes in call chain
+
+### IDE. Hints
+
+- [`KT-37537`](https://youtrack.jetbrains.com/issue/KT-37537) IDE is missing or swallowing keystrokes when hint popups are displayed
+
+### IDE. Inspections and Intentions
+
+- [`KT-36478`](https://youtrack.jetbrains.com/issue/KT-36478) IDE suggests to use 'OptIn' annotation when it is not available in the used version of kotlin-stdlib
+- [`KT-37294`](https://youtrack.jetbrains.com/issue/KT-37294) False positive "Unused unary operator" on negative long annotation value
+
+### IDE. Navigation
+
+- [`KT-36657`](https://youtrack.jetbrains.com/issue/KT-36657) KotlinFindUsagesHandler#processElementUsages always return false if options.isSearchForTextOccurrences is false
+
+### IDE. Refactorings
+
+- [`KT-37451`](https://youtrack.jetbrains.com/issue/KT-37451) Change of signature error: Type of parameter cannot be resolved
+- [`KT-37597`](https://youtrack.jetbrains.com/issue/KT-37597) Support Suggest rename and change signature refactorings in Kotlin for IDEA 2020.1
+
+### IDE. Run Configurations
+
+- [`KT-36781`](https://youtrack.jetbrains.com/issue/KT-36781) Override ConfigurationFactory::getId method in Kotlin plugin to avoid problems with localizations
+
+### JavaScript
+
+- [`KT-37386`](https://youtrack.jetbrains.com/issue/KT-37386) Incorrect JS generated by the compiler: function is erased by the function parameter
+
+### Tools. Gradle. JS
+
+- [`KT-36196`](https://youtrack.jetbrains.com/issue/KT-36196) Investigate performance problems while resolving in projects with npm dependencies
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-37264`](https://youtrack.jetbrains.com/issue/KT-37264) In intermediate common source sets, internals are not visible from their dependsOn source sets during Gradle build
+
+### Tools. Gradle. Native
+
+- [`KT-37565`](https://youtrack.jetbrains.com/issue/KT-37565) MPP plugin: Forbid parallel in-process execution of the Kotlin/Native compiler
+
+### Tools. kapt
+
+- [`KT-37241`](https://youtrack.jetbrains.com/issue/KT-37241) Kapt: Classpath entry points to a non-existent location: ...build/intermediates/javac/debug/classes...
+
+
 ## 1.3.70
 
 ### Compiler
