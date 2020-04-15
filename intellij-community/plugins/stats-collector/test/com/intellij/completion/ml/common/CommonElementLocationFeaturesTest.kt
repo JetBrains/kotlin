@@ -51,7 +51,7 @@ class CommonElementLocationFeaturesTest: LightCompletionTestCase() {
   }
 
   fun `test lookup element psi class name`() {
-    val features = calculateFeature("lookup_element_psi_class_name", "Test.java") {
+    val features = calculateFeature("item_class", "Test.java") {
       """|class Test {
          |  private int a = 1;
          |  
