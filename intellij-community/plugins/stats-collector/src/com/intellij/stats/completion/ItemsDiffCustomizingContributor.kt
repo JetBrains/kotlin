@@ -49,7 +49,7 @@ class ItemsDiffCustomizingContributor : CompletionContributor() {
     override fun renderElement(presentation: LookupElementPresentation) {
       super.renderElement(presentation)
       val diff = getUserData(DIFF_KEY)?.get()
-      if (diff == null || diff == 0 || !presentation.isReal) return
+      if (diff == null || diff == 0) return
       val text = if (diff < 0) " ↑${-diff} " else " ↓$diff "
       val color: Color = if (diff < 0) ML_RANK_DIFF_GREEN_COLOR else JBColor.RED
 
