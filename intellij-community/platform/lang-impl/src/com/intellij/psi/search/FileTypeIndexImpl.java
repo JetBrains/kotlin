@@ -28,7 +28,7 @@ public final class FileTypeIndexImpl
   @NotNull
   @Override
   public KeyDescriptor<FileType> getKeyDescriptor() {
-    return FileTypeKeyDescriptor.INSTANCE;
+    return new FileTypeKeyDescriptor();
   }
 
   @NotNull
@@ -44,7 +44,7 @@ public final class FileTypeIndexImpl
 
   @Override
   public int getVersion() {
-    return 2;
+    return 3;
   }
 
   @NotNull
