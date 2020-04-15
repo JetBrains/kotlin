@@ -11,8 +11,8 @@ import com.jetbrains.swift.codeinsight.resolve.processor.CollectingSymbolProcess
 import com.jetbrains.swift.codeinsight.resolve.processor.SwiftAbstractSymbolProcessor.ALL_DECLARATION_KINDS
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
-import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanConsumer
+import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -55,12 +55,8 @@ private fun findGlobalSymbols(containingFile: KtFile, offset: Int, kind: OCLangu
     val results = mutableListOf<OCSymbol>()
     val project = containingFile.project
     for (konanTarget in KonanConsumer.getAllReferencedKonanTargets(project)) {
-        val bridgeFile = konanTarget.let { target ->
-            KonanBridgeFileManager.getInstance(project).forTarget(target, target.productModuleName.let { "$it/$it.h" })
-        }
-
         val context = OCInclusionContext.empty(kind, containingFile)
-        context.addProcessedFile(bridgeFile)
+        context.define(PRODUCT_MODULE_NAME_KEY, konanTarget.productModuleName)
 
         val tableContents = FileSymbolTable.forFile(containingFile, context)?.takeIf { tables.add(it) }?.contents ?: emptyList()
         for (symbol in tableContents) {

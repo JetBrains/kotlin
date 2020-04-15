@@ -30,7 +30,7 @@ object KtFrameworkTranslator {
         val sources = collectSources(project, konanFile)
         val ktFile = sources.firstOrNull()?.let { PsiManager.getInstance(project).findFile(it) } as? KtFile ?: return emptySequence()
 
-        val baseDeclarations = translator.translateBase(ktFile, konanFile.target)
+        val baseDeclarations = translator.translateBase(ktFile, konanFile.target.productModuleName)
         val includes = sources.asSequence().map { include(konanFile, it) }
 
         return baseDeclarations + includes

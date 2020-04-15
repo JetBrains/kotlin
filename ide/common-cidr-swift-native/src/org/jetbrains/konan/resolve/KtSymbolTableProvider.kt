@@ -13,15 +13,14 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.jetbrains.cidr.CidrLog
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
-import com.jetbrains.cidr.lang.symbols.symtable.ContextSignature
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
+import com.jetbrains.cidr.lang.symbols.symtable.OCContextSignatureBuilder
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
-import org.jetbrains.konan.resolve.konan.KonanBridgeVirtualFile
+import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
 import org.jetbrains.konan.resolve.translation.KtFileTranslator
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KtSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(file: PsiFile): Boolean = file is KtFile
@@ -32,29 +31,25 @@ class KtSymbolTableProvider : SymbolTableProvider() {
 
     //todo[medvedev] check if the source is from common or ios module
     override fun isSource(project: Project, file: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
-        KtFileTranslator.isSupported(inclusionContext) && getBridgeFile(inclusionContext) != null && isSource(project, file)
+        isSource(project, file) && KtFileTranslator.isSupported(inclusionContext) && inclusionContext.isDefined(PRODUCT_MODULE_NAME_KEY)
 
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean =
         getInsideCodeBlockModificationScope(event.parent) == null
 
-    override fun calcTableUsingPSI(file: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
-        CidrLog.LOG.error("should not be called for this file: " + file.name)
-        return FileSymbolTable(virtualFile, ContextSignature())
-    }
+    override fun calcTableUsingPSI(file: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable =
+        throw UnsupportedOperationException()
 
     override fun calcTable(virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
-        val target = checkNotNull(getBridgeFile(context)).target
+        CidrLog.LOG.assertTrue(!context.isSurrogate, "Surrogate symbol table requested for bridged Kotlin symbols")
+        val signatureBuilder = OCContextSignatureBuilder(context.languageKind, context.currentNamespace, context.isSurrogate)
+        val derived = context.deriveButDontCopyTypes(false).apply { setSignatureBuilder(signatureBuilder) }
+        val frameworkName = requireNotNull(derived.getDefinition(PRODUCT_MODULE_NAME_KEY)).substitution
+        val table = FileSymbolTable(virtualFile, signatureBuilder.build())
+        val psi = PsiManager.getInstance(derived.project).findFile(virtualFile) as? KtFile ?: return table
 
-        val signature = ContextSignature(context.languageKind, emptyMap(), emptySet(), emptyList(), false, null, false)
-        val table = FileSymbolTable(virtualFile, signature)
-        val project = context.project
-        val psi = PsiManager.getInstance(project).findFile(virtualFile) as? KtFile ?: return table
-
-        val fileTranslator = KtFileTranslator.createTranslator(context)
-        fileTranslator.translate(psi, target).forEach { symbol -> table.append(symbol) }
+        val fileTranslator = KtFileTranslator.createTranslator(derived)
+        fileTranslator.translate(psi, frameworkName).forEach { symbol -> table.append(symbol) }
 
         return table
     }
-
-    private fun getBridgeFile(context: OCInclusionContext): KonanBridgeVirtualFile? = context.processedFiles.firstIsInstanceOrNull()
 }

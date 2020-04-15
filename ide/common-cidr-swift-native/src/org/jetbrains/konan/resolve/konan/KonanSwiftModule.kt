@@ -16,6 +16,7 @@ import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
+import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
 
 abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderBase() {
     protected abstract val project: Project
@@ -38,7 +39,7 @@ abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderB
         val file = konanBridgeFile() ?: return SwiftGlobalSymbols.EMPTY
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return SwiftGlobalSymbols.EMPTY
         val context = OCInclusionContext.empty(SwiftLanguageKind, psiFile)
-        context.addProcessedFile(file)
+        context.define(PRODUCT_MODULE_NAME_KEY, file.target.productModuleName)
         val table = FileSymbolTable.forFile(file, context)?.takeIf { !it.isEmpty } ?: return SwiftGlobalSymbols.EMPTY
 
         val bridgedSymbols = SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC, this)

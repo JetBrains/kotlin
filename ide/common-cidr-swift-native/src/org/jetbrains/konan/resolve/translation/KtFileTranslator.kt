@@ -6,7 +6,6 @@ import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
-import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.konan.resolve.symbols.KtSymbol
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -18,13 +17,13 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.util.getValueOrNull
 
 abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
-    fun translate(file: KtFile, target: KonanTarget): Sequence<T> {
-        val (stubTrace, lazy) = createStubProvider(file, target)
+    fun translate(file: KtFile, frameworkName: String): Sequence<T> {
+        val (stubTrace, lazy) = createStubProvider(file, frameworkName)
         return lazy.translate(file).translate(stubTrace, file.virtualFile)
     }
 
-    fun translateBase(file: KtFile, target: KonanTarget): Sequence<T> {
-        val (stubTrace, lazy) = createStubProvider(file, target)
+    fun translateBase(file: KtFile, frameworkName: String): Sequence<T> {
+        val (stubTrace, lazy) = createStubProvider(file, frameworkName)
         return lazy.generateBase().translate(stubTrace, file.virtualFile)
     }
 
@@ -44,9 +43,9 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
     protected abstract fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): T?
     protected abstract fun translateMember(stub: Stub<*>, clazz: T, file: VirtualFile, processor: (M) -> Unit)
 
-    private fun createStubProvider(file: KtFile, target: KonanTarget): Pair<StubTrace, ObjCExportLazy> {
+    private fun createStubProvider(file: KtFile, frameworkName: String): Pair<StubTrace, ObjCExportLazy> {
         val configuration = object : ObjCExportLazy.Configuration {
-            override val frameworkName: String get() = target.productModuleName
+            override val frameworkName: String get() = frameworkName
 
             override fun getCompilerModuleName(moduleInfo: ModuleInfo): String =
                 TODO() // no implementation in `KonanCompilerFrontendServices.kt` either
