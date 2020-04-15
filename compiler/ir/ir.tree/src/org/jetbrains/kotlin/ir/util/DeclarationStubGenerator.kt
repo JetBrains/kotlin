@@ -120,6 +120,8 @@ class DeclarationStubGenerator(
                 generatePropertyStub(descriptor)
             is TypeAliasDescriptor ->
                 generateTypeAliasStub(descriptor)
+            is TypeParameterDescriptor ->
+                generateOrGetTypeParameterStub(descriptor)
             else ->
                 throw AssertionError("Unexpected member descriptor: $descriptor")
         }

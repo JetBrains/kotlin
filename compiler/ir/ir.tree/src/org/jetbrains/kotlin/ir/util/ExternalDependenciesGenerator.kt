@@ -65,6 +65,7 @@ private val SymbolTable.allUnbound: List<IrSymbol>
         r.addAll(unboundSimpleFunctions)
         r.addAll(unboundProperties)
         r.addAll(unboundTypeAliases)
+        r.addAll(unboundTypeParameters)
         return r
     }
 
