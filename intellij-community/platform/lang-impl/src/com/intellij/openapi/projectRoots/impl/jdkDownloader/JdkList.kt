@@ -25,7 +25,6 @@ import org.tukaani.xz.XZInputStream
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
-import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -359,7 +358,8 @@ class JdkListDownloader {
       downloadJdkList(feedUrl, progress)
     }
     catch (t: IOException) {
-      throw RuntimeException("Failed to download the list of available JDKs from $feedUrl. ${t.message}", t)
+      Logger.getInstance(javaClass).warn("Failed to download the list of available JDKs from $feedUrl. ${t.message}")
+      return emptyList()
     }
 
     val rawData = try {
