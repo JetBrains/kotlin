@@ -13,21 +13,13 @@ FILE: destructuring.kt
         public? final? val third: String = R|<local>/third|
             public? get(): String
 
-        public final fun component1(): Int {
-            ^component1 this@R|/Some|.R|/Some.first|
-        }
+        public final fun component1(): Int
 
-        public final fun component2(): Double {
-            ^component2 this@R|/Some|.R|/Some.second|
-        }
+        public final fun component2(): Double
 
-        public final fun component3(): String {
-            ^component3 this@R|/Some|.R|/Some.third|
-        }
+        public final fun component3(): String
 
-        public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some| {
-            ^copy R|/Some.Some|(this@R|/Some|.R|/Some.first|, this@R|/Some|.R|/Some.second|, this@R|/Some|.R|/Some.third|)
-        }
+        public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
 
     }
     public? final? fun foo(some: Some): R|kotlin/Unit| {

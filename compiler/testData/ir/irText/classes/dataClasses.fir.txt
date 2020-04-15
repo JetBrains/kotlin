@@ -45,43 +45,40 @@ FILE fqName:<root> fileName:/dataClasses.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.Test1'
-          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component1' type=<root>.Test1 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component1' type=<root>.Test1 origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.Test1'
-          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component2' type=<root>.Test1 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component2' type=<root>.Test1 origin=null
     FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any declared in <root>.Test1'
-          CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component3' type=<root>.Test1 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
+            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component3' type=<root>.Test1 origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.Test1
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
-          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       VALUE_PARAMETER name:y index:1 type:kotlin.String
         EXPRESSION_BODY
-          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       VALUE_PARAMETER name:z index:2 type:kotlin.Any
         EXPRESSION_BODY
-          CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
+            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.String, z: kotlin.Any): <root>.Test1 declared in <root>.Test1'
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
-            x: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
-            y: CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
-            z: CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
+            x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.copy' type=kotlin.Int origin=null
+            y: GET_VAR 'y: kotlin.String declared in <root>.Test1.copy' type=kotlin.String origin=null
+            z: GET_VAR 'z: kotlin.Any declared in <root>.Test1.copy' type=kotlin.Any origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test1, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test1
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
@@ -193,19 +190,18 @@ FILE fqName:<root> fileName:/dataClasses.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any? declared in <root>.Test2'
-          CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.component1' type=<root>.Test2 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
+            receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.component1' type=<root>.Test2 origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, x:kotlin.Any?) returnType:<root>.Test2
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       VALUE_PARAMETER name:x index:0 type:kotlin.Any?
         EXPRESSION_BODY
-          CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.copy' type=<root>.Test2 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
+            receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.copy' type=<root>.Test2 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Any?): <root>.Test2 declared in <root>.Test2'
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any?) [primary] declared in <root>.Test2' type=<root>.Test2 origin=null
-            x: CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.copy' type=<root>.Test2 origin=null
+            x: GET_VAR 'x: kotlin.Any? declared in <root>.Test2.copy' type=kotlin.Any? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test2, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test2
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
@@ -322,55 +318,51 @@ FILE fqName:<root> fileName:/dataClasses.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Double declared in <root>.Test3'
-          CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=kotlin.Double origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component1' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component1' type=<root>.Test3 origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double?
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Double? declared in <root>.Test3'
-          CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=kotlin.Double? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component2' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]' type=kotlin.Double? origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component2' type=<root>.Test3 origin=null
     FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Float declared in <root>.Test3'
-          CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=kotlin.Float origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component3' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]' type=kotlin.Float origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component3' type=<root>.Test3 origin=null
     FUN name:component4 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float?
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component4 (): kotlin.Float? declared in <root>.Test3'
-          CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component4' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component4' type=<root>.Test3 origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:<root>.Test3
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       VALUE_PARAMETER name:d index:0 type:kotlin.Double
         EXPRESSION_BODY
-          CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=kotlin.Double origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       VALUE_PARAMETER name:dn index:1 type:kotlin.Double?
         EXPRESSION_BODY
-          CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=kotlin.Double? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]' type=kotlin.Double? origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       VALUE_PARAMETER name:f index:2 type:kotlin.Float
         EXPRESSION_BODY
-          CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=kotlin.Float origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]' type=kotlin.Float origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       VALUE_PARAMETER name:df index:3 type:kotlin.Float?
         EXPRESSION_BODY
-          CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
+            receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?): <root>.Test3 declared in <root>.Test3'
           CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
-            d: CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
-            dn: CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
-            f: CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
-            df: CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
+            d: GET_VAR 'd: kotlin.Double declared in <root>.Test3.copy' type=kotlin.Double origin=null
+            dn: GET_VAR 'dn: kotlin.Double? declared in <root>.Test3.copy' type=kotlin.Double? origin=null
+            f: GET_VAR 'f: kotlin.Float declared in <root>.Test3.copy' type=kotlin.Float origin=null
+            df: GET_VAR 'df: kotlin.Float? declared in <root>.Test3.copy' type=kotlin.Float? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test3, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test3
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

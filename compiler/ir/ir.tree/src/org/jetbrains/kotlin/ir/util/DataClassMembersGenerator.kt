@@ -6,43 +6,20 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
-import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.builders.irAs
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irCallOp
-import org.jetbrains.kotlin.ir.builders.irConcat
-import org.jetbrains.kotlin.ir.builders.irEqeqeq
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
-import org.jetbrains.kotlin.ir.builders.irIfNull
-import org.jetbrains.kotlin.ir.builders.irIfThenReturnFalse
-import org.jetbrains.kotlin.ir.builders.irIfThenReturnTrue
-import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.builders.irNotEquals
-import org.jetbrains.kotlin.ir.builders.irNotIs
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.irReturnTrue
-import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
+import org.jetbrains.kotlin.ir.expressions.mapValueParameters
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -70,13 +47,16 @@ abstract class DataClassMembersGenerator(
         val irFunction: IrFunction
     ) : IrBlockBodyBuilder(context, Scope(irFunction.symbol), startOffset, endOffset) {
         inline fun addToClass(builder: MemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
+            build(builder)
+            irClass.declarations.add(irFunction)
+            return irFunction
+        }
+
+        inline fun build(builder: MemberFunctionBuilder.(IrFunction) -> Unit) {
             irFunction.buildWithScope {
                 builder(irFunction)
                 irFunction.body = doBuild()
             }
-
-            irClass.declarations.add(irFunction)
-            return irFunction
         }
 
         fun irThis(): IrExpression {
@@ -94,6 +74,29 @@ abstract class DataClassMembersGenerator(
                 startOffset, endOffset,
                 irFirstParameter.type,
                 irFirstParameter.symbol
+            )
+        }
+
+        fun putDefault(parameter: ValueParameterDescriptor, value: IrExpression) {
+            irFunction.putDefault(parameter, irExprBody(value))
+        }
+
+        fun generateComponentFunction(irField: IrField) {
+            +irReturn(irGetField(irThis(), irField))
+        }
+
+        fun generateCopyFunction(constructorSymbol: IrConstructorSymbol) {
+            +irReturn(
+                irCall(
+                    constructorSymbol,
+                    irClass.defaultType
+                ).apply {
+                    mapTypeParameters(::transform)
+                    mapValueParameters {
+                        val irValueParameter = irFunction.valueParameters[it.index]
+                        irGet(irValueParameter.type, irValueParameter.symbol)
+                    }
+                }
             )
         }
 
@@ -231,7 +234,7 @@ abstract class DataClassMembersGenerator(
         endOffset: Int = UNDEFINED_OFFSET,
         body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
-        MemberFunctionBuilder(startOffset, endOffset, irFunction).addToClass { function ->
+        MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
             function.buildWithScope {
                 generateSyntheticFunctionParameterDeclarations(function)
                 body(function)
@@ -239,7 +242,45 @@ abstract class DataClassMembersGenerator(
         }
     }
 
-   // Entry for psi2ir
+    // Entry for psi2ir
+    fun generateComponentFunction(function: FunctionDescriptor, irField: IrField, startOffset: Int, endOffset: Int) {
+        buildMember(function, startOffset, endOffset) {
+            generateComponentFunction(irField)
+        }
+    }
+
+    // Entry for fir2ir
+    fun generateComponentFunction(irFunction: IrFunction, irField: IrField, startOffset: Int, endOffset: Int) {
+        buildMember(irFunction, startOffset, endOffset) {
+            generateComponentFunction(irField)
+        }
+    }
+
+    abstract fun getBackingField(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrField?
+
+    abstract fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType
+
+    // Entry for psi2ir
+    fun generateCopyFunction(function: FunctionDescriptor, constructorSymbol: IrConstructorSymbol) {
+        buildMember(function, irClass.startOffset, irClass.endOffset) {
+            function.valueParameters.forEach { parameter ->
+                putDefault(parameter, irGetField(irThis(), getBackingField(parameter, null)!!))
+            }
+            generateCopyFunction(constructorSymbol)
+        }
+    }
+
+    // Entry for fir2ir
+    fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol) {
+        buildMember(irFunction, irClass.startOffset, irClass.endOffset) {
+            irFunction.valueParameters.forEach { irValueParameter ->
+                irValueParameter.defaultValue = irExprBody(irGetField(irThis(), getBackingField(null, irValueParameter)!!))
+            }
+            generateCopyFunction(constructorSymbol)
+        }
+    }
+
+    // Entry for psi2ir
     fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function, irClass.startOffset, irClass.endOffset) {
             generateEqualsMethodBody(properties)
@@ -315,4 +356,3 @@ abstract class DataClassMembersGenerator(
         }
     }
 }
-

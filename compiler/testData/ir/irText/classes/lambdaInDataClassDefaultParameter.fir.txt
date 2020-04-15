@@ -28,19 +28,18 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A'
-          CALL 'public final fun <get-runA> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.component1' type=<root>.A origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.component1' type=<root>.A origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.A, runA:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>) returnType:<root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       VALUE_PARAMETER name:runA index:0 type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>
         EXPRESSION_BODY
-          CALL 'public final fun <get-runA> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>): <root>.A declared in <root>.A'
           CONSTRUCTOR_CALL 'public constructor <init> (runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>) [primary] declared in <root>.A' type=<root>.A origin=null
-            runA: CALL 'public final fun <get-runA> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
+            runA: GET_VAR 'runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A.copy' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
@@ -134,19 +133,18 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any declared in <root>.B'
-          CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.B declared in <root>.B.component1' type=<root>.B origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.component1' type=<root>.B origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.B, x:kotlin.Any) returnType:<root>.B
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       VALUE_PARAMETER name:x index:0 type:kotlin.Any
         EXPRESSION_BODY
-          CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.B declared in <root>.B.copy' type=<root>.B origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.copy' type=<root>.B origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Any): <root>.B declared in <root>.B'
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any) [primary] declared in <root>.B' type=<root>.B origin=null
-            x: CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.B declared in <root>.B.copy' type=<root>.B origin=null
+            x: GET_VAR 'x: kotlin.Any declared in <root>.B.copy' type=kotlin.Any origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.B, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.B
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?

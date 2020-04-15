@@ -21,19 +21,18 @@ FILE fqName:<root> fileName:/kt31649.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Nothing? declared in <root>.TestData'
-          CALL 'public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData' type=kotlin.Nothing? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.component1' type=<root>.TestData origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+            receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.component1' type=<root>.TestData origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.TestData, nn:kotlin.Nothing?) returnType:<root>.TestData
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
         EXPRESSION_BODY
-          CALL 'public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData' type=kotlin.Nothing? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.copy' type=<root>.TestData origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
+            receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.copy' type=<root>.TestData origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (nn: kotlin.Nothing?): <root>.TestData declared in <root>.TestData'
           CONSTRUCTOR_CALL 'public constructor <init> (nn: kotlin.Nothing?) [primary] declared in <root>.TestData' type=<root>.TestData origin=null
-            nn: CALL 'public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData' type=IrErrorType origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.copy' type=<root>.TestData origin=null
+            nn: GET_VAR 'nn: kotlin.Nothing? declared in <root>.TestData.copy' type=kotlin.Nothing? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestData, other:kotlin.Any?) returnType:kotlin.Boolean
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.TestData
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
