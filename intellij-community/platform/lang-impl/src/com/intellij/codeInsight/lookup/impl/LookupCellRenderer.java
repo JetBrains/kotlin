@@ -376,23 +376,9 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       used += icon.getIconWidth();
     }
 
-    Color sampleBackground = background;
+    myTypeLabel.append(labelText);
 
-    Object o = item.isValid() ? item.getObject() : null;
-    //noinspection deprecation
-    if (o instanceof LookupValueWithUIHint && StringUtil.isEmpty(labelText)) {
-      //noinspection deprecation
-      Color proposedBackground = ((LookupValueWithUIHint)o).getColorHint();
-      if (proposedBackground != null) {
-        sampleBackground = proposedBackground;
-      }
-      myTypeLabel.append("  ");
-      used += normalMetrics.stringWidth("WW");
-    } else {
-      myTypeLabel.append(labelText);
-    }
-
-    myTypeLabel.setBackground(sampleBackground);
+    myTypeLabel.setBackground(background);
     myTypeLabel.setForeground(getTypeTextColor(item, foreground, presentation, selected, nonFocusedSelection));
     myTypeLabel.setIconOnTheRight(presentation.isTypeIconRightAligned());
     return used;

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * @deprecated use {@link LookupElementBuilder}
@@ -83,17 +82,6 @@ public class LookupValueFactory {
     @Override
     public String getTypeHint() {
       return myHint;
-    }
-
-    @Override
-    @Nullable
-    public Color getColorHint() {
-      return null;
-    }
-
-    @Override
-    public boolean isBold() {
-      return false;
     }
   }
 }
