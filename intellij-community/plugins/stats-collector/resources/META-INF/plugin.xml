@@ -28,8 +28,10 @@
 
   <actions>
     <action id="DumpMLCompletionFeatures"
-            class="com.intellij.completion.actions.MLCompletionFeaturesUtil$CopyFeaturesToClipboard">
+            class="com.intellij.completion.actions.MLCompletionFeaturesUtil$CopyFeaturesToClipboard"
+            text="Copy ML Completion Features To Clipboard">
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt 0"/>
+      <add-to-group group-id="MaintenanceGroup" anchor="before" relative-to-action="DumpLookupElementWeights"/>
     </action>
   </actions>
 

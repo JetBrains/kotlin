@@ -42,6 +42,11 @@ object MLCompletionFeaturesUtil {
       private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     }
 
+    override fun update(e: AnActionEvent) {
+      val editor = e.getData(CommonDataKeys.EDITOR)
+      e.presentation.isEnabled = editor != null && LookupManager.getActiveLookup(editor) != null
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
       val editor = e.getData(CommonDataKeys.EDITOR)
       val lookup = LookupManager.getActiveLookup(editor) as? LookupImpl ?: return
