@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -591,10 +592,17 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         declarationInPlace.replaceImplicitDelegationCallWithExplicit(false)
                     }
                     if (declarationInPlace.valueParameters.size > primaryConstructorParameters.size) {
-                        val delegationCallArgumentList = declarationInPlace.getDelegationCall().valueArgumentList
-                        primaryConstructorParameters.forEach {
-                            val name = it.name
-                            if (name != null) delegationCallArgumentList?.addArgument(psiFactory.createArgument(name))
+                        val hasCompatibleTypes = primaryConstructorParameters.zip(callableInfo.parameterInfos).all { (primary, secondary) ->
+                            val primaryType = currentFileContext[BindingContext.TYPE, primary.typeReference] ?: return@all false
+                            val secondaryType = computeTypeCandidates(secondary.typeInfo).firstOrNull()?.theType ?: return@all false
+                            secondaryType.isSubtypeOf(primaryType)
+                        }
+                        if (hasCompatibleTypes) {
+                            val delegationCallArgumentList = declarationInPlace.getDelegationCall().valueArgumentList
+                            primaryConstructorParameters.forEach {
+                                val name = it.name
+                                if (name != null) delegationCallArgumentList?.addArgument(psiFactory.createArgument(name))
+                            }
                         }
                     }
                 }

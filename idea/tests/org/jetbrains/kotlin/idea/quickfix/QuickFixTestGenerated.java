@@ -4891,6 +4891,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/tooManyArguments.kt");
             }
 
+            @TestMetadata("tooManyArgumentsWithImcompatibleType.kt")
+            public void testTooManyArgumentsWithImcompatibleType() throws Exception {
+                runTest("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/tooManyArgumentsWithImcompatibleType.kt");
+            }
+
             @TestMetadata("wrongExpectedType.kt")
             public void testWrongExpectedType() throws Exception {
                 runTest("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/wrongExpectedType.kt");
