@@ -16,6 +16,7 @@
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManagerImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry;
@@ -67,7 +68,7 @@ public class GradleProjectResolverUtilTest {
     when(module.getPicoContainer()).thenReturn(container);
     when(module.getProject()).thenReturn(project);
     when(project.getPicoContainer()).thenReturn(container);
-    ExternalSystemModulePropertyManager modulePropertyManager = new ExternalSystemModulePropertyManager(module);
+    ExternalSystemModulePropertyManager modulePropertyManager = new ExternalSystemModulePropertyManagerImpl(module);
     when(container.getComponentInstance(ExternalSystemModulePropertyManager.class.getName())).thenReturn(modulePropertyManager);
 
     when(module.getOptionValue(ExternalProjectSystemRegistry.EXTERNAL_SYSTEM_ID_KEY)).thenReturn(SYSTEM_ID.getId());
