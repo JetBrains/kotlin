@@ -45,7 +45,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
     myProjectFileIndex = ProjectFileIndex.getInstance(myProject);
   }
 
-  static final class FileBasedIndexProjectHandlerStartupActivity implements StartupActivity {
+  static final class FileBasedIndexProjectHandlerStartupActivity implements StartupActivity.RequiredForSmartMode {
     FileBasedIndexProjectHandlerStartupActivity() {
       ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC,  new ProjectManagerListener() {
         @Override
