@@ -26,6 +26,7 @@
       <w>autotest</w>
       <w>avdeev</w>
       <w>backends</w>
+      <w>backtraces</w>
       <w>balancers</w>
       <w>basefont</w>
       <w>batrak</w>
@@ -135,6 +136,7 @@
       <w>gitlink</w>
       <w>globstar</w>
       <w>googleapis</w>
+      <w>granularly</w>
       <w>growx</w>
       <w>gson</w>
       <w>gttr</w>
@@ -431,4 +433,3 @@
     </words>
   </dictionary>
 </component>
-
