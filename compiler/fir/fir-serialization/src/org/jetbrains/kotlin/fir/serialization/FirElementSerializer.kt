@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -519,33 +523,47 @@ class FirElementSerializer private constructor(
     internal fun typeProto(type: ConeKotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
-        if (type is ConeKotlinErrorType) {
-            extension.serializeErrorType(type, builder)
-            return builder
-        }
-
-        if (type is ConeFlexibleType) {
-            val lowerBound = typeProto(type.lowerBound)
-            val upperBound = typeProto(type.upperBound)
-            extension.serializeFlexibleType(type, lowerBound, upperBound)
-            if (useTypeTable()) {
-                lowerBound.flexibleUpperBoundId = typeTable[upperBound]
-            } else {
-                lowerBound.setFlexibleUpperBound(upperBound)
-            }
-            return lowerBound
-        }
-
-
-        if (type is ConeClassLikeType && type.isSuspendFunctionType(session)) {
-            // TODO: suspend function type
-//            val functionType = typeProto(transformSuspendFunctionToRuntimeFunctionType(type, extension.releaseCoroutines()))
-//            functionType.flags = Flags.getTypeFlags(true)
-//            return functionType
-        }
-
         when (type) {
+            is ConeIntegerLiteralType -> {
+                // Questionable, I'm not sure we should expect this type here
+                return typeProto(type.getApproximatedType())
+            }
+            is ConeKotlinErrorType -> {
+                extension.serializeErrorType(type, builder)
+                return builder
+            }
+            is ConeFlexibleType -> {
+                val lowerBound = typeProto(type.lowerBound)
+                val upperBound = typeProto(type.upperBound)
+                extension.serializeFlexibleType(type, lowerBound, upperBound)
+                if (useTypeTable()) {
+                    lowerBound.flexibleUpperBoundId = typeTable[upperBound]
+                } else {
+                    lowerBound.setFlexibleUpperBound(upperBound)
+                }
+                return lowerBound
+            }
+            is ConeCapturedType -> {
+                val lowerType = type.lowerType
+                return if (lowerType != null) {
+                    typeProto(lowerType)
+                } else {
+                    typeProto(type.constructor.supertypes!!.first())
+                }
+            }
+            is ConeDefinitelyNotNullType -> {
+                return typeProto(type.original)
+            }
+            is ConeIntersectionType -> {
+                return typeProto(type.intersectedTypes.first())
+            }
             is ConeClassLikeType -> {
+                if (type.isSuspendFunctionType(session)) {
+                    val runtimeFunctionType = transformSuspendFunctionToRuntimeFunctionType(type)
+                    val functionType = typeProto(runtimeFunctionType)
+                    functionType.flags = Flags.getTypeFlags(true)
+                    return functionType
+                }
                 fillFromPossiblyInnerType(builder, type)
             }
             is ConeTypeParameterType -> {
@@ -555,6 +573,9 @@ class FirElementSerializer private constructor(
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
                 }
+            }
+            is ConeLookupTagBasedType, is ConeStubType -> {
+                throw AssertionError("Should not be here")
             }
         }
 
@@ -575,6 +596,21 @@ class FirElementSerializer private constructor(
         extension.serializeType(type, builder)
 
         return builder
+    }
+
+    private fun transformSuspendFunctionToRuntimeFunctionType(type: ConeClassLikeType): ConeClassLikeType {
+        val suspendClassId = type.classId!!
+        val runtimeClassId = FunctionClassDescriptor.Kind.Function.let {
+            ClassId(it.packageFqName, Name.identifier(suspendClassId.relativeClassName.asString().drop("Suspend".length)))
+        }
+        val continuationClassId = CONTINUATION_INTERFACE_CLASS_ID
+        return ConeClassLikeLookupTagImpl(runtimeClassId).constructClassType(
+            (type.typeArguments.toList() + ConeClassLikeLookupTagImpl(continuationClassId).constructClassType(
+                arrayOf(type.typeArguments.last()),
+                isNullable = false
+            )).toTypedArray(),
+            type.isNullable
+        )
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
@@ -651,8 +687,8 @@ class FirElementSerializer private constructor(
     }
 
     private fun FirCallableDeclaration<*>.isSuspendOrHasSuspendTypesInSignature(): Boolean {
-        // TODO
-        return false
+        // TODO (types in signature)
+        return this is FirCallableMemberDeclaration<*> && this.isSuspend
     }
 
     private fun writeVersionRequirementForInlineClasses(
