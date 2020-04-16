@@ -3330,6 +3330,7 @@ linkTest("inline_sharedVar_linkTest") {
 }
 
 linkTest("inline_lateinitProperty_linkTest") {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "OK\n"
     source = "codegen/inline/lateinitProperty_linkTest_main.kt"
     lib = "codegen/inline/lateinitProperty_linkTest_lib.kt"
