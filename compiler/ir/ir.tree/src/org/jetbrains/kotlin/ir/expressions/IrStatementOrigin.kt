@@ -89,6 +89,7 @@ interface IrStatementOrigin {
     object DEFAULT_VALUE : IrStatementOriginImpl("DEFAULT_VALUE")
     object ANONYMOUS_FUNCTION : IrStatementOriginImpl("ANONYMOUS_FUNCTION")
     object OBJECT_LITERAL : IrStatementOriginImpl("OBJECT_LITERAL")
+    object ADAPTED_FUNCTION_REFERENCE : IrStatementOriginImpl("ADAPTED_FUNCTION_REFERENCE")
 
     object INITIALIZE_PROPERTY_FROM_PARAMETER : IrStatementOriginImpl("INITIALIZE_PROPERTY_FROM_PARAMETER")
     object INITIALIZE_FIELD : IrStatementOriginImpl("INITIALIZE_FIELD")

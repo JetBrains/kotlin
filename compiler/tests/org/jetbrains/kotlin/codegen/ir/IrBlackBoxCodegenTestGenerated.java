@@ -2119,6 +2119,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
+            @TestMetadata("adapted.kt")
+            public void testAdapted() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/adapted.kt");
+            }
+
             public void testAllFilesPresentInBound() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }

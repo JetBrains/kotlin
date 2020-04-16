@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.builtins.isKFunctionType
+import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -28,6 +31,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.withScope
@@ -116,7 +122,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val adapteeSymbol = context.symbolTable.referenceFunction(adapteeDescriptor.original)
 
         val ktFunctionalType = getTypeInferredByFrontendOrFail(ktCallableReference)
-        val irFunctionalType = ktFunctionalType.toIrType()
+        val irFunctionalType = ktFunctionalType.maybeKFunctionTypeToFunctionType().toIrType()
 
         val ktFunctionalTypeArguments = ktFunctionalType.arguments
         val ktExpectedReturnType = ktFunctionalTypeArguments.last().type
@@ -137,7 +143,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             startOffset, endOffset,
             irFunctionalType,
             irAdapterFun,
-            IrStatementOrigin.LAMBDA
+            IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
         )
 
         return if (adapteeCall.tmpReceivers.isEmpty()) {
@@ -487,4 +493,21 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             context.callToSubstitutedDescriptorMap[this] = descriptor
             putTypeArguments(typeArguments) { it.toIrType() }
         }
+
+    // This patches up a frontend bug -- adapted references are mistakenly given a KFunction type.
+    private fun KotlinType.maybeKFunctionTypeToFunctionType() = when {
+        isKFunctionType -> kFunctionTypeToFunctionType(false)
+        isKSuspendFunctionType -> kFunctionTypeToFunctionType(true)
+        else -> this
+    }
+
+    private fun KotlinType.kFunctionTypeToFunctionType(suspendFunction: Boolean) = createFunctionType(
+        statementGenerator.context.builtIns,
+        annotations,
+        null,
+        arguments.dropLast(1).map { it.type },
+        null,
+        arguments.last().type,
+        suspendFunction
+    )
 }

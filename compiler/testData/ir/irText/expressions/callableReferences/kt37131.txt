@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/kt37131.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testFn (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: FUN_EXPR type=kotlin.reflect.KFunction0<kotlin.String> origin=LAMBDA
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL <> () returnType:kotlin.String
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun foo (): kotlin.String declared in <root>.testFn'
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/kt37131.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testCtor (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: FUN_EXPR type=kotlin.reflect.KFunction0<<root>.C> origin=LAMBDA
+          fn: FUN_EXPR type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> () returnType:<root>.C
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <init> (): <root>.C declared in <root>.testCtor'
