@@ -94,26 +94,6 @@ fun useScriptConfigurationFromImportOnly(): Boolean {
     return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
 }
 
-fun getGradleVersion(project: Project): String? {
-    val projectSettings = getGradleProjectSettings(project).firstOrNull()
-
-    if (projectSettings != null) {
-        return GradleSettings.getInstance(project).getLinkedProjectSettings(projectSettings.externalProjectPath)?.resolveGradleVersion()?.version
-    }
-    return null
-}
-
-fun getJavaHomeForGradleProject(project: Project): String? {
-    val projectSettings = getGradleProjectSettings(project).firstOrNull() ?: return null
-
-    val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
-        project,
-        projectSettings.externalProjectPath,
-        GradleConstants.SYSTEM_ID
-    )
-    return gradleExeSettings.javaHome
-}
-
 fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> {
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings
     return gradleSettings.getLinkedProjectsSettings()
