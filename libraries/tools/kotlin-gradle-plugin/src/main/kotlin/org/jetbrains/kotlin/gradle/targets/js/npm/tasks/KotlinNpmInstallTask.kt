@@ -45,7 +45,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        resolutionManager.requireResolved(args = args)
+        resolutionManager.installIfNeeded(args = args)
     }
 
     companion object {

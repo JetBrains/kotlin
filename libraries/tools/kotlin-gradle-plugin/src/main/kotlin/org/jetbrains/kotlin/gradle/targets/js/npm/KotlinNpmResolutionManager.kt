@@ -91,7 +91,6 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState() {
             override val npmProjects: List<NpmProject>
                 get() = resolver.compilations.map { it.npmProject }
-
         }
 
         open class Prepared(val resolved: KotlinRootNpmResolution) : ResolutionState() {
@@ -99,7 +98,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                 get() = resolved.projects.values.flatMap { it.npmProjects.map { it.npmProject } }
         }
 
-        class Resolved(resolved: KotlinRootNpmResolution) : Prepared(resolved)
+        class Installed(resolved: KotlinRootNpmResolution) : Prepared(resolved)
     }
 
     @Incubating
@@ -110,12 +109,12 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
     internal fun prepare() = prepareIfNeeded(requireNotInstalled = true)
 
-    internal fun requireResolved(
+    internal fun installIfNeeded(
         reason: String = "",
         args: List<String> = emptyList()
     ): KotlinRootNpmResolution {
-        if (state is ResolutionState.Resolved) {
-            return (state as ResolutionState.Resolved).resolved
+        if (state is ResolutionState.Installed) {
+            return (state as ResolutionState.Installed).resolved
         }
 
         val npmResolution = prepareIfNeeded(requireUpToDateReason = reason)
@@ -130,7 +129,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
             args
         )
 
-        return ResolutionState.Resolved((state as ResolutionState.Prepared).resolved)
+        return ResolutionState.Installed((state as ResolutionState.Prepared).resolved)
             .apply {
                 state = this
                 npmResolution.plugins
@@ -138,8 +137,8 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
             }.resolved
     }
 
-    internal fun requireAlreadyResolved(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-        requireResolved(reason = reason)[project]
+    internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
+        installIfNeeded(reason = reason)[project]
 
     internal val packageJsonFiles: Collection<File>
         get() = state.npmProjects.map { it.packageJsonFile }
@@ -189,7 +188,8 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         val resolvedProject =
             if (forceFullResolve) {
-                prepareIfNeeded()[project]
+                prepareIfNeeded()
+                installIfNeeded()[project]
             } else {
                 // may return null only during npm resolution
                 // (it can be called since NpmDependency added to configuration that
@@ -204,8 +204,6 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                 }
             }
 
-        requireResolved()
-
         return resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
     }
 
@@ -213,7 +211,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
             where T : RequiresNpmDependencies,
                   T : Task {
         val project = task.project
-        val requestedTaskDependencies = requireAlreadyResolved(project, "before $task execution").taskRequirements
+        val requestedTaskDependencies = requireAlreadyInstalled(project, "before $task execution").taskRequirements
         val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
 
         task.requiredNpmDependencies.forEach {

@@ -28,15 +28,21 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.description = "Download and install a local node/npm version"
         }
 
+        val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
+
         val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) {
             it.group = TASKS_GROUP_NAME
             it.description = "Create root package.json"
+
+            it.mustRunAfter(rootClean)
         }
 
         tasks.register(KotlinNpmInstallTask.NAME, KotlinNpmInstallTask::class.java) {
             it.dependsOn(setupTask, rootPackageJson)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
+
+            it.mustRunAfter(rootClean)
         }
 
         tasks.register("node" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
