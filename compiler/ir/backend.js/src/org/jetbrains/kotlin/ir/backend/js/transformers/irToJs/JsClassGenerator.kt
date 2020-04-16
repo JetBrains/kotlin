@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -189,6 +190,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         metadataLiteral.propertyInitializers += generateSuperClasses()
 
+        metadataLiteral.propertyInitializers += generateAssociatedKeyProperties()
+
         if (isCoroutineClass()) {
             metadataLiteral.propertyInitializers += generateSuspendArity()
         }
@@ -217,6 +220,31 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
             )
         )
+    }
+
+    private fun generateAssociatedKeyProperties(): List<JsPropertyInitializer> {
+        var result = emptyList<JsPropertyInitializer>()
+
+        context.getAssociatedObjectKey(irClass)?.let { key ->
+            result = result + JsPropertyInitializer(JsStringLiteral("associatedObjectKey"), JsIntLiteral(key))
+        }
+
+        val associatedObjects = irClass.annotations.mapNotNull { annotation ->
+            val annotationClass = annotation.symbol.owner.constructedClass
+            context.getAssociatedObjectKey(annotationClass)?.let { key ->
+                annotation.associatedObject()?.let { obj ->
+                    context.staticContext.backendContext.mapping.objectToGetInstanceFunction[obj]?.let { factory ->
+                        JsPropertyInitializer(JsIntLiteral(key), context.staticContext.getNameForStaticFunction(factory).makeRef())
+                    }
+                }
+            }
+        }
+
+        if (associatedObjects.isNotEmpty()) {
+            result = result + JsPropertyInitializer(JsStringLiteral("associatedObjects"), JsObjectLiteral(associatedObjects))
+        }
+
+        return result
     }
 }
 
