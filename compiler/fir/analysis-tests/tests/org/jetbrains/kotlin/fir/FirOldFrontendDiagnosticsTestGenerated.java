@@ -9154,9 +9154,24 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/generics/projectionsScope/typeParameterBounds.kt");
             }
 
+            @TestMetadata("unsafeVarianceInAliasedFunctionalType.kt")
+            public void testUnsafeVarianceInAliasedFunctionalType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/projectionsScope/unsafeVarianceInAliasedFunctionalType.kt");
+            }
+
+            @TestMetadata("unsafeVarianceOnInputTypeOfFunctionalType.kt")
+            public void testUnsafeVarianceOnInputTypeOfFunctionalType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/projectionsScope/unsafeVarianceOnInputTypeOfFunctionalType.kt");
+            }
+
             @TestMetadata("unsafeVarianceStar.kt")
             public void testUnsafeVarianceStar() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/projectionsScope/unsafeVarianceStar.kt");
+            }
+
+            @TestMetadata("unsafeVarianceWithRecursiveGenerics.kt")
+            public void testUnsafeVarianceWithRecursiveGenerics() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/projectionsScope/unsafeVarianceWithRecursiveGenerics.kt");
             }
 
             @TestMetadata("varargs.kt")

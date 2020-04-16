@@ -1,0 +1,19 @@
+package
+
+public final class Bar {
+    public constructor Bar()
+    public final val foo: Foo<*>
+    public final fun </*0*/ T> bar(): Baz<T> /* = (@kotlin.UnsafeVariance T) -> kotlin.Unit */
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ out T> {
+    public constructor Foo</*0*/ out T>(/*0*/ baz: Baz<T> /* = (@kotlin.UnsafeVariance T) -> kotlin.Unit */)
+    public final val baz: Baz<T> /* = (@kotlin.UnsafeVariance T) -> kotlin.Unit */
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Baz</*0*/ T> = (@kotlin.UnsafeVariance T) -> kotlin.Unit
