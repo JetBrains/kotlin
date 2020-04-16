@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
@@ -31,9 +30,13 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
 
     private val providers = ScriptingSupport.Provider.EPN.getPoint(project).extensionList
 
-    private val managers get() = providers.flatMap { it.all }
-
     val default = DefaultScriptingSupport(project)
+
+    private val managers
+        get() = mutableListOf<ScriptingSupport>().also { managers ->
+            managers.add(default)
+            providers.forEach { managers.addAll(it.all) }
+        }
 
     private fun getRelatedManager(file: VirtualFile): ScriptingSupport =
         providers.firstNotNullResult { it.getSupport(file) } ?: default
