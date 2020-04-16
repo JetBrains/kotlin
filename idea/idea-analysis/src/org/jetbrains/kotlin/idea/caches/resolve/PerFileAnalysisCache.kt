@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.storage.guarded
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 
@@ -60,8 +61,18 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
         ProgressIndicatorProvider.checkCanceled()
     }
 
+    private fun check(element: KtElement) {
+        checkWithAttachment(element.containingFile == file, {
+            "Expected $file, but was ${element.containingFile} for ${if (element.isValid) "valid" else "invalid"} $element "
+        }) {
+            it.withAttachment("element.kt", element.text)
+            it.withAttachment("file.kt", element.containingFile.text)
+            it.withAttachment("original.kt", file.text)
+        }
+    }
+
     internal fun fetchAnalysisResults(element: KtElement): AnalysisResult? {
-        assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
+        check(element)
 
         if (lock.tryLock()) {
             try {
@@ -76,9 +87,9 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
     }
 
     internal fun getAnalysisResults(element: KtElement): AnalysisResult {
-        assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
+        check(element)
 
-        val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
+        val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element) ?: return AnalysisResult.EMPTY
 
         return guardLock.guarded {
             // step 1: perform incremental analysis IF it is applicable
@@ -359,7 +370,7 @@ private object KotlinResolveDataProvider {
         KtTypeAlias::class.java
     )
 
-    fun findAnalyzableParent(element: KtElement): KtElement {
+    fun findAnalyzableParent(element: KtElement): KtElement? {
         if (element is KtFile) return element
 
         val topmostElement = KtPsiUtil.getTopmostParentOfTypes(element, *topmostElementTypes) as KtElement?
@@ -381,7 +392,7 @@ private object KotlinResolveDataProvider {
         // if none of the above worked, take the outermost declaration
             ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
             // if even that didn't work, take the whole file
-            ?: element.containingKtFile
+            ?: element.containingFile as? KtFile
     }
 
     fun analyze(
@@ -407,7 +418,7 @@ private object KotlinResolveDataProvider {
                 allowSliceRewrite = true
             )
 
-            val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
+            val moduleInfo = analyzableElement.containingFile.getModuleInfo()
 
             val targetPlatform = moduleInfo.platform
 
