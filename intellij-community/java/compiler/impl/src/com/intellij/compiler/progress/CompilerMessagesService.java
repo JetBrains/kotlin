@@ -269,15 +269,17 @@ public class CompilerMessagesService implements BuildViewService {
       component = myErrorTreeView.getComponent();
     }
 
-    final MessageView messageView = MessageView.SERVICE.getInstance(myProject);
-    final Content content = ContentFactory.SERVICE.getInstance().createContent(component, myContentName, true);
-    content.setHelpId(HelpID.COMPILER);
-    CONTENT_ID_KEY.set(content, myContentId);
-    SESSION_ID_KEY.set(content, sessionId);
-    messageView.getContentManager().addContent(content);
-    myCloseListener.setContent(content, messageView.getContentManager());
-    removeOldContents(myProject, sessionId, content);
-    messageView.getContentManager().setSelectedContent(content);
+    MessageView messageView = MessageView.SERVICE.getInstance(myProject);
+    messageView.runWhenInitialized(() -> {
+      Content content = ContentFactory.SERVICE.getInstance().createContent(component, myContentName, true);
+      content.setHelpId(HelpID.COMPILER);
+      CONTENT_ID_KEY.set(content, myContentId);
+      SESSION_ID_KEY.set(content, sessionId);
+      messageView.getContentManager().addContent(content);
+      myCloseListener.setContent(content, messageView.getContentManager());
+      removeOldContents(myProject, sessionId, content);
+      messageView.getContentManager().setSelectedContent(content);
+    });
   }
 
   private void removeOldContents(final Project project, Object sessionId, final Content notRemove) {
