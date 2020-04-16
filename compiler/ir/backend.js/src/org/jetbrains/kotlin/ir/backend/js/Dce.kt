@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.ir.isMemberOfOpenClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.isAssociatedObjectAnnotatedAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -78,8 +80,19 @@ private fun removeUselessDeclarations(module: IrModuleFragment, usefulDeclaratio
                 process(declaration)
             }
 
+            private fun IrConstructorCall.shouldKeepAnnotation(): Boolean {
+                associatedObject()?.let { obj ->
+                    if (obj !in usefulDeclarations) return false
+                }
+                return true
+            }
+
             override fun visitClass(declaration: IrClass) {
                 process(declaration)
+                // Remove annotations for `findAssociatedObject` feature, which reference objects eliminated by the DCE.
+                // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
+                // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
+                declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
             }
 
             // TODO bring back the primary constructor fix
@@ -117,6 +130,10 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
     // The collection must be a subset of [result] set.
     val contagiousReachableDeclarations = hashSetOf<IrOverridableDeclaration<*>>()
     val constructedClasses = hashSetOf<IrClass>()
+
+    val classesWithObjectAssociations = hashSetOf<IrClass>()
+    val referencedJsClasses = hashSetOf<IrDeclaration>()
+    val referencedJsClassesFromExpressions = hashSetOf<IrClass>()
 
     fun IrDeclaration.enqueue(
         from: IrDeclaration?,
@@ -211,6 +228,14 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                         }
                     }
                 }
+
+                declaration.annotations.forEach {
+                    val annotationClass = it.symbol.owner.constructedClass
+                    if (annotationClass.isAssociatedObjectAnnotatedAnnotation) {
+                        classesWithObjectAssociations += declaration
+                        annotationClass.enqueue("@AssociatedObject annotated annotation class")
+                    }
+                }
             }
 
             if (declaration is IrSimpleFunction && declaration.isFakeOverride) {
@@ -268,7 +293,13 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                             constructor.enqueue("intrinsic: jsBoxIntrinsic")
                         }
                         context.intrinsics.jsClass -> {
-                            (expression.getTypeArgument(0)!!.classifierOrFail.owner as IrDeclaration).enqueue("intrinsic: jsClass")
+                            val ref = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrDeclaration
+                            ref.enqueue("intrinsic: jsClass")
+                            referencedJsClasses += ref
+                        }
+                        context.intrinsics.jsGetKClassFromExpression -> {
+                            val ref = expression.getTypeArgument(0)?.classOrNull ?: context.irBuiltIns.anyClass
+                            referencedJsClassesFromExpressions += ref.owner
                         }
                         context.intrinsics.jsObjectCreate.symbol -> {
                             val classToCreate = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
@@ -312,6 +343,21 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
             }
 
             return null
+        }
+
+        // Handle objects, constructed via `findAssociatedObject` annotation
+        referencedJsClassesFromExpressions += constructedClasses.filterDescendantsOf(referencedJsClassesFromExpressions) // Grow the set of possible results of instance::class expression
+        for (klass in classesWithObjectAssociations) {
+            if (klass !in referencedJsClasses && klass !in referencedJsClassesFromExpressions) continue
+
+            for (annotation in klass.annotations) {
+                val annotationClass = annotation.symbol.owner.constructedClass
+                if (annotationClass !in referencedJsClasses) continue
+
+                annotation.associatedObject()?.let { obj ->
+                    context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
+                }
+            }
         }
 
         for (klass in constructedClasses) {
@@ -368,4 +414,30 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
     }
 
     return result
+}
+
+private fun Collection<IrClass>.filterDescendantsOf(bases: Collection<IrClass>): Collection<IrClass> {
+    val visited = hashSetOf<IrClass>()
+    val baseDescendants = hashSetOf<IrClass>()
+    baseDescendants += bases
+
+    fun overridesAnyBase(klass: IrClass): Boolean {
+        if (klass in baseDescendants) return true
+        if (klass in visited) return false
+
+        visited += klass
+
+        klass.superTypes.forEach {
+            (it.classifierOrNull as? IrClassSymbol)?.owner?.let {
+                if (overridesAnyBase(it)) {
+                    baseDescendants += klass
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    return this.filter { overridesAnyBase(it) }
 }

@@ -22,4 +22,5 @@ interface IrNamer {
     fun getNameForProperty(property: IrProperty): JsName
     fun getRefForExternalClass(klass: IrClass): JsNameRef
     fun getNameForLoop(loop: IrLoop): JsName?
+    fun getAssociatedObjectKey(irClass: IrClass): Int?
 }

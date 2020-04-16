@@ -6781,6 +6781,16 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/reflection/external.kt");
         }
 
+        @TestMetadata("findAssociatedObject.kt")
+        public void testFindAssociatedObject() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
+        }
+
+        @TestMetadata("findAssociatedObject_oldBE.kt")
+        public void testFindAssociatedObject_oldBE() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObject_oldBE.kt");
+        }
+
         @TestMetadata("jsClass.kt")
         public void testJsClass() throws Exception {
             runTest("js/js.translator/testData/box/reflection/jsClass.kt");
