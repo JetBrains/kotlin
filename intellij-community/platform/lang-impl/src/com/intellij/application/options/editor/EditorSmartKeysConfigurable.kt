@@ -166,13 +166,14 @@ class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompos
     ApplicationManager.getApplication().messageBus.syncPublisher(EditorOptionsListener.SMART_KEYS_CONFIGURABLE_TOPIC).changesApplied()
   }
 
+  private val allConfigurables: List<UnnamedConfigurable> by lazy { ConfigurableWrapper.createConfigurables(EP_NAME) }
+
   override fun createConfigurables(): List<UnnamedConfigurable> {
-    return ConfigurableWrapper.createConfigurables(EP_NAME).filterNot { it is Configurable }
+    return allConfigurables.filterNot { it is Configurable }
   }
 
   override fun getConfigurables(): Array<Configurable> {
-    val configurables = ConfigurableWrapper.createConfigurables(EP_NAME)
-    return configurables.filterIsInstance<Configurable>().toTypedArray()
+    return allConfigurables.filterIsInstance<Configurable>().toTypedArray()
   }
 
   override fun hasOwnContent() = true
