@@ -11,7 +11,6 @@ import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecAction
 import org.gradle.process.internal.ExecActionFactory
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
-import org.jetbrains.kotlin.gradle.targets.js.TeamCityMessageCommonClient
 import java.io.ByteArrayOutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream

@@ -12,13 +12,19 @@ import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
+import org.jetbrains.kotlin.gradle.internal.LogType
+import org.jetbrains.kotlin.gradle.internal.TeamCityMessageStackTraceProcessor
 import org.jetbrains.kotlin.gradle.internal.operation
+import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.*
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
@@ -417,7 +423,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
                     private val failedBrowsers: MutableList<String> = mutableListOf()
 
-                    private var stackTraceProcessor = TeamCityMessageStackTraceProcessor()
+                    private var stackTraceProcessor =
+                        TeamCityMessageStackTraceProcessor()
 
                     override fun printNonTestOutput(text: String, type: LogType?) {
                         val value = text.trimEnd()

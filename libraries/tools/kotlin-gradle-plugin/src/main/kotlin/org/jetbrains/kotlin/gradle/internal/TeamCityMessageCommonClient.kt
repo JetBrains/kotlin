@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js
+package org.jetbrains.kotlin.gradle.internal
 
 import jetbrains.buildServer.messages.serviceMessages.Message
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
@@ -22,7 +22,8 @@ class TeamCityMessageCommonClient(
 
     private val errors = mutableListOf<String>()
 
-    private val stackTraceProcessor = TeamCityMessageStackTraceProcessor()
+    private val stackTraceProcessor =
+        TeamCityMessageStackTraceProcessor()
 
     override fun parseException(e: ParseException, text: String) {
         log.error("Failed to parse test process messages: \"$text\"", e)
@@ -30,7 +31,12 @@ class TeamCityMessageCommonClient(
 
     override fun serviceMessage(message: ServiceMessage) {
         when (message) {
-            is Message -> printMessage(message.text, LogType.byValueOrNull(message.attributes["type"]))
+            is Message -> printMessage(
+                message.text,
+                LogType.byValueOrNull(
+                    message.attributes["type"]
+                )
+            )
         }
 
         afterMessage = true

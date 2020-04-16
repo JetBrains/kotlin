@@ -14,8 +14,8 @@ import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.process.internal.ExecHandle
+import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.targets.js.LogType
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.slf4j.Logger
 import java.text.ParseException
