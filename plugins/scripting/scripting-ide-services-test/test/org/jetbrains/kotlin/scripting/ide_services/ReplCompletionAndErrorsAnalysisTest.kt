@@ -62,6 +62,23 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         }
     }
 
+    @Test
+    fun testNoVariantsAfterLiterals() = test {
+        fun testNoVariants(testCode: String, testCursor: Int? = null) = run {
+            doComplete
+            code = testCode
+            cursor = testCursor ?: testCode.length
+            expect {
+                completionsMode(ComparisonType.EQUALS)
+            }
+        }
+
+        testNoVariants("val x1 = 42")
+        testNoVariants("val x2 = 42.42")
+        testNoVariants("val x3 = 'v'")
+        testNoVariants("val x4 = \"str42\"")
+    }
+
 
     @Test
     fun testPackagesImport() = test {
