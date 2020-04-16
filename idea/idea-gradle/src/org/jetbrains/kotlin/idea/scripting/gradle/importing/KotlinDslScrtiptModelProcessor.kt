@@ -15,6 +15,7 @@ import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupport
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
@@ -138,9 +139,7 @@ fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
         build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
     )
 
-    val buildRoot = VfsUtil.findFile(Paths.get(build.workingDir), false) ?: return
-    val scripts = GradleScriptingSupport.Provider.getInstance(project).all.find { it.buildRoot == buildRoot } ?: return
-    scripts.replace(build.models)
+    GradleScriptingSupportProvider.getInstance(project).update(build)
 
     project.service<GradleScriptInputsWatcher>().clearState()
 }
