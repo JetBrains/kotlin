@@ -58,6 +58,7 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.JBTreeTraverser;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -538,10 +539,10 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
     ArrayList<Language> items = new ArrayList<>();
     if (source instanceof LanguageFileType) {
       final Language baseLang = ((LanguageFileType)source).getLanguage();
-      items.add(baseLang);
-      List<Language> dialects = new ArrayList<>(baseLang.getDialects());
-      dialects.sort(LanguageUtil.LANGUAGE_COMPARATOR);
-      items.addAll(dialects);
+      JBTreeTraverser.from(Language::getDialects).withRoot(baseLang)
+        .preOrderDfsTraversal()
+        .addAllTo(items);
+      items.subList(1, items.size()).sort(LanguageUtil.LANGUAGE_COMPARATOR);
     }
     myDialectComboBox.setModel(new CollectionComboBoxModel<>(items));
 
@@ -552,7 +553,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
       VirtualFile file = myExternalDocument ? FileDocumentManager.getInstance().getFile(myEditor.getDocument()) : null;
       Language curLanguage = LanguageUtil.getLanguageForPsi(myProject, file);
       int idx = items.indexOf(curLanguage);
-      myDialectComboBox.setSelectedIndex(idx >= 0 ? idx : 0);
+      myDialectComboBox.setSelectedIndex(Math.max(idx, 0));
     }
   }
 
