@@ -11,7 +11,7 @@ class ProjectRefreshFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GR
   override val autoHideable = false
 
   companion object {
-    const val ACTION_GROUP = "ProjectRefreshActionGroup"
+    const val ACTION_GROUP = "ExternalSystem.ProjectRefreshActionGroup"
 
     fun getExtension(): ProjectRefreshFloatingProvider {
       return EP_NAME.findExtensionOrFail(ProjectRefreshFloatingProvider::class.java)

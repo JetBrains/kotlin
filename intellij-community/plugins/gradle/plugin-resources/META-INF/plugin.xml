@@ -153,7 +153,8 @@
 
     <group>
       <reference id="Gradle.ToggleOfflineAction"/>
-      <add-to-group group-id="ExternalSystemView.ActionsToolbar.RightPanel"/>
+      <add-to-group group-id="ExternalSystemView.ActionsToolbar.RightPanel" anchor="before"
+                    relative-to-action="ExternalSystem.ToggleAutoReload"/>
     </group>
 
     <group>
