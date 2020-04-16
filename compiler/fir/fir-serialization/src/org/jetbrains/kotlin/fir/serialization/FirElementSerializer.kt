@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -56,6 +57,31 @@ class FirElementSerializer private constructor(
     private val serializeTypeTableToFunction: Boolean,
 ) {
     private val contractSerializer = FirContractSerializer()
+
+    fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder {
+        val builder = ProtoBuf.Package.newBuilder()
+
+        for (declaration in file.declarations) {
+            when (declaration) {
+                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+            }
+        }
+
+        val typeTableProto = typeTable.serialize()
+        if (typeTableProto != null) {
+            builder.typeTable = typeTableProto
+        }
+
+        val versionRequirementTableProto = versionRequirementTable?.serialize()
+        if (versionRequirementTableProto != null) {
+            builder.versionRequirementTable = versionRequirementTableProto
+        }
+
+        extension.serializePackage(packageFqName, builder)
+
+        return builder
+    }
 
     fun classProto(irClass: IrClass): ProtoBuf.Class.Builder {
         val klass = (irClass.metadata as FirMetadataSource.Class).klass

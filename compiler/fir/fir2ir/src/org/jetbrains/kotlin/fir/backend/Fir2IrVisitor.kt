@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.builders.constFalse
 import org.jetbrains.kotlin.ir.builders.constTrue
 import org.jetbrains.kotlin.ir.builders.elseBranch
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -81,6 +82,8 @@ class Fir2IrVisitor(
             annotations = file.annotations.mapNotNull {
                 it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
             }
+
+            (this as IrFileImpl).metadata = FirMetadataSource.File(file, components.session, declarations.map { it.descriptor })
         }
     }
 

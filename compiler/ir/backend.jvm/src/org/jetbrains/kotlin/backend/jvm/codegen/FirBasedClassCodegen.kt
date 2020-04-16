@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -21,10 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isFileClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -46,6 +42,7 @@ class FirBasedClassCodegen internal constructor(
             is FirMetadataSource.Class -> FirElementSerializer.create(
                 metadata.klass, serializerExtension, (parentClassCodegen as? FirBasedClassCodegen)?.serializer
             )
+            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(session, serializerExtension)
             is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension)
             else -> null
         }
@@ -87,6 +84,26 @@ class FirBasedClassCodegen internal constructor(
 
                 assert(irClass !in context.classNameOverride) {
                     "JvmPackageName is not supported for classes: ${irClass.render()}"
+                }
+            }
+            is FirMetadataSource.File -> {
+                val packageFqName = irClass.getPackageFragment()!!.fqName
+                val packageProto = serializer!!.packagePartProto(packageFqName, metadata.file)
+
+                serializerExtension.serializeJvmPackage(packageProto, type)
+
+                val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
+                val kind = if (facadeClassName != null) KotlinClassHeader.Kind.MULTIFILE_CLASS_PART else KotlinClassHeader.Kind.FILE_FACADE
+                writeKotlinMetadata(visitor, state, kind, extraFlags) { av ->
+                    AsmUtil.writeAnnotationData(av, packageProto.build(), serializer.stringTable as JvmStringTable)
+
+                    if (facadeClassName != null) {
+                        av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
+                    }
+
+                    if (irClass in context.classNameOverride) {
+                        av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
+                    }
                 }
             }
             is FirMetadataSource.Function -> {
