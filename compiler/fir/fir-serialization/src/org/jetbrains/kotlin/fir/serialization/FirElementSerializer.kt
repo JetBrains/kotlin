@@ -106,6 +106,7 @@ class FirElementSerializer private constructor(
                 ?: klass.declarations.filterIsInstance<FirCallableMemberDeclaration<*>>()
 
         for (declaration in callableMembers) {
+            if (declaration.isStatic) continue // ??? Miss values() & valueOf()
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
                 is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
