@@ -126,11 +126,12 @@ internal class ClassMemberGenerator(
                         irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
+                        val classId = firFunction?.symbol?.callableId?.classId
                         when {
                             DataClassMembersGenerator.isComponentN(irFunction) ->
-                                DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction)
+                                DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction, classId!!)
                             DataClassMembersGenerator.isCopy(irFunction) ->
-                                DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction)
+                                DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction, classId!!)
                             else ->
                                 irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
                         }

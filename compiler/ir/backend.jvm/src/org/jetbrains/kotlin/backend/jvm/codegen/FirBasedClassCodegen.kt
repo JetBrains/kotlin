@@ -132,7 +132,9 @@ class FirBasedClassCodegen internal constructor(
             }
             null -> {
             }
-            else -> error("Incorrect metadata source $metadata for:\n${method.dump()}")
+            else -> {
+                error("Incorrect metadata source $metadata for:\n${method.dump()}")
+            }
         }
     }
 
