@@ -97,8 +97,8 @@ class KotlinNativeCompilation(
         get() = compileKotlinTask.kotlinOptions
 }
 
-class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, name: String) :
-    AbstractKotlinNativeCompilation(target, HostManager.host, name),
+class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, konanTarget: KonanTarget, name: String) :
+    AbstractKotlinNativeCompilation(target, konanTarget, name),
     KotlinMetadataCompilation<KotlinCommonOptions> {
 
     override val friendArtifacts: FileCollection
