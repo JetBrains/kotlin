@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupport
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
+import java.nio.file.Paths
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
@@ -42,15 +42,7 @@ fun processScriptModel(
         val project = task.findProject() ?: return
         val models = model.toListOfScriptModels(project)
 
-        val externalTaskId = task.toExternalTaskId()
-
-        project.kotlinDslModels
-            .getOrPut(externalTaskId) {
-                KotlinDslScriptModelsForGradleProject()
-            }.apply {
-                this.gradleProjectPaths.add(resolverCtx.projectPath)
-                this.models.addAll(models)
-            }
+        project.kotlinGradleDslSync[task]?.models?.addAll(models)
 
         if (models.containsErrors()) {
             throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
@@ -110,12 +102,6 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
         )
     }
 
-fun createGradleKtsContextIfPossible(project: Project): GradleKtsContext? {
-    val javaHome = getJavaHomeForGradleProject(project)?.let { File(it) }
-
-    return GradleKtsContext(javaHome)
-}
-
 class GradleKtsContext(val javaHome: File?)
 
 fun KotlinDslScriptModel.toScriptConfiguration(context: GradleKtsContext, project: Project): ScriptCompilationConfigurationWrapper? {
@@ -137,35 +123,24 @@ fun KotlinDslScriptModel.toScriptConfiguration(context: GradleKtsContext, projec
     )
 }
 
-fun saveScriptModels(
-    project: Project,
-    task: ExternalSystemTaskId,
-    javaHomeStr: String?,
-    modelsForGradleProject: KotlinDslScriptModelsForGradleProject
-) {
-    val errorReporter = KotlinGradleDslErrorReporter(project, task)
+class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
+    val models = mutableListOf<KotlinDslScriptModel>()
+}
 
-    val javaHome = javaHomeStr?.let { File(it) }
-    val context = GradleKtsContext(javaHome)
+fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
+    val errorReporter = KotlinGradleDslErrorReporter(project, build.taskId)
 
-    modelsForGradleProject.models.forEach { model ->
+    build.models.forEach { model ->
         errorReporter.reportError(File(model.file), model)
     }
 
     project.service<GradleScriptInputsWatcher>().saveGradleProjectRootsAfterImport(
-        modelsForGradleProject.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
+        build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
     )
 
-    GradleScriptingSupport.getInstance(project).replace(
-        context, modelsForGradleProject.gradleProjectId to modelsForGradleProject.models.toList()
-    )
+    val buildRoot = VfsUtil.findFile(Paths.get(build.workingDir), false) ?: return
+    val scripts = GradleScriptingSupport.Provider.getInstance(project).all.find { it.buildRoot == buildRoot } ?: return
+    scripts.replace(build.models)
+
     project.service<GradleScriptInputsWatcher>().clearState()
-}
-
-data class GradleProjectId(val paths: List<Int>)
-data class ExternalTaskId(val id: String)
-
-
-fun ExternalSystemTaskId.toExternalTaskId(): ExternalTaskId {
-    return ExternalTaskId(this.ideProjectId + ":" + hashCode())
 }

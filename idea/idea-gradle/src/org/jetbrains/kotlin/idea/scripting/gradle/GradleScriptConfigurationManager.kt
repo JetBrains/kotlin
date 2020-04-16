@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -16,8 +17,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfig
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleProjectId
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.createGradleKtsContextIfPossible
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.toScriptConfiguration
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,22 +24,25 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.io.File
 import java.nio.file.Paths
-
+import java.util.concurrent.atomic.AtomicReference
 
 internal data class ConfigurationData(
     val templateClasspath: List<String>,
-    val models: Map<GradleProjectId, List<KotlinDslScriptModel>>
+    val models: List<KotlinDslScriptModel>
 )
 
-internal class Configuration(val context: GradleKtsContext, val data: ConfigurationData) {
+internal class Configuration(val data: ConfigurationData) {
     private val scripts: Map<String, KotlinDslScriptModel>
 
     val sourcePath: MutableSet<String>
     val classFilePath: MutableSet<String> = mutableSetOf()
 
     init {
-        val allModels: List<KotlinDslScriptModel> = data.models.flatMap { it.value }
+        val allModels = data.models
 
         scripts = allModels.associateBy { it.file }
         sourcePath = allModels.flatMapTo(mutableSetOf()) { it.sourcePath }
@@ -54,42 +56,89 @@ internal class Configuration(val context: GradleKtsContext, val data: Configurat
     }
 }
 
-class GradleScriptingSupport(val project: Project) : ScriptingSupport() {
-    @Volatile
-    private var configuration: Configuration? = null
+internal class GradleScriptingSupport(
+    val rootsIndexer: ScriptClassRootsIndexer,
+    val project: Project,
+    val buildRoot: VirtualFile,
+    val context: GradleKtsContext,
+    configuration: Configuration?
+) : ScriptingSupport() {
+    class Provider(val project: Project) : ScriptingSupport.Provider() {
+        val rootsIndexer = ScriptClassRootsIndexer(project)
 
-    private val rootsIndexer = ScriptClassRootsIndexer(project)
+        override var all: List<GradleScriptingSupport> = listOf()
 
-    init {
-        if (isKotlinDslScriptsModelImportSupported(project)) {
-            ApplicationManager.getApplication().executeOnPooledThread {
-                val data = KotlinDslScriptModels.read(project)
-                val gradleKtsContext = createGradleKtsContextIfPossible(project)
-                if (data != null && gradleKtsContext != null) {
-                    val newConfiguration = Configuration(
-                        gradleKtsContext,
-                        data
+        init {
+            reloadSettings()
+        }
+
+        fun reloadSettings() {
+            val outdated = all.associateByTo(mutableMapOf()) { it.buildRoot }
+            val all = mutableListOf<GradleScriptingSupport>()
+
+            getGradleProjectSettings(project).forEach {
+                val vf = VfsUtil.findFile(Paths.get(it.externalProjectPath), true)
+                if (vf != null) {
+                    val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
+                        project,
+                        it.externalProjectPath,
+                        GradleConstants.SYSTEM_ID
                     )
 
-                    configuration = newConfiguration
-                    configurationChangedCallback(newConfiguration)
+                    val javaHome = gradleExeSettings.javaHome
+
+                    if (javaHome != null) {
+                        val context = GradleKtsContext(File(javaHome))
+
+                        val old = outdated.remove(vf)
+                        val oldConfiguration = old?.configuration?.get()
+                        all.add(GradleScriptingSupport(rootsIndexer, project, vf, context, oldConfiguration))
+                    }
+                }
+            }
+
+            this.all = all
+
+            outdated.forEach {
+                it.value.dispose()
+            }
+        }
+
+        override fun getSupport(file: VirtualFile): ScriptingSupport? =
+            all.find {
+                file.path.startsWith(it.buildRoot.path)
+            }
+
+        companion object {
+            fun getInstance(project: Project): Provider =
+                EPN.getPoint(project).extensionList.firstIsInstance()
+        }
+    }
+
+    private val configuration = AtomicReference<Configuration?>(configuration)
+
+    init {
+        if (configuration == null) {
+            if (isKotlinDslScriptsModelImportSupported(project)) {
+                ApplicationManager.getApplication().executeOnPooledThread {
+                    val data = KotlinDslScriptModels.read(buildRoot)
+                    if (data != null) {
+                        compareAndSetConfiguration(null, Configuration(data))
+                    }
                 }
             }
         }
     }
 
     override fun recreateRootsCache(): ScriptClassRootsCache {
-        return GradleClassRootsCache(project, configuration) {
-            configuration?.let { conf ->
-                val model = conf.scriptModel(it)
-                model?.toScriptConfiguration(conf.context, project)
-            }
+        val configuration = configuration.get()
+        return GradleClassRootsCache(project, context, configuration) {
+            configuration?.scriptModel(it)?.toScriptConfiguration(context, project)
         }
     }
 
-    @Synchronized
-    fun replace(context: GradleKtsContext, projectIdToModels: Pair<GradleProjectId, List<KotlinDslScriptModel>>) {
-        val models = projectIdToModels.second
+    fun replace(models: List<KotlinDslScriptModel>) {
+        val old = configuration.get()
         if (models.isEmpty()) return
 
         val anyScript = VfsUtil.findFile(Paths.get(models.first().file), true)!!
@@ -98,60 +147,43 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport() {
         val templateClasspath = definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()
             ?.templateClasspath?.map { it.path } ?: return
 
-        val oldConfiguration = configuration
+        val data = ConfigurationData(templateClasspath, models)
+        val new = Configuration(data)
 
-        @Suppress("IfThenToElvis")
-        val newModels = if (oldConfiguration == null) {
-            hashMapOf(projectIdToModels)
-        } else {
-            oldConfiguration.data.models.toMutableMap().apply {
-                this[projectIdToModels.first] = models
-            }
+        if (compareAndSetConfiguration(old, new)) {
+            KotlinDslScriptModels.write(buildRoot, data)
         }
-
-        val data = ConfigurationData(templateClasspath, newModels)
-        val newConfiguration = Configuration(context, data)
-
-        KotlinDslScriptModels.write(project, data)
-
-        configuration = newConfiguration
-
-        configurationChangedCallback(newConfiguration)
     }
 
-    private fun configurationChangedCallback(newConfiguration: Configuration) {
+    private fun compareAndSetConfiguration(old: Configuration?, new: Configuration): Boolean {
+        if (!configuration.compareAndSet(old, new)) return false
+
         rootsIndexer.transaction {
-            if (classpathRoots.hasNotCachedRoots(GradleClassRootsCache.extractRoots(newConfiguration))) {
+            if (classpathRoots.hasNotCachedRoots(GradleClassRootsCache.extractRoots(context, new))) {
                 rootsIndexer.markNewRoot()
             }
 
             clearClassRootsCaches(project)
 
             ScriptingSupportHelper.updateHighlighting(project) {
-                configuration?.scriptModel(it) != null
+                new.scriptModel(it) != null
             }
         }
 
         hideNotificationForProjectImport(project)
+
+        return true
     }
 
     fun updateNotification(file: KtFile) {
         val vFile = file.originalFile.virtualFile
-        val scriptModel = configuration?.scriptModel(vFile) ?: return
+        val scriptModel = configuration.get()?.scriptModel(vFile) ?: return
 
         if (scriptModel.inputs.isUpToDate(project, vFile)) {
             hideNotificationForProjectImport(project)
         } else {
             showNotificationForProjectImport(project)
         }
-    }
-
-    override fun isRelated(file: VirtualFile): Boolean {
-        if (isGradleKotlinScript(file)) {
-            return isKotlinDslScriptsModelImportSupported(project)
-        }
-
-        return false
     }
 
     private fun isKotlinDslScriptsModelImportSupported(project: Project): Boolean {
@@ -164,11 +196,11 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport() {
     }
 
     override fun hasCachedConfiguration(file: KtFile): Boolean =
-        configuration?.scriptModel(file.originalFile.virtualFile) != null
+        configuration.get()?.scriptModel(file.originalFile.virtualFile) != null
 
     override fun getOrLoadConfiguration(virtualFile: VirtualFile, preloadedKtFile: KtFile?): ScriptCompilationConfigurationWrapper? {
         val configuration = configuration
-        if (configuration == null) {
+        if (configuration.get() == null) {
             // todo: show notification "Import gradle project"
             return null
         } else {
@@ -190,9 +222,7 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport() {
             }
         }
 
-    companion object {
-        fun getInstance(project: Project): GradleScriptingSupport {
-            return SCRIPTING_SUPPORT.getPoint(project).extensionList.firstIsInstance()
-        }
+    private fun dispose() {
+        KotlinDslScriptModels.remove(buildRoot)
     }
 }

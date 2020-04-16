@@ -11,13 +11,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage.Companion.ScriptClassRoots
+import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 internal class GradleClassRootsCache(
     project: Project,
+    context: GradleKtsContext,
     configuration: Configuration?,
     override val fileToConfiguration: (VirtualFile) -> ScriptCompilationConfigurationWrapper?
-) : ScriptClassRootsCache(project, extractRoots(configuration)) {
+) : ScriptClassRootsCache(project, extractRoots(context, configuration)) {
 
     override val rootsCacheKey = ScriptClassRootsStorage.Companion.Key("gradle")
 
@@ -25,20 +27,20 @@ internal class GradleClassRootsCache(
         return firstScriptSdk
     }
 
-    override val firstScriptSdk: Sdk? = configuration?.let { getScriptSdk(configuration.context.javaHome) }
+    override val firstScriptSdk: Sdk? = configuration?.let { getScriptSdk(context.javaHome) }
 
     // TODO what should we do if no configuration is loaded yet
     override fun contains(file: VirtualFile): Boolean = true
 
     companion object {
-        fun extractRoots(configuration: Configuration?): ScriptClassRoots {
+        fun extractRoots(context: GradleKtsContext, configuration: Configuration?): ScriptClassRoots {
             if (configuration == null) {
                 return ScriptClassRootsStorage.EMPTY
             }
             return ScriptClassRoots(
                 configuration.classFilePath,
                 configuration.sourcePath,
-                getScriptSdk(configuration.context.javaHome)?.let { setOf(it) } ?: setOf()
+                getScriptSdk(context.javaHome)?.let { setOf(it) } ?: setOf()
             )
         }
     }

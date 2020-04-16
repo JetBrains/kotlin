@@ -13,36 +13,31 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import java.util.concurrent.ConcurrentHashMap
 
-var Project.kotlinDslModels: MutableMap<ExternalTaskId, KotlinDslScriptModelsForGradleProject>
-        by NotNullableUserDataProperty<Project, MutableMap<ExternalTaskId, KotlinDslScriptModelsForGradleProject>>(
-            Key("Kotlin DSL Scripts Models"), hashMapOf()
+var Project.kotlinGradleDslSync: MutableMap<ExternalSystemTaskId, KotlinDslGradleBuildSync>
+        by NotNullableUserDataProperty<Project, MutableMap<ExternalSystemTaskId, KotlinDslGradleBuildSync>>(
+            Key("Kotlin DSL Scripts Models"), ConcurrentHashMap()
         )
 
-data class KotlinDslScriptModelsForGradleProject(
-    val gradleProjectPaths: HashSet<String> = hashSetOf(),
-    val models: HashSet<KotlinDslScriptModel> = hashSetOf()
-) {
-    val gradleProjectId: GradleProjectId get() = GradleProjectId(gradleProjectPaths.map { it.hashCode() })
-}
-
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
+    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
+        if (workingDir != null) {
+            val project = id.findProject() ?: return
+            project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
+        }
+    }
+
     override fun onEnd(id: ExternalSystemTaskId) {
         if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT || id.projectSystemId != GRADLE_SYSTEM_ID) {
             return
         }
 
         val project = id.findProject() ?: return
+        val sync = project.kotlinGradleDslSync.remove(id) ?: return
 
-        val externalTaskId = id.toExternalTaskId()
-        val modelsForGradleProject = project.kotlinDslModels[externalTaskId] ?: return
+        if (sync.models.isEmpty()) return
 
-        project.kotlinDslModels.remove(externalTaskId)
-
-        if (modelsForGradleProject.models.isEmpty()) return
-
-        val javaHome = getJavaHomeForGradleProject(project)
-
-        saveScriptModels(project, id, javaHome, modelsForGradleProject)
+        saveScriptModels(project, sync)
     }
 }

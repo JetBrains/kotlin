@@ -24,7 +24,7 @@ abstract class ScriptingSupport {
     abstract class Provider {
         abstract val all: Collection<ScriptingSupport>
 
-        abstract fun getSupport(file: VirtualFile): ScriptingSupport
+        abstract fun getSupport(file: VirtualFile): ScriptingSupport?
 
         companion object {
             val EPN: ExtensionPointName<Provider> =
