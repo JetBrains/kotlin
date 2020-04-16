@@ -25,6 +25,7 @@ import com.intellij.psi.search.IndexPatternOccurrence
 import com.intellij.psi.search.searches.IndexPatternSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
 data class KotlinTodoOccurrence(private val _file: PsiFile, private val _textRange: TextRange, private val _pattern: IndexPattern) :
@@ -36,20 +37,21 @@ data class KotlinTodoOccurrence(private val _file: PsiFile, private val _textRan
 
 class KotlinTodoSearcher : QueryExecutorBase<IndexPatternOccurrence, IndexPatternSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: IndexPatternSearch.SearchParameters, consumer: Processor<in IndexPatternOccurrence>) {
+        val file = queryParameters.file as? KtFile ?: return
+        val virtualFile = file.virtualFile ?: return
+
         var pattern = queryParameters.pattern
         if (pattern != null && !pattern.patternString.contains("TODO", true)) return
         if (pattern == null) {
             pattern = queryParameters.patternProvider.indexPatterns.firstOrNull { it.patternString.contains("TODO", true) } ?: return
         }
 
-        val file = queryParameters.file
-
         val cacheManager = TodoCacheManager.SERVICE.getInstance(file.project)
         val patternProvider = queryParameters.patternProvider
         val count = if (patternProvider != null) {
-            cacheManager.getTodoCount(file.virtualFile, patternProvider)
+            cacheManager.getTodoCount(virtualFile, patternProvider)
         } else
-            cacheManager.getTodoCount(file.virtualFile, pattern)
+            cacheManager.getTodoCount(virtualFile, pattern)
         if (count == 0) return
 
         file.accept(object : KtTreeVisitorVoid() {
