@@ -2035,6 +2035,7 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/annotation-based-compiler-support/kotlin.compiler-plugins.annotation-based-compiler-support.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/annotation-based-compiler-support/kotlin.compiler-plugins.annotation-based-compiler-support.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/kotlinx-serialization/kotlin.compiler-plugins.kotlinx-serialization.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/kotlinx-serialization/kotlin.compiler-plugins.kotlinx-serialization.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" />
@@ -2078,7 +2079,6 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/tests-common/kotlin.tests-common.iml" filepath="$PROJECT_DIR$/kotlin/tests-common/kotlin.tests-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/uast/uast-kotlin/kotlin.uast.uast-kotlin.iml" filepath="$PROJECT_DIR$/kotlin/uast/uast-kotlin/kotlin.uast.uast-kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml" filepath="$PROJECT_DIR$/kotlin/uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/kotlinx-serialization/kotlinx-serialization.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/kotlinx-serialization/kotlinx-serialization.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/kotlin-compiler-classpath/util.kotlin-compiler-classpath.iml" filepath="$PROJECT_DIR$/tools/kotlin-compiler-classpath/util.kotlin-compiler-classpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/project-model-updater/util.project-model-updater.iml" filepath="$PROJECT_DIR$/tools/project-model-updater/util.project-model-updater.iml" />
     </modules>
