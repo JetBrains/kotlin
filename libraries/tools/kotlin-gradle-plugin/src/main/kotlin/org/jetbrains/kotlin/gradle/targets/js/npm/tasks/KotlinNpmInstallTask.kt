@@ -13,6 +13,10 @@ import java.io.File
 open class KotlinNpmInstallTask : DefaultTask() {
     init {
         check(project == project.rootProject)
+
+        onlyIf {
+            rootPackageJson.exists()
+        }
     }
 
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
