@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -121,18 +122,23 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         @set:PrivateForInline
         var implicitReceiverStack: MutableImplicitReceiverStack = ImplicitReceiverStackImpl()
 
+        val containerIfAny: FirDeclaration?
+            get() = containers.lastOrNull()
+
         @set:PrivateForInline
-        var containerIfAny: FirDeclaration? = null
+        var containers: PersistentList<FirDeclaration> = persistentListOf()
 
         val localContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirLocalContext> = mutableMapOf()
 
         @OptIn(PrivateForInline::class)
         inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
-            val prevContainer = containerIfAny
-            containerIfAny = declaration
-            val result = f()
-            containerIfAny = prevContainer
-            return result
+            val oldContainers = containers
+            containers = containers.add(declaration)
+            return try {
+                f()
+            } finally {
+                containers = oldContainers
+            }
         }
 
         @OptIn(PrivateForInline::class)
@@ -207,7 +213,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             file = this@BodyResolveContext.file
             implicitReceiverStack = this@BodyResolveContext.implicitReceiverStack
             localContextForAnonymousFunctions.putAll(this@BodyResolveContext.localContextForAnonymousFunctions)
-            containerIfAny = this@BodyResolveContext.containerIfAny
+            containers = this@BodyResolveContext.containers
         }
     }
 
