@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.scripting.definitions.isNonScript
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class CompositeManager(val project: Project) : ScriptConfigurationManager {
+class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
     @Suppress("unused")
     private val notifier = ScriptChangesNotifier(project, updater)
 
