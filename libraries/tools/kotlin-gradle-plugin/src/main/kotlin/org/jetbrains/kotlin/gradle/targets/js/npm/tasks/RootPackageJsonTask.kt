@@ -29,7 +29,7 @@ open class RootPackageJsonTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        resolutionManager.install()
+        resolutionManager.prepare()
     }
 
     companion object {
