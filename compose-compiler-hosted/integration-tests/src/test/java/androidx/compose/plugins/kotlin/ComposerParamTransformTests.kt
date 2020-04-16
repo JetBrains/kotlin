@@ -45,13 +45,13 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
+            val bar: Int
+              get() {
+                return 123
+              }
             @Composable
             fun Example(%composer: Composer<*>?) {
               bar
-            }
-            @JvmName("getBar")
-            fun <get-bar>(%composer: Composer<*>?): Int {
-              return 123
             }
         """
     )
@@ -251,11 +251,11 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            @JvmName("getMyProperty")
-            fun <get-myProperty>(%composer: Composer<*>?): Function0<Unit> {
-              return {
+            val myProperty: Function0<Unit>
+              get() {
+                return {
+                }
               }
-            }
         """
     )
 

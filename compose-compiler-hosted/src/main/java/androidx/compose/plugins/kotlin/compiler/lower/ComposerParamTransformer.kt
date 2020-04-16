@@ -26,10 +26,7 @@ import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
@@ -37,17 +34,11 @@ import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
@@ -80,16 +71,13 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
@@ -99,7 +87,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.math.ceil
 import kotlin.math.min
 
 class ComposerParamTransformer(
@@ -152,60 +139,6 @@ class ComposerParamTransformer(
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         return super.visitFunction(declaration.withComposerParamIfNeeded())
-    }
-
-    override fun visitFile(declaration: IrFile): IrFile {
-        val originalFunctions = mutableListOf<IrFunction>()
-        val originalProperties = mutableListOf<Pair<IrProperty, IrSimpleFunction>>()
-        loop@for (child in declaration.declarations) {
-            when (child) {
-                is IrFunction -> originalFunctions.add(child)
-                is IrProperty -> {
-                    val getter = child.getter ?: continue@loop
-                    originalProperties.add(child to getter)
-                }
-            }
-        }
-        val result = super.visitFile(declaration)
-        result.patchWithSyntheticComposableDecoys(originalFunctions, originalProperties)
-        return result
-    }
-
-    override fun visitClass(declaration: IrClass): IrStatement {
-        val originalFunctions = declaration.functions.toList()
-        val originalProperties = declaration
-            .properties
-            .mapNotNull { p -> p.getter?.let { p to it } }
-            .toList()
-        val result = super.visitClass(declaration)
-        if (result !is IrClass) error("expected IrClass")
-        result.patchWithSyntheticComposableDecoys(originalFunctions, originalProperties)
-        return result
-    }
-
-    fun IrDeclarationContainer.patchWithSyntheticComposableDecoys(
-        originalFunctions: List<IrFunction>,
-        originalProperties: List<Pair<IrProperty, IrSimpleFunction>>
-    ) {
-        for (function in originalFunctions) {
-            if (transformedFunctions.containsKey(function) && function.isComposable()) {
-                declarations.add(function.copyAsComposableDecoy())
-            }
-        }
-        for ((property, getter) in originalProperties) {
-            if (transformedFunctions.containsKey(getter) && property.hasComposableAnnotation()) {
-                val newGetter = property.getter
-                assert(getter !== newGetter)
-                assert(newGetter != null)
-                // NOTE(lmr): the compiler seems to turn a getter with a single parameter into a
-                // setter, even though it's in the "getter" position. As a result, we will put
-                // the original parameter-less getter in the "getter" position, and add the
-                // single-parameter getter to the class itself.
-                property.getter = getter.copyAsComposableDecoy().also { it.parent = this }
-                declarations.add(newGetter!!)
-                newGetter.parent = this
-            }
-        }
     }
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
@@ -316,8 +249,6 @@ class ComposerParamTransformer(
         // transform it further).
         if (transformedFunctionSet.contains(this)) return this
 
-        if (origin == COMPOSABLE_DECOY_IMPL) return this
-
         // if not a composable fn, nothing we need to do
         if (!descriptor.isComposable()) return this
 
@@ -381,44 +312,6 @@ class ComposerParamTransformer(
                 fn.addValueParameter(p.name.identifier, p.type.toIrType())
             }
             assert(fn.body == null) { "expected body to be null" }
-        }
-    }
-
-    private fun IrFunction.copyAsComposableDecoy(): IrSimpleFunction {
-        if (origin == IrDeclarationOrigin.FAKE_OVERRIDE) return this as IrSimpleFunction
-        return copy().also { fn ->
-            fn.origin = COMPOSABLE_DECOY_IMPL
-            (fn as IrFunctionImpl).metadata = metadata
-            val errorCls = context.moduleDescriptor.findTopLevel(FqName("kotlin" +
-                    ".NotImplementedError"))
-            val errorCtor = context.symbolTable.referenceConstructor(errorCls.constructors.single {
-                it.valueParameters.size == 1 &&
-                        KotlinBuiltIns.isString(it.valueParameters.single().type)
-            })
-            // the decoy cannot have default expressions in its parameters, since they might be
-            // composable and if they are, it wouldn't have a composer param to use
-            fn.valueParameters.clear()
-            valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn, defaultValue = null) }
-            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                +irThrow(
-                    IrConstructorCallImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        errorCls.defaultType.toIrType(),
-                        errorCtor,
-                        0, 0, 1
-                    ).also {
-                        it.putValueArgument(0, IrConstImpl.string(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            builtIns.stringType,
-                            "Composable functions cannot be called without a " +
-                                    "composer. If you are getting this error, it " +
-                                    "is likely because of a misconfigured compiler"
-                        ))
-                    }
-                )
-            }
         }
     }
 
@@ -504,6 +397,7 @@ class ComposerParamTransformer(
                 p.copyTo(fn, name = dexSafeName(p.name))
             }
             annotations.mapTo(fn.annotations) { a -> a }
+            fn.metadata = metadata
             fn.body = body?.deepCopyWithSymbols(this)
         }
     }
@@ -576,6 +470,7 @@ class ComposerParamTransformer(
             ) {
                 val name = JvmAbi.getterName(descriptor.correspondingProperty.name.identifier)
                 fn.annotations.add(jvmNameAnnotation(name))
+                fn.correspondingPropertySymbol?.owner?.getter = fn
             }
 
             // same thing for the setter
@@ -584,6 +479,7 @@ class ComposerParamTransformer(
             ) {
                 val name = JvmAbi.setterName(descriptor.correspondingProperty.name.identifier)
                 fn.annotations.add(jvmNameAnnotation(name))
+                fn.correspondingPropertySymbol?.owner?.setter = fn
             }
 
             val valueParametersMapping = explicitParameters
@@ -784,6 +680,3 @@ class ComposerParamTransformer(
         }
     }
 }
-
-internal val COMPOSABLE_DECOY_IMPL =
-    object : IrDeclarationOriginImpl("COMPOSABLE_DECOY_IMPL", isSynthetic = true) {}

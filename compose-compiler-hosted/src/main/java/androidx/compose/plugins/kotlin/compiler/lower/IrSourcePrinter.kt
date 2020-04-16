@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInOperator
-import org.jetbrains.kotlin.ir.descriptors.IrSimpleBuiltinOperatorDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBranch
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrContinue
-import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
@@ -97,7 +95,6 @@ import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -202,7 +199,6 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        if (declaration.origin == COMPOSABLE_DECOY_IMPL) return
         if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         declaration.printAnnotations(onePerLine = true)
         if (declaration.overriddenSymbols.isNotEmpty()) {
@@ -804,7 +800,6 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty) {
-        if (declaration.getter?.origin == COMPOSABLE_DECOY_IMPL) return
         if (declaration.isLateinit) {
             print("lateinit")
         }
