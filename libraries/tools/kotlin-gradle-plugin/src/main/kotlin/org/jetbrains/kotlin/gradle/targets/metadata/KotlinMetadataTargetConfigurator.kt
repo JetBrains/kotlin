@@ -262,7 +262,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         val isNativeSourceSet = platformCompilations.all { compilation -> compilation.target is KotlinNativeTarget }
 
         val compilationFactory: KotlinCompilationFactory<out AbstractKotlinCompilation<*>> = when {
-            isNativeSourceSet -> KotlinSharedNativeCompilationFactory(target)
+            isNativeSourceSet -> KotlinSharedNativeCompilationFactory(
+                target,
+                //get FIRST platform for metadata compiling
+                //todo: get commonized platform libraries for metadata compiling
+                (platformCompilations.first() as KotlinNativeCompilation).konanTarget
+            )
             else -> KotlinCommonCompilationFactory(target)
         }
 
