@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigura
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.areSimilar
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.hasSuggestedScriptConfiguration
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationLoaderForOutOfProjectScripts
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
@@ -95,7 +96,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
 
         // reload configuration and check this it is not changed
         scripts.forEach {
-            scriptConfigurationManager.updater.postponeConfigurationReload(ScriptConfigurationCacheScope.File(it.psiFile))
+            scriptConfigurationManager.forceReloadConfiguration(it.virtualFile, GradleScriptConfigurationLoaderForOutOfProjectScripts(it.psiFile.project))
             val reloadedConfiguration = scriptConfigurationManager.getConfiguration(it.psiFile)!!
             assertTrue(areSimilar(it.imported, reloadedConfiguration))
             it.assertNoSuggestedConfiguration()
