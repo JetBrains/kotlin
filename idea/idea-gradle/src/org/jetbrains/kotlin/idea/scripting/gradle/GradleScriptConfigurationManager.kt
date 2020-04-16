@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfig
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
+import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleProjectId
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.createGradleKtsContextIfPossible
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.toScriptConfiguration
@@ -29,18 +30,23 @@ import java.nio.file.Paths
 
 internal data class ConfigurationData(
     val templateClasspath: List<String>,
-    val models: List<KotlinDslScriptModel>
+    val models: Map<GradleProjectId, List<KotlinDslScriptModel>>
 )
 
-internal class Configuration(val context: GradleKtsContext, data: ConfigurationData) {
-    val scripts = data.models.associateBy { it.file }
-    val sourcePath = data.models.flatMapTo(mutableSetOf()) { it.sourcePath }
+internal class Configuration(val context: GradleKtsContext, val data: ConfigurationData) {
+    private val scripts: Map<String, KotlinDslScriptModel>
 
+    val sourcePath: MutableSet<String>
     val classFilePath: MutableSet<String> = mutableSetOf()
 
     init {
+        val allModels: List<KotlinDslScriptModel> = data.models.flatMap { it.value }
+
+        scripts = allModels.associateBy { it.file }
+        sourcePath = allModels.flatMapTo(mutableSetOf()) { it.sourcePath }
+
         classFilePath.addAll(data.templateClasspath)
-        data.models.flatMapTo(classFilePath) { it.classPath }
+        allModels.flatMapTo(classFilePath) { it.classPath }
     }
 
     fun scriptModel(file: VirtualFile): KotlinDslScriptModel? {
@@ -76,24 +82,38 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport() {
         return GradleClassRootsCache(project, configuration) {
             configuration?.let { conf ->
                 val model = conf.scriptModel(it)
-                model?.toScriptConfiguration(conf.context)
+                model?.toScriptConfiguration(conf.context, project)
             }
         }
     }
 
-    fun replace(context: GradleKtsContext, models: List<KotlinDslScriptModel>) {
+    @Synchronized
+    fun replace(context: GradleKtsContext, projectIdToModels: Pair<GradleProjectId, List<KotlinDslScriptModel>>) {
+        val models = projectIdToModels.second
         if (models.isEmpty()) return
 
         val anyScript = VfsUtil.findFile(Paths.get(models.first().file), true)!!
 
-        val definition = anyScript.findScriptDefinition(context.project) ?: return
+        val definition = anyScript.findScriptDefinition(project) ?: return
         val templateClasspath = definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()
             ?.templateClasspath?.map { it.path } ?: return
 
-        val data = ConfigurationData(templateClasspath, models)
+        val oldConfiguration = configuration
+
+        @Suppress("IfThenToElvis")
+        val newModels = if (oldConfiguration == null) {
+            hashMapOf(projectIdToModels)
+        } else {
+            oldConfiguration.data.models.toMutableMap().apply {
+                this[projectIdToModels.first] = models
+            }
+        }
+
+        val data = ConfigurationData(templateClasspath, newModels)
+        val newConfiguration = Configuration(context, data)
+
         KotlinDslScriptModels.write(project, data)
 
-        val newConfiguration = Configuration(context, data)
         configuration = newConfiguration
 
         configurationChangedCallback(newConfiguration)

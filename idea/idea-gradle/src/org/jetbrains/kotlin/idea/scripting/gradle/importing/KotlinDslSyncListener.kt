@@ -8,20 +8,23 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
-import org.jetbrains.plugins.gradle.util.GradleConstants
 
-var Project.kotlinDslModels: ArrayList<KotlinDslScriptModel>
-        by NotNullableUserDataProperty<Project, ArrayList<KotlinDslScriptModel>>(
-            Key("Kotlin DSL Scripts Models"), arrayListOf()
+var Project.kotlinDslModels: MutableMap<ExternalTaskId, KotlinDslScriptModelsForGradleProject>
+        by NotNullableUserDataProperty<Project, MutableMap<ExternalTaskId, KotlinDslScriptModelsForGradleProject>>(
+            Key("Kotlin DSL Scripts Models"), hashMapOf()
         )
+
+data class KotlinDslScriptModelsForGradleProject(
+    val gradleProjectPaths: HashSet<String> = hashSetOf(),
+    val models: HashSet<KotlinDslScriptModel> = hashSetOf()
+) {
+    val gradleProjectId: GradleProjectId get() = GradleProjectId(gradleProjectPaths.map { it.hashCode() })
+}
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
     override fun onEnd(id: ExternalSystemTaskId) {
@@ -31,13 +34,15 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
 
         val project = id.findProject() ?: return
 
-        val models: List<KotlinDslScriptModel> = project.kotlinDslModels
-        project.kotlinDslModels = arrayListOf()
+        val externalTaskId = id.toExternalTaskId()
+        val modelsForGradleProject = project.kotlinDslModels[externalTaskId] ?: return
 
-        if (models.isEmpty()) return
+        project.kotlinDslModels.remove(externalTaskId)
+
+        if (modelsForGradleProject.models.isEmpty()) return
 
         val javaHome = getJavaHomeForGradleProject(project)
 
-        saveScriptModels(project, id, javaHome, models)
+        saveScriptModels(project, id, javaHome, modelsForGradleProject)
     }
 }

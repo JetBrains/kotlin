@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
@@ -37,14 +38,19 @@ fun processScriptModel(
             "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
         )
     } else {
-        val project = resolverCtx.externalSystemTaskId.findProject() ?: return
+        val task = resolverCtx.externalSystemTaskId
+        val project = task.findProject() ?: return
         val models = model.toListOfScriptModels(project)
-        project.kotlinDslModels.addAll(
-            models
-        )
-        if (models.containsErrors()) {
-            throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
-        }
+
+        val externalTaskId = task.toExternalTaskId()
+
+        project.kotlinDslModels
+            .getOrPut(externalTaskId) {
+                KotlinDslScriptModelsForGradleProject()
+            }.apply {
+                this.gradleProjectPaths.add(resolverCtx.projectPath)
+                this.models.addAll(models)
+            }
 
         if (models.containsErrors()) {
             throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
@@ -105,18 +111,18 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
     }
 
 fun createGradleKtsContextIfPossible(project: Project): GradleKtsContext? {
-    val javaHome = getJavaHomeForGradleProject(project)?.let { File(it)}
+    val javaHome = getJavaHomeForGradleProject(project)?.let { File(it) }
 
-    return GradleKtsContext(project, javaHome)
+    return GradleKtsContext(javaHome)
 }
 
-class GradleKtsContext(val project: Project, val javaHome: File?)
+class GradleKtsContext(val javaHome: File?)
 
-fun KotlinDslScriptModel.toScriptConfiguration(context: GradleKtsContext): ScriptCompilationConfigurationWrapper? {
+fun KotlinDslScriptModel.toScriptConfiguration(context: GradleKtsContext, project: Project): ScriptCompilationConfigurationWrapper? {
     val scriptFile = File(file)
     val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
 
-    val definition = virtualFile.findScriptDefinition(context.project) ?: return null
+    val definition = virtualFile.findScriptDefinition(project) ?: return null
 
     return ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
         VirtualFileScriptSource(virtualFile),
@@ -135,21 +141,31 @@ fun saveScriptModels(
     project: Project,
     task: ExternalSystemTaskId,
     javaHomeStr: String?,
-    models: List<KotlinDslScriptModel>
+    modelsForGradleProject: KotlinDslScriptModelsForGradleProject
 ) {
     val errorReporter = KotlinGradleDslErrorReporter(project, task)
 
     val javaHome = javaHomeStr?.let { File(it) }
-    val context = GradleKtsContext(project, javaHome)
+    val context = GradleKtsContext(javaHome)
 
-    models.forEach { model ->
+    modelsForGradleProject.models.forEach { model ->
         errorReporter.reportError(File(model.file), model)
     }
 
     project.service<GradleScriptInputsWatcher>().saveGradleProjectRootsAfterImport(
-        models.map { File(it.file).parent }.toSet()
+        modelsForGradleProject.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
     )
 
-    GradleScriptingSupport.getInstance(project).replace(context, models)
+    GradleScriptingSupport.getInstance(project).replace(
+        context, modelsForGradleProject.gradleProjectId to modelsForGradleProject.models.toList()
+    )
     project.service<GradleScriptInputsWatcher>().clearState()
+}
+
+data class GradleProjectId(val paths: List<Int>)
+data class ExternalTaskId(val id: String)
+
+
+fun ExternalSystemTaskId.toExternalTaskId(): ExternalTaskId {
+    return ExternalTaskId(this.ideProjectId + ":" + hashCode())
 }

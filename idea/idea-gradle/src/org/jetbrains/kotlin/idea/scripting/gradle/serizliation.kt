@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.newvfs.FileAttribute
 import org.jetbrains.kotlin.idea.core.util.readString
 import org.jetbrains.kotlin.idea.core.util.writeString
+import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleProjectId
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -32,22 +33,32 @@ internal object KotlinDslScriptModels {
 internal fun writeKotlinDslScriptModels(output: DataOutputStream, data: ConfigurationData) {
     val strings = StringsPool.writer(output)
     strings.addStrings(data.templateClasspath)
-    val scriptModels = data.models
-    scriptModels.forEach {
-        strings.addString(it.file)
-        strings.addStrings(it.classPath)
-        strings.addStrings(it.sourcePath)
-        strings.addStrings(it.imports)
+    for ((_, models) in data.models) {
+        models.forEach {
+            strings.addString(it.file)
+            strings.addStrings(it.classPath)
+            strings.addStrings(it.sourcePath)
+            strings.addStrings(it.imports)
+        }
     }
+
     strings.writeHeader()
     strings.writeStringIds(data.templateClasspath)
-    output.writeList(scriptModels) {
-        strings.writeStringId(it.file)
-        output.writeString(it.inputs.sections)
-        output.writeLong(it.inputs.inputsTS)
-        strings.writeStringIds(it.classPath)
-        strings.writeStringIds(it.sourcePath)
-        strings.writeStringIds(it.imports)
+
+    output.writeList(data.models.entries) {
+        val (projectId, models) = it
+        output.writeList(projectId.paths) {
+            output.writeInt(it)
+        }
+        output.writeList(models) {
+            strings.writeStringId(it.file)
+            output.writeString(it.inputs.sections)
+            output.writeLong(it.inputs.inputsTS)
+            strings.writeStringIds(it.classPath)
+            strings.writeStringIds(it.sourcePath)
+            strings.writeStringIds(it.imports)
+        }
+
     }
 }
 
@@ -56,15 +67,22 @@ internal fun readKotlinDslScriptModels(input: DataInputStream): ConfigurationDat
 
     val templateClasspath = strings.readStrings()
 
-    val models = input.readList {
-        KotlinDslScriptModel(
-            strings.readString(),
-            GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
-            strings.readStrings(),
-            strings.readStrings(),
-            strings.readStrings(),
-            listOf()
-        )
+    val models = hashMapOf<GradleProjectId, List<KotlinDslScriptModel>>()
+    input.readList {
+        val projectPaths = input.readList {
+            input.readInt()
+        }
+        val scriptModels = input.readList {
+            KotlinDslScriptModel(
+                strings.readString(),
+                GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
+                strings.readStrings(),
+                strings.readStrings(),
+                strings.readStrings(),
+                listOf()
+            )
+        }
+        models[GradleProjectId(projectPaths)] = scriptModels
     }
 
     return ConfigurationData(templateClasspath, models)
@@ -106,7 +124,7 @@ private object StringsPool {
             output.writeInt(getStringId(it))
         }
 
-        fun writeStringIds(strings: List<String>) {
+        fun writeStringIds(strings: Collection<String>) {
             output.writeInt(strings.size)
             strings.forEach {
                 writeStringId(it)
