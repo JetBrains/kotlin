@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -90,6 +91,17 @@ private class KJvmReplCompleter(
         if (simpleExpression != null) {
             val inDescriptor: DeclarationDescriptor = simpleExpression.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
             val prefix = element.text.substring(0, cursor - element.startOffset)
+
+            val elementParent = element.parent
+            if (prefix.isEmpty() && elementParent is KtBinaryExpression) {
+                when (elementParent.node.firstChildNode.elementType) {
+                    KtStubElementTypes.INTEGER_CONSTANT,
+                    KtStubElementTypes.FLOAT_CONSTANT,
+                    KtStubElementTypes.CHARACTER_CONSTANT,
+                    KtStubElementTypes.STRING_TEMPLATE -> return@gen
+                }
+            }
+
             isSortNeeded = false
             descriptors = ReferenceVariantsHelper(
                 bindingContext,
@@ -246,7 +258,7 @@ private class KJvmReplCompleter(
         }
     }
 
-    private inner class VisibilityFilter(
+    private class VisibilityFilter(
         private val inDescriptor: DeclarationDescriptor
     ) : (DeclarationDescriptor) -> Boolean {
         override fun invoke(descriptor: DeclarationDescriptor): Boolean {
