@@ -6,15 +6,14 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.ProximityLocation;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.JavaResourceRootType;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 import java.util.Collections;
-import java.util.Optional;
 
 public class DirectoryTypeWeigher extends ProximityWeigher {
 
@@ -23,10 +22,7 @@ public class DirectoryTypeWeigher extends ProximityWeigher {
     Project project = location.getProject();
     if (project == null) return 0;
 
-    VirtualFile file = Optional.ofNullable(element.getContainingFile())
-      .map(PsiFile::getOriginalFile)
-      .map(PsiFile::getVirtualFile)
-      .orElse(null);
+    VirtualFile file = PsiUtilCore.getVirtualFile(element);
     if (file == null) return 0;
 
     ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
