@@ -198,7 +198,7 @@ public final class CompletionServiceImpl extends BaseCompletionService {
   @NotNull
   @Override
   protected CompletionSorterImpl processStatsWeigher(@NotNull CompletionSorterImpl sorter,
-                                                     @NotNull Weigher<Object, Object> weigher,
+                                                     @NotNull Weigher weigher,
                                                      @NotNull CompletionLocation location) {
     CompletionSorterImpl processedSorter = super.processStatsWeigher(sorter, weigher, location);
     return processedSorter.withClassifier(new ClassifierFactory<LookupElement>("stats") {
