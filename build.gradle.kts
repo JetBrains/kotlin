@@ -365,6 +365,7 @@ allprojects {
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
         "-Xno-optimized-callable-references",
+        "-Xno-kotlin-nothing-value-exception",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
