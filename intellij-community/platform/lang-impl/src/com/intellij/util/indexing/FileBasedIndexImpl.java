@@ -543,7 +543,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private void removeTransientFileDataFromIndices(Collection<? extends ID<?, ?>> indices, int inputId, VirtualFile file) {
     for (ID<?, ?> indexId : indices) {
       final UpdatableIndex<?, ?, FileContent> index = myRegisteredIndexes.getState().getIndex(indexId);
-      assert index != null;
+      if (index == null) {
+        throw new AssertionError("index '" + indexId.getName() + "' can't be found among registered indexes: " + myRegisteredIndexes.getState().getIndexIDs());
+      }
       index.removeTransientDataForFile(inputId);
     }
 
