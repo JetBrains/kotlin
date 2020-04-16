@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class AddMissingClassKeywordIntention : SelfTargetingIntention<PsiElement>(
     PsiElement::class.java,
-    KotlinBundle.message("add.missing.class.keyword")
+    KotlinBundle.lazyMessage("add.missing.class.keyword")
 ) {
     companion object {
         private val targetKeywords = listOf(
