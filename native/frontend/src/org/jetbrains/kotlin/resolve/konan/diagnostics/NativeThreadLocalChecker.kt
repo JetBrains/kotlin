@@ -23,8 +23,7 @@ internal fun DeclarationChecker.check(
     error: DiagnosticFactory0<KtElement>, successCondition: (DeclarationDescriptor) -> Boolean
 ) {
     if (successCondition(descriptor)) return
-    val threadLocalAnnotation = descriptor.annotations.findAnnotation(annotationFqName)
-    threadLocalAnnotation?.let {
+    descriptor.annotations.findAnnotation(annotationFqName)?.let {
         val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration
         context.trace.report(error.on(reportLocation))
     }
