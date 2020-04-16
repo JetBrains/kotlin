@@ -436,6 +436,6 @@ object DefaultScriptConfigurationManagerExtensions {
 }
 
 val ScriptConfigurationManager.testingBackgroundExecutor
-    get() = (this as CompositeManager).managers
+    get() = (this as CompositeScriptConfigurationManager).managers
         .firstIsInstance<DefaultScriptingSupport>()
         .backgroundExecutor as TestingBackgroundExecutor
