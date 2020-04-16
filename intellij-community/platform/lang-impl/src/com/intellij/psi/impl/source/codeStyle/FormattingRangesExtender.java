@@ -43,13 +43,15 @@ class FormattingRangesExtender {
     return validRange;
   }
 
-  private TextRange narrowToMaxExtensionLines(@NotNull TextRange original, @NotNull TextRange result) {
-    int startLine = Math.max(myDocument.getLineNumber(result.getStartOffset()),
+  private TextRange narrowToMaxExtensionLines(@NotNull TextRange original, @NotNull TextRange extended) {
+    int extendedStart = extended.getStartOffset();
+    int extendedEnd = Math.min(extended.getEndOffset(), myDocument.getTextLength());
+    int startLine = Math.max(myDocument.getLineNumber(extendedStart),
                              myDocument.getLineNumber(original.getStartOffset()) - MAX_EXTENSION_LINES);
-    int endLine = Math.min(myDocument.getLineNumber(result.getEndOffset() - 1),
+    int endLine = Math.min(myDocument.getLineNumber(extendedEnd - 1),
                            myDocument.getLineNumber(original.getEndOffset() - 1) + MAX_EXTENSION_LINES);
-    int rangeStart = Math.max(result.getStartOffset(), myDocument.getLineStartOffset(startLine));
-    int rangeEnd = Math.min(result.getEndOffset(), myDocument.getLineEndOffset(endLine));
+    int rangeStart = Math.max(extendedStart, myDocument.getLineStartOffset(startLine));
+    int rangeEnd = Math.min(extendedEnd, myDocument.getLineEndOffset(endLine));
     return new TextRange(rangeStart, rangeEnd);
   }
 
