@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.webcore.packaging;
 
-import com.google.common.collect.Lists;
 import com.intellij.CommonBundle;
 import com.intellij.ide.ActivityTracker;
 import com.intellij.ide.IdeBundle;
@@ -44,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InstalledPackagesPanel extends JPanel {
   private static final Logger LOG = Logger.getInstance(InstalledPackagesPanel.class);
-  
+
   private final AnActionButton myUpgradeButton;
   protected final AnActionButton myInstallButton;
   private final AnActionButton myUninstallButton;
@@ -62,7 +61,7 @@ public class InstalledPackagesPanel extends JPanel {
     super(new BorderLayout());
     myProject = project;
     myNotificationArea = area;
-    
+
     String[] names = {
       IdeBundle.message("packages.settings.package"),
       IdeBundle.message("packages.settings.version"),
@@ -417,7 +416,7 @@ public class InstalledPackagesPanel extends JPanel {
     progressManager.run(new Task.Backgroundable(myProject, IdeBundle.message("packages.settings.loading"), true, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        Collection<InstalledPackage> packages = Lists.newArrayList();
+        Collection<InstalledPackage> packages = new ArrayList<>();
         try {
           packages = packageManagementService.getInstalledPackages();
         }

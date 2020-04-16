@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
-import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.filters.Filter;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -202,7 +202,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
 
   @Override
   public AnAction @NotNull [] createConsoleActions() {
-    List<AnAction> actions = Lists.newArrayList();
+    List<AnAction> actions = new ArrayList<>();
     actions.addAll(mergeConsoleActions(Arrays.asList(myPrimaryConsoleView.createConsoleActions()),
                                        Arrays.asList(mySecondaryConsoleView.createConsoleActions())));
     actions.add(mySwitchConsoleAction);
