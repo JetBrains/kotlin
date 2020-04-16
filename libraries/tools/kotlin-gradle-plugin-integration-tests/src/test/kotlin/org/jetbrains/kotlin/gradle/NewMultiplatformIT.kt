@@ -2556,10 +2556,10 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
 
             val interopManifest = getManifest("foo/build/classes/kotlin/linux/main/foo-cinterop-bar.klib")
-            assertEquals("org.sample.one.foo-cinterop-bar", interopManifest[KLIB_PROPERTY_UNIQUE_NAME])
+            assertEquals("org.sample.one:foo-cinterop-bar", interopManifest[KLIB_PROPERTY_UNIQUE_NAME])
 
             val nativeManifest = getManifest("foo/build/classes/kotlin/linux/main/foo.klib")
-            assertEquals("org.sample.one.foo", nativeManifest[KLIB_PROPERTY_UNIQUE_NAME])
+            assertEquals("org.sample.one:foo", nativeManifest[KLIB_PROPERTY_UNIQUE_NAME])
             // Check the short name that is used as a prefix in generated ObjC headers.
             assertEquals("foo", nativeManifest[KLIB_PROPERTY_SHORT_NAME])
 
@@ -2567,7 +2567,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 .inputStream().use { stream ->
                     Properties().apply { load(stream) }
                 }
-            assertEquals("org.sample.one.foo", jsManifest[KLIB_PROPERTY_UNIQUE_NAME])
+            assertEquals("org.sample.one:foo", jsManifest[KLIB_PROPERTY_UNIQUE_NAME])
         }
     }
 }
