@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION
 // SKIP_TXT
 
 /*
@@ -19,7 +19,7 @@ package testsCase1
 import libPackageCase1.* //nothing to import
 
 fun case1() {
-    <!DEBUG_INFO_CALL("fqName: kotlin.collections.listOf; typeCall: function")!>listOf(elements = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arrayOf(1)<!>)<!>
+    <!DEBUG_INFO_CALL("fqName: kotlin.collections.listOf; typeCall: function")!>listOf(elements = *arrayOf(1))<!>
 }
 // FILE: Lib.kt
 package libPackageCase1
@@ -35,7 +35,7 @@ import libPackagecase2.* //nothing to import
 class Case2 {
 
     fun case2() {
-        <!DEBUG_INFO_CALL("fqName: kotlin.collections.listOf; typeCall: function")!>listOf(elements = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arrayOf(1)<!>)<!>
+        <!DEBUG_INFO_CALL("fqName: kotlin.collections.listOf; typeCall: function")!>listOf(elements = *arrayOf(1))<!>
     }
 }
 
