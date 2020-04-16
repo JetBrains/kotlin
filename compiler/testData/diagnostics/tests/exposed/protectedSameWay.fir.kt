@@ -9,5 +9,5 @@ class OuterDerived: Outer() {
     // valid, My has better visibility
     protected class His: Outer.My()
     // valid, My and Your have better visibility
-    override fun foo(my: Outer.My) = Outer.Your()
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>override fun foo(<!EXPOSED_PARAMETER_TYPE!>my: Outer.My<!>) = Outer.Your()<!>
 }
