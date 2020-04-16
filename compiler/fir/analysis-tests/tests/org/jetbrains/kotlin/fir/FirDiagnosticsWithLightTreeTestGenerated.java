@@ -1643,6 +1643,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         public void testMultipleJavaClassesInOneFile() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/multipleJavaClassesInOneFile.kt");
         }
+
+        @TestMetadata("safeCallInvoke.kt")
+        public void testSafeCallInvoke() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/safeCallInvoke.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/properties")
