@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.diff.util.DiffUtil
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -46,17 +45,16 @@ fun runPartialGradleImport(project: Project) {
     )
 }
 
-private var Project.notificationPanel: Boolean?
-        by UserDataProperty<Project, Boolean>(Key.create("load.script.configuration.panel"))
+private var Project.shouldShowLoadConfiguraionsAction: Boolean?
+        by UserDataProperty<Project, Boolean>(Key.create("load.script.configuration.action"))
 
 
-fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
-    project.notificationPanel = true
-    (ActionManager.getInstance().getAction("LoadConfigurationAction") as LoadConfigurationAction).onClick = callback
+fun showNotificationForProjectImport(project: Project) {
+    project.shouldShowLoadConfiguraionsAction = true
 }
 
 fun hideNotificationForProjectImport(project: Project): Boolean {
-    project.notificationPanel = false
+    project.shouldShowLoadConfiguraionsAction = false
     return true
 }
 
@@ -65,11 +63,9 @@ class LoadConfigurationAction : AnAction(
     KotlinIdeaGradleBundle.message("action.description.load.script.configurations"),
     KotlinIcons.LOAD_SCRIPT_CONFIGURATION
 ) {
-
-    var onClick = {}
-
     override fun actionPerformed(e: AnActionEvent) {
-        onClick()
+        val project = e.project ?: return
+        runPartialGradleImport(project)
     }
 
     override fun update(e: AnActionEvent) {
@@ -79,24 +75,28 @@ class LoadConfigurationAction : AnAction(
     }
 
     private fun ensureValidActionVisibility(e: AnActionEvent) {
-        if (e.project?.notificationPanel != true) {
+        if (e.project?.shouldShowLoadConfiguraionsAction != true) {
             e.presentation.isVisible = false
             return
         }
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
-        when {
-            DiffUtil.isDiffEditor(editor) -> e.presentation.isVisible = false
-            !editor.isScriptEditor() -> e.presentation.isVisible = false
+        if (DiffUtil.isDiffEditor(editor)) {
+            e.presentation.isVisible = false
+            return
         }
+        e.presentation.isVisible = editor.isScriptEditor()
     }
 
     private fun Editor.isScriptEditor(): Boolean {
+        val project = project ?: return false
+
         val documentManager = FileDocumentManager.getInstance()
         val virtualFile = documentManager.getFile(document)
         if (virtualFile is LightVirtualFileBase) return false
         if (virtualFile == null || !virtualFile.isValid) return false
 
-        val project = project ?: return false
+
+        // todo only for gradle script
         return virtualFile.findScriptDefinition(project) != null
     }
 }

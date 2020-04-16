@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
+
 data class KotlinDslScriptModel(
     val file: String,
-    val inputsTimeStamp: Long,
+    val inputs: GradleKotlinScriptConfigurationInputs,
     val classPath: List<String>,
     val sourcePath: List<String>,
     val imports: List<String>,

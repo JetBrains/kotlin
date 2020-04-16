@@ -1,7 +1,20 @@
 <idea-plugin>
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.scriptingSupport"
+                    interface="org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport"
+                    area="IDEA_PROJECT"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage"/>
 
     <trafficLightRendererContributor implementation="org.jetbrains.kotlin.idea.core.script.ScriptTrafficLightRendererContributor"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
+    <scriptingSupport
+        implementation="org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport"
+        order="last"
+    />
   </extensions>
 </idea-plugin>

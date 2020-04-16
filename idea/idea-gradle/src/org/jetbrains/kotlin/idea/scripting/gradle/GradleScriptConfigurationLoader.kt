@@ -78,12 +78,6 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
             }
         }
 
-        val gradleVersion = getGradleVersion(project)
-        if (gradleVersion != null && kotlinDslScriptsModelImportSupported(gradleVersion)) {
-            runPartialGradleImport(project)
-            return true
-        }
-
         val result = getConfigurationThroughScriptingApi(ktFile, vFile, scriptDefinition)
         context.saveNewConfiguration(vFile, result)
         return true
