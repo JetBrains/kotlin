@@ -22,6 +22,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 
 typedef struct _CSTypeRef {
   unsigned long type;
@@ -100,8 +101,16 @@ bool TryInitializeCoreSymbolication() {
 
 } // namespace
 
+typedef struct {
+  const char * fileName;
+  int start;
+  int end;
+} SymbolSourceInfoLimits;
+
 extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
   __block SourceInfo result = { .fileName = nullptr, .lineNumber = -1, .column = -1 };
+  __block bool continueUpdateResult = true;
+  __block SymbolSourceInfoLimits limits = {.start = -1, .end = -1};
 
   static bool csIsAvailable = TryInitializeCoreSymbolication();
 
@@ -115,21 +124,54 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
     if (CSIsNull(symbol))
       return result;
 
+    /**
+     * ASSUMPTION: we assume that the _first_ and the _last_ source infos should belong to real function(symbol) the rest might belong to
+     * inlined functions.
+     */
+    CSSymbolForeachSourceInfo(symbol,
+      ^(CSSourceInfoRef ref) {
+        uint32_t lineNumber = CSSourceInfoGetLineNumber(ref);
+        if (lineNumber == 0)
+          return 0;
+        if (limits.start == -1) {
+          limits.start = lineNumber;
+          limits.fileName = CSSourceInfoGetPath(ref);
+        } else {
+          limits.end = lineNumber;
+        }
+        return 0;
+    });
+
+    result.fileName = limits.fileName;
+
     CSSymbolForeachSourceInfo(symbol,
       ^(CSSourceInfoRef ref) {
           uint32_t lineNumber = CSSourceInfoGetLineNumber(ref);
+          if (lineNumber == 0)
+            return 0;
           CSRange range = CSSourceInfoGetRange(ref);
-          if (lineNumber != 0
-              && address >= range.location
-              && address < range.location + range.length) {
-            const char* fileName = CSSourceInfoGetPath(ref);
-            if (fileName != nullptr) {
-              result.fileName = fileName;
-              result.lineNumber = lineNumber;
-              result.column = CSSourceInfoGetColumn(ref);
-            }
-       }
-       return 0;
+          const char* fileName = CSSourceInfoGetPath(ref);
+          /**
+           * We need to change API fo Kotlin_getSourceInfo to return information about inlines,
+           * but for a moment we have to track that we updating result info _only_ for upper level or _inlined at_ and
+           * don't go deeper. at deeper level we check only that we at the right _inlined at_ position.
+           */
+          if (continueUpdateResult
+              && strcmp(limits.fileName, fileName) == 0
+              && lineNumber >= limits.start
+              && lineNumber <= limits.end) {
+            result.lineNumber = lineNumber;
+            result.column = CSSourceInfoGetColumn(ref);
+          }
+          /**
+           * if found right inlined function don't bother with
+           * updating high level inlined _at_ source info
+           */
+          if (continueUpdateResult &&  (address >= range.location
+                                        && address < range.location + range.length))
+             continueUpdateResult = false;
+
+          return 0;
    });
   }
   return result;
