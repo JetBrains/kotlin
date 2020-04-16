@@ -663,6 +663,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     private final Project myProject;
     private final ServiceViewContributor<?> myProvidingContributor;
     private volatile boolean myChildrenInitialized;
+    private volatile boolean myLoaded;
 
     ServiceNode(@NotNull Object service, @Nullable ServiceViewItem parent, @NotNull ServiceViewContributor<?> contributor,
                 @NotNull ServiceViewDescriptor viewDescriptor,
@@ -670,6 +671,8 @@ class ServiceModel implements Disposable, InvokerSupplier {
       super(service, parent, contributor, viewDescriptor);
       myProject = project;
       myProvidingContributor = providingContributor;
+      myChildrenInitialized = providingContributor == null;
+      myLoaded = !(providingContributor instanceof ServiceViewLazyContributor);
     }
 
     @NotNull
@@ -681,6 +684,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
           children.addAll(getContributorChildren(myProject, this, myProvidingContributor));
         }
         myChildrenInitialized = true;
+        myLoaded = true;
       }
       return children;
     }
@@ -689,9 +693,16 @@ class ServiceModel implements Disposable, InvokerSupplier {
       return myChildrenInitialized;
     }
 
+    boolean isLoaded() {
+      return myLoaded;
+    }
+
     private void reloadChildren() {
       super.getChildren().clear();
-      myChildrenInitialized = false;
+      if (myProvidingContributor != null) {
+        myChildrenInitialized = false;
+        myLoaded = true;
+      }
     }
 
     private void moveChildren(ServiceNode node) {
@@ -704,6 +715,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
         child.setParent(this);
       }
       myChildrenInitialized = node.myChildrenInitialized;
+      myLoaded = node.myLoaded;
     }
 
     @Nullable
