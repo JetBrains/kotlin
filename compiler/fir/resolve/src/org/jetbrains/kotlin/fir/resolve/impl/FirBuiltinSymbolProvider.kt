@@ -227,20 +227,28 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         }
 
                         superTypeRefs += when (kind) {
-                            FunctionClassDescriptor.Kind.Function ->
+                            FunctionClassDescriptor.Kind.Function -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 }
+                            )
 
-                            FunctionClassDescriptor.Kind.SuspendFunction ->
+                            FunctionClassDescriptor.Kind.SuspendFunction -> listOf(
                                 session.builtinTypes.anyType
+                            )
 
-                            FunctionClassDescriptor.Kind.KFunction ->
+                            FunctionClassDescriptor.Kind.KFunction -> listOf(
+                                buildResolvedTypeRef {
+                                    type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
+                                        .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
+                                },
                                 createSuperType(FunctionClassDescriptor.Kind.Function)
+                            )
 
-                            FunctionClassDescriptor.Kind.KSuspendFunction ->
+                            FunctionClassDescriptor.Kind.KSuspendFunction -> listOf(
                                 createSuperType(FunctionClassDescriptor.Kind.SuspendFunction)
+                            )
                         }
                         addDeclaration(
                             buildSimpleFunction {
