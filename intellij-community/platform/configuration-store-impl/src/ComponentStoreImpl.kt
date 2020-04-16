@@ -28,9 +28,7 @@ import com.intellij.util.ArrayUtilRt
 import com.intellij.util.SmartList
 import com.intellij.util.SystemProperties
 import com.intellij.util.ThreeState
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SmartHashSet
-import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.xmlb.XmlSerializerUtil
 import kotlinx.coroutines.CancellationException
@@ -43,6 +41,7 @@ import org.jetbrains.annotations.TestOnly
 import java.io.IOException
 import java.nio.file.Paths
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 internal val LOG = logger<ComponentStoreImpl>()
@@ -77,7 +76,7 @@ internal fun setRoamableComponentSaveThreshold(thresholdInSeconds: Int) {
 
 @ApiStatus.Internal
 abstract class ComponentStoreImpl : IComponentStore {
-  private val components = ContainerUtil.newConcurrentMap<String, ComponentInfo>()
+  private val components = ConcurrentHashMap<String, ComponentInfo>()
 
   open val project: Project?
     get() = null
@@ -652,7 +651,7 @@ private fun notifyUnknownMacros(store: IComponentStore, project: Project, compon
       notified.addAll(notification.macros)
     }
     if (!notified.isNullOrEmpty()) {
-      macros.removeAll(notified!!)
+      macros.removeAll(notified)
     }
 
     if (macros.isEmpty()) {

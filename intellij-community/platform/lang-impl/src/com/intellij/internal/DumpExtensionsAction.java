@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DumpExtensionsAction extends DumbAwareAction {
+public final class DumpExtensionsAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     List<ExtensionsArea> areas = new ArrayList<>();
-    areas.add(Extensions.getRootArea());
+    areas.add(ApplicationManager.getApplication().getExtensionArea());
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project != null) {
       areas.add(project.getExtensionArea());
@@ -36,17 +36,17 @@ public class DumpExtensionsAction extends DumbAwareAction {
     }
     System.out.println("\n");
 
-    List<ExtensionPoint> points = new ArrayList<>();
+    List<ExtensionPoint<?>> points = new ArrayList<>();
     for (ExtensionsArea area : areas) {
-      points.addAll(Arrays.asList(area.getExtensionPoints()));
+      points.addAll(area.getExtensionPoints());
     }
     System.out.println(points.size() + " extension points: ");
-    for (ExtensionPoint point : points) {
+    for (ExtensionPoint<?> point : points) {
       System.out.println(" " + point.getName());
     }
 
     List<Object> extensions = new ArrayList<>();
-    for (ExtensionPoint point : points) {
+    for (ExtensionPoint<?> point : points) {
       extensions.addAll(Arrays.asList(point.getExtensions()));
     }
     System.out.println("\n" + extensions.size() + " extensions:");
