@@ -12249,6 +12249,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/simpleRedundantLet/reference4.kt");
         }
 
+        @TestMetadata("safeReference.kt")
+        public void testSafeReference() throws Exception {
+            runTest("idea/testData/inspectionsLocal/simpleRedundantLet/safeReference.kt");
+        }
+
         @TestMetadata("sameLets.kt")
         public void testSameLets() throws Exception {
             runTest("idea/testData/inspectionsLocal/simpleRedundantLet/sameLets.kt");
