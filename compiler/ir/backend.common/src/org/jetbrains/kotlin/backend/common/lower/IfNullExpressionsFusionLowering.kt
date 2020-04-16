@@ -8,25 +8,15 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irIfNull
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.name.Name
 
 val ifNullExpressionsFusionPhase =
     makeIrFilePhase(
@@ -36,17 +26,13 @@ val ifNullExpressionsFusionPhase =
     )
 
 class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileLoweringPass {
-
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(Transformer(irFile))
-        irFile.patchDeclarationParents()
     }
 
     private inner class Transformer(private val currentFile: IrFile) : IrElementTransformerVoid() {
         override fun visitBlock(expression: IrBlock): IrExpression =
-            expression.transformPostfix {
-                fuseIfNullExpressions(expression)
-            }
+            visitExpression(expression.fuseIfNull())
 
         // We are looking for the "if-null" expressions:
         //
@@ -72,13 +58,11 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         //  where 'SIMPLIFY_IF_NULL( S, v, X0, X1; Context )' attempts to simplify 'IfNull( S, v, X0, X1 )' in Context,
         //  and 'X[v <- Y]' is an expression X with all occurrences of variable 'v' replaced with expression Y.
         //
-        // Note that this transformation in general is not beneficial. 
-        // However, the structure of argument expressions in case of '?.' and '?:' operators often allows reductions in SIMPLIFY_IF_NULL.
-        // This transformation is applied only if
-        //      size(A0) + size(A1) + size(B0) + size(B1) + 1 >= size(C0) + size(C1)
-        // where
-        //      size(X) is number of nodes in IR tree for X,
-        // thus assuring that we don't grow trees exponentially.
+        // Note that this transformation in general is not beneficial, and will in fact lead to duplication. However,
+        // the structure of argument expressions in case of '?.' and '?:' operators often allows reductions in SIMPLIFY_IF_NULL.
+        // This transformation is applied only if it is not necessary to copy any non-trivial subexpression:
+        // if B1 is trivial or either A0 or A1 is always null, and B0 is trivial or either A0 or A1 is never null.
+        // ("Trivial" is not precisely defined, but a trivial expression should have no side effects and be reasonably small.)
         //
         // Example:
         //
@@ -94,150 +78,67 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         //          ),
         //          t0, 'z', 't0'
         //      )
-        // which, assuming 'a.x' and 'b.y' are stable not-null expressions, is optimized to
+        // which, assuming 'a!!.x' and 'b!!.y' are stable not-null expressions, is optimized to
         //      IfNull(
         //          'a', t1,
         //          IfNull( 'b', t2, 'z', 't2.y' ),
         //          't1.x'
         //      )
-        // by applying FUSE_IF_NULL twice.
-        //
-        private fun fuseIfNullExpressions(expression: IrBlock) {
-            val ifNull1 = expression.matchIfNullExpr() ?: return
-            val ifNull2 = ifNull1.subjectExpr.matchIfNullExpr() ?: return
-            val type = expression.type
-
-            val u = ifNull1.subjectVar
+        // by applying FUSE_IF_NULL twice: in `a?.x ?: [...]` A0 is non-null and A1 is null, while in `[...] ?: z`
+        // A1 is non-null and B1 is trivial (read of a temporary variable that stores the subject of the branch).
+        private fun IrBlock.fuseIfNull(): IrExpression {
+            val outer = matchIfNullExpr() ?: return this
             // We are going to erase 1st variable. Do so only if it is temporary (true for variables introduced for '?.' and '?:').
-            if (u.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) return
+            if (outer.subjectVar.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) return this
+            val inner = outer.subjectVar.initializer?.matchIfNullExpr() ?: return this
 
-            val a0 = ifNull2.ifNullExpr
-            val a1 = ifNull2.ifNotNullExpr
-            val tmp1 = createTemporaryVar(a0)
-            val tmp2 = createTemporaryVar(a1)
-
-            val b0 = ifNull1.ifNullExpr
-            val b0tmp1 = b0.substituteVariable(u.symbol, tmp1.symbol)
-            val b0tmp2 = b0.substituteVariable(u.symbol, tmp2.symbol)
-
-            val b1 = ifNull1.ifNotNullExpr
-            val b1tmp1 = b1.substituteVariable(u.symbol, tmp1.symbol)
-            val b1tmp2 = b1.substituteVariable(u.symbol, tmp2.symbol)
-
-            val v = ifNull2.subjectVar
-            val c0 = simplifyIfNull(tmp1, b0tmp1, b1tmp1, v.symbol, type, true)
-            val c1 = simplifyIfNull(tmp2, b0tmp2, b1tmp2, v.symbol, type, false)
-
-            val sizeBeforeEstimate = a0.size() + a1.size() + b0.size() + b1.size() + 1
-            val sizeAfterEstimate = c0.size() + c1.size()
-            if (sizeBeforeEstimate < sizeAfterEstimate) return
-
-            val newBlock = constructIfNullExpr(v, c0, c1, type)
-
-            expression.statements.clear()
-            expression.statements.addAll(newBlock.statements)
-        }
-
-        private var tmpVarsCount = 0
-
-        private fun createTemporaryVar(initializer: IrExpression): IrVariable {
-            val descriptor = WrappedVariableDescriptor()
-            val symbol = IrVariableSymbolImpl(descriptor)
-            val irVar = IrVariableImpl(
-                initializer.startOffset, initializer.endOffset,
-                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                symbol,
-                Name.identifier("tmp_f_${tmpVarsCount++}"),
-                initializer.type,
-                isVar = false, isConst = false, isLateinit = false
-            )
-            irVar.initializer = initializer
-            descriptor.bind(irVar)
-            return irVar
-        }
-
-        private fun simplifyIfNull(
-            subjectVariable: IrVariable,
-            ifNullExpr: IrExpression,
-            ifNotNullExpr: IrExpression,
-            knownVariableSymbol: IrVariableSymbol,
-            type: IrType,
-            knownVariableIsNull: Boolean
-        ): IrExpression {
-            val subjectExpr = subjectVariable.initializer
-                ?: throw AssertionError("Subject variable should have an initializer: ${subjectVariable.render()}")
-
-            val ifNullResultExpr = ifNullExpr.safeReplaceSubjectVariableWithSubjectExpression(subjectVariable)
-                ?: return constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr, type)
-
-            val ifNotNullResultExpr = ifNotNullExpr.safeReplaceSubjectVariableWithSubjectExpression(subjectVariable)
-                ?: return constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr, type)
-
-            return when {
-                subjectExpr is IrConst<*> ->
-                    if (subjectExpr.value == null)
-                        ifNullResultExpr
-                    else
-                        ifNotNullResultExpr
-
-                subjectExpr is IrGetValue && subjectExpr.symbol == knownVariableSymbol ->
-                    if (knownVariableIsNull)
-                        ifNullResultExpr
-                    else
-                        ifNotNullResultExpr
-
-                subjectExpr is IrGetValue && !subjectExpr.type.isNullable() ->
-                    ifNotNullResultExpr
-
-                subjectExpr is IrConstructorCall ||
-                        subjectExpr is IrGetSingletonValue ||
-                        subjectExpr is IrFunctionExpression ||
-                        subjectExpr is IrCallableReference ||
-                        subjectExpr is IrClassReference ||
-                        subjectExpr is IrGetClass ->
-                    ifNotNullResultExpr
-
-                subjectExpr is IrCall && !subjectExpr.type.isNullable() && subjectExpr.isStableCall() ->
-                    ifNotNullResultExpr
-
-                else ->
-                    constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr, type)
+            val innerKeepsNull = inner.ifNullExpr.isNull(inner.subjectVar.symbol, true)
+            val innerDiscardsNonNull = inner.ifNotNullExpr.isNull(inner.subjectVar.symbol, false)
+            if ((!outer.ifNotNullExpr.isTrivial() && innerKeepsNull != true && innerDiscardsNonNull != true) ||
+                (!outer.ifNullExpr.isTrivial() && innerKeepsNull != false && innerDiscardsNonNull != false)
+            ) return this
+            return inner.createIrBuilder().irBlock {
+                val ifNull = outer.substitute(inner.ifNullExpr, innerKeepsNull)
+                val ifNotNull = outer.substitute(inner.ifNotNullExpr, innerDiscardsNonNull)
+                +inner.subjectVar
+                +irIfNull(outer.type, irGet(inner.subjectVar), ifNull, ifNotNull)
             }
         }
 
-        private fun IrExpression.safeReplaceSubjectVariableWithSubjectExpression(v: IrVariable): IrExpression? =
-            when {
-                this is IrGetValue && symbol == v.symbol ->
-                    v.initializer!!
-
-                this is IrTypeOperatorCall ->
-                    argument.safeReplaceSubjectVariableWithSubjectExpression(v)?.let {
-                        IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, it)
-                    }
-
-                this.containsGetValue(v) ->
-                    null
-
-                else -> this
-            }
-
-        private fun IrExpression.containsGetValue(v: IrVariable): Boolean {
-            class Searcher : IrElementVisitorVoid {
-                var found = false
-
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
+        private fun IfNullExpr.substitute(subject: IrExpression, knownNullability: Boolean?): IrExpression =
+            when (knownNullability) {
+                null -> createIrBuilder().irBlock {
+                    val tmp = createTmpVariable(subject)
+                    val ifNull = ifNullExpr.remap(subjectVar, lazy { tmp })
+                    val ifNotNull = ifNotNullExpr.remap(subjectVar, lazy { tmp })
+                    +irIfNull(type, irGet(tmp), ifNull, ifNotNull)
                 }
-
-                override fun visitGetValue(expression: IrGetValue) {
-                    if (expression.symbol == v.symbol)
-                        found = true
-                    else
-                        expression.acceptChildrenVoid(this)
-                }
+                true -> ifNullExpr.remap(subjectVar, subject)
+                else -> ifNotNullExpr.remap(subjectVar, subject)
             }
 
-            return Searcher().also { acceptChildrenVoid(it) }.found
+        private fun IfNullExpr.createIrBuilder() =
+            context.createIrBuilder((subjectVar.parent as IrSymbolOwner).symbol, subjectVar.startOffset, subjectVar.endOffset)
+
+        private fun IrExpression.isNull(knownVariableSymbol: IrVariableSymbol, knownVariableIsNull: Boolean): Boolean? {
+            when (this) {
+                is IrConst<*> ->
+                    return value == null
+                is IrGetValue -> {
+                    if (symbol == knownVariableSymbol) return knownVariableIsNull
+                    if (!type.isNullable()) return false
+                }
+                is IrConstructorCall,
+                is IrGetSingletonValue,
+                is IrFunctionExpression,
+                is IrCallableReference,
+                is IrClassReference,
+                is IrGetClass ->
+                    return false
+                is IrCall ->
+                    if (!type.isNullable() && isStableCall()) return false
+            }
+            return null
         }
 
         // TODO make calls to the declarations within the same module "stable"
@@ -246,12 +147,11 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
     }
 
     private class IfNullExpr(
+        val type: IrType,
         val subjectVar: IrVariable,
         val ifNullExpr: IrExpression,
         val ifNotNullExpr: IrExpression
-    ) {
-        val subjectExpr: IrExpression = subjectVar.initializer!!
-    }
+    )
 
     private fun IrExpression.matchIfNullExpr(): IfNullExpr? {
         if (this !is IrBlock) return null
@@ -274,57 +174,30 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
 
         val branch1 = whenExpr.branches[1] as? IrElseBranch ?: return null
 
-        return IfNullExpr(
-            subjectVar,
-            branch0.result,
-            branch1.result
-        )
+        return IfNullExpr(whenExpr.type, subjectVar, branch0.result, branch1.result)
     }
 
-    private fun IrExpression.substituteVariable(fromVar: IrVariableSymbol, toVar: IrVariableSymbol): IrExpression {
-        val symbolRemapper = DeepCopySymbolRemapper().also { acceptVoid(it) }
-        val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
+    private fun IrExpression.isTrivial() =
+        this is IrExpressionWithCopy
 
-        class Substitutor : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
+    private fun IrExpression.copyIfTrivial() =
+        if (this is IrExpressionWithCopy) copy() else this
 
-            override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop = irLoop
+    private fun IrExpression.remap(from: IrVariable, to: Lazy<IrVariable>): IrExpression =
+        copyIfTrivial().transform(object : AbstractVariableRemapper() {
+            override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
+                if (value.symbol == from.symbol) to.value else null
+        }, null)
 
-            override fun visitGetValue(expression: IrGetValue): IrGetValue =
-                if (expression.symbol == fromVar)
-                    IrGetValueImpl(expression.startOffset, expression.endOffset, toVar)
-                else
-                    super.visitGetValue(expression)
+    private fun IrExpression.remap(from: IrVariable, to: IrExpression): IrExpression =
+        when {
+            this is IrGetValue && symbol == from.symbol -> to
+            this is IrTypeOperatorCall ->
+                IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, argument.remap(from, to))
+            // TODO other expressions may not require a temporary even if they read the variable.
+            else ->
+                context.createIrBuilder((from.parent as IrSymbolOwner).symbol, startOffset, endOffset).irBlock {
+                    +remap(from, lazy { createTmpVariable(to) })
+                }.let { it.statements.singleOrNull() as IrExpression? ?: it }
         }
-
-        return transform(Substitutor(), null)
-    }
-
-    private fun constructIfNullExpr(
-        subjectVariable: IrVariable,
-        ifNullExpr: IrExpression,
-        ifNotNullExpr: IrExpression,
-        type: IrType
-    ): IrContainerExpression =
-        context.createIrBuilder(subjectVariable.symbol, subjectVariable.startOffset, subjectVariable.endOffset)
-            .irBlock {
-                +subjectVariable
-                +irIfNull(
-                    type,
-                    irGet(subjectVariable),
-                    ifNullExpr,
-                    ifNotNullExpr
-                )
-            }
-
-    private fun IrExpression.size(): Int {
-        class ChildrenCounter : IrElementVisitorVoid {
-            var count = 0
-            override fun visitElement(element: IrElement) {
-                ++count
-                element.acceptChildrenVoid(this)
-            }
-        }
-
-        return ChildrenCounter().also { acceptVoid(it) }.count
-    }
 }
