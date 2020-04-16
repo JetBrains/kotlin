@@ -310,8 +310,6 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
     fun getAppliedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? =
         getCachedConfigurationState(file)?.applied
 
-    override fun isRelated(file: VirtualFile): Boolean = true
-
     override fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
@@ -436,6 +434,5 @@ object DefaultScriptConfigurationManagerExtensions {
 }
 
 val ScriptConfigurationManager.testingBackgroundExecutor
-    get() = (this as CompositeScriptConfigurationManager).managers
-        .firstIsInstance<DefaultScriptingSupport>()
+    get() = (this as CompositeScriptConfigurationManager).default
         .backgroundExecutor as TestingBackgroundExecutor

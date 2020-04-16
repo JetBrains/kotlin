@@ -162,15 +162,13 @@ interface ScriptConfigurationManager {
         @TestOnly
         fun updateScriptDependenciesSynchronously(file: PsiFile) {
             // TODO: review the usages of this method
-            (getInstance(file.project) as CompositeScriptConfigurationManager).managers
-                .firstIsInstance<DefaultScriptingSupport>()
+            (getInstance(file.project) as CompositeScriptConfigurationManager).default
                 .updateScriptDependenciesSynchronously(file)
         }
 
         @TestOnly
         fun clearCaches(project: Project) {
-            (getInstance(project) as CompositeScriptConfigurationManager).managers
-                .firstIsInstance<DefaultScriptingSupport>()
+            (getInstance(project) as CompositeScriptConfigurationManager).default
                 .clearCaches()
         }
 

@@ -23,15 +23,21 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
     @Suppress("unused")
     private val notifier = ScriptChangesNotifier(project, updater)
 
-    // todo public for tests
-    val managers = ScriptingSupport.SCRIPTING_SUPPORT.getPoint(project).extensionList
+    private val providers = ScriptingSupport.Provider.EPN.getPoint(project).extensionList
 
-    private fun getRelatedManager(file: VirtualFile): ScriptingSupport = managers.first { it.isRelated(file) }
+    private val managers get() = providers.flatMap { it.all }
+
+    val default = DefaultScriptingSupport(project)
+
+    private fun getRelatedManager(file: VirtualFile): ScriptingSupport =
+        providers.firstNotNullResult { it.getSupport(file) } ?: default
+
     private fun getRelatedManager(file: KtFile): ScriptingSupport =
         getRelatedManager(file.originalFile.virtualFile)
 
@@ -115,7 +121,7 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
     override fun forceReloadConfiguration(file: VirtualFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper? {
         val ktFile = project.getKtFile(file, null) ?: return null
 
-        return managers.firstIsInstanceOrNull<DefaultScriptingSupport>()?.forceReloadConfiguration(ktFile, loader)
+        return default.forceReloadConfiguration(ktFile, loader)
     }
 
     ///////////////////
