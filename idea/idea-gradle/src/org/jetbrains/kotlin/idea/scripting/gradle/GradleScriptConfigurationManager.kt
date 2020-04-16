@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfig
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.createGradleKtsContextIfPosiible
+import org.jetbrains.kotlin.idea.scripting.gradle.importing.createGradleKtsContextIfPossible
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.toScriptConfiguration
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,7 +58,7 @@ class GradleScriptingSupport(val project: Project) : ScriptingSupport() {
         if (isKotlinDslScriptsModelImportSupported(project)) {
             ApplicationManager.getApplication().executeOnPooledThread {
                 val data = KotlinDslScriptModels.read(project)
-                val gradleKtsContext = createGradleKtsContextIfPosiible(project)
+                val gradleKtsContext = createGradleKtsContextIfPossible(project)
                 if (data != null && gradleKtsContext != null) {
                     val newConfiguration = Configuration(
                         gradleKtsContext,
