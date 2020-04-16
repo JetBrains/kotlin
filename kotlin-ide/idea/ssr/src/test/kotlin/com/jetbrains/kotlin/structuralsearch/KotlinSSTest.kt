@@ -3,7 +3,6 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.structuralsearch.Matcher
 import com.intellij.structuralsearch.inspection.highlightTemplate.SSBasedInspection
 import com.intellij.structuralsearch.plugin.ui.SearchConfiguration
-import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.util.*
@@ -31,11 +30,5 @@ abstract class KotlinSSTest : LightJavaCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return "src/test/resources/$basePath/"
     }
-
-    /*override fun getProjectDescriptor(): LightProjectDescriptor {
-        return KtSSProjectDescriptor()
-    }
-
-    internal class KtSSProjectDescriptor : LightProjectDescriptor()*/
 
 }
