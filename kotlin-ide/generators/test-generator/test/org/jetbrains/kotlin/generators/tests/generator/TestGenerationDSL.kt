@@ -12,11 +12,11 @@ import java.util.*
 import java.util.regex.Pattern
 
 class TestGroup(
-    private val testsRoot: String,
-    val testDataRoot: String,
-    val testRunnerMethodName: String,
-    val additionalRunnerArguments: List<String> = emptyList(),
-    val annotations: List<AnnotationModel> = emptyList()
+        private val moduleRelativePath: String,
+        val testDataRoot: String,
+        val testRunnerMethodName: String,
+        val additionalRunnerArguments: List<String> = emptyList(),
+        val annotations: List<AnnotationModel> = emptyList()
 ) {
     inline fun <reified T : TestCase> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
@@ -35,11 +35,11 @@ class TestGroup(
         init: TestClass.() -> Unit
     ) {
         TestGenerator(
-            testsRoot,
-            suiteTestClassName,
-            baseTestClassName,
-            TestClass(annotations).apply(init).testModels,
-            useJunit4
+                "${moduleRelativePath}/test",
+                suiteTestClassName,
+                baseTestClassName,
+                TestClass(annotations).apply(init).testModels,
+                useJunit4
         ).generateAndSave()
     }
 
@@ -63,6 +63,7 @@ class TestGroup(
             deep: Int? = null
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
+            val moduleFile = File(moduleRelativePath)
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
@@ -70,14 +71,16 @@ class TestGroup(
                 if (singleClass) {
                     if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
                     SingleClassTestModel(
-                        rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        targetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
+                            rootFile, moduleFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod,
+                            className, targetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
                     )
                 } else {
                     SimpleTestClassModel(
-                        rootFile, recursive, excludeParentDirs,
-                        compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations
+                            rootFile, moduleFile,
+                            recursive, excludeParentDirs, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase,
+                            testMethod, className, targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments,
+                            deep,
+                            annotations
                     )
                 }
             )
@@ -86,13 +89,13 @@ class TestGroup(
 }
 
 fun testGroup(
-    testsRoot: String,
-    testDataRoot: String,
-    testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
-    additionalRunnerArguments: List<String> = emptyList(),
-    init: TestGroup.() -> Unit
+        moduleRelativePath: String,
+        testDataRootRelativePath: String = "${moduleRelativePath}/testData",
+        testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
+        additionalRunnerArguments: List<String> = emptyList(),
+        init: TestGroup.() -> Unit
 ) {
-    TestGroup(testsRoot, testDataRoot, testRunnerMethodName, additionalRunnerArguments).init()
+    TestGroup("kotlin/$moduleRelativePath", "kotlin/$testDataRootRelativePath", testRunnerMethodName, additionalRunnerArguments).init()
 }
 
 fun getDefaultSuiteTestClassName(baseTestClassName: String): String {

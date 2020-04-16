@@ -31,11 +31,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class SingleClassTestModel extends TestClassModel {
     @NotNull
     private final File rootFile;
+    @NotNull
+    private final File moduleFile;
     @NotNull
     private final Pattern filenamePattern;
     @Nullable
@@ -60,6 +61,7 @@ public class SingleClassTestModel extends TestClassModel {
 
     public SingleClassTestModel(
             @NotNull File rootFile,
+            @NotNull File moduleFile,
             @NotNull Pattern filenamePattern,
             @Nullable Pattern excludePattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
@@ -72,6 +74,7 @@ public class SingleClassTestModel extends TestClassModel {
             @NotNull List<AnnotationModel> annotations
     ) {
         this.rootFile = rootFile;
+        this.moduleFile = moduleFile;
         this.filenamePattern = filenamePattern;
         this.excludePattern = excludePattern;
         this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
@@ -117,7 +120,7 @@ public class SingleClassTestModel extends TestClassModel {
     @NotNull
     private Collection<TestMethodModel> getTestMethodsFromFile(File file) {
         return Collections.singletonList(new SimpleTestMethodModel(
-                rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
+                rootFile, moduleFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
         ));
     }
 

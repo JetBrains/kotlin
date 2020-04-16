@@ -153,7 +153,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractYamlNewWizardProj
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroup("idea/jvm-debugger/jvm-debugger-test/test", "idea/jvm-debugger/jvm-debugger-test/testData") {
+    testGroup("jvm-debugger/test") {
         testClass<AbstractKotlinSteppingTest> {
             model(
                 "stepping/stepIntoAndSmartStepInto",
@@ -220,7 +220,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/tests", "idea/testData") {
+    testGroup("idea") {
         testClass<AbstractAdditionalResolveDescriptorRendererTest> {
             model("resolve/additionalLazyResolve")
         }
@@ -863,7 +863,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/idea-fir/tests", "idea/testData") {
+    testGroup("fir", "idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
             model("fir/multiModule", recursive = false, extension = null)
         }
@@ -887,7 +887,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/scripting-support/test", "idea/scripting-support/testData") {
+    testGroup("scripting-support") {
         testClass<AbstractScratchRunActionTest> {
             model(
                 "scratch",
@@ -935,7 +935,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
+    testGroup("maven") {
         testClass<AbstractMavenConfigureProjectByChangingFileTest> {
             model("configurator/jvm", extension = null, recursive = false, testMethod = "doTestWithMaven")
             model("configurator/js", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
@@ -946,14 +946,14 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/idea-gradle/tests", "idea/testData") {
+    testGroup("gradle/gradle-idea", "idea/testData") {
         testClass<AbstractGradleConfigureProjectByChangingFileTest> {
             model("configuration/gradle", extension = null, recursive = false, testMethod = "doTestGradle")
             model("configuration/gsk", extension = null, recursive = false, testMethod = "doTestGradle")
         }
     }
 
-    testGroup("idea/tests", "compiler/testData") {
+    testGroup("idea", "compiler/testData") {
         testClass<AbstractResolveByStubTest> {
             model("loadJava/compiledKotlin")
         }
@@ -990,7 +990,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/idea-completion/tests", "idea/idea-completion/testData") {
+    testGroup("completion") {
         testClass<AbstractCompiledKotlinInJavaCompletionTest> {
             model("injava", extension = "java", recursive = false)
         }
@@ -1074,10 +1074,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup(
-        "libraries/tools/new-project-wizard/new-project-wizard-cli/tests",
-        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
-    ) {
+    testGroup("project-wizard/cli") {
         testClass<AbstractYamlBuildFileGenerationTest> {
             model("buildFileGeneration", recursive = false, extension = null)
         }
@@ -1086,10 +1083,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup(
-        "idea/idea-new-project-wizard/tests",
-        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
-    ) {
+    testGroup("project-wizard/idea", "project-wizard/cli/testData") {
         fun TestGroup.TestClass.allBuildSystemTests(relativeRootPath: String) {
             for (testClass in listOf("GradleKts", "GradleGroovy", "Maven")) {
                 model(
@@ -1110,7 +1104,7 @@ fun main(args: Array<String>) {
     }
 
     //TODO: move these tests into idea-completion module
-    testGroup("idea/tests", "idea/idea-completion/testData") {
+    testGroup("idea", "completion/testData") {
         testClass<AbstractCodeFragmentCompletionHandlerTest> {
             model("handlers/runtimeCast")
         }
@@ -1120,23 +1114,19 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("j2k/tests", "j2k/testData") {
+    testGroup("j2k/old") {
         testClass<AbstractJavaToKotlinConverterSingleFileTest> {
             model("fileOrElement", extension = "java")
         }
-    }
-    testGroup("j2k/tests", "j2k/testData") {
         testClass<AbstractJavaToKotlinConverterMultiFileTest> {
             model("multiFile", extension = null, recursive = false)
         }
-    }
-    testGroup("j2k/tests", "j2k/testData") {
         testClass<AbstractJavaToKotlinConverterForWebDemoTest> {
             model("fileOrElement", extension = "java")
         }
     }
 
-    testGroup("nj2k/tests", "nj2k/testData") {
+    testGroup("j2k/new") {
         testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {
             model("newJ2k", pattern = """^([^\.]+)\.java$""")
         }
@@ -1160,7 +1150,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
+    testGroup("jps/jps-plugin", "jps/jps-plugin/testData") {
         testClass<AbstractIncrementalJvmJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
@@ -1209,7 +1199,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
+    testGroup("jps/jps-plugin", "jps/jps-plugin/testData") {
         fun TestGroup.TestClass.commonProtoComparisonTests() {
             model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
             model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
@@ -1229,7 +1219,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/performanceTests/test", "idea/testData") {
+    testGroup("performance-tests", "idea/testData") {
         testClass<AbstractPerformanceJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste/conversion", testMethod = "doPerfTest", pattern = """^([^\.]+)\.java$""")
         }
@@ -1253,7 +1243,7 @@ fun main(args: Array<String>) {
 
     }
 
-    testGroup("idea/performanceTests/test", "idea/idea-completion/testData") {
+    testGroup("performance-tests", "completion/testData") {
         testClass<AbstractPerformanceCompletionIncrementalResolveTest> {
             model("incrementalResolve", testMethod = "doPerfTest")
         }

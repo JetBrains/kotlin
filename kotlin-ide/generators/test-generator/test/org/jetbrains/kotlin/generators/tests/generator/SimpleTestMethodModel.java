@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.generator;
 
 import com.intellij.openapi.util.io.FileUtil;
+import kotlin.io.FilesKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,8 @@ public class SimpleTestMethodModel extends TestMethodModel {
     @NotNull
     private final File rootDir;
     @NotNull
+    private final File moduleDir;
+    @NotNull
     protected final File file;
     @NotNull
     private final Pattern filenamePattern;
@@ -35,6 +38,7 @@ public class SimpleTestMethodModel extends TestMethodModel {
 
     public SimpleTestMethodModel(
             @NotNull File rootDir,
+            @NotNull File moduleDir,
             @NotNull File file,
             @NotNull Pattern filenamePattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
@@ -44,6 +48,7 @@ public class SimpleTestMethodModel extends TestMethodModel {
         this.rootDir = rootDir;
         this.file = file;
         this.filenamePattern = filenamePattern;
+        this.moduleDir = moduleDir;
         this.targetBackend = targetBackend;
         this.skipIgnored = skipIgnored;
 
@@ -60,7 +65,8 @@ public class SimpleTestMethodModel extends TestMethodModel {
 
     @Override
     public void generateBody(@NotNull Printer p) {
-        String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
+        File fileRelativeToModule = FilesKt.relativeTo(file, moduleDir);
+        String filePath = KotlinTestUtils.getFilePath(fileRelativeToModule) + (fileRelativeToModule.isDirectory() ? "/" : "");
         p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");");
     }
 

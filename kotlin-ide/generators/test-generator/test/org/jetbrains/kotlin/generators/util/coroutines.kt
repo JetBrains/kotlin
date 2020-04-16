@@ -17,6 +17,7 @@ import java.util.regex.Pattern
 
 class CoroutinesTestModel(
     rootDir: File,
+    moduleDir: File,
     file: File,
     filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
@@ -24,12 +25,13 @@ class CoroutinesTestModel(
     skipIgnored: Boolean,
     private val isLanguageVersion1_3: Boolean
 ) : SimpleTestMethodModel(
-    rootDir,
-    file,
-    filenamePattern,
-    checkFilenameStartsLowerCase,
-    targetBackend,
-    skipIgnored
+        rootDir,
+        moduleDir,
+        file,
+        filenamePattern,
+        checkFilenameStartsLowerCase,
+        targetBackend,
+        skipIgnored
 ) {
     override val name: String
         get() = super.name + if (isLanguageVersion1_3) "_1_3" else "_1_2"
@@ -48,6 +50,7 @@ fun isCommonCoroutineTest(file: File): Boolean {
 
 fun createCommonCoroutinesTestMethodModels(
     rootDir: File,
+    moduleDir: File,
     file: File,
     filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
@@ -58,6 +61,7 @@ fun createCommonCoroutinesTestMethodModels(
         listOf(
             CoroutinesTestModel(
                 rootDir,
+                moduleDir,
                 file,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
@@ -70,6 +74,7 @@ fun createCommonCoroutinesTestMethodModels(
         listOf(
             CoroutinesTestModel(
                 rootDir,
+                moduleDir,
                 file,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
@@ -79,6 +84,7 @@ fun createCommonCoroutinesTestMethodModels(
             ),
             CoroutinesTestModel(
                 rootDir,
+                moduleDir,
                 file,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
