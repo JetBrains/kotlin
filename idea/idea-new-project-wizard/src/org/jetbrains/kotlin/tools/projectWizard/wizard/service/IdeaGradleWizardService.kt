@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -68,7 +69,14 @@ class IdeaGradleWizardService(private val project: Project) : ProjectImportingWi
             externalSystemIdString = GradleConstants.SYSTEM_ID.id
         }
 
-        ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, project, GradleConstants.SYSTEM_ID)
+        ExternalSystemUtil.runTask(
+            settings,
+            DefaultRunExecutor.EXECUTOR_ID,
+            project,
+            GradleConstants.SYSTEM_ID,
+            /*callback=*/ null,
+            ProgressExecutionMode.NO_PROGRESS_ASYNC
+        )
     }
 
     companion object {
