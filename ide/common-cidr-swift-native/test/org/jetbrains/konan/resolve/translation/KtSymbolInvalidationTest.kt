@@ -1,75 +1,15 @@
 package org.jetbrains.konan.resolve.translation
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.cidr.lang.CLanguageKind
-import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
-import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
-import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache.SymbolsProperties
-import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache.SymbolsProperties.SymbolsKind
-import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
-import org.jetbrains.konan.resolve.konan.KonanBridgePsiFile
-import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.konan.resolve.symbols.objc.KtOCInterfaceSymbol
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
-import org.junit.Assume.assumeFalse
-import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
-    private val translator: KtOCSymbolTranslator
-        get() = KtOCSymbolTranslator(project)
-
-    private val cache: FileSymbolTablesCache
-        get() = FileSymbolTablesCache.getInstance(project)
-
-    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-
-    private object TestTarget : KonanTarget {
-        override val moduleId: String
-            get() = ":module"
-        override val productModuleName: String
-            get() = "MyModule"
-
-        override fun equals(other: Any?): Boolean = super.equals(other)
-        override fun hashCode(): Int = super.hashCode()
-    }
-
-    override fun setUp(): Unit = super.setUp().also {
-        FileSymbolTablesCache.setShouldBuildTablesInTests(SymbolsProperties(SymbolsKind.ONLY_USED, false, false))
-        FileSymbolTablesCache.forceSymbolsLoadedInTests(true)
-    }
-
-    override fun tearDown() {
-        try {
-            FileSymbolTablesCache.forceSymbolsLoadedInTests(null)
-            FileSymbolTablesCache.setShouldBuildTablesInTests(null)
-        } catch (e: Throwable) {
-            addSuppressedException(e)
-        } finally {
-            super.tearDown()
-        }
-    }
-
-    fun `test simple class translation`() {
-        val file = configure("class A")
-        val translatedSymbol = translator.translate(file, TestTarget).single() as KtOCInterfaceSymbol
-        assertEquals("MyModuleA", translatedSymbol.name)
-        assertFalse("state already loaded", translatedSymbol.stateLoaded)
-        assertOCInterfaceSymbol(translatedSymbol, "MyModuleBase", true)
-    }
-
+class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
     fun `test stop translating after invalidation`() {
         val file = configure("class A")
-        val translatedSymbol = translator.translate(file, TestTarget).single() as KtOCInterfaceSymbol
+        val translatedSymbol = translator.translate(file, TestTarget.productModuleName).single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         runWriteAction {
@@ -84,7 +24,7 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun `test stop translating after invalidation by adjacent file`() {
         val file = configure("class A")
-        val translatedSymbol = translator.translate(file, TestTarget).single() as KtOCInterfaceSymbol
+        val translatedSymbol = translator.translate(file, TestTarget.productModuleName).single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         configure("typealias B = Unit", fileName = "other")
@@ -233,21 +173,5 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
         }
 
         assertTrue("table no longer valid", table.isValid)
-    }
-
-    private fun contextForFile(virtualFile: VirtualFile): OCInclusionContext {
-        assumeFalse("cache already contains file", cache.cachedFiles.contains(virtualFile))
-        val bridgingFile = KonanBridgeFileManager.getInstance(project).forTarget(TestTarget, "testTarget.h")
-        val psiBridgingFile = PsiManager.getInstance(project).findFile(bridgingFile) as KonanBridgePsiFile
-        return OCInclusionContext.empty(CLanguageKind.OBJ_C, psiBridgingFile).apply { addProcessedFile(bridgingFile) }
-    }
-
-    private fun configure(code: String, fileName: String = "toTranslate"): KtFile =
-        myFixture.configureByText("$fileName.kt", code) as KtFile
-
-    private fun assertOCInterfaceSymbol(translatedSymbol: KtOCInterfaceSymbol, expectedSuperType: String, expectLoaded: Boolean) {
-        assertFalse("unexpected template symbol", translatedSymbol.isTemplateSymbol)
-        assertEquals("unexpected super type", expectedSuperType, translatedSymbol.superType.name)
-        assertEquals("unexpected loaded state", expectLoaded, translatedSymbol.stateLoaded)
     }
 }
