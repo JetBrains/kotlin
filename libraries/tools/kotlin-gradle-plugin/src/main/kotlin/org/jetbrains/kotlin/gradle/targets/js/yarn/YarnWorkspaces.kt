@@ -17,30 +17,24 @@ class YarnWorkspaces : YarnBasics() {
 
     override fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean,
-        cliArgs: List<String>
+        subProjects: Collection<KotlinCompilationNpmResolution>
     ) {
         check(rootProject == rootProject.rootProject)
-        if (!skipExecution) setup(rootProject)
+        setup(rootProject)
         return prepareRootPackageJson(
             rootProject,
-            subProjects,
-            skipExecution
+            subProjects
         )
     }
 
     private fun prepareRootPackageJson(
         rootProject: Project,
-        npmProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        npmProjects: Collection<KotlinCompilationNpmResolution>
     ) {
         val nodeJs = NodeJsRootPlugin.apply(rootProject)
         val rootPackageJsonFile = nodeJs.rootPackageJson
 
-        if (!skipExecution) {
-            saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, rootPackageJsonFile)
-        }
+        saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, rootPackageJsonFile)
     }
 
     override fun resolveRootProject(

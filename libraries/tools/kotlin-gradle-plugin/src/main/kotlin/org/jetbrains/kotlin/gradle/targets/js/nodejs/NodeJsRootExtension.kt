@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
@@ -55,6 +56,9 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     val npmInstallTask: KotlinNpmInstallTask
         get() = rootProject.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
+
+    val rootPackageJsonTask: RootPackageJsonTask
+        get() = rootProject.tasks.getByName(RootPackageJsonTask.NAME) as RootPackageJsonTask
 
     val rootPackageDir: File
         get() = rootProject.buildDir.resolve("js")

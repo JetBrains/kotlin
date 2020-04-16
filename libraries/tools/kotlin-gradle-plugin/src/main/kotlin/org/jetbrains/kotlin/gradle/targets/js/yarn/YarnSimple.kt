@@ -32,14 +32,10 @@ class YarnSimple : YarnBasics() {
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
         cliArgs: List<String>
-    ) {
-        TODO("Not yet implemented")
-    }
+    ) = Unit
 
     override fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean,
-        cliArgs: List<String>
+        subProjects: Collection<KotlinCompilationNpmResolution>
     ) = Unit
 }

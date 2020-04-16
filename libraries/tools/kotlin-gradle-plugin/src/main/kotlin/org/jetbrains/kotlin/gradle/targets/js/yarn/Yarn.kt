@@ -47,14 +47,10 @@ class Yarn : NpmApi {
 
     override fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean,
-        cliArgs: List<String>
+        subProjects: Collection<KotlinCompilationNpmResolution>
     ) = getDelegate(rootProject.project)
         .prepareRootProject(
             rootProject,
-            subProjects,
-            skipExecution,
-            cliArgs
+            subProjects
         )
 }

@@ -117,17 +117,32 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
             return (state as ResolutionState.Installed).resolved
         }
 
+        val installUpToDate = nodeJsSettings.npmInstallTask.state.upToDate
+        val forceUpToDate = installUpToDate && !forceFullResolve
+
         val npmResolution = prepareIfNeeded(requireUpToDateReason = reason)
         val npmResolutions = npmResolution
             .projects
             .values
+            .flatMap { it.npmProjects }
+
+        // we need manual up-to-date checking to avoid call package manager during
+        // idea import if nothing was changed
+        // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
+        // because our upToDateChecks saves state for next execution
+        val upToDateChecks = npmResolutions.map {
+            PackageJsonUpToDateCheck(it.npmProject)
+        }
+        val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
         nodeJsSettings.packageManager.resolveRootProject(
             nodeJsSettings.rootProject,
-            npmResolutions.flatMap { it.npmProjects },
-            false,
+            npmResolutions,
+            upToDate,
             args
         )
+
+        upToDateChecks.forEach { it.commit() }
 
         return ResolutionState.Installed((state as ResolutionState.Prepared).resolved)
             .apply {
@@ -166,13 +181,12 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                     when (state1) {
                         is ResolutionState.Prepared -> alreadyResolved(state1.resolved)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.npmInstallTask.state.upToDate
+                            val upToDate = nodeJsSettings.rootPackageJsonTask.state.upToDate
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }
 
-                            val forceUpToDate = upToDate && !forceFullResolve
-                            state1.resolver.close(forceUpToDate).also {
+                            state1.resolver.close().also {
                                 this.state = ResolutionState.Prepared(it)
                                 state1.resolver.closePlugins(it)
                             }
