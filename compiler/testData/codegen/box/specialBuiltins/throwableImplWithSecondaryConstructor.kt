@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class MyThrowable : Throwable {
     val x: String
 

@@ -4,9 +4,9 @@ package toplevelObjectDeclarations
     open fun foo() : Int = 1
   }
 
-  class T : Foo {}
+  <!INAPPLICABLE_CANDIDATE!>class T : Foo {}<!>
 
-  object A : Foo {
+  <!INAPPLICABLE_CANDIDATE!>object A<!> : Foo {
     val x : Int = 2
 
     fun test() : Int {

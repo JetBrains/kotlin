@@ -8,7 +8,7 @@ FILE: LinkedList.kt
 FILE: HashSet.kt
     public final class HashSet<T> : R|java/util/HashSet<T>| {
         public constructor<T>(): R|util/HashSet<T>| {
-            super<R|kotlin/Any|>()
+            super<R|java/util/HashSet<T>|>()
         }
 
     }

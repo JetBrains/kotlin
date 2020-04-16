@@ -70,5 +70,5 @@ class B : A("") {
 }
 
 class C : A {
-    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>("")
+    constructor() : super("")
 }

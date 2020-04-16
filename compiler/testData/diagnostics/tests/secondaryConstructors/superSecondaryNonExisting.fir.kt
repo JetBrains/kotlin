@@ -6,5 +6,5 @@ open class B(x: Double) {
 interface C
 class A : B, C {
     constructor(): <!INAPPLICABLE_CANDIDATE!>super<!>(' ')
-    constructor(x: Int)
+    <!INAPPLICABLE_CANDIDATE!>constructor(x: Int)<!>
 }

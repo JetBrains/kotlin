@@ -35,5 +35,5 @@ class A : B {
     // no cycle, just call to super constuctor
     constructor(x1: Double, x2: Double): this(x1, x2, 1.0)
     constructor(x1: Double, x2: Double, x3: Double): this(x1, x2, x3, 1.0)
-    constructor(x1: Double, x2: Double, x3: Double, x4: Double): <!INAPPLICABLE_CANDIDATE!>super<!>(1.toByte())
+    constructor(x1: Double, x2: Double, x3: Double, x4: Double): super(1.toByte())
 }

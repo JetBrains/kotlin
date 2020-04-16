@@ -14,7 +14,7 @@ open class S(
 
 class A : S {
 
-    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>(
+    constructor() : super(
             foo(),
             Nested(),
             Inner(),

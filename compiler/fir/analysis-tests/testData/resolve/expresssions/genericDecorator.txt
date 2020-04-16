@@ -1,7 +1,7 @@
 FILE: test.kt
     public final class MyDecorator : R|Decorator<LookupElement>| {
         public constructor(): R|MyDecorator| {
-            super<R|kotlin/Any|>()
+            super<R|Decorator<LookupElement>|>()
         }
 
         public final override fun getLookupString(): R|kotlin/String| {

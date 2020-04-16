@@ -16,7 +16,7 @@ class B2 : A() {}
 class B3 : A("") {}
 
 class B4 : A {
-    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>(1)
+    constructor() : super(1)
     constructor(x: Int) : super()
-    constructor(x: Int, y: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>("")
+    constructor(x: Int, y: Int) : super("")
 }

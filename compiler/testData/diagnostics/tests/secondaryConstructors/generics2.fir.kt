@@ -13,14 +13,14 @@ class A0<T1, T2> {
 }
 
 class A1<T1, T2> : B<T1, T2> {
-    constructor(x: T1, y: T2): <!INAPPLICABLE_CANDIDATE!>super<!>(x, y)
+    constructor(x: T1, y: T2): super(x, y)
     constructor(x: T1, y: Int): <!INAPPLICABLE_CANDIDATE!>super<!>(x, y)
     constructor(x: T1, y: T1, z: T1): <!INAPPLICABLE_CANDIDATE!>super<!>(x, y)
 }
 
 class A2<T1, T2> : B<T1, Int> {
     constructor(x: T1, y: T2): <!INAPPLICABLE_CANDIDATE!>super<!>(x, y)
-    constructor(x: T1, y: Int): <!INAPPLICABLE_CANDIDATE!>super<!>(x, y)
+    constructor(x: T1, y: Int): super(x, y)
     constructor(x: T1, y: T1, z: T1): <!INAPPLICABLE_CANDIDATE!>super<!>(x, y)
     constructor(x: T1, y: T2, z: String): <!INAPPLICABLE_CANDIDATE!>super<!>(y, 1)
 }

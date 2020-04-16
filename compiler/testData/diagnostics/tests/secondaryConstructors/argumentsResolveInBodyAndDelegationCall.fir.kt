@@ -5,7 +5,7 @@ class A : B {
     val myProp: Int = 1
     override val parentProp = 1
 
-    constructor(x: Int, y: Int = global): <!INAPPLICABLE_CANDIDATE!>super<!>(x + y + global) {
+    constructor(x: Int, y: Int = global): super(x + y + global) {
         foo(x, y, myProp)
         x + y + myProp + parentProp + super.parentProp
     }

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import com.intellij.openapi.progress.ProcessCanceledException
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
+import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -604,6 +606,21 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         when (delegatedConstructorCall.calleeReference) {
             is FirResolvedNamedReference, is FirErrorNamedReference -> return delegatedConstructorCall.compose()
         }
+        if (delegatedConstructorCall.isSuper && delegatedConstructorCall.constructedTypeRef is FirImplicitTypeRef) {
+            val containers = components.context.containers
+            val containingClass = containers[containers.lastIndex - 1] as FirClass<*>
+            val superClass = containingClass.superTypeRefs.firstOrNull {
+                if (it !is FirResolvedTypeRef) return@firstOrNull false
+                val declaration = extractSuperTypeDeclaration(it) ?: return@firstOrNull false
+                declaration.classKind == ClassKind.CLASS
+            } as FirResolvedTypeRef? ?: session.builtinTypes.anyType
+            delegatedConstructorCall.replaceConstructedTypeRef(superClass)
+            delegatedConstructorCall.replaceCalleeReference(buildExplicitSuperReference {
+                source = delegatedConstructorCall.calleeReference.source
+                superTypeRef = superClass
+            })
+        }
+
         dataFlowAnalyzer.enterCall(delegatedConstructorCall)
         var callCompleted = true
         var result = delegatedConstructorCall
@@ -658,6 +675,15 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             return result.compose()
         } finally {
             dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted)
+        }
+    }
+
+    private fun extractSuperTypeDeclaration(typeRef: FirTypeRef): FirRegularClass? {
+        if (typeRef !is FirResolvedTypeRef) return null
+        return when (val declaration = typeRef.firClassLike(session)) {
+            is FirRegularClass -> declaration
+            is FirTypeAlias -> extractSuperTypeDeclaration(declaration.expandedTypeRef)
+            else -> null
         }
     }
 
