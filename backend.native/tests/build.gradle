@@ -2325,6 +2325,18 @@ standaloneTest("check_stacktrace_format") {
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
+standaloneTest("stack_trace_inline") {
+    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    flags = ['-g']
+    source = "runtime/exceptions/stack_trace_inline.kt"
+}
+
+standaloneTest("kt-37572") {
+    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    flags = ['-g']
+    source = "runtime/exceptions/kt-37572.kt"
+}
+
 standaloneTest("custom_hook") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     goldValue = "value 42: Error\n"
