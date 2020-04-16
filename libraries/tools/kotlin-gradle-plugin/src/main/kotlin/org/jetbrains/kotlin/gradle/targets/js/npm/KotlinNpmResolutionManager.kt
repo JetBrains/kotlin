@@ -47,7 +47,9 @@ import java.io.File
  * by compilation that depends on this compilation. Note that package.json will be executed only for
  * required compilations, while other may be missed.
  *
- * **installed**. Global final state. Initiated by executing global `kotlinNpmInstall` task.
+ * **installed**. Global final state. Initiated by executing global `rootPackageJson` task.
+ *
+ * **resolved**.
  * All created package.json files will be gathered and package manager will be executed.
  * Package manager will create lock file, that will be parsed for transitive npm dependencies
  * that will be added to the root [NpmDependency] objects. `kotlinNpmInstall` task may be up-to-date.
@@ -92,7 +94,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         }
 
-        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState() {
+        class Prepared(val resolved: KotlinRootNpmResolution) : ResolutionState() {
             override val npmProjects: List<NpmProject>
                 get() = resolved.projects.values.flatMap { it.npmProjects.map { it.npmProject } }
 
@@ -146,12 +148,12 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         val state0 = this.state
         return when (state0) {
-            is ResolutionState.Installed -> alreadyResolved(state0.resolved)
+            is ResolutionState.Prepared -> alreadyResolved(state0.resolved)
             is ResolutionState.Configuring -> {
                 synchronized(this) {
                     val state1 = this.state
                     when (state1) {
-                        is ResolutionState.Installed -> alreadyResolved(state1.resolved)
+                        is ResolutionState.Prepared -> alreadyResolved(state1.resolved)
                         is ResolutionState.Configuring -> {
                             val upToDate = nodeJsSettings.npmInstallTask.state.upToDate
                             if (requireUpToDateReason != null && !upToDate) {
@@ -160,7 +162,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
                             val forceUpToDate = upToDate && !forceFullResolve
                             state1.resolver.close(forceUpToDate).also {
-                                this.state = ResolutionState.Installed(it)
+                                this.state = ResolutionState.Prepared(it)
                                 state1.resolver.closePlugins(it)
                             }
                         }
@@ -182,7 +184,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                 // requires resolve to build package.json, in this case we should just skip this call)
                 val state0 = state
                 when (state0) {
-                    is ResolutionState.Installed -> state0.resolved[project]
+                    is ResolutionState.Prepared -> state0.resolved[project]
                     is ResolutionState.Configuring -> {
                         return null
                         //error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
