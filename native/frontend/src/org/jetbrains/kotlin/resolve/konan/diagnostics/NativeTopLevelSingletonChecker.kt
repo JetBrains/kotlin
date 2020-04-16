@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
-
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -20,14 +19,6 @@ object NativeTopLevelSingletonChecker : DeclarationChecker {
     private val threadLocalFqName = FqName("kotlin.native.concurrent.ThreadLocal")
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        // @ThreadLocal on enum has no effect.
-        if (descriptor is ClassDescriptor && DescriptorUtils.isEnumClass(descriptor)) {
-            descriptor.annotations.findAnnotation(threadLocalFqName)?.let {
-                val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration
-                context.trace.report(ErrorsNative.ENUM_THREAD_LOCAL_INAPPLICABLE.on(reportLocation))
-            }
-        }
-
         // Check variables inside singletons.
         if (descriptor !is PropertyDescriptor) return
         (descriptor.containingDeclaration as? ClassDescriptor)?.let { parent ->
