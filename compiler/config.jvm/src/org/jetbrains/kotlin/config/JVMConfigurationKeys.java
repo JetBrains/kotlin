@@ -119,4 +119,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_OPTIMIZED_CALLABLE_REFERENCES =
             CompilerConfigurationKey.create("Do not use optimized callable reference superclasses available from 1.4");
+
+    public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
+            CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
 }

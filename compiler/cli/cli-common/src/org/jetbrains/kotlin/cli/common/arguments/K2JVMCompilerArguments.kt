@@ -347,6 +347,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noOptimizedCallableReferences: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xno-kotlin-nothing-value-exception",
+        description = "Do not use KotlinNothingValueException available since 1.4"
+    )
+    var noKotlinNothingValueException: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

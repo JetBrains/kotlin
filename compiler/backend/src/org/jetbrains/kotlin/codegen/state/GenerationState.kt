@@ -219,6 +219,9 @@ class GenerationState private constructor(
     val generateOptimizedCallableReferenceSuperClasses =
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES)
+    val useKotlinNothingValueException =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
+                !configuration.getBoolean(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION)
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
