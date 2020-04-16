@@ -31,6 +31,7 @@ import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -168,9 +169,8 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
     visitTasks(projectTask instanceof ProjectTaskList ? (ProjectTaskList)projectTask : Collections.singleton(projectTask), taskClassifier);
 
     context.putUserData(ProjectTaskScope.KEY, new ProjectTaskScope() {
-      @NotNull
       @Override
-      public <T extends ProjectTask> List<T> getRequestedTasks(@NotNull Class<T> instanceOf) {
+      public @NotNull <T extends ProjectTask> List<T> getRequestedTasks(@NotNull Class<T> instanceOf) {
         List<T> tasks = new ArrayList<>();
         //noinspection unchecked
         toRun.forEach(pair -> pair.second.stream().filter(instanceOf::isInstance).map(task -> (T)task).forEach(tasks::add));
@@ -235,9 +235,8 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
     return promiseResult;
   }
 
-  @Nullable
   @ApiStatus.Experimental
-  public static <T> T waitForPromise(@NotNull Promise<T> promise) {
+  public static @Nullable <T> T waitForPromise(@NotNull Promise<T> promise) {
     while (true) {
       try {
         return promise.blockingGet(10, TimeUnit.MILLISECONDS);
@@ -251,8 +250,7 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
     }
   }
 
-  @NotNull
-  private static Supplier<List<String>> moduleOutputPathsProvider(@NotNull Module module) {
+  private static @NotNull Supplier<List<String>> moduleOutputPathsProvider(@NotNull Module module) {
     return () -> ReadAction.compute(() -> {
       return JBIterable.of(OrderEnumerator.orderEntries(module).withoutSdk().withoutLibraries().getClassesRoots())
         .filterMap(file -> file.isDirectory() && !file.getFileSystem().isReadOnly() ? file.getPath() : null)
@@ -312,7 +310,7 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
   }
 
   private class ResultConsumer implements Consumer<Result> {
-    @NotNull private final AsyncPromise<Result> myPromise;
+    private final @NotNull AsyncPromise<Result> myPromise;
 
     private ResultConsumer(@NotNull AsyncPromise<Result> promise) {
       myPromise = promise;
@@ -362,7 +360,7 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
     private final IdeActivity myActivity;
     private final AtomicBoolean myErrorsFlag;
     private final AtomicBoolean myAbortedFlag;
-    private final Map<ProjectTask, ProjectTaskState> myTasksState = ContainerUtil.newConcurrentMap();
+    private final Map<ProjectTask, ProjectTaskState> myTasksState = new ConcurrentHashMap<>();
 
     private ProjectTaskResultsAggregator(@NotNull ProjectTaskContext context,
                                          @NotNull ResultConsumer resultConsumer,
@@ -426,9 +424,8 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
       myErrors = hasErrors;
     }
 
-    @NotNull
     @Override
-    public ProjectTaskContext getContext() {
+    public @NotNull ProjectTaskContext getContext() {
       return myContext;
     }
 
@@ -453,9 +450,8 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
 
     private ResultWrapper(Result result) {myResult = result;}
 
-    @NotNull
     @Override
-    public ProjectTaskContext getContext() {
+    public @NotNull ProjectTaskContext getContext() {
       return myResult.getContext();
     }
 
@@ -604,9 +600,8 @@ public final class ProjectTaskManagerImpl extends ProjectTaskManager {
     @Override
     public void finished(@NotNull ProjectTaskResult executionResult) {
       myPromise.setResult(new Result() {
-        @NotNull
         @Override
-        public ProjectTaskContext getContext() {
+        public @NotNull ProjectTaskContext getContext() {
           return myContext;
         }
 

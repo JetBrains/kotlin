@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -44,9 +45,9 @@ public class IndexingStamp {
   private static final long INDEX_DATA_OUTDATED_STAMP = -2L;
 
   private static final int VERSION = 15 + (SharedIndicesData.ourFileSharedIndicesEnabled ? 15 : 0) + (SharedIndicesData.DO_CHECKS ? 15 : 0);
-  private static final ConcurrentMap<ID<?, ?>, IndexVersion> ourIndexIdToCreationStamp = ContainerUtil.newConcurrentMap();
+  private static final ConcurrentMap<ID<?, ?>, IndexVersion> ourIndexIdToCreationStamp = new ConcurrentHashMap<>();
   private static final long ourVfsCreationStamp = FSRecords.getCreationTimestamp();
-  
+
   static final int INVALID_FILE_ID = 0;
 
   private IndexingStamp() {}
@@ -106,7 +107,7 @@ public class IndexingStamp {
       );
     }
   }
-  
+
   public static synchronized void rewriteVersion(@NotNull ID<?,?> indexId, final int version) throws IOException {
     if (FileBasedIndex.USE_IN_MEMORY_INDEX) return;
     File file = IndexInfrastructure.getVersionFile(indexId);
@@ -123,9 +124,8 @@ public class IndexingStamp {
       file.getParentFile().mkdirs();
     }
     try (final DataOutputStream os = FileUtilRt.doIOOperation(new FileUtilRt.RepeatableIOOperation<DataOutputStream, FileNotFoundException>() {
-      @Nullable
       @Override
-      public DataOutputStream execute(boolean lastAttempt) throws FileNotFoundException {
+      public @Nullable DataOutputStream execute(boolean lastAttempt) throws FileNotFoundException {
         try {
           return new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         }
@@ -224,7 +224,7 @@ public class IndexingStamp {
   }
 
   private static final IndexVersion NON_EXISTING_INDEX_VERSION = new IndexVersion(0, -1, -1);
-  
+
   private static @NotNull IndexVersion getIndexVersion(@NotNull ID<?, ?> indexName) {
     IndexVersion version = ourIndexIdToCreationStamp.get(indexName);
     if (version != null) return version;
@@ -452,8 +452,7 @@ public class IndexingStamp {
     }
   }
 
-  @NotNull
-  public static List<ID<?,?>> getNontrivialFileIndexedStates(int fileId) {
+  public static @NotNull List<ID<?,?>> getNontrivialFileIndexedStates(int fileId) {
     if (fileId != INVALID_FILE_ID) {
       Lock readLock = getStripedLock(fileId).readLock();
       readLock.lock();

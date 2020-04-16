@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -7,18 +7,18 @@ import com.intellij.util.containers.Predicate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class IndexVersionRegistrationSink {
 
-  private final Map<ID<?, ?>, IndexingStamp.IndexVersionDiff> indexVersionDiffs = ContainerUtil.newConcurrentMap();
+  private final Map<ID<?, ?>, IndexingStamp.IndexVersionDiff> indexVersionDiffs = new ConcurrentHashMap<>();
 
   public boolean hasChangedIndexes() {
     return ContainerUtil.find(indexVersionDiffs.values(), diff -> isRebuildRequired(diff)) != null;
   }
 
-  @NotNull
-  public String changedIndices() {
+  public @NotNull String changedIndices() {
     return buildString(diff -> isRebuildRequired(diff));
   }
 
@@ -35,8 +35,7 @@ public class IndexVersionRegistrationSink {
     }
   }
 
-  @NotNull
-  private String buildString(@NotNull Predicate<IndexingStamp.IndexVersionDiff> condition) {
+  private @NotNull String buildString(@NotNull Predicate<IndexingStamp.IndexVersionDiff> condition) {
     return indexVersionDiffs
       .entrySet()
       .stream()

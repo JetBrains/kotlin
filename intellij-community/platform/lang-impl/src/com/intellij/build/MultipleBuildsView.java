@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.build.events.*;
@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -96,8 +97,8 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       }
       return panel;
     });
-    myViewMap = ContainerUtil.newConcurrentMap();
-    myBuildsMap = ContainerUtil.newConcurrentMap();
+    myViewMap = new ConcurrentHashMap<>();
+    myBuildsMap = new ConcurrentHashMap<>();
     myProgressWatcher = new ProgressWatcher();
   }
 
@@ -374,8 +375,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       return getOccurenceNavigator(true) != null;
     }
 
-    @Nullable
-    private Pair<Integer, Supplier<OccurenceInfo>> getOccurenceNavigator(boolean next) {
+    private @Nullable Pair<Integer, Supplier<OccurenceInfo>> getOccurenceNavigator(boolean next) {
       if (myBuildsList.getItemsCount() == 0) return null;
       int index = Math.max(myBuildsList.getSelectedIndex(), 0);
 
@@ -441,15 +441,13 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       return null;
     }
 
-    @NotNull
     @Override
-    public String getNextOccurenceActionName() {
+    public @NotNull String getNextOccurenceActionName() {
       return IdeBundle.message("action.next.problem");
     }
 
-    @NotNull
     @Override
-    public String getPreviousOccurenceActionName() {
+    public @NotNull String getPreviousOccurenceActionName() {
       return IdeBundle.message("action.previous.problem");
     }
   }

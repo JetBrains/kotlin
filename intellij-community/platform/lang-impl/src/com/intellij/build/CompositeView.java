@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.ComponentContainer;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -30,11 +30,10 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @ApiStatus.Experimental
 public class CompositeView<T extends ComponentContainer> extends JPanel implements ComponentContainer, DataProvider {
-  private final Map<String, T> myViewMap = ContainerUtil.newConcurrentMap();
+  private final Map<String, T> myViewMap = new ConcurrentHashMap<>();
   private final String mySelectionStateKey;
   private final AtomicReference<String> myVisibleViewRef = new AtomicReference<>();
-  @NotNull
-  private final SwitchViewAction mySwitchViewAction;
+  private final @NotNull SwitchViewAction mySwitchViewAction;
 
   public CompositeView(String selectionStateKey) {
     super(new CardLayout());
@@ -91,8 +90,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     return myViewMap.get(viewName);
   }
 
-  @Nullable
-  public <U> U getView(@NotNull String viewName, @NotNull Class<U> viewClass) {
+  public @Nullable <U> U getView(@NotNull String viewName, @NotNull Class<U> viewClass) {
     T view = getView(viewName);
     return viewClass.isInstance(view) ? viewClass.cast(view) : null;
   }
@@ -108,9 +106,8 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     return new AnAction[]{actionGroup};
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     return this;
   }
 
@@ -123,9 +120,8 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
   public void dispose() {
   }
 
-  @Nullable
   @Override
-  public Object getData(@NotNull @NonNls String dataId) {
+  public @Nullable Object getData(@NotNull @NonNls String dataId) {
     String visibleViewName = myVisibleViewRef.get();
     if (visibleViewName != null) {
       T visibleView = getView(visibleViewName);
@@ -143,8 +139,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     }
   }
 
-  @Nullable
-  private String getStoredState() {
+  private @Nullable String getStoredState() {
     return mySelectionStateKey == null ? null : PropertiesComponent.getInstance().getValue(mySelectionStateKey);
   }
 
@@ -166,7 +161,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     }
 
     @Override
-    public boolean isSelected(@NotNull final AnActionEvent event) {
+    public boolean isSelected(final @NotNull AnActionEvent event) {
       String visibleViewName = myVisibleViewRef.get();
       if (visibleViewName == null) return true;
       Set<String> viewNames = myViewMap.keySet();
@@ -174,7 +169,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     }
 
     @Override
-    public void setSelected(@NotNull final AnActionEvent event, final boolean flag) {
+    public void setSelected(final @NotNull AnActionEvent event, final boolean flag) {
       if (myViewMap.size() > 1) {
         List<String> names = new ArrayList<>(myViewMap.keySet());
         String viewName = flag ? names.get(0) : names.get(1);

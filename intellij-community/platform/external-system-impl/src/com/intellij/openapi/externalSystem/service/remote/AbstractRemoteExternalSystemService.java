@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.remote;
 
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
@@ -20,13 +6,13 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.RemoteExternalSystemService;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -39,10 +25,10 @@ public abstract class AbstractRemoteExternalSystemService<S extends ExternalSyst
 {
 
   private final ConcurrentMap<ExternalSystemTaskType, Set<ExternalSystemTaskId>> myTasksInProgress =
-    ContainerUtil.newConcurrentMap();
+    new ConcurrentHashMap<>();
 
   private final AtomicReference<S> mySettings = new AtomicReference<>();
-  
+
   private final AtomicReference<ExternalSystemTaskNotificationListener> myListener
     = new AtomicReference<>();
 
@@ -66,18 +52,16 @@ public abstract class AbstractRemoteExternalSystemService<S extends ExternalSyst
     mySettings.set(settings);
   }
 
-  @Nullable
-  public S getSettings() {
+  public @Nullable S getSettings() {
     return mySettings.get();
   }
-  
+
   @Override
   public void setNotificationListener(@NotNull ExternalSystemTaskNotificationListener listener) {
     myListener.set(listener);
   }
 
-  @NotNull
-  public ExternalSystemTaskNotificationListener getNotificationListener() {
+  public @NotNull ExternalSystemTaskNotificationListener getNotificationListener() {
     return myListener.get();
   }
 
@@ -87,9 +71,8 @@ public abstract class AbstractRemoteExternalSystemService<S extends ExternalSyst
     return tasks != null && tasks.contains(id);
   }
 
-  @NotNull
   @Override
-  public Map<ExternalSystemTaskType, Set<ExternalSystemTaskId>> getTasksInProgress() {
+  public @NotNull Map<ExternalSystemTaskType, Set<ExternalSystemTaskId>> getTasksInProgress() {
     return myTasksInProgress;
   }
 }

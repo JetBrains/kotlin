@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.openapi.Disposable;
@@ -18,7 +18,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -44,16 +44,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class ExternalSystemFacadeManager {
   private static final int REMOTE_FAIL_RECOVERY_ATTEMPTS_NUMBER = 3;
 
-  private final ConcurrentMap<IntegrationKey, RemoteExternalSystemFacade> myFacadeWrappers = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<IntegrationKey, RemoteExternalSystemFacade> myFacadeWrappers = new ConcurrentHashMap<>();
 
   private final Map<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>> myRemoteFacades
-    = ContainerUtil.newConcurrentMap();
+    = new ConcurrentHashMap<>();
 
-  @NotNull private final Lock          myLock                   = new ReentrantLock();
+  private final @NotNull Lock          myLock                   = new ReentrantLock();
 
-  @NotNull private final RemoteExternalSystemProgressNotificationManager myProgressManager;
-  @NotNull private final RemoteExternalSystemCommunicationManager        myRemoteCommunicationManager;
-  @NotNull private final InProcessExternalSystemCommunicationManager     myInProcessCommunicationManager;
+  private final @NotNull RemoteExternalSystemProgressNotificationManager myProgressManager;
+  private final @NotNull RemoteExternalSystemCommunicationManager        myRemoteCommunicationManager;
+  private final @NotNull InProcessExternalSystemCommunicationManager     myInProcessCommunicationManager;
 
   public ExternalSystemFacadeManager() {
     Application app = ApplicationManager.getApplication();
@@ -63,8 +63,7 @@ public final class ExternalSystemFacadeManager {
     myInProcessCommunicationManager = app.getService(InProcessExternalSystemCommunicationManager.class);
   }
 
-  @NotNull
-  private static Project findProject(@NotNull IntegrationKey key) {
+  private static @NotNull Project findProject(@NotNull IntegrationKey key) {
     final ProjectManager projectManager = ProjectManager.getInstance();
     for (Project project : projectManager.getOpenProjects()) {
       if (key.getIdeProjectName().equals(project.getName()) && key.getIdeProjectLocationHash().equals(project.getLocationHash())) {
@@ -106,8 +105,7 @@ public final class ExternalSystemFacadeManager {
    * @return external system api facade to use
    * @throws Exception    in case of inability to return the facade
    */
-  @NotNull
-  public RemoteExternalSystemFacade getFacade(@Nullable Project project,
+  public @NotNull RemoteExternalSystemFacade getFacade(@Nullable Project project,
                                               @NotNull String externalProjectPath,
                                               @NotNull ProjectSystemId externalSystemId) {
     if (project == null) {
@@ -148,8 +146,7 @@ public final class ExternalSystemFacadeManager {
     return currentInProcess ? myInProcessCommunicationManager : myRemoteCommunicationManager;
   }
 
-  @NotNull
-  private RemoteExternalSystemFacade doGetFacade(@NotNull IntegrationKey key, @NotNull Project project) throws Exception {
+  private @NotNull RemoteExternalSystemFacade doGetFacade(@NotNull IntegrationKey key, @NotNull Project project) throws Exception {
     final boolean currentInProcess = ExternalSystemApiUtil.isInProcessMode(key.getExternalSystemId());
     final ExternalSystemCommunicationManager myCommunicationManager = currentInProcess ? myInProcessCommunicationManager : myRemoteCommunicationManager;
 
@@ -180,9 +177,8 @@ public final class ExternalSystemFacadeManager {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
-  private RemoteExternalSystemFacade doCreateFacade(@NotNull IntegrationKey key, @NotNull Project project,
-                                                    @NotNull ExternalSystemCommunicationManager communicationManager) throws Exception {
+  private @NotNull RemoteExternalSystemFacade doCreateFacade(@NotNull IntegrationKey key, @NotNull Project project,
+                                                             @NotNull ExternalSystemCommunicationManager communicationManager) throws Exception {
     final RemoteExternalSystemFacade facade = communicationManager.acquire(key.getExternalProjectConfigPath(), key.getExternalSystemId());
     if (facade == null) {
       throw new IllegalStateException("Can't obtain facade to working with external api at the remote process. Project: " + project);
@@ -250,15 +246,14 @@ public final class ExternalSystemFacadeManager {
 
   private class MyHandler implements InvocationHandler {
 
-    @NotNull private final AtomicReference<IntegrationKey> myKey = new AtomicReference<>();
+    private final @NotNull AtomicReference<IntegrationKey> myKey = new AtomicReference<>();
 
     MyHandler(@NotNull IntegrationKey key) {
       myKey.set(key);
     }
 
-    @Nullable
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public @Nullable Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       if ("consume".equals(method.getName())) {
         myKey.set((IntegrationKey)args[0]);
         return null;

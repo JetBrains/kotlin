@@ -32,7 +32,6 @@ import com.intellij.util.CachedValueImpl;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Processors;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
@@ -49,6 +48,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -71,8 +71,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   private final Map<StubIndexKey<?, ?>, CachedValue<Map<CompositeKey<?>, StubIdList>>> myCachedStubIds = FactoryMap.createMap(k -> {
     UpdatableIndex<Integer, SerializedStubTree, FileContent> index = getStubUpdatingIndex();
     ModificationTracker tracker = index::getModificationStamp;
-    return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(ContainerUtil.newConcurrentMap(), tracker));
-  }, ContainerUtil::newConcurrentMap);
+    return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(new ConcurrentHashMap<CompositeKey<?>, StubIdList>(), tracker));
+  }, () -> new ConcurrentHashMap<>());
 
   private final StubProcessingHelper myStubProcessingHelper = new StubProcessingHelper();
   private final IndexAccessValidator myAccessValidator = new IndexAccessValidator();
@@ -91,8 +91,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     }, ApplicationManager.getApplication());
   }
 
-  @Nullable
-  static StubIndexImpl getInstanceOrInvalidate() {
+  static @Nullable StubIndexImpl getInstanceOrInvalidate() {
     if (ourForcedClean.compareAndSet(null, Boolean.TRUE)) {
       return null;
     }
@@ -110,19 +109,16 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     return state;
   }
 
-  @NotNull
-  public static <K> FileBasedIndexExtension<K, Void> wrapStubIndexExtension(StubIndexExtension<K, ?> extension) {
+  public static @NotNull <K> FileBasedIndexExtension<K, Void> wrapStubIndexExtension(StubIndexExtension<K, ?> extension) {
     return new FileBasedIndexExtension<K, Void>() {
-      @NotNull
       @Override
-      public ID<K, Void> getName() {
+      public @NotNull ID<K, Void> getName() {
         //noinspection unchecked
         return (ID<K, Void>)extension.getKey();
       }
 
-      @NotNull
       @Override
-      public FileBasedIndex.InputFilter getInputFilter() {
+      public @NotNull FileBasedIndex.InputFilter getInputFilter() {
         return f -> {
           throw new UnsupportedOperationException();
         };
@@ -133,23 +129,20 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         return true;
       }
 
-      @NotNull
       @Override
-      public DataIndexer<K, Void, FileContent> getIndexer() {
+      public @NotNull DataIndexer<K, Void, FileContent> getIndexer() {
         return i -> {
           throw new AssertionError();
         };
       }
 
-      @NotNull
       @Override
-      public KeyDescriptor<K> getKeyDescriptor() {
+      public @NotNull KeyDescriptor<K> getKeyDescriptor() {
         return extension.getKeyDescriptor();
       }
 
-      @NotNull
       @Override
-      public DataExternalizer<Void> getValueExternalizer() {
+      public @NotNull DataExternalizer<Void> getValueExternalizer() {
         return VoidDataExternalizer.INSTANCE;
       }
 
@@ -166,7 +159,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-  private static <K> void registerIndexer(@NotNull final StubIndexExtension<K, ?> extension, final boolean forceClean,
+  private static <K> void registerIndexer(final @NotNull StubIndexExtension<K, ?> extension, final boolean forceClean,
                                           @NotNull AsyncState state, @NotNull IndexVersionRegistrationSink registrationResultSink)
     throws IOException {
     final StubIndexKey<K, ?> indexKey = extension.getKey();
@@ -279,7 +272,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     public static final StubIdExternalizer INSTANCE = new StubIdExternalizer();
 
     @Override
-    public void save(@NotNull final DataOutput out, @NotNull final StubIdList value) throws IOException {
+    public void save(final @NotNull DataOutput out, final @NotNull StubIdList value) throws IOException {
       int size = value.size();
       if (size == 0) {
         DataInputOutputUtil.writeINT(out, Integer.MAX_VALUE);
@@ -295,9 +288,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       }
     }
 
-    @NotNull
     @Override
-    public StubIdList read(@NotNull final DataInput in) throws IOException {
+    public @NotNull StubIdList read(final @NotNull DataInput in) throws IOException {
       int size = DataInputOutputUtil.readINT(in);
       if (size == Integer.MAX_VALUE) {
         return new StubIdList();
@@ -359,13 +351,13 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   @Override
-  public <Key, Psi extends PsiElement> boolean processElements(@NotNull final StubIndexKey<Key, Psi> indexKey,
-                                                               @NotNull final Key key,
-                                                               @NotNull final Project project,
-                                                               @Nullable final GlobalSearchScope scope,
+  public <Key, Psi extends PsiElement> boolean processElements(final @NotNull StubIndexKey<Key, Psi> indexKey,
+                                                               final @NotNull Key key,
+                                                               final @NotNull Project project,
+                                                               final @Nullable GlobalSearchScope scope,
                                                                @Nullable IdFilter idFilter,
-                                                               @NotNull final Class<Psi> requiredClass,
-                                                               @NotNull final Processor<? super Psi> processor) {
+                                                               final @NotNull Class<Psi> requiredClass,
+                                                               final @NotNull Processor<? super Psi> processor) {
     boolean dumb = DumbService.isDumb(project);
     if (dumb) {
       DumbModeAccessType accessType = FileBasedIndex.getInstance().getCurrentDumbModeAccessType();
@@ -465,8 +457,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   @Override
-  @NotNull
-  public <K> Collection<K> getAllKeys(@SuppressWarnings("BoundedWildcard") @NotNull StubIndexKey<K, ?> indexKey, @NotNull Project project) {
+  public @NotNull <K> Collection<K> getAllKeys(@SuppressWarnings("BoundedWildcard") @NotNull StubIndexKey<K, ?> indexKey, @NotNull Project project) {
     Set<K> allKeys = new THashSet<>();
     processAllKeys(indexKey, project, Processors.cancelableCollectProcessor(allKeys));
     return allKeys;
@@ -500,21 +491,19 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     return true;
   }
 
-  @NotNull
   @Override
-  public <Key> IdIterator getContainingIds(@NotNull StubIndexKey<Key, ?> indexKey,
-                                           @NotNull Key dataKey,
-                                           @NotNull final Project project,
-                                           @Nullable final GlobalSearchScope scope) {
+  public @NotNull <Key> IdIterator getContainingIds(@NotNull StubIndexKey<Key, ?> indexKey,
+                                                    @NotNull Key dataKey,
+                                                    final @NotNull Project project,
+                                                    final @Nullable GlobalSearchScope scope) {
     return getContainingIds(indexKey, dataKey, project, null, scope);
   }
 
-  @NotNull
-  private <Key> IdIterator getContainingIds(@NotNull StubIndexKey<Key, ?> indexKey,
-                                           @NotNull Key dataKey,
-                                           @NotNull final Project project,
-                                           @Nullable IdFilter idFilter,
-                                           @Nullable final GlobalSearchScope scope) {
+  private @NotNull <Key> IdIterator getContainingIds(@NotNull StubIndexKey<Key, ?> indexKey,
+                                                     @NotNull Key dataKey,
+                                                     final @NotNull Project project,
+                                                     @Nullable IdFilter idFilter,
+                                                     final @Nullable GlobalSearchScope scope) {
     final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     ID<Integer, SerializedStubTree> stubUpdatingIndexId = StubUpdatingIndex.INDEX_ID;
     final UpdatableIndex<Key, Void, FileContent> index = getIndex(indexKey);   // wait for initialization to finish
@@ -676,14 +665,14 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   @Override
-  public void loadState(@NotNull final StubIndexState state) {
+  public void loadState(final @NotNull StubIndexState state) {
     myPreviouslyRegistered = state;
   }
 
   public <K> void updateIndex(@NotNull StubIndexKey<K, ?> key,
                               int fileId,
-                              @NotNull final Map<K, StubIdList> oldInputData,
-                              @NotNull final Map<K, StubIdList> newInputData) {
+                              final @NotNull Map<K, StubIdList> oldInputData,
+                              final @NotNull Map<K, StubIdList> newInputData) {
     try {
       if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
         LOG.info("stub index '" + key + "' update: " + fileId +

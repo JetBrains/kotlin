@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.config;
 
 import com.intellij.ProjectTopics;
@@ -24,7 +24,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.JdomKt;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.xmlb.XmlSerializer;
 import gnu.trove.THashMap;
@@ -46,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Vladislav.Soroka
@@ -54,15 +54,13 @@ public class GradleResourceCompilerConfigurationGenerator {
 
   private static final Logger LOG = Logger.getInstance(GradleResourceCompilerConfigurationGenerator.class);
 
-  @NotNull
-  private final Project myProject;
-  @NotNull
-  private final Map<String, Integer> myModulesConfigurationHash;
+  private final @NotNull Project myProject;
+  private final @NotNull Map<String, Integer> myModulesConfigurationHash;
   private final ExternalProjectDataCache externalProjectDataCache;
 
-  public GradleResourceCompilerConfigurationGenerator(@NotNull final Project project) {
+  public GradleResourceCompilerConfigurationGenerator(final @NotNull Project project) {
     myProject = project;
-    myModulesConfigurationHash = ContainerUtil.newConcurrentMap();
+    myModulesConfigurationHash = new ConcurrentHashMap<>();
     externalProjectDataCache = ExternalProjectDataCache.getInstance(project);
     assert externalProjectDataCache != null;
 
@@ -83,7 +81,7 @@ public class GradleResourceCompilerConfigurationGenerator {
     });
   }
 
-  public void generateBuildConfiguration(@NotNull final CompileContext context) {
+  public void generateBuildConfiguration(final @NotNull CompileContext context) {
 
     if (shouldBeBuiltByExternalSystem(myProject)) return;
 
@@ -133,8 +131,7 @@ public class GradleResourceCompilerConfigurationGenerator {
     });
   }
 
-  @NotNull
-  private GradleProjectConfiguration loadLastConfiguration(@NotNull File gradleConfigFile) {
+  private @NotNull GradleProjectConfiguration loadLastConfiguration(@NotNull File gradleConfigFile) {
     final GradleProjectConfiguration projectConfig = new GradleProjectConfiguration();
     if (gradleConfigFile.exists()) {
       try {
@@ -158,8 +155,7 @@ public class GradleResourceCompilerConfigurationGenerator {
     return projectConfig;
   }
 
-  @NotNull
-  private Map<String, GradleModuleResourceConfiguration> generateAffectedGradleModulesConfiguration(@NotNull CompileContext context) {
+  private @NotNull Map<String, GradleModuleResourceConfiguration> generateAffectedGradleModulesConfiguration(@NotNull CompileContext context) {
     final Map<String, GradleModuleResourceConfiguration> affectedGradleModuleConfigurations = new THashMap<>();
 
     final Map<String, ExternalProject> lazyExternalProjectMap = FactoryMap.create(
@@ -244,8 +240,8 @@ public class GradleResourceCompilerConfigurationGenerator {
   }
 
   private static void addResources(@NotNull List<ResourceRootConfiguration> container,
-                                   @Nullable final ExternalSourceDirectorySet directorySet,
-                                   @Nullable final ExternalSourceDirectorySet sourcesDirectorySet) {
+                                   final @Nullable ExternalSourceDirectorySet directorySet,
+                                   final @Nullable ExternalSourceDirectorySet sourcesDirectorySet) {
     if (directorySet == null) return;
 
     for (File file : directorySet.getSrcDirs()) {

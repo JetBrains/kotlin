@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.remote;
 
 import com.intellij.execution.rmi.RemoteObject;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ExternalSystemProgressNotificationManagerImpl extends RemoteObject
@@ -20,7 +21,7 @@ public class ExternalSystemProgressNotificationManagerImpl extends RemoteObject
 
   private final ConcurrentMap<ExternalSystemTaskNotificationListener, Set<ExternalSystemTaskId>/* EMPTY_SET as a sign of 'all ids' */>
     myListeners
-    = ContainerUtil.newConcurrentMap();
+    = new ConcurrentHashMap<>();
 
   public static ExternalSystemProgressNotificationManagerImpl getInstanceImpl() {
     return (ExternalSystemProgressNotificationManagerImpl)ApplicationManager.getApplication().getService(ExternalSystemProgressNotificationManager.class);

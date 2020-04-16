@@ -12,13 +12,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -44,12 +44,12 @@ public final class ExternalSystemProcessingManager implements ExternalSystemTask
    */
   private static final long TOO_LONG_EXECUTION_MS = TimeUnit.SECONDS.toMillis(10);
 
-  @NotNull private final ConcurrentMap<ExternalSystemTaskId, Long> myTasksInProgress = ContainerUtil.newConcurrentMap();
-  @NotNull private final ConcurrentMap<ExternalSystemTaskId, ExternalSystemTask> myTasksDetails = ContainerUtil.newConcurrentMap();
-  @NotNull private final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD,this);
+  private final @NotNull ConcurrentMap<ExternalSystemTaskId, Long> myTasksInProgress = new ConcurrentHashMap<>();
+  private final @NotNull ConcurrentMap<ExternalSystemTaskId, ExternalSystemTask> myTasksDetails = new ConcurrentHashMap<>();
+  private final @NotNull Alarm myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
 
-  @NotNull private final ExternalSystemFacadeManager myFacadeManager;
-  @NotNull private final ExternalSystemProgressNotificationManager myProgressNotificationManager;
+  private final @NotNull ExternalSystemFacadeManager myFacadeManager;
+  private final @NotNull ExternalSystemProgressNotificationManager myProgressNotificationManager;
 
   public ExternalSystemProcessingManager() {
     Application app = ApplicationManager.getApplication();
@@ -86,10 +86,9 @@ public final class ExternalSystemProcessingManager implements ExternalSystemTask
     return false;
   }
 
-  @Nullable
-  public ExternalSystemTask findTask(@NotNull ExternalSystemTaskType type,
-                                     @NotNull ProjectSystemId projectSystemId,
-                                     @NotNull final String externalProjectPath) {
+  public @Nullable ExternalSystemTask findTask(@NotNull ExternalSystemTaskType type,
+                                               @NotNull ProjectSystemId projectSystemId,
+                                               final @NotNull String externalProjectPath) {
     for(ExternalSystemTask task : myTasksDetails.values()) {
       if(task instanceof AbstractExternalSystemTask) {
         AbstractExternalSystemTask externalSystemTask = (AbstractExternalSystemTask)task;
@@ -104,9 +103,8 @@ public final class ExternalSystemProcessingManager implements ExternalSystemTask
     return null;
   }
 
-  @NotNull
-  public List<ExternalSystemTask> findTasksOfState(@NotNull ProjectSystemId projectSystemId,
-                                                   ExternalSystemTaskState @NotNull ... taskStates) {
+  public @NotNull List<ExternalSystemTask> findTasksOfState(@NotNull ProjectSystemId projectSystemId,
+                                                            ExternalSystemTaskState @NotNull ... taskStates) {
     List<ExternalSystemTask> result = new SmartList<>();
     for (ExternalSystemTask task : myTasksDetails.values()) {
       if (task instanceof AbstractExternalSystemTask) {

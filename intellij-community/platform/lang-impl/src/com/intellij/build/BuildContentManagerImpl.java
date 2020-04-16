@@ -26,7 +26,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.TabbedContent;
 import com.intellij.util.ContentUtilEx;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +35,7 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.intellij.util.ContentUtilEx.getFullName;
@@ -52,15 +52,14 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   private static final Key<Map<Object, CloseListener>> CONTENT_CLOSE_LISTENERS = Key.create("CONTENT_CLOSE_LISTENERS");
 
   private final Project myProject;
-  private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = ContainerUtil.newConcurrentMap();
+  private final Map<Content, Pair<Icon, AtomicInteger>> liveContentsMap = new ConcurrentHashMap<>();
 
   public BuildContentManagerImpl(@NotNull Project project) {
     myProject = project;
   }
 
   @Override
-  @NotNull
-  public ToolWindow getOrCreateToolWindow() {
+  public @NotNull ToolWindow getOrCreateToolWindow() {
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
     ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     if (toolWindow != null) {
@@ -257,10 +256,9 @@ public final class BuildContentManagerImpl implements BuildContentManager {
   }
 
   private class CloseListener extends BaseContentCloseListener {
-    @Nullable
-    private BuildProcessHandler myProcessHandler;
+    private @Nullable BuildProcessHandler myProcessHandler;
 
-    private CloseListener(@NotNull final Content content, @NotNull BuildProcessHandler processHandler) {
+    private CloseListener(final @NotNull Content content, @NotNull BuildProcessHandler processHandler) {
       super(content, myProject);
       myProcessHandler = processHandler;
     }

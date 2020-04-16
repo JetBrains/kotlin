@@ -18,11 +18,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ReflectionUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @State(name = "StructureViewFactory", storages = {
   @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
@@ -42,7 +42,7 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
   private State myState = new State();
   private Runnable myRunWhenInitialized = null;
 
-  private final Map<Class<? extends PsiElement>, Collection<StructureViewExtension>> myImplExtensions = ContainerUtil.newConcurrentMap();
+  private final Map<Class<? extends PsiElement>, Collection<StructureViewExtension>> myImplExtensions = new ConcurrentHashMap<>();
 
   public StructureViewFactoryImpl(@NotNull Project project) {
     myProject = project;

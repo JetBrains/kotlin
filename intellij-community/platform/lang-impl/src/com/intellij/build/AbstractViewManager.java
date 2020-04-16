@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.build.events.*;
@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -50,15 +51,14 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   private final Set<MultipleBuildsView> myPinnedViews;
   private final AtomicBoolean isDisposed = new AtomicBoolean(false);
   // todo [Vlad] remove the map when BuildProgressListener.onEvent(BuildEvent) method will be removed
-  private final Map<Object, Object> idsMap = ContainerUtil.newConcurrentMap();
+  private final Map<Object, Object> idsMap = new ConcurrentHashMap<>();
 
   public AbstractViewManager(Project project) {
     myProject = project;
     myBuildContentManager = project.getService(BuildContentManager.class);
     myBuildsViewValue = new AtomicClearableLazyValue<MultipleBuildsView>() {
-      @NotNull
       @Override
-      protected MultipleBuildsView compute() {
+      protected @NotNull MultipleBuildsView compute() {
         MultipleBuildsView buildsView = new MultipleBuildsView(myProject, myBuildContentManager, AbstractViewManager.this);
         Disposer.register(AbstractViewManager.this, buildsView);
         return buildsView;
@@ -77,9 +77,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     return true;
   }
 
-  @NotNull
-  @Nls(capitalization = Nls.Capitalization.Title)
-  protected abstract String getViewName();
+  protected abstract @NotNull @Nls(capitalization = Nls.Capitalization.Title) String getViewName();
 
   protected Map<BuildDescriptor, BuildView> getBuildsMap() {
     return myBuildsViewValue.getValue().getBuildsMap();
@@ -115,8 +113,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     }
   }
 
-  @Nullable
-  private MultipleBuildsView getMultipleBuildsView(@NotNull Object buildId) {
+  private @Nullable MultipleBuildsView getMultipleBuildsView(@NotNull Object buildId) {
     MultipleBuildsView buildsView = myBuildsViewValue.getValue();
     if (!buildsView.shouldConsume(buildId)) {
       buildsView = myPinnedViews.stream()
@@ -127,8 +124,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   }
 
   @ApiStatus.Internal
-  @Nullable
-  public BuildView getBuildView(@NotNull Object buildId) {
+  public @Nullable BuildView getBuildView(@NotNull Object buildId) {
     MultipleBuildsView buildsView = getMultipleBuildsView(buildId);
     if (buildsView == null) return null;
 
@@ -144,8 +140,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     toolbarActions.add(BuildTreeFilters.createFilteringActionsGroup(view));
   }
 
-  @Nullable
-  protected Icon getContentIcon() {
+  protected @Nullable Icon getContentIcon() {
     return null;
   }
 

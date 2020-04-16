@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.execution.rmi.RemoteServer;
@@ -6,12 +7,12 @@ import com.intellij.openapi.externalSystem.model.task.*;
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver;
 import com.intellij.openapi.externalSystem.service.remote.*;
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,15 +23,15 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
   implements RemoteExternalSystemFacade<S>
 {
 
-  private final ConcurrentMap<Class<?>, RemoteExternalSystemService<S>> myRemotes = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<Class<?>, RemoteExternalSystemService<S>> myRemotes = new ConcurrentHashMap<>();
 
   private final AtomicReference<S> mySettings              = new AtomicReference<>();
   private final AtomicReference<ExternalSystemTaskNotificationListener> myNotificationListener =
     new AtomicReference<>(new ExternalSystemTaskNotificationListenerAdapter() {
     });
 
-  @NotNull private final RemoteExternalSystemProjectResolverImpl<S> myProjectResolver;
-  @NotNull private final RemoteExternalSystemTaskManagerImpl<S>     myTaskManager;
+  private final @NotNull RemoteExternalSystemProjectResolverImpl<S> myProjectResolver;
+  private final @NotNull RemoteExternalSystemTaskManagerImpl<S>     myTaskManager;
 
   public AbstractExternalSystemFacadeImpl(@NotNull Class<ExternalSystemProjectResolver<S>> projectResolverClass,
                                           @NotNull Class<ExternalSystemTaskManager<S>> buildManagerClass)
@@ -44,20 +45,17 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
     applyProgressManager(RemoteExternalSystemProgressNotificationManager.NULL_OBJECT);
   }
 
-  @Nullable
-  protected S getSettings() {
+  protected @Nullable S getSettings() {
     return mySettings.get();
   }
-  
-  @NotNull
-  protected ExternalSystemTaskNotificationListener getNotificationListener() {
+
+  protected @NotNull ExternalSystemTaskNotificationListener getNotificationListener() {
     return myNotificationListener.get();
   }
-  
+
   @SuppressWarnings("unchecked")
-  @NotNull
   @Override
-  public RemoteExternalSystemProjectResolver<S> getResolver() throws IllegalStateException {
+  public @NotNull RemoteExternalSystemProjectResolver<S> getResolver() throws IllegalStateException {
     try {
       return getService(RemoteExternalSystemProjectResolver.class, myProjectResolver);
     }
@@ -67,9 +65,8 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
     }
   }
 
-  @NotNull
   @Override
-  public RawExternalSystemProjectResolver<S> getRawProjectResolver() throws IllegalStateException {
+  public @NotNull RawExternalSystemProjectResolver<S> getRawProjectResolver() throws IllegalStateException {
     try {
       return getService(RawExternalSystemProjectResolver.class, new RawExternalSystemProjectResolverImpl<>(myProjectResolver));
     }
@@ -80,9 +77,8 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
   @Override
-  public RemoteExternalSystemTaskManager<S> getTaskManager() {
+  public @NotNull RemoteExternalSystemTaskManager<S> getTaskManager() {
     try {
       return getService(RemoteExternalSystemTaskManager.class, myTaskManager);
     }
@@ -93,7 +89,7 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
 
   @SuppressWarnings({"unchecked", "UseOfSystemOutOrSystemErr"})
   private <I extends RemoteExternalSystemService<S>, C extends I> I getService(@NotNull Class<I> interfaceClass,
-                                                                               @NotNull final C impl)
+                                                                               final @NotNull C impl)
     throws ClassNotFoundException, IllegalAccessException, InstantiationException, RemoteException
   {
     Object cachedResult = myRemotes.get(interfaceClass);
@@ -143,7 +139,7 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr"})
   protected abstract  <I extends RemoteExternalSystemService<S>, C extends I> I createService(@NotNull Class<I> interfaceClass,
-                                                                                              @NotNull final C impl)
+                                                                                              final @NotNull C impl)
   throws ClassNotFoundException, IllegalAccessException, InstantiationException, RemoteException;
 
   @Override
@@ -156,9 +152,8 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
     return false;
   }
 
-  @NotNull
   @Override
-  public Map<ExternalSystemTaskType, Set<ExternalSystemTaskId>> getTasksInProgress() throws RemoteException {
+  public @NotNull Map<ExternalSystemTaskType, Set<ExternalSystemTaskId>> getTasksInProgress() throws RemoteException {
     Map<ExternalSystemTaskType, Set<ExternalSystemTaskId>> result = null;
     for (RemoteExternalSystemService service : myRemotes.values()) {
       final Map<ExternalSystemTaskType, Set<ExternalSystemTaskId>> tasks = service.getTasksInProgress();
@@ -211,7 +206,7 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
 
   private static class SwallowingNotificationListener implements ExternalSystemTaskNotificationListener {
 
-    @NotNull private final RemoteExternalSystemProgressNotificationManager myManager;
+    private final @NotNull RemoteExternalSystemProgressNotificationManager myManager;
 
     SwallowingNotificationListener(@NotNull RemoteExternalSystemProgressNotificationManager manager) {
       myManager = manager;
