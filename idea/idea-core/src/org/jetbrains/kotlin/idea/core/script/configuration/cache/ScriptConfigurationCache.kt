@@ -33,6 +33,8 @@ interface ScriptConfigurationCache {
 
     fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper>
     fun clear()
+
+    fun getAnyLoadedScript(): ScriptCompilationConfigurationWrapper?
 }
 
 sealed class ScriptConfigurationCacheScope {
