@@ -35,14 +35,13 @@ object CommonParser {
     private fun parseBasePath(pathPartRegex: String, testFilePath: String) =
         Pattern.compile(testPathBaseRegexTemplate.format(pathPartRegex)).matcher(testFilePath)
 
-    fun parseImplTest(testFilePath: String, files: TestFiles): Pair<LinkedSpecTest, SpecTestLinkedType> =
-        Pair(parseLinkedSpecTest(testFilePath, files, isImplementationTest = true), SpecTestLinkedType.LINKED)
-
-    fun parseSpecTest(testFilePath: String, files: TestFiles) = when {
+    fun parseSpecTest(testFilePath: String, files: TestFiles, isImplementationTest: Boolean = false) = when {
         isPathMatched(LinkedSpecTestPatterns.pathPartRegex, testFilePath) ->
             Pair(parseLinkedSpecTest(testFilePath, files), SpecTestLinkedType.LINKED)
         isPathMatched(NotLinkedSpecTestPatterns.pathPartRegex, testFilePath) ->
             Pair(parseNotLinkedSpecTest(testFilePath, files), SpecTestLinkedType.NOT_LINKED)
+        isImplementationTest ->
+            Pair(parseLinkedSpecTest(testFilePath, files, true), SpecTestLinkedType.LINKED)
         else ->
             throw SpecTestValidationException(SpecTestValidationFailedReason.FILENAME_NOT_VALID)
     }
@@ -54,51 +53,38 @@ object CommonParser {
             placeMatcher.group("sentenceNumber").toInt()
         )
 
-    private fun parseRelevantPlaces(
-        placesMatcher: Matcher?,
-        relevantPlaces: MutableSet<SpecPlace>
-    ) {
-        if (placesMatcher == null)
-            return
-        placesMatcher?.let {
-            relevantPlaces.add(createSpecPlace(it, placesMatcher))
-            while (it.find()) {
-                relevantPlaces.add(createSpecPlace(it, placesMatcher))
+    class RelevantLinks(linksMatcher: Matcher?) {
+        val linksSet: MutableSet<SpecPlace> = mutableSetOf()
+
+        init {
+            if (linksMatcher != null) {
+                linksSet.add(createSpecPlace(linksMatcher))
+                while (linksMatcher.find()) {
+                    linksSet.add(createSpecPlace(linksMatcher))
+                }
             }
         }
     }
 
+
     fun parseLinkedSpecTest(testFilePath: String, testFiles: TestFiles, isImplementationTest: Boolean = false): LinkedSpecTest {
-        val primaryLinks = mutableSetOf<SpecPlace>()
-        val secondaryLinks = mutableSetOf<SpecPlace>()
+
         val parsedTestFile = tryParseTestInfo(testFilePath, testFiles, SpecTestLinkedType.LINKED, isImplementationTest)
 
         val testInfoElements = parsedTestFile.testInfoElements
 
-        parseRelevantPlaces(
-            testInfoElements[LinkedSpecTestFileInfoElementType.PRIMARY_LINKS]?.additionalMatcher,
-            primaryLinks
-        )
-
-        parseRelevantPlaces(
-            testInfoElements[LinkedSpecTestFileInfoElementType.SECONDARY_LINKS]?.additionalMatcher,
-            secondaryLinks
-        )
+        val primaryLinks =
+            RelevantLinks(testInfoElements[LinkedSpecTestFileInfoElementType.PRIMARY_LINKS]?.additionalMatcher).linksSet
+        val secondaryLinks =
+            RelevantLinks(testInfoElements[LinkedSpecTestFileInfoElementType.SECONDARY_LINKS]?.additionalMatcher).linksSet
 
         val placeMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.MAIN_LINK]?.additionalMatcher
 
-        val mainPlace: SpecPlace
-        if (placeMatcher != null) {
-            mainPlace = createSpecPlace(placeMatcher)
-        } else {
-            mainPlace = primaryLinks.first()
-            primaryLinks.remove(mainPlace)
-        }
         return LinkedSpecTest(
             testInfoElements[LinkedSpecTestFileInfoElementType.SPEC_VERSION]!!.content,
             parsedTestFile.testArea,
             parsedTestFile.testType,
-            mainPlace,
+            placeMatcher?.let { createSpecPlace(placeMatcher) },
             primaryLinks,
             secondaryLinks,
             parsedTestFile.testNumber,
@@ -157,9 +143,9 @@ object CommonParser {
         rawElements: String,
     ) = when (testInfoOriginalElementName) {
         LinkedSpecTestPatterns.PRIMARY_LINKS ->
-            groupRelevantAndAlternativePlaces(LinkedSpecTestPatterns.primaryLinks, rawElements, testInfoOriginalElementName)
+            groupRelevantLinks(LinkedSpecTestPatterns.primaryLinks, rawElements, testInfoOriginalElementName)
         LinkedSpecTestPatterns.SECONDARY_LINKS ->
-            groupRelevantAndAlternativePlaces(LinkedSpecTestPatterns.secondaryLinks, rawElements, testInfoOriginalElementName)
+            groupRelevantLinks(LinkedSpecTestPatterns.secondaryLinks, rawElements, testInfoOriginalElementName)
         else ->
             testInfoElementMatcher.group("value")
     }
@@ -204,14 +190,14 @@ object CommonParser {
     }
 
 
-    private fun groupRelevantAndAlternativePlaces(placesPattern: Pattern, rawElements: String, linkType: String): String {
-        val placesMatcher = placesPattern.matcher(rawElements)
+    private fun groupRelevantLinks(linksPattern: Pattern, rawElements: String, linkType: String): String {
+        val placesMatcher = linksPattern.matcher(rawElements)
         if (placesMatcher.find()) {
             return placesMatcher.group("places")
         } else throw Exception("$linkType link is incorrect")
     }
 
-    fun testInfoFilter(fileContent: String) =
+    fun testInfoFilter(fileContent: String): String =
         testInfoPattern.matcher(fileContent).replaceAll("").let {
             testCaseInfoPattern.matcher(it).replaceAll("")
         }

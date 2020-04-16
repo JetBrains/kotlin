@@ -34,7 +34,7 @@
           "description": "When type disjunctions",
           "path": "compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -42,7 +42,7 @@
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -50,7 +50,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -58,7 +58,7 @@
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -66,7 +66,7 @@
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -74,7 +74,7 @@
           "description": "Exhaustive enum is",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -82,7 +82,7 @@
           "description": "Top level sealed",
           "path": "compiler/testData/diagnostics/tests/when/TopLevelSealed.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -108,7 +108,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "7": [
@@ -136,7 +136,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -144,7 +144,7 @@
           "description": "Redundant else",
           "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "5": [
@@ -154,7 +154,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -162,7 +162,7 @@
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -170,7 +170,7 @@
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -178,7 +178,7 @@
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "9": [
@@ -188,7 +188,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "10": [
@@ -198,7 +198,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -206,7 +206,7 @@
           "description": "Redundant else",
           "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     },
@@ -260,7 +260,7 @@
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -268,7 +268,7 @@
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -276,7 +276,7 @@
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "10": [
@@ -342,7 +342,7 @@
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -350,7 +350,7 @@
           "description": "Kt4434",
           "path": "compiler/testData/diagnostics/tests/when/kt4434.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -358,7 +358,7 @@
           "description": "Exhaustive initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -392,7 +392,7 @@
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -400,7 +400,7 @@
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "2": [
@@ -410,7 +410,7 @@
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -418,7 +418,7 @@
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -490,7 +490,7 @@
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -498,7 +498,7 @@
           "description": "Reserved exhaustive when",
           "path": "compiler/testData/diagnostics/tests/when/ReservedExhaustiveWhen.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -506,7 +506,7 @@
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "5": [
@@ -516,7 +516,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     },
@@ -570,7 +570,7 @@
           "description": "Kt10811",
           "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -578,7 +578,7 @@
           "description": "Kt9972",
           "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -586,7 +586,7 @@
           "description": "Comma in when condition without argument",
           "path": "compiler/testData/diagnostics/tests/when/CommaInWhenConditionWithoutArgument.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -594,7 +594,7 @@
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "4": [
@@ -604,7 +604,7 @@
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "5": [
@@ -614,7 +614,7 @@
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -644,7 +644,7 @@
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -652,7 +652,7 @@
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -660,7 +660,7 @@
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -668,7 +668,7 @@
           "description": "Exhaustive with nullability check before",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -676,7 +676,7 @@
           "description": "Exhaustive with nullability check else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -684,7 +684,7 @@
           "description": "Kt4434",
           "path": "compiler/testData/diagnostics/tests/when/kt4434.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -692,7 +692,7 @@
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -700,7 +700,7 @@
           "description": "Kt10811",
           "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -708,7 +708,7 @@
           "description": "Exhaustive platform enum statement",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -716,7 +716,7 @@
           "description": "Exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -724,7 +724,7 @@
           "description": "Comma in when condition without argument",
           "path": "compiler/testData/diagnostics/tests/when/CommaInWhenConditionWithoutArgument.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -732,7 +732,7 @@
           "description": "Exhaustive nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -740,7 +740,7 @@
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -748,7 +748,7 @@
           "description": "Exhaustive initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -756,7 +756,7 @@
           "description": "Exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -764,7 +764,7 @@
           "description": "Exhaustive with nullability check boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -772,7 +772,7 @@
           "description": "Exhaustive platform enum annotated",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -780,7 +780,7 @@
           "description": "No else when statement",
           "path": "compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -788,7 +788,7 @@
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -796,7 +796,7 @@
           "description": "Kt10439",
           "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -804,7 +804,7 @@
           "description": "Non exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -812,7 +812,7 @@
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -820,7 +820,7 @@
           "description": "Exhaustive return throw",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturnThrow.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -828,7 +828,7 @@
           "description": "Exhaustive return",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -836,7 +836,7 @@
           "description": "Exhaustive platform enum null",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     },
@@ -848,7 +848,7 @@
           "description": "When type disjunctions",
           "path": "compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -856,7 +856,7 @@
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -864,7 +864,7 @@
           "description": "Non exhaustive warning null",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -872,7 +872,7 @@
           "description": "No else returned unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -880,7 +880,7 @@
           "description": "No else expected unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseExpectedUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -888,7 +888,7 @@
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -896,7 +896,7 @@
           "description": "Non exhaustive warning",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -904,7 +904,7 @@
           "description": "Exhaustive val over conditional init",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -912,7 +912,7 @@
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -920,7 +920,7 @@
           "description": "When",
           "path": "compiler/testData/diagnostics/tests/when/When.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -928,7 +928,7 @@
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -936,7 +936,7 @@
           "description": "No else returned coercion to unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedCoercionToUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -944,7 +944,7 @@
           "description": "Non exhaustive warning false",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningFalse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -952,7 +952,7 @@
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -960,7 +960,7 @@
           "description": "Reserved exhaustive when",
           "path": "compiler/testData/diagnostics/tests/when/ReservedExhaustiveWhen.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -968,7 +968,7 @@
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -976,7 +976,7 @@
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -984,7 +984,7 @@
           "description": "Non exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustivePlatformEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -992,7 +992,7 @@
           "description": "No else returned from lambda expected int",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1000,7 +1000,7 @@
           "description": "Exhaustive var over conditional init",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveVarOverConditionalInit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1008,7 +1008,7 @@
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1016,7 +1016,7 @@
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1024,7 +1024,7 @@
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1032,7 +1032,7 @@
           "description": "Property not initialized",
           "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1040,7 +1040,7 @@
           "description": "Non exhaustive warning else",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1048,7 +1048,7 @@
           "description": "Redundant else",
           "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1056,7 +1056,7 @@
           "description": "Non exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1064,7 +1064,7 @@
           "description": "No else no expected type",
           "path": "compiler/testData/diagnostics/tests/when/NoElseNoExpectedType.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1072,7 +1072,7 @@
           "description": "Exhaustive enum is",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1080,7 +1080,7 @@
           "description": "No else returned non unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedNonUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1088,7 +1088,7 @@
           "description": "Exhaustive break continue",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1096,7 +1096,7 @@
           "description": "Top level sealed",
           "path": "compiler/testData/diagnostics/tests/when/TopLevelSealed.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1104,7 +1104,7 @@
           "description": "Else on nullable enum",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -1112,7 +1112,7 @@
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -1126,7 +1126,7 @@
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1134,7 +1134,7 @@
           "description": "No else when statement",
           "path": "compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "1": [
@@ -1144,7 +1144,7 @@
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1152,7 +1152,7 @@
           "description": "Kt9972",
           "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1160,7 +1160,7 @@
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1168,7 +1168,7 @@
           "description": "Kt10439",
           "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     },
@@ -1180,7 +1180,7 @@
           "description": "Non exhaustive warning null",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1188,7 +1188,7 @@
           "description": "No else returned unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1196,7 +1196,7 @@
           "description": "No else expected unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseExpectedUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1204,7 +1204,7 @@
           "description": "Non exhaustive warning",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1212,7 +1212,7 @@
           "description": "No else returned coercion to unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedCoercionToUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1220,7 +1220,7 @@
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1228,7 +1228,7 @@
           "description": "No else returned from lambda expected int",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1236,7 +1236,7 @@
           "description": "Non exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1244,7 +1244,7 @@
           "description": "No else no expected type",
           "path": "compiler/testData/diagnostics/tests/when/NoElseNoExpectedType.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -1252,7 +1252,7 @@
           "description": "No else returned non unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedNonUnit.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }

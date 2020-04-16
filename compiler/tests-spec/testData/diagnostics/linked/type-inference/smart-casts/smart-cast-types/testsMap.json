@@ -8,7 +8,7 @@
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -16,7 +16,7 @@
           "description": "Exhaustive with nullability check before",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -24,7 +24,7 @@
           "description": "Exhaustive with nullability check else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -32,7 +32,7 @@
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -40,7 +40,7 @@
           "description": "Exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -48,7 +48,7 @@
           "description": "Exhaustive with nullability check boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -56,7 +56,7 @@
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "8": [
@@ -66,7 +66,7 @@
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -74,7 +74,7 @@
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     },
@@ -86,7 +86,7 @@
           "description": "When type disjunctions",
           "path": "compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -94,7 +94,7 @@
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -102,7 +102,7 @@
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
@@ -110,7 +110,7 @@
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -118,7 +118,7 @@
           "description": "Non exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "6": [
@@ -128,7 +128,7 @@
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ],
       "8": [
@@ -138,7 +138,7 @@
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }

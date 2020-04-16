@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.sectionsInPathRege
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testAreaRegex
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testPathRegexTemplate
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testTypeRegex
-import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.ws
 import java.io.File
 import java.util.regex.Pattern
 
@@ -35,7 +34,6 @@ object CommonPatterns {
 
     val ls: String = System.lineSeparator()
     val ps: String = Pattern.quote(File.separator)
-    val ws = """\s*"""
 
     val directiveRegex =
         """${SINGLE_LINE_COMMENT_REGEX.format("""[\w\s]+:""")}|${MULTILINE_COMMENT_REGEX.format(""" $ASTERISK_REGEX [\w\s]+:[\s\S]*?""")}"""
@@ -88,8 +86,8 @@ object LinkedSpecTestPatterns : BasePatterns {
     private val linkRegex =
         Regex("""(( $ASTERISK_REGEX )?\s*($SECTIONS_IN_FILE_REGEX -> )?(paragraph $INTEGER_REGEX -> )?sentence $INTEGER_REGEX)""")
 
-    val primaryLinks: Pattern = Pattern.compile("""$PRIMARY_LINKS$ws:$ws(?<places>(${linkRegex}(\s)*\n)+)""")
-    val secondaryLinks: Pattern = Pattern.compile("""$SECONDARY_LINKS$ws:$ws(?<places>(${linkRegex}(\s)*\n)+)""")
+    val primaryLinks: Pattern = Pattern.compile("""$PRIMARY_LINKS\s*:\s*(?<places>(${linkRegex}(\s)*\n)+)""")
+    val secondaryLinks: Pattern = Pattern.compile("""$SECONDARY_LINKS\s*:\s*(?<places>(${linkRegex}(\s)*\n)+)""")
 }
 
 object TestCasePatterns {

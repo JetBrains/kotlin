@@ -8,7 +8,7 @@
           "description": "Callable reference as last expression in block",
           "path": "compiler/testData/diagnostics/tests/callableReference/callableReferenceAsLastExpressionInBlock.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -22,7 +22,7 @@
           "description": "Bare type",
           "path": "compiler/testData/diagnostics/tests/callableReference/bareType.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }

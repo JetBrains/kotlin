@@ -8,7 +8,7 @@
           "description": "Correct info after array like call",
           "path": "compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -22,7 +22,7 @@
           "description": "Correct info after array like call",
           "path": "compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }

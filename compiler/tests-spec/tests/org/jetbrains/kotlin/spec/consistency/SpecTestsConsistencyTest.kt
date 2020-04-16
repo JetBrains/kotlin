@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.spec.utils.spec.SpecSentencesStorage
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import kotlin.io.walkTopDown
 
 @TestDataPath("\$PROJECT_ROOT/compiler/tests-spec/testData/")
 @RunWith(com.intellij.testFramework.Parameterized::class)
@@ -55,8 +54,9 @@ class SpecTestsConsistencyTest : TestCase() {
         val file = File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testFilePath.replace("$", "/")}")
         val specSentences = specSentencesStorage.getLatest() ?: return
         val test = parseLinkedSpecTest(file.canonicalPath, mapOf("main" to file.readText()))
-        val sectionsPath = setOf(*test.place.sections.toTypedArray(), test.place.paragraphNumber).joinToString()
-        val sentenceNumber = test.place.sentenceNumber
+        if (test.mainLink == null) return  //todo add check for relevant links also
+        val sectionsPath = setOf(*test.mainLink.sections.toTypedArray(), test.mainLink.paragraphNumber).joinToString()
+        val sentenceNumber = test.mainLink.sentenceNumber
         val paragraphSentences = specSentences[sectionsPath]
 
         if (paragraphSentences != null && paragraphSentences.size >= sentenceNumber) {
@@ -76,5 +76,6 @@ class SpecTestsConsistencyTest : TestCase() {
 
             assertEquals(expectedSentence, actualSentence)
         }
+
     }
 }

@@ -8,7 +8,7 @@
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
@@ -16,7 +16,7 @@
           "description": "No else returned from lambda expected int",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     },
@@ -28,7 +28,7 @@
           "description": "Kt10439",
           "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
@@ -42,7 +42,7 @@
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }

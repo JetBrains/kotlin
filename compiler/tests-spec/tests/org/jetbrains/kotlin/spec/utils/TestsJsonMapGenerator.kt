@@ -35,7 +35,7 @@ object TestsJsonMapGenerator {
         return testsByType.getOrCreate(specPlace.sentenceNumber.toString())
     }
 
-    enum class LinkType{
+    enum class LinkType {
         MAIN,
         PRIMARY,
         SECONDARY;
@@ -44,6 +44,7 @@ object TestsJsonMapGenerator {
             return name.toLowerCase()
         }
     }
+
     private fun getTestInfo(test: LinkedSpecTest, testFile: File? = null, linkType: LinkType = LinkType.MAIN) =
         JsonObject().apply {
             addProperty("specVersion", test.specVersion)
@@ -57,6 +58,29 @@ object TestsJsonMapGenerator {
             addProperty("linkType", linkType.toString())
         }
 
+
+    private fun collectInfoFromTests(
+        testsMap: JsonObject,
+        testDataPath: String,
+        linkedTestsPath: String = ""
+    ) {
+        TestArea.values().forEach { testArea ->
+            val filePath = buildString {
+                append("${testDataPath}/${testArea.testDataPath}")
+                if (linkedTestsPath.isNotEmpty())
+                    append("/${linkedTestsPath}")
+            }
+            File(filePath).walkTopDown()
+                .forEach testFiles@{ file ->
+                    if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
+                    val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
+                    if (specTest is LinkedSpecTest) {
+                        collectInfoFromTests(testsMap = testsMap, specTest = specTest, file = file)
+                    }
+                }
+        }
+    }
+
     private fun collectInfoFromSpecTests(testsMap: JsonObject) {
         TestArea.values().forEach { testArea ->
             File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/$LINKED_TESTS_PATH").walkTopDown()
@@ -64,13 +88,7 @@ object TestsJsonMapGenerator {
                     if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
                     val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
                     if (specTest is LinkedSpecTest) {
-                        collectInfoFromTestsTemp(
-                            testsMap = testsMap,
-                            specTest = specTest,
-                            testInfoForMainLink = getTestInfo(specTest, file, LinkType.MAIN),
-                            testInfoForPrimaryLink = getTestInfo(specTest, file, LinkType.PRIMARY),
-                            testInfoForSecondaryLink = getTestInfo(specTest, file, LinkType.SECONDARY)
-                        )
+                        collectInfoFromTests(testsMap = testsMap, specTest = specTest, file = file)
                     }
                 }
         }
@@ -83,46 +101,34 @@ object TestsJsonMapGenerator {
                     if (!file.isFile || file.extension != "kt") return@testFiles
                     if (!LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
                         return@testFiles
-                    val (specTest, _) = CommonParser.parseImplTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
-                    collectInfoFromTests(testsMap, specTest, getTestInfo(specTest, file))
+                    val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()), true)
+                    if (specTest is LinkedSpecTest) {
+                        collectInfoFromTests(testsMap = testsMap, specTest = specTest, file = file)
+                    }
                 }
         }
     }
 
-    private fun collectInfoFromTests(
-        testsMap: JsonObject,
-        specTest: LinkedSpecTest,
-        testInfoForMainLink: JsonObject,
-        testInfoForRelevantLink: JsonObject = testInfoForMainLink
-    ) {
-        testsMap.getOrCreateSpecTestObject(specTest.place, specTest.testArea, specTest.testType).add(testInfoForMainLink)
-        specTest.primaryLinks?.forEach {
-            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForRelevantLink)
-        }
-        specTest.secondaryLinks?.forEach {
-            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForRelevantLink)
-        }
-    }
 
-    private fun collectInfoFromTestsTemp( //todo add same for implementation tests
-        testsMap: JsonObject,
-        specTest: LinkedSpecTest,
-        testInfoForMainLink: JsonObject,
-        testInfoForPrimaryLink: JsonObject = testInfoForMainLink,
-        testInfoForSecondaryLink: JsonObject = testInfoForMainLink
+    private fun collectInfoFromTests(
+        testsMap: JsonObject, specTest: LinkedSpecTest, file: File
     ) {
-        testsMap.getOrCreateSpecTestObject(specTest.place, specTest.testArea, specTest.testType).add(testInfoForMainLink)
+
+        if (specTest.mainLink != null)
+            testsMap.getOrCreateSpecTestObject(specTest.mainLink, specTest.testArea, specTest.testType)
+                .add(getTestInfo(specTest, file, LinkType.MAIN))
         specTest.primaryLinks?.forEach {
-            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForPrimaryLink)
+            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(getTestInfo(specTest, file, LinkType.PRIMARY))
         }
         specTest.secondaryLinks?.forEach {
-            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForSecondaryLink)
+            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType)
+                .add(getTestInfo(specTest, file, LinkType.SECONDARY))
         }
     }
 
     fun buildTestsMapPerSection() {
         val testsMap = JsonObject().apply {
-            collectInfoFromSpecTests(this)
+            collectInfoFromTests(this, GeneralConfiguration.SPEC_TESTDATA_PATH, LINKED_TESTS_PATH)
             collectInfoFromImplementationTests(this)
         }
 

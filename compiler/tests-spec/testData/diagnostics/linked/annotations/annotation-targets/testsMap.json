@@ -8,7 +8,7 @@
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "primary"
         }
       ]
     }
