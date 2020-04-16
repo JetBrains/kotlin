@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.intention.impl.preview
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.LOADING_PREVIEW
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.TestOnly
 import java.awt.Dimension
 import kotlin.math.min
 
+@VisibleForTesting
 class IntentionPreviewPopupUpdateProcessor(private val project: Project,
                                            private val originalFile: PsiFile,
                                            private val originalEditor: Editor) : PopupUpdateProcessor(project) {
