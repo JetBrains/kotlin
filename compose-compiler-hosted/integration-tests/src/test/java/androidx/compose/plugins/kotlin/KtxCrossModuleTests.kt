@@ -120,6 +120,47 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testInlineClassOverloading(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                        package x
+
+                        import androidx.compose.Composable
+
+                        inline class I(val i: Int)
+                        inline class J(val j: Int)
+
+                        @Composable fun foo(i: I) { }
+                        @Composable fun foo(j: J) { }
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/B.kt" to """
+                        package y
+
+                        import androidx.compose.Composable
+                        import x.*
+
+                        @Composable fun bar(k: Int) {
+                            foo(I(k))
+                            foo(J(k))
+                        }
+                    """
+                )
+            )
+        ) {
+            // Check that the composable functions were properly mangled
+            assert(it.contains("public final static foo-M7K8KNI(ILandroidx/compose/Composer;)V"))
+            assert(it.contains("public final static foo-fpD6Y9w(ILandroidx/compose/Composer;)V"))
+            // Check that we didn't leave any references to the original name, which probably
+            // leads to a compile error.
+            assert(!it.contains("foo("))
+        }
+    }
+
+    @Test
     fun testCrossinlineEmittable(): Unit = ensureSetup {
         compile(
             mapOf(

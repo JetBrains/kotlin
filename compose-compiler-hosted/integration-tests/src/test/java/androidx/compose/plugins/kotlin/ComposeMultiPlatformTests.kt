@@ -62,7 +62,6 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
         public final class JvmKt {
           final static INNERCLASS JvmKt%Test%1 null null
           public final static Test(Landroidx/compose/Composer;)V
-          public final static synthetic Test()V
         }
         """
         )
