@@ -52,12 +52,6 @@ class GradleScriptingSupport(
     val context: GradleKtsContext,
     val configuration: Configuration
 ) : ScriptingSupport() {
-    override fun recreateRootsCache(): ScriptClassRootsCache {
-        return GradleClassRootsCache(project, context, configuration) {
-            configuration.scriptModel(it)?.toScriptConfiguration(context, project)
-        }
-    }
-
     init {
         rootsIndexer.transaction {
             if (classpathRoots.hasNotCachedRoots(GradleClassRootsCache.extractRoots(context, configuration))) {
@@ -72,6 +66,10 @@ class GradleScriptingSupport(
         }
 
         hideNotificationForProjectImport(project)
+    }
+
+    override fun recreateRootsCache() = GradleClassRootsCache(project, context, configuration) {
+        configuration.scriptModel(it)?.toScriptConfiguration(context, project)
     }
 
     override fun clearCaches() {

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRoot
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
-internal class GradleClassRootsCache(
+class GradleClassRootsCache(
     project: Project,
     context: GradleKtsContext,
     configuration: Configuration?,

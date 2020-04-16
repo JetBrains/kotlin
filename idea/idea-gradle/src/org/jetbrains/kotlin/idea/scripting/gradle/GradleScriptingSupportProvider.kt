@@ -69,6 +69,16 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         project.messageBus.connect(project).subscribe(GradleSettingsListener.TOPIC, listener)
     }
 
+    fun update(build: KotlinDslGradleBuildSync) {
+        if (build.models.isEmpty()) return // todo: why?
+
+        val templateClasspath = findTemplateClasspath(build) ?: return
+        val data = ConfigurationData(templateClasspath, build.models)
+        val newSupport = createSupport(build.workingDir) { data } ?: return
+
+        byBuildRoot[newSupport.buildRoot] = newSupport
+    }
+
     private fun createSupport(
         externalProjectPath: String,
         dataProvider: (buildRoot: VirtualFile) -> ConfigurationData?
@@ -91,16 +101,6 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             GradleKtsContext(File(javaHome)),
             Configuration(data)
         )
-    }
-
-    fun update(build: KotlinDslGradleBuildSync) {
-        if (build.models.isEmpty()) return // todo: why?
-
-        val templateClasspath = findTemplateClasspath(build) ?: return
-        val data = ConfigurationData(templateClasspath, build.models)
-        val newSupport = createSupport(build.workingDir) { data } ?: return
-
-        byBuildRoot[newSupport.buildRoot] = newSupport
     }
 
     private fun findTemplateClasspath(build: KotlinDslGradleBuildSync): List<String>? {
