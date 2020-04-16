@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
+    <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-build-common-tests" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlinc.allopen-compiler-plugin" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlinc.allopen-compiler-plugin-tests" level="project" />
+    <orderEntry type="library" scope="TEST" name="Guava" level="project" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.test" />
+    <orderEntry type="module" module-name="kotlin.idea" />
+    <orderEntry type="module" module-name="kotlin.completion" />
+    <orderEntry type="module" module-name="kotlin.fir" />
+    <orderEntry type="module" module-name="kotlin.scripting-support" />
+    <orderEntry type="module" module-name="kotlin.maven" />
+    <orderEntry type="module" module-name="kotlin.gradle.gradle-idea" />
+    <orderEntry type="module" module-name="kotlin.project-wizard.cli" />
+    <orderEntry type="module" module-name="kotlin.project-wizard.idea" />
+    <orderEntry type="module" module-name="kotlin.j2k.old" />
+    <orderEntry type="module" module-name="kotlin.j2k.new" />
+    <orderEntry type="module" module-name="kotlin.jps-plugin" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.generators.test-generator" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.kotlinx-serialization" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.performance-tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+  </component>
+</module>
