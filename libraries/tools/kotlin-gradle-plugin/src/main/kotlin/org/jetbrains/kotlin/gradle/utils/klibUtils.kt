@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 
 internal fun Project.klibModuleName(baseName: String = project.name): String =
-    if (group.toString().isNotEmpty()) "$group.$baseName" else baseName
+    if (group.toString().isNotEmpty()) "$group:$baseName" else baseName
