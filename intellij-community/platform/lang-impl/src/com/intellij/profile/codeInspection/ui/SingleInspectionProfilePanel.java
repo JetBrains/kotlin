@@ -84,9 +84,8 @@ public class SingleInspectionProfilePanel extends JPanel {
   @NonNls private static final String EMPTY_HTML = "<html><body></body></html>";
 
   private static final float DIVIDER_PROPORTION_DEFAULT = 0.5f;
-  public static final String SETTINGS = "settings://";
 
-  private final Map<HighlightDisplayKey, ToolDescriptors> myInitialToolDescriptors = new THashMap<>();
+  private final Map<String, ToolDescriptors> myInitialToolDescriptors = new THashMap<>();
   private final InspectionConfigTreeNode myRoot = new InspectionConfigTreeNode.Group(InspectionsBundle.message("inspection.root.node.title"));
   private final Alarm myAlarm = new Alarm();
   private final ProjectInspectionProfileManager myProjectProfileManager;
@@ -382,7 +381,7 @@ public class SingleInspectionProfilePanel extends JPanel {
         continue;
       }
       ToolDescriptors descriptors = ToolDescriptors.fromScopeToolState(state, myProfile, project);
-      myInitialToolDescriptors.put(descriptors.getDefaultDescriptor().getKey(), descriptors);
+      myInitialToolDescriptors.put(descriptors.getDefaultDescriptor().getShortName(), descriptors);
     }
     myInitialScopesOrder = myProfile.getScopesOrder();
   }
@@ -686,9 +685,9 @@ public class SingleInspectionProfilePanel extends JPanel {
       if (filter != null && !filter.isEmpty() && !isDescriptorAccepted(descriptor, filter, forceInclude, keySetList, quoted)) {
         continue;
       }
-      final InspectionConfigTreeNode node = new InspectionConfigTreeNode.Tool(() -> myInitialToolDescriptors.get(toolDescriptors.getDefaultDescriptor().getKey()));
-      if (!emptyFilter && !myInspectionsFilter.matches(
-        myProfile.getTools(toolDescriptors.getDefaultDescriptor().getKey().toString(), project), node)) {
+      final String shortName = toolDescriptors.getDefaultDescriptor().getShortName();
+      final InspectionConfigTreeNode node = new InspectionConfigTreeNode.Tool(() -> myInitialToolDescriptors.get(shortName));
+      if (!emptyFilter && !myInspectionsFilter.matches(myProfile.getTools(shortName, project), node)) {
         continue;
       }
       getGroupNode(myRoot, toolDescriptors.getDefaultDescriptor().getGroup()).add(node);
@@ -1186,8 +1185,7 @@ public class SingleInspectionProfilePanel extends JPanel {
     repaintTableData();
   }
 
-  private void updateErrorLevel(final InspectionConfigTreeNode.Tool child,
-                                @NotNull HighlightDisplayLevel level) {
+  private void updateErrorLevel(final InspectionConfigTreeNode.Tool child, @NotNull HighlightDisplayLevel level) {
     final HighlightDisplayKey key = child.getKey();
     myProfile.setErrorLevel(key, level, null, getProject());
     child.dropCache();

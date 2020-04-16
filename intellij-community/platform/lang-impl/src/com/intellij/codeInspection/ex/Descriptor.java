@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ex;
 
@@ -19,7 +19,7 @@ public class Descriptor {
   @NotNull
   private final String myText;
   private final String[] myGroup;
-  private final HighlightDisplayKey myKey;
+  private final String myShortName;
   private final InspectionToolWrapper myToolWrapper;
   private final HighlightDisplayLevel myLevel;
   @Nullable
@@ -27,7 +27,6 @@ public class Descriptor {
   private final ScopeToolState myState;
   @NotNull
   private final InspectionProfileModifiableModel myInspectionProfile;
-  private final String myScopeName;
 
   private Element myConfig;
   private boolean myEnabled;
@@ -39,11 +38,11 @@ public class Descriptor {
     myText = tool.getDisplayName();
     final String[] groupPath = tool.getGroupPath();
     myGroup = groupPath.length == 0 ? new String[]{InspectionProfileEntry.getGeneralGroupName()} : groupPath;
-    myKey = HighlightDisplayKey.find(tool.getShortName());
-    myScopeName = state.getScopeName();
+    myShortName = tool.getShortName();
     myScope = state.getScope(project);
-    myLevel = inspectionProfile.getErrorLevel(myKey, myScope, project);
-    myEnabled = inspectionProfile.isToolEnabled(myKey, myScope, project);
+    final HighlightDisplayKey key = HighlightDisplayKey.find(myShortName);
+    myLevel = inspectionProfile.getErrorLevel(key, myScope, project);
+    myEnabled = inspectionProfile.isToolEnabled(key, myScope, project);
     myToolWrapper = tool;
   }
 
@@ -51,7 +50,7 @@ public class Descriptor {
   public boolean equals(Object obj) {
     if (!(obj instanceof Descriptor)) return false;
     final Descriptor descriptor = (Descriptor)obj;
-    return myKey.equals(descriptor.getKey()) &&
+    return myShortName.equals(descriptor.myShortName) &&
            myLevel.equals(descriptor.getLevel()) &&
            myEnabled == descriptor.isEnabled() &&
            myState.equalTo(descriptor.getState());
@@ -59,7 +58,7 @@ public class Descriptor {
 
   @Override
   public int hashCode() {
-    final int hash = myKey.hashCode() + 29 * myLevel.hashCode();
+    final int hash = myShortName.hashCode() + 29 * myLevel.hashCode();
     return myScope != null ? myScope.hashCode() + 29 * hash : hash;
   }
 
@@ -78,7 +77,7 @@ public class Descriptor {
 
   @NotNull
   public HighlightDisplayKey getKey() {
-    return myKey;
+    return HighlightDisplayKey.find(myShortName);
   }
 
   public HighlightDisplayLevel getLevel() {
@@ -131,7 +130,7 @@ public class Descriptor {
 
   @NotNull
   public String getScopeName() {
-    return myScopeName;
+    return myState.getScopeName();
   }
 
   @Nullable
@@ -144,8 +143,12 @@ public class Descriptor {
     return myState;
   }
 
+  public String getShortName() {
+    return myShortName;
+  }
+
   @Override
   public String toString() {
-    return myKey.toString();
+    return myShortName;
   }
 }
