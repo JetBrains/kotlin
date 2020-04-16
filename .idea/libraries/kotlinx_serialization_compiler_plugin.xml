@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="kotlinx-serialization-compiler-plugin">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/kotlinc/kotlinx-serialization-compiler-plugin.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
