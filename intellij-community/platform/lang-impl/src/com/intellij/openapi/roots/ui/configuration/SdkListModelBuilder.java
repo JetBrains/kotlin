@@ -5,6 +5,9 @@ import com.google.common.collect.ImmutableList;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -273,9 +276,20 @@ public final class SdkListModelBuilder {
     if (item instanceof SuggestedItem) {
       SuggestedItem suggestedItem = (SuggestedItem)item;
       String homePath = suggestedItem.getHomePath();
-      // IDEA-237709
-      // make sure VFS has the right image of our SDK to avoid empty SDK from being created
-      VfsUtil.markDirtyAndRefresh(false, true, true, new File(homePath));
+
+      ProgressManager.getInstance().run(new Task.Modal(myProject,
+                                                       ProjectBundle.message("progress.title.jdk.combo.box.resolving.jdk.home"),
+                                                       true) {
+
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          indicator.setText(ProjectBundle.message("progress.text.jdk.combo.box.resolving.jdk.home", StringUtil.trimMiddle(homePath, 50)));
+          // IDEA-237709
+          // make sure VFS has the right image of our SDK to avoid empty SDK from being created
+          VfsUtil.markDirtyAndRefresh(false, true, true, new File(homePath));
+        }
+      });
+
       mySdkModel.addSdk(suggestedItem.getSdkType(), homePath, onNewSdkAdded);
       return true;
     }
