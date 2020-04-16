@@ -68,10 +68,6 @@
                         interface="org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.notificationFactory"
-                        interface="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationNotificationFactory"
-                        area="IDEA_PROJECT"/>
-
         <extensionPoint qualifiedName="org.jetbrains.kotlin.additionalExtractableAnalyser"
                         interface="org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AdditionalExtractableAnalyser"/>
 
@@ -104,11 +100,6 @@
 
         <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
                                    implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
-
-        <scripting.idea.notificationFactory
-            implementation="org.jetbrains.kotlin.idea.core.script.DefaultScriptConfigurationNotificationFactory"
-            order="last"
-        />
 
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>

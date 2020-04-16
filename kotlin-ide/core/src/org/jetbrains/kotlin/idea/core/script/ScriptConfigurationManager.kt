@@ -29,8 +29,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
-import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeManager
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.makeFailureResult
@@ -106,13 +107,6 @@ interface ScriptConfigurationManager {
      */
     fun clearConfigurationCachesAndRehighlight()
 
-    /**
-     * Save configurations into cache.
-     * Start indexing for new class/source roots.
-     * Re-highlight opened scripts with changed configuration.
-     */
-    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptConfigurationSnapshot>>)
-
     ///////////////
     // classpath roots info:
 
@@ -168,12 +162,16 @@ interface ScriptConfigurationManager {
         @TestOnly
         fun updateScriptDependenciesSynchronously(file: PsiFile) {
             // TODO: review the usages of this method
-            (getInstance(file.project) as AbstractScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
+            (getInstance(file.project) as CompositeManager).managers
+                .firstIsInstance<DefaultScriptingSupport>()
+                .updateScriptDependenciesSynchronously(file)
         }
 
         @TestOnly
         fun clearCaches(project: Project) {
-            (getInstance(project) as AbstractScriptConfigurationManager).clearCaches()
+            (getInstance(project) as CompositeManager).managers
+                .firstIsInstance<DefaultScriptingSupport>()
+                .clearCaches()
         }
 
         fun clearManualConfigurationLoadingIfNeeded(file: VirtualFile) {
