@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import org.jetbrains.kotlin.EndorsedLibraryInfo
 
 buildscript {
     repositories {
@@ -11,13 +12,13 @@ buildscript {
     }
 }
 
-def endorsedLibrariesList = ['kotlinx.cli']
-
-def toTaskName(library) {
-    def name = ""
-    library.split("\\.").each { word -> name += word.capitalize() }
-    return name
+ext {
+    endorsedLibraries = [
+        new EndorsedLibraryInfo(project('kotlinx.cli'), "org.jetbrains.kotlinx.kotlinx-cli")
+    ].collectEntries { [it.project, it] }
 }
+
+Collection<EndorsedLibraryInfo> endorsedLibrariesList = ext.endorsedLibraries.values()
 
 task clean {
     doLast {
@@ -27,7 +28,7 @@ task clean {
 
 task jvmJar {
     endorsedLibrariesList.each { library ->
-        dependsOn "$library:jvmJar"
+        dependsOn "$library.projectName:jvmJar"
     }
 }
 
@@ -35,15 +36,15 @@ task jvmJar {
 targetList.each { target ->
     task("${target}EndorsedLibraries", type: Copy) {
         endorsedLibrariesList.each { library ->
-            dependsOn "$library:${target}${ toTaskName(library) }"
+            dependsOn "$library.projectName:${target}${library.taskName}"
         }
 
         destinationDir project.buildDir
 
         endorsedLibrariesList.each { library ->
-            from(project("$library").file("build/${target}${ toTaskName(library) }")) {
+            from(library.project.file("build/${target}${library.taskName}")) {
                 include('**')
-                into("${library.replaceAll("\\.", "-")}")
+                into(library.name)
                 eachFile {
                     if (name == 'manifest') {
                         def existingManifest = file("$destinationDir/$path")
@@ -61,11 +62,10 @@ targetList.each { target ->
         def cacheTask = task("${target}Cache")
 
         endorsedLibrariesList.each { library ->
-            def libraryName = library.replaceAll("\\.", "-")
             def dist = rootProject.file("dist")
-            task("${target}${toTaskName(library)}Cache", type: KonanCacheTask) {
+            task("${target}${library.taskName}Cache", type: KonanCacheTask) {
                 it.target = target
-                originalKlib = file("${project.buildDir}/$libraryName")
+                originalKlib = file("${project.buildDir}/${library.name}")
                 cacheRoot = file("$dist/klib/cache")
                 compilerDistributionPath.set(distDir)
 
@@ -80,29 +80,29 @@ targetList.each { target ->
 }
 
 endorsedLibrariesList.each { library ->
-    task("${toTaskName(library)}CommonSources", type: Zip) {
+    task("${library.taskName}CommonSources", type: Zip) {
         destinationDirectory = file("${rootProject.projectDir}/dist/sources")
-        archiveFileName = "${library.replaceAll("\\.", "-")}-common-sources.zip"
+        archiveFileName = "${library.name}-common-sources.zip"
 
         includeEmptyDirs = false
         include('**/*.kt')
 
-        from(project(":endorsedLibraries:${library}").file('src/main/kotlin'))
+        from(library.project.file('src/main/kotlin'))
     }
-    task("${toTaskName(library)}NativeSources", type: Zip) {
+    task("${library.taskName}NativeSources", type: Zip) {
         destinationDirectory = file("${rootProject.projectDir}/dist/sources")
-        archiveFileName = "${library.replaceAll("\\.", "-")}-native-sources.zip"
+        archiveFileName = "${library.name}-native-sources.zip"
 
         includeEmptyDirs = false
         include('**/*.kt')
 
-        from(project(":endorsedLibraries:${library}").file('src/main/kotlin-native'))
+        from(library.project.file('src/main/kotlin-native'))
     }
 }
 
 task endorsedLibsSources {
     endorsedLibrariesList.each { library ->
-        dependsOn "${toTaskName(library)}CommonSources"
-        dependsOn "${toTaskName(library)}NativeSources"
+        dependsOn "${library.taskName}CommonSources"
+        dependsOn "${library.taskName}NativeSources"
     }
 }
