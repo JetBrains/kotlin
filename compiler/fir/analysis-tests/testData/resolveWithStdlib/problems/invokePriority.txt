@@ -74,6 +74,7 @@ FILE: invokePriority.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
+        Q|E.f|
         Q|E.f|.R|/E.f.invoke|()
         Q|E.f|.R|/E.f.invoke|()
     }

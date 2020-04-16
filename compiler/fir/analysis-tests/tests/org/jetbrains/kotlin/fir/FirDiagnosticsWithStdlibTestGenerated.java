@@ -868,6 +868,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/invokePriority.kt");
         }
 
+        @TestMetadata("invokePriorityComplex.kt")
+        public void testInvokePriorityComplex() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/invokePriorityComplex.kt");
+        }
+
         @TestMetadata("KJKComplexHierarchyNestedLoop.kt")
         public void testKJKComplexHierarchyNestedLoop() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/KJKComplexHierarchyNestedLoop.kt");

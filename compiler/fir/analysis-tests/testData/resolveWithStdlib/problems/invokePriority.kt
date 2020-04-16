@@ -29,6 +29,7 @@ class E {
 }
 
 fun main() {
+    E.f // Resolves to (2) in old FE (Resolves to (1) in FIR)
     E.f() // Resolves to (2) in old FE (Resolves to (1) in FIR)
-    E.f.invoke() // Resolves to (1)
+    E.f.invoke() // Resolves to (1) in old FE and FIR
 }
