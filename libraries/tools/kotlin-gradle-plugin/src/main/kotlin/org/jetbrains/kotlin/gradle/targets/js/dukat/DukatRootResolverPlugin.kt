@@ -19,10 +19,6 @@ internal class DukatRootResolverPlugin(val resolver: KotlinRootNpmResolver) : Ro
         return listOf(plugin)
     }
 
-    override fun close(resolution: KotlinRootNpmResolution) {
-        // do nothing
-    }
-
     override fun resolve(resolution: KotlinRootNpmResolution) {
         if (resolver.forceFullResolve) {
             // inside idea import
@@ -30,5 +26,9 @@ internal class DukatRootResolverPlugin(val resolver: KotlinRootNpmResolver) : Ro
                 it.executeDukatIfNeeded(true, resolution)
             }
         }
+    }
+
+    override fun close(resolution: KotlinRootNpmResolution) {
+        // do nothing
     }
 }
