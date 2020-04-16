@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
-    @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/positionManager")
+    @TestMetadata("testData/positionManager")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleFile extends AbstractPositionManagerTest {
@@ -27,111 +27,111 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
 
         public void testAllFilesPresentInSingleFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), null, false);
         }
 
         @TestMetadata("anonymousFunction.kt")
         public void testAnonymousFunction() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/anonymousFunction.kt");
+            runTest("testData/positionManager/anonymousFunction.kt");
         }
 
         @TestMetadata("anonymousNamedFunction.kt")
         public void testAnonymousNamedFunction() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/anonymousNamedFunction.kt");
+            runTest("testData/positionManager/anonymousNamedFunction.kt");
         }
 
         @TestMetadata("class.kt")
         public void testClass() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/class.kt");
+            runTest("testData/positionManager/class.kt");
         }
 
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/classObject.kt");
+            runTest("testData/positionManager/classObject.kt");
         }
 
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/enum.kt");
+            runTest("testData/positionManager/enum.kt");
         }
 
         @TestMetadata("extensionFunction.kt")
         public void testExtensionFunction() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/extensionFunction.kt");
+            runTest("testData/positionManager/extensionFunction.kt");
         }
 
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/functionLiteral.kt");
+            runTest("testData/positionManager/functionLiteral.kt");
         }
 
         @TestMetadata("functionLiteralInVal.kt")
         public void testFunctionLiteralInVal() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/functionLiteralInVal.kt");
+            runTest("testData/positionManager/functionLiteralInVal.kt");
         }
 
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/innerClass.kt");
+            runTest("testData/positionManager/innerClass.kt");
         }
 
         @TestMetadata("JvmNameAnnotation.kt")
         public void testJvmNameAnnotation() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/JvmNameAnnotation.kt");
+            runTest("testData/positionManager/JvmNameAnnotation.kt");
         }
 
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/localFunction.kt");
+            runTest("testData/positionManager/localFunction.kt");
         }
 
         @TestMetadata("objectDeclaration.kt")
         public void testObjectDeclaration() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/objectDeclaration.kt");
+            runTest("testData/positionManager/objectDeclaration.kt");
         }
 
         @TestMetadata("objectExpression.kt")
         public void testObjectExpression() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/objectExpression.kt");
+            runTest("testData/positionManager/objectExpression.kt");
         }
 
         @TestMetadata("package.kt")
         public void testPackage() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/package.kt");
+            runTest("testData/positionManager/package.kt");
         }
 
         @TestMetadata("propertyAccessor.kt")
         public void testPropertyAccessor() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/propertyAccessor.kt");
+            runTest("testData/positionManager/propertyAccessor.kt");
         }
 
         @TestMetadata("propertyInitializer.kt")
         public void testPropertyInitializer() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/propertyInitializer.kt");
+            runTest("testData/positionManager/propertyInitializer.kt");
         }
 
         @TestMetadata("topLevelPropertyInitializer.kt")
         public void testTopLevelPropertyInitializer() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/topLevelPropertyInitializer.kt");
+            runTest("testData/positionManager/topLevelPropertyInitializer.kt");
         }
 
         @TestMetadata("trait.kt")
         public void testTrait() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/trait.kt");
+            runTest("testData/positionManager/trait.kt");
         }
 
         @TestMetadata("twoClasses.kt")
         public void testTwoClasses() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/twoClasses.kt");
+            runTest("testData/positionManager/twoClasses.kt");
         }
 
         @TestMetadata("_DefaultPackage.kt")
         public void test_DefaultPackage() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/_DefaultPackage.kt");
+            runTest("testData/positionManager/_DefaultPackage.kt");
         }
     }
 
-    @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/positionManager")
+    @TestMetadata("testData/positionManager")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiFile extends AbstractPositionManagerTest {
@@ -140,17 +140,17 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
 
         public void testAllFilesPresentInMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/positionManager"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("multiFilePackage")
         public void testMultiFilePackage() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/multiFilePackage/");
+            runTest("testData/positionManager/multiFilePackage");
         }
 
         @TestMetadata("multiFileSameName")
         public void testMultiFileSameName() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/positionManager/multiFileSameName/");
+            runTest("testData/positionManager/multiFileSameName");
         }
     }
 }

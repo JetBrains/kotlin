@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ProjectTemplateNewWizardProjectImportTestGenerated extends AbstractProjectTemplateNewWizardProjectImportTest {
-    @TestMetadata("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration")
+    @TestMetadata("../cli/testData/projectTemplatesBuildFileGeneration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GradleKts extends AbstractProjectTemplateNewWizardProjectImportTest {
@@ -27,56 +27,56 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         }
 
         public void testAllFilesPresentInGradleKts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("../cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("backendApplication")
         public void testBackendApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/backendApplication");
         }
 
         @TestMetadata("consoleApplication")
         public void testConsoleApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/consoleApplication");
         }
 
         @TestMetadata("frontendApplication")
         public void testFrontendApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/frontendApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/frontendApplication");
         }
 
         @TestMetadata("fullStackWebApplication")
         public void testFullStackWebApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication");
         }
 
         @TestMetadata("multiplatformApplication")
         public void testMultiplatformApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication");
         }
 
         @TestMetadata("multiplatformLibrary")
         public void testMultiplatformLibrary() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary");
         }
 
         @TestMetadata("multiplatformMobileApplication")
         public void testMultiplatformMobileApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication");
         }
 
         @TestMetadata("multiplatformMobileLibrary")
         public void testMultiplatformMobileLibrary() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary");
         }
 
         @TestMetadata("nativeApplication")
         public void testNativeApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/nativeApplication");
         }
     }
 
-    @TestMetadata("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration")
+    @TestMetadata("../cli/testData/projectTemplatesBuildFileGeneration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GradleGroovy extends AbstractProjectTemplateNewWizardProjectImportTest {
@@ -85,56 +85,56 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         }
 
         public void testAllFilesPresentInGradleGroovy() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("../cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("backendApplication")
         public void testBackendApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/backendApplication");
         }
 
         @TestMetadata("consoleApplication")
         public void testConsoleApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/consoleApplication");
         }
 
         @TestMetadata("frontendApplication")
         public void testFrontendApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/frontendApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/frontendApplication");
         }
 
         @TestMetadata("fullStackWebApplication")
         public void testFullStackWebApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication");
         }
 
         @TestMetadata("multiplatformApplication")
         public void testMultiplatformApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication");
         }
 
         @TestMetadata("multiplatformLibrary")
         public void testMultiplatformLibrary() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary");
         }
 
         @TestMetadata("multiplatformMobileApplication")
         public void testMultiplatformMobileApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication");
         }
 
         @TestMetadata("multiplatformMobileLibrary")
         public void testMultiplatformMobileLibrary() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary");
         }
 
         @TestMetadata("nativeApplication")
         public void testNativeApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/nativeApplication");
         }
     }
 
-    @TestMetadata("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration")
+    @TestMetadata("../cli/testData/projectTemplatesBuildFileGeneration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Maven extends AbstractProjectTemplateNewWizardProjectImportTest {
@@ -143,52 +143,52 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         }
 
         public void testAllFilesPresentInMaven() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("../cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("backendApplication")
         public void testBackendApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/backendApplication");
         }
 
         @TestMetadata("consoleApplication")
         public void testConsoleApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/consoleApplication");
         }
 
         @TestMetadata("frontendApplication")
         public void testFrontendApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/frontendApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/frontendApplication");
         }
 
         @TestMetadata("fullStackWebApplication")
         public void testFullStackWebApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication");
         }
 
         @TestMetadata("multiplatformApplication")
         public void testMultiplatformApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication");
         }
 
         @TestMetadata("multiplatformLibrary")
         public void testMultiplatformLibrary() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary");
         }
 
         @TestMetadata("multiplatformMobileApplication")
         public void testMultiplatformMobileApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication");
         }
 
         @TestMetadata("multiplatformMobileLibrary")
         public void testMultiplatformMobileLibrary() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary");
         }
 
         @TestMetadata("nativeApplication")
         public void testNativeApplication() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeApplication/");
+            runTest("../cli/testData/projectTemplatesBuildFileGeneration/nativeApplication");
         }
     }
 }

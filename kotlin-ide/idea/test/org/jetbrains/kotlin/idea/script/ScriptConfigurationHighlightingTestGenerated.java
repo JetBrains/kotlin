@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationHighlightingTestGenerated extends AbstractScriptConfigurationHighlightingTest {
-    @TestMetadata("idea/testData/script/definition/highlighting")
+    @TestMetadata("testData/script/definition/highlighting")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Highlighting extends AbstractScriptConfigurationHighlightingTest {
@@ -28,115 +28,115 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
 
         @TestMetadata("acceptedAnnotations")
         public void testAcceptedAnnotations() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/acceptedAnnotations/");
+            runTest("testData/script/definition/highlighting/acceptedAnnotations");
         }
 
         @TestMetadata("additionalImports")
         public void testAdditionalImports() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/additionalImports/");
+            runTest("testData/script/definition/highlighting/additionalImports");
         }
 
         public void testAllFilesPresentInHighlighting() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("asyncResolver")
         public void testAsyncResolver() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/asyncResolver/");
+            runTest("testData/script/definition/highlighting/asyncResolver");
         }
 
         @TestMetadata("conflictingModule")
         public void testConflictingModule() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/conflictingModule/");
+            runTest("testData/script/definition/highlighting/conflictingModule");
         }
 
         @TestMetadata("customBaseClass")
         public void testCustomBaseClass() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/customBaseClass/");
+            runTest("testData/script/definition/highlighting/customBaseClass");
         }
 
         @TestMetadata("customExtension")
         public void testCustomExtension() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/customExtension/");
+            runTest("testData/script/definition/highlighting/customExtension");
         }
 
         @TestMetadata("customJavaHome")
         public void testCustomJavaHome() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/customJavaHome/");
+            runTest("testData/script/definition/highlighting/customJavaHome");
         }
 
         @TestMetadata("customLibrary")
         public void testCustomLibrary() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/customLibrary/");
+            runTest("testData/script/definition/highlighting/customLibrary");
         }
 
         @TestMetadata("customLibraryInModuleDeps")
         public void testCustomLibraryInModuleDeps() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/customLibraryInModuleDeps/");
+            runTest("testData/script/definition/highlighting/customLibraryInModuleDeps");
         }
 
         @TestMetadata("doNotSpeakAboutJava")
         public void testDoNotSpeakAboutJava() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/doNotSpeakAboutJava/");
+            runTest("testData/script/definition/highlighting/doNotSpeakAboutJava");
         }
 
         @TestMetadata("doNotSpeakAboutJavaLegacy")
         public void testDoNotSpeakAboutJavaLegacy() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/doNotSpeakAboutJavaLegacy/");
+            runTest("testData/script/definition/highlighting/doNotSpeakAboutJavaLegacy");
         }
 
         @TestMetadata("emptyAsyncResolver")
         public void testEmptyAsyncResolver() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/emptyAsyncResolver/");
+            runTest("testData/script/definition/highlighting/emptyAsyncResolver");
         }
 
         @TestMetadata("errorResolver")
         public void testErrorResolver() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/errorResolver/");
+            runTest("testData/script/definition/highlighting/errorResolver");
         }
 
         @TestMetadata("implicitReceiver")
         public void testImplicitReceiver() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/implicitReceiver/");
+            runTest("testData/script/definition/highlighting/implicitReceiver");
         }
 
         @TestMetadata("javaNestedClass")
         public void testJavaNestedClass() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/javaNestedClass/");
+            runTest("testData/script/definition/highlighting/javaNestedClass");
         }
 
         @TestMetadata("multiModule")
         public void testMultiModule() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/multiModule/");
+            runTest("testData/script/definition/highlighting/multiModule");
         }
 
         @TestMetadata("noResolver")
         public void testNoResolver() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/noResolver/");
+            runTest("testData/script/definition/highlighting/noResolver");
         }
 
         @TestMetadata("propertyAccessor")
         public void testPropertyAccessor() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/propertyAccessor/");
+            runTest("testData/script/definition/highlighting/propertyAccessor");
         }
 
         @TestMetadata("propertyAccessorFromModule")
         public void testPropertyAccessorFromModule() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/propertyAccessorFromModule/");
+            runTest("testData/script/definition/highlighting/propertyAccessorFromModule");
         }
 
         @TestMetadata("simple")
         public void testSimple() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/simple/");
+            runTest("testData/script/definition/highlighting/simple");
         }
 
         @TestMetadata("throwingResolver")
         public void testThrowingResolver() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/throwingResolver/");
+            runTest("testData/script/definition/highlighting/throwingResolver");
         }
     }
 
-    @TestMetadata("idea/testData/script/definition/complex")
+    @TestMetadata("testData/script/definition/complex")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Complex extends AbstractScriptConfigurationHighlightingTest {
@@ -145,12 +145,12 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         }
 
         public void testAllFilesPresentInComplex() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/script/definition/complex"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/script/definition/complex"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("errorResolver")
         public void testErrorResolver() throws Exception {
-            runTest("idea/testData/script/definition/complex/errorResolver/");
+            runTest("testData/script/definition/complex/errorResolver");
         }
     }
 }

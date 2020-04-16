@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractGradleConfigureProjectByChangingFileTest {
-    @TestMetadata("idea/testData/configuration/gradle")
+    @TestMetadata("../../idea/testData/configuration/gradle")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Gradle extends AbstractGradleConfigureProjectByChangingFileTest {
@@ -27,56 +27,56 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
         }
 
         public void testAllFilesPresentInGradle() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/configuration/gradle"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("../../idea/testData/configuration/gradle"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("default")
         public void testDefault() throws Exception {
-            runTest("idea/testData/configuration/gradle/default/");
+            runTest("../../idea/testData/configuration/gradle/default");
         }
 
         @TestMetadata("eapVersion")
         public void testEapVersion() throws Exception {
-            runTest("idea/testData/configuration/gradle/eapVersion/");
+            runTest("../../idea/testData/configuration/gradle/eapVersion");
         }
 
         @TestMetadata("jreLib")
         public void testJreLib() throws Exception {
-            runTest("idea/testData/configuration/gradle/jreLib/");
+            runTest("../../idea/testData/configuration/gradle/jreLib");
         }
 
         @TestMetadata("js")
         public void testJs() throws Exception {
-            runTest("idea/testData/configuration/gradle/js/");
+            runTest("../../idea/testData/configuration/gradle/js");
         }
 
         @TestMetadata("m04Version")
         public void testM04Version() throws Exception {
-            runTest("idea/testData/configuration/gradle/m04Version/");
+            runTest("../../idea/testData/configuration/gradle/m04Version");
         }
 
         @TestMetadata("missedLibrary")
         public void testMissedLibrary() throws Exception {
-            runTest("idea/testData/configuration/gradle/missedLibrary/");
+            runTest("../../idea/testData/configuration/gradle/missedLibrary");
         }
 
         @TestMetadata("plugin_present")
         public void testPlugin_present() throws Exception {
-            runTest("idea/testData/configuration/gradle/plugin_present/");
+            runTest("../../idea/testData/configuration/gradle/plugin_present");
         }
 
         @TestMetadata("rcVersion")
         public void testRcVersion() throws Exception {
-            runTest("idea/testData/configuration/gradle/rcVersion/");
+            runTest("../../idea/testData/configuration/gradle/rcVersion");
         }
 
         @TestMetadata("withJava9ModuleInfo")
         public void testWithJava9ModuleInfo() throws Exception {
-            runTest("idea/testData/configuration/gradle/withJava9ModuleInfo/");
+            runTest("../../idea/testData/configuration/gradle/withJava9ModuleInfo");
         }
     }
 
-    @TestMetadata("idea/testData/configuration/gsk")
+    @TestMetadata("../../idea/testData/configuration/gsk")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Gsk extends AbstractGradleConfigureProjectByChangingFileTest {
@@ -85,32 +85,32 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
         }
 
         public void testAllFilesPresentInGsk() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/configuration/gsk"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("../../idea/testData/configuration/gsk"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("eap11Version")
         public void testEap11Version() throws Exception {
-            runTest("idea/testData/configuration/gsk/eap11Version/");
+            runTest("../../idea/testData/configuration/gsk/eap11Version");
         }
 
         @TestMetadata("eapVersion")
         public void testEapVersion() throws Exception {
-            runTest("idea/testData/configuration/gsk/eapVersion/");
+            runTest("../../idea/testData/configuration/gsk/eapVersion");
         }
 
         @TestMetadata("helloWorld")
         public void testHelloWorld() throws Exception {
-            runTest("idea/testData/configuration/gsk/helloWorld/");
+            runTest("../../idea/testData/configuration/gsk/helloWorld");
         }
 
         @TestMetadata("missedLibrary")
         public void testMissedLibrary() throws Exception {
-            runTest("idea/testData/configuration/gsk/missedLibrary/");
+            runTest("../../idea/testData/configuration/gsk/missedLibrary");
         }
 
         @TestMetadata("pluginPresent")
         public void testPluginPresent() throws Exception {
-            runTest("idea/testData/configuration/gsk/pluginPresent/");
+            runTest("../../idea/testData/configuration/gsk/pluginPresent");
         }
     }
 }
