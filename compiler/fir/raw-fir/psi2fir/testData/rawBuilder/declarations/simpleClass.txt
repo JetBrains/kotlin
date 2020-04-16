@@ -8,7 +8,7 @@ FILE: simpleClass.kt
     }
     public? final? class SomeClass : SomeInterface {
         public? constructor(): R|SomeClass| {
-            super<R|kotlin/Any|>()
+            super<<implicit>>()
         }
 
         private final? val baz: <implicit> = IntegerLiteral(42)

@@ -479,18 +479,21 @@ class RawFirBuilder(
                 }
                 this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
                     container.superTypeRefs += implicitAnnotationType
+                    delegatedSuperTypeRef = implicitAnyType
                 }
             }
 
             val defaultDelegatedSuperTypeRef =
                 when {
                     classKind == ClassKind.ENUM_ENTRY && this is KtClass -> delegatedEnumSuperTypeRef ?: implicitAnyType
-                    else -> implicitAnyType
+                    container.superTypeRefs.isEmpty() -> implicitAnyType
+                    else -> buildImplicitTypeRef()
                 }
 
 
             if (container.superTypeRefs.isEmpty()) {
-                container.superTypeRefs += defaultDelegatedSuperTypeRef
+                container.superTypeRefs += implicitAnyType
+                delegatedSuperTypeRef = implicitAnyType
             }
             if (this is KtClass && this.isInterface()) return delegatedSuperTypeRef ?: implicitAnyType
 

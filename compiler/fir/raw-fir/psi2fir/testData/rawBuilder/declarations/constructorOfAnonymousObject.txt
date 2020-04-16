@@ -1,0 +1,22 @@
+FILE: constructorOfAnonymousObject.kt
+    private final? fun resolveAccessorCall(suspendPropertyDescriptor: PropertyDescriptor, context: TranslationContext): ResolvedCall<PropertyDescriptor> {
+        ^resolveAccessorCall object : ResolvedCall<PropertyDescriptor> {
+            private constructor(): R|anonymous| {
+                super<<implicit>>()
+            }
+
+            public? open? override fun getStatus(): <implicit> {
+                ^getStatus ResolutionStatus#.SUCCESS#
+            }
+
+            public? open? override fun getCandidateDescriptor(): <implicit> {
+                ^getCandidateDescriptor suspendPropertyDescriptor#
+            }
+
+            public? open? override fun getResultingDescriptor(): <implicit> {
+                ^getResultingDescriptor suspendPropertyDescriptor#
+            }
+
+        }
+
+    }

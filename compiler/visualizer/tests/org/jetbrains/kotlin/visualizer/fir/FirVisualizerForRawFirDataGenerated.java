@@ -55,6 +55,11 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorInObject.kt");
         }
 
+        @TestMetadata("constructorOfAnonymousObject.kt")
+        public void testConstructorOfAnonymousObject() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorOfAnonymousObject.kt");
+        }
+
         @TestMetadata("contractDescription.kt")
         public void testContractDescription() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contractDescription.kt");
@@ -63,6 +68,11 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
         @TestMetadata("derivedClass.kt")
         public void testDerivedClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt");
+        }
+
+        @TestMetadata("emptyAnonymousObject.kt")
+        public void testEmptyAnonymousObject() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/emptyAnonymousObject.kt");
         }
 
         @TestMetadata("enums.kt")

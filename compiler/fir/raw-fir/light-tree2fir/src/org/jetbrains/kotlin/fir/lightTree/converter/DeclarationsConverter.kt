@@ -427,11 +427,14 @@ class DeclarationsConverter(
                         }
                         modifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> {
                             superTypeRefs += implicitAnnotationType
+                            delegatedSuperTypeRef = implicitAnyType
                         }
                     }
-                    val defaultDelegatedSuperTypeRef = implicitAnyType
 
-                    superTypeRefs.ifEmpty { superTypeRefs += defaultDelegatedSuperTypeRef }
+                    superTypeRefs.ifEmpty {
+                        superTypeRefs += implicitAnyType
+                        delegatedSuperTypeRef = implicitAnyType
+                    }
 
                     this.superTypeRefs += superTypeRefs
 
@@ -443,7 +446,7 @@ class DeclarationsConverter(
                         hasDefaultConstructor = if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
                         else secondaryConstructors.isEmpty() || secondaryConstructors.any { !it.hasValueParameters() },
                         delegatedSelfTypeRef = selfType,
-                        delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef,
+                        delegatedSuperTypeRef = delegatedSuperTypeRef ?: buildImplicitTypeRef(),
                         superTypeCallEntry = superTypeCallEntry
                     )
                     //parse primary constructor
@@ -514,8 +517,11 @@ class DeclarationsConverter(
             }
         }
 
-        superTypeRefs.ifEmpty { superTypeRefs += implicitAnyType }
-        val delegatedSuperType = delegatedSuperTypeRef ?: implicitAnyType
+        superTypeRefs.ifEmpty {
+            superTypeRefs += implicitAnyType
+            delegatedSuperTypeRef = implicitAnyType
+        }
+        val delegatedSuperType = delegatedSuperTypeRef ?: buildImplicitTypeRef()
 
         return withChildClassName(ANONYMOUS_OBJECT_NAME) {
             buildAnonymousObject {
