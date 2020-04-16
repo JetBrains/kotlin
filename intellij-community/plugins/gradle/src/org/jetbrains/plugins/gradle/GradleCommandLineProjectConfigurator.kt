@@ -2,8 +2,8 @@
 package org.jetbrains.plugins.gradle
 
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.CommandLineInspectionProgressReporter
-import com.intellij.codeInspection.CommandLineInspectionProjectConfigurator
+import com.intellij.ide.CommandLineInspectionProgressReporter
+import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC
