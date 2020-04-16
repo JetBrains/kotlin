@@ -45,15 +45,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        val npmResolutions = resolutionManager.requireInstalled()
-            .projects
-            .values
-        nodeJs.packageManager.resolveRootProject(
-            project,
-            npmResolutions.flatMap { it.npmProjects },
-            false,
-            args
-        )
+        resolutionManager.resolve(args)
     }
 
     companion object {

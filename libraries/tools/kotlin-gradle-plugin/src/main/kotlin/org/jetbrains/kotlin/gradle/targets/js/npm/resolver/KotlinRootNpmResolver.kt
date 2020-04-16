@@ -117,7 +117,11 @@ internal class KotlinRootNpmResolver internal constructor(
 
         upToDateChecks.forEach { it.commit() }
 
-        return KotlinRootNpmResolution(rootProject, projectResolutions)
+        return KotlinRootNpmResolution(
+            rootProject,
+            projectResolutions,
+            plugins
+        )
     }
 
     internal fun closePlugins(resolution: KotlinRootNpmResolution) {

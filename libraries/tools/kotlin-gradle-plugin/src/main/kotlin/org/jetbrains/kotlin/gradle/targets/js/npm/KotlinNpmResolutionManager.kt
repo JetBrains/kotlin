@@ -100,12 +100,29 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     }
 
     @Incubating
-    fun requireInstalled() = installIfNeeded(requireUpToDateReason = "")
+    internal fun requireInstalled() = installIfNeeded(requireUpToDateReason = "")
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
 
     internal fun install() = installIfNeeded(requireNotInstalled = true)
+
+    internal fun resolve(args: List<String> = emptyList()) {
+        val npmResolution = requireInstalled()
+        val npmResolutions = npmResolution
+            .projects
+            .values
+
+        nodeJsSettings.packageManager.resolveRootProject(
+            nodeJsSettings.rootProject,
+            npmResolutions.flatMap { it.npmProjects },
+            false,
+            args
+        )
+
+        npmResolution.plugins
+            .forEach { it.resolve(npmResolution) }
+    }
 
     internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
         installIfNeeded(requireUpToDateReason = reason)[project]
@@ -172,6 +189,8 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                     }
                 }
             }
+
+        resolve()
 
         return resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
     }

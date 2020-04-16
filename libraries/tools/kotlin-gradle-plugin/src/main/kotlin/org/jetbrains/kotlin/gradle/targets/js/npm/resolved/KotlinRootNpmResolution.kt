@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 
-class KotlinRootNpmResolution(
+internal class KotlinRootNpmResolution(
     val rootProject: Project,
-    val projects: Map<Project, KotlinProjectNpmResolution>
+    val projects: Map<Project, KotlinProjectNpmResolution>,
+    val plugins: List<RootResolverPlugin>
 ) {
     operator fun get(project: Project) = projects[project] ?: KotlinProjectNpmResolution.empty(project)
 }
