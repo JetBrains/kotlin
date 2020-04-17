@@ -13,6 +13,7 @@ class KotlinSSExpressionWithLabelTest : KotlinSSTest() {
     fun testReturnLabel() { doTest("return@lit") }
 
     fun testSuper() { doTest("super") }
+    fun testSuperTypeQualifier() { doTest("super<B>") }
 
     fun testThis() { doTest("this") }
     fun testThisLabel() { doTest("this@A") }

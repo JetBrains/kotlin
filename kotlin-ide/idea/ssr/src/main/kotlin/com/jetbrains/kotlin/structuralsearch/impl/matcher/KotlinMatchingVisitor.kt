@@ -62,14 +62,23 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         when (expression) {
             is KtBreakExpression -> matchExpressionWithLabel(expression, other)
             is KtContinueExpression -> matchExpressionWithLabel(expression, other)
-            is KtSuperExpression -> matchExpressionWithLabel(expression, other)
             is KtThisExpression -> matchExpressionWithLabel(expression, other)
+            is KtSuperExpression -> {
+                myMatchingVisitor.result = other is KtSuperExpression
+                        && myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
+                        && myMatchingVisitor.match(expression.superTypeQualifier, other.superTypeQualifier)
+            }
             is KtReturnExpression -> {
                 myMatchingVisitor.result = other is KtReturnExpression
                         && myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
                         && myMatchingVisitor.match(expression.returnedExpression, other.returnedExpression)
             }
         }
+    }
+
+    override fun visitTypeReference(typeReference: KtTypeReference) {
+        val other = getTreeElement<KtTypeReference>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference.typeElement, other.typeElement)
     }
 
 }
