@@ -7,6 +7,9 @@ plugins {
     id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
+val ultimateTools: Map<String, Any> by rootProject.extensions
+val proprietaryRepositories: Project.() -> Unit by ultimateTools
+
 val clionVersion: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 val isSnapshotIntellij = intellijVersion.endsWith("SNAPSHOT")
@@ -18,8 +21,7 @@ version = "$intellijVersion-0.1"
 
 repositories {
     maven(intellijRepo)
-    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    proprietaryRepositories()
     google()
 }
 

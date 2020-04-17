@@ -17,7 +17,6 @@ val kotlinNativeBackendVersion: String by rootProject.extra
 val kotlinNativeBackendRepo: String by rootProject.extra
 
 repositories {
-    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")
     }

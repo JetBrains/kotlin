@@ -7,6 +7,9 @@ plugins {
     id("com.github.jk1.tcdeps") version "1.2"
 }
 
+val ultimateTools: Map<String, Any> by rootProject.extensions
+val proprietaryRepositories: Project.() -> Unit by ultimateTools
+
 val mobilePluginDir: File by rootProject.extra
 val mobilePluginZipPath: File by rootProject.extra
 val cidrVersion: String by rootProject.extra
@@ -17,7 +20,7 @@ val isStandaloneBuild: Boolean by rootProject.extra
 
 repositories {
     maven("https://maven.google.com")
-    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
+    proprietaryRepositories()
     if (isStandaloneBuild) {
         maven("https://dl.bintray.com/kotlin/kotlin-dev/")
     }
