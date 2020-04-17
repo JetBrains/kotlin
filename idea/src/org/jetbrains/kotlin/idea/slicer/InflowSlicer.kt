@@ -117,7 +117,7 @@ class InflowSlicer(
                 .forEach { it.processPropertyAssignments() }
         }
 
-        val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
+        val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny() ?: return
 
         if (function is KtFunction) {
             processCalls(function, includeOverriders, ArgumentSliceProducer(parameterDescriptor))

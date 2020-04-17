@@ -65,7 +65,7 @@ class OutflowSlicer(
                 require(element == declaration.receiverTypeReference)
 
                 if (declaration.isExpectDeclaration()) {
-                    declaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                    declaration.resolveToDescriptorIfAny()
                         ?.actualsForExpected()
                         ?.forEach {
                             val actualDeclaration = (it as? DeclarationDescriptorWithSource)?.toPsi()
@@ -121,7 +121,7 @@ class OutflowSlicer(
 
             if (callable != null) {
                 if (callable.isExpectDeclaration()) {
-                    variable.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+                    variable.resolveToDescriptorIfAny()
                         ?.actualsForExpected()
                         ?.forEach {
                             (it as? DeclarationDescriptorWithSource)?.toPsi()?.passToProcessor()

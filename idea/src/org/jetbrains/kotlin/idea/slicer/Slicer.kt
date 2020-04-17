@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -121,7 +120,7 @@ abstract class Slicer(
             .forEach { it.namedUnwrappedElement?.passToProcessor(mode) }
 
         if (this is KtCallableDeclaration && isExpectDeclaration()) {
-            resolveToDescriptorIfAny(BodyResolveMode.FULL)
+            resolveToDescriptorIfAny()
                 ?.actualsForExpected()
                 ?.forEach {
                     (it as? DeclarationDescriptorWithSource)?.toPsi()?.passToProcessor(mode)
@@ -159,7 +158,7 @@ abstract class Slicer(
             else -> return
         }
 
-        val descriptor = callable.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableMemberDescriptor ?: return
+        val descriptor = callable.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
         val superDescriptors = if (includeOverriders) {
             descriptor.getDeepestSuperDeclarations()
         } else {
