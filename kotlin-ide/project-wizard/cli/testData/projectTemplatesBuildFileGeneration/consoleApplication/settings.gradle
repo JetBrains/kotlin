@@ -8,4 +8,4 @@ pluginManagement {
     }
 
 }
-rootProject.name = 'ConsoleApplication'
+rootProject.name = 'consoleApplication'

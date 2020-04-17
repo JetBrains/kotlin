@@ -16,7 +16,7 @@ pluginManagement {
         }
     }
 }
-rootProject.name = 'MultiplatformMobileApplication'
+rootProject.name = 'multiplatformMobileApplication'
 
 
 include(':shared')

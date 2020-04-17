@@ -8,4 +8,4 @@ pluginManagement {
     }
 
 }
-rootProject.name = "FullStackWebApplication"
+rootProject.name = "fullStackWebApplication"

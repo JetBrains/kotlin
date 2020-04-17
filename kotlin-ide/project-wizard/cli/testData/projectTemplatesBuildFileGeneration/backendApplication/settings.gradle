@@ -8,4 +8,4 @@ pluginManagement {
     }
 
 }
-rootProject.name = 'BackendApplication'
+rootProject.name = 'backendApplication'
