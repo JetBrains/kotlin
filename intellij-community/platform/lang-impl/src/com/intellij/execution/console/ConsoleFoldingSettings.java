@@ -8,9 +8,9 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Predicate;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +64,7 @@ public class ConsoleFoldingSettings implements PersistentStateComponent<ConsoleF
       }
     }
 
-    Predicate<String> containsPredicate = l -> {
+    Condition<String> containsPredicate = l -> {
       for (String pattern : patterns) {
         if (l.contains(pattern)) {
           return true;
@@ -74,10 +74,10 @@ public class ConsoleFoldingSettings implements PersistentStateComponent<ConsoleF
     };
 
     if (lines == null) {
-      return containsPredicate.apply(line);
+      return containsPredicate.value(line);
     }
 
-    return lines.stream().anyMatch(containsPredicate::apply);
+    return ContainerUtil.exists(lines, containsPredicate);
   }
 
   public List<String> getPositivePatterns() {
