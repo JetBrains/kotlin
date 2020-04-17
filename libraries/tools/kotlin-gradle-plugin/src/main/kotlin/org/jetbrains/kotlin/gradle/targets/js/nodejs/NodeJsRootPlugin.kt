@@ -10,7 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 
 open class NodeJsRootPlugin : Plugin<Project> {
@@ -30,20 +30,15 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
 
-        val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) {
-            it.group = TASKS_GROUP_NAME
-            it.description = "Create root package.json"
-
-            it.mustRunAfter(rootClean)
-        }
-
         tasks.register(KotlinNpmInstallTask.NAME, KotlinNpmInstallTask::class.java) {
-            it.dependsOn(setupTask, rootPackageJson)
+            it.dependsOn(setupTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
 
             it.mustRunAfter(rootClean)
         }
+
+        YarnPlugin.apply(project)
 
         tasks.register("node" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
             it.cleanableStoreProvider = provider { settings.requireConfigured().cleanableStore }

@@ -8,12 +8,21 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 class YarnWorkspaces : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) = Unit
+
+    override fun preparedFiles(project: Project): Collection<File> {
+        return listOf(
+            NodeJsRootPlugin.apply(project.rootProject)
+                .rootPackageDir
+                .resolve(NpmProject.PACKAGE_JSON)
+        )
+    }
 
     override fun prepareRootProject(
         rootProject: Project,
@@ -31,8 +40,7 @@ class YarnWorkspaces : YarnBasics() {
         rootProject: Project,
         npmProjects: Collection<KotlinCompilationNpmResolution>
     ) {
-        val nodeJs = NodeJsRootPlugin.apply(rootProject)
-        val rootPackageJsonFile = nodeJs.rootPackageJson
+        val rootPackageJsonFile = preparedFiles(rootProject).single()
 
         saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, rootPackageJsonFile)
     }

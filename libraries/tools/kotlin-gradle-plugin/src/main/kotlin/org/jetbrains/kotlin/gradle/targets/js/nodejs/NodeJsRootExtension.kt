@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
@@ -62,9 +61,6 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     val rootPackageDir: File
         get() = rootProject.buildDir.resolve("js")
-
-    val rootPackageJson: File
-        get() = rootPackageDir.resolve(NpmProject.PACKAGE_JSON)
 
     internal val rootNodeModulesStateFile: File
         get() = rootPackageDir.resolve("node_modules.state")

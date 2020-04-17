@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import java.io.File
 
 class YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) {
@@ -27,15 +28,18 @@ class YarnSimple : YarnBasics() {
         }
     }
 
+    override fun preparedFiles(project: Project): Collection<File> =
+        emptyList()
+
+    override fun prepareRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>
+    ) = Unit
+
     override fun resolveRootProject(
         rootProject: Project,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
         cliArgs: List<String>
-    ) = Unit
-
-    override fun prepareRootProject(
-        rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
     ) = Unit
 }

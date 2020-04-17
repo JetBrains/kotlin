@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
@@ -15,7 +18,9 @@ open class KotlinNpmInstallTask : DefaultTask() {
         check(project == project.rootProject)
 
         onlyIf {
-            rootPackageJson.exists()
+            preparedFiles.all {
+                it.exists()
+            }
         }
     }
 
@@ -30,9 +35,9 @@ open class KotlinNpmInstallTask : DefaultTask() {
     val packageJsonFiles: Collection<File>
         get() = resolutionManager.packageJsonFiles
 
-    @get:InputFile
-    val rootPackageJson: File
-        get() = nodeJs.rootPackageJson
+    @get:InputFiles
+    val preparedFiles: Collection<File>
+        get() = nodeJs.packageManager.preparedFiles(project)
 
     // avoid using node_modules as output directory, as it is significantly slows down build
     @get:OutputFile

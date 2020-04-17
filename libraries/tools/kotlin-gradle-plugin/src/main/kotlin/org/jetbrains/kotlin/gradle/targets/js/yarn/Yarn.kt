@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import java.io.File
 
 class Yarn : NpmApi {
     private val yarnWorkspaces = YarnWorkspaces()
@@ -23,6 +24,18 @@ class Yarn : NpmApi {
 
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) =
         getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
+
+    override fun preparedFiles(project: Project): Collection<File> =
+        getDelegate(project).preparedFiles(project)
+
+    override fun prepareRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>
+    ) = getDelegate(rootProject.project)
+        .prepareRootProject(
+            rootProject,
+            subProjects
+        )
 
     override fun resolveRootProject(
         rootProject: Project,
@@ -43,14 +56,5 @@ class Yarn : NpmApi {
             npmResolution,
             dependency,
             transitive
-        )
-
-    override fun prepareRootProject(
-        rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
-    ) = getDelegate(rootProject.project)
-        .prepareRootProject(
-            rootProject,
-            subProjects
         )
 }

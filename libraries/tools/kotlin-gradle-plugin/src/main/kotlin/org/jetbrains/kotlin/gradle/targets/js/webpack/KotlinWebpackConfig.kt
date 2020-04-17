@@ -93,7 +93,7 @@ data class KotlinWebpackConfig(
         val noInfo: Boolean = true,
         val open: Any = true,
         val overlay: Any = false,
-        val port: Int = 8080,
+        val port: Int? = null,
         val proxy: Map<String, Any>? = null,
         val contentBase: List<String>
     ) : Serializable

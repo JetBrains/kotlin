@@ -17,6 +17,8 @@ interface NpmApi {
 
     fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution)
 
+    fun preparedFiles(project: Project): Collection<File>
+
     fun prepareRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>
