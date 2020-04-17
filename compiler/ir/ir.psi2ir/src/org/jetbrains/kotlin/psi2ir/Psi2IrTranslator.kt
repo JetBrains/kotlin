@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.*
@@ -83,11 +84,13 @@ class Psi2IrTranslator(
         expectDescriptorToSymbol?.let { referenceExpectsForUsedActuals(it, context.symbolTable, irModule) }
         postprocess(context, irModule)
 
-        irProviders.filterIsInstance<IrDeserializer>().forEach { it.init(irModule, pluginExtensions) }
+        irProviders.filterIsInstance<IrDeserializer>().forEach { it.init(irModule, emptyList()) }
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
+        assert(context.symbolTable.allUnbound.isEmpty())
         postprocessingSteps.forEach { it.invoke(irModule) }
+//        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
@@ -96,6 +99,7 @@ class Psi2IrTranslator(
     }
 
     private fun postprocess(context: GeneratorContext, irElement: IrModuleFragment) {
+        generateSyntheticDeclarations(irElement, context)
         insertImplicitCasts(irElement, context)
         generateAnnotationsForDeclarations(context, irElement)
 
@@ -105,5 +109,10 @@ class Psi2IrTranslator(
     private fun generateAnnotationsForDeclarations(context: GeneratorContext, irElement: IrElement) {
         val annotationGenerator = AnnotationGenerator(context)
         irElement.acceptVoid(annotationGenerator)
+    }
+
+    private fun generateSyntheticDeclarations(moduleFragment: IrModuleFragment, context: GeneratorContext) {
+        val generator = IrSyntheticDeclarationGenerator(context)
+        moduleFragment.acceptChildrenVoid(generator)
     }
 }
