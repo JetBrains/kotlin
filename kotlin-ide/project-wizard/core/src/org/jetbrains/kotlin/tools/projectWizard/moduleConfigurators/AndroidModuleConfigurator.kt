@@ -79,7 +79,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         buildList {
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.GOOGLE, "androidx.core", "core-ktx"),
-                version = Version.fromString("1.1.0"),
+                version = Versions.ANDROID.ANDROIDX_CORE_CTX,
                 dependencyType = DependencyType.MAIN
             )
         }

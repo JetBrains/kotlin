@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetTy
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 
 class KtorServerTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.title")
@@ -40,7 +41,7 @@ class KtorServerTemplate : Template() {
                 +ktorArtifactDependency("ktor-html-builder")
                 +ArtifactBasedLibraryDependencyIR(
                     MavenArtifact(DefaultRepository.JCENTER, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
-                    Version.fromString("0.6.12"),
+                    Versions.KOTLINX.KOTLINX_HTML,
                     DependencyType.MAIN
                 )
             }
@@ -74,7 +75,7 @@ class KtorServerTemplate : Template() {
 
 private fun ktorArtifactDependency(@NonNls name: String) = ArtifactBasedLibraryDependencyIR(
     MavenArtifact(Repositories.KTOR_BINTRAY, "io.ktor", name),
-    Version.fromString("1.2.6"),
+    Versions.KTOR,
     DependencyType.MAIN
 )
 
