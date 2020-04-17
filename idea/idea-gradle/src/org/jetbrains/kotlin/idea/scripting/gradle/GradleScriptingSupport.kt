@@ -7,24 +7,14 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupportHelper
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
-import java.io.File
-import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
 
 data class ConfigurationData(
     val templateClasspath: List<String>,

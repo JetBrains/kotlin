@@ -21,21 +21,21 @@ var Project.kotlinGradleDslSync: MutableMap<ExternalSystemTaskId, KotlinDslGradl
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
     override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
-        if (workingDir != null) {
-            val project = id.findProject() ?: return
-            project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
-        }
+        if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT) return
+        if (id.projectSystemId != GRADLE_SYSTEM_ID) return
+
+        if (workingDir == null) return
+        val project = id.findProject() ?: return
+
+        project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
     }
 
     override fun onEnd(id: ExternalSystemTaskId) {
-        if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT || id.projectSystemId != GRADLE_SYSTEM_ID) {
-            return
-        }
+        if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT) return
+        if (id.projectSystemId != GRADLE_SYSTEM_ID) return
 
         val project = id.findProject() ?: return
         val sync = project.kotlinGradleDslSync.remove(id) ?: return
-
-        if (sync.models.isEmpty()) return
 
         saveScriptModels(project, sync)
     }

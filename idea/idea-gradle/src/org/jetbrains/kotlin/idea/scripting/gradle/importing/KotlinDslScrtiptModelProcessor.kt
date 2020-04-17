@@ -93,8 +93,6 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
         )
     }
 
-class GradleKtsContext(val javaHome: File?)
-
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
     val models = mutableListOf<KotlinDslScriptModel>()
 }

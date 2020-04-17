@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage.Companion.ScriptClassRoots
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper

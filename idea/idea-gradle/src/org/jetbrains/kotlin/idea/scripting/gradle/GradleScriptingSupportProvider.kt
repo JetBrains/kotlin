@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslGradleBuildSync
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
@@ -121,7 +120,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             ?.templateClasspath?.map { it.path }
     }
 
-    val unlinkedFilesSupport = object : ScriptingSupport() {
+    private val unlinkedFilesSupport = object : ScriptingSupport() {
         override fun clearCaches() {
         }
 
