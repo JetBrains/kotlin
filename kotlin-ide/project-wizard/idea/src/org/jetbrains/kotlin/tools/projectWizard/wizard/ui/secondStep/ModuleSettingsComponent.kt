@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
@@ -24,14 +22,13 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIB
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(
     private val context: Context,
-    uiEditorUsagesStats: UiEditorUsageStats
+    private val uiEditorUsagesStats: UiEditorUsageStats
 ) : DynamicComponent(context) {
     private val settingsList = TitledComponentsList(emptyList(), context).asSubComponent()
     private val moduleDependenciesComponent = ModuleDependenciesComponent(context)
@@ -64,7 +61,7 @@ class ModuleSettingsComponent(
 
     private fun createTemplatesListComponentForModule(module: Module) =
         read { availableTemplatesFor(module) }.takeIf { it.isNotEmpty() }?.let { templates ->
-            ModuleTemplateComponent(context, module, templates) {
+            ModuleTemplateComponent(context, module, templates, uiEditorUsagesStats) {
                 updateModule(module)
                 component.updateUI()
             }
@@ -114,6 +111,7 @@ private class ModuleTemplateComponent(
     context: Context,
     private val module: Module,
     templates: List<Template>,
+    uiEditorUsagesStats: UiEditorUsageStats,
     onTemplateChanged: () -> Unit
 ) : TitledComponent(context) {
     @OptIn(ExperimentalStdlibApi::class)
@@ -127,6 +125,7 @@ private class ModuleTemplateComponent(
         labelText = null,
     ) { value ->
         module.template = value.takeIf { it != NoneTemplate }
+        uiEditorUsagesStats.moduleTemplateChanged++
         changeTemplateDescription(module.template)
         onTemplateChanged()
     }.asSubComponent()

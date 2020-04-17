@@ -14,49 +14,41 @@ interface WizardStats {
 }
 
 data class ProjectCreationStats(
-    val projectTemplateName: String,
+    val projectTemplateId: String,
     val buildSystemType: String
 ) : WizardStats {
     override fun toMap(): Map<String, String> = mapOf(
-        ::projectTemplateName.name to projectTemplateName,
-        ::buildSystemType.name to buildSystemType
+        "project_template" to projectTemplateId,
+        "build_system" to buildSystemType
     )
 }
 
 data class UiEditorUsageStats(
     var modulesCreated: Int = 0,
     var modulesRemoved: Int = 0,
-    var moduleTemplatesRemoved: Int = 0,
-    var moduleTemplatesSet: Int = 0
+    var moduleTemplateChanged: Int = 0
 ) : WizardStats {
     override fun toMap(): Map<String, String> = mapOf(
-        ::modulesCreated.name to modulesCreated.toString(),
-        ::modulesRemoved.name to modulesRemoved.toString(),
-        ::moduleTemplatesRemoved.name to moduleTemplatesRemoved.toString(),
-        ::moduleTemplatesSet.name to moduleTemplatesSet.toString()
+        "modules_created" to modulesCreated.toString(),
+        "modules_removed" to modulesRemoved.toString(),
+        "module_template_changed" to moduleTemplateChanged.toString()
     )
 }
 
 private enum class WizardStatsEvent(@NonNls val text: String) {
-    PROJECT_OPEN_BY_HYPERLINK("Wizard opened by hyperlink"),
-    PROJECT_CREATED("Project Created"),
-    WIZARD_STATE_CHANGE("New Wizard enabled or disable")
+    PROJECT_OPEN_BY_HYPERLINK("wizard_opened_by_hyperlink"),
+    PROJECT_CREATED("project_created")
 }
 
 object WizardStatsService {
     fun logWizardOpenByHyperlink(templateId: String?) {
-        val data = mapOf("templateId" to (templateId ?: "None"))
+        val data = mapOf("template_id" to (templateId ?: "none"))
         log(WizardStatsEvent.PROJECT_OPEN_BY_HYPERLINK, data)
     }
 
     fun logDataOnProjectGenerated(projectCreationStats: ProjectCreationStats, uiEditorUsageStats: UiEditorUsageStats) {
         val data = projectCreationStats.toMap() + uiEditorUsageStats.toMap()
         log(WizardStatsEvent.PROJECT_CREATED, data)
-    }
-
-    fun logWizardStatusChanged(isEnabled: Boolean) {
-        val data = mapOf("enabled" to isEnabled.toString())
-        log(WizardStatsEvent.WIZARD_STATE_CHANGE, data)
     }
 
     private fun log(event: WizardStatsEvent, data: Map<String, String>) {

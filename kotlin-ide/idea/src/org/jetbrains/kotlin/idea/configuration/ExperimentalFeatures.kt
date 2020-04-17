@@ -35,10 +35,6 @@ object ExperimentalFeatures {
             val platformVersion = PlatformVersion.getCurrent() ?: return true
             return platformVersion.platform != PlatformVersion.Platform.ANDROID_STUDIO
         }
-
-        override fun onFeatureStatusChanged(enabled: Boolean) {
-            WizardStatsService.logWizardStatusChanged(isEnabled = enabled)
-        }
     }
 
     val allFeatures: List<ExperimentalFeature> = listOf(
