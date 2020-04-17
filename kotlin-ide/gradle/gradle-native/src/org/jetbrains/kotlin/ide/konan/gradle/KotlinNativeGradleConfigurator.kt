@@ -29,7 +29,7 @@ open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
 
     override val name: String get() = NAME
 
-    override val targetPlatform get() = NativePlatforms.defaultNativePlatform
+    override val targetPlatform get() = NativePlatforms.unspecifiedNativePlatform
 
     @Suppress("DEPRECATION_ERROR")
     override fun getTargetPlatform() = NativePlatforms.CompatNativePlatform

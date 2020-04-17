@@ -104,7 +104,7 @@ class CompositeResolverForModuleFactory(
             yieldAll(getCommonProvidersIfAny(moduleInfo, moduleContext, moduleDescriptor, container)) // todo: module context
             yieldAll(getJsProvidersIfAny(moduleInfo, moduleContext, moduleDescriptor, container))
             yieldAll(getJvmProvidersIfAny(container))
-            yieldAll(getKonanProvidersIfAny(moduleInfo, container))
+            yieldAll(getNativeProvidersIfAny(moduleInfo, container))
         }.toList()
 
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
@@ -133,11 +133,11 @@ class CompositeResolverForModuleFactory(
     private fun getJvmProvidersIfAny(container: StorageComponentContainer): List<PackageFragmentProvider> =
         if (targetPlatform.has<JvmPlatform>()) listOf(container.get<JavaDescriptorResolver>().packageFragmentProvider) else emptyList()
 
-    private fun getKonanProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
+    private fun getNativeProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
         if (!targetPlatform.has<NativePlatform>()) return emptyList()
 
         return listOfNotNull(
-            NativePlatforms.defaultNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
+            NativePlatforms.unspecifiedNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
                 moduleInfo,
                 container.get<StorageManager>(),
                 container.get<LanguageVersionSettings>(),
