@@ -823,10 +823,11 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
       Collection<FileEditor> activeEditors = dca.getSelectedEditors();
       boolean updateByTimerEnabled = dca.isUpdateByTimerEnabled();
-      PassExecutorService.log(dca.getUpdateProgress(), null, "Update Runnable. myUpdateByTimerEnabled:",
-                              updateByTimerEnabled, " something disposed:",
-                              PowerSaveMode.isEnabled() || !myProject.isInitialized(), " activeEditors:",
-                              activeEditors);
+      if (PassExecutorService.LOG.isDebugEnabled()) {
+        PassExecutorService.log(dca.getUpdateProgress(), null, "Update Runnable. myUpdateByTimerEnabled:",
+                                updateByTimerEnabled, " something disposed:",
+                                PowerSaveMode.isEnabled() || !myProject.isInitialized(), " activeEditors:", activeEditors);
+      }
       if (!updateByTimerEnabled) return;
 
       if (activeEditors.isEmpty()) return;
