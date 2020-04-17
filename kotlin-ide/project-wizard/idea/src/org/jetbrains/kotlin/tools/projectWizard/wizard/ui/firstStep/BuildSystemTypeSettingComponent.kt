@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.Disposer
 import icons.GradleIcons
 import icons.OpenapiIcons
@@ -56,7 +56,7 @@ class BuildSystemTypeSettingComponent(
 
     private inner class BuildSystemTypeAction(
         val buildSystemType: BuildSystemType
-    ) : ToggleAction(buildSystemType.text, null, buildSystemType.icon) {
+    ) : ToggleAction(buildSystemType.text, null, buildSystemType.icon), DumbAware {
         override fun isSelected(e: AnActionEvent): Boolean = value == buildSystemType
 
         override fun setSelected(e: AnActionEvent, state: Boolean) {
