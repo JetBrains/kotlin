@@ -800,18 +800,15 @@ val zipPlugin by task<Zip> {
     }
     val destPath = project.findProperty("pluginZipPath") as String?
     val dest = File(destPath ?: "$buildDir/kotlin-plugin.zip")
-    destinationDir = dest.parentFile
-    archiveName = dest.name
-    doFirst {
-        if (destPath == null) throw GradleException("Specify target zip path with 'pluginZipPath' property")
-    }
+    destinationDirectory.set(dest.parentFile)
+    archiveFileName.set(dest.name)
 
     from(src)
     into("Kotlin")
     setExecutablePermissions()
 
     doLast {
-        logger.lifecycle("Plugin artifacts packed to $archivePath")
+        logger.lifecycle("Plugin artifacts packed to $archiveFile")
     }
 }
 
