@@ -88,8 +88,9 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
   private static void closeIntentionPreviewPopup() {
     ApplicationManager.getApplication().invokeLater(() ->
        StackingPopupDispatcher.getInstance().getPopupStream()
-      .filter(popup -> popup.getUserData(IntentionPreviewPopupUpdateProcessor.IntentionPreviewPopupKey.class) != null)
-      .forEach(popup -> popup.cancel()));
+         .filter(popup -> popup.getUserData(IntentionPreviewPopupUpdateProcessor.IntentionPreviewPopupKey.class) != null)
+         .collect(Collectors.toList())
+         .forEach(popup -> popup.cancel()));
   }
 
   @Override
