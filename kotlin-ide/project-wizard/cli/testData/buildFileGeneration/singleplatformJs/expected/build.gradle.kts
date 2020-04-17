@@ -14,4 +14,9 @@ dependencies {
     testImplementation(kotlin("test-js"))
     implementation(kotlin("stdlib-js"))
 }
-kotlin.target.browser { }
+kotlin {
+    js {
+        browser {}
+        binaries.executable()
+    }
+}
