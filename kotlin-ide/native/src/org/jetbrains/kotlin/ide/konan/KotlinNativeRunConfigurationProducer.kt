@@ -13,17 +13,13 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.idea.facet.externalSystemNativeMainRunTasks
-import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.plugins.gradle.service.execution.GradleExternalTaskConfigurationType
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
-import org.jetbrains.plugins.gradle.util.GradleConstants
 
 
 class KotlinNativeRunConfigurationProducer :
@@ -36,9 +32,9 @@ class KotlinNativeRunConfigurationProducer :
         GradleExternalTaskConfigurationType.getInstance().factory
 
     override fun isConfigurationFromContext(configuration: GradleRunConfiguration, context: ConfigurationContext): Boolean {
+        val module = context.module.asNativeModule() ?: return false
         val location = context.location ?: return false
         val function = location.psiElement.parentOfType<KtFunction>() ?: return false
-        val module = function.module.asNativeModule() ?: return false
 
         val mainRunTasks = getDebugMainRunTasks(function)
         if (mainRunTasks.isEmpty()) return false
@@ -52,9 +48,8 @@ class KotlinNativeRunConfigurationProducer :
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
-        if (GradleConstants.SYSTEM_ID != configuration.settings.externalSystemId) return false
+        val module = context.module.asNativeModule() ?: return false
         val function = sourceElement.get()?.parentOfType<KtFunction>() ?: return false
-        val module = function.module.asNativeModule() ?: return false
 
         val mainRunTasks = getDebugMainRunTasks(function)
         if (mainRunTasks.isEmpty()) return false
