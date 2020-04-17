@@ -1,17 +1,15 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
-import com.intellij.util.containers.toArray
 import org.jetbrains.kotlin.psi.*
-import kotlin.reflect.typeOf
 
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
 
     /**
-     * Casts [myMatchingVisitor].element to [T], sets its result to false else.
+     * Casts the current code element to [T], sets [myMatchingVisitor].result to false else.
      */
-    private inline fun <reified T> getOther(): T? = when (myMatchingVisitor.element) {
+    private inline fun <reified T> getTreeElement(): T? = when (myMatchingVisitor.element) {
         is T -> myMatchingVisitor.element as T
         else -> {
             myMatchingVisitor.result = false
@@ -20,13 +18,13 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
-        val other = getOther<KtArrayAccessExpression>() ?: return
+        val other = getTreeElement<KtArrayAccessExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.arrayExpression, other.arrayExpression)
                 && myMatchingVisitor.matchSons(expression.indicesNode, other.indicesNode)
     }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression) {
-        val other = getOther<KtBinaryExpression>() ?: return
+        val other = getTreeElement<KtBinaryExpression>() ?: return
         // Same operation
         if (myMatchingVisitor.setResult(expression.operationToken == other.operationToken)) {
             // Same operands
@@ -39,20 +37,39 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.element.text == expression.text
     }
 
-    private inline fun <reified T : KtSimpleNameExpression> matchSimpleNameReferencedName(expr: KtReferenceExpression, expr2: T) {
-        myMatchingVisitor.result = if (expr is T) expr.getReferencedName() == expr2.getReferencedName() else false
+    private inline fun <reified T : KtSimpleNameExpression> matchSimpleNameReferencedName(patternElement: T, treeElement: KtReferenceExpression) {
+        myMatchingVisitor.result =
+            treeElement is T && patternElement.getReferencedName() == treeElement.getReferencedName()
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-        val other = getOther<KtSimpleNameExpression>() ?: return
+        val other = getTreeElement<KtSimpleNameExpression>() ?: return
         when (expression) {
-            is KtNameReferenceExpression -> matchSimpleNameReferencedName(other, expression)
-            is KtLabelReferenceExpression -> matchSimpleNameReferencedName(other, expression)
-            is KtOperationReferenceExpression -> matchSimpleNameReferencedName(other, expression)
-            is KtEnumEntrySuperclassReferenceExpression -> matchSimpleNameReferencedName(other, expression)
+            is KtNameReferenceExpression -> matchSimpleNameReferencedName(expression, other)
+            is KtLabelReferenceExpression -> matchSimpleNameReferencedName(expression, other)
+            is KtOperationReferenceExpression -> matchSimpleNameReferencedName(expression, other)
+            is KtEnumEntrySuperclassReferenceExpression -> matchSimpleNameReferencedName(expression, other)
         }
     }
 
+    private inline fun <reified T : KtExpressionWithLabel> matchExpressionWithLabel(patternElement: T, treeElement: KtExpressionWithLabel) {
+        myMatchingVisitor.result =
+            treeElement is T && myMatchingVisitor.match(patternElement.getTargetLabel(), treeElement.getTargetLabel())
+    }
 
+    override fun visitExpressionWithLabel(expression: KtExpressionWithLabel) {
+        val other = getTreeElement<KtExpressionWithLabel>() ?: return
+        when (expression) {
+            is KtBreakExpression -> matchExpressionWithLabel(expression, other)
+            is KtContinueExpression -> matchExpressionWithLabel(expression, other)
+            is KtSuperExpression -> matchExpressionWithLabel(expression, other)
+            is KtThisExpression -> matchExpressionWithLabel(expression, other)
+            is KtReturnExpression -> {
+                myMatchingVisitor.result = other is KtReturnExpression
+                        && myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
+                        && myMatchingVisitor.match(expression.returnedExpression, other.returnedExpression)
+            }
+        }
+    }
 
 }
