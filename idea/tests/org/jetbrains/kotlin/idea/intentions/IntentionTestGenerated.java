@@ -13928,6 +13928,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testRemoveUnresolvedType() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/removeUnresolvedType.kt");
         }
+
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/suspendFunction.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/removeExplicitTypeArguments")
