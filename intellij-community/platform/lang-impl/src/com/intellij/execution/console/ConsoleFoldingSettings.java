@@ -10,6 +10,7 @@ import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.Predicate;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,19 +52,32 @@ public class ConsoleFoldingSettings implements PersistentStateComponent<ConsoleF
   }
 
   private static boolean containsAny(String line, List<String> patterns) {
-    LinkedHashSet<String> lines = new LinkedHashSet<>();
+    Set<String> lines = null;
     for (ConsoleLineModifier modifier : ConsoleLineModifier.EP_NAME.getExtensionList()) {
-      ContainerUtil.addIfNotNull(lines, modifier.modify(line));
+      String modifiedLine = modifier.modify(line);
+      if (modifiedLine != null) {
+        if (lines == null) {
+          lines = new HashSet<>();
+          lines.add(line);
+        }
+        lines.add(modifiedLine);
+      }
     }
 
-    for (String l : lines) {
+    Predicate<String> containsPredicate = l -> {
       for (String pattern : patterns) {
         if (l.contains(pattern)) {
           return true;
         }
       }
+      return false;
+    };
+
+    if (lines == null) {
+      return containsPredicate.apply(line);
     }
-    return false;
+
+    return lines.stream().anyMatch(containsPredicate::apply);
   }
 
   public List<String> getPositivePatterns() {
