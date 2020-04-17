@@ -11,6 +11,6 @@ import java.nio.file.Path
 
 abstract class AbstractProjectTemplateBuildFileGenerationTest : AbstractBuildFileGenerationTest() {
     override fun createWizard(directory: Path, buildSystem: BuildSystem, projectDirectory: Path): Wizard =
-        ProjectTemplateBasedTestWizard.createByDirectory(directory, buildSystem, projectDirectory, YamlWizard.CLI_SERVICES_MANAGER)
+        ProjectTemplateBasedTestWizard.createByDirectory(directory, buildSystem, projectDirectory, CLI_WIZARD_TEST_SERVICES_MANAGER)
 }
 

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.3.70"
+    kotlin("multiplatform") version "KOTLIN_VERSION"
     id("com.android.library")
     id("kotlin-android-extensions")
 }
@@ -11,6 +11,9 @@ repositories {
     google()
     jcenter()
     mavenCentral()
+    maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
+    }
 }
 kotlin {
     android()

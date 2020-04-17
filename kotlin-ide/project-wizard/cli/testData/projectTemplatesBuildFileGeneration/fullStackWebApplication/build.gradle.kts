@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-    kotlin("multiplatform") version "1.3.70"
+    kotlin("multiplatform") version "KOTLIN_VERSION"
     application
 }
 group = "me.user"
@@ -12,6 +12,9 @@ repositories {
     jcenter()
     maven {
         url = uri("https://dl.bintray.com/kotlin/ktor")
+    }
+    maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
     }
     maven {
         url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")

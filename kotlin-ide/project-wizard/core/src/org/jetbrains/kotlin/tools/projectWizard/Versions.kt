@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.tools.projectWizard
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 object Versions {
-    val KOTLIN = version("1.3.70")
+    val KOTLIN = version("1.4-M1") //used in tests and as fallback version
+
     val GRADLE = version("6.3")
     val KTOR = version("1.2.6")
 
