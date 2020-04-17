@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +35,7 @@ public class ExpandAllRegionsAction extends EditorAction {
       public void doExecute(@NotNull final Editor editor, @Nullable Caret caret, DataContext dataContext) {
         Project project = editor.getProject();
         assert project != null;
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
         CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
-        codeFoldingManager.updateFoldRegions(editor);
 
         final List<FoldRegion> regions = getFoldRegionsForSelection(editor, caret);
         editor.getFoldingModel().runBatchFoldingOperation(() -> {

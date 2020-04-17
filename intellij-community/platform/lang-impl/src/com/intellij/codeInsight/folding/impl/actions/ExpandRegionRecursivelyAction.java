@@ -15,7 +15,6 @@
  */
 package com.intellij.codeInsight.folding.impl.actions;
 
-import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -31,10 +30,6 @@ public class ExpandRegionRecursivelyAction extends EditorAction {
     super(new BaseFoldingHandler() {
       @Override
       public void doExecute(@NotNull final Editor editor, @Nullable Caret caret, DataContext dataContext) {
-        assert editor.getProject() != null;
-        CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(editor.getProject());
-        foldingManager.updateFoldRegions(editor);
-
         final List<FoldRegion> regions = getFoldRegionsForCaret(editor, caret, false);
         editor.getFoldingModel().runBatchFoldingOperation(() -> {
           for (FoldRegion region : regions) {

@@ -15,7 +15,6 @@
  */
 package com.intellij.codeInsight.folding.impl.actions;
 
-import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.codeInsight.folding.impl.FoldingUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
@@ -34,10 +33,6 @@ public abstract class BaseExpandToLevelAction extends EditorAction {
     super(new BaseFoldingHandler() {
       @Override
       protected void doExecute(@NotNull final Editor editor, @Nullable Caret caret, DataContext dataContext) {
-        assert editor.getProject() != null;
-        CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(editor.getProject());
-        foldingManager.updateFoldRegions(editor);
-
         if (caret == null) {
           caret = editor.getCaretModel().getPrimaryCaret();
         }

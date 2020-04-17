@@ -16,7 +16,6 @@
 
 package com.intellij.codeInsight.folding.impl.actions;
 
-import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.codeInsight.folding.impl.FoldingUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
@@ -31,9 +30,6 @@ public class CollapseRegionAction extends EditorAction {
     super(new BaseFoldingHandler() {
       @Override
       public void doExecute(@NotNull final Editor editor, @Nullable Caret caret, DataContext dataContext) {
-        CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(editor.getProject());
-        foldingManager.updateFoldRegions(editor);
-
         final int line = editor.getCaretModel().getLogicalPosition().line;
 
         Runnable processor = () -> {

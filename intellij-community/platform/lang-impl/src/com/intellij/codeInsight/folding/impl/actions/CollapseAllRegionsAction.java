@@ -16,14 +16,11 @@
 
 package com.intellij.codeInsight.folding.impl.actions;
 
-import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,11 +31,6 @@ public class CollapseAllRegionsAction extends EditorAction {
     super(new BaseFoldingHandler() {
       @Override
       public void doExecute(@NotNull final Editor editor, @Nullable Caret caret, DataContext dataContext) {
-        Project project = editor.getProject();
-        assert project != null;
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
-        CodeFoldingManager.getInstance(project).updateFoldRegions(editor);
-
         final List<FoldRegion> regions = getFoldRegionsForSelection(editor, caret);
         editor.getFoldingModel().runBatchFoldingOperation(() -> {
           for (FoldRegion region : regions) {
