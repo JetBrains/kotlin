@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.components.service
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrap
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
+import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
@@ -25,18 +28,16 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
 fun saveScriptModels(
-    resolverContext: ProjectResolverContext,
+    project: Project,
+    task: ExternalSystemTaskId,
+    javaHomeStr: String?,
     models: List<KotlinDslScriptModel>
 ) {
-    val task = resolverContext.externalSystemTaskId
-    val project = task.findProject() ?: return
-    val settings = resolverContext.settings ?: return
-
     val scriptConfigurations = mutableListOf<Pair<VirtualFile, ScriptConfigurationSnapshot>>()
 
     val errorReporter = KotlinGradleDslErrorReporter(project, task)
 
-    val javaHome = settings.javaHome?.let { File(it) }
+    val javaHome = javaHomeStr?.let { File(it) }
     models.forEach { model ->
         val scriptFile = File(model.file)
         val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!

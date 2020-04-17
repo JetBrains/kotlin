@@ -93,9 +93,9 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
             )
         } else {
             val models = model.toListOfScriptModels()
-
-            saveScriptModels(resolverCtx, models)
-
+            resolverCtx.externalSystemTaskId.findProject()?.kotlinDslModels?.addAll(
+                models
+            )
             if (models.containsErrors()) {
                 throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
             }
