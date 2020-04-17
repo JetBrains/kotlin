@@ -573,8 +573,8 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             val receiver = localFunction.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
             val uVariable = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
-            assertEquals("ULambdaExpression", uVariable.asLogString())
-            assertEquals(uVariable, localFunctionResolved.toUElement())
+            assertEquals("ULocalVariable (name = bar)", uVariable.asLogString())
+            assertEquals((uVariable as ULocalVariable).uastInitializer, localFunctionResolved.toUElement())
         }
     }
 
