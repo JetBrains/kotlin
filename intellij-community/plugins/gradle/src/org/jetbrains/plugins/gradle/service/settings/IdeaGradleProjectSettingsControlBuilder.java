@@ -26,10 +26,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -994,8 +991,10 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       this.value = value;
     }
 
+    @NlsContexts.ListItem
     protected abstract String getText();
 
+    @NlsContexts.ListItem
     protected abstract String getComment();
 
     @Override
@@ -1025,7 +1024,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     @Override
     protected String getComment() {
-      return Comparing.equal(value, GradleProjectSettings.DEFAULT_DELEGATE) ? "Default" : null;
+      return Comparing.equal(value, GradleProjectSettings.DEFAULT_DELEGATE) ? GradleBundle.message("gradle.settings.text.default") : null;
     }
 
     @NotNull
@@ -1058,7 +1057,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     @Override
     protected String getComment() {
-      return Comparing.equal(value, GradleProjectSettings.DEFAULT_TEST_RUNNER) ? "Default" : null;
+      return Comparing.equal(value, GradleProjectSettings.DEFAULT_TEST_RUNNER)
+             ? GradleBundle.message("gradle.settings.text.default")
+             : null;
     }
 
     @NotNull
