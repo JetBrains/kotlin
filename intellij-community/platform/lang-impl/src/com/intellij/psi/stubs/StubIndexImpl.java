@@ -18,7 +18,6 @@ import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,14 +37,19 @@ import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
 import com.intellij.util.indexing.impl.RemovedKeyProcessor;
 import com.intellij.util.indexing.memory.InMemoryIndexStorage;
-import com.intellij.util.io.DataOutputStream;
-import com.intellij.util.io.*;
-import gnu.trove.*;
+import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.KeyDescriptor;
+import com.intellij.util.io.VoidDataExternalizer;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
+import gnu.trove.TIntArrayList;
+import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -268,87 +272,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     }
   }
 
-  public static class StubIdExternalizer implements DataExternalizer<StubIdList> {
-    public static final StubIdExternalizer INSTANCE = new StubIdExternalizer();
-
-    @Override
-    public void save(final @NotNull DataOutput out, final @NotNull StubIdList value) throws IOException {
-      int size = value.size();
-      if (size == 0) {
-        DataInputOutputUtil.writeINT(out, Integer.MAX_VALUE);
-      }
-      else if (size == 1) {
-        DataInputOutputUtil.writeINT(out, value.get(0)); // most often case
-      }
-      else {
-        DataInputOutputUtil.writeINT(out, -size);
-        for (int i = 0; i < size; ++i) {
-          DataInputOutputUtil.writeINT(out, value.get(i));
-        }
-      }
-    }
-
-    @Override
-    public @NotNull StubIdList read(final @NotNull DataInput in) throws IOException {
-      int size = DataInputOutputUtil.readINT(in);
-      if (size == Integer.MAX_VALUE) {
-        return new StubIdList();
-      }
-      if (size >= 0) {
-        return new StubIdList(size);
-      }
-      size = -size;
-      int[] result = new int[size];
-      for (int i = 0; i < size; ++i) {
-        result[i] = DataInputOutputUtil.readINT(in);
-      }
-      return new StubIdList(result, size);
-    }
-  }
-
-  @Override
-  <K> void serializeIndexValue(@NotNull DataOutput out, @NotNull StubIndexKey<K, ?> stubIndexKey, @NotNull Map<K, StubIdList> map) throws IOException {
-    UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
-    if (index == null) return;
-    KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
-
-    BufferExposingByteArrayOutputStream indexOs = new BufferExposingByteArrayOutputStream();
-    DataOutputStream indexDos = new DataOutputStream(indexOs);
-    for (K key : map.keySet()) {
-      keyDescriptor.save(indexDos, key);
-      StubIdExternalizer.INSTANCE.save(indexDos, map.get(key));
-    }
-    DataInputOutputUtil.writeINT(out, indexDos.size());
-    out.write(indexOs.getInternalBuffer(), 0, indexOs.size());
-  }
-
-  @Override
-  @NotNull
-  <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey, @Nullable K requestedKey) throws IOException {
-    UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
-    KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
-
-    int bufferSize = DataInputOutputUtil.readINT(in);
-    byte[] buffer = new byte[bufferSize];
-    in.readFully(buffer);
-    UnsyncByteArrayInputStream indexIs = new UnsyncByteArrayInputStream(buffer);
-    DataInputStream indexDis = new DataInputStream(indexIs);
-    TObjectHashingStrategy<K> hashingStrategy = StubKeyHashingStrategyCache.INSTANCE.getKeyHashingStrategy(stubIndexKey);
-    Map<K, StubIdList> result = new THashMap<>(hashingStrategy);
-    while (indexDis.available() > 0) {
-      K key = keyDescriptor.read(indexDis);
-      StubIdList read = StubIdExternalizer.INSTANCE.read(indexDis);
-      if (requestedKey != null) {
-        if (hashingStrategy.equals(requestedKey, key)) {
-          result.put(key, read);
-          return result;
-        }
-      } else {
-        result.put(key, read);
-      }
-    }
-    return result;
-  }
 
   @Override
   public <Key, Psi extends PsiElement> boolean processElements(final @NotNull StubIndexKey<Key, Psi> indexKey,
@@ -443,13 +366,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   @Override
   public void forceRebuild(@NotNull Throwable e) {
     FileBasedIndex.getInstance().scheduleRebuild(StubUpdatingIndex.INDEX_ID, e);
-  }
-
-  @Override
-  void ensureLoaded() {
-    ProgressManager.getInstance().executeNonCancelableSection(() -> {
-      getAsyncState();
-    });
   }
 
   private static void requestRebuild() {
@@ -593,7 +509,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   private void clearState() {
-    StubKeyHashingStrategyCache.INSTANCE.clear();
+    StubIndexKeyDescriptorCache.INSTANCE.clear();
     myCachedStubIds.clear();
     myStateFuture = null;
     myState = null;

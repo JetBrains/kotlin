@@ -12,6 +12,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.KeyedExtensionCollector;
@@ -256,6 +257,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   @NotNull
   @Override
   public DataExternalizer<SerializedStubTree> getValueExternalizer() {
+    ensureSerializationManagerInitialized(mySerializationManager);
     return new SerializedStubTreeDataExternalizer(true, mySerializationManager, myStubIndexesExternalizer);
   }
 
@@ -310,16 +312,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
       throws IOException {
       super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(extension), null, null);
-
-      // load stub serializers before usage
-      FileTypeRegistry.getInstance().getRegisteredFileTypes();
-      getExtensions(BinaryFileStubBuilders.INSTANCE).forEach(builder -> {});
-      getExtensions(LanguageParserDefinitions.INSTANCE).forEach(ParserDefinition::getFileNodeType);
-    }
-
-    private static  <T> Stream<T> getExtensions(KeyedExtensionCollector<T, ?> ex) {
-      ExtensionPoint<KeyedLazyInstance<T>> point = ex.getPoint();
-      return point == null ? Stream.empty() : point.extensions().map(KeyedLazyInstance::getInstance);
     }
 
     @Override
@@ -435,5 +427,25 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
         return false;
       }
     }
+  }
+
+  private static void ensureSerializationManagerInitialized(@NotNull SerializationManagerEx serializationManager) {
+    ProgressManager.getInstance().executeNonCancelableSection(() -> {
+      instantiateElementTypesFromFields();
+      StubIndexEx.initExtensions();
+      serializationManager.initSerializers();
+    });
+  }
+
+  private static void instantiateElementTypesFromFields() {
+    // load stub serializers before usage
+    FileTypeRegistry.getInstance().getRegisteredFileTypes();
+    getExtensions(BinaryFileStubBuilders.INSTANCE).forEach(builder -> {});
+    getExtensions(LanguageParserDefinitions.INSTANCE).forEach(ParserDefinition::getFileNodeType);
+  }
+
+  private static  <T> Stream<T> getExtensions(KeyedExtensionCollector<T, ?> ex) {
+    ExtensionPoint<KeyedLazyInstance<T>> point = ex.getPoint();
+    return point == null ? Stream.empty() : point.extensions().map(KeyedLazyInstance::getInstance);
   }
 }
