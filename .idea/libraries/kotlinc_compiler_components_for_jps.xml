@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="kotlinc.compiler-components-for-jps">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/compiler-components-for-jps/1.4-SNAPSHOT/compiler-components-for-jps-1.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/compiler-components-for-jps/1.4-SNAPSHOT/compiler-components-for-jps-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
