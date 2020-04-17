@@ -17,6 +17,7 @@
           <element id="archive" name="kotlin-jps-plugin.jar">
             <element id="module-output" name="kotlin.jps-plugin" />
             <element id="module-output" name="kotlin.jps-common" />
+            <element id="library" level="project" name="kotlinc.compiler-components-for-jps" />
           </element>
         </element>
         <element id="archive" name="kotlin-compiler-plugins-allopen.jar">
