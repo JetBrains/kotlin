@@ -39,7 +39,7 @@ import java.util.ArrayList
 import kotlin.collections.*
 
 // BUNCH 191
-abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
+abstract class RenameKotlinPsiProcessorCompat : RenamePsiElementProcessor() {
     class MangledJavaRefUsageInfo(
         val manglingSuffix: String,
         element: PsiElement,
@@ -56,13 +56,11 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val searchParameters = KotlinReferencesSearchParameters(
-            element,
-            element.project.projectScope() or element.useScope,
-            kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
-        )
-        val references = ReferencesSearch.search(searchParameters).toMutableList()
+    protected fun findReferences(
+        element: PsiElement,
+        searchParameters: KotlinReferencesSearchParameters
+    ): MutableSet<PsiReference> {
+        val references = ReferencesSearch.search(searchParameters).toMutableSet()
         if (element is KtNamedFunction || (element is KtProperty && !element.isLocal) || (element is KtParameter && element.hasValOrVar())) {
             element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
         }
