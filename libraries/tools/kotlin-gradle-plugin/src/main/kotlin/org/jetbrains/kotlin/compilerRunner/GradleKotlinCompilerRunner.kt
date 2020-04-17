@@ -170,6 +170,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
 
         @Volatile
         private var cachedGradle = WeakReference<Gradle>(null)
+
         @Volatile
         private var cachedModulesInfo: IncrementalModuleInfo? = null
 

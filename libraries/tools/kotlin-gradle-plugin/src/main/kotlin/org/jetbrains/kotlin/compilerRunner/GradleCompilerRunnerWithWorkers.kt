@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Task
-import org.gradle.workers.ForkMode
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug

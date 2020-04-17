@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -84,21 +85,6 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
     }
 
     return result ?: "<unknown>"
-}
-
-internal fun runToolInSeparateProcessForGradle6AndMore(
-    argsArray: Array<String>,
-    compilerClassName: String,
-    classpath: List<File>,
-    project: Project
-): ExecResult {
-    val gradleExecutionOperation = project.objects.newInstance(GradleExecOperationsHolder::class.java)
-    val compilationArguments = writeArgumentsToFile(project.buildDir, argsArray)
-    return gradleExecutionOperation.execOperation.javaexec {
-        it.classpath = project.files(classpath)
-        it.args = listOf("@${compilationArguments.absolutePath}")
-        it.main = compilerClassName
-    }
 }
 
 internal fun runToolInSeparateProcess(

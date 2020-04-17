@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
@@ -34,13 +33,13 @@ internal class ProjectFilesForCompilation(
     val projectRootFile: File,
     val clientIsAliveFlagFile: File,
     val sessionFlagFile: File,
-    val project: Project
+    val buildDir: File
 ) : Serializable {
     constructor(project: Project) : this(
         projectRootFile = project.rootProject.projectDir,
         clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(project),
         sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(project),
-        project = project
+        buildDir = project.buildDir
     )
 
     companion object {
@@ -100,7 +99,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val buildReportMode = config.buildReportMode
     private val kotlinScriptExtensions = config.kotlinScriptExtensions
     private val allWarningsAsErrors = config.allWarningsAsErrors
-    private val project = config.projectFiles.project
+    private val buildDir = config.projectFiles.buildDir
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -301,13 +300,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         clearLocalState(outputFiles, log, reason = "out-of-process execution strategy is non-incremental")
 
         return try {
-            if (isGradleVersionAtLeast(6, 0)) {
-                val execResult =
-                    runToolInSeparateProcessForGradle6AndMore(compilerArgs, compilerClassName, compilerFullClasspath, project)
-                exitCodeFromProcessExitCode(log, execResult.exitValue)
-            } else {
-                runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, project.buildDir)
-            }
+            runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, buildDir)
         } finally {
             reportExecutionResultIfNeeded {
                 TaskExecutionResult(
