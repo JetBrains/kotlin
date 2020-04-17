@@ -9,11 +9,13 @@ import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.OCMembersContainer
 import com.jetbrains.swift.codeinsight.resolve.processor.CollectingSymbolProcessor
 import com.jetbrains.swift.codeinsight.resolve.processor.SwiftAbstractSymbolProcessor.ALL_DECLARATION_KINDS
+import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanConsumer
 import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -23,7 +25,7 @@ fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
     if (containingFile.isCompiled) return emptyList()
 
     val offset = textOffset // we have to use same offset as in `org.jetbrains.konan.resolve.symbols.KtSymbolUtilKt.getOffset`
-    if (this !is KtClassOrObject) {
+    if (kind == SwiftLanguageKind || this !is KtClassOrObject || this is KtEnumEntry) {
         containingClassOrObject?.findMemberSymbols(offset, kind)?.let { return it }
     }
     return findGlobalSymbols(containingFile, offset, kind)
