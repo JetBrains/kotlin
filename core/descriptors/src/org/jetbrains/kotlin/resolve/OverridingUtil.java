@@ -126,10 +126,10 @@ public class OverridingUtil {
                 Pair<CallableDescriptor, CallableDescriptor> meAndOther = transformFirst.invoke(meD, otherD);
                 CallableDescriptor me = meAndOther.component1();
                 CallableDescriptor other = meAndOther.component2();
-                if (overrides(me, other, allowDescriptorCopies)) {
+                if (overrides(me, other, allowDescriptorCopies, true)) {
                     iterator.remove();
                 }
-                else if (overrides(other, me, allowDescriptorCopies)) {
+                else if (overrides(other, me, allowDescriptorCopies, true)) {
                     continue outerLoop;
                 }
             }
@@ -145,7 +145,10 @@ public class OverridingUtil {
      * @return whether f overrides g
      */
     public static <D extends CallableDescriptor> boolean overrides(
-            @NotNull D f, @NotNull D g, boolean allowDeclarationCopies
+            @NotNull D f,
+            @NotNull D g,
+            boolean allowDeclarationCopies,
+            boolean distinguishExpectsAndNonExpects
     ) {
         // In a multi-module project different "copies" of the same class may be present in different libraries,
         // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
@@ -155,11 +158,27 @@ public class OverridingUtil {
         // we'll be getting sets of members that do not override each other, but are structurally equivalent.
         // As other code relies on no equal descriptors passed here, we guard against f == g, but this may not be necessary
         // Note that this is needed for the usage of this function in the IDE code
-        if (!f.equals(g) && DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(f.getOriginal(), g.getOriginal(), allowDeclarationCopies)) return true;
+        if (!f.equals(g)
+            && DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(
+                    f.getOriginal(),
+                    g.getOriginal(),
+                    allowDeclarationCopies,
+                    distinguishExpectsAndNonExpects
+            )
+        ) {
+            return true;
+        }
 
         CallableDescriptor originalG = g.getOriginal();
         for (D overriddenFunction : DescriptorUtils.getAllOverriddenDescriptors(f)) {
-            if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(originalG, overriddenFunction, allowDeclarationCopies)) return true;
+            if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(
+                    originalG,
+                    overriddenFunction,
+                    allowDeclarationCopies,
+                    distinguishExpectsAndNonExpects
+            )) {
+                return true;
+            }
         }
         return false;
     }

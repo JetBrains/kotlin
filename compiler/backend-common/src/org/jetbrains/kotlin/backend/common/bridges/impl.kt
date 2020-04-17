@@ -125,11 +125,16 @@ fun findImplementationFromInterface(descriptor: CallableMemberDescriptor): Calla
  * The returned function should be called from TImpl-bridges generated for the given fake override.
  */
 fun firstSuperMethodFromKotlin(
-        descriptor: CallableMemberDescriptor,
-        implementation: CallableMemberDescriptor
+    descriptor: CallableMemberDescriptor,
+    implementation: CallableMemberDescriptor
 ): CallableMemberDescriptor? {
     return descriptor.overriddenDescriptors.firstOrNull { overridden ->
         overridden.modality != Modality.ABSTRACT &&
-        (overridden == implementation || OverridingUtil.overrides(overridden, implementation, overridden.module.isTypeRefinementEnabled()))
+                (overridden == implementation || OverridingUtil.overrides(
+                    overridden,
+                    implementation,
+                    overridden.module.isTypeRefinementEnabled(),
+                    true
+                ))
     }
 }
