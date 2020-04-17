@@ -97,7 +97,8 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
         targetConfigurationIR: TargetConfigurationIR
     ): TargetConfigurationIR = targetConfigurationIR
 
-    open fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
+    open fun Reader.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
+    open fun Reader.getAdditionalSettings(module: Module): Map<String, Any> = emptyMap()
 
     open fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = emptyList()
 
@@ -123,15 +124,18 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
         return result.asSuccess()
     }
 
-    fun Writer.settingsAsMap(module: Module): Map<String, Any> =
+    fun Reader.settingsAsMap(module: Module): Map<String, Any> = mutableMapOf<String, Any>().apply {
         withSettingsOf(module) {
-            settings.associate { setting ->
+            settings.associateTo(this@apply) { setting ->
                 setting.path to setting.reference.settingValue
             }
-        } + createDefaultSettings()
+        }
+        putAll(createDefaultSettings())
+        putAll(getAdditionalSettings(module))
+    }
 
 
-    private fun Writer.createDefaultSettings() = mapOf(
+    private fun Reader.createDefaultSettings() = mapOf(
         "projectName" to StructurePlugin::name.settingValue.capitalize()
     )
 

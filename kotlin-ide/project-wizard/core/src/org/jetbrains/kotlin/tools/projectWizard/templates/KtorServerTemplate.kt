@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 class KtorServerTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.title")
@@ -56,7 +56,7 @@ class KtorServerTemplate : Template() {
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.addWithJavaIntoJvmTarget()
 
-    override fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
+    override fun Reader.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
         FileTemplateDescriptor("$id/server.kt.vm", "server.kt".asPath()) asSrcOf SourcesetType.main
     )
 

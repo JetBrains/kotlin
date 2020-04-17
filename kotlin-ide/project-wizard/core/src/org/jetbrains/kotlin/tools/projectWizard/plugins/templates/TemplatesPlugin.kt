@@ -129,7 +129,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }.sequenceIgnore()
     }
 
-    private fun Writer.defaultSettings(moduleIR: ModuleIR) = mapOf(
+    private fun Reader.defaultSettings(moduleIR: ModuleIR) = mapOf(
         "projectName" to projectName,
         "moduleName" to moduleIR.name
     )
