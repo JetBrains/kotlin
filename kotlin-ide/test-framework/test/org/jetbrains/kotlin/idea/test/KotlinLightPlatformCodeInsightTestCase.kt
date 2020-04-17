@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 
-abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsightTestCase()
+// BUNCH: 191
+abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsightTestCase() {
+    protected inline val project_: Project get() = project
+    protected inline val editor_: Editor get() = editor
+}
