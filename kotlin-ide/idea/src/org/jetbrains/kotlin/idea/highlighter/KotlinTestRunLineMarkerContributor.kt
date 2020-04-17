@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import javax.swing.Icon
 
@@ -59,9 +59,9 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val declaration = element.getStrictParentOfType<KtNamedDeclaration>() ?: return null
         if (declaration.nameIdentifier != element) return null
 
-        if (declaration !is KtClassOrObject && declaration !is KtNamedFunction) return null
+        if (declaration !is KtClass && declaration !is KtNamedFunction) return null
 
-        if (declaration is KtNamedFunction && declaration.containingClassOrObject == null) return null
+        if (declaration is KtNamedFunction && declaration.containingClass() == null) return null
 
         // To prevent IDEA failing on red code
         val descriptor = declaration.resolveToDescriptorIfAny() ?: return null
