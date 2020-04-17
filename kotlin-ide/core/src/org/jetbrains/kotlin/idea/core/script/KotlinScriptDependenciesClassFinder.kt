@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,6 +25,7 @@ class KotlinScriptDependenciesClassFinder(
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
         tailrec fun findClassInner(parentQualifier: String, inners: List<String> = emptyList()): PsiClass? {
             if (parentQualifier.isEmpty()) return null
+            ProgressManager.checkCanceled()
             val parentClass = super.findClass(parentQualifier, scope)
             if (parentClass != null) {
                 if (inners.isNotEmpty()) {
