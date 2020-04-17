@@ -23,7 +23,7 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
         val originFilePath = testFileName + testFileExtension
         val originalFileText = FileUtil.loadFile(File(originFilePath), true)
         try {
-            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project))
+            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project_))
             if (!inverted) {
                 configurator.configureSettings()
             } else {
@@ -32,16 +32,16 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
 
             doNewlineTest(originFilePath, afterFilePath)
         } finally {
-            CodeStyle.getSettings(project).clearCodeStyleSettings()
+            CodeStyle.getSettings(project_).clearCodeStyleSettings()
         }
     }
 
     private fun doNewlineTest(beforeFilePath: String, afterFilePath: String) {
         configureByFile(beforeFilePath)
         type('\n')
-        val caretModel = editor.caretModel
+        val caretModel = editor_.caretModel
         val offset = caretModel.offset
-        val actualTextWithCaret = StringBuilder(editor.document.text).insert(offset, EditorTestUtil.CARET_TAG).toString()
+        val actualTextWithCaret = StringBuilder(editor_.document.text).insert(offset, EditorTestUtil.CARET_TAG).toString()
         KotlinTestUtils.assertEqualsToFile(File(afterFilePath), actualTextWithCaret)
     }
 
