@@ -83,6 +83,12 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     }
 
     fun update(build: KotlinDslGradleBuildSync) {
+        // fast path for linked gradle builds without .gradle.kts support
+        if (build.models.isEmpty()) {
+            val root = roots.findRoot(build.workingDir) ?: return
+            if (root.configuration.data.models.isEmpty()) return
+        }
+
         val templateClasspath = findTemplateClasspath(build) ?: return
         val data = ConfigurationData(templateClasspath, build.models)
         val newSupport = createSupport(build.workingDir) { data } ?: return
