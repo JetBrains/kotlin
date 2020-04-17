@@ -89,18 +89,205 @@ internal val KOTLIN_CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("c
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
-private fun DeclarationDescriptor.toSource(): PsiElement? {
-    return try {
-        DescriptorToSourceUtils.getEffectiveReferencedDescriptors(this)
-            .asSequence()
-            .mapNotNull { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
-            .firstOrNull()
-    } catch (e: ProcessCanceledException) {
-        throw e
-    } catch (e: Exception) {
-        Logger.getInstance("DeclarationDescriptor.toSource").error(e)
-        null
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
+
+internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
+    val innerExpression = KtPsiUtil.safeDeparenthesize(this)
+    if (innerExpression is KtBlockExpression) {
+        val statement = innerExpression.statements.singleOrNull() ?: return this
+        return KtPsiUtil.safeDeparenthesize(statement)
     }
+    return innerExpression
+}
+
+internal inline fun <reified T : UDeclaration, reified P : PsiElement> unwrap(element: P): P {
+    val unwrapped = if (element is T) element.javaPsi else element
+    assert(unwrapped !is UElement)
+    return unwrapped as P
+}
+
+internal fun getContainingLightClass(original: KtDeclaration): KtLightClass? =
+    (original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass())
+
+internal fun unwrapFakeFileForLightClass(file: PsiFile): PsiFile = (file as? FakeFileForLightClass)?.ktFile ?: file
+
+// mb merge with org.jetbrains.kotlin.idea.references.ReferenceAccess ?
+internal enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
+    READ(true, false), WRITE(false, true), READ_WRITE(true, true)
+}
+
+internal fun KtExpression.readWriteAccess(): ReferenceAccess {
+    var expression = getQualifiedExpressionForSelectorOrThis()
+    loop@ while (true) {
+        val parent = expression.parent
+        when (parent) {
+            is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLabeledExpression -> expression = parent as KtExpression
+            else -> break@loop
+        }
+    }
+
+    val assignment = expression.getAssignmentByLHS()
+    if (assignment != null) {
+        return when (assignment.operationToken) {
+            KtTokens.EQ -> ReferenceAccess.WRITE
+            else -> ReferenceAccess.READ_WRITE
+        }
+    }
+
+    return if ((expression.parent as? KtUnaryExpression)?.operationToken
+        in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) }
+    )
+        ReferenceAccess.READ_WRITE
+    else
+        ReferenceAccess.READ
+}
+
+internal fun KotlinType.toPsiType(source: UElement?, element: KtElement, boxed: Boolean): PsiType =
+    toPsiType(source?.getParentOfType<UDeclaration>(false)?.javaPsi as? PsiModifierListOwner, element, boxed)
+
+internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, context: KtElement, boxed: Boolean): PsiType {
+    if (this.isError) return UastErrorType
+
+    (constructor.declarationDescriptor as? TypeAliasDescriptor)?.let { typeAlias ->
+        return typeAlias.expandedType.toPsiType(lightDeclaration, context, boxed)
+    }
+
+    if (contains { type -> type.constructor is TypeVariableTypeConstructor }) {
+        return UastErrorType
+    }
+
+    (constructor.declarationDescriptor as? TypeParameterDescriptor)?.let { typeParameter ->
+        (typeParameter.containingDeclaration.toSource()?.getMaybeLightElement() as? PsiTypeParameterListOwner)
+            ?.typeParameterList?.typeParameters?.getOrNull(typeParameter.index)
+            ?.let { return PsiTypesUtil.getClassType(it) }
+        return CommonSupertypes.commonSupertype(typeParameter.upperBounds).toPsiType(lightDeclaration, context, boxed)
+    }
+
+    if (arguments.isEmpty()) {
+        val typeFqName = this.constructor.declarationDescriptor?.fqNameSafe?.asString()
+        fun PsiPrimitiveType.orBoxed() = if (boxed) getBoxedType(context) else this
+        val psiType = when (typeFqName) {
+            "kotlin.Int" -> PsiType.INT.orBoxed()
+            "kotlin.Long" -> PsiType.LONG.orBoxed()
+            "kotlin.Short" -> PsiType.SHORT.orBoxed()
+            "kotlin.Boolean" -> PsiType.BOOLEAN.orBoxed()
+            "kotlin.Byte" -> PsiType.BYTE.orBoxed()
+            "kotlin.Char" -> PsiType.CHAR.orBoxed()
+            "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
+            "kotlin.Float" -> PsiType.FLOAT.orBoxed()
+            "kotlin.Unit" -> PsiType.VOID.orBoxed()
+            "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
+            else -> {
+                val typeConstructor = this.constructor
+                when (typeConstructor) {
+                    is IntegerValueTypeConstructor -> TypeUtils.getDefaultPrimitiveNumberType(typeConstructor).toPsiType(lightDeclaration, context, boxed)
+                    is IntegerLiteralTypeConstructor -> typeConstructor.getApproximatedType().toPsiType(lightDeclaration, context, boxed)
+                    else -> null
+                }
+            }
+        }
+        if (psiType != null) return psiType
+    }
+
+    if (this.containsLocalTypes()) return UastErrorType
+
+    val project = context.project
+
+    val typeMapper = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
+        .getTypeMapper(context) ?: return UastErrorType
+
+    val languageVersionSettings = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
+        .getLanguageVersionSettings(context)
+
+    val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
+    val typeMappingMode = if (boxed) TypeMappingMode.GENERIC_ARGUMENT_UAST else TypeMappingMode.DEFAULT_UAST
+    val approximatedType = TypeApproximator(this.builtIns).approximateDeclarationType(this, true, languageVersionSettings)
+    typeMapper.mapType(approximatedType, signatureWriter, typeMappingMode)
+
+    val signature = StringCharacterIterator(signatureWriter.toString())
+
+    val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
+    val typeInfo = TypeInfo.fromString(javaType, false)
+    val typeText = TypeInfo.createTypeText(typeInfo) ?: return UastErrorType
+
+    val parent: PsiElement = lightDeclaration ?: context
+    if (parent.containingFile == null) {
+        Logger.getInstance("org.jetbrains.uast.kotlin.KotlinInternalUastUtils")
+            .error(
+                "initialising ClsTypeElementImpl with null-file parent = $parent (of ${parent.javaClass}) " +
+                        "containing class = ${parent.safeAs<PsiMethod>()?.containingClass}, " +
+                        "lightDeclaration = $lightDeclaration (of ${lightDeclaration?.javaClass})," +
+                        " context = $context (of ${context.javaClass})"
+            )
+    }
+    return ClsTypeElementImpl(parent, typeText, '\u0000').type
+}
+
+internal fun KtTypeReference?.toPsiType(source: UElement, boxed: Boolean = false): PsiType {
+    if (this == null) return UastErrorType
+    return (analyze()[BindingContext.TYPE, this] ?: return UastErrorType).toPsiType(source, this, boxed)
+}
+
+internal fun KtClassOrObject.toPsiType(): PsiType {
+    val lightClass = toLightClass() ?: return UastErrorType
+    return PsiTypesUtil.getClassType(lightClass)
+}
+
+internal fun KtElement.canAnalyze(): Boolean {
+    if (!isValid) return false
+    val containingFile = containingFile as? KtFile ?: return false // EA-114080, EA-113475, EA-134193
+    if (containingFile.doNotAnalyze != null) return false // To prevent exceptions during analysis
+    return true
+}
+
+internal fun KtElement.analyze(): BindingContext {
+    if (!canAnalyze()) return BindingContext.EMPTY
+    return ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
+        ?.getBindingContext(this) ?: BindingContext.EMPTY
+}
+
+internal fun KtExpression.getExpectedType(): KotlinType? = analyze()[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
+
+internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]
+
+internal val KtTypeReference.nameElement: PsiElement?
+    get() = this.typeElement?.let {
+        (it as? KtUserType)?.referenceExpression?.getReferencedNameElement() ?: it.navigationElement
+    }
+
+internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: KtElement): PsiType? =
+    takeIf { it.isInterface() && !it.isBuiltinFunctionalTypeOrSubtype }?.toPsiType(source, element, false)
+
+internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
+    val parent = sourcePsi.parent
+    if (parent is KtBinaryExpressionWithTypeRHS) return parent.right?.getType()?.getFunctionalInterfaceType(this, sourcePsi)
+    if (parent is KtValueArgument) run {
+        val callExpression = parent.parents.take(2).firstIsInstanceOrNull<KtCallExpression>() ?: return@run
+        val resolvedCall = callExpression.getResolvedCall(callExpression.analyze()) ?: return@run
+
+        // NewResolvedCallImpl can be used as a marker meaning that this code is working under *new* inference
+        if (resolvedCall is NewResolvedCallImpl) {
+            val samConvertedArgument = resolvedCall.getExpectedTypeForSamConvertedArgument(parent)
+
+            // Same as if in old inference we would get SamDescriptor
+            if (samConvertedArgument != null) {
+                val type = getTypeByArgument(resolvedCall, resolvedCall.candidateDescriptor, parent) ?: return@run
+                return type.getFunctionalInterfaceType(this, sourcePsi)
+            }
+        }
+
+        val candidateDescriptor = resolvedCall.candidateDescriptor as? SyntheticMemberDescriptor<*> ?: return@run
+        when (candidateDescriptor) {
+            is SamConstructorDescriptor -> return candidateDescriptor.returnType?.getFunctionalInterfaceType(this, sourcePsi)
+            is SamAdapterDescriptor<*>, is SamAdapterExtensionFunctionDescriptor -> {
+                val functionDescriptor = candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return@run
+
+                val type = getTypeByArgument(resolvedCall, functionDescriptor, parent) ?: return@run
+                return type.getFunctionalInterfaceType(this, sourcePsi)
+            }
+        }
+    }
+    return sourcePsi.getExpectedType()?.getFunctionalInterfaceType(this, sourcePsi)
 }
 
 internal fun resolveToPsiMethod(context: KtElement): PsiMethod? =
@@ -136,8 +323,41 @@ internal fun resolveToPsiMethod(
     }
 }
 
-internal fun getContainingLightClass(original: KtDeclaration): KtLightClass? =
-    (original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass())
+internal fun resolveToDeclaration(sourcePsi: KtExpression): PsiElement? =
+    when (sourcePsi) {
+        is KtSimpleNameExpression ->
+            sourcePsi.analyze()[BindingContext.REFERENCE_TARGET, sourcePsi]
+                ?.let { resolveToDeclaration(sourcePsi, it) }
+        else ->
+            sourcePsi.getResolvedCall(sourcePsi.analyze())?.resultingDescriptor
+                ?.let { descriptor -> resolveToDeclaration(sourcePsi, descriptor) }
+    }
+
+internal fun resolveToDeclaration(sourcePsi: KtExpression, declarationDescriptor: DeclarationDescriptor): PsiElement? {
+    declarationDescriptor.toSource()?.getMaybeLightElement()?.let { return it }
+
+    var declarationDescriptor = declarationDescriptor
+    if (declarationDescriptor is ImportedFromObjectCallableDescriptor<*>) {
+        declarationDescriptor = declarationDescriptor.callableFromObject
+    }
+    if (declarationDescriptor is SyntheticJavaPropertyDescriptor) {
+        declarationDescriptor = when (sourcePsi.readWriteAccess()) {
+            ReferenceAccess.WRITE, ReferenceAccess.READ_WRITE ->
+                declarationDescriptor.setMethod ?: declarationDescriptor.getMethod
+            ReferenceAccess.READ -> declarationDescriptor.getMethod
+        }
+    }
+
+    if (declarationDescriptor is PackageViewDescriptor) {
+        return JavaPsiFacade.getInstance(sourcePsi.project).findPackage(declarationDescriptor.fqName.asString())
+    }
+
+    resolveToPsiClass({ sourcePsi.toUElement() }, declarationDescriptor, sourcePsi)?.let { return it }
+    if (declarationDescriptor is DeclarationDescriptorWithSource) {
+        declarationDescriptor.source.getPsi()?.let { it.getMaybeLightElement() ?: it }?.let { return it }
+    }
+    return resolveDeserialized(sourcePsi, declarationDescriptor, sourcePsi.readWriteAccess())
+}
 
 private fun resolveContainingDeserializedClass(context: KtElement, memberDescriptor: DeserializedCallableMemberDescriptor): PsiClass? {
     val containingDeclaration = memberDescriptor.containingDeclaration
@@ -165,6 +385,19 @@ private fun resolveToPsiClass(uElement: () -> UElement?, declarationDescriptor: 
         else -> null
     }?.toPsiType(uElement.invoke(), context, true).let { PsiTypesUtil.getPsiClass(it) }
 
+private fun DeclarationDescriptor.toSource(): PsiElement? {
+    return try {
+        DescriptorToSourceUtils.getEffectiveReferencedDescriptors(this)
+            .asSequence()
+            .mapNotNull { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+            .firstOrNull()
+    } catch (e: ProcessCanceledException) {
+        throw e
+    } catch (e: Exception) {
+        Logger.getInstance("DeclarationDescriptor.toSource").error(e)
+        null
+    }
+}
 
 private fun resolveDeserialized(
     context: KtElement,
@@ -256,89 +489,6 @@ private fun getMethodSignatureFromDescriptor(context: KtElement, descriptor: Cal
     return JvmMemberSignature.Method(descriptor.name.asString(), desc)
 }
 
-internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
-
-internal fun KotlinType.toPsiType(source: UElement?, element: KtElement, boxed: Boolean): PsiType =
-    toPsiType(source?.getParentOfType<UDeclaration>(false)?.javaPsi as? PsiModifierListOwner, element, boxed)
-
-internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, context: KtElement, boxed: Boolean): PsiType {
-    if (this.isError) return UastErrorType
-
-    (constructor.declarationDescriptor as? TypeAliasDescriptor)?.let { typeAlias ->
-        return typeAlias.expandedType.toPsiType(lightDeclaration, context, boxed)
-    }
-
-    if (contains { type -> type.constructor is TypeVariableTypeConstructor }) {
-        return UastErrorType
-    }
-
-    (constructor.declarationDescriptor as? TypeParameterDescriptor)?.let { typeParameter ->
-        (typeParameter.containingDeclaration.toSource()?.getMaybeLightElement() as? PsiTypeParameterListOwner)
-            ?.typeParameterList?.typeParameters?.getOrNull(typeParameter.index)
-            ?.let { return PsiTypesUtil.getClassType(it) }
-        return CommonSupertypes.commonSupertype(typeParameter.upperBounds).toPsiType(lightDeclaration, context, boxed)
-    }
-
-    if (arguments.isEmpty()) {
-        val typeFqName = this.constructor.declarationDescriptor?.fqNameSafe?.asString()
-        fun PsiPrimitiveType.orBoxed() = if (boxed) getBoxedType(context) else this
-        val psiType = when (typeFqName) {
-            "kotlin.Int" -> PsiType.INT.orBoxed()
-            "kotlin.Long" -> PsiType.LONG.orBoxed()
-            "kotlin.Short" -> PsiType.SHORT.orBoxed()
-            "kotlin.Boolean" -> PsiType.BOOLEAN.orBoxed()
-            "kotlin.Byte" -> PsiType.BYTE.orBoxed()
-            "kotlin.Char" -> PsiType.CHAR.orBoxed()
-            "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
-            "kotlin.Float" -> PsiType.FLOAT.orBoxed()
-            "kotlin.Unit" -> PsiType.VOID.orBoxed()
-            "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
-            else -> {
-                val typeConstructor = this.constructor
-                when (typeConstructor) {
-                    is IntegerValueTypeConstructor -> TypeUtils.getDefaultPrimitiveNumberType(typeConstructor).toPsiType(lightDeclaration, context, boxed)
-                    is IntegerLiteralTypeConstructor -> typeConstructor.getApproximatedType().toPsiType(lightDeclaration, context, boxed)
-                    else -> null
-                }
-            }
-        }
-        if (psiType != null) return psiType
-    }
-
-    if (this.containsLocalTypes()) return UastErrorType
-
-    val project = context.project
-
-    val typeMapper = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
-        .getTypeMapper(context) ?: return UastErrorType
-
-    val languageVersionSettings = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
-        .getLanguageVersionSettings(context)
-
-    val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
-    val typeMappingMode = if (boxed) TypeMappingMode.GENERIC_ARGUMENT_UAST else TypeMappingMode.DEFAULT_UAST
-    val approximatedType = TypeApproximator(this.builtIns).approximateDeclarationType(this, true, languageVersionSettings)
-    typeMapper.mapType(approximatedType, signatureWriter, typeMappingMode)
-
-    val signature = StringCharacterIterator(signatureWriter.toString())
-
-    val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
-    val typeInfo = TypeInfo.fromString(javaType, false)
-    val typeText = TypeInfo.createTypeText(typeInfo) ?: return UastErrorType
-
-    val parent: PsiElement = lightDeclaration ?: context
-    if (parent.containingFile == null) {
-        Logger.getInstance("org.jetbrains.uast.kotlin.KotlinInternalUastUtils")
-            .error(
-                "initialising ClsTypeElementImpl with null-file parent = $parent (of ${parent.javaClass}) " +
-                        "containing class = ${parent.safeAs<PsiMethod>()?.containingClass}, " +
-                        "lightDeclaration = $lightDeclaration (of ${lightDeclaration?.javaClass})," +
-                        " context = $context (of ${context.javaClass})"
-            )
-    }
-    return ClsTypeElementImpl(parent, typeText, '\u0000').type
-}
-
 private fun KotlinType.containsLocalTypes(): Boolean {
     val typeDeclarationDescriptor = this.constructor.declarationDescriptor
     if (typeDeclarationDescriptor is ClassDescriptor && DescriptorUtils.isLocal(typeDeclarationDescriptor)) {
@@ -346,16 +496,6 @@ private fun KotlinType.containsLocalTypes(): Boolean {
     }
 
     return arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }
-}
-
-internal fun KtTypeReference?.toPsiType(source: UElement, boxed: Boolean = false): PsiType {
-    if (this == null) return UastErrorType
-    return (analyze()[BindingContext.TYPE, this] ?: return UastErrorType).toPsiType(source, this, boxed)
-}
-
-internal fun KtClassOrObject.toPsiType(): PsiType {
-    val lightClass = toLightClass() ?: return UastErrorType
-    return PsiTypesUtil.getClassType(lightClass)
 }
 
 private fun PsiElement.getMaybeLightElement(): PsiElement? {
@@ -381,78 +521,6 @@ private fun PsiElement.getMaybeLightElement(): PsiElement? {
     }
 }
 
-internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
-    val innerExpression = KtPsiUtil.safeDeparenthesize(this)
-    if (innerExpression is KtBlockExpression) {
-        val statement = innerExpression.statements.singleOrNull() ?: return this
-        return KtPsiUtil.safeDeparenthesize(statement)
-    }
-    return innerExpression
-}
-
-internal fun KtElement.canAnalyze(): Boolean {
-    if (!isValid) return false
-    val containingFile = containingFile as? KtFile ?: return false // EA-114080, EA-113475, EA-134193
-    if (containingFile.doNotAnalyze != null) return false // To prevent exceptions during analysis
-    return true
-}
-
-internal fun KtElement.analyze(): BindingContext {
-    if (!canAnalyze()) return BindingContext.EMPTY
-    return ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
-        ?.getBindingContext(this) ?: BindingContext.EMPTY
-}
-
-internal inline fun <reified T : UDeclaration, reified P : PsiElement> unwrap(element: P): P {
-    val unwrapped = if (element is T) element.javaPsi else element
-    assert(unwrapped !is UElement)
-    return unwrapped as P
-}
-
-internal fun KtExpression.getExpectedType(): KotlinType? = analyze()[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
-
-internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]
-
-internal val KtTypeReference.nameElement: PsiElement?
-    get() = this.typeElement?.let {
-        (it as? KtUserType)?.referenceExpression?.getReferencedNameElement() ?: it.navigationElement
-    }
-
-internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: KtElement): PsiType? =
-    takeIf { it.isInterface() && !it.isBuiltinFunctionalTypeOrSubtype }?.toPsiType(source, element, false)
-
-internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
-    val parent = sourcePsi.parent
-    if (parent is KtBinaryExpressionWithTypeRHS) return parent.right?.getType()?.getFunctionalInterfaceType(this, sourcePsi)
-    if (parent is KtValueArgument) run {
-        val callExpression = parent.parents.take(2).firstIsInstanceOrNull<KtCallExpression>() ?: return@run
-        val resolvedCall = callExpression.getResolvedCall(callExpression.analyze()) ?: return@run
-
-        // NewResolvedCallImpl can be used as a marker meaning that this code is working under *new* inference
-        if (resolvedCall is NewResolvedCallImpl) {
-            val samConvertedArgument = resolvedCall.getExpectedTypeForSamConvertedArgument(parent)
-
-            // Same as if in old inference we would get SamDescriptor
-            if (samConvertedArgument != null) {
-                val type = getTypeByArgument(resolvedCall, resolvedCall.candidateDescriptor, parent) ?: return@run
-                return type.getFunctionalInterfaceType(this, sourcePsi)
-            }
-        }
-
-        val candidateDescriptor = resolvedCall.candidateDescriptor as? SyntheticMemberDescriptor<*> ?: return@run
-        when (candidateDescriptor) {
-            is SamConstructorDescriptor -> return candidateDescriptor.returnType?.getFunctionalInterfaceType(this, sourcePsi)
-            is SamAdapterDescriptor<*>, is SamAdapterExtensionFunctionDescriptor -> {
-                val functionDescriptor = candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return@run
-
-                val type = getTypeByArgument(resolvedCall, functionDescriptor, parent) ?: return@run
-                return type.getFunctionalInterfaceType(this, sourcePsi)
-            }
-        }
-    }
-    return sourcePsi.getExpectedType()?.getFunctionalInterfaceType(this, sourcePsi)
-}
-
 private fun getTypeByArgument(
     resolvedCall: ResolvedCall<*>,
     descriptor: CallableDescriptor,
@@ -463,76 +531,3 @@ private fun getTypeByArgument(
 
     return parameterDescriptor.type
 }
-
-internal fun unwrapFakeFileForLightClass(file: PsiFile): PsiFile = (file as? FakeFileForLightClass)?.ktFile ?: file
-
-// mb merge with org.jetbrains.kotlin.idea.references.ReferenceAccess ?
-internal enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
-    READ(true, false), WRITE(false, true), READ_WRITE(true, true)
-}
-
-internal fun resolveToDeclaration(sourcePsi: KtExpression): PsiElement? =
-    when (sourcePsi) {
-        is KtSimpleNameExpression ->
-            sourcePsi.analyze()[BindingContext.REFERENCE_TARGET, sourcePsi]
-                ?.let { resolveToDeclaration(sourcePsi, it) }
-        else ->
-            sourcePsi.getResolvedCall(sourcePsi.analyze())?.resultingDescriptor
-                ?.let { descriptor -> resolveToDeclaration(sourcePsi, descriptor) }
-    }
-
-
-internal fun resolveToDeclaration(sourcePsi: KtExpression, declarationDescriptor: DeclarationDescriptor): PsiElement? {
-    declarationDescriptor.toSource()?.getMaybeLightElement()?.let { return it }
-
-    var declarationDescriptor = declarationDescriptor
-    if (declarationDescriptor is ImportedFromObjectCallableDescriptor<*>) {
-        declarationDescriptor = declarationDescriptor.callableFromObject
-    }
-    if (declarationDescriptor is SyntheticJavaPropertyDescriptor) {
-        declarationDescriptor = when (sourcePsi.readWriteAccess()) {
-            ReferenceAccess.WRITE, ReferenceAccess.READ_WRITE ->
-                declarationDescriptor.setMethod ?: declarationDescriptor.getMethod
-            ReferenceAccess.READ -> declarationDescriptor.getMethod
-        }
-    }
-
-    if (declarationDescriptor is PackageViewDescriptor) {
-        return JavaPsiFacade.getInstance(sourcePsi.project).findPackage(declarationDescriptor.fqName.asString())
-    }
-
-    resolveToPsiClass({ sourcePsi.toUElement() }, declarationDescriptor, sourcePsi)?.let { return it }
-    if (declarationDescriptor is DeclarationDescriptorWithSource) {
-        declarationDescriptor.source.getPsi()?.let { it.getMaybeLightElement() ?: it }?.let { return it }
-    }
-    return resolveDeserialized(sourcePsi, declarationDescriptor, sourcePsi.readWriteAccess())
-}
-
-internal fun KtExpression.readWriteAccess(): ReferenceAccess {
-    var expression = getQualifiedExpressionForSelectorOrThis()
-    loop@ while (true) {
-        val parent = expression.parent
-        when (parent) {
-            is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLabeledExpression -> expression = parent as KtExpression
-            else -> break@loop
-        }
-    }
-
-    val assignment = expression.getAssignmentByLHS()
-    if (assignment != null) {
-        return when (assignment.operationToken) {
-            KtTokens.EQ -> ReferenceAccess.WRITE
-            else -> ReferenceAccess.READ_WRITE
-        }
-    }
-
-    return if ((expression.parent as? KtUnaryExpression)?.operationToken
-        in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) }
-    )
-        ReferenceAccess.READ_WRITE
-    else
-        ReferenceAccess.READ
-}
-
-
-
