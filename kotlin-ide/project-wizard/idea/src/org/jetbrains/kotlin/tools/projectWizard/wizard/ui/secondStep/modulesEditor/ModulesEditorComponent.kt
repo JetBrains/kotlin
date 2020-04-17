@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
 import com.intellij.ui.JBColor
+import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -11,8 +12,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UIConstants
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.addBorder
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
@@ -90,9 +89,13 @@ class ModulesEditorComponent(
     }
 
     private fun createEditorComponent() =
-        (if (editable) toolbarDecorator!!.createToolPanel() else tree).apply {
+        when {
+            editable -> toolbarDecorator!!.createToolPanel()
+            else -> ScrollPaneFactory.createScrollPane(tree, true).apply {
+                viewport.background = JBColor.PanelBackground
+            }
+        }.apply {
             preferredSize = Dimension(TREE_WIDTH, preferredSize.height)
-            minimumSize = Dimension(TREE_WIDTH, minimumSize.height)
         }
 
     override val validationIndicator: ValidationIndicator? = null

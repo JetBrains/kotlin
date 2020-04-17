@@ -80,7 +80,7 @@ open class TitledComponentsList(
         var lastLabel: SpringLayout.Constraints? = null
         var lastComponent: SpringLayout.Constraints? = null
 
-        for ((index, data) in componentsWithLabels.withIndex()) {
+        for (data in componentsWithLabels) {
             val (label, component) = data
             label.x = xPanelPadding.asSpring()
             component.x = label[SpringLayout.EAST] + xGap
@@ -119,16 +119,4 @@ open class TitledComponentsList(
         val maximumWidth: Int?
     )
 }
-
-private operator fun Spring.plus(other: Spring) = Spring.sum(this, other)
-private operator fun Spring.plus(gap: Int) = Spring.sum(this, Spring.constant(gap))
-private operator fun Spring.minus(other: Spring) = this + Spring.minus(other)
-private operator fun Spring.unaryMinus() = Spring.minus(this)
-private operator fun Spring.times(by: Float) = Spring.scale(this, by)
-private fun Int.asSpring() = Spring.constant(this)
-private operator fun SpringLayout.Constraints.get(edgeName: String) = getConstraint(edgeName)
-private operator fun SpringLayout.Constraints.set(edgeName: String, spring: Spring) {
-    setConstraint(edgeName, spring)
-}
-
 
