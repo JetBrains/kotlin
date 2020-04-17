@@ -4,6 +4,7 @@ package com.intellij.openapi.module
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.module.impl.ModuleTypeManagerImpl
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.systemIndependentPath
 import com.intellij.testFramework.HeavyPlatformTestCase
@@ -55,7 +56,7 @@ class ModuleTypeRegistrationTest : HeavyPlatformTestCase() {
     val extension = ModuleTypeEP()
     extension.id = MockModuleType.ID
     extension.implementationClass = MockModuleType::class.qualifiedName
-    ModuleTypeEP.EP_NAME.getPoint(null).registerExtension(extension, moduleTypeDisposable)
+    ModuleTypeManagerImpl.EP_NAME.getPoint(null).registerExtension(extension, moduleTypeDisposable)
   }
 }
 

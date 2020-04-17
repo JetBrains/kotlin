@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler;
 
 import com.intellij.compiler.impl.*;
@@ -12,6 +12,7 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.compiler.util.InspectionValidator;
 import com.intellij.openapi.compiler.util.InspectionValidatorWrapper;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
@@ -42,8 +43,7 @@ import org.jetbrains.jps.incremental.BinaryContent;
 import org.jetbrains.jps.javac.*;
 import org.jetbrains.jps.javac.ast.api.JavacFileData;
 
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
+import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -52,7 +52,10 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+// cannot be final - extended by Bazel plugin
 public class CompilerManagerImpl extends CompilerManager {
+  private static final ProjectExtensionPointName<CompileTaskBean> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compiler.task");
+
   private static final Logger LOG = Logger.getInstance(CompilerManagerImpl.class);
 
   private final Project myProject;
@@ -71,7 +74,7 @@ public class CompilerManagerImpl extends CompilerManager {
   @SuppressWarnings("MissingDeprecatedAnnotation")
   @NonInjectable
   @Deprecated
-  public CompilerManagerImpl(@NotNull Project project, @NotNull MessageBus messageBus) {
+  public CompilerManagerImpl(@NotNull Project project, @SuppressWarnings("unused") @NotNull MessageBus messageBus) {
     this(project);
   }
 
@@ -202,8 +205,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  @NotNull
-  public List<CompileTask> getBeforeTasks() {
+  public @NotNull List<CompileTask> getBeforeTasks() {
     final List<Compiler> extCompilers = Compiler.EP_NAME.getExtensions(myProject);
     return ContainerUtil.concat(
       myBeforeTasks,
@@ -213,8 +215,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  @NotNull
-  public List<CompileTask> getAfterTaskList() {
+  public @NotNull List<CompileTask> getAfterTaskList() {
     final List<Compiler> extCompilers = Compiler.EP_NAME.getExtensions(myProject);
     return ContainerUtil.concat(
       myAfterTasks,
@@ -224,9 +225,14 @@ public class CompilerManagerImpl extends CompilerManager {
     );
   }
 
-  @NotNull
-  private List<CompileTask> getExtensionsTasks(CompileTaskBean.CompileTaskExecutionPhase phase) {
-    return CompileTaskBean.EP_NAME.extensions(myProject).filter(ext -> ext.myExecutionPhase == phase).map(ext -> ext.getTaskInstance(myProject)).collect(Collectors.toList());
+  private @NotNull List<CompileTask> getExtensionsTasks(@NotNull CompileTaskBean.CompileTaskExecutionPhase phase) {
+    List<CompileTask> list = new ArrayList<>();
+    EP_NAME.processWithPluginDescriptor(myProject, (ext, pluginDescriptor) -> {
+      if (ext.executionPhase == phase) {
+        list.add(ext.getInstance(myProject, pluginDescriptor));
+      }
+    });
+    return list;
   }
 
   @Override
@@ -270,7 +276,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  public boolean isUpToDate(@NotNull final CompileScope scope) {
+  public boolean isUpToDate(@NotNull CompileScope scope) {
     return new CompileDriver(myProject).isUpToDate(scope);
   }
 
@@ -288,7 +294,7 @@ public class CompilerManagerImpl extends CompilerManager {
   private final Map<CompilationStatusListener, MessageBusConnection> myListenerAdapters = new HashMap<>();
 
   @Override
-  public void addCompilationStatusListener(@NotNull final CompilationStatusListener listener) {
+  public void addCompilationStatusListener(@NotNull CompilationStatusListener listener) {
     final MessageBusConnection connection = myProject.getMessageBus().connect();
     myListenerAdapters.put(listener, connection);
     connection.subscribe(CompilerTopics.COMPILATION_STATUS, listener);
@@ -301,7 +307,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  public void removeCompilationStatusListener(@NotNull final CompilationStatusListener listener) {
+  public void removeCompilationStatusListener(final @NotNull CompilationStatusListener listener) {
     final MessageBusConnection connection = myListenerAdapters.remove(listener);
     if (connection != null) {
       connection.disconnect();
@@ -314,8 +320,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  @NotNull
-  public CompileScope createFilesCompileScope(final VirtualFile @NotNull [] files) {
+  public @NotNull CompileScope createFilesCompileScope(final VirtualFile @NotNull [] files) {
     CompileScope[] scopes = new CompileScope[files.length];
     for(int i = 0; i < files.length; i++){
       scopes[i] = new OneProjectItemCompileScope(myProject, files[i]);
@@ -324,32 +329,27 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  @NotNull
-  public CompileScope createModuleCompileScope(@NotNull final Module module, final boolean includeDependentModules) {
+  public @NotNull CompileScope createModuleCompileScope(final @NotNull Module module, final boolean includeDependentModules) {
     return createModulesCompileScope(new Module[] {module}, includeDependentModules);
   }
 
   @Override
-  @NotNull
-  public CompileScope createModulesCompileScope(final Module @NotNull [] modules, final boolean includeDependentModules) {
+  public @NotNull CompileScope createModulesCompileScope(final Module @NotNull [] modules, final boolean includeDependentModules) {
     return createModulesCompileScope(modules, includeDependentModules, false);
   }
 
   @Override
-  @NotNull
-  public CompileScope createModulesCompileScope(Module @NotNull [] modules, boolean includeDependentModules, boolean includeRuntimeDependencies) {
+  public @NotNull CompileScope createModulesCompileScope(Module @NotNull [] modules, boolean includeDependentModules, boolean includeRuntimeDependencies) {
     return new ModuleCompileScope(myProject, modules, includeDependentModules, includeRuntimeDependencies);
   }
 
   @Override
-  @NotNull
-  public CompileScope createModuleGroupCompileScope(@NotNull final Project project, final Module @NotNull [] modules, final boolean includeDependentModules) {
+  public @NotNull CompileScope createModuleGroupCompileScope(final @NotNull Project project, final Module @NotNull [] modules, final boolean includeDependentModules) {
     return new ModuleCompileScope(project, modules, includeDependentModules);
   }
 
   @Override
-  @NotNull
-  public CompileScope createProjectCompileScope(@NotNull final Project project) {
+  public @NotNull CompileScope createProjectCompileScope(final @NotNull Project project) {
     return new ProjectCompileScope(project);
   }
 
@@ -461,8 +461,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
 
-  @Nullable
-  private ExternalJavacManager getJavacManager() throws IOException {
+  private @Nullable ExternalJavacManager getJavacManager() throws IOException {
     ExternalJavacManager manager = myExternalJavacManager;
     if (manager == null) {
       synchronized (this) {
@@ -486,8 +485,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  @Nullable
-  public File getJavacCompilerWorkingDir() {
+  public @Nullable File getJavacCompilerWorkingDir() {
     final File projectBuildDir = BuildManager.getInstance().getProjectSystemDirectory(myProject);
     if (projectBuildDir == null) {
       return null;
@@ -529,14 +527,14 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   private class ListenerNotificator implements CompileStatusNotification {
-    @Nullable private final CompileStatusNotification myDelegate;
+    private final @Nullable CompileStatusNotification myDelegate;
 
     private ListenerNotificator(@Nullable CompileStatusNotification delegate) {
       myDelegate = delegate;
     }
 
     @Override
-    public void finished(boolean aborted, int errors, int warnings, @NotNull final CompileContext compileContext) {
+    public void finished(boolean aborted, int errors, int warnings, final @NotNull CompileContext compileContext) {
       if (!myProject.isDisposed()) {
         myEventPublisher.compilationFinished(aborted, errors, warnings, compileContext);
       }

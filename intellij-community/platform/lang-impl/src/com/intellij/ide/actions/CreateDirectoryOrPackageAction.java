@@ -61,8 +61,7 @@ import java.util.function.Consumer;
 import static com.intellij.internal.statistic.utils.PluginInfoDetectorKt.getPluginInfo;
 
 public class CreateDirectoryOrPackageAction extends AnAction implements DumbAware {
-  private static final ExtensionPointName<CreateDirectoryCompletionContributorEP>
-    EP = ExtensionPointName.create("com.intellij.createDirectoryCompletionContributor");
+  private static final ExtensionPointName<CreateDirectoryCompletionContributor> EP = new ExtensionPointName<>("com.intellij.createDirectoryCompletionContributor");
 
   @TestOnly
   public static final DataKey<String> TEST_DIRECTORY_NAME_KEY = DataKey.create("CreateDirectoryOrPackageAction.testName");
@@ -220,11 +219,9 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     List<CompletionItem> variants = new ArrayList<>();
 
     VirtualFile vDir = directory.getVirtualFile();
-    for (CreateDirectoryCompletionContributorEP ep : EP.getExtensionList()) {
-      CreateDirectoryCompletionContributor contributor = ep.getInstance();
+    for (CreateDirectoryCompletionContributor contributor : EP.getExtensionList()) {
       for (CreateDirectoryCompletionContributor.Variant variant : contributor.getVariants(directory)) {
         String relativePath = FileUtil.toSystemIndependentName(variant.path);
-
         if (FileUtil.isAbsolutePlatformIndependent(relativePath)) {
           // only suggest sub-folders
           if (!FileUtil.isAncestor(vDir.getPath(), relativePath, true)) continue;

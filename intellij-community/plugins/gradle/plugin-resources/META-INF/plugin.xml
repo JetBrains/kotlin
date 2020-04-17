@@ -101,7 +101,7 @@
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleImportHintService"
                     configurationSchemaKey="importHint.gradle" />
-    <createDirectoryCompletionContributor implementationClass="org.jetbrains.plugins.gradle.GradleDirectoryCompletionContributor"/>
+    <createDirectoryCompletionContributor implementation="org.jetbrains.plugins.gradle.GradleDirectoryCompletionContributor"/>
 
     <stepsBeforeRunProvider implementation="org.jetbrains.plugins.gradle.execution.GradleBeforeRunTaskProvider" />
     <runConfigurationProducer implementation="org.jetbrains.plugins.gradle.service.execution.GradleRuntimeConfigurationProducer"/>

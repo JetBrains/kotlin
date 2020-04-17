@@ -1,9 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.module.impl;
 
 import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.*;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,14 +13,16 @@ import java.util.List;
 
 public class ModuleTypeManagerImpl extends ModuleTypeManager {
   private static final Logger LOG = Logger.getInstance(ModuleTypeManagerImpl.class);
+  @ApiStatus.Internal
+  public static final ExtensionPointName<ModuleTypeEP> EP_NAME = ExtensionPointName.create("com.intellij.moduleType");
 
   private final LinkedHashMap<ModuleType<?>, Boolean> myModuleTypes = new LinkedHashMap<>();
 
   public ModuleTypeManagerImpl() {
     registerModuleType(getDefaultModuleType(), true);
-    for (ModuleTypeEP ep : ModuleTypeEP.EP_NAME.getExtensions()) {
+    for (ModuleTypeEP ep : EP_NAME.getExtensions()) {
       if (ep.id == null) {
-        LOG.error(new PluginException("'id' attribute isn't specified for <moduleType implementationClass='" + ep.implementationClass + "'> extension", ep.getPluginId()));
+        LOG.error(new PluginException("'id' attribute isn't specified for <moduleType implementationClass='" + ep.implementationClass + "'> extension", ep.pluginDescriptor.getPluginId()));
       }
     }
   }
@@ -48,7 +52,7 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   @Override
   public ModuleType<?>[] getRegisteredTypes() {
     List<ModuleType<?>> result = new ArrayList<>(myModuleTypes.keySet());
-    for (ModuleTypeEP moduleTypeEP : ModuleTypeEP.EP_NAME.getExtensionList()) {
+    for (ModuleTypeEP moduleTypeEP : EP_NAME.getExtensionList()) {
       ModuleType<?> moduleType = moduleTypeEP.getModuleType();
       if (!myModuleTypes.containsKey(moduleType)) {
         result.add(moduleType);
@@ -65,7 +69,7 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
         return type;
       }
     }
-    for (ModuleTypeEP ep : ModuleTypeEP.EP_NAME.getExtensionList()) {
+    for (ModuleTypeEP ep : EP_NAME.getExtensionList()) {
       if (moduleTypeID.equals(ep.id)) {
         return ep.getModuleType();
       }
@@ -75,15 +79,15 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   }
 
   @Override
-  public boolean isClasspathProvider(final ModuleType moduleType) {
-    for (ModuleTypeEP ep : ModuleTypeEP.EP_NAME.getExtensionList()) {
+  public boolean isClasspathProvider(ModuleType moduleType) {
+    for (ModuleTypeEP ep : EP_NAME.getExtensionList()) {
       if (moduleType.getId().equals(ep.id)) {
         return ep.classpathProvider;
       }
     }
 
     final Boolean provider = myModuleTypes.get(moduleType);
-    return provider != null && provider.booleanValue();
+    return provider != null && provider;
   }
 
   @Override
