@@ -13,16 +13,17 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.util.containers.filterSmart
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.util.*
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
 
@@ -97,4 +98,40 @@ fun useScriptConfigurationFromImportOnly(): Boolean {
 fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> {
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings
     return gradleSettings.getLinkedProjectsSettings()
+}
+
+class RootsIndex<T : Any> {
+    internal val tree = TreeMap<String, T>()
+    var values: Collection<T> = listOf()
+        internal set
+
+    fun findRoot(path: String): T? {
+        // race condition can be ignored
+        val values = values
+        val size = values.size
+        if (size == 0) return null
+        if (size == 1) return values.single() // we can omit prefix check
+        return tree.floorEntry(path).takeIf { path.startsWith(it.key) }?.value
+    }
+
+    internal inline fun update(updater: (insert: (prefix: String, value: T) -> Unit) -> Unit) {
+        synchronized(this) {
+            updater { prefix, value -> tree[prefix] = value }
+            values = tree.values
+        }
+    }
+
+    @Synchronized
+    operator fun set(prefix: String, value: T) {
+        val moreCommon = tree.floorKey(prefix)
+        check(moreCommon == null || !prefix.startsWith(moreCommon)) {
+            "Cannot add root `${prefix}`. More common root already added: `$moreCommon`"
+        }
+
+        tree[prefix] = value
+        values = tree.values
+    }
+
+    @Synchronized
+    fun remove(prefix: String) = tree.remove(prefix)
 }

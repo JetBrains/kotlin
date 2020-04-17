@@ -26,7 +26,6 @@ import org.jetbrains.plugins.gradle.settings.GradleSettingsListener
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.nio.file.Paths
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Creates [GradleScriptingSupport] per each linked Gradle build.
@@ -35,11 +34,13 @@ import java.util.concurrent.ConcurrentHashMap
 class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Provider() {
     private val rootsIndexer = ScriptClassRootsIndexer(project)
 
-    private val byBuildRoot = ConcurrentHashMap<VirtualFile, GradleScriptingSupport>()
-    override val all get() = byBuildRoot.values
+    val roots = RootsIndex<GradleScriptingSupport>()
+    override val all get() = roots.values
 
-    private fun findRoot(buildRoot: VirtualFile) =
-        all.find { buildRoot.path.startsWith(it.buildRoot.path) }
+    private val VirtualFile.localPath
+        get() = path
+
+    private fun findRoot(file: VirtualFile) = roots.findRoot(file.localPath)
 
     override fun getSupport(file: VirtualFile): ScriptingSupport? =
         when {
@@ -48,15 +49,17 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         }
 
     init {
-        getGradleProjectSettings(project).forEach { gradleProjectSettings ->
-            if (kotlinDslScriptsModelImportSupported(gradleProjectSettings.resolveGradleVersion().version)) {
-                ApplicationManager.getApplication().executeOnPooledThread {
-                    val support = createSupport(gradleProjectSettings.externalProjectPath) {
-                        KotlinDslScriptModels.read(it)
-                    }
+        ApplicationManager.getApplication().executeOnPooledThread {
+            roots.update { set ->
+                getGradleProjectSettings(project).forEach { gradleProjectSettings ->
+                    if (kotlinDslScriptsModelImportSupported(gradleProjectSettings.resolveGradleVersion().version)) {
+                        val support = createSupport(gradleProjectSettings.externalProjectPath) {
+                            KotlinDslScriptModels.read(it)
+                        }
 
-                    if (support != null) {
-                        byBuildRoot.putIfAbsent(support.buildRoot, support)
+                        if (support != null) {
+                            set(support.buildRoot.localPath, support)
+                        }
                     }
                 }
             }
@@ -68,8 +71,9 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
                 linkedProjectPaths.forEach {
                     val buildRoot = VfsUtil.findFile(Paths.get(it), false)
                     if (buildRoot != null) {
-                        KotlinDslScriptModels.remove(buildRoot)
-                        byBuildRoot.remove(buildRoot)
+                        if (roots.remove(buildRoot.localPath) != null) {
+                            KotlinDslScriptModels.remove(buildRoot)
+                        }
                     }
                 }
             }
@@ -79,13 +83,12 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     }
 
     fun update(build: KotlinDslGradleBuildSync) {
-        if (build.models.isEmpty()) return // todo: why?
-
         val templateClasspath = findTemplateClasspath(build) ?: return
         val data = ConfigurationData(templateClasspath, build.models)
         val newSupport = createSupport(build.workingDir) { data } ?: return
+        KotlinDslScriptModels.write(newSupport.buildRoot, data)
 
-        byBuildRoot[newSupport.buildRoot] = newSupport
+        roots[newSupport.buildRoot.localPath] = newSupport
     }
 
     private fun createSupport(
