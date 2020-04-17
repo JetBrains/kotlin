@@ -27,8 +27,6 @@ abstract class AbstractKlibLibraryInfo(project: Project, library: Library, val l
 
     final override fun getLibraryRoots() = listOf(libraryRoot)
 
-    final override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoot=$libraryRoot)"
-
     abstract override val platform: TargetPlatform // must override
 
     companion object {

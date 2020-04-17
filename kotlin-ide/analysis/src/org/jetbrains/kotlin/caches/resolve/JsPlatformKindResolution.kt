@@ -75,7 +75,7 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
                 JsKlibLibraryInfo(project, library, path)
             }
         } else {
-            super.createLibraryInfo(project, library)
+            listOf(JsMetadataLibraryInfo(project, library))
         }
     }
 
@@ -109,6 +109,11 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
 }
 
 class JsKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
+    override val platform: TargetPlatform
+        get() = JsPlatforms.defaultJsPlatform
+}
+
+class JsMetadataLibraryInfo(project: Project, library: Library) : LibraryInfo(project, library) {
     override val platform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
 }

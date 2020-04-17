@@ -69,7 +69,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
             }
         } else {
             // No klib files <=> old metadata-library <=> create usual LibraryInfo
-            listOf(LibraryInfo(project, library))
+            listOf(CommonMetadataLibraryInfo(project, library))
         }
     }
 
@@ -115,9 +115,16 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     }
 }
 
-class CommonKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) :
-    AbstractKlibLibraryInfo(project, library, libraryRoot) {
+class CommonKlibLibraryInfo(
+    project: Project,
+    library: Library,
+    libraryRoot: String
+) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
+    override val platform: TargetPlatform
+        get() = CommonPlatforms.defaultCommonPlatform
+}
 
+class CommonMetadataLibraryInfo(project: Project, library: Library) : LibraryInfo(project, library) {
     override val platform: TargetPlatform
         get() = CommonPlatforms.defaultCommonPlatform
 }

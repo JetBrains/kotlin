@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModif
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
+import org.jetbrains.kotlin.idea.framework.effectiveKind
+import org.jetbrains.kotlin.idea.framework.platform
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
@@ -109,16 +110,20 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
     }
 }
 
-val Project.libraryInfoCache: MutableMap<Library, List<LibraryInfo>>
+private val Project.libraryInfoCache: MutableMap<Library, List<LibraryInfo>>
     get() = cacheInvalidatingOnRootModifications { ContainerUtil.createConcurrentWeakMap() }
 
-fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
-    val cache = project.libraryInfoCache
+fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> =
+    project.libraryInfoCache.getOrPut(library) {
+        val approximatePlatform = if (library is LibraryEx && !library.isDisposed) {
+            // for Native returns 'unspecifiedNativePlatform', thus "approximate"
+            library.effectiveKind(project).platform
+        } else {
+            DefaultIdeTargetPlatformKindProvider.defaultPlatform
+        }
 
-    return cache.getOrPut(library) {
-        getLibraryPlatform(project, library).idePlatformKind.resolution.createLibraryInfo(project, library)
+        approximatePlatform.idePlatformKind.resolution.createLibraryInfo(project, library)
     }
-}
 
 private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
@@ -300,7 +305,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun toString() = "ModuleTestSourceScope($module)"
 }
 
-open class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
+abstract class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -315,18 +320,15 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
         val result = LinkedHashSet<IdeaModuleInfo>()
         result.add(this)
 
-        val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(library)
+        val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(this)
 
-        sdks.mapTo(result) { SdkInfo(project, it) }
-        libraries.filter { it is LibraryEx && !it.isDisposed }.flatMapTo(result) {
-            createLibraryInfo(project, it)
-        }
+        result.addAll(sdks)
+        result.addAll(libraries)
 
         return result.toList()
     }
 
-    override val platform: TargetPlatform
-        get() = getLibraryPlatform(project, library)
+    abstract override val platform: TargetPlatform // must override
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = platform.findAnalyzerServices(project)
@@ -337,7 +339,7 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
     override fun getLibraryRoots(): Collection<String> =
         library.getFiles(OrderRootType.CLASSES).mapNotNull(PathUtil::getLocalPath)
 
-    override fun toString() = "LibraryInfo(libraryName=${library.name})"
+    override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoots=${getLibraryRoots()})"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -345,7 +347,6 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
     }
 
     override fun hashCode(): Int = 43 * library.hashCode()
-
 }
 
 data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
