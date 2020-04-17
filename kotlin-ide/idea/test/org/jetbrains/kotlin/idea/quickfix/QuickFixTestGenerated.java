@@ -6467,6 +6467,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage4.kt");
             }
 
+            @TestMetadata("constructorUsage5.kt")
+            public void testConstructorUsage5() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage5.kt");
+            }
+
+            @TestMetadata("constructorUsage6.kt")
+            public void testConstructorUsage6() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage6.kt");
+            }
+
+            @TestMetadata("constructorUsage7.kt")
+            public void testConstructorUsage7() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage7.kt");
+            }
+
             @TestMetadata("constructorUsageWithTypeArgument.kt")
             public void testConstructorUsageWithTypeArgument() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsageWithTypeArgument.kt");
@@ -6580,6 +6595,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("qualifiedClassNameInPattern.kt")
             public void testQualifiedClassNameInPattern() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/qualifiedClassNameInPattern.kt");
+            }
+
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/secondaryConstructor.kt");
             }
 
             @TestMetadata("simple.kt")
@@ -7076,6 +7096,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("classConstructor.kt")
+            public void testClassConstructor() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/classConstructor.kt");
+            }
+
             @TestMetadata("classLiteral.kt")
             public void testClassLiteral() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/classLiteral.kt");
@@ -7134,6 +7159,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("typeReference.kt")
             public void testTypeReference() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/typeReference.kt");
+            }
+
+            @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/wholeProject")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WholeProject extends AbstractQuickFixTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInWholeProject() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("classConstructor.kt")
+                public void testClassConstructor() throws Exception {
+                    runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/wholeProject/classConstructor.kt");
+                }
             }
         }
 
