@@ -55,7 +55,10 @@ class ProjectTemplateSettingComponent(
         super.onValueUpdated(reference)
         if (reference == ProjectTemplatesPlugin::template.reference) {
             applySelectedTemplate()
-            value?.let(templateDescriptionComponent::setTemplate)
+            value?.let { template ->
+                list.setSelectedValue(template, true)
+                templateDescriptionComponent.setTemplate(template)
+            }
         }
     }
 
