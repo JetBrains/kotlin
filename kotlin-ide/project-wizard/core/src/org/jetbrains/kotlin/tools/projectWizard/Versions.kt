@@ -14,23 +14,23 @@ object Versions {
     val KTOR = version("1.2.6")
 
     object ANDROID {
-        val ANDROIDX_CORE_KTX = version("1.1.0")
+        val ANDROIDX_CORE_KTX = version("1.2.0")
         val ANDROIDX_APPCOMPAT = version("1.1.0")
         val ANDROIDX_CONSTRAINTLAYOUT = version("1.1.3")
     }
 
     object KOTLINX {
-        val KOTLINX_HTML = version("0.6.12")
+        val KOTLINX_HTML = version("0.7.1")
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT = version("16.9.0-pre.89-kotlin-1.3.60")
+        val KOTLIN_REACT = version("16.13.0-pre.93-kotlin-1.4-M1")
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED = KOTLIN_REACT
+        val KOTLIN_STYLED = version("1.0.0-pre.93-kotlin-1.4-M1")
     }
 
     object NPM {
-        val REACT = version("16.12.0")
+        val REACT = version("16.13.0")
         val REACT_DOM = REACT
         val REACT_IS = REACT
 
