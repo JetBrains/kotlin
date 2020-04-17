@@ -14,7 +14,7 @@ import com.intellij.util.containers.mapSmart
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Internal
-open class ProjectSaveSessionProducerManager(private val project: Project) : SaveSessionProducerManager() {
+open class ProjectSaveSessionProducerManager(protected val project: Project) : SaveSessionProducerManager() {
   suspend fun saveWithAdditionalSaveSessions(extraSessions: List<SaveSession>): SaveResult {
     val saveSessions = SmartList<SaveSession>()
     collectSaveSessions(saveSessions)

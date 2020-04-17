@@ -101,7 +101,10 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
       for (Module module : ModuleManager.getInstance(myProject).getModules()) {
         if (!module.isDisposed()) {
           ExternalSystemModulePropertyManager.getInstance(module).swapStore();
-          ((ModuleRootManagerImpl)ModuleRootManager.getInstance(module)).stateChanged();
+          ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+          if (moduleRootManager instanceof ModuleRootManagerImpl) {
+            ((ModuleRootManagerImpl)moduleRootManager).stateChanged();
+          }
         }
       }
     }

@@ -2,8 +2,12 @@
 package com.intellij.openapi.externalSystem.configurationStore
 
 import com.intellij.facet.FacetManager
-import com.intellij.facet.impl.invalid.InvalidFacetType
+import com.intellij.facet.FacetType
+import com.intellij.facet.mock.MockFacetType
+import com.intellij.facet.mock.MockSubFacetType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.AppUIExecutor
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.ex.PathManagerEx
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.application.runWriteAction
@@ -13,13 +17,12 @@ import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjec
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.CompilerProjectExtension
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.packaging.artifacts.ArtifactManager
 import com.intellij.packaging.elements.PackagingElementFactory
 import com.intellij.packaging.impl.artifacts.PlainArtifactType
@@ -29,6 +32,7 @@ import com.intellij.testFramework.*
 import com.intellij.util.io.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
@@ -41,7 +45,11 @@ class ExternalSystemStorageTest {
     @JvmField
     @ClassRule
     val appRule = ApplicationRule()
+
   }
+  @JvmField
+  @Rule
+  val disposableRule = DisposableRule()
 
   @JvmField
   @Rule
@@ -64,7 +72,25 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun libraries() = saveProjectAndCheckResult("libraries") { project, projectDir ->
+  fun `regular facet in imported module`() = saveProjectAndCheckResult("regularFacetInImportedModule") { project, projectDir ->
+    val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
+    FacetManager.getInstance(imported).addFacet(MockFacetType.getInstance(), "regular", null)
+    ExternalSystemModulePropertyManager.getInstance(imported).setMavenized(true)
+  }
+
+  @Test
+  fun `imported facet in imported module`() = saveProjectAndCheckResult("importedFacetInImportedModule") { project, projectDir ->
+    val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
+    val facetManager = FacetManager.getInstance(imported)
+    val model = facetManager.createModifiableModel()
+    val source = ExternalProjectSystemRegistry.getInstance().getSourceById(ExternalProjectSystemRegistry.MAVEN_EXTERNAL_SOURCE_ID)
+    model.addFacet(facetManager.createFacet(MockFacetType.getInstance(), "imported", null), source)
+    model.commit()
+    ExternalSystemModulePropertyManager.getInstance(imported).setMavenized(true)
+  }
+
+  @Test
+  fun libraries() = saveProjectAndCheckResult("libraries") { project, _ ->
     val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
     val model = libraryTable.modifiableModel
     model.createLibrary("regular", null)
@@ -83,6 +109,14 @@ class ExternalSystemStorageTest {
     model.commit()
   }
 
+  @Before
+  fun registerFacetType() {
+    WriteAction.runAndWait<RuntimeException> {
+      FacetType.EP_NAME.getPoint(null).registerExtension(MockFacetType(), disposableRule.disposable)
+      FacetType.EP_NAME.getPoint(null).registerExtension(MockSubFacetType(), disposableRule.disposable)
+    }
+  }
+
   private val externalSource get() = ExternalProjectSystemRegistry.getInstance().getSourceById("test")
 
   private fun saveProjectAndCheckResult(testDataDirName: String, setupProject: (Project, Path) -> Unit) {
@@ -92,6 +126,7 @@ class ExternalSystemStorageTest {
         val projectDir = Paths.get(project.stateStore.directoryStorePath).parent
         val cacheDir = ExternalProjectsDataStorage.getProjectConfigurationDir(project)
         cacheDir.delete()
+        Disposer.register(disposableRule.disposable, Disposable { cacheDir.delete() })
 
         withContext(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
           runWriteAction {
@@ -110,7 +145,7 @@ class ExternalSystemStorageTest {
         FileUtil.copyDir(testDataRoot.resolve(testDataDirName).toFile(), expectedDir.toFile())
 
         projectDir.toFile().assertMatches(directoryContentOf(expectedDir.resolve("project")))
-        cacheDir.toFile().assertMatches(directoryContentOf(expectedDir.resolve("cache")))
+        cacheDir.toFile().assertMatches(directoryContentOf(expectedDir.resolve("cache")), FileTextMatcher.ignoreBlankLines())
       }
     }
   }

@@ -347,8 +347,9 @@ public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
     return getOptionManager().getModificationCount();
   }
 
+  @ApiStatus.Internal
   @State(name = "DeprecatedModuleOptionManager", useLoadedStateAsExisting = false /* doesn't make sense to check it */)
-  static class DeprecatedModuleOptionManager extends SimpleModificationTracker implements PersistentStateComponent<DeprecatedModuleOptionManager.State>,
+  public static class DeprecatedModuleOptionManager extends SimpleModificationTracker implements PersistentStateComponent<DeprecatedModuleOptionManager.State>,
                                                                                           ProjectModelElement {
     private final Module module;
 
