@@ -10,12 +10,16 @@ import com.jetbrains.swift.symbols.impl.variable.TypeAnnotationInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
 class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
+    private var isClassProperty: Boolean = false
+
     constructor(
         stub: ObjCProperty,
         project: Project,
         file: VirtualFile,
         containingTypeSymbol: SwiftTypeSymbol
-    ) : super(stub, file, project, containingTypeSymbol)
+    ) : super(stub, file, project, containingTypeSymbol) {
+        isClassProperty = stub.propertyAttributes.contains("class")
+    }
 
     constructor() : super()
 
@@ -38,7 +42,8 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
         return SwiftAttributesInfo.EMPTY //todo [medvedev]???
     }
 
-    override fun getStaticness(): SwiftCanBeStatic.Staticness = SwiftCanBeStatic.Staticness.NOT_STATIC
+    override fun getStaticness(): SwiftCanBeStatic.Staticness =
+        if (isClassProperty) SwiftCanBeStatic.Staticness.CLASS else SwiftCanBeStatic.Staticness.NOT_STATIC
 
     override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(swiftType)
 
