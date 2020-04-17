@@ -376,6 +376,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("annotations", "mutableListOf()")
+            defaultFalse("isSuspend")
             useTypes(coneClassErrorTypeType)
         }
 
@@ -398,12 +399,23 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(errorTypeRefImpl)
         }
 
-        impl(functionTypeRef)
-        impl(implicitTypeRef) {
-            defaultEmptyList("annotations")
+        impl(dynamicTypeRef) {
+            defaultFalse("isSuspend")
         }
 
-        impl(composedSuperTypeRef)
+        impl(functionTypeRef) {
+            // Note that we intentionally do _not_ set default value (false) for `isSuspend`, since function type reference is the only
+            // place where type modifier `suspend` matters.
+        }
+
+        impl(implicitTypeRef) {
+            defaultEmptyList("annotations")
+            defaultFalse("isSuspend")
+        }
+
+        impl(composedSuperTypeRef) {
+            defaultFalse("isSuspend")
+        }
 
         impl(reference, "FirStubReference") {
             default("source") {
@@ -454,6 +466,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                     delegate = "typeRef"
                 }
             }
+            defaultFalse("isSuspend")
         }
 
         noImpl(userTypeRef)

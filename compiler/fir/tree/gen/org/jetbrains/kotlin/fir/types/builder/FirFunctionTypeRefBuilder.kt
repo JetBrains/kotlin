@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var receiverTypeRef: FirTypeRef? = null
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
@@ -35,6 +36,7 @@ class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
         return FirFunctionTypeRefImpl(
             source,
             annotations,
+            isSuspend,
             isMarkedNullable,
             receiverTypeRef,
             valueParameters,

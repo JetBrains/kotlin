@@ -19,7 +19,8 @@ open class FirUserTypeRefImpl(
     override val source: FirSourceElement?,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
-    override val annotations: MutableList<FirAnnotationCall>
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val isSuspend: Boolean = false
 ) : FirUserTypeRef(), FirAnnotationContainer {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

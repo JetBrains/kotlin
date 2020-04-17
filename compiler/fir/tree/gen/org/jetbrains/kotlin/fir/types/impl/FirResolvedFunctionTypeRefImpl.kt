@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedFunctionTypeRefImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
+    override val isSuspend: Boolean,
     override val type: ConeKotlinType,
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,

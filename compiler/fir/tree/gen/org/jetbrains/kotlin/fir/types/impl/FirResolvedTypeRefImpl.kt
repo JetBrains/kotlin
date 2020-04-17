@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedTypeRefImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
+    override val isSuspend: Boolean,
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
 ) : FirResolvedTypeRef() {
