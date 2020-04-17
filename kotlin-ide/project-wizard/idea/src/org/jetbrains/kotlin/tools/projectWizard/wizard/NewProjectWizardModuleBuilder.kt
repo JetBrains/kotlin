@@ -80,9 +80,6 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats, wizardContext))
     }
 
-    override fun createProject(name: String?, path: String?) =
-        ProjectManager.getInstance().createProject(wizard.projectName, wizard.projectPath.toString())
-
     override fun commit(
         project: Project,
         model: ModifiableModuleModel?,
@@ -126,6 +123,10 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     }
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? {
+        settingsStep.moduleNameLocationSettings?.apply {
+            moduleName = wizard.projectName!!
+            moduleContentRoot = wizard.projectPath!!.toString()
+        }
         clickFinishButton()
         return null
     }
