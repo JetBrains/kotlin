@@ -76,19 +76,8 @@ class ProjectTemplateSettingComponent(
 }
 
 class TemplateDescriptionComponent : Component() {
-    private val descriptionLabel = JBLabel().apply {
+    private val descriptionLabel = CommentLabel().apply {
         preferredSize = Dimension(preferredSize.width, 45)
-        verticalAlignment = SwingConstants.TOP
-        isFocusable = false
-        foreground = UIUtil.getContextHelpForeground()
-
-        // taken from com.intellij.openapi.ui.panel.ComponentPanelBuilder.createCommentComponent
-        if (SystemInfo.isMac) {
-            val font = this.font
-            val size = font.size2D
-            val smallFont = font.deriveFont(size - 2.0f)
-            this.font = smallFont
-        }
     }
 
     fun setTemplate(template: ProjectTemplate) {

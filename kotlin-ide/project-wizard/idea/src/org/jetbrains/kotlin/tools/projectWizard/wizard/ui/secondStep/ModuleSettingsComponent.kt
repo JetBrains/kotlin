@@ -131,8 +131,7 @@ private class ModuleTemplateComponent(
     }.asSubComponent()
 
     override val forceLabelCenteringOffset: Int? = 4
-    private val templateDescriptionLabel = JBLabel().apply {
-        foreground = UIUtil.getContextHelpForeground()
+    private val templateDescriptionLabel = CommentLabel().apply {
         addBorder(JBUI.Borders.empty(2, 4))
     }
 
@@ -142,7 +141,7 @@ private class ModuleTemplateComponent(
     }
 
     private fun changeTemplateDescription(template: Template?) {
-        templateDescriptionLabel.text = template?.description
+        templateDescriptionLabel.text = template?.description?.asHtml()
         templateDescriptionLabel.isVisible = template?.description != null
     }
 

@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
+import com.intellij.openapi.actionSystem.CommonShortcuts
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.ui.ColoredListCellRenderer
@@ -110,12 +112,16 @@ private class ModuleDependenciesList(getDependencies: () -> List<Module>) : Abst
             appendText(KotlinNewProjectWizardUIBundle.message("module.settings.dependencies.empty"))
             appendSecondaryText(
                 KotlinNewProjectWizardUIBundle.message("module.settings.dependencies.empty.suggest.add"),
-                SimpleTextAttributes.LINK_ATTRIBUTES
+                SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
             ) {
                 AddModulesPopUp.create(
                     getDependencies(),
                     ::addDependency
                 ).showInCenterOf(this@ModuleDependenciesList)
+            }
+            val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(CommonShortcuts.getNewForDialogs())
+            if (shortcutText.isNotEmpty()) {
+                appendSecondaryText(" ($shortcutText)", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
             }
         }
     }
