@@ -213,7 +213,7 @@ data class ModuleProductionSourceInfo internal constructor(
 
     override val name = Name.special("<production sources for module ${module.name}>")
 
-    override val stableName: Name = module.getStableName()
+    override val stableName: Name by lazy { module.getStableName() }
 
     override fun contentScope(): GlobalSearchScope {
         return enlargedSearchScope(ModuleProductionSourceScope(module), module, isTestScope = false)
@@ -229,7 +229,7 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override val displayedName get() = KotlinIdeaAnalysisBundle.message("module.name.0.test", module.name)
 
-    override val stableName: Name = module.getStableName()
+    override val stableName: Name by lazy { module.getStableName() }
 
     override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
 

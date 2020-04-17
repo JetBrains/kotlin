@@ -9,7 +9,8 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
@@ -23,10 +24,10 @@ import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.isGradleLibraryName
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
+import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
 
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
 class KotlinNativeABICompatibilityChecker(private val project: Project) : ProjectComponent, Disposable {
@@ -86,7 +87,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     }
 
     private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
-        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
+        val incompatibleLibraries = getModuleInfosFromIdeaModel(project)
             .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }

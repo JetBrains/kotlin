@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus.checkCanceled
 import org.jetbrains.kotlin.types.typeUtil.closure
 import java.util.concurrent.ConcurrentHashMap
 
@@ -67,8 +67,15 @@ private fun collectModuleInfosFromIdeaModel(
     }
 
     return IdeaModelInfosCache(
-        moduleSourceInfos = ideaModules.flatMap(Module::correspondingModuleInfos),
-        libraryInfos = ideaLibraries.flatMap { createLibraryInfo(project, it) },
+        moduleSourceInfos = ideaModules.flatMap {
+            checkCanceled()
+            it.correspondingModuleInfos()
+        },
+        libraryInfos = ideaLibraries.flatMap {
+            checkCanceled()
+
+            createLibraryInfo(project, it)
+        },
         sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
     )
 }

@@ -87,7 +87,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     }
 
     private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
-        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
+        val incompatibleLibraries = getModuleInfosFromIdeaModel(project)
             .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
