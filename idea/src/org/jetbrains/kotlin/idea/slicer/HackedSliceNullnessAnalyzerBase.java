@@ -210,7 +210,9 @@ public abstract class HackedSliceNullnessAnalyzerBase {
     static final int NULLS = 0;
     static final int NOT_NULLS = 1;
     static final int UNKNOWNS = 2;
-    final Collection<PsiElement>[] groupedByValue = new Collection[] {new THashSet<PsiElement>(),new THashSet<PsiElement>(),new THashSet<PsiElement>()};
+    // it's important to use LinkedHashSet's to have consistent output in tests
+    final Collection<PsiElement>[] groupedByValue =
+            new Collection[] {new LinkedHashSet<PsiElement>(), new LinkedHashSet<PsiElement>(), new LinkedHashSet<PsiElement>()};
 
     public void clear() {
       for (Collection<PsiElement> elements : groupedByValue) {
