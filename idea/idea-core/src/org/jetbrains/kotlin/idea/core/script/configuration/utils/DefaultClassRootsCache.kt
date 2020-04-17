@@ -16,14 +16,15 @@ import java.io.File
 internal class DefaultClassRootsCache(
     project: Project,
     private val all: Map<VirtualFile, ScriptCompilationConfigurationWrapper>
-) : ScriptClassRootsCache(project, extractRoots(all, project)) {
+) : ScriptClassRootsCache(
+    project,
+    ScriptClassRootsStorage.Companion.Key("default"),
+    extractRoots(all, project)
+) {
 
-    override val fileToConfiguration: (VirtualFile) -> ScriptCompilationConfigurationWrapper?
-        get() = { all[it] }
+    override fun getConfiguration(file: VirtualFile) = all[file]
 
     override fun contains(file: VirtualFile): Boolean = file in all
-
-    override val rootsCacheKey = ScriptClassRootsStorage.Companion.Key("default")
 
     private val scriptsSdksCache: Map<VirtualFile, Sdk?> =
         ConcurrentFactoryMap.createWeakMap { file ->

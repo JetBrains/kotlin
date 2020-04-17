@@ -11,12 +11,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslGradleBuildSync
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
@@ -36,9 +39,13 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     private val byBuildRoot = ConcurrentHashMap<VirtualFile, GradleScriptingSupport>()
     override val all get() = byBuildRoot.values
 
+    private fun findRoot(buildRoot: VirtualFile) =
+        all.find { buildRoot.path.startsWith(it.buildRoot.path) }
+
     override fun getSupport(file: VirtualFile): ScriptingSupport? =
-        all.find {
-            file.path.startsWith(it.buildRoot.path)
+        when {
+            isGradleKotlinScript(file) -> findRoot(file) ?: unlinkedFilesSupport
+            else -> null
         }
 
     init {
@@ -112,6 +119,31 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         val definition = anyScript.findScriptDefinition(project) ?: return null
         return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()
             ?.templateClasspath?.map { it.path }
+    }
+
+    val unlinkedFilesSupport = object : ScriptingSupport() {
+        override fun clearCaches() {
+        }
+
+        override fun hasCachedConfiguration(file: KtFile): Boolean = false
+
+        override fun getOrLoadConfiguration(
+            virtualFile: VirtualFile,
+            preloadedKtFile: KtFile?
+        ): ScriptCompilationConfigurationWrapper? = null
+
+        override val updater: ScriptConfigurationUpdater
+            get() = object : ScriptConfigurationUpdater {
+                override fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
+                }
+
+                override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean = false
+
+                override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
+                }
+            }
+
+        override fun recreateRootsCache(): ScriptClassRootsCache = ScriptClassRootsCache.empty(project)
     }
 
     companion object {

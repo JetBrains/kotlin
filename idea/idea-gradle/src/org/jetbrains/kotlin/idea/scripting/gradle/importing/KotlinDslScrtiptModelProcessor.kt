@@ -14,20 +14,10 @@ import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
-import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupport
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
-import java.nio.file.Paths
-import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
 
 fun processScriptModel(
     resolverCtx: ProjectResolverContext,
@@ -104,25 +94,6 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
     }
 
 class GradleKtsContext(val javaHome: File?)
-
-fun KotlinDslScriptModel.toScriptConfiguration(context: GradleKtsContext, project: Project): ScriptCompilationConfigurationWrapper? {
-    val scriptFile = File(file)
-    val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
-
-    val definition = virtualFile.findScriptDefinition(project) ?: return null
-
-    return ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
-        VirtualFileScriptSource(virtualFile),
-        definition.compilationConfiguration.with {
-            if (context.javaHome != null) {
-                jvm.jdkHome(context.javaHome)
-            }
-            defaultImports(imports)
-            dependencies(JvmDependency(classPath.map { File(it) }))
-            ide.dependenciesSources(JvmDependency(sourcePath.map { File(it) }))
-        }.adjustByDefinition(definition)
-    )
-}
 
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
     val models = mutableListOf<KotlinDslScriptModel>()

@@ -7,29 +7,62 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage.Companion.ScriptClassRoots
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.GradleKtsContext
+import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
+import java.io.File
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.jdkHome
+import kotlin.script.experimental.jvm.jvm
 
 class GradleClassRootsCache(
-    project: Project,
-    context: GradleKtsContext,
-    configuration: Configuration?,
-    override val fileToConfiguration: (VirtualFile) -> ScriptCompilationConfigurationWrapper?
-) : ScriptClassRootsCache(project, extractRoots(context, configuration)) {
+    val project: Project,
+    val context: GradleKtsContext,
+    val configuration: Configuration
+) : ScriptClassRootsCache(
+    project,
+    ScriptClassRootsStorage.Companion.Key("gradle"),
+    extractRoots(context, configuration)
+) {
+    override fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? =
+        configuration.scriptModel(file)?.toScriptConfiguration()
 
-    override val rootsCacheKey = ScriptClassRootsStorage.Companion.Key("gradle")
+    private fun KotlinDslScriptModel.toScriptConfiguration(): ScriptCompilationConfigurationWrapper? {
+        val scriptFile = File(file)
+        val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
+
+        val definition = virtualFile.findScriptDefinition(project) ?: return null
+
+        return ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
+            VirtualFileScriptSource(virtualFile),
+            definition.compilationConfiguration.with {
+                if (context.javaHome != null) {
+                    jvm.jdkHome(context.javaHome)
+                }
+                defaultImports(imports)
+                dependencies(JvmDependency(classPath.map { File(it) }))
+                ide.dependenciesSources(JvmDependency(sourcePath.map { File(it) }))
+            }.adjustByDefinition(definition)
+        )
+    }
 
     override fun getScriptSdk(file: VirtualFile): Sdk? {
         return firstScriptSdk
     }
 
-    override val firstScriptSdk: Sdk? = configuration?.let { getScriptSdk(context.javaHome) }
+    override val firstScriptSdk: Sdk? = getScriptSdk(context.javaHome)
 
-    // TODO what should we do if no configuration is loaded yet
+    // called to ensure that configuration for file is loaded
+    // as we cannot force loading, we always return true
     override fun contains(file: VirtualFile): Boolean = true
 
     companion object {

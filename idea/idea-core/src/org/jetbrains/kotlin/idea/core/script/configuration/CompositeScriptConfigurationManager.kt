@@ -85,14 +85,16 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
      * Loads script configuration if classpath roots don't contain [file] yet
      */
     private fun getActualClasspathRoots(file: VirtualFile): ScriptClassRootsCache {
-        val classpathRoots = getRelatedManager(file).classpathRoots
+        val manager = getRelatedManager(file)
+
+        val classpathRoots = manager.classpathRoots
         if (classpathRoots.contains(file)) {
             return classpathRoots
         }
 
         getOrLoadConfiguration(file)
 
-        return getRelatedManager(file).classpathRoots
+        return manager.classpathRoots
     }
 
     override fun getScriptSdk(file: VirtualFile): Sdk? =
