@@ -16,6 +16,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.lang.Math.max
 import java.util.*
 import java.util.regex.Pattern
 
@@ -154,7 +155,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         val highlightEndOffset = offset + (if (lineNumber > 0) line.lastIndex else fileNameEnd)
 
         // OpenFileHyperlinkInfo accepts zero-based line number
-        val hyperLinkInfo = OpenFileHyperlinkInfo(project, virtualFile, lineNumber - 1, columnNumber)
+        val hyperLinkInfo = OpenFileHyperlinkInfo(project, virtualFile, max(0, lineNumber - 1), columnNumber)
         return Filter.Result(offset + fileNameBegin, highlightEndOffset, hyperLinkInfo)
     }
 
