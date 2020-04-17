@@ -24,8 +24,12 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
         }
     }
 
+    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
+        if (files.any { "FIR_IGNORE" in it.directives }) return
+        super.analyzeAndCheck(testDataFile, files)
+    }
+
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
-        if (testFiles.any { "FIR_IGNORE" in it.directives }) return
         val failure: FirRuntimeException? = try {
             for ((_, firFiles) in firFilesPerSession) {
                 doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
