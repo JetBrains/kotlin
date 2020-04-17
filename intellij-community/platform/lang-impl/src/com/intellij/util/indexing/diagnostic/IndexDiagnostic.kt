@@ -1,19 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic
 
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.indexing.UnindexedFilesUpdater
-
-object IndexDiagnostic {
-  val allProjectIndexingHistories: MutableMap<String, MutableList<ProjectIndexingHistory>> =
-    ContainerUtil.createConcurrentSoftKeySoftValueMap()
-
-}
-
 data class ProjectIndexingHistory(val projectName: String) {
   val times: IndexingTimes = IndexingTimes()
 
-  val providerStatistics: MutableList<UnindexedFilesUpdater.FileProviderIndexStatistics> = arrayListOf()
+  val providerStatistics: MutableList<FileProviderIndexStatistics> = arrayListOf()
 
   data class IndexingTimes(
     var startIndexing: Long = 0,

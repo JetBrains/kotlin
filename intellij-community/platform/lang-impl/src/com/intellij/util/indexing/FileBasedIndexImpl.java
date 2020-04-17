@@ -48,6 +48,7 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.caches.CachedFileContent;
+import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
 import com.intellij.util.indexing.memory.InMemoryIndexStorage;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
@@ -1131,17 +1132,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     final VirtualFile file = fileContent.getVirtualFile();
     if (getChangedFilesCollector().isScheduledForUpdate(file)) {
       indexFileContent(project, fileContent);
-    }
-  }
-
-  public static final class FileIndexingStatistics {
-
-    public final long totalTime;
-    public final Map<ID<?, ?>, Long> perIndexerTimes;
-
-    public FileIndexingStatistics(long totalTime, @NotNull Map<ID<?, ?>, Long> perIndexerTimes) {
-      this.totalTime = totalTime;
-      this.perIndexerTimes = perIndexerTimes;
     }
   }
 

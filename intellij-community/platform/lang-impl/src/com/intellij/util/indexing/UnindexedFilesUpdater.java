@@ -27,8 +27,9 @@ import com.intellij.util.concurrency.NonUrgentExecutor;
 import com.intellij.util.containers.ConcurrentBitSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.caches.IndexUpdateRunner;
+import com.intellij.util.indexing.diagnostic.FileProviderIndexStatistics;
 import com.intellij.util.indexing.diagnostic.IndexDiagnosticDumper;
-import com.intellij.util.indexing.diagnostic.PerThreadTime;
+import com.intellij.util.indexing.diagnostic.IndexingJobStatistics;
 import com.intellij.util.indexing.diagnostic.ProjectIndexingHistory;
 import com.intellij.util.indexing.roots.IndexableFilesProvider;
 import com.intellij.util.messages.MessageBusConnection;
@@ -152,17 +153,9 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       SubTaskProgressIndicator subTaskIndicator = concurrentTasksProgressManager.createSubTaskIndicator(providerFiles.size());
       try {
         long startTime = System.currentTimeMillis();
-        IndexUpdateRunner.IndexingStatistics indexStatistics = indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
+        IndexingJobStatistics indexStatistics = indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
         long totalTime = System.currentTimeMillis() - startTime;
-        FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(
-          provider.getDebugName(),
-          totalTime,
-          indexStatistics.indexingTime,
-          indexStatistics.contentLoadingTime,
-          indexStatistics.timesPerIndexer,
-          indexStatistics.timesPerFileType,
-          indexStatistics.numberOfFilesPerFileType
-        );
+        FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(provider.getDebugName(), totalTime, indexStatistics);
         projectIndexingHistory.getProviderStatistics().add(statistics);
       } finally {
         subTaskIndicator.finished();
@@ -180,31 +173,6 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
   private static long now() {
     return System.currentTimeMillis();
-  }
-
-  public static class FileProviderIndexStatistics {
-    public final String providerDebugName;
-    public final long totalTime;
-    public final PerThreadTime indexingTime;
-    public final PerThreadTime contentLoadingTime;
-    public final Map<String, PerThreadTime> timesPerIndexer;
-    public final Map<String, PerThreadTime> timesPerFileType;
-    public final Map<String, Integer> numberOfFilesPerFileType;
-
-    public FileProviderIndexStatistics(@NotNull String providerDebugName,
-                                       long totalTime,
-                                       @NotNull PerThreadTime indexingTime,
-                                       @NotNull PerThreadTime contentLoadingTime,
-                                       @NotNull Map<String, PerThreadTime> timesPerIndexer,
-                                       @NotNull Map<String, PerThreadTime> timesPerFileType, Map<String, Integer> numberOfFilesPerFileType) {
-      this.providerDebugName = providerDebugName;
-      this.totalTime = totalTime;
-      this.indexingTime = indexingTime;
-      this.contentLoadingTime = contentLoadingTime;
-      this.timesPerIndexer = timesPerIndexer;
-      this.timesPerFileType = timesPerFileType;
-      this.numberOfFilesPerFileType = numberOfFilesPerFileType;
-    }
   }
 
   @NotNull

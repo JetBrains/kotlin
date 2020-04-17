@@ -3,7 +3,6 @@ package com.intellij.util.indexing.diagnostic
 
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.util.indexing.UnindexedFilesUpdater
 import com.intellij.util.text.DateFormatUtil
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -36,21 +35,21 @@ data class JsonFileProviderIndexStatistics(
   data class FilesNumberPerFileType(val fileType: String, val filesNumber: Int)
 }
 
-fun UnindexedFilesUpdater.FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics =
+fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics =
   JsonFileProviderIndexStatistics(
     providerDebugName,
     totalTime,
-    indexingTime.toJsonPerThreadTime(),
-    contentLoadingTime.toJsonPerThreadTime(),
-    numberOfFilesPerFileType
+    indexingStatistics.indexingTime.toJsonPerThreadTime(),
+    indexingStatistics.contentLoadingTime.toJsonPerThreadTime(),
+    indexingStatistics.numberOfFilesPerFileType
       .map { JsonFileProviderIndexStatistics.FilesNumberPerFileType(it.key, it.value) }
       .sortedByDescending { it.filesNumber }
     ,
-    timesPerFileType
+    indexingStatistics.timesPerFileType
       .map { JsonFileProviderIndexStatistics.TimePerFileType(it.key, it.value.toJsonPerThreadTime()) }
       .sortedByDescending { it.time.totalCpuTime }
     ,
-    timesPerIndexer
+    indexingStatistics.timesPerIndexer
       .map { JsonFileProviderIndexStatistics.TimePerIndexer(it.key, it.value.toJsonPerThreadTime()) }
       .sortedByDescending { it.time.totalCpuTime }
   )

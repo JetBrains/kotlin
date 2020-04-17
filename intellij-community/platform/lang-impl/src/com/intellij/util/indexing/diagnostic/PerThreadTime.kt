@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 class PerThreadTime {
-
   val threadIdToTime: Map<Long, Long>
     get() = HashMap(_threadIdToTime)
 
@@ -15,5 +14,4 @@ class PerThreadTime {
     val currentThread = Thread.currentThread()
     _threadIdToTime.compute(currentThread.id) { _, currentTime -> (currentTime ?: 0L) + time }
   }
-
 }
