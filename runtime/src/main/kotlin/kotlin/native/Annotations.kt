@@ -36,8 +36,10 @@ public annotation class RetainForTarget(val target: String)
 @Deprecated("Use common kotlin.Throws annotation instead.", ReplaceWith("kotlin.Throws"), DeprecationLevel.WARNING)
 public typealias Throws = kotlin.Throws
 
+/** @suppress */
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
+/** @suppress */
 public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 
 /**
