@@ -24,6 +24,16 @@
 #include <unistd.h>
 #include <string.h>
 
+#define TRACE_SYMBOLICATION 0
+#if TRACE_SYMBOLICATION
+#include <stdio.h>
+#define SYM_LOG(...) fprintf(stderr, __VA_ARGS__)
+#define SYM_DUMP(p) CSShow((p))
+#else
+#define SYM_LOG(...)
+#define SYM_DUMP(p)
+#endif
+
 typedef struct _CSTypeRef {
   unsigned long type;
   void* contents;
@@ -75,6 +85,12 @@ CSRange (*CSSourceInfoGetRange)(CSSourceInfoRef);
 
 CSSymbolRef (*CSSymbolOwnerGetSymbolWithAddress)(CSSymbolOwnerRef, unsigned long long);
 CSSymbolicatorRef symbolicator;
+/**
+ * Function used for debug.
+ */
+#if TRACE_SYMBOLICATION
+void (*CSShow)(CSTypeRef);
+#endif
 
 bool TryInitializeCoreSymbolication() {
   void* cs = dlopen("/System/Library/PrivateFrameworks/CoreSymbolication.framework/CoreSymbolication", RTLD_LAZY);
@@ -93,6 +109,10 @@ bool TryInitializeCoreSymbolication() {
   KONAN_CS_LOOKUP(CSSymbolForeachSourceInfo)
   KONAN_CS_LOOKUP(CSSymbolOwnerGetSymbolWithAddress)
   KONAN_CS_LOOKUP(CSSourceInfoGetRange)
+
+#if TRACE_SYMBOLICATION
+  KONAN_CS_LOOKUP(CSShow)
+#endif
 #undef KONAN_CS_LOOKUP
 
   symbolicator = CSSymbolicatorCreateWithPid(getpid());
@@ -123,6 +143,9 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
     CSSymbolRef symbol = CSSymbolOwnerGetSymbolWithAddress(symbolOwner, address);
     if (CSIsNull(symbol))
       return result;
+    SYM_LOG("Kotlin_getSourceInfo: address: %p\n", addr);
+    SYM_DUMP(symbol);
+
 
     /**
      * ASSUMPTION: we assume that the _first_ and the _last_ source infos should belong to real function(symbol) the rest might belong to
@@ -142,6 +165,7 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
         return 0;
     });
 
+    SYM_LOG("limits: {%s %d..%d}\n", limits.fileName, limits.start, limits.end);
     result.fileName = limits.fileName;
 
     CSSymbolForeachSourceInfo(symbol,
@@ -149,6 +173,7 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
           uint32_t lineNumber = CSSourceInfoGetLineNumber(ref);
           if (lineNumber == 0)
             return 0;
+          SYM_DUMP(ref);
           CSRange range = CSSourceInfoGetRange(ref);
           const char* fileName = CSSourceInfoGetPath(ref);
           /**
