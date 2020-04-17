@@ -40,7 +40,7 @@ class KotlinUPostfixExpression(
     override val operatorIdentifier: UIdentifier?
         get() = KotlinUIdentifier(sourcePsi.operationReference, this)
 
-    override fun resolveOperator() = sourcePsi.operationReference.resolveCallToDeclaration() as? PsiMethod
+    override fun resolveOperator(): PsiMethod? = resolveToPsiMethod(sourcePsi)
 
     override fun resolve(): PsiMethod? = when (sourcePsi.operationToken) {
         KtTokens.EXCLEXCL -> operand.tryResolve() as? PsiMethod
