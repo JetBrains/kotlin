@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.repl.js.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
@@ -32,7 +32,7 @@ class JsReplTestAgainstKlib : AbstractJsReplTest() {
             ReentrantReadWriteLock(),
             nameTables,
             dependencies,
-            ReplCodeAnalyzer.ResettableAnalyzerState(),
+            ReplCodeAnalyzerBase.ResettableAnalyzerState(),
             symbolTable
         )
     }
