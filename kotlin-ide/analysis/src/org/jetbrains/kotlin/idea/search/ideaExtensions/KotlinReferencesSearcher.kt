@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.CacheManager
 import com.intellij.psi.search.*
+import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import com.intellij.util.containers.nullize
@@ -73,7 +74,7 @@ data class KotlinReferencesSearchOptions(
             elementToSearch: PsiNamedElement,
             parameters: ReferencesSearch.SearchParameters
         ): SearchScope {
-            val kotlinOptions = (parameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
+            val kotlinOptions = (parameters as? KotlinAwareReferencesSearchParameters)?.kotlinOptions ?: Empty
             val elements = if (elementToSearch is KtDeclaration && !isOnlyKotlinSearch(parameters.scopeDeterminedByUser)) {
                 elementToSearch.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).nullize()
             } else {
@@ -87,17 +88,28 @@ data class KotlinReferencesSearchOptions(
     }
 }
 
+interface KotlinAwareReferencesSearchParameters {
+    val kotlinOptions: KotlinReferencesSearchOptions
+}
+
 class KotlinReferencesSearchParameters(
     elementToSearch: PsiElement,
     scope: SearchScope = runReadAction { elementToSearch.project.allScope() },
     ignoreAccessScope: Boolean = false,
     optimizer: SearchRequestCollector? = null,
-    val kotlinOptions: KotlinReferencesSearchOptions = Empty
-) : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
+    override val kotlinOptions: KotlinReferencesSearchOptions = Empty
+) : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer), KotlinAwareReferencesSearchParameters
+
+class KotlinMethodReferencesSearchParameters(
+    elementToSearch: PsiMethod,
+    scope: SearchScope = runReadAction { elementToSearch.project.allScope() },
+    strictSignatureSearch: Boolean = true,
+    override val kotlinOptions: KotlinReferencesSearchOptions = Empty
+) : MethodReferencesSearch.SearchParameters(elementToSearch, scope, strictSignatureSearch), KotlinAwareReferencesSearchParameters
 
 class KotlinAliasedImportedElementSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
     override fun processQuery(parameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference?>) {
-        val kotlinOptions = (parameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
+        val kotlinOptions = (parameters as? KotlinAwareReferencesSearchParameters)?.kotlinOptions ?: Empty
         if (!kotlinOptions.acceptImportAlias) return
         val element = parameters.elementToSearch
         if (!element.isValid) return
@@ -142,7 +154,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
     private class QueryProcessor(val queryParameters: ReferencesSearch.SearchParameters, val consumer: Processor<in PsiReference>) {
 
-        private val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
+        private val kotlinOptions = (queryParameters as? KotlinAwareReferencesSearchParameters)?.kotlinOptions ?: Empty
 
         private val longTasks = ArrayList<() -> Unit>()
 

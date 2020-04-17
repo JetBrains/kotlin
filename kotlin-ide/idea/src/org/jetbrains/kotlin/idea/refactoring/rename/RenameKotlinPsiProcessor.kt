@@ -22,7 +22,10 @@ abstract class RenameKotlinPsiProcessor : RenameKotlinPsiProcessorCompat() {
         val searchParameters = KotlinReferencesSearchParameters(
             element,
             searchScope,
-            kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
+            kotlinOptions = KotlinReferencesSearchOptions(
+                searchForComponentConventions = false,
+                acceptImportAlias = false
+            )
         )
         return findReferences(element, searchParameters)
     }
