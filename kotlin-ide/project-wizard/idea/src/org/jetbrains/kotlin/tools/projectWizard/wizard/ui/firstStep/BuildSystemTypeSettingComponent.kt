@@ -78,6 +78,10 @@ class BuildSystemTypeSettingComponent(
         actionGroup: ActionGroup,
         horizontal: Boolean
     ) : ActionToolbarImplWrapper(place, actionGroup, horizontal) {
+        init {
+            layoutPolicy = ActionToolbar.WRAP_LAYOUT_POLICY
+        }
+
         override fun createToolbarButton(
             action: AnAction,
             look: ActionButtonLook?,
