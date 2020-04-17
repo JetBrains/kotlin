@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="kotlinc.android-extensions-compiler-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/android-extensions-compiler-plugin-for-ide/1.4-SNAPSHOT/android-extensions-compiler-plugin-for-ide-1.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/android-extensions-compiler-plugin-for-ide/1.4-SNAPSHOT/android-extensions-compiler-plugin-for-ide-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
