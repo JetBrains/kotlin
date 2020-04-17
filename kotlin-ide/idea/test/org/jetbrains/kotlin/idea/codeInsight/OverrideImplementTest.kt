@@ -45,6 +45,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doImplementDirectoryTest()
     }
 
+    fun testJavaInterfaceMethodInCorrectOrder() {
+        doMultiImplementDirectoryTest()
+    }
+
     fun testJavaParameters() {
         doImplementDirectoryTest()
     }
