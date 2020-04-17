@@ -458,7 +458,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (status.errorAnalyzingFinished) {
         return isDumb ?
           new AnalyzerStatus(AllIcons.General.InspectionsPause, title, details, this::createUIController).
-            withExpandedStatus(new StatusItem(UtilBundle.message("heavyProcess.type.index"))) :
+            withExpandedStatus(new StatusItem(UtilBundle.message("heavyProcess.type.indexing"))) :
           new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
                                   details, this::createUIController);
       }
