@@ -68,7 +68,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
     override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
         +createRepositories(KotlinPlugin::version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
-        +AndroidResolutionStrategyIR(Versions.GradlePlugins.ANDROID)
+        +AndroidResolutionStrategyIR(Versions.GRADLE_PLUGINS.ANDROID)
     }
 
     override fun createModuleIRs(
@@ -79,7 +79,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         buildList {
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.GOOGLE, "androidx.core", "core-ktx"),
-                version = Versions.ANDROID.ANDROIDX_CORE_CTX,
+                version = Versions.ANDROID.ANDROIDX_CORE_KTX,
                 dependencyType = DependencyType.MAIN
             )
         }
