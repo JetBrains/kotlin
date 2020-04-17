@@ -19,17 +19,11 @@ FILE: constantValues.kt
         public final val arrayNestedness: R|kotlin/Int| = R|<local>/arrayNestedness|
             public get(): R|kotlin/Int|
 
-        public final fun component1(): R|ClassId| {
-            ^component1 this@R|/ClassLiteralValue|.R|/ClassLiteralValue.classId|
-        }
+        public final fun component1(): R|ClassId|
 
-        public final fun component2(): R|kotlin/Int| {
-            ^component2 this@R|/ClassLiteralValue|.R|/ClassLiteralValue.arrayNestedness|
-        }
+        public final fun component2(): R|kotlin/Int|
 
-        public final fun copy(classId: R|ClassId| = this@R|/ClassLiteralValue|.R|/ClassLiteralValue.classId|, arrayNestedness: R|kotlin/Int| = this@R|/ClassLiteralValue|.R|/ClassLiteralValue.arrayNestedness|): R|ClassLiteralValue| {
-            ^copy R|/ClassLiteralValue.ClassLiteralValue|(this@R|/ClassLiteralValue|.R|/ClassLiteralValue.classId|, this@R|/ClassLiteralValue|.R|/ClassLiteralValue.arrayNestedness|)
-        }
+        public final fun copy(classId: R|ClassId| = this@R|/ClassLiteralValue|.R|/ClassLiteralValue.classId|, arrayNestedness: R|kotlin/Int| = this@R|/ClassLiteralValue|.R|/ClassLiteralValue.arrayNestedness|): R|ClassLiteralValue|
 
     }
     public final class ClassId : R|kotlin/Any| {
@@ -68,13 +62,9 @@ FILE: constantValues.kt
                 public final val arrayDimensions: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final fun component1(): R|ClassLiteralValue| {
-                    ^component1 this@R|/KClassValue.Value.NormalClass|.R|/KClassValue.Value.NormalClass.value|
-                }
+                public final fun component1(): R|ClassLiteralValue|
 
-                public final fun copy(value: R|ClassLiteralValue| = this@R|/KClassValue.Value.NormalClass|.R|/KClassValue.Value.NormalClass.value|): R|KClassValue.Value.NormalClass| {
-                    ^copy R|/KClassValue.Value.NormalClass.NormalClass|(this@R|/KClassValue.Value.NormalClass|.R|/KClassValue.Value.NormalClass.value|)
-                }
+                public final fun copy(value: R|ClassLiteralValue| = this@R|/KClassValue.Value.NormalClass|.R|/KClassValue.Value.NormalClass.value|): R|KClassValue.Value.NormalClass|
 
             }
 
@@ -86,13 +76,9 @@ FILE: constantValues.kt
                 public final val type: R|KotlinType| = R|<local>/type|
                     public get(): R|KotlinType|
 
-                public final fun component1(): R|KotlinType| {
-                    ^component1 this@R|/KClassValue.Value.LocalClass|.R|/KClassValue.Value.LocalClass.type|
-                }
+                public final fun component1(): R|KotlinType|
 
-                public final fun copy(type: R|KotlinType| = this@R|/KClassValue.Value.LocalClass|.R|/KClassValue.Value.LocalClass.type|): R|KClassValue.Value.LocalClass| {
-                    ^copy R|/KClassValue.Value.LocalClass.LocalClass|(this@R|/KClassValue.Value.LocalClass|.R|/KClassValue.Value.LocalClass.type|)
-                }
+                public final fun copy(type: R|KotlinType| = this@R|/KClassValue.Value.LocalClass|.R|/KClassValue.Value.LocalClass.type|): R|KClassValue.Value.LocalClass|
 
             }
 

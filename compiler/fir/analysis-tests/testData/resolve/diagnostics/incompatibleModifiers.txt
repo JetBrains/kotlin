@@ -51,13 +51,9 @@ FILE: incompatibleModifiers.kt
         public final val i: R|kotlin/Int| = R|<local>/i|
             public get(): R|kotlin/Int|
 
-        public final fun component1(): R|kotlin/Int| {
-            ^component1 this@R|/H|.R|/H.i|
-        }
+        public final fun component1(): R|kotlin/Int|
 
-        public final fun copy(i: R|kotlin/Int| = this@R|/H|.R|/H.i|): R|H| {
-            ^copy R|/H.H|(this@R|/H|.R|/H.i|)
-        }
+        public final fun copy(i: R|kotlin/Int| = this@R|/H|.R|/H.i|): R|H|
 
     }
     public sealed data class I : R|kotlin/Any| {
@@ -68,13 +64,9 @@ FILE: incompatibleModifiers.kt
         public final val i: R|kotlin/Int| = R|<local>/i|
             public get(): R|kotlin/Int|
 
-        public final fun component1(): R|kotlin/Int| {
-            ^component1 this@R|/I|.R|/I.i|
-        }
+        public final fun component1(): R|kotlin/Int|
 
-        public final fun copy(i: R|kotlin/Int| = this@R|/I|.R|/I.i|): R|I| {
-            ^copy R|/I.I|(this@R|/I|.R|/I.i|)
-        }
+        public final fun copy(i: R|kotlin/Int| = this@R|/I|.R|/I.i|): R|I|
 
     }
     public final data inline class J : R|kotlin/Any| {
@@ -85,13 +77,9 @@ FILE: incompatibleModifiers.kt
         public final val i: R|kotlin/Int| = R|<local>/i|
             public get(): R|kotlin/Int|
 
-        public final fun component1(): R|kotlin/Int| {
-            ^component1 this@R|/J|.R|/J.i|
-        }
+        public final fun component1(): R|kotlin/Int|
 
-        public final fun copy(i: R|kotlin/Int| = this@R|/J|.R|/J.i|): R|J| {
-            ^copy R|/J.J|(this@R|/J|.R|/J.i|)
-        }
+        public final fun copy(i: R|kotlin/Int| = this@R|/J|.R|/J.i|): R|J|
 
     }
     public abstract class K : R|kotlin/Any| {
@@ -131,13 +119,9 @@ FILE: incompatibleModifiers.kt
             public final val i: R|kotlin/Int| = R|<local>/i|
                 public get(): R|kotlin/Int|
 
-            public final fun component1(): R|kotlin/Int| {
-                ^component1 this@R|/X.Y|.R|/X.Y.i|
-            }
+            public final fun component1(): R|kotlin/Int|
 
-            public final fun copy(i: R|kotlin/Int| = this@R|/X.Y|.R|/X.Y.i|): R|X.Y| {
-                ^copy R|/X.Y.Y|(this@R|/X.Y|.R|/X.Y.i|)
-            }
+            public final fun copy(i: R|kotlin/Int| = this@R|/X.Y|.R|/X.Y.i|): R|X.Y|
 
         }
 

@@ -42,21 +42,13 @@ FILE: problems2.kt
             public final val s: R|kotlin/String?| = R|<local>/s|
                 public get(): R|kotlin/String?|
 
-            public final fun component1(): R|kotlin/Int| {
-                ^component1 this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|
-            }
+            public final fun component1(): R|kotlin/Int|
 
-            public final fun component2(): R|kotlin/Array<kotlin/String>?| {
-                ^component2 this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|
-            }
+            public final fun component2(): R|kotlin/Array<kotlin/String>?|
 
-            public final fun component3(): R|kotlin/String?| {
-                ^component3 this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|
-            }
+            public final fun component3(): R|kotlin/String?|
 
-            public final fun copy(x: R|kotlin/Int| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|, arr: R|kotlin/Array<kotlin/String>?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|, s: R|kotlin/String?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|): R|Some.WithPrimary| {
-                ^copy R|/Some.WithPrimary.WithPrimary|(this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|, this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|, this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|)
-            }
+            public final fun copy(x: R|kotlin/Int| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|, arr: R|kotlin/Array<kotlin/String>?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|, s: R|kotlin/String?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|): R|Some.WithPrimary|
 
         }
 
