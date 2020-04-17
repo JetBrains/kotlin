@@ -123,11 +123,7 @@ abstract class ScriptClassRootsCache(
         fun empty(project: Project) = object : ScriptClassRootsCache(
             project,
             ScriptClassRootsStorage.Companion.Key("EMPTY"),
-            ScriptClassRootsStorage.Companion.ScriptClassRoots(
-                setOf(),
-                setOf(),
-                setOf()
-            )
+            ScriptClassRootsStorage.EMPTY
         ) {
             override fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = null
 

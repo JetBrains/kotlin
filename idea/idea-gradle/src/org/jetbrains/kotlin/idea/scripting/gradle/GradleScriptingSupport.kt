@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupportHelper
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.psi.KtFile
@@ -51,9 +52,7 @@ class GradleScriptingSupport(
 ) : ScriptingSupport() {
     init {
         rootsIndexer.transaction {
-            if (classpathRoots.hasNotCachedRoots(GradleClassRootsCache.extractRoots(context, configuration))) {
-                rootsIndexer.markNewRoot()
-            }
+            rootsIndexer.markNewRoot()
 
             clearClassRootsCaches(project)
 
@@ -65,7 +64,7 @@ class GradleScriptingSupport(
         hideNotificationForProjectImport(project)
     }
 
-    override fun recreateRootsCache() = GradleClassRootsCache(project, context, configuration)
+    override fun recreateRootsCache() = createRootsCache() ?: ScriptClassRootsCache.empty(project)
 
     override fun clearCaches() {
         // todo: should clear up to date
