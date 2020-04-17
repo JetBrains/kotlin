@@ -19,6 +19,7 @@ import java.nio.file.attribute.BasicFileAttributes
 data class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
     constructor(parent: File, child: String): this(parent.javaPath.resolve(child))
+    constructor(parent: File, child: File): this(parent.javaPath.resolve(child.javaPath))
     constructor(path: String): this(Paths.get(path))
     constructor(parent: String, child: String): this(Paths.get(parent, child))
 
