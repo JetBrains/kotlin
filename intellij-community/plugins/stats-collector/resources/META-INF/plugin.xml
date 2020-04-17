@@ -72,6 +72,8 @@
 
     <projectService serviceImplementation="com.intellij.stats.personalization.impl.ProjectUserFactorStorage"/>
 
+    <projectService serviceImplementation="com.intellij.completion.ngram.NGramModelRunnerManager"/>
+
     <completion.ml.model implementation="com.jetbrains.completion.ranker.FallbackKotlinMLRankingProvider"/>
     <completion.ml.model implementation="com.jetbrains.completion.ranker.FallbackScalaMLRankingProvider"/>
 <!--    <completion.ml.model implementation="com.jetbrains.completion.ranker.PythonMLRankingProvider"/>-->
