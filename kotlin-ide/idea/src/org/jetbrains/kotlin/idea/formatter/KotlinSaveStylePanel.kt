@@ -16,13 +16,14 @@ import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JLabel
 import javax.swing.JList
 import javax.swing.JPanel
 
-class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
+class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(KotlinLanguage.INSTANCE, null, settings) {
     override fun getRightMargin() = throw UnsupportedOperationException()
     override fun createHighlighter(scheme: EditorColorsScheme) = throw UnsupportedOperationException()
     override fun getFileType() = throw UnsupportedOperationException()

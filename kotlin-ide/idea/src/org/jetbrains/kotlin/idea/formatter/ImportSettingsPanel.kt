@@ -15,6 +15,7 @@ import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
@@ -23,7 +24,7 @@ import java.awt.Insets
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
 
-class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
+class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(KotlinLanguage.INSTANCE, null, settings) {
     private val importsPanel = ImportSettingsPanel(settings)
 
     private fun CodeStyleSettings.kotlinSettings() = getCustomSettings(KotlinCodeStyleSettings::class.java)
