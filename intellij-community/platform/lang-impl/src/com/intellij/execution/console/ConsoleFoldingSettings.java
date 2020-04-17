@@ -51,9 +51,16 @@ public class ConsoleFoldingSettings implements PersistentStateComponent<ConsoleF
   }
 
   private static boolean containsAny(String line, List<String> patterns) {
-    for (String pattern : patterns) {
-      if (line.contains(pattern)) {
-        return true;
+    LinkedHashSet<String> lines = new LinkedHashSet<>();
+    for (ConsoleLineModifier modifier : ConsoleLineModifier.EP_NAME.getExtensionList()) {
+      ContainerUtil.addIfNotNull(lines, modifier.modify(line));
+    }
+
+    for (String l : lines) {
+      for (String pattern : patterns) {
+        if (l.contains(pattern)) {
+          return true;
+        }
       }
     }
     return false;
