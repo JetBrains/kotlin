@@ -109,6 +109,18 @@ public class ErrorUtils {
 
             @NotNull
             @Override
+            public MemberScope getPackageScope(@NotNull FqName fqName) {
+                throw new IllegalStateException("Should not be called!");
+            }
+
+            @NotNull
+            @Override
+            public MemberScope getPackageScopeWithoutDependencies(@NotNull FqName fqName) {
+                throw new IllegalStateException("Should not be called!");
+            }
+
+            @NotNull
+            @Override
             public List<ModuleDescriptor> getAllDependencyModules() {
                 return emptyList();
             }

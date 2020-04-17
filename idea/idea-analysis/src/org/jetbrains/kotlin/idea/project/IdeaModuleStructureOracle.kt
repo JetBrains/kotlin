@@ -93,10 +93,6 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
         }
         return ModulePath(scopesInPath)
     }
-
-    private fun ModuleInfo.hackAndroidModules(): ModuleInfo {
-
-    }
 }
 
 private val ModuleDescriptor.moduleInfo: ModuleInfo?

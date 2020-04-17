@@ -112,6 +112,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
         val projectDataNode = ideModule.getDataNode(ProjectKeys.PROJECT)!!
         val moduleOutputsMap = projectDataNode.getUserData(MODULES_OUTPUTS)!!
         val outputDirs = HashSet<String>()
+
         processCompilations(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, compilation ->
             var gradleOutputMap = dataNode.getUserData(GradleProjectResolver.GRADLE_OUTPUTS)
             if (gradleOutputMap == null) {
@@ -188,6 +189,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
         val MPP_CONFIGURATION_ARTIFACTS =
             Key.create<MutableMap<String/* artifact path */, MutableList<String> /* module ids*/>>("gradleMPPArtifactsMap")
         val proxyObjectCloningCache = WeakHashMap<Any, Any>()
+
+        var dependsOnAdjustmentMap: Map<KotlinSourceSet, Collection<KotlinSourceSet>> = emptyMap()
 
         private var nativeDebugAdvertised = false
         private val androidPluginPresent = PluginManager.getPlugin(PluginId.findId("org.jetbrains.android"))?.isEnabled ?: false
@@ -303,10 +306,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val sourceSetMap = projectDataNode.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS)!!
 
             val sourceSetToRunTasks = calculateRunTasks(mppModel, gradleModule, resolverCtx)
+            dependsOnAdjustmentMap = calculateDependsOnAdjustmentsForAndroidSourceSetsInHmpp(mppModel)
 
             val sourceSetToCompilationData = LinkedHashMap<String, MutableSet<GradleSourceSetData>>()
             for (target in mppModel.targets) {
-                if (delegateToAndroidPlugin(target)) continue
+                if (delegateToAndroidPlugin(target)) {
+                    continue
+                }
                 if (target.name == KotlinTarget.METADATA_TARGET_NAME) continue
                 val targetData = KotlinTargetData(target.name).also {
                     it.archiveFile = target.jar?.archiveFile
@@ -505,6 +511,42 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
             }
             return sourceSetToRunTasks
+        }
+
+        private fun calculateDependsOnAdjustmentsForAndroidSourceSetsInHmpp(
+            mppModel: KotlinMPPGradleModel
+        ): Map<KotlinSourceSet, Collection<KotlinSourceSet>> {
+            if (!mppModel.extraFeatures.isHMPPEnabled) return emptyMap()
+
+            val androidTarget = mppModel.targets.find { it.platform == KotlinPlatform.ANDROID } ?: return emptyMap()
+
+            val sourceSetsToCompilations: MutableMap<KotlinSourceSet, MutableSet<KotlinCompilation>> = mutableMapOf()
+            for (compilation in androidTarget.compilations) {
+                compilation.sourceSets.forEach {
+                    sourceSetsToCompilations.getOrPut(it, { mutableSetOf() }) += compilation
+                }
+            }
+
+            // Stupid quadratic algorithm
+            val allPairsOfSourcesets: Collection<kotlin.Pair<KotlinSourceSet, KotlinSourceSet>> =
+                sourceSetsToCompilations.keys.flatMap { l -> sourceSetsToCompilations.keys.map { r -> l to r } }
+            val approximatedDependsOn: MutableMap<KotlinSourceSet, MutableSet<KotlinSourceSet>> = mutableMapOf()
+
+            for ((first, second) in allPairsOfSourcesets) {
+                if (first == second) continue
+
+                // null possible for orphan-source sets
+                val firstCompilations = sourceSetsToCompilations[first] ?: continue
+                val secondCompilations = sourceSetsToCompilations[second] ?: continue
+
+                if (firstCompilations.size > secondCompilations.size) continue // fast check sizes
+
+                if (secondCompilations.containsAll(firstCompilations)) {
+                    approximatedDependsOn.getOrPut(first, { mutableSetOf() }) += second
+                }
+            }
+
+            return approximatedDependsOn
         }
 
         fun populateContentRoots(
@@ -1008,7 +1050,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))
                 sourceSetInfo.isTestModule = compilation.isTestModule
-                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnSourceSets }.map {
+                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnWithAdjustmentIfNeeded() }.map {
                     getGradleModuleQualifiedName(resolverCtx, gradleModule, it)
                 }.distinct().toList()
                 sourceSetInfo.compilerArguments =
@@ -1020,6 +1062,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     createCompilerArguments(compilation.arguments.defaultArguments.toList(), compilation.platform)
                 sourceSetInfo.addSourceSets(compilation.sourceSets, compilation.fullName(), gradleModule, resolverCtx)
             }
+        }
+
+        private fun KotlinSourceSet.dependsOnWithAdjustmentIfNeeded(): Collection<String> {
+            // No adjustment for non-android source sets
+            if (actualPlatforms.getSinglePlatform() != KotlinPlatform.ANDROID) return dependsOnSourceSets
+
+            return dependsOnAdjustmentMap[this]?.map { it.name } ?: dependsOnSourceSets
         }
 
         /** Checks if our IDE doesn't support such platform */

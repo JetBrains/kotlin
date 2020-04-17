@@ -229,8 +229,8 @@ class ExpectedActualDeclarationChecker(
     ) {
         val compatibility = implementedModules
             .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
-            .ifEmpty { return }
             .foldMaps()
+            .ifEmpty { return }
 
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
 

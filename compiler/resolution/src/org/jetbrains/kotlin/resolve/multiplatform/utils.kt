@@ -14,22 +14,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 // TODO: Klibs still need to better handle source in deserialized descriptors.
-internal val DeclarationDescriptorWithSource.couldHaveASource: Boolean
-    get() =
-        this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
-                this is DeserializedMemberDescriptor ||
-                this is DeserializedClassDescriptor
+val DeclarationDescriptorWithSource.couldHaveASource: Boolean
+    get() = this.source.containingFile != SourceFile.NO_SOURCE_FILE || this is DeserializedDescriptor
 
 internal fun CallableMemberDescriptor.findNamesakesFromModule(
     module: PackageMemberScopeProvider
 ): Collection<CallableMemberDescriptor> {
     val scopes = when (val containingDeclaration = containingDeclaration) {
         is PackageFragmentDescriptor -> {
-            listOf(module.getPackageWithoutDependencies(containingDeclaration.fqName).memberScope)
+            listOf(module.getPackageScopeWithoutDependencies(containingDeclaration.fqName))
         }
         is ClassDescriptor -> {
             val classes = containingDeclaration.findClassifiersFromModule(module)
@@ -72,9 +67,9 @@ internal fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
     val segments = classId.relativeClassName.pathSegments()
 
     val scope = if (includeDependencies)
-        module.getPackage(classId.packageFqName).memberScope
+        module.getPackageScope(classId.packageFqName)
     else
-        module.getPackageWithoutDependencies(classId.packageFqName).memberScope
+        module.getPackageScopeWithoutDependencies(classId.packageFqName)
 
     var classifiers = scope.getAllClassifiers(segments.first())
 
