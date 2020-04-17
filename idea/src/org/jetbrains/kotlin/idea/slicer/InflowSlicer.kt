@@ -10,6 +10,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
@@ -112,9 +113,13 @@ class InflowSlicer(
         ) {
 
             ReferencesSearch.search(function, analysisScope)
-                .filterIsInstance<KtPropertyDelegationMethodsReference>()
-                .mapNotNull { it.element.parent as? KtProperty }
-                .forEach { it.processPropertyAssignments() }
+                .forEach(Processor { reference ->
+                    if (reference is KtPropertyDelegationMethodsReference) {
+                        val property = reference.element.parent as? KtProperty
+                        property?.processPropertyAssignments()
+                    }
+                    true
+                })
         }
 
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny() ?: return
