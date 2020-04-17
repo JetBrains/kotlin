@@ -6,7 +6,7 @@ plugins {
 description = "Common klib reader and writer"
 
 dependencies {
-    compile(kotlinStdlib())
+    compile(kotlinStdlib(forceBootstrap = true))
     compile(project(":kotlin-util-io"))
 }
 

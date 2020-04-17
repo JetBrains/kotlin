@@ -6,7 +6,7 @@ plugins {
 description = "Kotlin/Native utils"
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    compileOnly(kotlinStdlib(forceBootstrap = true))
     compile(project(":kotlin-util-io"))
 
     testCompile(commonDep("junit:junit"))

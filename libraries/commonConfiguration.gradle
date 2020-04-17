@@ -211,6 +211,6 @@ allprojects { project ->
     }
 
     dependencies.ext.kotlinStdlib = { suffix ->
-        DependenciesKt.kotlinStdlib(project, suffix, null)
+        DependenciesKt.kotlinStdlib(project, suffix, null, false)
     }
 }
