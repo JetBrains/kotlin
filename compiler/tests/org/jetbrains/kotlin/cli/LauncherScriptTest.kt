@@ -46,7 +46,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             *quoteIfNeeded(args)
         )
         pb.directory(workDirectory)
-        pb.environment().remove("_KOTLIN_RUNNER") // FIXME: HACK
         val process = pb.start()
         val stdout = StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() })
         val stderr = StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() })
@@ -64,6 +63,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             System.err.println("=== STDERR ===")
             System.err.println(stderr)
             throw e
+        } finally {
+            process.destroy()
         }
     }
 
