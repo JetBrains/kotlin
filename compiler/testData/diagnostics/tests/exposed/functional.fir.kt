@@ -9,4 +9,4 @@ fun foo(<!EXPOSED_PARAMETER_TYPE!>my: My<!>, <!EXPOSED_PARAMETER_TYPE!>f: (My) -
 fun bar(your: Your, f: (Your) -> Unit) = f(your)
 
 // Exposed, returns My
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun gav(<!EXPOSED_PARAMETER_TYPE!>f: () -> My<!>) = f()<!>
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>gav<!>(<!EXPOSED_PARAMETER_TYPE!>f: () -> My<!>) = f()

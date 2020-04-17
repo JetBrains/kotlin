@@ -20,7 +20,7 @@ private fun bar() {
     xx = 30
 }
 
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun makeA() = A()<!>
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 

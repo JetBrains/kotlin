@@ -2,27 +2,27 @@ class My<T>(val value: T)
 
 open class Base
 
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun invalid1() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid1<!>() = run {
     class Local
     My(Local())
-}<!>
+}
 
 fun invalid2() = My(object {})
 
 fun invalid3() = My(object : Base() {})
 
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun invalid4() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid4<!>() = run {
     class Local
     My(My(Local()))
-}<!>
+}
 
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun invalid5() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid5<!>() = run {
     fun invalid5a() = run {
         class Local
         Local()
     }
     My(invalid5a())
-}<!>
+}
 
 // Valid: effectively Any
 fun valid1() = object {}

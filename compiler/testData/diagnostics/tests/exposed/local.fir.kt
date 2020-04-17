@@ -1,14 +1,14 @@
 // invalid, depends on local class
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {
     class A
     A()
-}<!>
+}
 
 // invalid, depends on local class
-<!EXPOSED_FUNCTION_RETURN_TYPE!>fun gav() = {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>gav<!>() = {
     class B
     B()
-}<!>
+}
 
 abstract class My
 
