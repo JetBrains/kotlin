@@ -23,15 +23,7 @@ data class RawGradleIR(
     override fun GradlePrinter.renderGradle() = renderer()
 }
 
-fun rawIR(@NonNls ir: String) = RawGradleIR { +ir }
-fun rawIR(ir: GradlePrinter.() -> String) = RawGradleIR { +ir() }
-
-fun MutableList<BuildSystemIR>.addRawIR(ir: GradlePrinter.() -> String) {
-    add(RawGradleIR { +ir() })
-}
-
-
-class CreateGradleValueIR(@NonNls val name: String, val body: GradleIR) : GradleIR {
+class CreateGradleValueIR(@NonNls val name: String, val body: BuildSystemIR) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
             GradlePrinter.GradleDsl.KOTLIN -> {
@@ -87,17 +79,12 @@ data class GradleNewInstanceCall(
 
 data class GradleSectionIR(
     @NonNls val name: String,
-    val body: BodyIR
+    val irs: List<BuildSystemIR>
 ) : GradleIR, FreeIR {
-    constructor(name: String, bodyBuilder: MutableList<BuildSystemIR>.() -> Unit) : this(
-        name,
-        BodyIR(mutableListOf<BuildSystemIR>().apply(bodyBuilder))
-    )
-
     override fun GradlePrinter.renderGradle() {
-        +name
-        +" "
-        body.render(this)
+        sectionCall(name) {
+            irs.listNl()
+        }
     }
 }
 

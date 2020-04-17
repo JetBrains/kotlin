@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserTargetConfigurator.isApplication
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeTargetConfigurator.isApplication
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -105,19 +106,16 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
 
     override fun Reader.createTargetIrs(
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js),
-            buildPersistenceList {
-                +RawGradleIR {
-                    sectionCall("browser", needIndent = true) {
-                        if (isApplication(module)) {
-                            +"binaries.executable()"
-                        }
-                    }
+            module.createTargetAccessIr(ModuleSubType.js)
+        ) {
+            "browser" {
+                if (isApplication(module)) {
+                    +"binaries.executable()"
                 }
             }
-        )
+        }
     }
 }
 
@@ -133,19 +131,16 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
 
     override fun Reader.createTargetIrs(
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js),
-            buildPersistenceList {
-                +RawGradleIR {
-                    sectionCall("nodejs", needIndent = true) {
-                        if (isApplication(module)) {
-                            +"binaries.executable()"
-                        }
-                    }
+            module.createTargetAccessIr(ModuleSubType.js)
+        ) {
+            "nodejs" {
+                if (isApplication(module)) {
+                    +"binaries.executable()"
                 }
             }
-        )
+        }
     }
 }
 
@@ -168,20 +163,18 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
     override fun createInnerTargetIrs(
         reader: Reader,
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         reader {
             withSettingsOf(module) {
                 val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 if (buildSystemType.isGradle) {
-                    +GradleSectionIR(
-                        "compilations.all",
-                        BodyIR(
-                            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersionValue))
-                        )
-                    )
+                    "compilations.all" {
+                        "kotlinOptions.jvmTarget" assign GradleStringConstIR(targetVersionValue)
+                    }
+
                 }
                 if (Settings.javaSupport.reference.settingValue) {
-                    +GradleCallIr("withJava")
+                    "withJava"()
                 }
             }
         }

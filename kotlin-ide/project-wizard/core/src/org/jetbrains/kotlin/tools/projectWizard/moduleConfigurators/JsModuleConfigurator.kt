@@ -9,13 +9,11 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.rawIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
@@ -47,13 +45,11 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
         reader: Reader,
         configurationData: ModulesToIrConversionData,
         module: Module
-    ): List<BuildSystemIR> = buildList {
-        +RawGradleIR {
-            sectionCall("kotlin", needIndent = true) {
-                sectionCall("js", needIndent = true) {
-                    +"browser {}"; nlIndented()
-                    +"binaries.executable()"
-                }
+    ): List<BuildSystemIR> = irsList {
+        "kotlin" {
+            "js" {
+                +"browser {}"
+                +"binaries.executable()"
             }
         }
     }
