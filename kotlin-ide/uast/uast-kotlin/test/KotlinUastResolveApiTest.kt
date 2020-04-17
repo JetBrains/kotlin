@@ -6,8 +6,8 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
-import com.intellij.psi.PsiVariable
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -286,7 +286,6 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testLocalResolve() {
-
         myFixture.configureByText(
             "MyClass.kt", """
             fun foo() {
@@ -297,10 +296,24 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         """
         )
 
+
         val uCallExpression = myFixture.file.findElementAt(myFixture.caretOffset).toUElement().getUCallExpression().orFail("cant convert to UCallExpression")
         val resolved = uCallExpression.resolve().orFail("cant resolve from $uCallExpression")
         TestCase.assertEquals("bar", resolved.name)
     }
 
+
+    fun testResolveCompiledAnnotation() {
+        myFixture.configureByText(
+            "MyClass.kt", """
+            @Deprecated(message = "deprecated")    
+            fun foo() {}
+        """
+        )
+
+        val compiledAnnotationParameter = myFixture.file.toUElement()!!.findElementByTextFromPsi<USimpleNameReferenceExpression>("message")
+        val resolved = compiledAnnotationParameter.resolve() as PsiMethod
+        TestCase.assertEquals("message", resolved.name)
+    }
 }
 
