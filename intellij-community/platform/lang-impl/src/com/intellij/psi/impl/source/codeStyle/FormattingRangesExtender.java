@@ -87,7 +87,8 @@ class FormattingRangesExtender {
     return range;
   }
 
-  private static TextRange getRangeWithSiblings(@NotNull ASTNode astNode) {
+  @NotNull
+  private TextRange getRangeWithSiblings(@NotNull ASTNode astNode) {
     Ref<TextRange> result = Ref.create(astNode.getTextRange());
     IElementType elementType = astNode.getElementType();
     ASTNode sibling = astNode.getTreePrev();
@@ -98,6 +99,7 @@ class FormattingRangesExtender {
     while (sibling != null && processSibling(sibling, result, elementType)) {
       sibling = sibling.getTreeNext();
     }
+    assert result.get().getEndOffset() <= myDocument.getTextLength() : "PSI-document mismatch";
     return result.get();
   }
 

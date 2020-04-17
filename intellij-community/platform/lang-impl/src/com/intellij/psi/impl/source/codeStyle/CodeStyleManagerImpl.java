@@ -162,6 +162,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   public void reformatTextWithContext(@NotNull PsiFile file,
                                       @NotNull ChangedRangesInfo info) throws IncorrectOperationException
   {
+    ensureDocumentCommitted(file);
     FormatTextRanges formatRanges = new FormatTextRanges(info, ChangedRangesUtil.processChangedRanges(file, info));
     formatRanges.setExtendToContext(true);
     reformatText(file, formatRanges, null);
@@ -182,10 +183,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     if (ranges.isEmpty()) {
       return;
     }
-    Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
-    if (document != null) {
-      PsiDocumentManager.getInstance(getProject()).commitDocument(document);
-    }
+    ensureDocumentCommitted(file);
 
     CheckUtil.checkWritable(file);
     if (!SourceTreeToPsiMap.hasTreeElement(file)) {
@@ -220,6 +218,14 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
 
     if (caretKeeper != null) {
       caretKeeper.restoreCaretPosition();
+    }
+  }
+
+  private void ensureDocumentCommitted(@NotNull PsiFile file) {
+    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(myProject);
+    Document document = documentManager.getDocument(file);
+    if (document != null) {
+      documentManager.commitDocument(document);
     }
   }
 
