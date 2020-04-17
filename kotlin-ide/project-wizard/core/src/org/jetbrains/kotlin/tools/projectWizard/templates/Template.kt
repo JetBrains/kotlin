@@ -58,6 +58,11 @@ fun <T> withSettingsOf(
     function: TemplateEnvironment.() -> T
 ): T = function(IdBasedTemplateEnvironment(template, identificator))
 
+fun <V : Any, T : SettingType<V>> Reader.settingValue(module: Module, setting: TemplateSetting<V, T>): V? =
+    withSettingsOf(module) {
+        setting.reference.notRequiredSettingValue
+    }
+
 
 abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSettingItem {
     final override fun <V : Any, T : SettingType<V>> settingDelegate(
