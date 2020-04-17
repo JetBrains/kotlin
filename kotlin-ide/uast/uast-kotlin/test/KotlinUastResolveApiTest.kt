@@ -298,7 +298,7 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         )
 
         val uCallExpression = myFixture.file.findElementAt(myFixture.caretOffset).toUElement().getUCallExpression().orFail("cant convert to UCallExpression")
-        val resolved = uCallExpression.resolve().orFail("cant resolve from $uCallExpression") as PsiVariable
+        val resolved = uCallExpression.resolve().orFail("cant resolve from $uCallExpression")
         TestCase.assertEquals("bar", resolved.name)
     }
 

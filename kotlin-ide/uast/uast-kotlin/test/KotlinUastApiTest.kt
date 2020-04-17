@@ -568,11 +568,43 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 "bar",
                 localFunction.methodName
             )
-            assertNull(localFunction.resolve())
+            val localFunctionResolved = localFunction.resolve()
+            assertNotNull(localFunctionResolved)
             val receiver = localFunction.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
-            assertEquals("ULambdaExpression", uParameter.asLogString())
+            val uVariable = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
+            assertEquals("ULambdaExpression", uVariable.asLogString())
+            assertEquals(uVariable, localFunctionResolved.toUElement())
+        }
+    }
+
+    @Test
+    fun testLocalConstructorCall() {
+        doTest("LocalDeclarations") { _, file ->
+            val localFunction = file.findElementByTextFromPsi<UElement>("bar() == Local()").
+                findElementByText<UCallExpression>("Local()")
+            assertEquals(
+                "UIdentifier (Identifier (Local))",
+                localFunction.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "Local",
+                localFunction.methodIdentifier?.name
+            )
+            assertEquals(
+                "<init>",
+                localFunction.methodName
+            )
+            val localFunctionResolved = localFunction.resolve()
+            assertNotNull(localFunctionResolved)
+            val classReference = localFunction.classReference ?: kfail("classReference expected")
+            assertEquals("USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Local)", classReference.asLogString())
+            val localClass = classReference.resolve().toUElement() ?: kfail("uelement expected")
+            assertEquals("UClass (name = Local)", localClass.asLogString())
+            assertEquals(localClass, localFunctionResolved.toUElement())
+            val localPrimaryConstructor = localFunctionResolved.toUElementOfType<UMethod>() ?: kfail("constructor expected")
+            assertTrue(localPrimaryConstructor.isConstructor)
+            assertEquals(localClass, localPrimaryConstructor.uastParent)
         }
     }
 
