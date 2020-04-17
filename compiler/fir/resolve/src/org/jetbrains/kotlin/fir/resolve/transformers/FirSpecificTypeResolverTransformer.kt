@@ -32,6 +32,7 @@ class FirSpecificTypeResolverTransformer(
             source = functionTypeRef.source
             type = typeResolver.resolveType(functionTypeRef, towerScope)
             isMarkedNullable = functionTypeRef.isMarkedNullable
+            isSuspend = functionTypeRef.isSuspend
             receiverTypeRef = functionTypeRef.receiverTypeRef
             returnTypeRef = functionTypeRef.returnTypeRef
             annotations += functionTypeRef.annotations

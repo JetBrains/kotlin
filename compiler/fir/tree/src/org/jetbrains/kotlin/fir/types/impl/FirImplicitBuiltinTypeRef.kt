@@ -22,7 +22,8 @@ sealed class FirImplicitBuiltinTypeRef(
     override val source: FirSourceElement?,
     val id: ClassId,
     typeArguments: Array<out ConeTypeProjection> = emptyArray(),
-    isNullable: Boolean = false
+    isNullable: Boolean = false,
+    override val isSuspend: Boolean = false
 ) : FirResolvedTypeRef() {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()

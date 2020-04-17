@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    var isSuspend: Boolean = false
     lateinit var type: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null
 
@@ -32,6 +33,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
         return FirResolvedTypeRefImpl(
             source,
             annotations,
+            isSuspend,
             type,
             delegatedTypeRef,
         )

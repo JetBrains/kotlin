@@ -530,6 +530,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeRef.configure {
             +annotations
+            +booleanField("isSuspend")
         }
 
         resolvedTypeRef.configure {

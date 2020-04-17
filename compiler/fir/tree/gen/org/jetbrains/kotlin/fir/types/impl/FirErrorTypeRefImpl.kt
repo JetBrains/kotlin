@@ -24,6 +24,7 @@ internal class FirErrorTypeRefImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorTypeRef() {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val isSuspend: Boolean = false
     override val type: ConeKotlinType = ConeClassErrorType(diagnostic.reason)
     override val delegatedTypeRef: FirTypeRef? get() = null
 

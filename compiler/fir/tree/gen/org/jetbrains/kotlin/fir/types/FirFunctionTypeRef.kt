@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirFunctionTypeRef : FirTypeRefWithNullability {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
+    override val isSuspend: Boolean
     override val isMarkedNullable: Boolean
     val receiverTypeRef: FirTypeRef?
     val valueParameters: List<FirValueParameter>

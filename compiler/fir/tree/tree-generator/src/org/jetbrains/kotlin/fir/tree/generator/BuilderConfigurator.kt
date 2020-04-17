@@ -232,6 +232,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(resolvedTypeRef) {
+            defaultFalse("isSuspend")
             defaultNull("delegatedTypeRef")
         }
 
