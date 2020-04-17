@@ -476,6 +476,9 @@ internal object CheckVisibility : CheckerStage() {
             val classSymbol = provider.getClassLikeSymbolByFqName(ownerClassId)
 
             if (classSymbol is FirRegularClassSymbol) {
+                if (classSymbol.fir.classKind.isSingleton) {
+                    sink.yieldApplicability(CandidateApplicability.HIDDEN)
+                }
                 checkVisibility(classSymbol.fir, classSymbol, sink, callInfo)
             }
         }

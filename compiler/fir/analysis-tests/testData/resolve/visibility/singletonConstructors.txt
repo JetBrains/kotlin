@@ -1,0 +1,70 @@
+FILE: singletonConstructors.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Comp : R|kotlin/Any| {
+            private constructor(): R|A.Comp| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            <Inapplicable(HIDDEN): [/A.Comp.Comp]>#()
+        }
+
+    }
+    public final object B : R|kotlin/Any| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val x: <ERROR TYPE REF: Inapplicable(HIDDEN): [/B.B]> = <Inapplicable(HIDDEN): [/B.B]>#()
+            private get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [/B.B]>
+
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Comp2 : R|kotlin/Any| {
+            private constructor(): R|D.Comp2| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            Q|D.Comp2|.R|/D.Comp2.invoke|()
+        }
+
+    }
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static enum entry X: R|E| = object : R|E| {
+            private constructor(): R|anonymous| {
+                super<R|E|>()
+            }
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            <Unresolved name: X>#()
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+    }

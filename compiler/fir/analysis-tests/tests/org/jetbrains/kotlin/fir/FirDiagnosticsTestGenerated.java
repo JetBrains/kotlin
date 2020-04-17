@@ -2172,5 +2172,10 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testProtectedInCompanion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/protectedInCompanion.kt");
         }
+
+        @TestMetadata("singletonConstructors.kt")
+        public void testSingletonConstructors() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/singletonConstructors.kt");
+        }
     }
 }
