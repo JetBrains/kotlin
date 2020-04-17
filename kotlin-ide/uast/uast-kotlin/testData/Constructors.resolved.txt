@@ -50,6 +50,6 @@ UBlockExpression -> UCallExpression (kind = UastCallKind(name='constructor_call'
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = s) -> Light Parameter: s
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
     ULocalVariable (name = local) -> USimpleNameReferenceExpression (identifier = s) -> Light Parameter: s
-    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UBlockExpression -> UQualifiedReferenceExpression -> PsiMethod:toString: toString
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = local) -> LightVariableBuilder:local: local
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:toString) -> USimpleNameReferenceExpression (identifier = toString) -> PsiMethod:toString: toString
