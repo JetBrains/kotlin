@@ -6,6 +6,10 @@ Cleaning output files:
   out/production/pJvm/FJvmKt.class
   out/production/pJvm/META-INF/pJvm.kotlin_module
 End of files
+Cleaning output files:
+  out/production/pJvm/FKt.class
+  out/production/pJvm/SharedImmutable.class
+End of files
 Compiling files:
   c/src/f.kt
   pJvm/src/fJvm.kt
