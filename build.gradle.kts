@@ -28,7 +28,7 @@ buildscript {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
-        classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
+        classpath("com.gradle.publish:plugin-publish-plugin:0.11.0")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     }
@@ -453,7 +453,7 @@ allprojects {
 
         // Aggregate task for build related checks
         tasks.register("checkBuild")
-        
+
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
     }
 }
