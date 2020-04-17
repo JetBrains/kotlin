@@ -24,47 +24,22 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="library" scope="TEST" name="Guava" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-build-common-tests" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlinc.incremental-compilation-impl-tests" level="project" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.jps.build" />
-    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../dependencies/kotlinc/tests-common-1.4-SNAPSHOT-tests.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../dependencies/kotlinc/kotlin-build-common-1.4-SNAPSHOT-tests.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="Log4J" level="project" />
-    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
-    <orderEntry type="module" module-name="intellij.platform.jps.model.tests" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
-    <orderEntry type="library" scope="TEST" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
     <orderEntry type="module" module-name="intellij.devkit.jps" scope="TEST" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../dependencies/kotlinc/incremental-compilation-impl-1.4-SNAPSHOT-tests.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>
