@@ -3423,6 +3423,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         public void testKt9820_javaFunctionTypeInheritor() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt9820_javaFunctionTypeInheritor.kt");
         }
+
+        @TestMetadata("kt-37497.kt")
+        public void testKt_37497() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt-37497.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reified")
