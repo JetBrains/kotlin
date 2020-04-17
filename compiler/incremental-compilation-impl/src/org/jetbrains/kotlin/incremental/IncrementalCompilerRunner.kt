@@ -249,6 +249,7 @@ abstract class IncrementalCompilerRunner<
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
+                    generatedFiles.forEach { it.outputFile.delete() }
                     continue
                 }
             }
