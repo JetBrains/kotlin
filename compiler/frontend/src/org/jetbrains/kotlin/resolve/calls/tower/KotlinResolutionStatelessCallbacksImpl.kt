@@ -65,7 +65,7 @@ class KotlinResolutionStatelessCallbacksImpl(
             descriptor,
             (kotlinCall as? PSIKotlinCall)?.psiCall,
             (resolutionCallbacks as? KotlinResolutionCallbacksImpl)?.trace?.bindingContext,
-            isSuperOrDelegatingConstructorCall(kotlinCall),
+            kotlinCall is PSIKotlinCallImpl && kotlinCall.psiCall.isCallWithSuperReceiver(),
         )
 
     override fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean =

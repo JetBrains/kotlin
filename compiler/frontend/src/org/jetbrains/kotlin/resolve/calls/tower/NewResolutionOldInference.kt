@@ -601,7 +601,8 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
     return PreviousResolutionError(level)
 }
 
-private val BasicCallResolutionContext.isSuperCall: Boolean get() = call.explicitReceiver is SuperCallReceiverValue
+internal fun Call.isCallWithSuperReceiver(): Boolean = explicitReceiver is SuperCallReceiverValue 
+private val BasicCallResolutionContext.isSuperCall: Boolean get() = call.isCallWithSuperReceiver()
 
 internal fun reportResolvedUsingDeprecatedVisibility(
     call: Call,
