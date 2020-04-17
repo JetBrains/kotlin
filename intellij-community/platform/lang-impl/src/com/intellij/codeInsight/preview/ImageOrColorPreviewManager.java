@@ -91,8 +91,9 @@ final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionL
           if (pointerInfo != null) {
             Point location = pointerInfo.getLocation();
             SwingUtilities.convertPointFromScreen(location, editor.getContentComponent());
+            int offset = editor.logicalPositionToOffset(editor.xyToLogicalPosition(location));
             alarm.cancelAllRequests();
-            alarm.addRequest(new PreviewRequest(location, editor, true), 100);
+            alarm.addRequest(new PreviewRequest(editor, offset, true), 100);
           }
         }
       }
@@ -114,7 +115,7 @@ final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionL
   }
 
   @NotNull
-  private static Collection<PsiElement> getPsiElementsAt(Point point, Editor editor) {
+  private static Collection<PsiElement> getPsiElementsAt(Editor editor, int offset) {
     if (editor.isDisposed()) {
       return Collections.emptySet();
     }
@@ -132,7 +133,6 @@ final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionL
     }
 
     final Set<PsiElement> elements = ContainerUtil.createWeakSet();
-    final int offset = editor.logicalPositionToOffset(editor.xyToLogicalPosition(point));
     if (documentManager.isCommitted(document)) {
       ContainerUtil.addIfNotNull(elements, InjectedLanguageUtil.findElementAtNoCommit(psiFile, offset));
     }
@@ -157,12 +157,11 @@ final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionL
     }
 
     alarm.cancelAllRequests();
-    Point point = event.getMouseEvent().getPoint();
     Collection<PsiElement> elements = myElements;
     if (elements == null && event.getMouseEvent().isShiftDown()) {
-      alarm.addRequest(new PreviewRequest(point, editor, false), 100);
+      alarm.addRequest(new PreviewRequest(editor, event.getOffset(), false), 100);
     }
-    else if (elements != null && !getPsiElementsAt(point, editor).equals(elements)) {
+    else if (elements != null && !getPsiElementsAt(editor, event.getOffset()).equals(elements)) {
       myElements = null;
       for (ElementPreviewProvider provider : ElementPreviewProvider.EP_NAME.getExtensionList()) {
         try {
@@ -178,19 +177,19 @@ final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionL
   }
 
   private final class PreviewRequest implements Runnable {
-    private final Point point;
     private final Editor editor;
+    private final int offset;
     private final boolean keyTriggered;
 
-    PreviewRequest(Point point, Editor editor, boolean keyTriggered) {
-      this.point = point;
+    PreviewRequest(Editor editor, int offset, boolean keyTriggered) {
       this.editor = editor;
+      this.offset = offset;
       this.keyTriggered = keyTriggered;
     }
 
     @Override
     public void run() {
-      Collection<PsiElement> elements = getPsiElementsAt(point, editor);
+      Collection<PsiElement> elements = getPsiElementsAt(editor, offset);
       if (elements.equals(myElements)) return;
       for (PsiElement element : elements) {
         if (element == null || !element.isValid()) {
@@ -205,7 +204,7 @@ final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionL
           if (!provider.isSupportedFile(element.getContainingFile())) continue;
 
           try {
-            provider.show(element, editor, point, keyTriggered);
+            provider.show(element, editor, editor.offsetToXY(offset), keyTriggered);
           }
           catch (ProcessCanceledException e) {
             throw e;

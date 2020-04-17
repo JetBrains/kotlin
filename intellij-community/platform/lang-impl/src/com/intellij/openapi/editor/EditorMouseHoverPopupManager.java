@@ -334,15 +334,13 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
   private static int getTargetOffset(EditorMouseEvent event) {
     Editor editor = event.getEditor();
-    Point point = event.getMouseEvent().getPoint();
     if (editor instanceof EditorEx &&
         editor.getProject() != null &&
         event.getArea() == EditorMouseEventArea.EDITING_AREA &&
         event.getMouseEvent().getModifiers() == 0 &&
-        EditorUtil.isPointOverText(editor, point) &&
-        ((EditorEx)editor).getFoldingModel().getFoldingPlaceholderAt(point) == null) {
-      LogicalPosition logicalPosition = editor.xyToLogicalPosition(point);
-      return editor.logicalPositionToOffset(logicalPosition);
+        event.isOverText() &&
+        event.getCollapsedFoldRegion() == null) {
+      return event.getOffset();
     }
     return -1;
   }

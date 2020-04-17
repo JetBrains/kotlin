@@ -503,27 +503,27 @@ class EditorWindowImpl extends com.intellij.injected.editor.EditorWindowImpl imp
     EditorMouseListener wrapper = new EditorMouseListener() {
       @Override
       public void mousePressed(@NotNull EditorMouseEvent e) {
-        listener.mousePressed(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mousePressed(convertEvent(e));
       }
 
       @Override
       public void mouseClicked(@NotNull EditorMouseEvent e) {
-        listener.mouseClicked(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mouseClicked(convertEvent(e));
       }
 
       @Override
       public void mouseReleased(@NotNull EditorMouseEvent e) {
-        listener.mouseReleased(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mouseReleased(convertEvent(e));
       }
 
       @Override
       public void mouseEntered(@NotNull EditorMouseEvent e) {
-        listener.mouseEntered(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mouseEntered(convertEvent(e));
       }
 
       @Override
       public void mouseExited(@NotNull EditorMouseEvent e) {
-        listener.mouseExited(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mouseExited(convertEvent(e));
       }
     };
     myEditorMouseListeners.registerWrapper(listener, wrapper);
@@ -547,12 +547,12 @@ class EditorWindowImpl extends com.intellij.injected.editor.EditorWindowImpl imp
     EditorMouseMotionListener wrapper = new EditorMouseMotionListener() {
       @Override
       public void mouseMoved(@NotNull EditorMouseEvent e) {
-        listener.mouseMoved(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mouseMoved(convertEvent(e));
       }
 
       @Override
       public void mouseDragged(@NotNull EditorMouseEvent e) {
-        listener.mouseDragged(new EditorMouseEvent(EditorWindowImpl.this, e.getMouseEvent(), e.getArea()));
+        listener.mouseDragged(convertEvent(e));
       }
     };
     myEditorMouseMotionListeners.registerWrapper(listener, wrapper);
@@ -565,6 +565,16 @@ class EditorWindowImpl extends com.intellij.injected.editor.EditorWindowImpl imp
     if (wrapper != null) {
       myDelegate.removeEditorMouseMotionListener(wrapper);
     }
+  }
+
+  private EditorMouseEvent convertEvent(EditorMouseEvent originalEvent) {
+    LogicalPosition logicalPosition = hostToInjected(originalEvent.getLogicalPosition());
+    int offset = logicalPositionToOffset(logicalPosition);
+    VisualPosition visualPosition = logicalToVisualPosition(logicalPosition);
+    FoldRegion hostFoldRegion = originalEvent.getCollapsedFoldRegion();
+    return new EditorMouseEvent(this, originalEvent.getMouseEvent(), originalEvent.getArea(),
+                                offset, logicalPosition, visualPosition, true,
+                                hostFoldRegion == null ? null : FoldingRegionWindow.getInjectedRegion(hostFoldRegion), null, null);
   }
 
   @Override

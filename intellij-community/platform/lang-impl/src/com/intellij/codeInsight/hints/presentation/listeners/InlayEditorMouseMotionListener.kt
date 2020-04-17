@@ -12,14 +12,13 @@ class InlayEditorMouseMotionListener : EditorMouseMotionListener {
 
   override fun mouseMoved(e: EditorMouseEvent) {
     if (e.isConsumed) return
-    val editor = e.editor
     val event = e.mouseEvent
-    if (editor.getMouseEventArea(event) != EditorMouseEventArea.EDITING_AREA) {
+    if (e.area != EditorMouseEventArea.EDITING_AREA) {
       activeContainer?.mouseExited()
       activeContainer = null
       return
     }
-    val inlay = editor.inlayModel.getElementAt(event.point)
+    val inlay = e.inlay
     val container = inlay?.renderer
     if (activeContainer != container) {
       activeContainer?.mouseExited()

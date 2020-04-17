@@ -459,8 +459,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
       if ((e.getMouseEvent().getModifiers() & (SystemInfo.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK)) == 0) return;
 
       Editor editor = e.getEditor();
-      int line = editor.xyToLogicalPosition(new Point(e.getMouseEvent().getX(), e.getMouseEvent().getY())).line;
-      if (line < 0) return;
+      int line = e.getLogicalPosition().line;
 
       Document document = editor.getDocument();
 

@@ -13,10 +13,9 @@ import java.awt.Point
 class InlayEditorMouseListener : EditorMouseListener {
   override fun mouseClicked(e: EditorMouseEvent) {
     if (e.isConsumed) return
-    val editor = e.editor
     val event = e.mouseEvent
-    if (editor.getMouseEventArea(event) != EditorMouseEventArea.EDITING_AREA) return
-    val inlay = editor.inlayModel.getElementAt(event.point) ?: return
+    if (e.area != EditorMouseEventArea.EDITING_AREA) return
+    val inlay = e.inlay ?: return
     val renderer = inlay.renderer
     if (renderer !is InputHandler) return
     val bounds = inlay.bounds ?: return

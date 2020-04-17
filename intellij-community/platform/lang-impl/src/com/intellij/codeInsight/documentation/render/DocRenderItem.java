@@ -563,42 +563,41 @@ public class DocRenderItem {
     }
   }
 
-  private static class IconVisibilityController
-    implements EditorMouseListener, EditorMouseMotionListener, VisibleAreaListener, Runnable, Disposable {
+  private static class IconVisibilityController implements EditorMouseListener, EditorMouseMotionListener, VisibleAreaListener, Disposable {
     private DocRenderItem myCurrentItem;
     private Editor myQueuedEditor;
 
     @Override
     public void mouseMoved(@NotNull EditorMouseEvent e) {
-      queueUpdate(e.getEditor());
+      doUpdate(e.getEditor(), e);
     }
 
     @Override
     public void mouseExited(@NotNull EditorMouseEvent e) {
-      queueUpdate(e.getEditor());
+      doUpdate(e.getEditor(), e);
     }
 
     @Override
     public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
       Editor editor = e.getEditor();
       if (((EditorImpl)editor).isCursorHidden()) return;
-      queueUpdate(editor);
-    }
-
-    private void queueUpdate(Editor editor) {
       if (myQueuedEditor == null) {
         myQueuedEditor = editor;
         // delay update: multiple visible area updates within same EDT event will cause only one icon update,
         // and we'll not observe the item in inconsistent state during toggling
-        SwingUtilities.invokeLater(this);
+        SwingUtilities.invokeLater(() -> {
+          if (myQueuedEditor != null && !myQueuedEditor.isDisposed()) {
+            doUpdate(myQueuedEditor, null);
+          }
+          myQueuedEditor = null;
+        });
       }
     }
 
-    @Override
-    public void run() {
-      Editor editor = myQueuedEditor;
-      myQueuedEditor = null;
-      if (editor != null && !editor.isDisposed()) {
+    private void doUpdate(@NotNull Editor editor, @Nullable EditorMouseEvent event) {
+      int y = 0;
+      int offset = -1;
+      if (event == null) {
         PointerInfo info = MouseInfo.getPointerInfo();
         if (info != null) {
           Point screenPoint = info.getLocation();
@@ -607,26 +606,29 @@ public class DocRenderItem {
           Point componentPoint = new Point(screenPoint);
           SwingUtilities.convertPointFromScreen(componentPoint, component);
 
-          DocRenderItem item = null;
           if (new Rectangle(component.getSize()).contains(componentPoint)) {
             Point editorPoint = new Point(screenPoint);
             SwingUtilities.convertPointFromScreen(editorPoint, editor.getContentComponent());
-            item = findItem(editor, editorPoint.y);
-          }
-
-          if (item != myCurrentItem) {
-            if (myCurrentItem != null) myCurrentItem.setIconVisible(false);
-            myCurrentItem = item;
-            if (myCurrentItem != null) myCurrentItem.setIconVisible(true);
+            y = editorPoint.y;
+            offset = editor.visualPositionToOffset(new VisualPosition(editor.yToVisualLine(y), 0));
           }
         }
       }
+      else {
+        y = event.getMouseEvent().getY();
+        offset = event.getOffset();
+      }
+      DocRenderItem item = offset < 0 ? null : findItem(editor, y, offset);
+      if (item != myCurrentItem) {
+        if (myCurrentItem != null) myCurrentItem.setIconVisible(false);
+        myCurrentItem = item;
+        if (myCurrentItem != null) myCurrentItem.setIconVisible(true);
+      }
     }
 
-    private static DocRenderItem findItem(Editor editor, int y) {
+    private static DocRenderItem findItem(Editor editor, int y, int neighborOffset) {
       Document document = editor.getDocument();
-      int offset = editor.visualPositionToOffset(new VisualPosition(editor.yToVisualLine(y), 0));
-      int lineNumber = document.getLineNumber(offset);
+      int lineNumber = document.getLineNumber(neighborOffset);
       int searchStartOffset = document.getLineStartOffset(Math.max(0, lineNumber - 1));
       int searchEndOffset = document.getLineEndOffset(lineNumber);
       Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);

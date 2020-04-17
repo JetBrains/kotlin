@@ -866,8 +866,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       return null;
     }
     if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
-      final LogicalPosition pos = myEditor.getCaretModel().getLogicalPosition();
-      final HyperlinkInfo info = myHyperlinks.getHyperlinkInfoByLineAndCol(pos.line, pos.column);
+      int offset = myEditor.getCaretModel().getOffset();
+      HyperlinkInfo info = myHyperlinks.getHyperlinkAt(offset);
       final OpenFileDescriptor openFileDescriptor = info instanceof FileHyperlinkInfo ? ((FileHyperlinkInfo)info).getDescriptor() : null;
       if (openFileDescriptor == null || !openFileDescriptor.getFile().isValid()) {
         return null;
@@ -914,7 +914,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       editor.installPopupHandler(new ContextMenuPopupHandler() {
         @Override
         public ActionGroup getActionGroup(@NotNull EditorMouseEvent event) {
-          return getPopupGroup(event.getMouseEvent());
+          return getPopupGroup(event);
         }
       });
 
@@ -962,12 +962,12 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     action.registerCustomShortcutSet(new CustomShortcutSet(shortcuts), editor.getContentComponent());
   }
 
-  private ActionGroup getPopupGroup(@NotNull MouseEvent mouseEvent) {
+  private ActionGroup getPopupGroup(@NotNull EditorMouseEvent event) {
     final ActionManager actionManager = ActionManager.getInstance();
-    final HyperlinkInfo info = myHyperlinks != null ? myHyperlinks.getHyperlinkInfoByPoint(mouseEvent.getPoint()) : null;
+    final HyperlinkInfo info = myHyperlinks != null ? myHyperlinks.getHyperlinkInfoByEvent(event) : null;
     ActionGroup group = null;
     if (info instanceof HyperlinkWithPopupMenuInfo) {
-      group = ((HyperlinkWithPopupMenuInfo)info).getPopupMenuGroup(mouseEvent);
+      group = ((HyperlinkWithPopupMenuInfo)info).getPopupMenuGroup(event.getMouseEvent());
     }
     if (group == null) {
       group = (ActionGroup)actionManager.getAction(CONSOLE_VIEW_POPUP_MENU);

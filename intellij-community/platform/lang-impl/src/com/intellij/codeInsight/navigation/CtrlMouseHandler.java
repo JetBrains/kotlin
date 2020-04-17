@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
@@ -160,12 +159,11 @@ public final class CtrlMouseHandler {
 
       Editor editor = e.getEditor();
       if (!(editor instanceof EditorEx) || editor.getProject() != null && editor.getProject() != myProject) return;
-      Point point = new Point(mouseEvent.getPoint());
-      if (!EditorUtil.isPointOverText(editor, point)) {
+      if (!e.isOverText()) {
         disposeHighlighter();
         return;
       }
-      myTooltipProvider = new TooltipProvider((EditorEx)editor, editor.xyToLogicalPosition(point), ctrlMouseAction);
+      myTooltipProvider = new TooltipProvider((EditorEx)editor, e.getLogicalPosition(), ctrlMouseAction);
       myTooltipProvider.execute();
     }
   };

@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation.render;
 
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorCustomElementRenderer;
 import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseEventArea;
@@ -23,7 +23,7 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
   public void mouseMoved(@NotNull EditorMouseEvent event) {
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    Inlay<? extends DocRenderer> currentInlay = redispatchEvent(event.getEditor(), event.getMouseEvent(), MouseEvent.MOUSE_MOVED);
+    Inlay<? extends DocRenderer> currentInlay = redispatchEvent(event, MouseEvent.MOUSE_MOVED);
     if (currentInlay == null) {
       restoreCursor();
     }
@@ -49,7 +49,7 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
   public void mouseClicked(@NotNull EditorMouseEvent event) {
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    redispatchEvent(event.getEditor(), event.getMouseEvent(), MouseEvent.MOUSE_CLICKED);
+    redispatchEvent(event, MouseEvent.MOUSE_CLICKED);
   }
 
   private void restoreCursor() {
@@ -60,24 +60,28 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Nullable
-  private static Inlay<? extends DocRenderer> redispatchEvent(@NotNull Editor editor, @NotNull MouseEvent mouseEvent, int eventId) {
+  private static Inlay<? extends DocRenderer> redispatchEvent(@NotNull EditorMouseEvent event, int eventId) {
+    MouseEvent mouseEvent = event.getMouseEvent();
     Point mousePoint = mouseEvent.getPoint();
-    Inlay<? extends DocRenderer> inlay = editor.getInlayModel().getElementAt(mousePoint, DocRenderer.class);
+    Inlay inlay = event.getInlay();
     if (inlay != null) {
-      DocRenderer renderer = inlay.getRenderer();
-      Point relativeLocation = renderer.getEditorPaneLocationWithinInlay();
-      Rectangle inlayBounds = inlay.getBounds();
-      assert inlayBounds != null;
-      int x = mousePoint.x - inlayBounds.x - relativeLocation.x;
-      int y = mousePoint.y - inlayBounds.y - relativeLocation.y;
-      JEditorPane editorPane = renderer.myPane;
-      if (x >= 0 && x < editorPane.getWidth() && y >= 0 && y < editorPane.getHeight()) {
-        int button = mouseEvent.getButton();
-        dispatchEvent(inlay, new MouseEvent(editorPane, eventId, 0, 0, x, y, mouseEvent.getClickCount(), false,
-                                            // hack to process middle-button clicks (JEditorPane ignores them)
-                                            button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON1 : button));
-        return inlay;
+      EditorCustomElementRenderer renderer = inlay.getRenderer();
+      if (renderer instanceof DocRenderer) {
+        Point relativeLocation = ((DocRenderer)renderer).getEditorPaneLocationWithinInlay();
+        Rectangle inlayBounds = inlay.getBounds();
+        assert inlayBounds != null;
+        int x = mousePoint.x - inlayBounds.x - relativeLocation.x;
+        int y = mousePoint.y - inlayBounds.y - relativeLocation.y;
+        JEditorPane editorPane = ((DocRenderer)renderer).myPane;
+        if (x >= 0 && x < editorPane.getWidth() && y >= 0 && y < editorPane.getHeight()) {
+          int button = mouseEvent.getButton();
+          dispatchEvent(inlay, new MouseEvent(editorPane, eventId, 0, 0, x, y, mouseEvent.getClickCount(), false,
+                                              // hack to process middle-button clicks (JEditorPane ignores them)
+                                              button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON1 : button));
+          return inlay;
+        }
       }
     }
     return null;
