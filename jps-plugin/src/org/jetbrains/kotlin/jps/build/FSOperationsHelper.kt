@@ -21,8 +21,11 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.BuildRootDescriptor
 import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.FileProcessor
+import org.jetbrains.jps.builders.impl.DirtyFilesHolderBase
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
+import org.jetbrains.jps.incremental.BuildOperations
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -76,19 +79,33 @@ class FSOperationsHelper(
     /**
      * Marks given [files] as dirty for current round and given [target] of [chunk].
      */
-    fun markFilesForCurrentRound(target: ModuleBuildTarget, files: Iterable<File>) {
+    fun markFilesForCurrentRound(target: ModuleBuildTarget, files: Collection<File>) {
         require(target in chunk.targets)
 
         val targetDirtyFiles = dirtyFilesHolder.byTarget.getValue(target)
+        val dirtyFileToRoot = HashMap<File, JavaSourceRootDescriptor>()
         files.forEach { file ->
             val root = compileContext.projectDescriptor.buildRootIndex
                 .findAllParentDescriptors<BuildRootDescriptor>(file, compileContext)
                 .single { sourceRoot -> sourceRoot.target == target }
 
             targetDirtyFiles._markDirty(file, root as JavaSourceRootDescriptor)
+            dirtyFileToRoot[file] = root
         }
 
         markFilesImpl(files, currentRound = true) { it.exists() }
+        cleanOutputsForNewDirtyFilesInCurrentRound(target, dirtyFileToRoot)
+    }
+
+    private fun cleanOutputsForNewDirtyFilesInCurrentRound(target: ModuleBuildTarget, dirtyFiles: Map<File, JavaSourceRootDescriptor>) {
+        val dirtyFilesHolder = object : DirtyFilesHolderBase<JavaSourceRootDescriptor, ModuleBuildTarget>(compileContext) {
+            override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
+                dirtyFiles.forEach { (file, root) -> processor.apply(target, file, root) }
+            }
+
+            override fun hasDirtyFiles(): Boolean = dirtyFiles.isNotEmpty()
+        }
+        BuildOperations.cleanOutputsCorrespondingToChangedFiles(compileContext, dirtyFilesHolder)
     }
 
     fun markFiles(files: Iterable<File>) {
