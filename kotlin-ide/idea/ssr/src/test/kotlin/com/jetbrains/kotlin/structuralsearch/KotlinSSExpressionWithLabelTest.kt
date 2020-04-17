@@ -4,20 +4,17 @@ class KotlinSSExpressionWithLabelTest : KotlinSSTest() {
     override fun getBasePath() = "expressionWithLabel"
 
     fun testBreak() { doTest("break") }
+    fun testBreakLabel() { doTest("break@loop") }
 
     fun testContinue() { doTest("continue") }
+    fun testContinueLabel() { doTest("continue@loop") }
 
     fun testReturn() { doTest("return 1") }
+    fun testReturnLabel() { doTest("return@lit") }
 
     fun testSuper() { doTest("super") }
 
     fun testThis() { doTest("this") }
+    fun testThisLabel() { doTest("this@A") }
 
-    fun testBreakLabel() { doTest("break@loop") }
-
-    fun testContinueLabel() { doTest("continue@loop") }
-
-    fun testReturnLabel() { doTest("return@lit") }
-
-    // TODO: Write tests for super and this with labels
 }
