@@ -870,7 +870,7 @@ internal val ModuleDescriptor.namePrefix: String get() {
     return abbreviate(fullPrefix)
 }
 
-internal fun abbreviate(name: String): String {
+fun abbreviate(name: String): String {
     val normalizedName = name
             .capitalize()
             .replace("-|\\.".toRegex(), "_")
