@@ -24,8 +24,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.ToIntFunction;
 
 public class HyperlinkInfoFactoryImpl extends HyperlinkInfoFactory {
@@ -47,7 +47,7 @@ public class HyperlinkInfoFactoryImpl extends HyperlinkInfoFactory {
   }
 
   @Override
-  public @NotNull HyperlinkInfo createMultiplePsiElementHyperlinkInfo(@NotNull Map<? extends VirtualFile, ? extends PsiElement> fileToElement) {
-    return new MultiPsiElementHyperlinkInfo(fileToElement);
+  public @NotNull HyperlinkInfo createMultiplePsiElementHyperlinkInfo(@NotNull Collection<? extends PsiElement> elements) {
+    return new MultiPsiElementHyperlinkInfo(elements);
   }
 }

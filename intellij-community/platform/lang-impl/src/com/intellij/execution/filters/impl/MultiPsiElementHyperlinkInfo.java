@@ -20,22 +20,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 class MultiPsiElementHyperlinkInfo extends HyperlinkInfoBase {
   private final Map<VirtualFile, SmartPsiElementPointer<?>> myMap;
 
-  MultiPsiElementHyperlinkInfo(Map<? extends VirtualFile, ? extends PsiElement> pointers) {
+  MultiPsiElementHyperlinkInfo(Collection<? extends PsiElement> elements) {
     SmartPointerManager manager = null;
     myMap = new LinkedHashMap<>();
-    for (Map.Entry<? extends VirtualFile, ? extends PsiElement> entry : pointers.entrySet()) {
-      VirtualFile file = entry.getKey();
-      PsiElement element = entry.getValue();
+    for (PsiElement element : elements) {
       if (manager == null) {
         manager = SmartPointerManager.getInstance(element.getProject());
       }
-      myMap.put(file, manager.createSmartPsiElementPointer(element));
+      myMap.put(element.getContainingFile().getVirtualFile(), manager.createSmartPsiElementPointer(element));
     }
   }
 
