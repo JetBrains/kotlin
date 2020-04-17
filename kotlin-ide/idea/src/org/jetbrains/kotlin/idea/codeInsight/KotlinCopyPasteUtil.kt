@@ -116,4 +116,5 @@ internal fun <T> submitNonBlocking(project: Project, indicator: ProgressIndicato
     }
         .withDocumentsCommitted(project)
         .cancelWith(indicator)
+        .expireWith(project)
         .submit(AppExecutorUtil.getAppExecutorService())
