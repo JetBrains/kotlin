@@ -23,6 +23,7 @@ import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.annotations.CalledInBackground
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
@@ -130,6 +131,7 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
  *
  * DO NOT CALL THIS ON AWT THREAD
  */
+@CalledInBackground
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!isUnitTestMode() && ApplicationManager.getApplication().isDispatchThread) {
         LOG.error("getModulesWithKotlinFiles could be a heavy operation and should not be call on AWT thread")
