@@ -906,7 +906,17 @@ private val INDENT_RULES = arrayOf(
     strategy("Indent for block content")
         .within(BLOCK, CLASS_BODY, FUNCTION_LITERAL)
         .notForType(RBRACE, LBRACE, BLOCK)
-        .set(Indent.getNormalIndent(false)),
+        .set(Indent.getNormalIndent()),
+
+    strategy("Indent for template content")
+        .within(LONG_STRING_TEMPLATE_ENTRY)
+        .notForType(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END)
+        .set(Indent.getNormalIndent()),
+
+    strategy("No indent for braces in template")
+        .within(LONG_STRING_TEMPLATE_ENTRY)
+        .forType(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END)
+        .set(Indent.getNoneIndent()),
 
     strategy("Indent for property accessors")
         .within(PROPERTY).forType(PROPERTY_ACCESSOR)
@@ -1006,7 +1016,7 @@ private val INDENT_RULES = arrayOf(
     strategy("Colon of delegation list")
         .within(CLASS, OBJECT_DECLARATION)
         .forType(COLON)
-        .set(Indent.getNormalIndent(false)),
+        .set(Indent.getNormalIndent()),
 
     strategy("Delegation list")
         .within(SUPER_TYPE_LIST)
