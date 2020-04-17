@@ -241,7 +241,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       }
       else {
         status.reasonWhySuspended = "Heavy operation is running";
-        status.heavyProcessType = HeavyProcessLatch.Type.Process;
+        status.heavyProcessType = HeavyProcessLatch.Type.Paused;
       }
       status.errorAnalyzingFinished = true;
       return status;
