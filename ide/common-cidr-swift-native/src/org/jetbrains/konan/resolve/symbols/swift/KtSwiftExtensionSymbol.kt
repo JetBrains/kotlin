@@ -13,8 +13,8 @@ import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 
 class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftExtensionSymbol.ExtensionState, ObjCInterface>, SwiftExtensionSymbol {
-    constructor(translationState: TranslationState<ObjCInterface>, file: VirtualFile)
-            : super(translationState, file)
+    constructor(translationState: TranslationState<ObjCInterface>, swiftName: String, file: VirtualFile)
+            : super(translationState, swiftName, file)
 
     constructor() : super()
 

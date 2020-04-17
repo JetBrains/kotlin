@@ -13,14 +13,25 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
 abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stb : ObjCClass<*>>
     : KtSwiftLazySymbol<State, Stb>, SwiftTypeSymbol {
-
-    constructor(translationState: TranslationState<Stb>, file: VirtualFile)
-            : super(translationState, file)
+    constructor(translationState: TranslationState<Stb>, swiftName: String, file: VirtualFile) : super(translationState, swiftName, file)
 
     constructor() : super()
 
-    override val context: SwiftMemberSymbol?
-        get() = containingTypeSymbol
+    internal var containingSymbol: SwiftTypeSymbol? = null
+
+    @Transient
+    private var containedSymbols: MutableList<SwiftTypeSymbol>? = null // should only be mutated during symbol building
+
+    internal fun mutableContainedSymbols(): MutableList<SwiftTypeSymbol> =
+        containedSymbols ?: mutableListOf<SwiftTypeSymbol>().also { containedSymbols = it }
+
+    override fun clearTranslationState() {
+        super.clearTranslationState()
+        containedSymbols = null
+    }
+
+    override val context: SwiftTypeSymbol?
+        get() = containingSymbol
 
     override val swiftType: SwiftType
         get() = SwiftTypeFactory.getInstance().createClassType(this)
@@ -29,19 +40,23 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stb : ObjC
     override fun getGenericParametersInfo(): SwiftGenericParametersInfo = SwiftGenericParametersInfo.EMPTY
 
     override val qualifiedName: String
-        //todo qualified name!!!
-        get() = name
+        get() = containingSymbol?.qualifiedName?.let { "$it.$name" } ?: name
 
     override val rawMembers: MostlySingularMultiMap<String, SwiftMemberSymbol>
         get() = state?.members ?: MostlySingularMultiMap.emptyMap()
-
-    override fun getContainingTypeSymbol(): SwiftTypeSymbol? = null
 
     open class TypeState : StubState {
         var members: MostlySingularMultiMap<String, SwiftMemberSymbol>?
 
         constructor(clazz: KtSwiftTypeSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            members = createTranslator(project).translateMembers(stub, clazz)
+            val members = createTranslator(project).translateMembers(stub, clazz)
+            this.members = clazz.containedSymbols?.let { containedSymbols ->
+                (members ?: MostlySingularMultiMap<String, SwiftMemberSymbol>()).apply {
+                    for (containedSymbol in containedSymbols) {
+                        add(containedSymbol.name, containedSymbol)
+                    }
+                }
+            } ?: members
         }
 
         constructor() : super() {

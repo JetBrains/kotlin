@@ -2,22 +2,33 @@ package org.jetbrains.konan.resolve.translation
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.ResolveState
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.util.CommonProcessors
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
+import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache.SymbolsProperties
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache.SymbolsProperties.SymbolsKind
+import com.jetbrains.swift.codeinsight.resolve.processor.CollectingSymbolProcessor
+import com.jetbrains.swift.psi.SwiftDeclarationKind
+import com.jetbrains.swift.symbols.SwiftMemberSymbol
+import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanBridgePsiFile
 import org.jetbrains.konan.resolve.konan.KonanTarget
+import org.jetbrains.konan.resolve.symbols.objc.KtOCClassSymbol
 import org.jetbrains.konan.resolve.symbols.objc.KtOCInterfaceSymbol
+import org.jetbrains.konan.resolve.symbols.swift.KtSwiftClassSymbol
+import org.jetbrains.konan.resolve.symbols.swift.KtSwiftTypeSymbol
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assume
 import org.junit.runner.RunWith
+import java.util.*
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCase() {
@@ -72,4 +83,30 @@ abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCas
         assertEquals("unexpected super type", expectedSuperType, translatedSymbol.superType.name)
         assertEquals("unexpected loaded state", expectLoaded, translatedSymbol.stateLoaded)
     }
+
+    protected fun assertSwiftInterfaceSymbol(
+        translatedSymbol: KtSwiftClassSymbol,
+        expectedSuperType: String,
+        expectLoaded: Boolean,
+        expectedContainingType: SwiftTypeSymbol?,
+        vararg expectedContainedTypes: SwiftTypeSymbol
+    ) {
+        assertEquals("unexpected super type", expectedSuperType, translatedSymbol.superTypes.singleOrNull()?.referenceName)
+        assertEquals("unexpected containing type", expectedContainingType, translatedSymbol.containingTypeSymbol)
+        assertSameElements(
+            "unexpected contained types",
+            translatedSymbol.members.filterIsInstance<SwiftTypeSymbol>(), expectedContainedTypes.asList()
+        )
+        assertEquals("unexpected loaded state", expectLoaded, translatedSymbol.stateLoaded)
+    }
+
+    protected val KtOCClassSymbol<*, *>.members: Collection<OCMemberSymbol>
+        get() = CommonProcessors.CollectProcessor<OCMemberSymbol>().also {
+            processMembers(null, null, it)
+        }.results
+
+    protected val KtSwiftTypeSymbol<*, *>.members: Collection<SwiftMemberSymbol>
+        get() = CollectingSymbolProcessor<SwiftMemberSymbol>(null, null, EnumSet.allOf(SwiftDeclarationKind::class.java)).also {
+            processMembers(it, ResolveState())
+        }.collectedSymbols
 }

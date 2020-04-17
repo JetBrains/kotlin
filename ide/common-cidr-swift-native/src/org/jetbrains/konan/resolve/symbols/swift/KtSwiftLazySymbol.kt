@@ -27,8 +27,7 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLe
     override val projectFile: SwiftContext
         get() = SwiftContext.of(file, project)
 
-    constructor(translationState: TranslationState<Stb>, file: VirtualFile)
-            : super(translationState, translationState.stub.swiftName) {
+    constructor(translationState: TranslationState<Stb>, swiftName: String, file: VirtualFile) : super(translationState, swiftName) {
         this.file = file
         this.project = translationState.project
         this.objcName = translationState.stub.name

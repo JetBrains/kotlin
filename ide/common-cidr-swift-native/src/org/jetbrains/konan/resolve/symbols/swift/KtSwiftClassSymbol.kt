@@ -11,8 +11,8 @@ import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 
 class KtSwiftClassSymbol : KtSwiftTypeSymbol<KtSwiftClassSymbol.ClassState, ObjCInterface>, SwiftClassSymbol {
-    constructor(translationState: TranslationState<ObjCInterface>, file: VirtualFile)
-            : super(translationState, file)
+    constructor(translationState: TranslationState<ObjCInterface>, swiftName: String, file: VirtualFile)
+            : super(translationState, swiftName, file)
 
     constructor() : super()
 

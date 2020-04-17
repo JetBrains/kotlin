@@ -10,4 +10,14 @@ class KtOCSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedSymbol, "MyModuleBase", true)
     }
+
+    fun `test nested class translation`() {
+        val file = configure("class A { class B }")
+        val translatedSymbols = translator.translate(file, TestTarget.productModuleName)
+        assertSize(2, translatedSymbols)
+        val nestedSymbol = translatedSymbols.last() as KtOCInterfaceSymbol
+        assertEquals("MyModuleAB", nestedSymbol.name)
+        assertFalse("state already loaded", nestedSymbol.stateLoaded)
+        assertOCInterfaceSymbol(nestedSymbol, "MyModuleBase", true)
+    }
 }

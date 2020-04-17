@@ -52,7 +52,7 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
                 }
                 if (valueUpdater.compareAndSet(this@KtLazySymbol, null, newState ?: AbortedState(stub))) {
                     if (newState != null) didCompleteSuccessfully()
-                    translationState = null
+                    clearTranslationState()
                     return newState
                 }
             }
@@ -72,6 +72,10 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
             ?: _state!!.offset
 
     protected abstract fun computeState(stub: Stb, project: Project): State
+
+    protected open fun clearTranslationState() {
+        translationState = null
+    }
 
     override fun deepEqualStep(c: DeepEqual.Comparator, first: Any, second: Any): Boolean {
         val f = first as KtLazySymbol<*, *>

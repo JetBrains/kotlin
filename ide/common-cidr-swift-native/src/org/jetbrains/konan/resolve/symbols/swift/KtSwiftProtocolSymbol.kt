@@ -19,8 +19,8 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
     @Volatile
     private var myCachedMemberHolder: SwiftAllMemberHolder? = null
 
-    constructor(translationState: TranslationState<ObjCProtocol>, file: VirtualFile)
-            : super(translationState, file)
+    constructor(translationState: TranslationState<ObjCProtocol>, swiftName: String, file: VirtualFile)
+            : super(translationState, swiftName, file)
 
     constructor() : super()
 

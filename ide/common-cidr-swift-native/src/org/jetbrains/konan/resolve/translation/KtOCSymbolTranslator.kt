@@ -14,7 +14,10 @@ import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSymbol>() {
-    override fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
+    override fun translate(stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile): List<KtOCClassSymbol<*, *>> =
+        stubs.mapNotNull { translate(stubTrace, it, file) }
+
+    private fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
         return when (stub) {
             is ObjCProtocol -> KtOCProtocolSymbol(TranslationState(stubTrace, stub), file)
             is ObjCInterface -> KtOCInterfaceSymbol(TranslationState(stubTrace, stub), file)

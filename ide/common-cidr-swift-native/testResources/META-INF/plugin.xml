@@ -1,5 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/CidrLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/CidrCorePlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>com.intellij.kotlin.ocswift.test</id>
