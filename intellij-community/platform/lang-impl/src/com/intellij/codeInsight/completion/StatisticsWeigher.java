@@ -33,7 +33,7 @@ public class StatisticsWeigher extends CompletionWeigher {
 
   public static class LookupStatisticsWeigher extends Classifier<LookupElement> {
     private final CompletionLocation myLocation;
-    private final Map<LookupElement, StatisticsComparable> myWeights = ContainerUtil.newIdentityHashMap();
+    private final Map<LookupElement, StatisticsComparable> myWeights = new IdentityHashMap<>();
     private final Set<String> myStringsWithWeights = new THashSet<>();
     private final Set<LookupElement> myNoStats = ContainerUtil.newIdentityTroveSet();
 

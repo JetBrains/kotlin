@@ -44,7 +44,7 @@ public abstract class LRUPopupBuilder<T> {
 
   private final String myTitle;
   private final PropertiesComponent myPropertiesComponent;
-  private final Map<T, Pair<String, Icon>> myPresentations = ContainerUtil.newIdentityHashMap();
+  private final Map<T, Pair<String, Icon>> myPresentations = new IdentityHashMap<>();
 
   private T mySelection;
   private Consumer<? super T> myOnChosen;

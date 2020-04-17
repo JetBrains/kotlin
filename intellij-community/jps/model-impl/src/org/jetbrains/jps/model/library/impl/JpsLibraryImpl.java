@@ -3,7 +3,7 @@ package org.jetbrains.jps.model.library.impl;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.*;
@@ -148,7 +148,8 @@ public class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeEleme
     return urls;
   }
 
-  private static final Set<String> AR_EXTENSIONS  = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY, "jar", "zip", "swc", "ane");
+  private static final Set<String> AR_EXTENSIONS  =
+    new THashSet<>(Arrays.asList("jar", "zip", "swc", "ane"), FileUtil.PATH_HASHING_STRATEGY);
 
   private static void collectArchives(File file, boolean recursively, List<? super String> result) {
     final File[] children = file.listFiles();

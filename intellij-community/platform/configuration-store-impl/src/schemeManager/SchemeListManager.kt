@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.schemeManager
 
 import com.intellij.configurationStore.LOG
@@ -7,13 +7,14 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.filterSmart
 import com.intellij.util.text.UniqueNameGenerator
 import gnu.trove.THashSet
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Predicate
 
 internal class SchemeListManager<T : Any>(private val schemeManager: SchemeManagerImpl<T, *>) {
   private val schemesRef = AtomicReference(ContainerUtil.createLockFreeCopyOnWriteList<T>())
 
-  internal val readOnlyExternalizableSchemes = ContainerUtil.newConcurrentMap<String, T>()
+  internal val readOnlyExternalizableSchemes = ConcurrentHashMap<String, T>()
 
   val schemes: MutableList<T>
     get() = schemesRef.get()
