@@ -3,16 +3,14 @@ public final class WhenAndDestructingKt {
         var arr: java.util.List<? extends java.lang.String> = listOf("1", "2")
         switch (string)  {
             "aaaa" -> {
-                return "bindingContext"
-                break
+                yield return "bindingContext"
             }
 
              -> {
                 @null var var837f1e82: <ErrorType> = arr
                 @null var bindingContext: java.lang.String = var837f1e82.<anonymous class>()
                 @null var statementFilter: java.lang.String = var837f1e82.<anonymous class>()
-                return bindingContext
-                break
+                yield return bindingContext
             }
 
         }

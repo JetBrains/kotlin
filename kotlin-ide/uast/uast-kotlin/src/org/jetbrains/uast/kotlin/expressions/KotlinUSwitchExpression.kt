@@ -18,8 +18,10 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
@@ -64,13 +66,13 @@ class KotlinUSwitchEntry(
                 expressions.forEach { appendln(it.asRenderString().withMargin) }
                 appendln("}")
             }
-        }.apply {
+        }.apply KotlinUExpressionList@{
             val exprPsi = this@KotlinUSwitchEntry.sourcePsi.expression
             val userExpressions = when (exprPsi) {
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElementPlaceholder {
+            expressions = userExpressions.subList(0, userExpressions.lastIndex) + object : UYieldExpression, JvmDeclarationUElementPlaceholder {
                 override val javaPsi: PsiElement? = null
                 override val sourcePsi: PsiElement? = null
                 override val psi: PsiElement?
@@ -78,9 +80,12 @@ class KotlinUSwitchEntry(
                 override val label: String?
                     get() = null
                 override val uastParent: UElement?
-                    get() = this@KotlinUSwitchEntry
+                    get() = this@KotlinUExpressionList
                 override val annotations: List<UAnnotation>
                     get() = emptyList()
+                override val expression: UExpression?
+                    get() = userExpressions.lastOrNull()?.sourcePsi.safeAs<KtExpression>()
+                        ?.let { KotlinConverter.convertExpression(it, this, DEFAULT_EXPRESSION_TYPES_LIST) }
             }
         }
     }
