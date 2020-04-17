@@ -1,12 +1,12 @@
 <component name="libraryTable">
   <library name="rd-swing" type="repository">
-    <properties include-transitive-deps="false" maven-id="com.jetbrains.rd:rd-swing:0.201.73" />
+    <properties include-transitive-deps="false" maven-id="com.jetbrains.rd:rd-swing:0.201.75" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-swing/0.201.73/rd-swing-0.201.73.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-swing/0.201.75/rd-swing-0.201.75.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-swing/0.201.73/rd-swing-0.201.73-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-swing/0.201.75/rd-swing-0.201.75-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
