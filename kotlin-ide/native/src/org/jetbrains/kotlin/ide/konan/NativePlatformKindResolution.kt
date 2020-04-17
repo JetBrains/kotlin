@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.project.lazyClosure
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.klib.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.isInterop
@@ -67,7 +68,8 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
                 storageManager = storageManager,
                 metadataModuleDescriptorFactory = metadataFactories.DefaultDeserializedDescriptorFactory,
                 languageVersionSettings = languageVersionSettings,
-                moduleDescriptor = moduleDescriptor
+                moduleDescriptor = moduleDescriptor,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
     }
 
