@@ -365,7 +365,7 @@ internal class ObjCExportTranslatorImpl(
 
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
-                        +ObjCProperty(entryName, null, type, listOf("class", "readonly"),
+                        +ObjCProperty(entryName, it, type, listOf("class", "readonly"),
                                 declarationAttributes = listOf(swiftNameAttribute(entryName)))
                     }
                 }

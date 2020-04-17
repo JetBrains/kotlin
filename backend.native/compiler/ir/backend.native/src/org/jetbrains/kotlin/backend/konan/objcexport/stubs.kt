@@ -68,12 +68,12 @@ class ObjCParameter(name: String,
                     val type: ObjCType) : Stub<ParameterDescriptor>(name)
 
 class ObjCProperty(name: String,
-                   override val descriptor: PropertyDescriptor?,
+                   override val descriptor: DeclarationDescriptorWithSource?,
                    val type: ObjCType,
                    val propertyAttributes: List<String>,
                    val setterName: String? = null,
                    val getterName: String? = null,
-                   val declarationAttributes: List<String> = emptyList()) : Stub<PropertyDescriptor>(name) {
+                   val declarationAttributes: List<String> = emptyList()) : Stub<DeclarationDescriptorWithSource>(name) {
 
     @Deprecated("", ReplaceWith("this.propertyAttributes"), DeprecationLevel.WARNING)
     val attributes: List<String> get() = propertyAttributes
