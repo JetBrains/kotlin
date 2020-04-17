@@ -64,7 +64,7 @@ fun setupFirRunConfiguration() {
 
     val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
     junit.moduleName = "kotlin.compiler.test"
-    junit.pattern = "^(org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)|org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated)\$"
+    junit.pattern = "^(org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)|org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated|org\\.jetbrains\\.kotlin\\.spec\\.checkers\\.FirDiagnosticsTestSpecGenerated)\$"
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
 
