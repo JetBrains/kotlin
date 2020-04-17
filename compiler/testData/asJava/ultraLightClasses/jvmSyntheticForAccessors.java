@@ -1,9 +1,9 @@
 public final class X /* X*/ {
   @null()
-  public  X();
+  public  X();//  .ctor()
 
-  public final int getW();
+  public final int getW();//  getW()
 
-  public final void setV(int);
+  public final void setV(int);//  setV(int)
 
 }

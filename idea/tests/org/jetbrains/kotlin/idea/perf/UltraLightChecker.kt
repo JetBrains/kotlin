@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.MethodSignature
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.PairProcessor
 import com.intellij.util.ref.DebugReflectionUtil
@@ -185,9 +186,9 @@ object UltraLightChecker {
         return result
     }
 
-    private fun PsiTypeParameterListOwner.renderTypeParams() =
-        if (typeParameters.isEmpty()) ""
-        else "<" + typeParameters.joinToString {
+    private fun Array<PsiTypeParameter>.renderTypeParams() =
+        if (isEmpty()) ""
+        else "<" + joinToString {
             val bounds =
                 if (it.extendsListTypes.isNotEmpty())
                     " extends " + it.extendsListTypes.joinToString(" & ", transform = { it.renderType() })
@@ -204,7 +205,7 @@ object UltraLightChecker {
     private fun PsiMethod.renderMethod() =
         renderModifiers(returnType) +
                 (if (isVarArgs) "/* vararg */ " else "") +
-                renderTypeParams() +
+                typeParameters.renderTypeParams() +
                 (returnType?.renderType() ?: "") + " " +
                 name +
                 "(" + parameterList.parameters.joinToString { it.renderModifiers(it.type) + it.type.renderType() } + ")" +
@@ -213,7 +214,15 @@ object UltraLightChecker {
                     if (thrownTypes.isEmpty()) ""
                     else " throws " + thrownTypes.joinToString { it.renderType() }
                 } +
-                ";"
+                ";" +
+                "// ${getSignature(PsiSubstitutor.EMPTY).renderSignature()}"
+
+    private fun MethodSignature.renderSignature(): String {
+        val typeParams = typeParameters.renderTypeParams()
+        val paramTypes = parameterTypes.joinToString(prefix = "(", postfix = ")") { it.renderType() }
+        val name = if (isConstructor) ".ctor" else name
+        return "$typeParams $name$paramTypes"
+    }
 
     private fun PsiEnumConstant.renderEnumConstant(): String {
         val initializingClass = initializingClass ?: return name
@@ -237,7 +246,7 @@ object UltraLightChecker {
             append(renderModifiers())
             append("$classWord ")
             append("$name /* $qualifiedName*/")
-            append(renderTypeParams())
+            append(typeParameters.renderTypeParams())
             append(extendsList.renderRefList("extends"))
             append(implementsList.renderRefList("implements"))
             appendln(" {")
