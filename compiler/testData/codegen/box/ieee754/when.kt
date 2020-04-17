@@ -14,7 +14,6 @@ fun box(): String {
             -0.0 -> {
                 return "fail 2"
             }
-            else -> {}
         }
 
         if (minusZero is Double) {

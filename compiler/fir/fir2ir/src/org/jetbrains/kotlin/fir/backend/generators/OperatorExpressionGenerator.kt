@@ -20,19 +20,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
-import java.util.*
 
 internal class OperatorExpressionGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
     private val callGenerator: CallAndReferenceGenerator
 ) : Fir2IrComponents by components {
-
-    companion object {
-        private val NEGATED_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY)
-
-        private val UNARY_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.EXCL)
-    }
 
     fun convertComparisonExpression(comparisonExpression: FirComparisonExpression): IrExpression {
         return comparisonExpression.convertWithOffsets { startOffset, endOffset ->
@@ -92,38 +85,59 @@ internal class OperatorExpressionGenerator(
 
     private fun generateOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
-    ): IrExpression {
-        val (type, symbol, origin) = when (operation) {
-            FirOperation.EQ -> Triple(irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, IrStatementOrigin.EQEQ)
-            FirOperation.NOT_EQ -> Triple(irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ)
-            FirOperation.IDENTITY -> Triple(irBuiltIns.booleanType, irBuiltIns.eqeqeqSymbol, IrStatementOrigin.EQEQEQ)
-            FirOperation.NOT_IDENTITY -> Triple(irBuiltIns.booleanType, irBuiltIns.eqeqeqSymbol, IrStatementOrigin.EXCLEQEQ)
-            FirOperation.EXCL -> Triple(irBuiltIns.booleanType, irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL)
-            FirOperation.LT, FirOperation.GT,
-            FirOperation.LT_EQ, FirOperation.GT_EQ,
-            FirOperation.OTHER, FirOperation.ASSIGN, FirOperation.PLUS_ASSIGN,
-            FirOperation.MINUS_ASSIGN, FirOperation.TIMES_ASSIGN,
-            FirOperation.DIV_ASSIGN, FirOperation.REM_ASSIGN,
-            FirOperation.IS, FirOperation.NOT_IS,
-            FirOperation.AS, FirOperation.SAFE_AS
-            -> {
-                TODO("Should not be here: incompatible operation in FirOperatorCall: $operation")
-            }
-        }
-        val result = if (operation in UNARY_OPERATIONS) {
-            primitiveOp1(startOffset, endOffset, symbol, type, origin, visitor.convertToIrExpression(arguments[0]))
-        } else {
-            val comparisonInfo = inferPrimitiveNumericComparisonInfo(arguments[0], arguments[1])
-            val comparisonType = comparisonInfo?.comparisonType
-            primitiveOp2(
-                startOffset, endOffset, symbol, type, origin,
-                visitor.convertToIrExpression(arguments[0]).asComparisonOperand(comparisonInfo?.leftType, comparisonType),
-                visitor.convertToIrExpression(arguments[1]).asComparisonOperand(comparisonInfo?.rightType, comparisonType)
-            )
-        }
-        if (operation !in NEGATED_OPERATIONS) return result
-        return primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, result)
+    ): IrExpression = when (operation) {
+        FirOperation.EQ, FirOperation.NOT_EQ -> generateEqualityOperatorCall(startOffset, endOffset, operation, arguments)
+        FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> generateIdentityOperatorCall(startOffset, endOffset, operation, arguments)
+        FirOperation.EXCL -> visitor.convertToIrExpression(arguments[0]).negate(IrStatementOrigin.EXCL)
+        else -> error("Unexpected operation: $operation")
     }
+
+    private fun generateEqualityOperatorCall(
+        startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
+    ): IrExpression {
+        val origin = when (operation) {
+            FirOperation.EQ -> IrStatementOrigin.EQEQ
+            FirOperation.NOT_EQ -> IrStatementOrigin.EXCLEQ
+            else -> error("Not an equality operation: $operation")
+        }
+        val comparisonInfo = inferPrimitiveNumericComparisonInfo(arguments[0], arguments[1])
+        val comparisonType = comparisonInfo?.comparisonType
+        val eqeqSymbol = comparisonType?.let { typeConverter.classIdToSymbolMap[it.lookupTag.classId] }
+            ?.let { irBuiltIns.ieee754equalsFunByOperandType[it] } ?: irBuiltIns.eqeqSymbol
+        val equalsCall = primitiveOp2(
+            startOffset, endOffset, eqeqSymbol, irBuiltIns.booleanType, origin,
+            visitor.convertToIrExpression(arguments[0]).asComparisonOperand(comparisonInfo?.leftType, comparisonType),
+            visitor.convertToIrExpression(arguments[1]).asComparisonOperand(comparisonInfo?.rightType, comparisonType)
+        )
+        return if (operation == FirOperation.EQ) {
+            equalsCall
+        } else {
+            equalsCall.negate(origin)
+        }
+    }
+
+    private fun generateIdentityOperatorCall(
+        startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
+    ): IrExpression {
+        val origin = when (operation) {
+            FirOperation.IDENTITY -> IrStatementOrigin.EQEQEQ
+            FirOperation.NOT_IDENTITY -> IrStatementOrigin.EXCLEQEQ
+            else -> error("Not an identity operation: $operation")
+        }
+        val identityCall = primitiveOp2(
+            startOffset, endOffset, irBuiltIns.eqeqeqSymbol, irBuiltIns.booleanType, origin,
+            visitor.convertToIrExpression(arguments[0]),
+            visitor.convertToIrExpression(arguments[1])
+        )
+        return if (operation == FirOperation.IDENTITY) {
+            identityCall
+        } else {
+            identityCall.negate(origin)
+        }
+    }
+
+    private fun IrExpression.negate(origin: IrStatementOrigin) =
+        primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, this)
 
     private fun IrExpression.asComparisonOperand(
         operandType: ConeClassLikeType?,

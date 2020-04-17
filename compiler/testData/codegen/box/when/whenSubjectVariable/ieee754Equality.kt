@@ -1,5 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND_FIR: JVM_IR
 
 val dz = -0.0
 val fz = -0.0f
