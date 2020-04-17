@@ -10,6 +10,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
@@ -108,7 +109,10 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
                 GradleConstants.SYSTEM_ID
             )
 
-        val javaHome = gradleExeSettings.javaHome ?: return null
+        val javaHome = gradleExeSettings.javaHome
+            ?: ScriptConfigurationManager.getScriptDefaultSdk(project)?.homePath
+            ?: return null
+
         val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
         val data = dataProvider(buildRoot) ?: return null
 
