@@ -38,6 +38,7 @@ abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCCl
 
     override fun getMembersCount(): Int = state?.members?.size() ?: 0
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : OCMemberSymbol?> processMembers(
         memberName: String?,
         memberClass: Class<out T>?,
