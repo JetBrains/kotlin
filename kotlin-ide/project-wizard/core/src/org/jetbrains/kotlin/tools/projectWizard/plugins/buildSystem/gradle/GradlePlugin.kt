@@ -107,6 +107,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                 +BuildSystemPlugin::pluginRepositoreis.propertyValue.map(::RepositoryIR)
                 if (isNotEmpty()) {
                     +RepositoryIR(DefaultRepository.MAVEN_CENTRAL)
+                    +RepositoryIR(DefaultRepository.GRADLE_PLUGIN_PORTAL)
                 }
             }.map(::PluginManagementRepositoryIR)
 
