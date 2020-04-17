@@ -1292,6 +1292,7 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
             model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
+            model("incremental/mpp/jvmOnly", extension = null, excludeParentDirs = true)
         }
         testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
             model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
