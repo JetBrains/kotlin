@@ -61,7 +61,10 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             override fun onProjectsUnlinked(linkedProjectPaths: MutableSet<String>) {
                 linkedProjectPaths.forEach {
                     val buildRoot = VfsUtil.findFile(Paths.get(it), false)
-                    byBuildRoot.remove(buildRoot)
+                    if (buildRoot != null) {
+                        KotlinDslScriptModels.remove(buildRoot)
+                        byBuildRoot.remove(buildRoot)
+                    }
                 }
             }
         }
