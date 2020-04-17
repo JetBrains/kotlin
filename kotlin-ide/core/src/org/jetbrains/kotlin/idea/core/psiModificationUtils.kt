@@ -74,18 +74,20 @@ fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     replacement: KtExpression,
-    functionLiteralArgumentName: Name?
+    functionLiteralArgumentName: Name?,
+    withNameCheck: Boolean = true,
 ): KtCallExpression {
     val oldCallExpression = parent as KtCallExpression
     val newCallExpression = oldCallExpression.copy() as KtCallExpression
 
     val psiFactory = KtPsiFactory(project)
 
-    val argument = if (shouldLambdaParameterBeNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
-        psiFactory.createArgument(replacement, functionLiteralArgumentName)
-    } else {
-        psiFactory.createArgument(replacement)
-    }
+    val argument =
+        if (withNameCheck && shouldLambdaParameterBeNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
+            psiFactory.createArgument(replacement, functionLiteralArgumentName)
+        } else {
+            psiFactory.createArgument(replacement)
+        }
 
     val functionLiteralArgument = newCallExpression.lambdaArguments.firstOrNull()!!
     val valueArgumentList = newCallExpression.valueArgumentList ?: psiFactory.createCallArguments("()")
