@@ -84,7 +84,7 @@ class TemplateDescriptionComponent : Component() {
 
         // taken from com.intellij.openapi.ui.panel.ComponentPanelBuilder.createCommentComponent
         if (SystemInfo.isMac) {
-            val font = component.font
+            val font = this.font
             val size = font.size2D
             val smallFont = font.deriveFont(size - 2.0f)
             this.font = smallFont
