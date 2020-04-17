@@ -10,6 +10,7 @@ import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
+import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -112,6 +113,9 @@ internal abstract class KtUltraLightMethod(
 
     override fun findSuperMethods(parentClass: PsiClass?): Array<out PsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethods(this, parentClass)
+
+    override fun getSignature(substitutor: PsiSubstitutor): MethodSignature =
+        MethodSignatureBackedByPsiMethod.create(this, substitutor)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
