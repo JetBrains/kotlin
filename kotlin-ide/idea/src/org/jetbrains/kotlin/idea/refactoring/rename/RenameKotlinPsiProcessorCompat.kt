@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
-import org.jetbrains.kotlin.idea.search.or
-import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.name.Name
