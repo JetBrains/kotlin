@@ -16,10 +16,10 @@ class MyJavaClass {
 //FILE:a.kt
 package a
 
-<!EXPOSED_PROPERTY_TYPE!>val mc = MyJavaClass()<!>
+val <!EXPOSED_PROPERTY_TYPE!>mc<!> = MyJavaClass()
 val x = MyJavaClass.staticMethod()
 val y = MyJavaClass.NestedClass.staticMethodOfNested()
-<!EXPOSED_PROPERTY_TYPE!>val z = MyJavaClass.NestedClass()<!>
+val <!EXPOSED_PROPERTY_TYPE!>z<!> = MyJavaClass.NestedClass()
 
 //FILE: b.kt
 package b

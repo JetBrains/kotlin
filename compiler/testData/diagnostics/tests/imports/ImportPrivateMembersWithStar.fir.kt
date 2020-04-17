@@ -16,7 +16,7 @@ private class TopLevelClass {
     }
 }
 
-<!EXPOSED_FUNCTION_RETURN_TYPE, EXPOSED_FUNCTION_RETURN_TYPE!>private enum class TopLevelEnum(private val e: NestedEnum) {
+private enum class TopLevelEnum(private val e: NestedEnum) {
     E1(NestedEntry);
 
     private enum class NestedEnum {

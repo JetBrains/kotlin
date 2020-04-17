@@ -17,7 +17,7 @@ class Property {
     var var1: String
     var var2: String
     var var3: Int
-    <!EXPOSED_PROPERTY_TYPE!>var var4: A.AInnerPrivate<!>
+    var <!EXPOSED_PROPERTY_TYPE!>var4<!>: A.AInnerPrivate
     var var5: A.AInnerPublic
-    <!EXPOSED_PROPERTY_TYPE!>var var6: A.AInnerProtectedEnum<!>
+    var <!EXPOSED_PROPERTY_TYPE!>var6<!>: A.AInnerProtectedEnum
 }
