@@ -1144,7 +1144,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
 
         public void testAllFilesPresentInAddMissingClassKeyword() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addMissingClassKeyword"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/addMissingClassKeyword"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("annottion.kt")
@@ -13837,6 +13837,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("removeUnresolvedType.kt")
         public void testRemoveUnresolvedType() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/removeUnresolvedType.kt");
+        }
+
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/suspendFunction.kt");
         }
     }
 
