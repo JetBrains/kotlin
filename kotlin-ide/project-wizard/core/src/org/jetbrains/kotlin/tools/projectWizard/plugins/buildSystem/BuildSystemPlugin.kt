@@ -45,7 +45,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
                     KotlinNewProjectWizardBundle.message(
                         "plugin.buildsystem.setting.type.error.wrong.project.kind",
                         projectKind,
-                        buildSystemType.fullText
+                        buildSystemType.text
                     )
                 )
             } else ValidationResult.OK
@@ -122,13 +122,10 @@ data class BuildFileData(
     @NonNls val buildFileName: String
 )
 
-enum class BuildSystemType(@Nls override val text: String, val fullText: String = text) : DisplayableSettingItem {
+enum class BuildSystemType(@Nls override val text: String) : DisplayableSettingItem {
     GradleKotlinDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.kotlin")),
     GradleGroovyDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.groovy")),
-    Jps(
-        KotlinNewProjectWizardBundle.message("buildsystem.type.intellij"),
-        KotlinNewProjectWizardBundle.message("buildsystem.type.intellij.full")
-    ),
+    Jps(KotlinNewProjectWizardBundle.message("buildsystem.type.intellij")),
     Maven(KotlinNewProjectWizardBundle.message("buildsystem.type.maven"))
 
     ;
