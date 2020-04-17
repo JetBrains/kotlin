@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: b.kt
 
 class Foo<T>(val minus0: T, val plus0: T) {

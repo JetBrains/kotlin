@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -216,10 +213,21 @@ fun IrDeclaration.isInCurrentModule(): Boolean =
 // This is needed to pinpoint exceptional treatment of IEEE754 floating point comparisons, where proper IEEE
 // comparisons are used "if values are statically known to be of primitive numeric types", taken to mean as
 // "not learned through smartcasting".
-fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext) =
-    this is IrTypeOperatorCall &&
-            operator == IrTypeOperator.IMPLICIT_CAST &&
-            !this.argument.type.isSubtypeOf(type.makeNullable(), context.irBuiltIns)
+fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): Boolean {
+    return when (this) {
+        is IrTypeOperatorCall -> operator == IrTypeOperator.IMPLICIT_CAST && !argument.type.isSubtypeOf(
+            type.makeNullable(),
+            context.irBuiltIns
+        )
+        is IrGetValue -> {
+            // Check if the variable initializer is smartcast. In FIR, if the subject of a `when` is smartcast,
+            // the IMPLICIT_CAST is in the initializer of the variable for the subject.
+            val variable = (symbol as? IrVariableSymbol)?.owner ?: return false
+            !variable.isVar && variable.initializer?.isSmartcastFromHigherThanNullable(context) == true
+        }
+        else -> false
+    }
+}
 
 fun IrBody.replaceThisByStaticReference(
     declarationFactory: JvmDeclarationFactory,

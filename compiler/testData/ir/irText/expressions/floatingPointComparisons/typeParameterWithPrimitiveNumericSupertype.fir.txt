@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                 GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
               arg1: GET_VAR 'y: T of <root>.test1 declared in <root>.test1' type=T of <root>.test1 origin=null
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
-            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                   GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
-            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
                   GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
-            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
                   GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
-            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
                   GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
                 GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
-              then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                   $this: GET_VAR 'x: T of <root>.F declared in <root>.F.testCapturedType' type=T of <root>.F origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
