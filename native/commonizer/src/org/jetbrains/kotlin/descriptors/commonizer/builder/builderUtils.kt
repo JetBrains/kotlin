@@ -122,7 +122,8 @@ internal fun CirSimpleType.buildType(
 
     // TODO: commonize annotations, KT-34234
     val typeAnnotations = if (!targetComponents.isCommon) annotations.buildDescriptors(targetComponents) else Annotations.EMPTY
-    val rawType = simpleType(
+
+    val simpleType = simpleType(
         annotations = typeAnnotations,
         constructor = classifier.typeConstructor,
         arguments = arguments.map { it.buildArgument(targetComponents, typeParameterResolver) },
@@ -130,7 +131,15 @@ internal fun CirSimpleType.buildType(
         kotlinTypeRefiner = null
     )
 
-    return if (isDefinitelyNotNullType) rawType.makeSimpleTypeDefinitelyNotNullOrNotNull() else rawType
+    val computedType = if (classifier is TypeAliasDescriptor)
+        classifier.underlyingType.withAbbreviation(simpleType)
+    else
+        simpleType
+
+    return if (isDefinitelyNotNullType)
+        computedType.makeSimpleTypeDefinitelyNotNullOrNotNull()
+    else
+        computedType
 }
 
 internal fun findClassOrTypeAlias(
