@@ -178,7 +178,8 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                                     it == overriddenDescriptor || OverridingUtil.overrides(
                                         it,
                                         overriddenDescriptor,
-                                        it.module.isTypeRefinementEnabled()
+                                        it.module.isTypeRefinementEnabled(),
+                                        true
                                     )
                                 }
                         }
