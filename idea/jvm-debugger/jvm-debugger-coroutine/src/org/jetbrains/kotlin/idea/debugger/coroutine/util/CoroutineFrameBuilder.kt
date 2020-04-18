@@ -60,10 +60,7 @@ class CoroutineFrameBuilder {
 
             // rest of the stack
             stackFrames.addAll(preflightFrame.threadPreCoroutineFrames.drop(1).mapIndexedNotNull { index, stackFrameProxyImpl ->
-//                if (index == 0)
-//                    PreCoroutineStackFrameItem(stackFrameProxyImpl, firstRestoredFrame) // get location and variables from restored part
-//                else
-                    suspendContext.invokeInManagerThread { buildRealStackFrameItem(stackFrameProxyImpl) }
+                suspendContext.invokeInManagerThread { buildRealStackFrameItem(stackFrameProxyImpl) }
             })
 
             return DoubleFrameList(stackFrames, preflightFrame.coroutineInfoData.creationStackTrace)
@@ -80,7 +77,6 @@ class CoroutineFrameBuilder {
             val location = frame.location()
             return RunningCoroutineStackFrameItem(frame, location)
         }
-
 
         /**
          * Used by CoroutineStackFrameInterceptor to check if that frame is 'exit' coroutine frame.
