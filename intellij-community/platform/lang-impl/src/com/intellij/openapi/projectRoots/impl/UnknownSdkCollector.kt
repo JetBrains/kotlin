@@ -2,6 +2,7 @@
 package com.intellij.openapi.projectRoots.impl
 
 import com.google.common.collect.MultimapBuilder
+import com.google.common.hash.Hashing
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.logger
@@ -10,9 +11,11 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager.checkCanceled
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.roots.ModuleJdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -23,12 +26,28 @@ private val EP_NAME = ExtensionPointName.create<UnknownSdkContributor>("com.inte
 
 interface UnknownSdkContributor {
   fun contributeUnknownSdks(project: Project): List<UnknownSdk>
+
+  @JvmDefault
+  fun contributeKnownSdks(project: Project) : List<Sdk> = listOf()
 }
 
 data class UnknownSdkSnapshot(
   val totallyUnknownSdks: Set<String>,
-  val resolvableSdks: List<UnknownSdk>
+  val resolvableSdks: List<UnknownSdk>,
+  val knownSdks: List<Sdk>
 ) {
+
+  private val sdkState = run {
+    val hasher = Hashing.goodFastHash(128).newHasher()
+    knownSdks.sortedBy { it.name }.forEach { sdk ->
+      hasher.putByte(42)
+      hasher.putUnencodedChars(sdk.name)
+      sdk.homePath?.let { hasher.putUnencodedChars(it) }
+      sdk.rootProvider.getUrls(OrderRootType.CLASSES).forEach { hasher.putUnencodedChars(it) }
+    }
+    hasher.hash()
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is UnknownSdkSnapshot) return false
@@ -43,10 +62,11 @@ data class UnknownSdkSnapshot(
       it.sdkName to (it.sdkType.name to ((it.sdkHomePredicate == null) to (it.sdkVersionStringPredicate == null)))
     }.toSet()
 
-    return this.resolvableSdks.map() == other.resolvableSdks.map()
+    if (this.resolvableSdks.map() != other.resolvableSdks.map()) return false
+    return this.sdkState == other.sdkState
   }
 
-  override fun hashCode() = 42 + totallyUnknownSdks.size + resolvableSdks.size
+  override fun hashCode() = Objects.hash(totallyUnknownSdks.size, resolvableSdks.size, sdkState)
 }
 
 private data class MissingSdkInfo(
@@ -70,6 +90,7 @@ class UnknownSdkCollector(private val myProject: Project) {
 
   private fun collectSdksUnderReadAction(): UnknownSdkSnapshot {
 
+    val knownSdks = mutableSetOf<Sdk>()
     val sdkToTypes = MultimapBuilder.treeKeys(java.lang.String.CASE_INSENSITIVE_ORDER)
       .hashSetValues()
       .build<String, String>()
@@ -77,13 +98,16 @@ class UnknownSdkCollector(private val myProject: Project) {
     checkCanceled()
 
     val rootManager = ProjectRootManager.getInstance(myProject)
-    if (rootManager.projectSdk == null) {
+    val projectSdk = rootManager.projectSdk
+    if (projectSdk == null) {
       val sdkName = rootManager.projectSdkName
       val sdkTypeName = rootManager.projectSdkTypeName
 
       if (sdkName != null) {
         sdkToTypes.put(sdkName, sdkTypeName)
       }
+    } else {
+      knownSdks += projectSdk
     }
 
     for (module in ModuleManager.getInstance(myProject).modules) {
@@ -99,13 +123,16 @@ class UnknownSdkCollector(private val myProject: Project) {
                        .filterIsInstance<ModuleJdkOrderEntry>()
                        .firstOrNull() ?: continue
 
-      if (jdkEntry.jdk == null) {
+      val moduleJdk = jdkEntry.jdk
+      if (moduleJdk == null) {
         val jdkName = jdkEntry.jdkName
         val jdkTypeName = jdkEntry.jdkTypeName
 
         if (jdkName != null) {
           sdkToTypes.put(jdkName, jdkTypeName)
         }
+      } else {
+        knownSdks += moduleJdk
       }
     }
 
@@ -147,8 +174,16 @@ class UnknownSdkCollector(private val myProject: Project) {
         if (!detectedUnknownSdkNames.add(name)) continue
         resolvableSdks += unknownSdk
       }
+
+      try {
+        knownSdks += it.contributeKnownSdks(myProject)
+      } catch (e: ProcessCanceledException) {
+        throw e
+      } catch (t: Throwable) {
+        LOG.warn("Failed to contribute SDKs with ${it.javaClass.name}. ${t.message}", t)
+      }
     }
 
-    return UnknownSdkSnapshot(totallyUnknownSdks, resolvableSdks)
+    return UnknownSdkSnapshot(totallyUnknownSdks, resolvableSdks, knownSdks.toList().sortedBy { it.name })
   }
 }

@@ -60,12 +60,13 @@ public class UnknownSdkTracker {
       .usePassThroughInUnitTestMode();
   }
 
-  public void updateUnknownSdks() {
-    myUpdateQueue.queue(new Update("update") {
+  @NotNull
+  private Update newUpdateTask() {
+    return new Update("update") {
       @Override
       public void run() {
         if (!Registry.is("unknown.sdk") || !UnknownSdkResolver.EP_NAME.hasAnyExtensions()) {
-          showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
+          showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap(), Collections.emptyList());
           return;
         }
 
@@ -77,10 +78,18 @@ public class UnknownSdkTracker {
             myPreviousRequestCache = snapshot;
 
             //we cannot use snapshot#missingSdks here, because it affects other IDEs/languages where our logic is not good enough
-            onFixableAndMissingSdksCollected(filterOnlyAllowedEntries(snapshot.getResolvableSdks()));
+            onFixableAndMissingSdksCollected(filterOnlyAllowedEntries(snapshot.getResolvableSdks()), filterOnlyAllowedSdkEntries(snapshot.getKnownSdks()));
           });
       }
-    });
+    };
+  }
+
+  public void updateUnknownSdksNow() {
+    myUpdateQueue.run(newUpdateTask());
+  }
+
+  public void updateUnknownSdks() {
+    myUpdateQueue.queue(newUpdateTask());
   }
 
   private static boolean allowFixesFor(@NotNull SdkTypeId type) {
@@ -101,9 +110,23 @@ public class UnknownSdkTracker {
     return copy;
   }
 
-  private void onFixableAndMissingSdksCollected(@NotNull List<UnknownSdk> fixable) {
-    if (fixable.isEmpty()) {
-      showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
+  @NotNull
+  private static List<Sdk> filterOnlyAllowedSdkEntries(@NotNull List<Sdk> input) {
+    List<Sdk> copy = new ArrayList<>();
+    for (Sdk item : input) {
+      SdkTypeId type = item.getSdkType();
+
+      if (allowFixesFor(type)) {
+        copy.add(item);
+      }
+    }
+
+    return copy;
+  }
+
+  private void onFixableAndMissingSdksCollected(@NotNull List<UnknownSdk> fixable, @NotNull List<Sdk> usedSdks) {
+    if (fixable.isEmpty() && usedSdks.isEmpty()) {
+      showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap(), Collections.emptyList());
       return;
     }
 
@@ -114,18 +137,24 @@ public class UnknownSdkTracker {
                indicator.setText(ProjectBundle.message("progress.text.resolving.missing.sdks"));
                List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
 
+               indicator.setText(ProjectBundle.message("progress.text.resolving.existing.sdks"));
+               List<UnknownInvalidSdk> invalidSdks = UnknownInvalidSdk.resolveInvalidSdks(usedSdks);
+               fixable.addAll(invalidSdks);
+
                indicator.setText(ProjectBundle.message("progress.text.looking.for.local.sdks"));
                Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
 
                indicator.setText(ProjectBundle.message("progress.text.looking.for.downloadable.sdks"));
                Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
 
+               UnknownInvalidSdk.removeAndUpdate(invalidSdks, fixable, localFixes, downloadFixes);
+
                if (!localFixes.isEmpty()) {
                  indicator.setText(ProjectBundle.message("progress.text.configuring.sdks"));
                  configureLocalSdks(localFixes);
                }
 
-               showStatus(fixable, localFixes, downloadFixes);
+               showStatus(fixable, localFixes, downloadFixes, invalidSdks);
              }
            }
       );
@@ -133,14 +162,15 @@ public class UnknownSdkTracker {
 
   private void showStatus(@NotNull List<UnknownSdk> unknownSdksWithoutFix,
                           @NotNull Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes,
-                          @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes) {
+                          @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes,
+                          @NotNull List<UnknownInvalidSdk> invalidSdks) {
     UnknownSdkBalloonNotification
       .getInstance(myProject)
       .notifyFixedSdks(localFixes);
 
     UnknownSdkEditorNotification
       .getInstance(myProject)
-      .showNotifications(unknownSdksWithoutFix, downloadFixes);
+      .showNotifications(unknownSdksWithoutFix, downloadFixes, invalidSdks);
 
   }
 
@@ -159,7 +189,7 @@ public class UnknownSdkTracker {
   public void applyDownloadableFix(@NotNull UnknownSdk info, @NotNull UnknownSdkDownloadableSdkFix fix) {
     downloadFix(myProject, info, fix, sdk -> {}, sdk -> {
       if (sdk != null) {
-        updateUnknownSdks();
+        updateUnknownSdksNow();
       }
     });
   }
@@ -170,59 +200,21 @@ public class UnknownSdkTracker {
                                  @NotNull UnknownSdkDownloadableSdkFix fix,
                                  @NotNull Consumer<? super Sdk> onSdkNameReady,
                                  @NotNull Consumer<? super Sdk> onCompleted) {
-    SdkDownloadTask task;
-    String title = ProjectBundle.message("progress.title.downloading.sdk");
-    try {
-      task = ProgressManager.getInstance().run(new Task.WithResult<SdkDownloadTask, RuntimeException>(project, title, true) {
-        @Override
-        protected SdkDownloadTask compute(@NotNull ProgressIndicator indicator) {
-          return fix.createTask(indicator);
-        }
-      });
-    } catch (ProcessCanceledException e) {
-      onCompleted.consume(null);
-      throw e;
-    } catch (Exception error) {
-      LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
-      ApplicationManager.getApplication().invokeLater(() -> {
-        Messages.showErrorDialog(ProjectBundle.message("dialog.message.failed.to.download.0.1", fix.getDownloadDescription(),
-                                                       error.getMessage()), title);
-      });
-      onCompleted.consume(null);
-      return;
-    }
-
-    ApplicationManager.getApplication().invokeLater(() -> {
-      try {
-        Disposable lifetime = Disposer.newDisposable();
-
-        String actualSdkName = info.getSdkName();
-        if (actualSdkName == null) {
-          actualSdkName = task.getSuggestedSdkName();
-        }
-
-        Sdk sdk = ProjectJdkTable.getInstance().createSdk(actualSdkName, info.getSdkType());
-
-        SdkDownloadTracker downloadTracker = SdkDownloadTracker.getInstance();
-        downloadTracker.registerSdkDownload(sdk, task);
-        String targetSdkName = actualSdkName;
-        downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), success -> {
-          Disposer.dispose(lifetime);
-          registerNewSdkInJdkTable(targetSdkName, sdk);
-          onCompleted.consume(success ? sdk : null);
-        });
-
-        onSdkNameReady.consume(sdk);
-        downloadTracker.startSdkDownloadIfNeeded(sdk);
-      } catch (Exception error) {
-        LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
-        ApplicationManager.getApplication().invokeLater(() -> {
-          Messages.showErrorDialog(
-            ProjectBundle.message("dialog.message.failed.to.download.0.1", fix.getDownloadDescription(), error.getMessage()), title);
-        });
-        onCompleted.consume(null);
-      }
-    });
+    UnknownSdkDownloader.downloadFix(project, info, fix,
+                task -> {
+                  String actualSdkName = info.getSdkName();
+                  if (actualSdkName == null) {
+                    actualSdkName = task.getSuggestedSdkName();
+                  }
+                  return ProjectJdkTable.getInstance().createSdk(actualSdkName, info.getSdkType());
+                },
+                onSdkNameReady,
+                sdk -> {
+                  if (sdk != null) {
+                    registerNewSdkInJdkTable(sdk.getName(), sdk);
+                  }
+                  onCompleted.consume(sdk);
+                });
   }
 
   @NotNull

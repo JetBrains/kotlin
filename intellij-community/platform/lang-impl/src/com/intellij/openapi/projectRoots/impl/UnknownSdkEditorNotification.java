@@ -13,8 +13,11 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdkLocalSdkFix;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
@@ -67,7 +70,8 @@ public class UnknownSdkEditorNotification {
   }
 
   public void showNotifications(@NotNull List<UnknownSdk> unfixableSdks,
-                                @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> files) {
+                                @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> files,
+                                @NotNull List<UnknownInvalidSdk> invalidSdks) {
     ImmutableSet.Builder<SimpleSdkFixInfo> notifications = ImmutableSet.builder();
 
     if (Registry.is("unknown.sdk.show.editor.actions")) {
@@ -75,7 +79,7 @@ public class UnknownSdkEditorNotification {
         @Nullable String name = e.getSdkName();
         SdkType type = e.getSdkType();
         if (name == null) continue;
-        notifications.add(new SimpleSdkFixInfo(name, type, null, null));
+        notifications.add(new UnknownSdkFixInfo(name, type, null, null));
       }
 
       for (Map.Entry<UnknownSdk, UnknownSdkDownloadableSdkFix> e : files.entrySet()) {
@@ -84,7 +88,11 @@ public class UnknownSdkEditorNotification {
         if (name == null) continue;
 
         UnknownSdkDownloadableSdkFix fix = e.getValue();
-        notifications.add(new SimpleSdkFixInfo(name, unknownSdk.getSdkType(), unknownSdk, fix));
+        notifications.add(new UnknownSdkFixInfo(name, unknownSdk.getSdkType(), unknownSdk, fix));
+      }
+
+      for (UnknownInvalidSdk sdk : invalidSdks) {
+        notifications.add(new InvalidSdkFixInfo(sdk));
       }
     }
 
@@ -125,20 +133,11 @@ public class UnknownSdkEditorNotification {
     }
   }
 
-  public class SimpleSdkFixInfo {
-    @NotNull private final String mySdkName;
-    @NotNull private final SdkType mySdkType;
-    @Nullable private final UnknownSdk mySdk;
-    @Nullable private final UnknownSdkDownloadableSdkFix myFix;
+  public abstract static class SimpleSdkFixInfo {
+    @NotNull protected final SdkType mySdkType;
 
-    SimpleSdkFixInfo(@NotNull String sdkName,
-                     @NotNull SdkType sdkType,
-                     @Nullable UnknownSdk sdk,
-                     @Nullable UnknownSdkDownloadableSdkFix fix) {
-      mySdkName = sdkName;
+    protected SimpleSdkFixInfo(@NotNull SdkType sdkType) {
       mySdkType = sdkType;
-      mySdk = sdk;
-      myFix = fix;
     }
 
     @Nullable
@@ -148,16 +147,15 @@ public class UnknownSdkEditorNotification {
         return null;
       }
 
-      String sdkTypeName = mySdkType.getPresentableName();
-      String notificationText = ProjectBundle.message("config.unknown.sdk.notification.text", sdkTypeName, mySdkName);
-      String configureText = ProjectBundle.message("config.unknown.sdk.configure");
+      return createNotificationPanelImpl(file, project);
+    }
 
-      boolean hasDownload = myFix != null && mySdk != null;
-      String downloadText = hasDownload ? ProjectBundle.message("config.unknown.sdk.download", myFix.getDownloadDescription()) : "";
-      String intentionActionText =
-        hasDownload ? downloadText : ProjectBundle.message("config.unknown.sdk.configure.missing", sdkTypeName, mySdkName);
+    @NotNull
+    abstract EditorNotificationPanel createNotificationPanelImpl(@NotNull VirtualFile file, @NotNull Project project);
 
-      EditorNotificationPanel notification = new EditorNotificationPanel() {
+    @NotNull
+    protected EditorNotificationPanel newNotificationPanel(@NotNull String intentionActionText) {
+      return new EditorNotificationPanel() {
         @Override
         protected String getIntentionActionText() {
           return intentionActionText;
@@ -175,6 +173,37 @@ public class UnknownSdkEditorNotification {
           return ProjectBundle.message("config.unknown.sdk.configuration");
         }
       };
+    }
+  }
+
+  private class UnknownSdkFixInfo extends SimpleSdkFixInfo {
+    @NotNull private final String mySdkName;
+    @Nullable private final UnknownSdk mySdk;
+    @Nullable private final UnknownSdkDownloadableSdkFix myFix;
+
+    UnknownSdkFixInfo(@NotNull String sdkName,
+                      @NotNull SdkType sdkType,
+                      @Nullable UnknownSdk sdk,
+                      @Nullable UnknownSdkDownloadableSdkFix fix) {
+      super(sdkType);
+      mySdkName = sdkName;
+      mySdk = sdk;
+      myFix = fix;
+    }
+
+    @NotNull
+    @Override
+    final EditorNotificationPanel createNotificationPanelImpl(@NotNull VirtualFile file, @NotNull Project project) {
+      String sdkTypeName = mySdkType.getPresentableName();
+      String notificationText = ProjectBundle.message("config.unknown.sdk.notification.text", sdkTypeName, mySdkName);
+      String configureText = ProjectBundle.message("config.unknown.sdk.configure");
+
+      boolean hasDownload = myFix != null && mySdk != null;
+      String downloadText = hasDownload ? ProjectBundle.message("config.unknown.sdk.download", myFix.getDownloadDescription()) : "";
+      String intentionActionText =
+        hasDownload ? downloadText : ProjectBundle.message("config.unknown.sdk.configure.missing", sdkTypeName, mySdkName);
+
+      EditorNotificationPanel notification = newNotificationPanel(intentionActionText);
 
       notification.setProject(myProject);
       notification.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
@@ -202,6 +231,70 @@ public class UnknownSdkEditorNotification {
       sb.append("SdkFixInfo { name: ").append(mySdkName);
       if (myFix != null) {
         sb.append(", fix: ").append(myFix.getDownloadDescription());
+      }
+      sb.append("}");
+      return sb.toString();
+    }
+  }
+
+  private class InvalidSdkFixInfo extends SimpleSdkFixInfo {
+    @NotNull private final String mySdkName;
+    @NotNull private final UnknownInvalidSdk mySdk;
+
+    InvalidSdkFixInfo(@NotNull UnknownInvalidSdk invalidSdk) {
+      super(invalidSdk.mySdkType);
+      mySdkName = invalidSdk.getSdkName();
+      mySdk = invalidSdk;
+    }
+
+    @NotNull
+    @Override
+    final EditorNotificationPanel createNotificationPanelImpl(@NotNull VirtualFile file, @NotNull Project project) {
+      String sdkTypeName = mySdkType.getPresentableName();
+      String notificationText = ProjectBundle.message("config.invalid.sdk.notification.text", sdkTypeName, mySdkName);
+      String configureText = ProjectBundle.message("config.invalid.sdk.configure");
+
+      UnknownSdkLocalSdkFix localFix = mySdk.myLocalSdkFix;
+      UnknownSdkDownloadableSdkFix downloadFix = mySdk.myDownloadableSdkFix;
+
+      String intentionActionText = ProjectBundle.message("config.invalid.sdk.configure.missing", sdkTypeName, mySdkName);
+
+      String localText = localFix != null ? intentionActionText = ProjectBundle.message("config.unknown.sdk.local", StringUtil.trimMiddle(FileUtil.getLocationRelativeToUserHome(localFix.getExistingSdkHome()), 30)) : "";
+      String downloadText = downloadFix != null ? intentionActionText = ProjectBundle.message("config.unknown.sdk.download", downloadFix.getDownloadDescription()) : "";
+      EditorNotificationPanel notification = newNotificationPanel(intentionActionText);
+
+      notification.setProject(myProject);
+      notification.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
+      notification.setText(notificationText);
+
+      if (localFix != null) {
+        notification.createActionLabel(localText, () -> {
+          mySdk.applyLocalFix();
+        }, true);
+      }
+      else if (downloadFix != null) {
+        notification.createActionLabel(downloadText, () -> {
+          mySdk.applyDownloadFix(myProject);
+        }, true);
+      }
+
+      notification.createActionLabel(configureText,
+                                     mySdk.createSdkSelectionPopup(project),
+                                     true
+      );
+
+      return notification;
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("InvalidSdkFixInfo { name: ").append(mySdkName);
+      if (mySdk.myLocalSdkFix != null) {
+        sb.append(", fix: ").append(mySdk.myLocalSdkFix.getExistingSdkHome());
+      }
+      if (mySdk.myDownloadableSdkFix != null) {
+        sb.append(", fix: ").append(mySdk.myDownloadableSdkFix.getDownloadDescription());
       }
       sb.append("}");
       return sb.toString();
