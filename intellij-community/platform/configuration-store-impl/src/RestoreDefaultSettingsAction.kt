@@ -18,7 +18,7 @@ private class RestoreDefaultSettingsAction : DumbAwareAction() {
       return
     }
 
-    CustomConfigMigrationOption.writeCustomConfigMigrationFile(null)
+    CustomConfigMigrationOption.StartWithCleanConfig.writeConfigMarkerFile()
 
     invokeLater {
       (ApplicationManager.getApplication() as ApplicationEx).restart(true)
