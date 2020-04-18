@@ -1,5 +1,4 @@
 package continuation
-// ATTACH_LIBRARY: coroutines
 // ATTACH_LIBRARY: maven(org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.3.4)-javaagent
 
 import kotlinx.coroutines.runBlocking

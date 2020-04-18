@@ -79,21 +79,6 @@ class CreationCoroutineStackFrame(debugProcess: DebugProcessImpl, item: StackFra
         true
 }
 
-/**
- * Acts as a joint frame, take variables from restored frame and information from the real 'exit' frame.
- */
-class PreCoroutineStackFrame(val frame: StackFrameProxyImpl, val debugProcess: DebugProcessImpl, item: StackFrameItem) :
-    CoroutineStackFrame(debugProcess, item) {
-    override fun computeChildren(node: XCompositeNode) {
-        val fakeStackFrame = debugProcess.invokeInManagerThread {
-            val skipCoroutineFrame = SkipCoroutineStackFrameProxyImpl(frame)
-            debugProcess.positionManager.createStackFrame(skipCoroutineFrame, debugProcess, frame.location())
-        }
-        fakeStackFrame?.computeChildren(node)
-//        super.computeChildren(node)
-    }
-}
-
 open class CoroutineStackFrame(debugProcess: DebugProcessImpl, val item: StackFrameItem, val realStackFrame: XStackFrame? = null) :
     StackFrameItem.CapturedStackFrame(debugProcess, item) {
     override fun customizePresentation(component: ColoredTextContainer) {
