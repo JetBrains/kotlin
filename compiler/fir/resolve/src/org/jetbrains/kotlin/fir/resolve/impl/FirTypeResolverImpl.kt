@@ -96,8 +96,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             listOfNotNull((typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type) +
                     typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() } +
                     listOf(typeRef.returnTypeRef.coneTypeUnsafe())
+        val classId = if (typeRef.isSuspend) {
+            KotlinBuiltIns.getSuspendFunctionClassId(typeRef.parametersCount)
+        } else {
+            KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount)
+        }
         return ConeClassLikeTypeImpl(
-            resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), session).toLookupTag(),
+            resolveBuiltInQualified(classId, session).toLookupTag(),
             parameters.toTypedArray(),
             typeRef.isMarkedNullable
         )

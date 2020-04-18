@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.FirResolvedTypeRefBuilder
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -198,7 +199,7 @@ private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection
     }
 }.toTypedArray()
 
-fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedTypeRef {
+fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession, isSuspend: Boolean = false): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverTypeRef
         is FirAnonymousFunction -> receiverTypeRef
@@ -209,11 +210,12 @@ fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedT
     }
     val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
 
-    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneTypeSafe(), rawReturnType)
+    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneTypeSafe(), rawReturnType, isSuspend = isSuspend)
 
     return buildResolvedTypeRef {
         source = this@constructFunctionalTypeRef.source
         type = functionalType
+        this.isSuspend = isSuspend
     }
 }
 
