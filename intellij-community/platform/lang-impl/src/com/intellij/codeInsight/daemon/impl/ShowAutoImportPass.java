@@ -7,7 +7,6 @@ import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
-import com.intellij.codeInsight.daemon.ReferenceImporter;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.HintAction;
 import com.intellij.injected.editor.EditorWindow;
@@ -106,10 +105,6 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
         if (action.isAvailable(myProject, myEditor, myFile) && action.fixSilently(myEditor)) {
           break;
         }
-      }
-      for (ReferenceImporter importer: ReferenceImporter.EP_NAME.getExtensionList()) {
-        //noinspection deprecation
-        if (importer.autoImportReferenceAt(myEditor, myFile, info.getActualStartOffset())) break;
       }
     }
   }
