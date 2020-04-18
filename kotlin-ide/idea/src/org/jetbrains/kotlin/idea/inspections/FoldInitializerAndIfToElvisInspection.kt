@@ -29,14 +29,19 @@ import org.jetbrains.kotlin.idea.util.hasComments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
     override fun inspectionText(element: KtIfExpression): String = KotlinBundle.message("if.null.return.break.foldable.to")
@@ -137,6 +142,15 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
                 val checkedType = ifExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
                 val variableType = (prevStatement.resolveToDescriptorIfAny() as? VariableDescriptor)?.type
                 if (checkedType != null && variableType != null && !checkedType.isSubtypeOf(variableType)) return null
+            } else if (prevStatement.isVar && operationExpression is KtBinaryExpression) {
+                val ifEndOffset = ifExpression.endOffset
+                val context = ifExpression.analyze()
+                val isUsedAsNotNullable = ReferencesSearch.search(prevStatement, LocalSearchScope(prevStatement.parent)).any {
+                    if (it.element.startOffset <= ifEndOffset) return@any false
+                    val type = it.element.safeAs<KtExpression>()?.getType(context) ?: return@any false
+                    !type.isNullable()
+                }
+                if (isUsedAsNotNullable) return null
             }
 
             val statement = if (then is KtBlockExpression) then.statements.singleOrNull() else then
