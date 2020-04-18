@@ -83,20 +83,6 @@ class DefaultCoroutineStackFrameItem(location: Location, spilledVariables: List<
  * - Kotlin/JavaStackFrame -> PreCoroutineStackFrameItem : CoroutinePreflightStackFrame.threadPreCoroutineFrames
  *
  */
-class PreCoroutineStackFrameItem internal constructor(val frame: StackFrameProxyImpl, location: Location, variables: List<XNamedValue> = emptyList()) :
-    CoroutineStackFrameItem(location, variables) {
-    constructor(frame: StackFrameProxyImpl, variables: List<XNamedValue> = emptyList()) : this(frame, frame.location(), variables)
-
-    constructor(frame: StackFrameProxyImpl, restoredCoroutineStackFrameItem: CoroutineStackFrameItem) : this(
-        frame,
-        restoredCoroutineStackFrameItem.location,
-        restoredCoroutineStackFrameItem.spilledVariables
-    )
-
-    override fun createFrame(debugProcess: DebugProcessImpl): CapturedStackFrame {
-        return PreCoroutineStackFrame(frame, debugProcess, this)
-    }
-}
 
 class RunningCoroutineStackFrameItem(
     val frame: StackFrameProxyImpl,

@@ -17,7 +17,7 @@ class DebugMetadata internal constructor(context: DefaultExecutionContext) :
     private val getStackTraceElementMethod = makeMethod("getStackTraceElement")
     private val getSpilledVariableFieldMappingMethod =
         makeMethod("getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;")
-    val baseContinuationImpl = BaseContinuationImpl(context, this);
+    val baseContinuationImpl = BaseContinuationImpl(context, this)
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfDebugProbesImpl? {
         // @TODO fix this
