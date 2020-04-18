@@ -124,7 +124,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
   }
 
   @NotNull
-  protected Module createModule(DataNode<E> module, @NotNull IdeModifiableModelsProvider modelsProvider) {
+  protected Module createModule(@NotNull DataNode<E> module, @NotNull IdeModifiableModelsProvider modelsProvider) {
     ModuleData data = module.getData();
     return modelsProvider.newModule(data);
   }

@@ -65,7 +65,7 @@ public class GradleSourceSetDataService extends AbstractModuleDataService<Gradle
   }
 
   @Override
-  protected @NotNull Module createModule(DataNode<GradleSourceSetData> sourceSetModuleNode,
+  protected @NotNull Module createModule(@NotNull DataNode<GradleSourceSetData> sourceSetModuleNode,
                                          @NotNull IdeModifiableModelsProvider modelsProvider) {
     //noinspection unchecked
     DataNode<ModuleData> parentModuleNode = (DataNode<ModuleData>)sourceSetModuleNode.getParent();
