@@ -802,11 +802,11 @@ class Collections {
 
         @Sample
         fun sortedBy() {
-            val list = listOf("bbb", "aa", "cccc")
+            val list = listOf("aaa", "cc", "bbbb")
             val sorted = list.sortedBy { it.length }
 
-            assertPrints(list, "[bbb, aa, cccc]")
-            assertPrints(sorted, "[aa, bbb, cccc]")
+            assertPrints(list, "[aaa, cc, bbbb]")
+            assertPrints(sorted, "[cc, aaa, bbbb]")
         }
     }
 
