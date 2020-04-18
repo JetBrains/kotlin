@@ -123,10 +123,15 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
     }
   }
 
+  @NotNull
+  protected Module createModule(DataNode<E> module, @NotNull IdeModifiableModelsProvider modelsProvider) {
+    ModuleData data = module.getData();
+    return modelsProvider.newModule(data);
+  }
+
   private void createModules(@NotNull Collection<? extends DataNode<E>> toCreate, @NotNull IdeModifiableModelsProvider modelsProvider) {
-    for (final DataNode<E> module : toCreate) {
-      ModuleData data = module.getData();
-      final Module created = modelsProvider.newModule(data);
+    for (DataNode<E> module : toCreate) {
+      Module created = createModule(module, modelsProvider);
       module.putUserData(MODULE_KEY, created);
 
       // Ensure that the dependencies are clear (used to be not clear when manually removing the module and importing it via external system)

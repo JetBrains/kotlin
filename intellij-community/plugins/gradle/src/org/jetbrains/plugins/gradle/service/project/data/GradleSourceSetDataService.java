@@ -4,9 +4,11 @@ package org.jetbrains.plugins.gradle.service.project.data;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.Key;
+import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractModuleDataService;
+import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
@@ -20,6 +22,9 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.util.Collection;
 import java.util.List;
+
+import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getSettings;
+import static org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID;
 
 /**
  * @author Vladislav.Soroka
@@ -57,6 +62,45 @@ public class GradleSourceSetDataService extends AbstractModuleDataService<Gradle
 
       return orphanIdeModules;
     };
+  }
+
+  @Override
+  protected @NotNull Module createModule(DataNode<GradleSourceSetData> sourceSetModuleNode,
+                                         @NotNull IdeModifiableModelsProvider modelsProvider) {
+    //noinspection unchecked
+    DataNode<ModuleData> parentModuleNode = (DataNode<ModuleData>)sourceSetModuleNode.getParent();
+    assert parentModuleNode != null;
+    Module parentModule = parentModuleNode.getUserData(MODULE_KEY);
+    assert parentModule != null;
+
+    String projectPath = sourceSetModuleNode.getData().getLinkedExternalProjectPath();
+    ExternalProjectSettings settings = getSettings(parentModule.getProject(), SYSTEM_ID).getLinkedProjectSettings(projectPath);
+    if (settings != null && settings.isUseQualifiedModuleNames()) {
+      String sourceSetModuleInternalName = sourceSetModuleNode.getData().getInternalName();
+      if (!sourceSetModuleInternalName.startsWith(parentModule.getName())) {
+        String sourceSetName = sourceSetModuleNode.getData().getModuleName();
+        String adjustedInternalName = findDeduplicatedModuleName(parentModule.getName() + "." + sourceSetName, modelsProvider);
+        sourceSetModuleNode.getData().setInternalName(adjustedInternalName);
+      }
+    }
+    return super.createModule(sourceSetModuleNode, modelsProvider);
+  }
+
+  @NotNull
+  private static String findDeduplicatedModuleName(@NotNull String moduleName,
+                                                   @NotNull IdeModifiableModelsProvider modelsProvider) {
+    Module ideModule = modelsProvider.findIdeModule(moduleName);
+    if (ideModule == null) {
+      return moduleName;
+    }
+    int i = 0;
+    while (true) {
+      String nextModuleNameCandidate = moduleName + "~" + ++i;
+      ideModule = modelsProvider.findIdeModule(nextModuleNameCandidate);
+      if (ideModule == null) {
+        return nextModuleNameCandidate;
+      }
+    }
   }
 
   @Override

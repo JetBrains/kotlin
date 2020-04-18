@@ -2,9 +2,12 @@
 package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -104,7 +107,7 @@ public class GradleMiscImportingTest extends GradleJavaImportingTestCase {
       "apply plugin: 'java'\n" +
       "compileTestJava {\n" +
       "  sourceCompatibility = 13\n" +
-      "  options.compilerArgs << '--enable-preview'" + 
+      "  options.compilerArgs << '--enable-preview'" +
       "}\n"
     );
 
@@ -258,6 +261,27 @@ public class GradleMiscImportingTest extends GradleJavaImportingTestCase {
     assertExternalProjectIds(projectMap, "inc-build:util", ArrayUtilRt.EMPTY_STRING_ARRAY);
 
     // Note, currently ExternalProject models are not exposed for "buildSrc" projects
+  }
+
+  @Test
+  public void testSourceSetModuleNamesForDeduplicatedMainModule() throws Exception {
+    IdeModifiableModelsProvider modelsProvider = new IdeModifiableModelsProviderImpl(myProject);
+    modelsProvider.newModule(getProjectPath() + "/app.iml", StdModuleTypes.JAVA.getId());
+    modelsProvider.newModule(getProjectPath() + "/my_group.app.main.iml", StdModuleTypes.JAVA.getId());
+    edt(() -> ApplicationManager.getApplication().runWriteAction(modelsProvider::commit));
+
+    createSettingsFile("rootProject.name = 'app'");
+    importProject("apply plugin: 'java'\n" +
+                  "group 'my_group'");
+
+    assertModules("app", "my_group.app.main",
+                  "my_group.app", "my_group.app.main~1", "my_group.app.test");
+
+    assertNull(ExternalSystemApiUtil.getExternalProjectPath(getModule("app")));
+    assertNull(ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app.main")));
+    assertEquals(getProjectPath(), ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app")));
+    assertEquals(getProjectPath(), ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app.main~1")));
+    assertEquals(getProjectPath(), ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app.test")));
   }
 
   private static void assertExternalProjectIds(Map<String, ExternalProject> projectMap, String projectId, String... sourceSetModulesIds) {
