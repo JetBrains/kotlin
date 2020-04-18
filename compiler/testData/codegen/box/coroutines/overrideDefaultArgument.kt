@@ -76,5 +76,8 @@ fun asyncSuspend(f: suspend () -> Unit) {
 }
 
 var result = ""
-var proceed: () -> Unit = { }
+var proceed: () -> Unit = {
+    // TODO: FIR generates a body without explicit `return`, resulting in an infinite loop at runtime.
+    return
+}
 var finished = false
