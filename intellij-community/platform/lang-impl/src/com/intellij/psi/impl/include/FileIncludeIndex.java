@@ -150,7 +150,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
       }
 
       @Override
-      public void registerFileTypesUsedForIndexing(@NotNull Consumer<FileType> fileTypeSink) {
+      public void registerFileTypesUsedForIndexing(@NotNull Consumer<? super FileType> fileTypeSink) {
         for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
           provider.registerFileTypesUsedForIndexing(fileTypeSink);
         }

@@ -36,7 +36,7 @@ import java.util.List;
 public class PsiAwareTextEditorImpl extends TextEditorImpl {
   private TextEditorBackgroundHighlighter myBackgroundHighlighter;
 
-  public PsiAwareTextEditorImpl(@NotNull final Project project, @NotNull final VirtualFile file, final TextEditorProvider provider) {
+  public PsiAwareTextEditorImpl(@NotNull Project project, @NotNull VirtualFile file, @NotNull TextEditorProvider provider) {
     super(project, file, provider);
   }
 
@@ -86,7 +86,7 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
 
   @NotNull
   @Override
-  protected TextEditorComponent createEditorComponent(final Project project, final VirtualFile file) {
+  protected TextEditorComponent createEditorComponent(@NotNull Project project, @NotNull VirtualFile file) {
     return new PsiAwareTextEditorComponent(project, file, this);
   }
 
@@ -106,9 +106,9 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
     private final Project myProject;
     private final VirtualFile myFile;
 
-    private PsiAwareTextEditorComponent(@NotNull final Project project,
-                                        @NotNull final VirtualFile file,
-                                        @NotNull final TextEditorImpl textEditor) {
+    private PsiAwareTextEditorComponent(@NotNull Project project,
+                                        @NotNull VirtualFile file,
+                                        @NotNull TextEditorImpl textEditor) {
       super(project, file, textEditor);
       myProject = project;
       myFile = file;

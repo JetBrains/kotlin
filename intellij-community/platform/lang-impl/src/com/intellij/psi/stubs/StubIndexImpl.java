@@ -21,7 +21,6 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -60,7 +59,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.IntPredicate;
 
 @State(name = "FileBasedIndex", storages = {
-  @Storage(value = StoragePathMacros.CACHE_FILE),
+  @Storage(StoragePathMacros.CACHE_FILE),
   @Storage(value = "stubIndex.xml", deprecated = true, roamingType = RoamingType.DISABLED)
 })
 public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
@@ -290,7 +289,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     }
 
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
-    PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
+    PersistentFS fs = PersistentFS.getInstance();
     IntPredicate accessibleFileFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getAccessibleFileIdFilter(project);
     // already ensured up-to-date in getContainingIds() method
     try {
@@ -305,9 +304,9 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
           continue;
         }
 
-        StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey<>(key, id), __ -> {
-          return myStubProcessingHelper.retrieveStubIdList(indexKey, key, file, project);
-        });
+        StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey<>(key, id), __ ->
+          myStubProcessingHelper.retrieveStubIdList(indexKey, key, file, project)
+        );
         if (list == null) {
           LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
           continue;
@@ -437,14 +436,14 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       myAccessValidator.validate(stubUpdatingIndexId, ()-> {
         // disable up-to-date check to avoid locks on attempt to acquire index write lock while holding at the same time the readLock for this index
         return FileBasedIndexImpl.disableUpToDateCheckIn(() ->
-                                                           ConcurrencyUtil.withLock(stubUpdatingIndex.getReadLock(), () -> {
-                                                             return index.getData(dataKey).forEach((id, value) -> {
+                                                           ConcurrencyUtil.withLock(stubUpdatingIndex.getReadLock(), () ->
+                                                             index.getData(dataKey).forEach((id, value) -> {
                                                                if (finalIdFilter == null || finalIdFilter.containsFileId(id)) {
                                                                  result.add(id);
                                                                }
                                                                return true;
-                                                             });
-                                                           }));
+                                                             })
+                                                           ));
       });
       return new IdIterator() {
         int cursor;
@@ -660,9 +659,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         if (extension == null) break;
         extension.getKey(); // initialize stub index keys
 
-        addNestedInitializationTask(() -> {
-          registerIndexer(extension, forceClean, state, indicesRegistrationSink);
-        });
+        addNestedInitializationTask(() -> registerIndexer(extension, forceClean, state, indicesRegistrationSink));
       }
     }
 

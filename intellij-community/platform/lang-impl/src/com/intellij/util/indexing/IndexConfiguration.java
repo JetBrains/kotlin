@@ -35,14 +35,15 @@ class IndexConfiguration {
   private final Map<FileType, List<ID<?, ?>>> myFileType2IndicesWithFileTypeInfoMap = new THashMap<>();
   private volatile boolean myFreezed;
 
-  <K, V> UpdatableIndex<K, V, FileContent> getIndex(ID<K, V> indexId) {
+  <K, V> UpdatableIndex<K, V, FileContent> getIndex(@NotNull ID<K, V> indexId) {
     assert myFreezed;
     final Pair<UpdatableIndex<?, ?, FileContent>, FileBasedIndex.InputFilter> pair = myIndices.get(indexId);
 
     //noinspection unchecked
-    return pair != null ? (UpdatableIndex<K, V, FileContent>)pair.getFirst() : null;
+    return (UpdatableIndex<K, V, FileContent>)Pair.getFirst(pair);
   }
 
+  @NotNull
   FileBasedIndex.InputFilter getInputFilter(@NotNull ID<?, ?> indexId) {
     assert myFreezed;
     final Pair<UpdatableIndex<?, ?, FileContent>, FileBasedIndex.InputFilter> pair = myIndices.get(indexId);
@@ -56,9 +57,9 @@ class IndexConfiguration {
     myFreezed = true;
   }
 
-  <K, V> void registerIndex(ID<K, V> name,
+  <K, V> void registerIndex(@NotNull ID<K, V> name,
                             @NotNull UpdatableIndex<K, V, FileContent> index,
-                            FileBasedIndex.InputFilter inputFilter,
+                            @NotNull FileBasedIndex.InputFilter inputFilter,
                             int version,
                             @Nullable Collection<? extends FileType> associatedFileTypes) {
     assert !myFreezed;
@@ -71,7 +72,8 @@ class IndexConfiguration {
           List<ID<?, ?>> ids = myFileType2IndicesWithFileTypeInfoMap.computeIfAbsent(fileType, __ -> new ArrayList<>(5));
           ids.add(name);
         }
-      } else {
+      }
+      else {
         myIndicesWithoutFileTypeInfo.add(name);
       }
 
@@ -99,17 +101,18 @@ class IndexConfiguration {
     }
   }
 
+  @NotNull
   Collection<ID<?, ?>> getIndexIDs() {
     assert myFreezed;
     return myIndices.keySet();
   }
 
-  boolean hasIndex(ID<?, ?> name) {
+  boolean hasIndex(@NotNull ID<?, ?> name) {
     assert myFreezed;
     return myIndices.containsKey(name);
   }
 
-  int getIndexVersion(ID<?, ?> id) {
+  int getIndexVersion(@NotNull ID<?, ?> id) {
     assert myFreezed;
     return myIndexIdToVersionMap.get(id);
   }

@@ -93,9 +93,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private final PerIndexDocumentVersionMap myLastIndexedDocStamps = new PerIndexDocumentVersionMap();
 
   // findExtensionOrFail is thread safe
-  private final NotNullLazyValue<ChangedFilesCollector> myChangedFilesCollector = NotNullLazyValue.createValue(() -> {
-    return AsyncEventSupport.EP_NAME.findExtensionOrFail(ChangedFilesCollector.class);
-  });
+  private final NotNullLazyValue<ChangedFilesCollector> myChangedFilesCollector = NotNullLazyValue.createValue(()
+           -> AsyncEventSupport.EP_NAME.findExtensionOrFail(ChangedFilesCollector.class));
 
   private final List<IndexableFileSet> myIndexableSets = ContainerUtil.createLockFreeCopyOnWriteList();
   private final Map<IndexableFileSet, Project> myIndexableSetToProjectMap = new THashMap<>();
@@ -216,7 +215,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @VisibleForTesting
-  void doClearIndices(@NotNull Predicate<ID<?, ?>> filter) {
+  void doClearIndices(@NotNull Predicate<? super ID<?, ?>> filter) {
     try {
       waitUntilIndicesAreInitialized();
     }
@@ -390,10 +389,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
         state.registerIndex(name,
                             index,
-                            file -> {
-                              return file instanceof VirtualFileWithId && inputFilter.acceptInput(file) &&
-                                     !GlobalIndexFilter.isExcludedFromIndexViaFilters(file, name);
-                            },
+                            file -> file instanceof VirtualFileWithId && inputFilter.acceptInput(file) &&
+                                  !GlobalIndexFilter.isExcludedFromIndexViaFilters(file, name),
                             version + GlobalIndexFilter.getFiltersVersion(name),
                             addedTypes);
         break;
@@ -558,7 +555,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     clearUpToDateIndexesForUnsavedOrTransactedDocs();
   }
 
-  void flushAllIndices(final long modCount) {
+  private void flushAllIndices(final long modCount) {
     if (HeavyProcessLatch.INSTANCE.isRunning()) {
       return;
     }
@@ -1030,7 +1027,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @Override
-  public void requestRebuild(@NotNull final ID<?, ?> indexId, final Throwable throwable) {
+  public void requestRebuild(@NotNull final ID<?, ?> indexId, final @NotNull Throwable throwable) {
     if (!myRegisteredIndexes.isExtensionsDataLoaded()) {
       IndexInfrastructure.submitGenesisTask(() -> {
         waitUntilIndicesAreInitialized(); // should be always true here since the genesis pool is sequential
@@ -1125,7 +1122,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   // caller is responsible to ensure no concurrent same document processing
-  void processRefreshedFile(@Nullable Project project, @NotNull final CachedFileContent fileContent) {
+  private void processRefreshedFile(@Nullable Project project, @NotNull final CachedFileContent fileContent) {
     // ProcessCanceledException will cause re-adding the file to processing list
     final VirtualFile file = fileContent.getVirtualFile();
     if (getChangedFilesCollector().isScheduledForUpdate(file)) {

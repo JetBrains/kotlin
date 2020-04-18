@@ -950,7 +950,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       return activeTextEditors;
     }
 
-    Collection<FileEditor> result = new THashSet<>();
+    Collection<FileEditor> result = new THashSet<>(activeTextEditors.size());
     Collection<VirtualFile> files = new THashSet<>(activeTextEditors.size());
     if (!app.isUnitTestMode()) {
       // editors in tabs
