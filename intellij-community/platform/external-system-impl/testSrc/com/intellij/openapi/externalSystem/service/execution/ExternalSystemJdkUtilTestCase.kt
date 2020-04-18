@@ -31,11 +31,6 @@ abstract class ExternalSystemJdkUtilTestCase : SdkTestCase() {
     TestUnknownSdkResolver.useLocalSdkFix = true
   }
 
-  override fun tearDown() {
-    closeAndDeleteProject()
-    super.tearDown()
-  }
-
   fun assertUnexpectedSdksRegistration(action: () -> Unit) {
     assertNewlyRegisteredSdks({ null }, action)
   }
