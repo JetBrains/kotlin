@@ -99,7 +99,9 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
       private fun parseSdkRequirement(sdk: UnknownSdk): JdkRequirement? {
         val hint = resolveHint(sdk)
 
-        val namePredicate = hint?.version?.trim()?.toLowerCase()?.nullize(true) ?: sdk.sdkName
+        val namePredicate = hint?.version?.trim()?.toLowerCase()?.nullize(true)
+                            ?: JavaVersion.tryParse(sdk.expectedVersionString)?.toFeatureMinorUpdateString()
+                            ?: sdk.sdkName
 
         return JdkRequirements.parseRequirement(
           namePredicate = namePredicate,

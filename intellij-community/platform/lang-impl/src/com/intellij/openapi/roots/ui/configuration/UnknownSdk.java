@@ -46,4 +46,13 @@ public interface UnknownSdk {
   default Predicate<String> getSdkHomePredicate() {
     return null;
   }
+
+  /**
+   * Returns an expected version string. The same major
+   * versio is and SDK is expected to be returned
+   */
+  @Nullable
+  default String getExpectedVersionString() {
+    return null;
+  }
 }
