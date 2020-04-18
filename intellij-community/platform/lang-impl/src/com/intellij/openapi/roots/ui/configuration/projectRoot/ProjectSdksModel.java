@@ -436,11 +436,13 @@ public class ProjectSdksModel implements SdkModel {
 
     SdkDownloadTracker tracker = SdkDownloadTracker.getInstance();
     tracker.registerSdkDownload(sdk, item);
-    Sdk editableSdk = doAddInternal(sdk, callback);
-    if (editableSdk != null) {
+    doAdd(sdk, (editableSdk) -> {
       tracker.registerEditableSdk(sdk, editableSdk);
       tracker.tryRegisterSdkDownloadFailureHandler(sdk, () -> removeSdk(editableSdk));
-    }
+      if (callback != null) {
+        callback.consume(editableSdk);
+      }
+    });
     tracker.startSdkDownloadIfNeeded(sdk);
   }
 
@@ -463,11 +465,6 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   public void doAdd(@NotNull Sdk newSdk, @Nullable Consumer<? super Sdk> updateTree) {
-    doAddInternal(newSdk, updateTree);
-  }
-
-  @Nullable
-  private Sdk doAddInternal(@NotNull Sdk newSdk, @Nullable Consumer<? super Sdk> updateTree) {
     myModified = true;
     try {
       Sdk editableCopy = (Sdk)newSdk.clone();
@@ -476,11 +473,9 @@ public class ProjectSdksModel implements SdkModel {
         updateTree.consume(editableCopy);
       }
       mySdkEventsDispatcher.getMulticaster().sdkAdded(editableCopy);
-      return editableCopy;
     }
     catch (CloneNotSupportedException e) {
       LOG.error(e);
-      return null;
     }
   }
 
