@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -53,11 +53,11 @@ class PrimitiveSetJsTest : SetJsTest() {
     fun compareBehavior() {
         val specialJsStringSet = HashSet<String>()
         specialJsStringSet.add("kotlin")
-        compare(genericHashSetOf("kotlin"), specialJsStringSet) { setBehavior() }
+        compare(genericHashSetOf("kotlin"), specialJsStringSet) { setBehavior(ordered = false) }
 
         val specialJsNumberSet = HashSet<Double>()
         specialJsNumberSet.add(3.14)
-        compare(genericHashSetOf(3.14), specialJsNumberSet) { setBehavior() }
+        compare(genericHashSetOf(3.14), specialJsNumberSet) { setBehavior(ordered = false) }
     }
 
 }

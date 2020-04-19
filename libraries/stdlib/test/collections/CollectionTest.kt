@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1076,15 +1076,15 @@ class CollectionTest {
     }
 
     @Test fun specialSets() {
-        compare(linkedSetOf<Int>(), setOf<Int>()) { setBehavior() }
-        compare(hashSetOf<Double>(), emptySet<Double>()) { setBehavior() }
-        compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior() }
+        compare(linkedSetOf<Int>(), setOf<Int>()) { setBehavior(ordered = true) }
+        compare(hashSetOf<Double>(), emptySet<Double>()) { setBehavior(ordered = true) }
+        compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior(ordered = true) }
     }
 
     @Test fun specialMaps() {
-        compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior() }
-        compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior() }
-        compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior() }
+        compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior(ordered = true) }
+        compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior(ordered = true) }
+        compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior(ordered = true) }
     }
 
     @Test fun toStringTest() {

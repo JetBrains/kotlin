@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,7 +48,7 @@ class AbstractCollectionsTest {
         assertTrue("ok" in set)
 
         compare(set.toSet(), set) {
-            setBehavior()
+            setBehavior(ordered = true)
         }
     }
 
@@ -72,7 +72,7 @@ class AbstractCollectionsTest {
         assertEquals(listOf(42), map.values.toList())
 
         compare(map.toMap(), map) {
-            mapBehavior()
+            mapBehavior(ordered = true)
         }
     }
 
@@ -142,7 +142,7 @@ class AbstractCollectionsTest {
         assertEquals(setOf("element", "test"), set)
 
         compare(set.storage, set) {
-            setBehavior()
+            setBehavior(ordered = true)
         }
     }
 
@@ -161,7 +161,7 @@ class AbstractCollectionsTest {
         assertTrue(map.containsValue('f'.toInt()))
 
         compare(map.storage, map) {
-            mapBehavior()
+            mapBehavior(ordered = true)
         }
     }
 }

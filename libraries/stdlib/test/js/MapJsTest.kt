@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,11 +52,11 @@ class PrimitiveMapJsTest : MapJsTest() {
     @Test fun compareBehavior() {
         val specialJsStringMap = stringMapOf<Any>()
         specialJsStringMap.put("k1", "v1")
-        compare(genericHashMapOf("k1" to "v1"), specialJsStringMap) { mapBehavior() }
+        compare(genericHashMapOf("k1" to "v1"), specialJsStringMap) { mapBehavior(ordered = false) }
 
         val specialJsNumberMap = HashMap<Int, Any>(4)
         specialJsNumberMap.put(5, "v5")
-        compare(genericHashMapOf(5 to "v5"), specialJsNumberMap) { mapBehavior() }
+        compare(genericHashMapOf(5 to "v5"), specialJsNumberMap) { mapBehavior(ordered = false) }
     }
 
     @Test fun putNull() {

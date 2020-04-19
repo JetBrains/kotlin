@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1655,7 +1655,7 @@ ${"    "}
 
     @Test
     fun toHashSet() {
-        compare(hashSetOf('A', 'B', 'C'), "ACAABBAC".toHashSet()) { setBehavior() }
+        compare(hashSetOf('A', 'B', 'C'), "ACAABBAC".toHashSet()) { setBehavior(ordered = false) }
 
         buildString {
             repeat(100) { append('1') }
@@ -1664,7 +1664,7 @@ ${"    "}
             append('4')
             repeat(100) { append('5') }
         }.let {
-            compare(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet()) { setBehavior() }
+            compare(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet()) { setBehavior(ordered = false) }
         }
     }
 }
