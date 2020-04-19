@@ -14,7 +14,8 @@ object CallCheckers {
         FirSuperNotAvailableChecker,
         FirNotASupertypeChecker,
         FirSuperclassNotAccessibleFromInterfaceChecker,
-        FirAbstractSuperCallChecker
+        FirAbstractSuperCallChecker,
+        FirQualifiedSupertypeExtendedByOtherSupertypeChecker,
     ) + EXPRESSIONS
 
     val FUNCTION_CALLS: List<FirFunctionCallChecker> = listOf<FirFunctionCallChecker>(

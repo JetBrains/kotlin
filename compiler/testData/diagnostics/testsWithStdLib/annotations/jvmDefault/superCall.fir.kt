@@ -40,7 +40,7 @@ open class Bar2 : Bar() {
 class ManySupers: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
-        super<B>.test()
+        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.test()
         super.test()
     }
 }
