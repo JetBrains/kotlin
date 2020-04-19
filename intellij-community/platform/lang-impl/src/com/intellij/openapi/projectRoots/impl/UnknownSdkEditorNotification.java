@@ -11,16 +11,16 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.roots.ui.configuration.SdkListPresenter;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkLocalSdkFix;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -259,7 +259,13 @@ public class UnknownSdkEditorNotification {
 
       String intentionActionText = ProjectBundle.message("config.invalid.sdk.configure.missing", sdkTypeName, mySdkName);
 
-      String localText = localFix != null ? intentionActionText = ProjectBundle.message("config.unknown.sdk.local", StringUtil.trimMiddle(FileUtil.getLocationRelativeToUserHome(localFix.getExistingSdkHome()), 30)) : "";
+      String localText = "";
+      String localTextTooltip = "";
+      if (localFix != null) {
+        localText = intentionActionText = ProjectBundle.message("config.unknown.sdk.local", sdkTypeName, localFix.getPresentableVersionString());
+        localTextTooltip = SdkListPresenter.presentDetectedSdkPath(localFix.getExistingSdkHome(), 90, 40);
+      }
+
       String downloadText = downloadFix != null ? intentionActionText = ProjectBundle.message("config.unknown.sdk.download", downloadFix.getDownloadDescription()) : "";
       EditorNotificationPanel notification = newNotificationPanel(intentionActionText);
 
@@ -268,9 +274,10 @@ public class UnknownSdkEditorNotification {
       notification.setText(notificationText);
 
       if (localFix != null) {
-        notification.createActionLabel(localText, () -> {
+        HyperlinkLabel actionLabel = notification.createActionLabel(localText, () -> {
           mySdk.applyLocalFix(project);
         }, true);
+        actionLabel.setToolTipText(localTextTooltip);
       }
       else if (downloadFix != null) {
         notification.createActionLabel(downloadText, () -> {
