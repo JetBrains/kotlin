@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -144,6 +145,12 @@ public class UnknownInvalidSdk implements UnknownSdk {
     SdkTypeId type = sdk.getSdkType();
     if (!(type instanceof SdkType)) return null;
     SdkType sdkType = (SdkType)type;
+
+    //for tests
+    //noinspection TestOnlyProblems
+    if (ApplicationManager.getApplication().isUnitTestMode() && sdk instanceof MockSdk) {
+      return null;
+    }
 
     try {
       String homePath = sdk.getHomePath();

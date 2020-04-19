@@ -269,7 +269,7 @@ public class UnknownSdkEditorNotification {
 
       if (localFix != null) {
         notification.createActionLabel(localText, () -> {
-          mySdk.applyLocalFix();
+          mySdk.applyLocalFix(project);
         }, true);
       }
       else if (downloadFix != null) {
