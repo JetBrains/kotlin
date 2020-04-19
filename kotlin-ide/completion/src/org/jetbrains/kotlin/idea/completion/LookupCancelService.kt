@@ -35,7 +35,7 @@ class LookupCancelService {
         // forget about auto-popup cancellation when the caret is moved to the start or before it
         private var editorListener: CaretListener? = object : CaretListener {
             override fun caretPositionChanged(e: CaretEvent) {
-                if (!marker!!.isValid || editor.logicalPositionToOffset(e.newPosition) <= offset) {
+                if (marker != null && (!marker!!.isValid || editor.logicalPositionToOffset(e.newPosition) <= offset)) {
                     dispose()
                 }
             }
