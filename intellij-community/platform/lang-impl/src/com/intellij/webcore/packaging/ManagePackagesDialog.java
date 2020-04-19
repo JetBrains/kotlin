@@ -24,6 +24,7 @@ import com.intellij.util.ui.PlatformColors;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.UiNotifyConnector;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
 
@@ -80,7 +82,7 @@ public class ManagePackagesDialog extends DialogWrapper {
 
     myPackageListener = packageListener;
     init();
-    setTitle("Available Packages");
+    setTitle(IdeBundle.message("available.packages.dialog.title"));
     myPackages = new JBList();
     myNotificationArea = new PackagesNotificationPanel();
     myNotificationsAreaPlaceholder.add(myNotificationArea.getComponent(), BorderLayout.CENTER);
@@ -99,7 +101,8 @@ public class ManagePackagesDialog extends DialogWrapper {
           }
           catch (final IOException e1) {
             application.invokeLater(() -> {
-              Messages.showErrorDialog(myMainPanel, "Error updating package list: " + e1.getMessage(), "Reload List of Packages");
+              Messages.showErrorDialog(myMainPanel, IdeBundle.message("error.updating.package.list", e1.getMessage()),
+                                       IdeBundle.message("action.AnActionButton.text.reload.list.of.packages"));
               LOG.info("Error updating list of repository packages", e1);
               myPackages.setPaintBusy(false);
             }, ModalityState.any());
@@ -292,7 +295,8 @@ public class ManagePackagesDialog extends DialogWrapper {
       catch (final IOException e) {
         application.invokeLater(() -> {
           if (myMainPanel.isShowing()) {
-            Messages.showErrorDialog(myMainPanel, "Error loading package list:" + e.getMessage(), "Packages");
+            Messages.showErrorDialog(myMainPanel, IdeBundle.message("error.loading.package.list", e.getMessage()),
+                                     IdeBundle.message("packages.title"));
           }
           LOG.info("Error initializing model", e);
           setDownloadStatus(false);
@@ -425,6 +429,9 @@ public class ManagePackagesDialog extends DialogWrapper {
   }
 
   private class MyPackageSelectionListener implements ListSelectionListener {
+    @NonNls
+    private static final String DESCRIPTION_TEXT_HTML_TEMPLATE = "<html><body style='text-align: center;padding-top:20px;'>{0}</body></html>";
+
     @Override
     public void valueChanged(ListSelectionEvent event) {
       myOptionsCheckBox.setEnabled(myPackages.getSelectedIndex() >= 0);
@@ -433,7 +440,7 @@ public class ManagePackagesDialog extends DialogWrapper {
       myVersionCheckBox.setSelected(false);
       myVersionComboBox.setEnabled(false);
       myOptionsField.setEnabled(false);
-      myDescriptionTextArea.setText("<html><body style='text-align: center;padding-top:20px;'>Loading...</body></html>");
+      myDescriptionTextArea.setText(MessageFormat.format(DESCRIPTION_TEXT_HTML_TEMPLATE, IdeBundle.message("loading.in.progress")));
       final Object pyPackage = myPackages.getSelectedValue();
       if (pyPackage instanceof RepoPackage) {
         final String packageName = ((RepoPackage)pyPackage).getName();
@@ -476,7 +483,7 @@ public class ManagePackagesDialog extends DialogWrapper {
 
           @Override
           public void consume(Exception exception) {
-            UIUtil.invokeLaterIfNeeded(() -> myDescriptionTextArea.setText("No information available"));
+            UIUtil.invokeLaterIfNeeded(() -> myDescriptionTextArea.setText(IdeBundle.message("no.information.available")));
             LOG.info("Error retrieving package details", exception);
           }
         });

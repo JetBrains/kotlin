@@ -15,6 +15,7 @@
  */
 package com.intellij.webcore.packaging;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -40,7 +41,7 @@ public class ManageRepoDialog extends DialogWrapper {
   public ManageRepoDialog(Project project, final PackageManagementService controller) {
     super(project, false);
     init();
-    setTitle("Manage Repositories");
+    setTitle(IdeBundle.message("manage.repositories.dialog.title"));
     myList = new JBList<>();
     myList.setPaintBusy(true);
     final DefaultListModel<String> repoModel = new DefaultListModel<>();
@@ -74,12 +75,12 @@ public class ManageRepoDialog extends DialogWrapper {
     });
 
     final ToolbarDecorator decorator = ToolbarDecorator.createDecorator(myList).disableUpDownActions();
-    decorator.setAddActionName("Add repository");
-    decorator.setRemoveActionName("Remove repository from list");
-    decorator.setEditActionName("Edit repository URL");
+    decorator.setAddActionName(IdeBundle.message("action.add.repository"));
+    decorator.setRemoveActionName(IdeBundle.message("action.remove.repository.from.list"));
+    decorator.setEditActionName(IdeBundle.message("action.edit.repository.url"));
 
     decorator.setAddAction(button -> {
-      String url = Messages.showInputDialog("Please input repository URL", "Repository URL", null);
+      String url = Messages.showInputDialog(IdeBundle.message("please.input.repository.url"), IdeBundle.message("repository.url.title"), null);
       if (!StringUtil.isEmptyOrSpaces(url) && !repoModel.contains(url)) {
         repoModel.addElement(url);
         controller.addRepository(url);
@@ -88,17 +89,23 @@ public class ManageRepoDialog extends DialogWrapper {
     decorator.setEditAction(button -> {
       final String oldValue = myList.getSelectedValue();
 
-      String url = Messages.showInputDialog("Please edit repository URL", "Repository URL", null, oldValue, new InputValidator() {
-        @Override
-        public boolean checkInput(String inputString) {
-          return !repoModel.contains(inputString);
-        }
+      String url = Messages.showInputDialog(
+        IdeBundle.message("please.edit.repository.url"),
+        IdeBundle.message("repository.url.title"),
+        null,
+        oldValue,
+        new InputValidator() {
+          @Override
+          public boolean checkInput(String inputString) {
+            return !repoModel.contains(inputString);
+          }
 
-        @Override
-        public boolean canClose(String inputString) {
-          return true;
+          @Override
+          public boolean canClose(String inputString) {
+            return true;
+          }
         }
-      });
+      );
       if (!StringUtil.isEmptyOrSpaces(url) && !oldValue.equals(url)) {
         repoModel.addElement(url);
         repoModel.removeElement(oldValue);
