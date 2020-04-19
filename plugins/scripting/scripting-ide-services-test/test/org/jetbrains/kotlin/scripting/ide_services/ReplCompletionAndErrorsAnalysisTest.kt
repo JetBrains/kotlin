@@ -63,7 +63,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
-    fun testNoVariantsAfterLiterals() = test {
+    fun testNoVariantsAfterFinalExpressions() = test {
         fun testNoVariants(testCode: String, testCursor: Int? = null) = run {
             doComplete
             code = testCode
@@ -77,8 +77,19 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         testNoVariants("val x2 = 42.42")
         testNoVariants("val x3 = 'v'")
         testNoVariants("val x4 = \"str42\"")
-    }
 
+        testNoVariants("val x5 = 40 + 41 * 42")
+        testNoVariants("val x6 = 40 + 41 * 42", 16) // after 41
+        testNoVariants("val x7 = 40 + 41 * 42", 11) // after 40
+        testNoVariants("6 * (2 + 5)")
+
+        testNoVariants("\"aBc\".capitalize()")
+        testNoVariants(
+            """
+                "abc" + "def"
+            """.trimIndent()
+        )
+    }
 
     @Test
     fun testPackagesImport() = test {
