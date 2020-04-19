@@ -22,7 +22,6 @@ import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -329,7 +328,6 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
   private void createUIComponents() {
     myResourcePatternsField = new RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER);
     myResourcePatternsField.setDialogCaption("Resource patterns");
-    myHeapSizeField = new JTextField();
-    myHeapSizeField.setPreferredSize(new Dimension(JBUIScale.scale(50), myHeapSizeField.getPreferredSize().height));
+    myHeapSizeField = new JTextField(5);
   }
 }
