@@ -10,9 +10,10 @@ import com.sun.jdi.ClassType
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.StringReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isBaseContinuationImpl
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class DebugMetadata internal constructor(context: DefaultExecutionContext) :
+class DebugMetadata private constructor(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfDebugProbesImpl>("kotlin.coroutines.jvm.internal.DebugMetadataKt", context) {
     private val getStackTraceElementMethod = makeMethod("getStackTraceElement")
     private val getSpilledVariableFieldMappingMethod =
@@ -42,10 +43,13 @@ class DebugMetadata internal constructor(context: DefaultExecutionContext) :
         staticMethodValue(getSpilledVariableFieldMappingMethod, context, value) as? ArrayReference
 
     companion object {
+        val log by logger
+
         fun instance(context: DefaultExecutionContext) =
             try {
                 DebugMetadata(context)
             } catch (e: IllegalStateException) {
+                log.warn("Attempt to access DebugMetadata", e)
                 null
             }
     }
