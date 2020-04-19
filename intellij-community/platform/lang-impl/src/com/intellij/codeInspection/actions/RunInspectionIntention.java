@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.codeInspection.actions;
 
 import com.intellij.analysis.AnalysisScope;
@@ -35,24 +34,22 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class RunInspectionIntention implements IntentionAction, HighPriorityAction {
-  private final static Logger LOG = Logger.getInstance(RunInspectionIntention.class);
+public final class RunInspectionIntention implements IntentionAction, HighPriorityAction {
+  private static final Logger LOG = Logger.getInstance(RunInspectionIntention.class);
 
   private final String myShortName;
 
-  public RunInspectionIntention(final HighlightDisplayKey key) {
+  public RunInspectionIntention(@NotNull HighlightDisplayKey key) {
     myShortName = key.toString();
   }
 
   @Override
-  @NotNull
-  public String getText() {
+  public @NotNull String getText() {
     return InspectionsBundle.message("run.inspection.on.file.intention.text");
   }
 
   @Override
-  @NotNull
-  public String getFamilyName() {
+  public @NotNull String getFamilyName() {
     return getText();
   }
 
@@ -91,7 +88,7 @@ public class RunInspectionIntention implements IntentionAction, HighPriorityActi
     }
     final AnalysisUIOptions uiOptions = AnalysisUIOptions.getInstance(project);
     customScope = dlg.getScope(uiOptions, customScope, project, module);
-    final InspectionToolWrapper wrapper = LocalInspectionToolWrapper.findTool2RunInBatch(project, context, toolShortName);
+    InspectionToolWrapper<?, ?> wrapper = LocalInspectionToolWrapper.findTool2RunInBatch(project, context, toolShortName);
     LOG.assertTrue(wrapper != null, "Can't find tool with name = \"" + toolShortName + "\"");
     rerunInspection(wrapper, (InspectionManagerEx)InspectionManager.getInstance(project), customScope, context);
   }
@@ -104,26 +101,24 @@ public class RunInspectionIntention implements IntentionAction, HighPriorityActi
     inspectionContext.doInspections(scope);
   }
 
-  @NotNull
-  public static GlobalInspectionContextImpl createContext(@NotNull InspectionToolWrapper toolWrapper,
-                                                          @NotNull InspectionManagerEx managerEx,
-                                                          @Nullable PsiElement psiElement) {
+  public static @NotNull GlobalInspectionContextImpl createContext(@NotNull InspectionToolWrapper toolWrapper,
+                                                                   @NotNull InspectionManagerEx managerEx,
+                                                                   @Nullable PsiElement psiElement) {
     final InspectionProfileImpl model = createProfile(toolWrapper, managerEx, psiElement);
     final GlobalInspectionContextImpl inspectionContext = managerEx.createNewGlobalContext();
     inspectionContext.setExternalProfile(model);
     return inspectionContext;
   }
 
-  @NotNull
-  public static InspectionProfileImpl createProfile(@NotNull InspectionToolWrapper toolWrapper,
-                                                    @NotNull InspectionManagerEx managerEx,
-                                                    @Nullable PsiElement psiElement) {
+  public static @NotNull InspectionProfileImpl createProfile(@NotNull InspectionToolWrapper toolWrapper,
+                                                             @NotNull InspectionManagerEx managerEx,
+                                                             @Nullable PsiElement psiElement) {
     final Project project = managerEx.getProject();
     InspectionProfileImpl rootProfile = InspectionProfileManager.getInstance(project).getCurrentProfile();
     LinkedHashSet<InspectionToolWrapper<?, ?>> allWrappers = new LinkedHashSet<>();
     allWrappers.add(toolWrapper);
     rootProfile.collectDependentInspections(toolWrapper, allWrappers, project);
-    List<InspectionToolWrapper> toolWrappers = allWrappers.size() == 1 ? Collections.singletonList(allWrappers.iterator().next()) : new ArrayList<>(allWrappers);
+    List<InspectionToolWrapper<?, ?>> toolWrappers = allWrappers.size() == 1 ? Collections.singletonList(allWrappers.iterator().next()) : new ArrayList<>(allWrappers);
     InspectionProfileImpl model = new InspectionProfileImpl(toolWrapper.getDisplayName(), new InspectionToolsSupplier.Simple(toolWrappers), rootProfile);
     for (InspectionToolWrapper wrapper : toolWrappers) {
       model.enableTool(wrapper.getShortName(), project);

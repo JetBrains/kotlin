@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.codeInspection.ex;
 
 import com.intellij.analysis.AnalysisScope;
@@ -84,7 +83,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
   private Content myContent;
   private volatile boolean myViewClosed = true;
   private long myInspectionStartedTimestamp;
-  private final ConcurrentMap<InspectionToolWrapper, InspectionToolPresentation> myPresentationMap = new ConcurrentHashMap<>();
+  private final ConcurrentMap<InspectionToolWrapper<?, ?>, InspectionToolPresentation> myPresentationMap = new ConcurrentHashMap<>();
 
   public GlobalInspectionContextImpl(@NotNull Project project, @NotNull NotNullLazyValue<? extends ContentManager> contentManager) {
     super(project);
@@ -282,7 +281,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
       }
 
       boolean includeDoNotShow = includeDoNotShow(getCurrentProfile());
-      List<InspectionToolWrapper> externalAnnotatable = ContainerUtil.concat(
+      List<InspectionToolWrapper<?, ?>> externalAnnotatable = ContainerUtil.concat(
         getWrappersFromTools(localTools, file, includeDoNotShow, wrapper -> wrapper.getTool() instanceof ExternalAnnotatorBatchInspection),
         getWrappersFromTools(globalSimpleTools, file, includeDoNotShow, wrapper -> wrapper.getTool() instanceof ExternalAnnotatorBatchInspection));
       externalAnnotatable.forEach(wrapper -> {
@@ -509,9 +508,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
                               @NotNull List<? extends Tools> globalTools,
                               boolean isOfflineInspections) {
     LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed() || isOfflineInspections, "Must not run under read action, too unresponsive");
-    final List<InspectionToolWrapper> needRepeatSearchRequest = new ArrayList<>();
+    final List<InspectionToolWrapper<?, ?>> needRepeatSearchRequest = new ArrayList<>();
 
-    SearchScope initialSearchScope = ReadAction.compute(() -> scope.toSearchScope());
+    SearchScope initialSearchScope = ReadAction.compute(scope::toSearchScope);
     final boolean canBeExternalUsages = !(scope.getScopeType() == AnalysisScope.PROJECT && scope.isIncludeTestSource());
     for (Tools tools : globalTools) {
       for (ScopeToolState state : tools.getTools()) {
@@ -578,7 +577,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
       return ActionCallback.DONE;
     }
     return ApplicationManager.getApplication().getInvokator().invokeLater(() -> {
-      if (getCurrentScope() == null) return;
+      if (getCurrentScope() == null) {
+        return;
+      }
       InspectionResultsView view = getView();
       if (view == null) {
         view = new InspectionResultsView(this, new InspectionRVContentProviderImpl());
@@ -873,7 +874,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     if (ApplicationManager.getApplication().isHeadlessEnvironment() && !TESTING_VIEW) {
       return;
     }
-    if (myView == null && !ReadAction.compute(() -> InspectionResultsView.hasProblems(tools, this, new InspectionRVContentProviderImpl())).booleanValue()) {
+    if (myView == null && !ReadAction.compute(() -> InspectionResultsView.hasProblems(tools, this, new InspectionRVContentProviderImpl()))) {
       return;
     }
     initializeViewIfNeeded().doWhenDone(() -> myView.addTools(tools));
@@ -881,26 +882,22 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
 
   @Override
   public @NotNull InspectionToolPresentation getPresentation(@NotNull InspectionToolWrapper toolWrapper) {
-    InspectionToolPresentation presentation = myPresentationMap.get(toolWrapper);
-    if (presentation == null) {
-      String presentationClass = StringUtil
-        .notNullize(toolWrapper.myEP == null ? null : toolWrapper.myEP.presentation, DefaultInspectionToolPresentation.class.getName());
-
+    return myPresentationMap.computeIfAbsent(toolWrapper, __ -> {
+      String presentationClass = toolWrapper.myEP == null ? null : toolWrapper.myEP.presentation;
+      if (StringUtil.isEmpty(presentationClass)) {
+        presentationClass = DefaultInspectionToolPresentation.class.getName();
+      }
       try {
         InspectionEP extension = toolWrapper.getExtension();
-        ClassLoader classLoader = extension == null ? getClass().getClassLoader() : extension.getLoaderForClass();
-        Constructor<?> constructor = Class.forName(presentationClass, true, classLoader)
-          .getConstructor(InspectionToolWrapper.class, GlobalInspectionContextImpl.class);
-        presentation = (InspectionToolPresentation)constructor.newInstance(toolWrapper, this);
+        ClassLoader classLoader = extension == null ? getClass().getClassLoader() : extension.getPluginDescriptor().getPluginClassLoader();
+        Constructor<?> constructor = Class.forName(presentationClass, true, classLoader).getConstructor(InspectionToolWrapper.class, GlobalInspectionContextImpl.class);
+        constructor.setAccessible(true);
+        return (InspectionToolPresentation)constructor.newInstance(toolWrapper, this);
       }
       catch (Exception e) {
         LOG.error(e);
         throw new RuntimeException(e);
       }
-      presentation = ConcurrencyUtil.cacheOrGet(myPresentationMap, toolWrapper, presentation);
-    }
-    return presentation;
+    });
   }
-
-
 }

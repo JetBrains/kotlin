@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform.templates.github;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -7,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Producer;
-import com.intellij.util.containers.Predicate;
 import com.intellij.util.io.HttpRequests;
 import com.intellij.util.net.NetUtils;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
-public class DownloadUtil {
-
+public final class DownloadUtil {
   public static final String CONTENT_LENGTH_TEMPLATE = "${content-length}";
   private static final Logger LOG = Logger.getInstance(DownloadUtil.class);
 
@@ -55,7 +55,7 @@ public class DownloadUtil {
       downloadContentToFile(indicator, url, tempFile);
       if (contentChecker != null) {
         String content = FileUtil.loadFile(tempFile);
-        if (!contentChecker.apply(content)) {
+        if (!contentChecker.test(content)) {
           return false;
         }
       }
@@ -99,12 +99,11 @@ public class DownloadUtil {
   }
 
 
-  @NotNull
-  public static <V> Outcome<V> provideDataWithProgressSynchronously(
+  public static @NotNull <V> Outcome<V> provideDataWithProgressSynchronously(
     @Nullable Project project,
     @NotNull String progressTitle,
-    @NotNull final String actionShortDescription,
-    @NotNull final Callable<? extends V> supplier,
+    final @NotNull String actionShortDescription,
+    final @NotNull Callable<? extends V> supplier,
     @Nullable Producer<Boolean> tryAgainProvider) {
     int attemptNumber = 1;
     while (true) {

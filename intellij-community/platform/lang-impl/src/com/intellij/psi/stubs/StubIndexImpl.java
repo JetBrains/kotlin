@@ -67,7 +67,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
 
-  private static class AsyncState {
+  private static final class AsyncState {
     private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, Void, FileContent>> myIndices = new THashMap<>();
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
@@ -75,8 +75,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   private final Map<StubIndexKey<?, ?>, CachedValue<Map<CompositeKey<?>, StubIdList>>> myCachedStubIds = FactoryMap.createMap(k -> {
     UpdatableIndex<Integer, SerializedStubTree, FileContent> index = getStubUpdatingIndex();
     ModificationTracker tracker = index::getModificationStamp;
-    return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(new ConcurrentHashMap<CompositeKey<?>, StubIdList>(), tracker));
-  }, () -> new ConcurrentHashMap<>());
+    return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(new ConcurrentHashMap<>(), tracker));
+  }, ConcurrentHashMap::new);
 
   private final StubProcessingHelper myStubProcessingHelper = new StubProcessingHelper();
   private final IndexAccessValidator myAccessValidator = new IndexAccessValidator();

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal;
 
 import com.intellij.codeInspection.InspectionProfile;
@@ -27,10 +27,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-/**
- * @author stathik
- */
-public class DumpInspectionDescriptionsAction extends AnAction implements DumbAware {
+public final class DumpInspectionDescriptionsAction extends AnAction implements DumbAware {
   private static final Logger LOG = Logger.getInstance(DumpInspectionDescriptionsAction.class);
 
   public DumpInspectionDescriptionsAction() {
@@ -38,24 +35,22 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
   }
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent event) {
-    final InspectionProfile profile = InspectionProfileManager.getInstance().getCurrentProfile();
-    final InspectionToolWrapper[] tools = profile.getInspectionTools(null);
+  public void actionPerformed(final @NotNull AnActionEvent event) {
+    InspectionProfile profile = InspectionProfileManager.getInstance().getCurrentProfile();
+    Collection<String> classes = new TreeSet<>();
+    Map<String, Collection<String>> groups = new TreeMap<>();
 
-    final Collection<String> classes = new TreeSet<>();
-    final Map<String, Collection<String>> groups = new TreeMap<>();
-
-    final String tempDirectory = FileUtil.getTempDirectory();
-    final File descDirectory = new File(tempDirectory, "inspections");
+    String tempDirectory = FileUtil.getTempDirectory();
+    File descDirectory = new File(tempDirectory, "inspections");
     if (!descDirectory.mkdirs() && !descDirectory.isDirectory()) {
       LOG.error("Unable to create directory: " + descDirectory.getAbsolutePath());
       return;
     }
 
-    for (InspectionToolWrapper toolWrapper : tools) {
+    for (InspectionToolWrapper<?, ?> toolWrapper : profile.getInspectionTools(null)) {
       classes.add(getInspectionClass(toolWrapper).getName());
 
-      final String group = getGroupName(toolWrapper);
+      String group = getGroupName(toolWrapper);
       Collection<String> names = groups.get(group);
       if (names == null) groups.put(group, (names = new TreeSet<>()));
       names.add(toolWrapper.getShortName());
@@ -71,8 +66,8 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
     }
     doNotify("Inspection descriptions dumped to\n" + descDirectory.getAbsolutePath());
 
-    final File fqnListFile = new File(tempDirectory, "inspection_fqn_list.txt");
-    final boolean fqnOk = doDump(fqnListFile, new Processor() {
+    File fqnListFile = new File(tempDirectory, "inspection_fqn_list.txt");
+    boolean fqnOk = doDump(fqnListFile, new Processor() {
       @Override public void process(BufferedWriter writer) throws Exception {
         for (String name : classes) {
           writer.write(name);

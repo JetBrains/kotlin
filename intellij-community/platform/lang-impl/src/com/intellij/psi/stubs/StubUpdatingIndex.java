@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
 import com.intellij.index.PrebuiltIndexProviderBase;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
+public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
   implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
   static final Logger LOG = Logger.getInstance(StubUpdatingIndex.class);
   private static final int VERSION = 45 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0);
@@ -52,7 +52,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
   public static final ID<Integer, SerializedStubTree> INDEX_ID = ID.create("Stubs");
 
-  private static final FileBasedIndex.InputFilter INPUT_FILTER = file -> canHaveStub(file);
+  private static final FileBasedIndex.InputFilter INPUT_FILTER = StubUpdatingIndex::canHaveStub;
+
   @NotNull
   private final StubForwardIndexExternalizer<?> myStubIndexesExternalizer;
 
@@ -175,7 +176,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   }
 
   private static void checkStubIndexes(@NotNull SerializedStubTree prebuiltSerializedTree, @NotNull Stub calculatedStub) {
-    Map<StubIndexKey, Map<Object, StubIdList>> calculatedStubIndexes = SerializedStubTree.indexTree(calculatedStub);
+    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> calculatedStubIndexes = SerializedStubTree.indexTree(calculatedStub);
     assert calculatedStubIndexes.equals(prebuiltSerializedTree.getStubIndicesValueMap());
   }
 
@@ -351,7 +352,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
     @Override
     public void removeTransientDataForKeys(int inputId, @NotNull Collection<? extends Integer> keys) {
-      Map<StubIndexKey, Map<Object, StubIdList>> maps;
+      Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> maps;
       try {
         Map<Integer, SerializedStubTree> data = getIndexedFileData(inputId);
         maps = getStubIndexMaps(data);
@@ -363,16 +364,18 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       removeStubIndexKeys(inputId, maps);
     }
 
-    private static void removeStubIndexKeys(int inputId, @NotNull Map<StubIndexKey, Map<Object, StubIdList>> indexedStubs) {
-      final StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
+    private static void removeStubIndexKeys(int inputId, @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> indexedStubs) {
+      StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
       for (StubIndexKey key : indexedStubs.keySet()) {
         stubIndex.removeTransientDataForFile(key, inputId, indexedStubs.get(key).keySet());
       }
     }
 
     @NotNull
-    private static Map<StubIndexKey, Map<Object, StubIdList>> getStubIndexMaps(@NotNull Map<? extends Integer, ? extends SerializedStubTree> data) {
-      if (data.isEmpty()) return Collections.emptyMap();
+    private static Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> getStubIndexMaps(@NotNull Map<? extends Integer, ? extends SerializedStubTree> data) {
+      if (data.isEmpty()) {
+        return Collections.emptyMap();
+      }
       SerializedStubTree tree = data.values().iterator().next();
       return tree == null ? Collections.emptyMap() : tree.getStubIndicesValueMap();
     }
@@ -444,8 +447,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     getExtensions(LanguageParserDefinitions.INSTANCE).forEach(ParserDefinition::getFileNodeType);
   }
 
-  private static  <T> Stream<T> getExtensions(KeyedExtensionCollector<T, ?> ex) {
-    ExtensionPoint<KeyedLazyInstance<T>> point = ex.getPoint();
+  private static @NotNull <T> Stream<T> getExtensions(@NotNull KeyedExtensionCollector<T, ?> collector) {
+    ExtensionPoint<KeyedLazyInstance<T>> point = collector.getPoint();
     return point == null ? Stream.empty() : point.extensions().map(KeyedLazyInstance::getInstance);
   }
 }

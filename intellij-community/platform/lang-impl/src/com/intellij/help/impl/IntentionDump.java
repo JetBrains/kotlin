@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.help.impl;
 
 import com.intellij.codeInsight.intention.IntentionManager;
@@ -26,15 +26,16 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-public class IntentionDump implements ApplicationStarter {
+final class IntentionDump implements ApplicationStarter {
   @Override
   public String getCommandName() {
     return "intentions";
   }
 
   @Override
-  public void main(String @NotNull [] args) {
+  public void main(@NotNull List<String> args) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try {
       DocumentBuilder builder = factory.newDocumentBuilder();
@@ -72,7 +73,7 @@ public class IntentionDump implements ApplicationStarter {
       Transformer transformer = TransformerFactory.newInstance().newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       DOMSource source = new DOMSource(document);
-      final String path = args.length == 2 ? args[1] : PathManager.getHomePath() + File.separator + "AllIntentions.xml";
+      final String path = args.size() == 2 ? args.get(1) : PathManager.getHomePath() + File.separator + "AllIntentions.xml";
       StreamResult console = new StreamResult(new File(path));
       transformer.transform(source, console);
 
@@ -86,6 +87,6 @@ public class IntentionDump implements ApplicationStarter {
   }
 
   private static String escapeCDATA(String cData) {
-    return cData.replaceAll("\\]", "&#x005D;").replaceAll("\\[", "&#x005B;");
+    return cData.replaceAll("]", "&#x005D;").replaceAll("\\[", "&#x005B;");
   }
 }

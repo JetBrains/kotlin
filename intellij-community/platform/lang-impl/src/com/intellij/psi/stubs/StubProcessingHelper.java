@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
 import com.intellij.openapi.application.AppUIExecutor;
@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Author: dmitrylomov
- */
 public final class StubProcessingHelper extends StubProcessingHelperBase {
   private final ThreadLocal<Set<VirtualFile>> myFilesHavingProblems = new ThreadLocal<>();
 
@@ -45,7 +42,7 @@ public final class StubProcessingHelper extends StubProcessingHelperBase {
         String mainMessage = "Stub ids not found for key in index = " + indexKey.getName() + ", " + getFileTypeInfo(file, project);
         String additionalMessage;
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-          Map<StubIndexKey, Map<Object, StubIdList>> map = null;
+          Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> map = null;
           try {
             tree.restoreIndexedStubs();
             map = tree.getStubIndicesValueMap();

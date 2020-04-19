@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.ExtensionsArea;
+import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.Configurable;
@@ -42,7 +43,7 @@ public final class DumpExtensionsAction extends DumbAwareAction {
     }
     System.out.println(points.size() + " extension points: ");
     for (ExtensionPoint<?> point : points) {
-      System.out.println(" " + point.getName());
+      System.out.println(" " + ((ExtensionPointImpl<?>)point).getName());
     }
 
     List<Object> extensions = new ArrayList<>();

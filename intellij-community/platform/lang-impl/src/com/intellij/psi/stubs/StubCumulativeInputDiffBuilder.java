@@ -1,11 +1,14 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.StorageException;
-import com.intellij.util.indexing.impl.*;
+import com.intellij.util.indexing.impl.DebugAssertions;
+import com.intellij.util.indexing.impl.DirectInputDataDiffBuilder;
+import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
+import com.intellij.util.indexing.impl.RemovedKeyProcessor;
 import one.util.streamex.IntStreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,13 +71,13 @@ class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer,
   }
 
   private void updateStubIndices(@Nullable SerializedStubTree newSerializedStubTree) {
-    Map<StubIndexKey, Map<Object, StubIdList>> previousStubIndicesValueMap = myCurrentTree == null
+    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> previousStubIndicesValueMap = myCurrentTree == null
                                                                              ? Collections.emptyMap()
                                                                              : myCurrentTree.getStubIndicesValueMap();
-    Map<StubIndexKey, Map<Object, StubIdList>> newStubIndicesValueMap = newSerializedStubTree == null
+    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newStubIndicesValueMap = newSerializedStubTree == null
                                                                         ? Collections.emptyMap()
                                                                         : newSerializedStubTree.getStubIndicesValueMap();
-    Collection<StubIndexKey> affectedIndexes = getAffectedIndices(previousStubIndicesValueMap, newStubIndicesValueMap);
+    Collection<StubIndexKey<?, ?>> affectedIndexes = getAffectedIndices(previousStubIndicesValueMap, newStubIndicesValueMap);
     if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
       StubIndexImpl.LOG.info("stub indexes" + (newSerializedStubTree == null ? "deletion" : "update") + ": file = " + myInputId + " indexes " + affectedIndexes);
     }
@@ -86,10 +89,10 @@ class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer,
     );
   }
 
-  private static void updateStubIndices(@NotNull final Collection<StubIndexKey> indexKeys,
-                                        final int inputId,
-                                        @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> oldStubTree,
-                                        @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> newStubTree) {
+  private static void updateStubIndices(@NotNull Collection<StubIndexKey<?, ?>> indexKeys,
+                                        int inputId,
+                                        @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> oldStubTree,
+                                        @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newStubTree) {
     final StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
     for (StubIndexKey key : indexKeys) {
       final Map<Object, StubIdList> oldMap = oldStubTree.get(key);
@@ -103,9 +106,9 @@ class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer,
   }
 
   @NotNull
-  private static Collection<StubIndexKey> getAffectedIndices(@NotNull final Map<StubIndexKey, Map<Object, StubIdList>> oldStubTree,
-                                                             @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> newStubTree) {
-    Set<StubIndexKey> allIndices = new HashSet<>();
+  private static Collection<StubIndexKey<?, ?>> getAffectedIndices(@NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> oldStubTree,
+                                                             @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newStubTree) {
+    Set<StubIndexKey<?, ?>> allIndices = new HashSet<>();
     allIndices.addAll(oldStubTree.keySet());
     allIndices.addAll(newStubTree.keySet());
     return allIndices;

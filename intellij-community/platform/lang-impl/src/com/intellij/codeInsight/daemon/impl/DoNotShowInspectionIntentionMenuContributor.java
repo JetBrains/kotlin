@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class DoNotShowInspectionIntentionMenuContributor implements IntentionMenuContributor {
+final class DoNotShowInspectionIntentionMenuContributor implements IntentionMenuContributor {
   private static final Logger LOG = Logger.getInstance(DoNotShowInspectionIntentionMenuContributor.class);
 
   @Override
@@ -68,11 +68,11 @@ public class DoNotShowInspectionIntentionMenuContributor implements IntentionMen
   /**
    * Can be invoked in EDT, each inspection should be fast
    */
-  private static void collectIntentionsFromDoNotShowLeveledInspections(@NotNull final Project project,
-                                                                       @NotNull final PsiFile hostFile,
+  private static void collectIntentionsFromDoNotShowLeveledInspections(final @NotNull Project project,
+                                                                       final @NotNull PsiFile hostFile,
                                                                        @NotNull PsiElement psiElement,
                                                                        final int offset,
-                                                                       @NotNull final ShowIntentionsPass.IntentionsInfo intentions) {
+                                                                       final @NotNull ShowIntentionsPass.IntentionsInfo intentions) {
     if (!psiElement.isPhysical()) {
       VirtualFile virtualFile = hostFile.getVirtualFile();
       String text = hostFile.getText();
@@ -86,9 +86,8 @@ public class DoNotShowInspectionIntentionMenuContributor implements IntentionMen
     }
 
     List<LocalInspectionToolWrapper> intentionTools = new ArrayList<>();
-    final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-    final InspectionToolWrapper[] tools = profile.getInspectionTools(hostFile);
-    for (InspectionToolWrapper toolWrapper : tools) {
+    InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+    for (InspectionToolWrapper toolWrapper : profile.getInspectionTools(hostFile)) {
       if (toolWrapper instanceof GlobalInspectionToolWrapper) {
         toolWrapper = ((GlobalInspectionToolWrapper)toolWrapper).getSharedLocalInspectionToolWrapper();
       }
