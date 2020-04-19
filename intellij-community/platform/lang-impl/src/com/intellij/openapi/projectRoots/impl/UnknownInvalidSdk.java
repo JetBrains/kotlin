@@ -54,16 +54,18 @@ public class UnknownInvalidSdk implements UnknownSdk {
     return mySdk.getVersionString();
   }
 
-  void applyLocalFix() {
+  void applyLocalFix(@NotNull Project project) {
     if (myLocalSdkFix == null) return;
 
     String sdkFixVersionString = myLocalSdkFix.getVersionString();
     String sdkHome = myLocalSdkFix.getExistingSdkHome();
 
-    copySdk(sdkFixVersionString, sdkHome);
+    copySdk(project, sdkFixVersionString, sdkHome);
   }
 
-  private void copySdk(@NotNull String sdkFixVersionString, @NotNull String sdkHome) {
+  private void copySdk(@NotNull Project project,
+                       @NotNull String sdkFixVersionString,
+                       @NotNull String sdkHome) {
     WriteAction.run(() -> {
       SdkModificator mod = mySdk.getSdkModificator();
       mod.setVersionString(sdkFixVersionString);
@@ -72,6 +74,8 @@ public class UnknownInvalidSdk implements UnknownSdk {
 
       mySdkType.setupSdkPaths(mySdk);
     });
+
+    UnknownSdkTracker.getInstance(project).updateUnknownSdksNow();
   }
 
   void applyDownloadFix(@NotNull Project project) {
@@ -102,8 +106,7 @@ public class UnknownInvalidSdk implements UnknownSdk {
         String homePath = sdk.getHomePath();
         String versionString = sdk.getVersionString();
         if (homePath != null && versionString != null) {
-          copySdk(versionString, homePath);
-          UnknownSdkTracker.getInstance(project).updateUnknownSdksNow();
+          copySdk(project, versionString, homePath);
         } else {
           LOG.warn("Newly added SDK has invalid home or version: " + sdk + ", home=" + homePath + " version=" + versionString);
         }
