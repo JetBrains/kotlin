@@ -2,6 +2,7 @@
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,11 +16,22 @@ public interface UnknownSdkDownloadableSdkFix {
   String getDownloadDescription();
 
   /**
-   * @return it is helpful for the UI to know the version of the SDK
-   * beforehand (e.g. while the SDK is downloading)
+   * @return the actual version string of the SDK,
+   * it is used for {@link com.intellij.openapi.projectRoots.SdkModificator#setVersionString(String)}
+   * and should be similar to what the respective {@link com.intellij.openapi.projectRoots.SdkType}
+   * configures in {@link com.intellij.openapi.projectRoots.SdkType#setupSdkPaths(Sdk)}
+   * @see #getPresentableVersionString()
+   */
+  @NotNull String getVersionString();
+
+  /**
+   * @return version string that is short and enough to be shown in UI
+   * @see #getVersionString()
    */
   @NotNull
-  String getVersionString();
+  default String getPresentableVersionString() {
+    return getVersionString();
+  }
 
   /**
    * Creates and SDK download task to apply the fix.

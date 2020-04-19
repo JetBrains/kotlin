@@ -148,6 +148,8 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
 
         return object: UnknownSdkDownloadableSdkFix {
           override fun getVersionString() = jdkToDownload.versionString
+          override fun getPresentableVersionString() = jdkToDownload.presentableVersionString
+
           override fun getDownloadDescription() = jdkToDownload.fullPresentationText
 
           override fun createTask(indicator: ProgressIndicator): SdkDownloadTask {
@@ -217,6 +219,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
                                 val suggestedName: String) : UnknownSdkLocalSdkFix {
     override fun getExistingSdkHome() = homeDir
     override fun getVersionString() = JdkVersionDetector.formatVersionString(version)
+    override fun getPresentableVersionString() = version.toFeatureMinorUpdateString()
     override fun getSuggestedSdkName() : String = suggestedName
   }
 }

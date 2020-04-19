@@ -119,6 +119,9 @@ data class JdkItem(
   val versionString
     get() = JavaVersion.tryParse(jdkVersion)?.let(JdkVersionDetector::formatVersionString) ?: jdkVersion
 
+  val presentableVersionString
+    get() = JavaVersion.tryParse(jdkVersion)?.toFeatureMinorUpdateString() ?: jdkVersion
+
   val versionPresentationText: String
     get() = jdkVersion
 
