@@ -24,22 +24,26 @@ import javax.swing.*;
 
 public class KotlinDelegatedPropertyRendererConfigurableUi implements ConfigurableUi<KotlinDebuggerSettings> {
     private JCheckBox renderDelegatedProperties;
+    private JCheckBox disableCoroutineAgent;
     private JPanel myPanel;
 
     @Override
     public void reset(@NotNull KotlinDebuggerSettings settings) {
         boolean flag = settings.getDEBUG_RENDER_DELEGATED_PROPERTIES();
         renderDelegatedProperties.setSelected(flag);
+        disableCoroutineAgent.setSelected(settings.getDEBUG_DISABLE_COROUTINE_AGENT());
     }
 
     @Override
     public boolean isModified(@NotNull KotlinDebuggerSettings settings) {
-        return settings.getDEBUG_RENDER_DELEGATED_PROPERTIES() != renderDelegatedProperties.isSelected();
+        return settings.getDEBUG_RENDER_DELEGATED_PROPERTIES() != renderDelegatedProperties.isSelected()
+               || settings.getDEBUG_DISABLE_COROUTINE_AGENT() != disableCoroutineAgent.isSelected();
     }
 
     @Override
     public void apply(@NotNull KotlinDebuggerSettings settings) {
         settings.setDEBUG_RENDER_DELEGATED_PROPERTIES(renderDelegatedProperties.isSelected());
+        settings.setDEBUG_DISABLE_COROUTINE_AGENT(disableCoroutineAgent.isSelected());
     }
 
     @NotNull

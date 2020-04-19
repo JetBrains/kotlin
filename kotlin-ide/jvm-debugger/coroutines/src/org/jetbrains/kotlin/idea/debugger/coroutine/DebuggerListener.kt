@@ -12,6 +12,7 @@ import com.intellij.execution.configurations.RunnerSettings
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.xdebugger.XDebuggerManagerListener
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 
 interface DebuggerListener : XDebuggerManagerListener {
@@ -32,8 +33,8 @@ class CoroutineDebuggerListener(val project: Project) : DebuggerListener {
     ): DebuggerConnection? {
         val isExternalSystemRunConfiguration = configuration is ExternalSystemRunConfiguration
         val isGradleConfiguration = gradleConfiguration(configuration.type.id)
-
-        if (runnerSettings is DebuggingRunnerData && !isExternalSystemRunConfiguration && !isGradleConfiguration)
+        val disableCoroutineAgent = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_COROUTINE_AGENT
+        if (!disableCoroutineAgent && runnerSettings is DebuggingRunnerData && !isExternalSystemRunConfiguration && !isGradleConfiguration)
             return DebuggerConnection(project, configuration, params, runnerSettings)
         return null
     }
