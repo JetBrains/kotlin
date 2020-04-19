@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.debugger.test
 
 import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaStackFrame
+import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.process.ProcessOutputTypes
@@ -22,9 +23,11 @@ import com.intellij.xdebugger.frame.XStackFrame
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
+import org.jetbrains.kotlin.idea.debugger.coroutine.PreflightProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.format
 import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
+import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.idea.debugger.test.util.XDebuggerTestUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -77,6 +80,44 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
         printStackTrace(PrintWriter(writer))
         return writer.toString()
     }
+
+    fun printStackFrame(files: TestFiles, preferences: DebuggerPreferences) {
+        val asyncStackTraceProvider = getAsyncStackTraceProvider()
+
+        doWhenXSessionPausedThenResume {
+            printContext(debugProcess.debuggerContext)
+            val suspendContext = debuggerSession.xDebugSession?.getSuspendContext()
+            var executionStack = suspendContext?.getActiveExecutionStack()
+            if (executionStack != null) {
+                try {
+                    out("Thread stack trace:")
+                    val stackFrames: List<XStackFrame> = XDebuggerTestUtil.collectFrames(executionStack)
+                    for (frame in stackFrames) {
+                        if (frame is JavaStackFrame) {
+                            out(frame)
+                            val stackFrames = asyncStackTraceProvider?.getAsyncStackTrace(frame, suspendContext as SuspendContextImpl)
+                            if (stackFrames != null) {
+                                if (stackFrames is PreflightProvider) {
+                                    val preflightFrame = stackFrames.getPreflight()
+                                    out(0, preflightFrame.coroutineInfoData.key.toString())
+                                }
+                                for (frameItem in stackFrames)
+                                    out(frameItem)
+                                return@doWhenXSessionPausedThenResume
+                            }
+                        }
+                    }
+                } catch (e: Throwable) {
+                    val stackTrace = e.stackTraceAsString()
+                    System.err.println("Exception occurred on calculating async stack traces: $stackTrace")
+                    throw e
+                }
+            } else {
+                println("FrameProxy is 'null', can't calculate async stack trace", ProcessOutputTypes.SYSTEM)
+            }
+        }
+    }
+
 
     protected fun getAsyncStackTraceProvider(): CoroutineAsyncStackTraceProvider? {
         val area = Extensions.getArea(null)
