@@ -67,8 +67,8 @@ class CoroutineId(context: DefaultExecutionContext) : ContextKey<Long>("kotlinx.
     override fun key() = key
 }
 
-class Job(context: DefaultExecutionContext) : ContextKey<ObjectReference>("kotlinx.coroutines.Job", context) {
-    val key = staticObjectValue("Key")
+class Job(context: DefaultExecutionContext) : ContextKey<ObjectReference>("kotlinx.coroutines.Job\$Key", context) {
+    val key = staticObjectValue("\$\$INSTANCE")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): ObjectReference? {
         return value
