@@ -22,6 +22,7 @@ class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin
     var DEBUG_RENDER_DELEGATED_PROPERTIES: Boolean = false
     var DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES: Boolean = true
     var DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED: Boolean = false
+    var DEBUG_DISABLE_COROUTINE_AGENT: Boolean = false
 
     companion object {
         fun getInstance(): KotlinDebuggerSettings {
