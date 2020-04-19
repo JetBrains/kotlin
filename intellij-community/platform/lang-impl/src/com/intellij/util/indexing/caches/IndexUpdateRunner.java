@@ -152,7 +152,7 @@ public final class IndexUpdateRunner {
 
   private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob,
                                                  @NotNull ProgressIndicator writeActionIndicator) throws ProcessCanceledException {
-    long contentLoadingStartTime = System.currentTimeMillis();
+    long contentLoadingStartTime = System.nanoTime();
     CachedFileContentToken token;
     try {
       token = loadNextContent(indexingJob, writeActionIndicator);
@@ -168,7 +168,7 @@ public final class IndexUpdateRunner {
       return;
     }
     finally {
-      indexingJob.myStatistics.addContentLoadingTime(System.currentTimeMillis() - contentLoadingStartTime);
+      indexingJob.myStatistics.addContentLoadingTime(System.nanoTime() - contentLoadingStartTime);
     }
 
     if (token == null) {
@@ -178,11 +178,11 @@ public final class IndexUpdateRunner {
 
     try {
       CachedFileContent fileContent = token.getContent();
-      long indexingStartTime = System.currentTimeMillis();
+      long indexingStartTime = System.nanoTime();
       try {
         indexOneFileOfJobIfUserIsInactive(indexingJob, writeActionIndicator, fileContent);
       } finally {
-        indexingJob.myStatistics.addIndexingTime(System.currentTimeMillis() - indexingStartTime);
+        indexingJob.myStatistics.addIndexingTime(System.nanoTime() - indexingStartTime);
       }
       token.release();
       indexingJob.oneMoreFileProcessed();

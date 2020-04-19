@@ -73,7 +73,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   private void updateUnindexedFiles(ProgressIndicator indicator) {
     if (!IndexInfrastructure.hasIndices()) return;
     ProjectIndexingHistory projectIndexingHistory = new ProjectIndexingHistory(myProject.getName());
-    projectIndexingHistory.getTimes().setStartIndexing(now());
+    projectIndexingHistory.getTimes().setStartIndexing(nowMillis());
 
     if (myStartSuspended) {
       ProgressSuspender suspender = ProgressSuspender.getSuspender(indicator);
@@ -88,13 +88,13 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     indicator.setIndeterminate(true);
     indicator.setText(IndexingBundle.message("progress.indexing.scanning"));
 
-    projectIndexingHistory.getTimes().setStartPushProperties(now());
+    projectIndexingHistory.getTimes().setStartPushProperties(nowMillis());
 
     PerformanceWatcher.Snapshot snapshot = PerformanceWatcher.takeSnapshot();
     myPusher.pushAllPropertiesNow();
     boolean trackResponsiveness = !ApplicationManager.getApplication().isUnitTestMode();
 
-    projectIndexingHistory.getTimes().setEndPushProperties(now());
+    projectIndexingHistory.getTimes().setEndPushProperties(nowMillis());
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Pushing properties");
 
@@ -102,19 +102,19 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     snapshot = PerformanceWatcher.takeSnapshot();
 
-    projectIndexingHistory.getTimes().setStartIndexExtensions(now());
+    projectIndexingHistory.getTimes().setStartIndexExtensions(nowMillis());
 
     FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.processIndexingProject(myProject, indicator));
 
-    projectIndexingHistory.getTimes().setEndIndexExtensions(now());
+    projectIndexingHistory.getTimes().setEndIndexExtensions(nowMillis());
 
-    projectIndexingHistory.getTimes().setStartScanFiles(now());
+    projectIndexingHistory.getTimes().setStartScanFiles(nowMillis());
 
     List<IndexableFilesProvider> orderedProviders = myIndex.getOrderedIndexableFilesProviders(myProject);
 
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = collectIndexableFilesConcurrently(myProject, indicator, orderedProviders);
 
-    projectIndexingHistory.getTimes().setEndScanFiles(now());
+    projectIndexingHistory.getTimes().setEndScanFiles(nowMillis());
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Indexable file iteration");
 
@@ -152,9 +152,9 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       concurrentTasksProgressManager.setText(provider.getIndexingProgressText());
       SubTaskProgressIndicator subTaskIndicator = concurrentTasksProgressManager.createSubTaskIndicator(providerFiles.size());
       try {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         IndexingJobStatistics indexStatistics = indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
-        long totalTime = System.currentTimeMillis() - startTime;
+        long totalTime = System.nanoTime() - startTime;
         FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(provider.getDebugName(), totalTime, indexStatistics);
         projectIndexingHistory.getProviderStatistics().add(statistics);
       } finally {
@@ -162,7 +162,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       }
     }
 
-    projectIndexingHistory.getTimes().setEndIndexing(now());
+    projectIndexingHistory.getTimes().setEndIndexing(nowMillis());
 
     NonUrgentExecutor.getInstance().execute(() -> {
       IndexDiagnosticDumper.INSTANCE.dumpProjectIndexingHistoryToLogSubdirectory(projectIndexingHistory);
@@ -171,7 +171,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Unindexed files update");
   }
 
-  private static long now() {
+  private static long nowMillis() {
     return System.currentTimeMillis();
   }
 

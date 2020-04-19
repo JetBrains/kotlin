@@ -9,8 +9,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 data class JsonPerThreadTime(
-  val perThreadTimes: List<Long>,
-  val totalCpuTime: Long
+  val perThreadTimes: List<TimeNano>,
+  val totalCpuTime: TimeNano
 )
 
 fun PerThreadTime.toJsonPerThreadTime(): JsonPerThreadTime =
@@ -22,7 +22,7 @@ fun PerThreadTime.toJsonPerThreadTime(): JsonPerThreadTime =
 data class JsonFileProviderIndexStatistics(
   val indexableFilesProviderDebugName: String,
   // <total time> = <content loading time> + <indexing time> + <time spent on waiting for other indexing tasks to complete>
-  val totalTime: Long,
+  val totalTime: TimeNano,
   val indexingTime: JsonPerThreadTime,
   val contentLoadingTime: JsonPerThreadTime,
   val numberOfFilesPerFileType: List<FilesNumberPerFileType>,
@@ -56,23 +56,23 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
 
 @Suppress("unused", "used for JSON")
 data class JsonProjectIndexingHistoryTimes(
-  val startIndexing: Long,
-  val endIndexing: Long,
+  val startIndexing: TimeMillis,
+  val endIndexing: TimeMillis,
 
-  val startPushProperties: Long,
-  val endPushProperties: Long,
+  val startPushProperties: TimeMillis,
+  val endPushProperties: TimeMillis,
 
-  val startIndexExtensions: Long,
-  val endIndexExtensions: Long,
+  val startIndexExtensions: TimeMillis,
+  val endIndexExtensions: TimeMillis,
 
-  val startScanFiles: Long,
-  val endScanFiles: Long
+  val startScanFiles: TimeMillis,
+  val endScanFiles: TimeMillis
 ) {
   val presentableStartIndexingTime: String get() = DateFormatUtil.formatTimeWithSeconds(startIndexing)
-  val indexingTime: Long get() = endIndexing - startIndexing
-  val pushPropertiesTime: Long get() = endPushProperties - startPushProperties
-  val indexExtensionsTime: Long get() = endIndexExtensions - startIndexExtensions
-  val scanFilesTime: Long get() = endScanFiles - startScanFiles
+  val indexingTime: TimeMillis get() = endIndexing - startIndexing
+  val pushPropertiesTime: TimeMillis get() = endPushProperties - startPushProperties
+  val indexExtensionsTime: TimeMillis get() = endIndexExtensions - startIndexExtensions
+  val scanFilesTime: TimeMillis get() = endScanFiles - startScanFiles
 }
 
 fun ProjectIndexingHistory.IndexingTimes.convertToJson(): JsonProjectIndexingHistoryTimes =

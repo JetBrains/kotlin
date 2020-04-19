@@ -5,13 +5,13 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 class PerThreadTime {
-  val threadIdToTime: Map<Long, Long>
+  val threadIdToTime: Map<Long, TimeNano>
     get() = HashMap(_threadIdToTime)
 
-  private val _threadIdToTime: ConcurrentMap<Long, Long> = ConcurrentHashMap()
+  private val _threadIdToTime: ConcurrentMap<Long, TimeNano> = ConcurrentHashMap()
 
-  fun addTimeSpentInCurrentThread(time: Long) {
+  fun addTimeSpentInCurrentThread(nanoTime: TimeNano) {
     val currentThread = Thread.currentThread()
-    _threadIdToTime.compute(currentThread.id) { _, currentTime -> (currentTime ?: 0L) + time }
+    _threadIdToTime.compute(currentThread.id) { _, currentTime -> (currentTime ?: 0L) + nanoTime }
   }
 }

@@ -1144,7 +1144,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
     boolean setIndexedStatus = true;
     Map<ID<?, ?>, Long> indexerTimes = Collections.emptyMap();
-    long startTime = System.currentTimeMillis();
+    long startTime = System.nanoTime();
     try {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
       // in this case we consider that current indexing (out of roots backed CacheUpdater) will cover its content
@@ -1170,7 +1170,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
     getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
     if (file instanceof VirtualFileSystemEntry && setIndexedStatus) ((VirtualFileSystemEntry)file).setFileIndexed(true);
-    return new FileIndexingStatistics(System.currentTimeMillis() - startTime, indexerTimes);
+    return new FileIndexingStatistics(System.nanoTime() - startTime, indexerTimes);
   }
 
   @NotNull
@@ -1208,7 +1208,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         try {
           ProgressManager.checkCanceled();
           final ID<?, ?> indexId = affectedIndexCandidates.get(i);
-          long startTime = System.currentTimeMillis();
+          long startTime = System.nanoTime();
           try {
             if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
               ProgressManager.checkCanceled();
@@ -1218,7 +1218,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
               currentIndexedStates.remove(indexId);
             }
           } finally {
-            perIndexerTimes.put(indexId, System.currentTimeMillis() - startTime);
+            perIndexerTimes.put(indexId, System.nanoTime() - startTime);
           }
         }
         catch (ProcessCanceledException e) {
@@ -1233,7 +1233,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
       for (ID<?, ?> indexId : currentIndexedStates) {
         ProgressManager.checkCanceled();
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         try {
           if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
             ProgressManager.checkCanceled();
@@ -1242,7 +1242,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
             }
           }
         } finally {
-          perIndexerTimes.put(indexId, System.currentTimeMillis() - startTime);
+          perIndexerTimes.put(indexId, System.nanoTime() - startTime);
         }
       }
     });
