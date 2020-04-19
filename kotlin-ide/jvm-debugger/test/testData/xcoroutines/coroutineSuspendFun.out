@@ -1,15 +1,16 @@
-LineBreakpoint created at coroutineSuspendFun.kt:30
+LineBreakpoint created at coroutineSuspendFun.kt:29
 Run Java
 Connected to the target VM
-coroutineSuspendFun.kt:30
+coroutineSuspendFun.kt:29
 Thread stack trace:
-	c:30, CoroutineSuspendFunKt (continuation)
+	c:29, CoroutineSuspendFunKt (continuation)
 		($completion, c, paramB)
-	b:24, CoroutineSuspendFunKt (continuation)
+	b:23, CoroutineSuspendFunKt (continuation)
 		($completion, $continuation, $result, b, paramA)
-	a:17, continuation.CoroutineSuspendFunKt
+CoroutineNameIdState(name=coroutine, id=1, state=RUNNING, dispatcher=BlockingEventLoop@6f45df59)
+	a:16, continuation.CoroutineSuspendFunKt
 		(a)
-	invokeSuspend:11, continuation.CoroutineSuspendFunKt$main$1
+	invokeSuspend:10, continuation.CoroutineSuspendFunKt$main$1
 		($this$runBlocking)
 	resumeWith:33, kotlin.coroutines.jvm.internal.BaseContinuationImpl
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
@@ -27,7 +28,7 @@ Thread stack trace:
 		()
 	runBlocking$default:1, kotlinx.coroutines.BuildersKt
 		()
-	main:10, continuation.CoroutineSuspendFunKt
+	main:9, continuation.CoroutineSuspendFunKt
 		(main)
 	main:-1, continuation.CoroutineSuspendFunKt
 		()
@@ -38,7 +39,7 @@ Creation stack frame
 		()
 	runBlocking$default:1, kotlinx.coroutines.BuildersKt
 		()
-	main:10, continuation.CoroutineSuspendFunKt
+	main:9, continuation.CoroutineSuspendFunKt
 		()
 	main:-1, continuation.CoroutineSuspendFunKt
 		()

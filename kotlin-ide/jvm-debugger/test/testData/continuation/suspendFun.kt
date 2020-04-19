@@ -13,18 +13,17 @@ fun main() {
 suspend fun test1(i: Int): Int {
     val test1 = "a"
     a(test1)
-    println(test1)
     return i
 }
 
 suspend fun a(aParam: String) {
     val a = "a"
     b(a)
-    println(a)
+    a + 1
 }
 
 suspend fun b(bParam: String) {
     val b = "b"
-    // Breakpoint!
-    println(b)
+    //Breakpoint!
+    b + 1
 }

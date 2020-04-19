@@ -41,9 +41,15 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
             )
         ) {
             val doubleFrameList = CoroutineFrameBuilder.build(preflightFrame, suspendContext)
-            return doubleFrameList.stackTrace + doubleFrameList.creationStackTrace
+            val resultList = doubleFrameList.stackTrace + doubleFrameList.creationStackTrace
+            return PreflightProvider(preflightFrame, resultList)
         }
         return null
     }
 }
 
+class PreflightProvider(private val preflight: CoroutinePreflightStackFrame, stackFrames: List<CoroutineStackFrameItem>) :
+    List<CoroutineStackFrameItem> by stackFrames {
+    fun getPreflight() =
+        preflight
+}
