@@ -1881,6 +1881,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt34314_lambda.kt");
             }
 
+            @TestMetadata("kt35105.kt")
+            public void testKt35105() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt35105.kt");
+            }
+
             @TestMetadata("kt35959.kt")
             public void testKt35959() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt35959.kt");
@@ -10133,6 +10138,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/kt36819.kt");
             }
 
+            @TestMetadata("kt37853.kt")
+            public void testKt37853() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt37853.kt");
+            }
+
             @TestMetadata("kt6175.kt")
             public void testKt6175() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt6175.kt");
@@ -13465,6 +13475,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("inheritedStaticSam.kt")
                 public void testInheritedStaticSam() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/inheritedStaticSam.kt");
+                }
+
+                @TestMetadata("kt37920.kt")
+                public void testKt37920() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/sam/kt37920.kt");
                 }
 
                 @TestMetadata("privateCandidatesWithWrongArguments.kt")

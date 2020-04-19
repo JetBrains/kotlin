@@ -2399,6 +2399,21 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37554.kt");
         }
 
+        @TestMetadata("kt37706.kt")
+        public void testKt37706() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37706.kt");
+        }
+
+        @TestMetadata("kt37727.kt")
+        public void testKt37727() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37727.kt");
+        }
+
+        @TestMetadata("kt37735.kt")
+        public void testKt37735() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37735.kt");
+        }
+
         @TestMetadata("kt9820_javaFunctionTypeInheritor.kt")
         public void testKt9820_javaFunctionTypeInheritor() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt9820_javaFunctionTypeInheritor.kt");

@@ -1,0 +1,48 @@
+package
+
+public fun </*0*/ T> WebClient.myPost(/*0*/ uri: java.net.URI, /*1*/ body: kotlin.Any, /*2*/ extract: WebClient.ResponseSpec.() -> Mono<T>): Mono<T>
+
+public final class InDto {
+    public constructor InDto()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Mono</*0*/ T> {
+    public constructor Mono</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OutDto {
+    public constructor OutDto()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class RestClient {
+    public constructor RestClient(/*0*/ webClient: WebClient)
+    private final val webClient: WebClient
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun post(/*0*/ outDto: OutDto): Mono<InDto>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WebClient {
+    public constructor WebClient()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun post(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface ResponseSpec {
+        public abstract fun </*0*/ T> bodyToMono(): Mono<T>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

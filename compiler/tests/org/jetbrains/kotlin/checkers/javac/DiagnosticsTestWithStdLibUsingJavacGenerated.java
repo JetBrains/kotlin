@@ -1583,6 +1583,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_4.kt");
         }
 
+        @TestMetadata("basicBuildListBuildMap.kt")
+        public void testBasicBuildListBuildMap() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/basicBuildListBuildMap.kt");
+        }
+
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReferences.kt");
@@ -1631,6 +1636,21 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("kt28658.kt")
         public void testKt28658() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt28658.kt");
+        }
+
+        @TestMetadata("kt36947.kt")
+        public void testKt36947() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt36947.kt");
+        }
+
+        @TestMetadata("kt37309.kt")
+        public void testKt37309() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt37309.kt");
+        }
+
+        @TestMetadata("kt38179.kt")
+        public void testKt38179() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt38179.kt");
         }
 
         @TestMetadata("lambdaExpectedType.kt")
@@ -3382,6 +3402,21 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("kt37554.kt")
         public void testKt37554() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37554.kt");
+        }
+
+        @TestMetadata("kt37706.kt")
+        public void testKt37706() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37706.kt");
+        }
+
+        @TestMetadata("kt37727.kt")
+        public void testKt37727() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37727.kt");
+        }
+
+        @TestMetadata("kt37735.kt")
+        public void testKt37735() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37735.kt");
         }
 
         @TestMetadata("kt9820_javaFunctionTypeInheritor.kt")
