@@ -58,7 +58,7 @@ public abstract class TodoTreeBuilder implements Disposable {
    */
   protected final FileTree myFileTree;
   /**
-   * This set contains "dirty" files. File is "dirty" if it's currently not unknown
+   * This set contains "dirty" files. File is "dirty" if it's currently unknown
    * whether the file contains T.O.D.O item or not. To determine this it's necessary
    * to perform some (perhaps, CPU expensive) operation. These "dirty" files are
    * validated in {@code validateCache()} method.
