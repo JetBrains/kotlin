@@ -33,7 +33,7 @@ internal class ClassMemberGenerator(
 ) : Fir2IrComponents by components {
 
     private val fakeOverrideGenerator = FakeOverrideGenerator(
-        session, components.scopeSession, declarationStorage, conversionScope, fakeOverrideMode
+        session, components.scopeSession, classifierStorage, declarationStorage, conversionScope, fakeOverrideMode
     )
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }

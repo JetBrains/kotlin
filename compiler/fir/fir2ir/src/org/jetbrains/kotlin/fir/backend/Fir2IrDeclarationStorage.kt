@@ -214,6 +214,7 @@ class Fir2IrDeclarationStorage(
                         if (functionSymbol is FirNamedFunctionSymbol) {
                             val fakeOverrideSymbol =
                                 FirClassSubstitutionScope.createFakeOverrideFunction(session, functionSymbol.fir, functionSymbol)
+                            classifierStorage.preCacheTypeParameters(functionSymbol.fir)
                             irClass.declarations += createIrFunction(fakeOverrideSymbol.fir, irClass)
                         }
                     }
@@ -221,6 +222,7 @@ class Fir2IrDeclarationStorage(
                         if (propertySymbol is FirPropertySymbol) {
                             val fakeOverrideSymbol =
                                 FirClassSubstitutionScope.createFakeOverrideProperty(session, propertySymbol.fir, propertySymbol)
+                            classifierStorage.preCacheTypeParameters(propertySymbol.fir)
                             irClass.declarations += createIrProperty(fakeOverrideSymbol.fir, irClass)
                         }
                     }

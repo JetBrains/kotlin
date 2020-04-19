@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.Name
 internal class FakeOverrideGenerator(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
+    private val classifierStorage: Fir2IrClassifierStorage,
     private val declarationStorage: Fir2IrDeclarationStorage,
     private val conversionScope: Fir2IrConversionScope,
     private val fakeOverrideMode: FakeOverrideMode
@@ -109,6 +110,7 @@ internal class FakeOverrideGenerator(
                         )
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
+                        classifierStorage.preCacheTypeParameters(originalFunction)
                         val irFunction = declarationStorage.createIrFunction(
                             fakeOverrideFunction, irParent = this,
                             thisReceiverOwner = declarationStorage.findIrParent(originalFunction) as? IrClass,
@@ -146,6 +148,7 @@ internal class FakeOverrideGenerator(
                         )
                         val fakeOverrideProperty = fakeOverrideSymbol.fir
 
+                        classifierStorage.preCacheTypeParameters(originalProperty)
                         val irProperty = declarationStorage.createIrProperty(
                             fakeOverrideProperty, irParent = this,
                             thisReceiverOwner = declarationStorage.findIrParent(originalProperty) as? IrClass,
