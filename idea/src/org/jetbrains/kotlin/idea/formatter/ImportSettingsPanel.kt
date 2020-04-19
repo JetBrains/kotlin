@@ -11,12 +11,12 @@ import com.intellij.application.options.PackagePanel
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntryTable
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -53,12 +53,8 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
 class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPanel() {
     private val cbImportNestedClasses = JCheckBox(KotlinBundle.message("formatter.checkbox.text.insert.imports.for.nested.classes"))
 
-    private val starImportPackageEntryTable = PackageEntryTable()
-    private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
-        override fun areStaticImportsEnabled() = false
-        override fun refresh() {}
-    }
-    private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
+    private val starImportLayoutPanel = KotlinStarImportLayoutPanel()
+    private val importOrderLayoutPanel = KotlinImportOrderLayoutPanel()
 
     private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
         KotlinBundle.message("formatter.title.top.level.symbols"), KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT
@@ -88,7 +84,13 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                     KotlinBundle.message("formatter.title.other")).apply { add(cbImportNestedClasses) }.createPanel(),
                 constraints.apply { gridy++ })
 
-            add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.apply {
+            add(starImportLayoutPanel, constraints.apply {
+                gridy++
+                fill = GridBagConstraints.BOTH
+                weighty = 1.0
+            })
+
+            add(importOrderLayoutPanel, constraints.apply {
                 gridy++
                 fill = GridBagConstraints.BOTH
                 weighty = 1.0
@@ -102,18 +104,27 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
 
         cbImportNestedClasses.isSelected = settings.IMPORT_NESTED_CLASSES
 
-        starImportPackageEntryTable.copyFrom(settings.PACKAGES_TO_USE_STAR_IMPORTS)
-        (starImportPackageTable.model as AbstractTableModel).fireTableDataChanged()
-        if (starImportPackageTable.rowCount > 0) {
-            starImportPackageTable.selectionModel.setSelectionInterval(0, 0)
+        starImportLayoutPanel.packageTable.copyFrom(settings.PACKAGES_TO_USE_STAR_IMPORTS)
+        (starImportLayoutPanel.layoutTable.model as AbstractTableModel).fireTableDataChanged()
+        if (starImportLayoutPanel.layoutTable.rowCount > 0) {
+            starImportLayoutPanel.layoutTable.selectionModel.setSelectionInterval(0, 0)
         }
+
+        importOrderLayoutPanel.packageTable.copyFrom(settings.PACKAGES_IMPORT_LAYOUT)
+        (importOrderLayoutPanel.layoutTable.model as AbstractTableModel).fireTableDataChanged()
+        if (importOrderLayoutPanel.layoutTable.rowCount > 0) {
+            importOrderLayoutPanel.layoutTable.selectionModel.setSelectionInterval(0, 0)
+        }
+
+        importOrderLayoutPanel.recomputeAliasesCheckbox()
     }
 
     fun apply(settings: KotlinCodeStyleSettings) {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarImportSelector.value
         settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = nameCountToUseStarImportForMembersSelector.value
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected
-        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(getCopyWithoutEmptyPackages(starImportPackageEntryTable))
+        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable))
+        settings.PACKAGES_IMPORT_LAYOUT.copyFrom(importOrderLayoutPanel.packageTable)
     }
 
     fun isModified(settings: KotlinCodeStyleSettings): Boolean {
@@ -122,7 +133,8 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
             isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
-            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportPackageEntryTable), PACKAGES_TO_USE_STAR_IMPORTS)
+            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_STAR_IMPORTS)
+            isModified = isModified || isModified(importOrderLayoutPanel.packageTable, PACKAGES_IMPORT_LAYOUT)
 
             isModified
         }
@@ -133,12 +145,12 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             return checkBox.isSelected != value
         }
 
-        private fun isModified(list: PackageEntryTable, table: PackageEntryTable): Boolean {
-            if (list.entryCount != table.entryCount) {
+        private fun isModified(list: KotlinPackageEntryTable, table: KotlinPackageEntryTable): Boolean {
+            if (list.getEntryCount() != table.getEntryCount()) {
                 return true
             }
 
-            for (i in 0 until list.entryCount) {
+            for (i in 0 until list.getEntryCount()) {
                 val entry1 = list.getEntryAt(i)
                 val entry2 = table.getEntryAt(i)
                 if (entry1 != entry2) {
@@ -149,9 +161,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             return false
         }
 
-        private fun getCopyWithoutEmptyPackages(table: PackageEntryTable): PackageEntryTable {
+        private fun getCopyWithoutEmptyPackages(table: KotlinPackageEntryTable): KotlinPackageEntryTable {
             try {
-                val copy = table.clone() as PackageEntryTable
+                val copy = table.clone()
                 copy.removeEmptyPackages()
                 return copy
             } catch (ignored: CloneNotSupportedException) {
