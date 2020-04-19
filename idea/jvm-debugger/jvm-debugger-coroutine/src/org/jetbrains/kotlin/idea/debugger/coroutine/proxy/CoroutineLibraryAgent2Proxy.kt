@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecutionContext) :
     CoroutineInfoProvider {
     val log by logger
-    private val debugProbesImpl = DebugProbesImpl(executionContext)
+    private val debugProbesImpl = DebugProbesImpl.instance(executionContext)
     private val locationCache = LocationCache(executionContext)
     private val debugMetadata: DebugMetadata? = DebugMetadata.instance(executionContext)
 
     override fun dumpCoroutinesInfo(): List<CoroutineInfoData> {
-        val result = debugProbesImpl.dumpCoroutinesInfo(executionContext)
+        val result = debugProbesImpl?.dumpCoroutinesInfo(executionContext) ?: emptyList()
         return result.mapNotNull { mapToCoroutineInfoData(it) }
     }
 
@@ -45,7 +45,7 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
 
     fun isInstalled(): Boolean {
         try {
-            return debugProbesImpl.isInstalledValue ?: false
+            return debugProbesImpl?.isInstalledValue ?: false
         } catch (e: Exception) {
             log.error("Exception happened while checking agent status.", e)
             return false

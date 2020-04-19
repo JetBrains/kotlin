@@ -9,20 +9,20 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
-
+import java.lang.IllegalStateException
 
 abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) {
     val log by logger
-    protected val cls = context.findClassSafe(name)
+    protected val cls = context.findClassSafe(name) ?: throw IllegalStateException("coroutine-debugger: class $name not found.")
 
     fun makeField(fieldName: String): Field? =
         cls?.let { it.fieldByName(fieldName) }
 
     fun makeMethod(methodName: String): Method? =
-        cls?.let { it.methodsByName(methodName).single() }
+        cls?.let { it.methodsByName(methodName).singleOrNull() }
 
     fun makeMethod(methodName: String, signature: String): Method? =
-        cls?.let { it.methodsByName(methodName, signature).single() }
+        cls?.let { it.methodsByName(methodName, signature).singleOrNull() }
 
     fun isCompatible(value: ObjectReference?) =
         value?.let { it.referenceType().isSubTypeOrSame(name) } ?: false
