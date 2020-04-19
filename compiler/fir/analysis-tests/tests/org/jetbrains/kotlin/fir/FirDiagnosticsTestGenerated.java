@@ -826,6 +826,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
         }
 
+        @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
+        public void testQualifiedSupertypeExtendedByOtherSupertype() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
+        }
+
         @TestMetadata("redundantModifier.kt")
         public void testRedundantModifier() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/redundantModifier.kt");

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IBase {
     fun foo() {}
     fun bar() {}
