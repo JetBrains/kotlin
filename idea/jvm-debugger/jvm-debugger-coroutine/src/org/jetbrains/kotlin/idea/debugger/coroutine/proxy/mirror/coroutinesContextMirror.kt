@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import java.lang.StackTraceElement
 
 class CoroutineContext(context: DefaultExecutionContext) :
-    BaseMirror<MirrorOfCoroutineContext>("kotlin.coroutines.CoroutineContext", context) {
+    BaseMirror<MirrorOfCoroutineContext>("kotlin.coroutines.CombinedContext", context) {
     val coroutineNameRef = CoroutineName(context)
     val coroutineIdRef = CoroutineId(context)
     val jobRef = Job(context)
@@ -27,7 +27,8 @@ class CoroutineContext(context: DefaultExecutionContext) :
     }
 
     fun <T> getElementValue(value: ObjectReference, context: DefaultExecutionContext, keyProvider: ContextKey<T>): T? {
-        val elementValue = objectValue(value, getContextElement, context, keyProvider.key() ?: return null) ?: return null
+        val key = keyProvider.key() ?: return null
+        val elementValue = objectValue(value, getContextElement, context, key) ?: return null
         return keyProvider.mirror(elementValue, context)
     }
 }

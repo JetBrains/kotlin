@@ -154,13 +154,13 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                 managerThreadExecutor.on(suspendContext).schedule {
                     val debugProbesProxy = CoroutineDebugProbesProxy(suspendContext)
 
-                    val defaultGroupName = KotlinDebuggerCoroutinesBundle.message("coroutine.view.default.group")
+                    val emptyDispatcherName = KotlinDebuggerCoroutinesBundle.message("coroutine.view.dispatcher.empty")
                     var coroutineCache = debugProbesProxy.dumpCoroutines()
                     if (coroutineCache.isOk()) {
                         val children = XValueChildrenList()
                         var groups = coroutineCache.cache.groupBy { it.key.dispatcher }
                         for (dispatcher in groups.keys) {
-                            children.add(CoroutineContainer(suspendContext, dispatcher ?: defaultGroupName, groups[dispatcher]))
+                            children.add(CoroutineContainer(suspendContext, dispatcher ?: emptyDispatcherName, groups[dispatcher]))
                         }
                         if (children.size() > 0)
                             node.addChildren(children, true)
