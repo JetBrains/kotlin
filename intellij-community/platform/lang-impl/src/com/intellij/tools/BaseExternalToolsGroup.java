@@ -14,7 +14,26 @@ import java.util.List;
  * @author Eugene Belyaev
  */
 public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActionGroup implements DumbAware {
-  protected BaseExternalToolsGroup(List<ToolsGroup<T>> groups) {
+  protected BaseExternalToolsGroup() {
+    updateGroups(true);
+  }
+
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    Presentation presentation = event.getPresentation();
+    removeAll();
+    Project project = event.getData(CommonDataKeys.PROJECT);
+    if (project == null) {
+      presentation.setEnabledAndVisible(false);
+      return;
+    }
+    updateGroups(false);
+    presentation.setEnabled(true);
+    presentation.setVisible(getChildrenCount() > 0);
+  }
+
+  protected void updateGroups(boolean registerActions) {
+    List<ToolsGroup<T>> groups = getToolsGroups();
     for (ToolsGroup group : groups) {
       String groupName = group.getName();
       if (!StringUtil.isEmptyOrSpaces(groupName)) {
@@ -24,7 +43,9 @@ public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActio
         fillGroup(groupName, subgroup);
         if (subgroup.getChildrenCount() > 0) {
           add(subgroup);
-          ActionManager.getInstance().registerAction(groupName, subgroup);
+          if (registerActions) {
+            ActionManager.getInstance().registerAction(groupName, subgroup);
+          }
         }
       }
       else {
@@ -33,17 +54,7 @@ public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActio
     }
   }
 
-  @Override
-  public void update(@NotNull AnActionEvent event) {
-    Presentation presentation = event.getPresentation();
-    presentation.setEnabled(true);
-    Project project = event.getData(CommonDataKeys.PROJECT);
-    if (project == null) {
-      presentation.setEnabledAndVisible(false);
-      return;
-    }
-    presentation.setVisible(getChildrenCount() > 0);
-  }
+  protected abstract List<ToolsGroup<T>> getToolsGroups();
 
   private void fillGroup(@Nullable String groupName, SimpleActionGroup group) {
     List<T> tools = getToolsByGroupName(groupName);

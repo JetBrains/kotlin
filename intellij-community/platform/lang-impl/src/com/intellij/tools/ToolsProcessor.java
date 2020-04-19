@@ -62,7 +62,7 @@ abstract public class ToolsProcessor<T extends Tool> extends NonLazySchemeProces
     }
 
     String attrName = root.getAttributeValue(ATTRIBUTE_NAME);
-    String groupName = StringUtil.isEmpty(attrName)? Tool.DEFAULT_GROUP_NAME : attrName;
+    String groupName = StringUtil.isEmpty(attrName)? getDefaultGroupName() : attrName;
     ToolsGroup<T> result = createToolsGroup(groupName);
 
     final PathMacroManager macroManager = PathMacroManager.getInstance(ApplicationManager.getApplication());
@@ -122,6 +122,10 @@ abstract public class ToolsProcessor<T extends Tool> extends NonLazySchemeProces
     tool.setShowConsoleOnStdOut(Boolean.valueOf(element.getAttributeValue(SHOW_CONSOLE_ON_STDOUT)).booleanValue());
     tool.setShowConsoleOnStdErr(Boolean.valueOf(element.getAttributeValue(SHOW_CONSOLE_ON_STDERR)).booleanValue());
     tool.setFilesSynchronizedAfterRun(Boolean.valueOf(element.getAttributeValue(SYNCHRONIZE_AFTER_EXECUTION)).booleanValue());
+  }
+
+  protected String getDefaultGroupName() {
+    return Tool.DEFAULT_GROUP_NAME;
   }
 
   protected abstract ToolsGroup<T> createToolsGroup(String groupName);

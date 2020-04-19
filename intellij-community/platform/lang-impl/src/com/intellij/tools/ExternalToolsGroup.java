@@ -5,8 +5,9 @@ package com.intellij.tools;
 import java.util.List;
 
 public class ExternalToolsGroup extends BaseExternalToolsGroup<Tool> {
-  public ExternalToolsGroup() {
-    super(ToolManager.getInstance().getGroups());
+  @Override
+  protected List<ToolsGroup<Tool>> getToolsGroups() {
+    return ToolManager.getInstance().getGroups();
   }
 
   @Override

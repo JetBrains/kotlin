@@ -6,32 +6,21 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.CompoundScheme;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.CheckboxTree;
-import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.*;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.tree.TreeUtil;
-import java.awt.BorderLayout;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultTreeSelectionModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
   enum Direction {
@@ -100,7 +89,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
       @Override
       public void run(AnActionButton button) {
         ToolEditorDialog dlg = createToolEditorDialog(ToolsBundle.message("tools.add.title"));
-        Tool tool = new Tool();
+        Tool tool = dlg.createTool();
         tool.setUseConsole(true);
         tool.setFilesSynchronizedAfterRun(true);
         tool.setShownInMainMenu(true);
@@ -144,7 +133,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
 
         if (originalTool != null) {
           ToolEditorDialog dlg = createToolEditorDialog(ToolsBundle.message("tools.copy.title"));
-          Tool toolCopy = new Tool();
+          Tool toolCopy = dlg.createTool();
           toolCopy.copyFrom(originalTool);
           dlg.setData(toolCopy, getGroups());
           if (dlg.showAndGet()) {
