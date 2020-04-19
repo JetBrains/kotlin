@@ -49,6 +49,10 @@ data class CoroutineInfoData(
 }
 
 data class CoroutineNameIdState(val name: String, val id: String, val state: State, val dispatcher: String?) {
+
+    fun formatName() =
+        "$name:$id"
+    
     companion object {
         fun instance(mirror: MirrorOfCoroutineInfo): CoroutineNameIdState =
             CoroutineNameIdState(
