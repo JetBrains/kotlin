@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
@@ -89,6 +91,32 @@ class Fir2IrClassifierStorage(
                     ?: createIrTypeParameterWithoutBounds(original, index, context)
             }
         }
+        if (owner is FirCallableDeclaration<*>) {
+            val typeParameterInReturnType = owner.returnTypeRef.retrieveTypeParameter()
+            if (typeParameterInReturnType != null) {
+                getCachedIrTypeParameter(typeParameterInReturnType)
+                    ?: createIrTypeParameterWithoutBounds(typeParameterInReturnType, index = 0)
+            }
+        }
+        if (owner is FirFunction<*>)
+            owner.valueParameters.forEachIndexed { index, valueParameter ->
+                val typeParameterInValueParameter = valueParameter.returnTypeRef.retrieveTypeParameter()
+                if (typeParameterInValueParameter != null) {
+                    getCachedIrTypeParameter(typeParameterInValueParameter)
+                        ?: createIrTypeParameterWithoutBounds(typeParameterInValueParameter, index)
+                }
+            }
+    }
+
+    private fun FirTypeRef.retrieveTypeParameter(): FirTypeParameter? {
+        if (this is FirResolvedTypeRef) {
+            val type = this.type
+            return if (type is ConeTypeParameterType) {
+                type.lookupTag.typeParameterSymbol.fir
+            } else
+                null
+        }
+        return null
     }
 
     internal fun IrTypeParametersContainer.setTypeParameters(
