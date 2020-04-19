@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -94,12 +93,11 @@ private class KJvmReplCompleter(
 
             val elementParent = element.parent
             if (prefix.isEmpty() && elementParent is KtBinaryExpression) {
-                when (elementParent.node.firstChildNode.elementType) {
-                    KtStubElementTypes.INTEGER_CONSTANT,
-                    KtStubElementTypes.FLOAT_CONSTANT,
-                    KtStubElementTypes.CHARACTER_CONSTANT,
-                    KtStubElementTypes.STRING_TEMPLATE -> return@gen
-                }
+                val parentChildren = elementParent.children
+                if (parentChildren.size == 3 &&
+                    parentChildren[1] is KtOperationReferenceExpression &&
+                    parentChildren[1].text == INSERTED_STRING
+                ) return@gen
             }
 
             isSortNeeded = false
