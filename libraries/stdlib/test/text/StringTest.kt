@@ -1655,7 +1655,7 @@ ${"    "}
 
     @Test
     fun toHashSet() {
-        compare(hashSetOf('A', 'B', 'C'), "ACAABBAC".toHashSet()) { setBehavior() }
+        assertEquals(hashSetOf('A', 'B', 'C'), "ACAABBAC".toHashSet())
 
         buildString {
             repeat(100) { append('1') }
@@ -1664,7 +1664,7 @@ ${"    "}
             append('4')
             repeat(100) { append('5') }
         }.let {
-            compare(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet()) { setBehavior() }
+            assertEquals(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet())
         }
     }
 }
