@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -65,7 +66,7 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
         if (annotationEntry == null || annotationEntry.valueArguments.isEmpty()) {
             annotationEntry?.delete()
             val whiteSpaceText = if (containingDeclaration is KtPropertyAccessor) " " else "\n"
-            containingDeclaration.addAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME, annotationArgumentText, whiteSpaceText)
+            containingDeclaration.addAnnotation(KOTLIN_THROWS_ANNOTATION_FQ_NAME, annotationArgumentText, whiteSpaceText)
         } else {
             val factory = KtPsiFactory(element)
             val argument = annotationEntry.valueArguments.firstOrNull()
