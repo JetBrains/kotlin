@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
-import org.jetbrains.kotlin.idea.imports.ImportPathComparator
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -45,7 +44,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         get() = KotlinCodeStyleSettings.getInstance(project)
 
     override val importSortComparator: Comparator<ImportPath>
-        get() = ImportPathComparator
+        get() = ImportPathComparator(codeStyleSettings.PACKAGES_IMPORT_LAYOUT)
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
@@ -409,10 +408,11 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                     importList.add(psiFactory.createNewLine())
                     importList.add(newDirective) as KtImportDirective
                 } else {
+                    val importPathComparator = ImportInsertHelperImpl(project).importSortComparator
                     val insertAfter = imports
                         .lastOrNull {
                             val directivePath = it.importPath
-                            directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
+                            directivePath != null && importPathComparator.compare(directivePath, importPath) <= 0
                         }
                     importList.addAfter(newDirective, insertAfter) as KtImportDirective
                 }
