@@ -1,0 +1,29 @@
+LineBreakpoint created at suspendFun.kt:28
+Run Java
+Connected to the target VM
+suspendFun.kt:28
+Thread stack trace:
+	b:28, SuspendFunKt (coroutine1)
+		($completion, b, bParam)
+	a:21, SuspendFunKt (coroutine1)
+		($completion, $continuation, $result, a, aParam)
+	test1:15, SuspendFunKt (coroutine1)
+		($completion, $continuation, $result, i, test1)
+	invoke:9, SuspendFunKt$main$result$1 (coroutine1)
+		(continuation, p1, this)
+	invoke:-1, SuspendFunKt$main$result$1 (coroutine1)
+		(this)
+	invokeSuspend:121, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3 (kotlin.coroutines.intrinsics)
+		($i$a$-createCoroutineFromSuspendFunction-IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$2, it, result, this)
+	resumeWith:33, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
+		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
+	startCoroutine:128, ContinuationKt (kotlin.coroutines)
+		($this$startCoroutine, completion, receiver)
+	main:9, SuspendFunKt (coroutine1)
+		(cnt)
+	main:-1, SuspendFunKt (coroutine1)
+		()
+Disconnected from the target VM
+
+Process finished with exit code 0
+kotlin.Unit
