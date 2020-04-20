@@ -2129,7 +2129,7 @@ public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun IntArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2138,7 +2138,7 @@ public actual fun IntArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun LongArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2147,7 +2147,7 @@ public actual fun LongArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ByteArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2156,7 +2156,7 @@ public actual fun ByteArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ShortArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2165,7 +2165,7 @@ public actual fun ShortArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun DoubleArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2174,7 +2174,7 @@ public actual fun DoubleArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun FloatArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2183,7 +2183,7 @@ public actual fun FloatArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun CharArray.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2194,7 +2194,105 @@ public actual fun CharArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArrayOfComparable
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
-    if (size > 1) sortArray(this)
+    if (size > 1) sortArray(this, 0, size)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
+ */
+@SinceKotlin("1.4")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2211,7 +2309,9 @@ public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit 
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     sortArrayWith(this, fromIndex, toIndex, comparator)
 }
 

@@ -362,7 +362,7 @@ private fun quickSort(
 // Interfaces   =============================================================================
 /**
  * Sorts the subarray specified by [fromIndex] (inclusive) and [toIndex] (exclusive) parameters
- * using the qsort algorithm with the given [comparator].
+ * using the merge sort algorithm with the given [comparator].
  */
 internal fun <T> sortArrayWith(
         array: Array<out T>, fromIndex: Int = 0, toIndex: Int = array.size, comparator: Comparator<T>) {
@@ -372,21 +372,21 @@ internal fun <T> sortArrayWith(
 
 /**
  * Sorts a subarray of [Comparable] elements specified by [fromIndex] (inclusive) and
- * [toIndex] (exclusive) parameters using the qsort algorithm.
+ * [toIndex] (exclusive) parameters using the merge sort algorithm.
  */
-internal fun <T: Comparable<T>> sortArray(array: Array<out T>) {
+internal fun <T: Comparable<T>> sortArray(array: Array<out T>, fromIndex: Int, toIndex: Int) {
     @Suppress("UNCHECKED_CAST")
-    mergeSort(array as Array<T>, 0, array.size - 1)
+    mergeSort(array as Array<T>, fromIndex, toIndex - 1)
 }
 
 /**
  * Sorts the given array using qsort algorithm.
  */
-internal fun sortArray(array: ByteArray)    = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: ShortArray)   = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: IntArray)     = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: LongArray)    = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: CharArray)    = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: FloatArray)   = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: DoubleArray)  = quickSort(array, 0, array.size - 1)
-internal fun sortArray(array: BooleanArray) = quickSort(array, 0, array.size - 1)
+internal fun sortArray(array: ByteArray, fromIndex: Int, toIndex: Int)    = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: ShortArray, fromIndex: Int, toIndex: Int)   = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: IntArray, fromIndex: Int, toIndex: Int)     = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: LongArray, fromIndex: Int, toIndex: Int)    = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: CharArray, fromIndex: Int, toIndex: Int)    = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: FloatArray, fromIndex: Int, toIndex: Int)   = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: DoubleArray, fromIndex: Int, toIndex: Int)  = quickSort(array, fromIndex, toIndex - 1)
+internal fun sortArray(array: BooleanArray, fromIndex: Int, toIndex: Int) = quickSort(array, fromIndex, toIndex - 1)
