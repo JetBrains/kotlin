@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -13,7 +14,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -66,7 +69,11 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
         if (annotationEntry == null || annotationEntry.valueArguments.isEmpty()) {
             annotationEntry?.delete()
             val whiteSpaceText = if (containingDeclaration is KtPropertyAccessor) " " else "\n"
-            containingDeclaration.addAnnotation(KOTLIN_THROWS_ANNOTATION_FQ_NAME, annotationArgumentText, whiteSpaceText)
+            val annotationFqName = KOTLIN_THROWS_ANNOTATION_FQ_NAME.takeIf {
+                element.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+            } ?: JVM_THROWS_ANNOTATION_FQ_NAME
+
+            containingDeclaration.addAnnotation(annotationFqName, annotationArgumentText, whiteSpaceText)
         } else {
             val factory = KtPsiFactory(element)
             val argument = annotationEntry.valueArguments.firstOrNull()
@@ -110,7 +117,8 @@ private fun KtDeclaration.findThrowsAnnotation(context: BindingContext): KtAnnot
     val annotationEntries = this.annotationEntries + (parent as? KtProperty)?.annotationEntries.orEmpty()
     return annotationEntries.find {
         val typeReference = it.typeReference ?: return@find false
-        context[BindingContext.TYPE, typeReference]?.constructor?.declarationDescriptor?.fqNameSafe == JVM_THROWS_ANNOTATION_FQ_NAME
+        val fqName = context[BindingContext.TYPE, typeReference]?.fqName ?: return@find false
+        fqName == KOTLIN_THROWS_ANNOTATION_FQ_NAME || fqName == JVM_THROWS_ANNOTATION_FQ_NAME
     }
 }
 
