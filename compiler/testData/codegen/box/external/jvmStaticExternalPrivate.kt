@@ -21,7 +21,7 @@ fun box(): String {
         return "Link error expected"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "C.foo()V") return "Fail 1: " + e.message
+        if (e.message != "C.foo()V" && e.message != "'void C.foo()'") return "Fail 1: " + e.message
     }
 
     return "OK"
