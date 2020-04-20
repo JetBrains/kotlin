@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,8 @@ import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -21,11 +23,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.topRealPath
@@ -45,6 +47,26 @@ internal class KotlinCompilationNpmResolver(
     val target get() = compilation.target
     val project get() = target.project
     val packageJsonTaskHolder = KotlinPackageJsonTask.create(compilation)
+
+    val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> =
+        project.registerTask<PublicPackageJsonTask>(
+            npmProject.publicPackageJsonTaskName,
+            listOf(nodeJs, npmProject)
+        ) {
+            it.skipOnEmptyNpmDependencies = true
+            it.dependsOn(nodeJs.npmInstallTask)
+            it.dependsOn(packageJsonTaskHolder)
+        }.also { packageJsonTask ->
+            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                project.tasks
+                    .withType(Zip::class.java)
+                    .named(npmProject.target.artifactsTaskName)
+                    .configure {
+                        it.from(packageJsonTask)
+                    }
+            }
+        }
+
     val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins.flatMap {
         it.createCompilationResolverPlugins(this)
     }
@@ -301,12 +323,10 @@ internal class KotlinCompilationNpmResolver(
             }
                 .filterNotNull()
 
-            val packageJson = PackageJson(
-                npmProject.name,
-                fixSemver(project.version.toString())
+            val packageJson = packageJson(
+                npmProject,
+                externalNpmDependencies
             )
-
-            packageJson.main = npmProject.main
 
             compositeDependencies.forEach {
                 packageJson.dependencies[it.name] = it.version
@@ -318,23 +338,6 @@ internal class KotlinCompilationNpmResolver(
 
             importedExternalGradleDependencies.forEach {
                 packageJson.dependencies[it.name] = fileVersion(it.path)
-            }
-
-            val dependencies = mutableMapOf<String, String>()
-
-            externalNpmDependencies.forEach {
-                val module = it.key
-                dependencies[it.key] = chooseVersion(dependencies[module], it.version)
-            }
-
-            externalNpmDependencies.forEach {
-                val dependency = dependencies.getValue(it.key)
-                when (it.scope) {
-                    NORMAL -> packageJson.dependencies[it.key] = dependency
-                    DEV -> packageJson.devDependencies[it.key] = dependency
-                    OPTIONAL -> packageJson.optionalDependencies[it.key] = dependency
-                    PEER -> packageJson.peerDependencies[it.key] = dependency
-                }
             }
 
             compilation.packageJsonHandlers.forEach {
@@ -365,16 +368,6 @@ internal class KotlinCompilationNpmResolver(
                 ?.map { packages.resolve(it) }
                 ?.map { it.resolve(PACKAGE_JSON) }
                 ?: emptyList()
-        }
-
-        // TODO: real versions conflict resolution
-        private fun chooseVersion(oldVersion: String?, newVersion: String): String {
-            // https://yarnpkg.com/lang/en/docs/dependency-versions/#toc-x-ranges
-            if (oldVersion == "*") {
-                return newVersion
-            }
-
-            return oldVersion ?: newVersion
         }
     }
 }
