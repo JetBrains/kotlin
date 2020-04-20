@@ -28,7 +28,7 @@ fun createTopDownAnalyzerProviderForKonan(
         initContainer: StorageComponentContainer.() -> Unit
 ): ComponentProvider {
     return createContainer("TopDownAnalyzerForKonan", NativePlatformAnalyzerServices) {
-        configureModule(moduleContext, NativePlatforms.defaultNativePlatform, NativePlatformAnalyzerServices, bindingTrace, languageVersionSettings)
+        configureModule(moduleContext, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices, bindingTrace, languageVersionSettings)
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()
