@@ -33,4 +33,8 @@ FILE: lambda.kt
         }
 
         lval ss: R|kotlin/String| = R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+        lval empty: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
+            ^ Unit
+        }
+
     }

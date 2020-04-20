@@ -13,5 +13,7 @@ fun main() {
 
     val f = { "OK" }
     val ss = f.invoke()
+
+    val empty: () -> Unit = { }
 }
 

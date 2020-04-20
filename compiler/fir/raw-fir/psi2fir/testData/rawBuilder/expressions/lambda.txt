@@ -67,7 +67,7 @@ FILE: lambda.kt
         )
     }
     public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
-        Unit
+        ^ Unit
     }
 
         public? get(): <implicit>

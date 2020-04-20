@@ -130,8 +130,9 @@ class ExpressionsConverter(
 
         val labelName = lambdaExpression.getLabelName() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.asString()
         val target = FirFunctionTarget(labelName = labelName, isLambda = true)
+        val expressionSource = lambdaExpression.toFirSourceElement()
         return buildAnonymousFunction {
-            source = lambdaExpression.toFirSourceElement()
+            source = expressionSource
             session = baseSession
             returnTypeRef = implicitType
             receiverTypeRef = implicitType
@@ -171,7 +172,13 @@ class ExpressionsConverter(
             body = if (block != null) {
                 declarationsConverter.convertBlockExpressionWithoutBuilding(block!!).apply {
                     if (statements.isEmpty()) {
-                        statements.add(buildUnitExpression())
+                        statements.add(
+                            buildReturnExpression {
+                                source = expressionSource
+                                this.target = target
+                                result = buildUnitExpression { source = expressionSource }
+                            }
+                        )
                     }
                     if (destructuringBlock is FirBlock) {
                         for ((index, statement) in destructuringBlock.statements.withIndex()) {

@@ -28,7 +28,7 @@ FILE: lambdaInLambda.kt
             this@R|special/anonymous|.R|/insert|<R|StringBuilder|, R|KDocTemplate|>(R|/KDocTemplate.KDocTemplate|(), <L> = insert@fun R|KDocTemplate|.<anonymous>(): R|kotlin/Unit| {
                 this@R|special/anonymous|.R|/KDocTemplate.definition|(<L> = definition@fun R|StringBuilder|.<anonymous>(): R|kotlin/Unit| {
                     ^ R|<local>/ordinal|?.R|kotlin/let|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-                        Unit
+                        ^@let Unit
                     }
                     )
                 }

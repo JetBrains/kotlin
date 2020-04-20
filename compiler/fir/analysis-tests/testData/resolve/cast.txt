@@ -9,7 +9,7 @@ FILE: cast.kt
 
         public get(): R|() -> kotlin/Any|
     public final val g: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
-        Unit
+        ^ Unit
     }
 
         public get(): R|() -> kotlin/Unit|

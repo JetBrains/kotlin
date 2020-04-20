@@ -7,70 +7,70 @@ FILE: lambda.kt
     }
     public final fun test(): R|kotlin/Unit| {
         R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@foo Unit
         }
         )
         R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@foo Unit
         }
         )
         R|/foo|(foo@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@foo Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(1), <L> = foo@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@foo Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(f = foo@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@foo Unit
         }
         , <L> = foo@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@foo Unit
         }
         )
         R|/bar|(Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@bar Unit
         }
         )
         R|/bar|(x = Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@bar Unit
         }
         )
         R|/bar|(Int(1), bar@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@bar Unit
         }
         )
         R|/bar|(x = Int(1), f = bar@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@bar Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(<L> = bar@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@bar Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(bar@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@bar Unit
         }
         )
         R|/baz|(other = Boolean(false), f = baz@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@baz Unit
         }
         )
         R|/baz|(baz@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@baz Unit
         }
         , Boolean(false))
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@baz Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@baz Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(other = Boolean(false), <L> = baz@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@baz Unit
         }
         )
     }
