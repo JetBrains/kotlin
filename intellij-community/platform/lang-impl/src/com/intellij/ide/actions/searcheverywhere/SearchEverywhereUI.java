@@ -44,8 +44,8 @@ import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.components.fields.ExtendableTextField;
 import com.intellij.ui.popup.PopupUpdateProcessor;
 import com.intellij.ui.scale.JBUIScale;
@@ -234,7 +234,7 @@ public final class SearchEverywhereUI extends BigPopupUI implements DataProvider
       setEverywhereAuto(false);
     }
 
-    rebuildSearchFieldExtensions();
+    updateSearchFieldAdvertisement();
 
     if (prevTabIsAll != nextTabIsAll) {
       //reset cell renderer to show/hide group titles in "All" tab
@@ -247,46 +247,30 @@ public final class SearchEverywhereUI extends BigPopupUI implements DataProvider
     rebuildList();
   }
 
-  private void rebuildSearchFieldExtensions() {
-    if (mySearchField != null) {
-      Boolean commandsSupported = mySelectedTab.getContributor()
-        .map(contributor -> !contributor.getSupportedCommands().isEmpty())
-        .orElse(true);
-      if (commandsSupported) {
-        mySearchField.addExtension(hintExtension);
-      }
-      else {
-        mySearchField.removeExtension(hintExtension);
-      }
-
-      mySearchField.removeExtension(myAdvertisement);
-      if (!commandsSupported) {
-        mySelectedTab.getContributor().map(c -> c.getAdvertisement()).
-          ifPresent(s -> mySearchField.addExtension(myAdvertisement.withText(s)));
-      }
-    }
+  private final JLabel myAdvertisementLabel = new JBLabel();
+  {
+    myAdvertisementLabel.setForeground(JBUI.CurrentTheme.BigPopup.searchFieldGrayForeground());
+    myAdvertisementLabel.setFont(RelativeFont.SMALL.derive(getFont()));
   }
+  private void updateSearchFieldAdvertisement() {
+    if (mySearchField == null) return;
 
-  private final MyAdvertisement myAdvertisement = new MyAdvertisement();
+    Boolean commandsSupported = mySelectedTab.getContributor()
+      .map(contributor -> !contributor.getSupportedCommands().isEmpty())
+      .orElse(true);
 
-
-  private final class MyAdvertisement implements ExtendableTextComponent.Extension {
-    private final TextIcon icon;
-    String message = "";
-
-    {
-      icon = new TextIcon(message, JBUI.CurrentTheme.BigPopup.searchFieldGrayForeground(), null, 0);
-      icon.setFont(RelativeFont.SMALL.derive(getFont()));
+    String advertisementText;
+    if (commandsSupported) {
+      advertisementText = IdeBundle.message("searcheverywhere.textfield.hint", SearchTopHitProvider.getTopHitAccelerator());
+    }
+    else {
+      advertisementText = mySelectedTab.getContributor().map(c -> c.getAdvertisement()).orElse(null);
     }
 
-    MyAdvertisement withText(@NotNull String text) {
-      icon.setText(text);
-      return this;
-    }
-
-    @Override
-    public Icon getIcon(boolean hovered) {
-      return icon;
+    mySearchField.remove(myAdvertisementLabel);
+    if (advertisementText != null) {
+      myAdvertisementLabel.setText(advertisementText);
+      mySearchField.add(myAdvertisementLabel, BorderLayout.EAST);
     }
   }
 
@@ -435,6 +419,7 @@ public final class SearchEverywhereUI extends BigPopupUI implements DataProvider
       }
     };
     res.putClientProperty(SEARCH_EVERYWHERE_SEARCH_FILED_KEY, true);
+    res.setLayout(new BorderLayout());
     return res;
   }
 
@@ -733,7 +718,7 @@ public final class SearchEverywhereUI extends BigPopupUI implements DataProvider
       @Override
       public void exitDumbMode() {
         ApplicationManager.getApplication().invokeLater(() -> {
-          rebuildSearchFieldExtensions();
+          updateSearchFieldAdvertisement();
           rebuildList();
         });
       }
@@ -1714,22 +1699,6 @@ public final class SearchEverywhereUI extends BigPopupUI implements DataProvider
     @Override
     public Object getDataForItem(@NotNull Object element, @NotNull String dataId) {
       return null;
-    }
-  };
-
-  private final ExtendableTextField.Extension hintExtension = new ExtendableTextField.Extension() {
-    private final TextIcon icon;
-
-    {
-      String message = IdeBundle.message("searcheverywhere.textfield.hint", SearchTopHitProvider.getTopHitAccelerator());
-      Color color = JBUI.CurrentTheme.BigPopup.searchFieldGrayForeground();
-      icon = new TextIcon(message, color, null, 0);
-      icon.setFont(RelativeFont.SMALL.derive(getFont()));
-    }
-
-    @Override
-    public Icon getIcon(boolean hovered) {
-      return icon;
     }
   };
 }
