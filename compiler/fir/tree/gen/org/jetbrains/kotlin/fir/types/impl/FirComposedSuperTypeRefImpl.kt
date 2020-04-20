@@ -21,8 +21,6 @@ internal class FirComposedSuperTypeRefImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override val superTypeRefs: MutableList<FirResolvedTypeRef>,
 ) : FirComposedSuperTypeRef() {
-    override val isSuspend: Boolean = false
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         superTypeRefs.forEach { it.accept(visitor, data) }

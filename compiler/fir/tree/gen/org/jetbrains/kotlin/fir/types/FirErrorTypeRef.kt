@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val isSuspend: Boolean
     abstract override val type: ConeKotlinType
     abstract override val delegatedTypeRef: FirTypeRef?
+    abstract override val isSuspend: Boolean
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorTypeRef(this, data)

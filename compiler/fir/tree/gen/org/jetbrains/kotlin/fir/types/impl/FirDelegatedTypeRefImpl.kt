@@ -23,7 +23,6 @@ internal class FirDelegatedTypeRefImpl(
 ) : FirDelegatedTypeRef() {
     override val source: FirSourceElement? get() = typeRef.source
     override val annotations: List<FirAnnotationCall> get() = typeRef.annotations
-    override val isSuspend: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate?.accept(visitor, data)

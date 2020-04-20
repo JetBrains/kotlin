@@ -20,8 +20,6 @@ internal class FirDynamicTypeRefImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {
-    override val isSuspend: Boolean = false
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }

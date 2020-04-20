@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirComposedSuperTypeRef : FirPureAbstractElement(), FirTypeRef {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val isSuspend: Boolean
     abstract val superTypeRefs: List<FirResolvedTypeRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComposedSuperTypeRef(this, data)

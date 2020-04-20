@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirUserTypeRef : FirPureAbstractElement(), FirTypeRefWithNullability {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val isSuspend: Boolean
     abstract override val isMarkedNullable: Boolean
     abstract val qualifier: List<FirQualifierPart>
 

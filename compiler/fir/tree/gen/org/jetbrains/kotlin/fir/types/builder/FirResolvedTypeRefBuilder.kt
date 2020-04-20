@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    var isSuspend: Boolean = false
     lateinit var type: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null
+    var isSuspend: Boolean = false
 
     override fun build(): FirResolvedTypeRef {
         return FirResolvedTypeRefImpl(
             source,
             annotations,
-            isSuspend,
             type,
             delegatedTypeRef,
+            isSuspend,
         )
     }
 

@@ -416,7 +416,9 @@ class Fir2IrDeclarationStorage(
         val name = simpleFunction?.name
             ?: if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>")
         val visibility = simpleFunction?.visibility ?: Visibilities.LOCAL
-        val isSuspend = if (isLambda) (function as FirAnonymousFunction).typeRef.isSuspend else simpleFunction?.isSuspend == true
+        val isSuspend =
+            if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.isSuspend == true
+            else simpleFunction?.isSuspend == true
         val created = function.convertWithOffsets { startOffset, endOffset ->
             enterScope(descriptor)
             val result = symbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirDelegatedTypeRef : FirPureAbstractElement(), FirTypeRef {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val isSuspend: Boolean
     abstract val delegate: FirExpression?
     abstract val typeRef: FirTypeRef
 

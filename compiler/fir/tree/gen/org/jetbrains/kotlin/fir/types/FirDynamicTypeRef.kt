@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirDynamicTypeRef : FirPureAbstractElement(), FirTypeRefWithNullability {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val isSuspend: Boolean
     abstract override val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDynamicTypeRef(this, data)

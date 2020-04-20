@@ -530,12 +530,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeRef.configure {
             +annotations
-            +booleanField("isSuspend")
         }
 
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
             +field("delegatedTypeRef", typeRef, nullable = true)
+            +booleanField("isSuspend")
         }
 
         delegatedTypeRef.configure {
@@ -555,6 +555,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("receiverTypeRef", typeRef, nullable = true)
             +valueParameters
             +returnTypeRef
+            +booleanField("isSuspend")
         }
 
         composedSuperTypeRef.configure {

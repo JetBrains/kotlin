@@ -22,8 +22,7 @@ sealed class FirImplicitBuiltinTypeRef(
     override val source: FirSourceElement?,
     val id: ClassId,
     typeArguments: Array<out ConeTypeProjection> = emptyArray(),
-    isNullable: Boolean = false,
-    override val isSuspend: Boolean = false
+    isNullable: Boolean = false
 ) : FirResolvedTypeRef() {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
@@ -32,6 +31,9 @@ sealed class FirImplicitBuiltinTypeRef(
 
     override val delegatedTypeRef: FirTypeRef?
         get() = null
+
+    override val isSuspend: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

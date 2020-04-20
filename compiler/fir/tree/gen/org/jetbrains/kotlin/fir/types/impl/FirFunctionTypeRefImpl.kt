@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirFunctionTypeRefImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
-    override val isSuspend: Boolean,
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var returnTypeRef: FirTypeRef,
+    override val isSuspend: Boolean,
 ) : FirPureAbstractElement(), FirFunctionTypeRef {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

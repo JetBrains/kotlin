@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirTypeRef : FirAnnotationContainer {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
-    val isSuspend: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeRef(this, data)
 

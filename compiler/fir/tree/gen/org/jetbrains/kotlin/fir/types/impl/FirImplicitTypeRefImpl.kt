@@ -19,7 +19,6 @@ internal class FirImplicitTypeRefImpl(
     override val source: FirSourceElement?,
 ) : FirImplicitTypeRef() {
     override val annotations: List<FirAnnotationCall> get() = emptyList()
-    override val isSuspend: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
     }
