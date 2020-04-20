@@ -118,7 +118,8 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
                 override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility =
                     if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
                         declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) {
+                        declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+                    ) {
                         scopedVisibility(inInlineFunctionScope)
                     } else {
                         declaration.visibility
@@ -255,12 +256,17 @@ private val syntheticAccessorPhase = makeIrFilePhase(
     prerequisite = setOf(objectClassPhase, staticDefaultFunctionPhase, interfacePhase)
 )
 
-private val tailrecPhase = makeIrFilePhase<JvmBackendContext>(
+private val tailrecPhase = makeIrFilePhase(
     ::JvmTailrecLowering,
     name = "Tailrec",
     description = "Handle tailrec calls"
 )
 
+private val kotlinNothingValueExceptionPhase = makeIrFilePhase(
+    ::KotlinNothingValueExceptionLowering,
+    name = "KotlinNothingValueException",
+    description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
+)
 
 @Suppress("Reformat")
 private val jvmFilePhases =
@@ -353,10 +359,11 @@ private val jvmFilePhases =
         jvmArgumentNullabilityAssertions then
         toArrayPhase then
         jvmOptimizationLoweringPhase then
-                ifNullExpressionsFusionPhase then
+        ifNullExpressionsFusionPhase then
         additionalClassAnnotationPhase then
         typeOperatorLowering then
         replaceKFunctionInvokeWithFunctionInvokePhase then
+        kotlinNothingValueExceptionPhase then
 
         checkLocalNamesWithOldBackendPhase then
 

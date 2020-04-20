@@ -9,6 +9,10 @@ package kotlin
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
     throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
 
+@PublishedApi
+internal fun throwKotlinNothingValueException(): Nothing =
+    throw KotlinNothingValueException()
+
 internal fun noWhenBranchMatchedException(): Nothing = throw NoWhenBranchMatchedException()
 
 

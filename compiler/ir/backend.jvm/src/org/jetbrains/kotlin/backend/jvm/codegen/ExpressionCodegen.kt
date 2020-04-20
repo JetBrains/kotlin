@@ -451,8 +451,6 @@ class ExpressionCodegen(
 
         return when {
             expression.type.isNothing() -> {
-                mv.aconst(null)
-                mv.athrow()
                 unitValue
             }
             expression is IrConstructorCall ->

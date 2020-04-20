@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JS, JS_IR, JVM_IR, NATIVE
+// IGNORE_BACKEND: JS, NATIVE
 
 fun <T> something(): T = Any() as T
 

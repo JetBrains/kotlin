@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("PropertyName")
+
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -76,11 +77,12 @@ class JvmSymbols(
     override val ThrowTypeCastException: IrFunctionSymbol =
         typeCastExceptionClass.constructors.single()
 
-    private val unsupportedOperationExceptionClass: IrClassSymbol = createClass(FqName("java.lang.UnsupportedOperationException")) { klass ->
-        klass.addConstructor().apply {
-            addValueParameter("message", irBuiltIns.stringType.makeNullable())
+    private val unsupportedOperationExceptionClass: IrClassSymbol =
+        createClass(FqName("java.lang.UnsupportedOperationException")) { klass ->
+            klass.addConstructor().apply {
+                addValueParameter("message", irBuiltIns.stringType.makeNullable())
+            }
         }
-    }
 
     val ThrowUnsupportOperationExceptionClass: IrFunctionSymbol =
         unsupportedOperationExceptionClass.constructors.single()
@@ -679,6 +681,15 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
+
+    override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol =
+        buildFun {
+            name = Name.identifier("ThrowKotlinNothingValueException")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+            returnType = irBuiltIns.nothingType
+        }.apply {
+            parent = kotlinJvmInternalPackage
+        }.symbol
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =

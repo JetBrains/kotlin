@@ -159,6 +159,12 @@ private val lateinitUsageLoweringPhase = makeBodyLoweringPhase(
     description = "Insert checks for lateinit field references"
 )
 
+private val kotlinNothingValueExceptionPhase = makeBodyLoweringPhase(
+    ::KotlinNothingValueExceptionLowering,
+    name = "KotlinNothingValueException",
+    description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
+)
+
 private val stripTypeAliasDeclarationsPhase = makeDeclarationTransformerPhase(
     { StripTypeAliasDeclarationsLowering() },
     name = "StripTypeAliasDeclarations",
@@ -638,6 +644,7 @@ val loweringList = listOf<Lowering>(
     annotationConstructorLowering,
     initializersLoweringPhase,
     initializersCleanupLoweringPhase,
+    kotlinNothingValueExceptionPhase,
     // Common prefix ends
     enumEntryInstancesLoweringPhase,
     enumEntryInstancesBodyLoweringPhase,

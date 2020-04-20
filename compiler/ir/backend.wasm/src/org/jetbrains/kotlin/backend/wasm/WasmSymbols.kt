@@ -34,6 +34,8 @@ class WasmSymbols(
         get() = TODO()
     override val ThrowUninitializedPropertyAccessException
         get() = TODO()
+    override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol
+        get() = TODO()
     override val defaultConstructorMarker
         get() = TODO()
     override val stringBuilder
