@@ -255,6 +255,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     currentScope?.scope?.scopeOwnerSymbol ?: irClass.symbol, expression.startOffset, expression.endOffset
                 )
                     .irBlock {
+                        // TODO: Move this to the enclosing class, right now the parent field is wrong!
                         +referenceClass
                         +irCall(referenceClass.constructors.single()).apply {
                             var index = 0
