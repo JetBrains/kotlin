@@ -12,7 +12,7 @@ CoroutineNameIdState(name=coroutine, id=-1, state=UNKNOWN, dispatcher=null)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	hasNext:140, kotlin.sequences.SequenceBuilderIterator
 		(step, this)
-	hasNext:374, kotlin.sequences.TakeSequence$iterator$1
+	hasNext:406, kotlin.sequences.TakeSequence$iterator$1
 		(this)
 	toCollection:722, kotlin.sequences.SequencesKt___SequencesKt
 		($this$toCollection, destination)
@@ -22,8 +22,6 @@ CoroutineNameIdState(name=coroutine, id=-1, state=UNKNOWN, dispatcher=null)
 		($this$toList)
 	main:5, continuation.SuspendLambdaKt
 		(a)
-	main:-1, continuation.SuspendLambdaKt
-		()
 Disconnected from the target VM
 
 Process finished with exit code 0

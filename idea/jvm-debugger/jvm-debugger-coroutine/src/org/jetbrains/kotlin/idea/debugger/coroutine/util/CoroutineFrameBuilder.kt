@@ -10,18 +10,21 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
+import com.intellij.util.containers.addIfNotNull
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder
 import org.jetbrains.kotlin.idea.debugger.safeLineNumber
 import org.jetbrains.kotlin.idea.debugger.safeLocation
 import org.jetbrains.kotlin.idea.debugger.safeMethod
+import java.lang.Integer.min
 
 
 class CoroutineFrameBuilder {
 
     companion object {
         val log by logger
+        const val PRE_FETCH_FRAME_COUNT = 5
 
         fun build(coroutine: CoroutineInfoData, suspendContext: SuspendContextImpl): DoubleFrameList? =
             when {
@@ -39,12 +42,12 @@ class CoroutineFrameBuilder {
             for (runningStackFrameProxy in realFrames) {
                 val preflightStackFrame = coroutineExitFrame(runningStackFrameProxy, suspendContext)
                 if (preflightStackFrame != null) {
-                    coroutineStackFrameList.add(buildRealStackFrameItem(preflightStackFrame.stackFrameProxy,))
+                    coroutineStackFrameList.addIfNotNull(buildRealStackFrameItem(preflightStackFrame.stackFrameProxy))
                     val doubleFrameList = build(preflightStackFrame, suspendContext)
                     coroutineStackFrameList.addAll(doubleFrameList.stackTrace)
                     return DoubleFrameList(coroutineStackFrameList, doubleFrameList.creationStackTrace)
                 } else {
-                    coroutineStackFrameList.add(buildRealStackFrameItem(runningStackFrameProxy,))
+                    coroutineStackFrameList.addIfNotNull(buildRealStackFrameItem(runningStackFrameProxy))
                 }
             }
             return DoubleFrameList(coroutineStackFrameList, emptyList())
@@ -59,7 +62,8 @@ class CoroutineFrameBuilder {
             stackFrames.addAll(preflightFrame.restoredStackTrace())
 
             // rest of the stack
-            stackFrames.addAll(preflightFrame.threadPreCoroutineFrames.drop(1).mapIndexedNotNull { index, stackFrameProxyImpl ->
+            val framesLeft = preflightFrame.threadPreCoroutineFrames.drop(1)
+            stackFrames.addAll(framesLeft.mapIndexedNotNull { index, stackFrameProxyImpl ->
                 suspendContext.invokeInManagerThread { buildRealStackFrameItem(stackFrameProxyImpl) }
             })
 
@@ -73,9 +77,12 @@ class CoroutineFrameBuilder {
 
         private fun buildRealStackFrameItem(
             frame: StackFrameProxyImpl
-        ): RunningCoroutineStackFrameItem {
+        ): RunningCoroutineStackFrameItem? {
             val location = frame.location()
-            return RunningCoroutineStackFrameItem(frame, location)
+            if (!location.safeCoroutineExitPointLineNumber())
+                return RunningCoroutineStackFrameItem(frame, location)
+            else
+                return null
         }
 
         /**
@@ -113,10 +120,7 @@ class CoroutineFrameBuilder {
             if (mode.isSuspendMethodParameter()) {
                 if (theFollowingFrames.isNotEmpty()) {
                     // have to check next frame if that's invokeSuspend:-1 before proceed, otherwise skip
-                    val theFollowingFrame = theFollowingFrames.first()
-                    val theFollowingMode = theFollowingFrame.location().isPreFlight()
-                    if (theFollowingMode != SuspendExitMode.SUSPEND_METHOD)
-                        return null // break, that's not the exit, perhaps the following one?
+                    val invokeSuspendFrame = lookForTheFollowingFrame(theFollowingFrames) ?: return null
                 } else
                     return null
             }
@@ -131,6 +135,16 @@ class CoroutineFrameBuilder {
 
                 val coroutineInfo = ContinuationHolder(context).extractCoroutineInfoData(continuation) ?: return null
                 return preflight(frame, theFollowingFrames, coroutineInfo, mode)
+            }
+            return null
+        }
+
+        private fun lookForTheFollowingFrame(theFollowingFrames: List<StackFrameProxyImpl>): StackFrameProxyImpl? {
+            for (i in 0 until min(PRE_FETCH_FRAME_COUNT, theFollowingFrames.size)) { // pre-scan PRE_FETCH_FRAME_COUNT frames
+                val nextFrame = theFollowingFrames.get(i)
+                if (nextFrame.location().isPreFlight() == SuspendExitMode.SUSPEND_METHOD) {
+                    return nextFrame
+                }
             }
             return null
         }

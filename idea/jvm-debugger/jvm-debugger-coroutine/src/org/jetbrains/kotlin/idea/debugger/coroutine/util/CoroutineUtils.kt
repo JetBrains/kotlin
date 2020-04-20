@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.util
 
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.openapi.project.Project
@@ -26,6 +27,9 @@ const val CREATION_STACK_TRACE_SEPARATOR = "\b\b\b" // the "\b\b\b" is used as c
 fun Method.isInvokeSuspend(): Boolean =
     name() == "invokeSuspend" && signature() == "(Ljava/lang/Object;)Ljava/lang/Object;"
 
+fun Method.isInvoke(): Boolean =
+    name() == "invoke" && signature().contains("Ljava/lang/Object;)Ljava/lang/Object;")
+
 fun Method.isContinuation() =
     isInvokeSuspend() && declaringType().isContinuation() /* Perhaps need to check for "Lkotlin/coroutines/Continuation;)" in signature() ? */
 
@@ -44,10 +48,13 @@ fun Location.isPreFlight(): SuspendExitMode {
         return SuspendExitMode.SUSPEND_LAMBDA
     else if (method.hasContinuationParameter())
         return SuspendExitMode.SUSPEND_METHOD_PARAMETER
-    else if (method.isInvokeSuspend() && safeLineNumber() == -1)
+    else if ((method.isInvokeSuspend() || method.isInvoke()) && safeCoroutineExitPointLineNumber())
         return SuspendExitMode.SUSPEND_METHOD
     return SuspendExitMode.NONE
 }
+
+fun Location.safeCoroutineExitPointLineNumber() =
+    wrapIllegalArgumentException { DebuggerUtilsEx.getLineNumber(this, false) } ?: -2 == -1
 
 fun ReferenceType.isContinuation() =
     isBaseContinuationImpl() || isSubtype("kotlin.coroutines.Continuation")
