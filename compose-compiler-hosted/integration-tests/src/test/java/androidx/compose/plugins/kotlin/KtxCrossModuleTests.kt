@@ -38,6 +38,52 @@ import java.net.URLClassLoader
 class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
+    fun testAccessibilityBridgeGeneration(): Unit = ensureSetup {
+        compile(
+            mapOf("library module" to mapOf(
+                    "x/I.kt" to """
+                      package x
+
+                      import androidx.compose.Composable
+
+                      @Composable fun bar(arg: @Composable () -> Unit) {
+                          arg()
+                      }
+                  """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/User.kt" to """
+                      package y
+
+                      import x.bar
+                      import androidx.compose.Composable
+
+                      @Composable fun baz() {
+                          bar {
+                            foo()
+                          }
+                      }
+                      @Composable private fun foo() { }
+                  """.trimIndent()
+                )
+            )
+        ) {
+            // Check that there is only one method declaration for access$foo.
+            // We used to introduce more symbols for the same function leading
+            // to multiple identical methods in the output.
+            // In the dump, $ is mapped to %.
+            val declaration = "synthetic access%foo"
+            val occurrences = it.windowed(declaration.length) { candidate ->
+                if (candidate.equals(declaration))
+                    1
+                else
+                    0
+            }.sum()
+            assert(occurrences == 1)
+        }
+    }
+
+    @Test
     fun testInlineClassCrossModule(): Unit = ensureSetup {
         compile(
             mapOf(
