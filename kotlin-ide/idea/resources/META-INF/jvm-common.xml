@@ -1,10 +1,4 @@
 <idea-plugin>
-    <project-components>
-        <component>
-            <implementation-class>org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider</implementation-class>
-        </component>
-    </project-components>
-
     <actions>
         <!-- Kotlin Console REPL-->
         <action id="KotlinConsoleREPL" class="org.jetbrains.kotlin.console.actions.RunKotlinConsoleAction"

@@ -17,23 +17,21 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.KotlinFileType
+import com.intellij.openapi.startup.StartupActivity
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
 
-class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
+// BUNCH: 192
+class ScratchFileModuleInfoProvider : StartupActivity {
     private val LOG = Logger.getInstance(this.javaClass)
 
-    override fun projectOpened() {
+    override fun runActivity(project: Project) {
         project.messageBus.connect().subscribe(ScratchFileListener.TOPIC, object : ScratchFileListener {
             override fun fileCreated(scratchFile: ScratchFile) {
                 val ktFile = scratchFile.getPsiFile() as? KtFile ?: return
