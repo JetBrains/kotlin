@@ -1588,19 +1588,34 @@ public class FunctionCodegen {
                             @NotNull MethodContext context,
                             @NotNull MemberCodegen<?> parentCodegen
                     ) {
-                        Method delegateToMethod = typeMapper.mapToCallableMethod(delegatedTo, /* superCall = */ false).getAsmMethod();
                         Method delegateMethod = typeMapper.mapAsmMethod(delegateFunction);
-
                         Type[] argTypes = delegateMethod.getArgumentTypes();
+                        List<KotlinType> argKotlinTypes = getKotlinTypesForJvmParameters(delegateFunction);
+
+                        Method delegateToMethod = typeMapper.mapToCallableMethod(delegatedTo, /* superCall = */ false).getAsmMethod();
                         Type[] originalArgTypes = delegateToMethod.getArgumentTypes();
+                        List<KotlinType> originalArgKotlinTypes = getKotlinTypesForJvmParameters(delegatedTo);
 
                         InstructionAdapter iv = new InstructionAdapter(mv);
                         iv.load(0, OBJECT_TYPE);
                         field.put(iv);
-                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-                            //noinspection AssignmentToForLoopParameter
-                            reg += argTypes[i].getSize();
+
+                        // When delegating to inline class, we invoke static implementation method
+                        // that takes inline class underlying value as 1st argument.
+                        int toArgsShift = toClass.isInline() ? 1 : 0;
+
+                        int reg = 1;
+                        for (int i = 0; i < argTypes.length; ++i) {
+                            Type argType = argTypes[i];
+                            KotlinType argKotlinType = argKotlinTypes.get(i);
+
+                            Type toArgType = originalArgTypes[i + toArgsShift];
+                            KotlinType toArgKotlinType = originalArgKotlinTypes.get(i);
+
+                            StackValue.local(reg, argType, argKotlinType)
+                                    .put(toArgType, toArgKotlinType, iv);
+
+                            reg += argType.getSize();
                         }
 
                         String internalName = typeMapper.mapClass(toClass).getInternalName();
@@ -1614,6 +1629,7 @@ public class FunctionCodegen {
                             iv.invokevirtual(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor(), false);
                         }
 
+                        //noinspection ConstantConditions
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
                                 state,
                                 StackValue.onStack(delegateToMethod.getReturnType(), delegatedTo.getReturnType()),
@@ -1637,6 +1653,28 @@ public class FunctionCodegen {
                     @Override
                     public boolean skipGenericSignature() {
                         return skipGenericSignature;
+                    }
+
+                    private List<KotlinType> getKotlinTypesForJvmParameters(@NotNull FunctionDescriptor functionDescriptor) {
+                        List<KotlinType> kotlinTypes = new ArrayList<>();
+
+                        ReceiverParameterDescriptor extensionReceiver = functionDescriptor.getExtensionReceiverParameter();
+                        if (extensionReceiver != null) {
+                            kotlinTypes.add(extensionReceiver.getType());
+                        }
+
+                        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
+                            kotlinTypes.add(parameter.getType());
+                        }
+
+                        if (functionDescriptor.isSuspend()) {
+                            // Suspend functions take continuation type as last argument.
+                            // It's not an inline class, so we don't really care about exact KotlinType here.
+                            // Just make sure argument types are counted properly.
+                            kotlinTypes.add(null);
+                        }
+
+                        return kotlinTypes;
                     }
                 }
         );
