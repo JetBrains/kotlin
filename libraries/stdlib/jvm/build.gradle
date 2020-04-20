@@ -58,12 +58,11 @@ dependencies {
 
 jar {
     dependsOn(configurations.builtins)
-    manifestAttributes(manifest, project, 'Main' /*true*/)
+    manifestAttributes(manifest, project, 'Main', true)
     from {
         zipTree(configurations.builtins.singleFile)
     }
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
+    from sourceSets.java9.output
 }
 
 sourcesJar {
@@ -90,11 +89,7 @@ task modularJar(type: Jar) {
     manifestAttributes(manifest, project, 'Main', true)
     classifier = 'modular'
 
-    from zipTree(jar.outputs.files.singleFile).matching {
-        // Beware of Gradle problem: changing exclude spec doesn't affect Jar task up-to-dateness
-        exclude('kotlin/native/**')
-    }
-    from sourceSets.java9.output
+    from zipTree(jar.outputs.files.singleFile)
 }
 
 artifacts {
