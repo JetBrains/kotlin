@@ -29,6 +29,7 @@ import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor;
 import com.intellij.psi.impl.source.tree.TreeElement;
 import com.intellij.psi.util.PsiEditorUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CharTable;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ThrowableRunnable;
@@ -512,7 +513,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
    * </ol>
    * </pre>
    * <p/>
-   * This method inserts that dummy comment (fallback to identifier {@code xxx}, see {@link CodeStyleManagerImpl#createDummy(PsiFile)})
+   * This method inserts that dummy comment (fallback to identifier {@code xxx}, see {@link CodeStyleManagerImpl#createDummy(Project, Language)})
    * if necessary.
    * <p/>
 
@@ -548,18 +549,20 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       }
     }
 
+    Project project = file.getProject();
+    PsiElement injectedElement = InjectedLanguageManager.getInstance(project).findInjectedElementAt(file, offset);
+    Language language = injectedElement != null ? injectedElement.getLanguage() : PsiUtilCore.getLanguageAtOffset(file, offset);
+
     setSequentialProcessingAllowed(false);
-    String dummy = createDummy(file);
+    String dummy = createDummy(project, language);
     document.insertString(offset, dummy);
     return new TextRange(offset, offset + dummy.length());
   }
 
-  @NotNull
-  private static String createDummy(@NotNull PsiFile file) {
-    Language language = file.getLanguage();
+  private static @NotNull String createDummy(@NotNull Project project, @NotNull Language language) {
     PsiComment comment = null;
     try {
-      comment = PsiParserFacade.SERVICE.getInstance(file.getProject()).createLineOrBlockCommentFromText(language, "");
+      comment = PsiParserFacade.SERVICE.getInstance(project).createLineOrBlockCommentFromText(language, "");
     }
     catch (Throwable ignored) {
     }
