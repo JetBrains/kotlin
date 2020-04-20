@@ -333,16 +333,6 @@ fun IrBuilderWithScope.irConcat() =
     IrStringConcatenationImpl(startOffset, endOffset, context.irBuiltIns.stringType)
 
 
-fun IrBuilderWithScope.irSetField(receiver: IrExpression, irField: IrField, value: IrExpression): IrExpression =
-    IrSetFieldImpl(
-        startOffset,
-        endOffset,
-        irField.symbol,
-        receiver = receiver,
-        value = value,
-        type = context.irBuiltIns.unitType
-    )
-
 inline fun IrBuilderWithScope.irBlock(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
