@@ -74,8 +74,6 @@ fun compile(
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
 
-    symbolTable.lazyWrapper.stubGenerator = DeclarationStubGenerator(moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings)
-
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
 
     if (dceDriven) {
