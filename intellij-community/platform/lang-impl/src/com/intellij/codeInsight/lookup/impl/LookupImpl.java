@@ -1133,7 +1133,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     requestResize();
   }
 
-  public void addAdvertisement(@NotNull String text, @Nullable Icon icon) {
+  public void addAdvertisement(@NotNull @NlsContexts.PopupAdvertisement String text, @Nullable Icon icon) {
     if (!containsDummyIdentifier(text)) {
       myAdComponent.addAdvertisement(text, icon);
       requestResize();
