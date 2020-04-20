@@ -35,7 +35,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel in) {
+    public final User createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -47,12 +47,30 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L1)
     }
 
-    public final java.lang.Object[] newArray(int size) {
+    public java.lang.Object createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+        LINENUMBER (9)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (User$Creator, createFromParcel, (Landroid/os/Parcel;)LUser;)
+          ARETURN
+    }
+
+    public final User[] newArray(int size) {
         LABEL (L0)
           ILOAD (1)
           ANEWARRAY
           ARETURN
         LABEL (L1)
+    }
+
+    public java.lang.Object[] newArray(int p0) {
+        LABEL (L0)
+        LINENUMBER (9)
+          ALOAD (0)
+          ILOAD (1)
+          INVOKEVIRTUAL (User$Creator, newArray, (I)[LUser;)
+          ARETURN
     }
 }
 

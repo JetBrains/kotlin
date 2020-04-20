@@ -13,7 +13,7 @@ public final class SerializableSimple : java/lang/Object, java/io/Serializable {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel in) {
+    public final User createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -31,7 +31,18 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L1)
     }
 
-    public final java.lang.Object[] newArray(int size)
+    public java.lang.Object createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+        LINENUMBER (11)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (User$Creator, createFromParcel, (Landroid/os/Parcel;)LUser;)
+          ARETURN
+    }
+
+    public final User[] newArray(int size)
+
+    public java.lang.Object[] newArray(int p0)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
