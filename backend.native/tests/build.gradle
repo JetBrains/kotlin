@@ -1018,6 +1018,12 @@ task atomic0(type: KonanLocalTest) {
     source = "runtime/workers/atomic0.kt"
 }
 
+standaloneTest("atomic1") {
+    // Note: This test reproduces a race, so it'll start flaking if problem is reintroduced.
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    source = "runtime/workers/atomic1.kt"
+}
+
 task lazy0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "OK\n"
