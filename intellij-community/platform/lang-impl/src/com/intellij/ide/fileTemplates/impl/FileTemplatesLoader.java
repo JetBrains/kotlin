@@ -2,18 +2,24 @@
 package com.intellij.ide.fileTemplates.impl;
 
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.plugins.cl.PluginClassLoader;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ClearableLazyValue;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.project.ProjectKt;
 import com.intellij.util.UriUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.lang.UrlClassLoader;
 import gnu.trove.THashSet;
@@ -28,9 +34,10 @@ import java.text.MessageFormat;
 import java.util.*;
 
 /**
- * Serves as a container for all existing template manager types and loads corresponding templates upon creation (at construction time).
+ * Serves as a container for all existing template manager types and loads corresponding templates lazily.
+ * Reloads templates on plugins change.
  */
-class FileTemplatesLoader {
+class FileTemplatesLoader implements Disposable {
   private static final Logger LOG = Logger.getInstance(FileTemplatesLoader.class);
 
   static final String TEMPLATES_DIR = "fileTemplates";
@@ -38,23 +45,74 @@ class FileTemplatesLoader {
   private static final String DESCRIPTION_FILE_EXTENSION = "html";
   private static final String DESCRIPTION_EXTENSION_SUFFIX = "." + DESCRIPTION_FILE_EXTENSION;
 
-  private final FTManager myDefaultTemplatesManager;
-  private final FTManager myInternalTemplatesManager;
-  private final FTManager myPatternsManager;
-  private final FTManager myCodeTemplatesManager;
-  private final FTManager myJ2eeTemplatesManager;
+  private static final Map<String, String> MANAGER_TO_DIR = ContainerUtil.newHashMap(
+    Pair.create(FileTemplateManager.DEFAULT_TEMPLATES_CATEGORY, ""),
+    Pair.create(FileTemplateManager.INTERNAL_TEMPLATES_CATEGORY, "internal"),
+    Pair.create(FileTemplateManager.INCLUDES_TEMPLATES_CATEGORY, "includes"),
+    Pair.create(FileTemplateManager.CODE_TEMPLATES_CATEGORY, "code"),
+    Pair.create(FileTemplateManager.J2EE_TEMPLATES_CATEGORY, "j2ee")
+  );
 
-  private final FTManager[] myAllManagers;
-
-  private static final String INTERNAL_DIR = "internal";
-  private static final String INCLUDES_DIR = "includes";
-  private static final String CODE_TEMPLATES_DIR = "code";
-  private static final String J2EE_TEMPLATES_DIR = "j2ee";
-
-  private final URL myDefaultTemplateDescription;
-  private final URL myDefaultIncludeDescription;
+  private final ClearableLazyValue<LoadedConfiguration> myManagers;
 
   FileTemplatesLoader(@Nullable Project project) {
+    myManagers = ClearableLazyValue.createAtomic(() -> {
+      return loadConfiguration(project);
+    });
+    ApplicationManager.getApplication().getMessageBus().connect(this).
+      subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+        @Override
+        public void pluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+          myManagers.drop();
+        }
+        @Override
+        public void pluginUnloaded(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+          myManagers.drop();
+        }
+      });
+  }
+
+  @Override
+  public void dispose() {}
+
+  @NotNull Collection<@NotNull FTManager> getAllManagers() {
+    return myManagers.getValue().getManagers();
+  }
+
+  @NotNull
+  FTManager getDefaultTemplatesManager() {
+    return new FTManager(myManagers.getValue().getManager(FileTemplateManager.DEFAULT_TEMPLATES_CATEGORY));
+  }
+
+  @NotNull
+  FTManager getInternalTemplatesManager() {
+    return new FTManager(myManagers.getValue().getManager(FileTemplateManager.INTERNAL_TEMPLATES_CATEGORY));
+  }
+
+  @NotNull
+  FTManager getPatternsManager() {
+    return new FTManager(myManagers.getValue().getManager(FileTemplateManager.INCLUDES_TEMPLATES_CATEGORY));
+  }
+
+  @NotNull
+  FTManager getCodeTemplatesManager() {
+    return new FTManager(myManagers.getValue().getManager(FileTemplateManager.CODE_TEMPLATES_CATEGORY));
+  }
+
+  @NotNull
+  FTManager getJ2eeTemplatesManager() {
+    return new FTManager(myManagers.getValue().getManager(FileTemplateManager.J2EE_TEMPLATES_CATEGORY));
+  }
+
+  URL getDefaultTemplateDescription() {
+    return myManagers.getValue().defaultTemplateDescription;
+  }
+
+  URL getDefaultIncludeDescription() {
+    return myManagers.getValue().defaultIncludeDescription;
+  }
+
+  private static LoadedConfiguration loadConfiguration(@Nullable Project project) {
     Path configDir;
     if (project == null || project.isDefault()) {
       configDir = PathManager.getConfigDir().resolve(TEMPLATES_DIR);
@@ -64,70 +122,19 @@ class FileTemplatesLoader {
       configDir = Paths.get(storeDirPath, TEMPLATES_DIR);
     }
 
-    myDefaultTemplatesManager = new FTManager(FileTemplateManager.DEFAULT_TEMPLATES_CATEGORY, configDir);
-    myInternalTemplatesManager = new FTManager(FileTemplateManager.INTERNAL_TEMPLATES_CATEGORY, configDir.resolve(INTERNAL_DIR), true);
-    myPatternsManager = new FTManager(FileTemplateManager.INCLUDES_TEMPLATES_CATEGORY, configDir.resolve(INCLUDES_DIR));
-    myCodeTemplatesManager = new FTManager(FileTemplateManager.CODE_TEMPLATES_CATEGORY, configDir.resolve(CODE_TEMPLATES_DIR));
-    myJ2eeTemplatesManager = new FTManager(FileTemplateManager.J2EE_TEMPLATES_CATEGORY, configDir.resolve(J2EE_TEMPLATES_DIR));
-    myAllManagers = new FTManager[]{
-      myDefaultTemplatesManager,
-      myInternalTemplatesManager,
-      myPatternsManager,
-      myCodeTemplatesManager,
-      myJ2eeTemplatesManager
-    };
-
-    Map<FTManager, String> managerToPrefix = new LinkedHashMap<>();
-    for (FTManager manager : myAllManagers) {
-      Path managerRoot = manager.getConfigRoot();
-      String relativePath = configDir.equals(managerRoot) ? "" : FileUtilRt.toSystemIndependentName(configDir.relativize(managerRoot).toString()) + "/";
-      managerToPrefix.put(manager, relativePath);
-    }
-
-    FileTemplateLoadResult result = loadDefaultTemplates(new ArrayList<>(managerToPrefix.values()));
-    myDefaultTemplateDescription = result.getDefaultTemplateDescription();
-    myDefaultIncludeDescription = result.getDefaultIncludeDescription();
-    for (FTManager manager : myAllManagers) {
-      manager.setDefaultTemplates(result.getResult().get(managerToPrefix.get(manager)));
+    FileTemplateLoadResult result = loadDefaultTemplates(new ArrayList<>(MANAGER_TO_DIR.values()));
+    Map<String, FTManager> managers = new HashMap<>();
+    for (Map.Entry<String, String> entry: MANAGER_TO_DIR.entrySet()) {
+      String name = entry.getKey();
+      String pathPrefix = entry.getValue();
+      FTManager manager = new FTManager(name, configDir.resolve(pathPrefix),
+                                        name.equals(FileTemplateManager.INTERNAL_TEMPLATES_CATEGORY));
+      manager.setDefaultTemplates(result.getResult().get(pathPrefix));
       manager.loadCustomizedContent();
+      managers.put(name, manager);
     }
-  }
 
-  FTManager @NotNull [] getAllManagers() {
-    return myAllManagers;
-  }
-
-  @NotNull
-  FTManager getDefaultTemplatesManager() {
-    return new FTManager(myDefaultTemplatesManager);
-  }
-
-  @NotNull
-  FTManager getInternalTemplatesManager() {
-    return new FTManager(myInternalTemplatesManager);
-  }
-
-  @NotNull
-  FTManager getPatternsManager() {
-    return new FTManager(myPatternsManager);
-  }
-
-  @NotNull
-  FTManager getCodeTemplatesManager() {
-    return new FTManager(myCodeTemplatesManager);
-  }
-
-  @NotNull
-  FTManager getJ2eeTemplatesManager() {
-    return new FTManager(myJ2eeTemplatesManager);
-  }
-
-  URL getDefaultTemplateDescription() {
-    return myDefaultTemplateDescription;
-  }
-
-  URL getDefaultIncludeDescription() {
-    return myDefaultIncludeDescription;
+    return new LoadedConfiguration(managers, result.getDefaultTemplateDescription(), result.getDefaultIncludeDescription());
   }
 
   private static @NotNull FileTemplateLoadResult loadDefaultTemplates(@NotNull List<String> prefixes) {
@@ -162,7 +169,8 @@ class FileTemplatesLoader {
     return result;
   }
 
-  private static void loadDefaultsFromRoot(@NotNull URL root, @NotNull List<String> prefixes, @NotNull FileTemplateLoadResult result) throws IOException {
+  private static void loadDefaultsFromRoot(@NotNull URL root, @NotNull List<String> prefixes, @NotNull FileTemplateLoadResult result)
+    throws IOException {
     final List<String> children = UrlUtil.getChildrenRelativePaths(root);
     if (children.isEmpty()) {
       return;
@@ -171,10 +179,12 @@ class FileTemplatesLoader {
     final Set<String> descriptionPaths = new HashSet<>();
     for (String path : children) {
       if (path.equals("default.html")) {
-        result.setDefaultTemplateDescription(UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + path)));
+        result.setDefaultTemplateDescription(
+          UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + path)));
       }
       else if (path.equals("includes/default.html")) {
-        result.setDefaultIncludeDescription(UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + path)));
+        result.setDefaultIncludeDescription(
+          UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + path)));
       }
       else if (path.endsWith(DESCRIPTION_EXTENSION_SUFFIX)) {
         descriptionPaths.add(path);
@@ -191,13 +201,14 @@ class FileTemplatesLoader {
           continue;
         }
 
-        String filename = path.substring(prefix.length(), path.length() - FTManager.TEMPLATE_EXTENSION_SUFFIX.length());
+        String filename = path.substring(prefix.isEmpty() ? 0 : prefix.length() + 1, path.length() - FTManager.TEMPLATE_EXTENSION_SUFFIX.length());
         String extension = FileUtilRt.getExtension(filename);
         String templateName = filename.substring(0, filename.length() - extension.length() - 1);
-        URL templateUrl = UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm())+ "/" + path));
+        URL templateUrl = UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + path));
         String descriptionPath = getDescriptionPath(prefix, templateName, extension, descriptionPaths);
         URL descriptionUrl = descriptionPath == null ? null :
-                             UrlClassLoader.internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + descriptionPath));
+                             UrlClassLoader
+                               .internProtocol(new URL(UriUtil.trimTrailingSlashes(root.toExternalForm()) + "/" + descriptionPath));
         assert templateUrl != null;
         result.getResult().putValue(prefix, new DefaultTemplate(templateName, extension, templateUrl, descriptionUrl));
         // FTManagers loop
@@ -210,20 +221,20 @@ class FileTemplatesLoader {
     if (prefix.isEmpty()) {
       return path.indexOf('/') == -1;
     }
-    return FileUtil.startsWith(path, prefix) && path.indexOf('/', prefix.length()) == -1;
+    return FileUtil.startsWith(path, prefix) && path.indexOf('/', prefix.length() + 1) == -1;
   }
 
   //Example: templateName="NewClass"   templateExtension="java"
   private static @Nullable String getDescriptionPath(@NotNull String pathPrefix,
-                                           @NotNull String templateName,
-                                           @NotNull String templateExtension,
-                                           @NotNull Set<String> descriptionPaths) {
+                                                     @NotNull String templateName,
+                                                     @NotNull String templateExtension,
+                                                     @NotNull Set<String> descriptionPaths) {
     final Locale locale = Locale.getDefault();
 
     String descName = MessageFormat
       .format("{0}.{1}_{2}_{3}" + DESCRIPTION_EXTENSION_SUFFIX, templateName, templateExtension,
               locale.getLanguage(), locale.getCountry());
-    String descPath = pathPrefix.isEmpty() ? descName : pathPrefix + descName;
+    String descPath = pathPrefix.isEmpty() ? descName : pathPrefix + "/" + descName;
     if (descriptionPaths.contains(descPath)) {
       return descPath;
     }
@@ -240,5 +251,29 @@ class FileTemplatesLoader {
       return descPath;
     }
     return null;
+  }
+
+  private static class LoadedConfiguration {
+    public final URL defaultTemplateDescription;
+    public final URL defaultIncludeDescription;
+
+    private final Map<String, FTManager> myManagers;
+
+    LoadedConfiguration(@NotNull Map<String, FTManager> managers,
+                        URL defaultTemplateDescription,
+                        URL defaultIncludeDescription) {
+
+      myManagers = Collections.unmodifiableMap(managers);
+      this.defaultTemplateDescription = defaultTemplateDescription;
+      this.defaultIncludeDescription = defaultIncludeDescription;
+    }
+
+    public FTManager getManager(@NotNull String kind) {
+      return myManagers.get(kind);
+    }
+
+    public Collection<FTManager> getManagers() {
+      return myManagers.values();
+    }
   }
 }

@@ -380,7 +380,7 @@ public final class FileTemplateManagerImpl extends FileTemplateManager implement
     setScheme(scheme);
   }
 
-  private FTManager[] getAllManagers() {
+  private Collection<FTManager> getAllManagers() {
     return getSettings().getAllManagers();
   }
 
