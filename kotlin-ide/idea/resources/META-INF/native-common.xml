@@ -1,10 +1,4 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-    <application-components>
-        <component>
-            <implementation-class>org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache</implementation-class>
-        </component>
-    </application-components>
-
     <extensions defaultExtensionNs="com.intellij">
         <psi.classFileDecompiler implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetadataDecompiler"/>
 
