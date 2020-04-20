@@ -41,7 +41,8 @@ class LinkedSpecTest(
     testArea: TestArea,
     testType: TestType,
     val place: SpecPlace,
-    val relevantPlaces: Set<SpecPlace>?,
+    val primaryLinks: Set<SpecPlace>?,
+    val secondaryLinks: Set<SpecPlace>?,
     testNumber: Int,
     description: String,
     cases: SpecTestCasesSet,
@@ -80,7 +81,8 @@ class LinkedSpecTest(
         append("${testArea.name.withSpaces()} $testType SPEC TEST (${testType.toString().withSpaces()})$ls")
         append("SPEC VERSION: $specVersion$ls")
         append("SPEC PLACE: ${sections.joinToString()} -> paragraph: ${place.paragraphNumber} -> sentence: ${place.sentenceNumber}$ls")
-        relevantPlaces?.let { append("OTHER RELEVANT SPEC PLACES:${it.joinToString { "$ls\t${sections.joinToString()} -> paragraph: ${place.paragraphNumber} -> sentence: ${place.sentenceNumber}" }}$ls") }
+        primaryLinks?.let { append("PRIMARY LINKS:${it.joinToString { "$ls\t${sections.joinToString()} -> paragraph: ${place.paragraphNumber} -> sentence: ${place.sentenceNumber}" }}$ls") }
+        secondaryLinks?.let { append("SECONDARY LINKS:${it.joinToString { "$ls\t${sections.joinToString()} -> paragraph: ${place.paragraphNumber} -> sentence: ${place.sentenceNumber}" }}$ls") }
         append("NUMBER: $testNumber$ls")
         append("TEST CASES: ${cases.byNumbers.size.coerceAtLeast(1)}$ls")
         append("DESCRIPTION: $description$ls")

@@ -6,7 +6,8 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Sequences with decimal digit symbols separated by underscores.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -14,7 +15,8 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Sequences with decimal digit symbols.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

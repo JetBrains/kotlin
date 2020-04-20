@@ -35,7 +35,16 @@ object TestsJsonMapGenerator {
         return testsByType.getOrCreate(specPlace.sentenceNumber.toString())
     }
 
-    private fun getTestInfo(test: LinkedSpecTest, testFile: File? = null) =
+    enum class LinkType{
+        MAIN,
+        PRIMARY,
+        SECONDARY;
+
+        override fun toString(): String {
+            return name.toLowerCase()
+        }
+    }
+    private fun getTestInfo(test: LinkedSpecTest, testFile: File? = null, linkType: LinkType = LinkType.MAIN) =
         JsonObject().apply {
             addProperty("specVersion", test.specVersion)
             addProperty("casesNumber", test.cases.byNumbers.size)
@@ -45,6 +54,7 @@ object TestsJsonMapGenerator {
                 "unexpectedBehaviour",
                 test.unexpectedBehavior || test.cases.byNumbers.any { it.value.unexpectedBehavior }
             )
+            addProperty("linkType", linkType.toString())
         }
 
     private fun collectInfoFromSpecTests(testsMap: JsonObject) {
@@ -54,7 +64,13 @@ object TestsJsonMapGenerator {
                     if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
                     val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
                     if (specTest is LinkedSpecTest) {
-                        collectInfoFromTests(testsMap, specTest, getTestInfo(specTest), getTestInfo(specTest, file))
+                        collectInfoFromTestsTemp(
+                            testsMap = testsMap,
+                            specTest = specTest,
+                            testInfoForMainLink = getTestInfo(specTest),
+                            testInfoForPrimaryLink = getTestInfo(specTest, file, LinkType.PRIMARY),
+                            testInfoForSecondaryLink = getTestInfo(specTest, file, LinkType.SECONDARY)
+                        )
                     }
                 }
         }
@@ -80,8 +96,27 @@ object TestsJsonMapGenerator {
         testInfoForRelevantLink: JsonObject = testInfoForMainLink
     ) {
         testsMap.getOrCreateSpecTestObject(specTest.place, specTest.testArea, specTest.testType).add(testInfoForMainLink)
-        specTest.relevantPlaces?.forEach {
+        specTest.primaryLinks?.forEach {
             testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForRelevantLink)
+        }
+        specTest.secondaryLinks?.forEach {
+            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForRelevantLink)
+        }
+    }
+
+    private fun collectInfoFromTestsTemp( //todo add same for implementation tests
+        testsMap: JsonObject,
+        specTest: LinkedSpecTest,
+        testInfoForMainLink: JsonObject,
+        testInfoForPrimaryLink: JsonObject = testInfoForMainLink,
+        testInfoForSecondaryLink: JsonObject = testInfoForMainLink
+    ) {
+        testsMap.getOrCreateSpecTestObject(specTest.place, specTest.testArea, specTest.testType).add(testInfoForMainLink)
+        specTest.primaryLinks?.forEach {
+            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForPrimaryLink)
+        }
+        specTest.secondaryLinks?.forEach {
+            testsMap.getOrCreateSpecTestObject(it, specTest.testArea, specTest.testType).add(testInfoForSecondaryLink)
         }
     }
 

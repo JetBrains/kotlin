@@ -69,19 +69,20 @@ object CommonParser {
     }
 
     fun parseLinkedSpecTest(testFilePath: String, testFiles: TestFiles, isImplementationTest: Boolean = false): LinkedSpecTest {
-        val relevantPlaces = mutableSetOf<SpecPlace>()
+        val primaryLinks = mutableSetOf<SpecPlace>()
+        val secondaryLinks = mutableSetOf<SpecPlace>()
         val parsedTestFile = tryParseTestInfo(testFilePath, testFiles, SpecTestLinkedType.LINKED, isImplementationTest)
 
         val testInfoElements = parsedTestFile.testInfoElements
 
         parseRelevantPlaces(
             testInfoElements[LinkedSpecTestFileInfoElementType.PRIMARY_LINKS]?.additionalMatcher,
-            relevantPlaces
+            primaryLinks
         )
 
         parseRelevantPlaces(
             testInfoElements[LinkedSpecTestFileInfoElementType.SECONDARY_LINKS]?.additionalMatcher,
-            relevantPlaces
+            secondaryLinks
         )
 
         val placeMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.MAIN_LINK]?.additionalMatcher
@@ -90,15 +91,16 @@ object CommonParser {
         if (placeMatcher != null) {
             mainPlace = createSpecPlace(placeMatcher)
         } else {
-            mainPlace = relevantPlaces.first()
-            relevantPlaces.remove(mainPlace)
+            mainPlace = primaryLinks.first()
+            primaryLinks.remove(mainPlace)
         }
         return LinkedSpecTest(
             testInfoElements[LinkedSpecTestFileInfoElementType.SPEC_VERSION]!!.content,
             parsedTestFile.testArea,
             parsedTestFile.testType,
             mainPlace,
-            relevantPlaces,
+            primaryLinks,
+            secondaryLinks,
             parsedTestFile.testNumber,
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,

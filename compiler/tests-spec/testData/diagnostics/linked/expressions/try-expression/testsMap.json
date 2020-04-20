@@ -6,7 +6,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 6,
           "description": "try-expression has to start with a try body and continue with zero ore more catch blocks",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "2": [
@@ -15,28 +16,32 @@
           "casesNumber": 6,
           "description": "try-expression has to start with a try body and continue with zero ore more catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/3.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 3,
           "description": "try-expression has to start with a try body, catch blocks and finally block",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/4.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "A valid try-expression must have at least one catch or finally block.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/5.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 3,
           "description": "try-expression has to start with a try body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "4": [
@@ -44,7 +49,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 3,
           "description": "try-expression has to start with a try body, catch blocks and finally block",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "5": [
@@ -52,7 +58,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "A valid try-expression must have at least one catch or finally block.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -60,7 +67,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 3,
           "description": "try-expression has to start with a try body",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     },
@@ -70,13 +78,15 @@
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "try-expression has to start with a try body and continue with zero ore more catch blocks",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 5,
           "description": "catch is a soft keyword",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "2": [
@@ -85,35 +95,40 @@
           "casesNumber": 2,
           "description": "try-expression has to start with a try body and continue with zero ore more catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "try-expression has to start with a try body, catch blocks and finally block",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 5,
           "description": "finally is a soft keyword",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 5,
           "description": "catch is a soft keyword",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "try-expression has to start with a try body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "4": [
@@ -121,13 +136,15 @@
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "try-expression has to start with a try body, catch blocks and finally block",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 5,
           "description": "finally is a soft keyword",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -135,7 +152,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "try-expression has to start with a try body",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "5": [
@@ -144,7 +162,8 @@
           "casesNumber": 2,
           "description": "try-expression has to start with a try body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -156,7 +175,8 @@
           "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         }
       ]
     },
@@ -166,7 +186,8 @@
           "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -179,7 +200,8 @@
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
         }
       ]
     },
@@ -190,7 +212,8 @@
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -202,7 +225,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 1,
           "description": "catch block is evaluated immediately after the exception is thrown and the exception itself is passed inside the catch block as the corresponding parameter.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -211,7 +235,8 @@
           "casesNumber": 1,
           "description": "catch block is evaluated immediately after the exception is thrown and the exception itself is passed inside the catch block as the corresponding parameter.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos/2.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -223,7 +248,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 1,
           "description": "If an exception was thrown, but no catch block matched its type, the finally block is evaluated before propagating the exception up the call stack.",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -231,7 +257,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 1,
           "description": "If no exception is thrown during the evaluation of the try body, no catch blocks are executed, the finally block is evaluated after the try body, and the program execution continues as normal.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -244,14 +271,16 @@
           "casesNumber": 1,
           "description": "If an exception was thrown, but no catch block matched its type, the finally block is evaluated before propagating the exception up the call stack.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/2.1.kt",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 1,
           "description": "If no exception is thrown during the evaluation of the try body, no catch blocks are executed, the finally block is evaluated after the try body, and the program execution continues as normal.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

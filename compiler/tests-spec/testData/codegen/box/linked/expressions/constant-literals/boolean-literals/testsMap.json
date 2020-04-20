@@ -6,157 +6,183 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the companionObject.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the variableDeclarationEntry.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the infixFunctionCall.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the typeParameter.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the packageComplex.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the catchBlock.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the parameter.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the fileAnnotationSimple.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the function.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the valueArgument.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the unescapedAnnotation.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the typeAlias.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the stringTemplateElement.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the import.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the labelDefinition.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the fileAnnotationComplex.",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the enumEntry.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the setter.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the callableReference.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the typeConstraint.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the simpleUserType.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the labelReference.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the atomicExpression.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the object.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the packageSimple.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

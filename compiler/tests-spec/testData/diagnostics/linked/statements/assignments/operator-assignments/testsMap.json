@@ -6,7 +6,8 @@
           "specVersion": "0.1-253",
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "2": [
@@ -15,7 +16,8 @@
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -24,7 +26,8 @@
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -34,7 +37,8 @@
           "specVersion": "0.1-253",
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "2": [
@@ -43,7 +47,8 @@
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -52,7 +57,8 @@
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -65,7 +71,8 @@
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -76,7 +83,8 @@
           "casesNumber": 1,
           "description": "An operator assignment A+\u003dB",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

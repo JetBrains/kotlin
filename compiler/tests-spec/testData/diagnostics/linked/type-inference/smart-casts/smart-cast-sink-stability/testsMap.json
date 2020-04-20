@@ -6,7 +6,8 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "smart case for property `plus` available through the operator invoke",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         }
       ]
     },
@@ -16,7 +17,8 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "smart cast for the property available through the operator invoke",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         }
       ]
     }

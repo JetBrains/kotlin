@@ -7,14 +7,16 @@
           "casesNumber": 11,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-296",
           "casesNumber": 9,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -26,19 +28,22 @@
           "specVersion": "0.1-100",
           "casesNumber": 11,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 5,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 15,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -50,7 +55,8 @@
           "specVersion": "0.1-100",
           "casesNumber": 15,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -58,7 +64,8 @@
           "specVersion": "0.1-296",
           "casesNumber": 13,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

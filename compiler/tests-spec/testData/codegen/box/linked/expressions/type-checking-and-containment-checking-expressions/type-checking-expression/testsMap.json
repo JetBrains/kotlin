@@ -6,13 +6,15 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "checks whether the runtime type of E is not a subtype of T for !is operator.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "checks whether the runtime type of EE is a subtype of TT for is operator",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -24,7 +26,8 @@
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "E is T: The type T must be runtime-available, otherwise it is a compiler error",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -36,7 +39,8 @@
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "the expression null is T? for any type T always evaluates to true",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

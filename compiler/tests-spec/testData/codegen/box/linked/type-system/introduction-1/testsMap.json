@@ -6,7 +6,8 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         }
       ]
     }

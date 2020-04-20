@@ -7,7 +7,8 @@
           "casesNumber": 0,
           "description": "If an exception was thrown, but no catch block matched its type, the finally block is evaluated before propagating the exception up the call stack",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/neg/3.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -18,7 +19,8 @@
           "casesNumber": 0,
           "description": "If an exception was thrown, but no catch block matched its type, the finally block is evaluated before propagating the exception up the call stack",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/3.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

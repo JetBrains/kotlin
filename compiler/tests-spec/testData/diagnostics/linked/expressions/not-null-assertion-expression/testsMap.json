@@ -6,7 +6,8 @@
           "specVersion": "0.1-296",
           "casesNumber": 5,
           "description": "The type of non-null assertion e!! expression is the non-nullable variant of the type of e.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -18,7 +19,8 @@
           "specVersion": "0.1-296",
           "casesNumber": 5,
           "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

@@ -6,7 +6,8 @@
           "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "main"
         }
       ]
     },
@@ -16,7 +17,8 @@
           "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -29,28 +31,32 @@
           "casesNumber": 0,
           "description": "Kt10811",
           "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt9972",
           "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10439",
           "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -63,14 +69,16 @@
           "casesNumber": 0,
           "description": "Kt9972",
           "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10439",
           "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

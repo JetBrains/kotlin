@@ -6,19 +6,22 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with long literal mark.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Binary integer literals with long literal mark.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Decimal integer literals with long literal mark.",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

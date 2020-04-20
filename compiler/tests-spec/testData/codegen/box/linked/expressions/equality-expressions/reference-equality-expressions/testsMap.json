@@ -6,38 +6,44 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "two values are equal (\u003d\u003d\u003d) or non-equal (!\u003d\u003d) by reference",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if values are non-equal (!\u003d\u003d) by reference",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if two values are non-equal (!\u003d\u003d) by reference",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "todo",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -45,7 +51,8 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check equallity by refference via constructor",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -58,7 +65,8 @@
           "casesNumber": 0,
           "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "2": [
@@ -66,13 +74,15 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "Any instance of the null reference null is equal by reference to any other instance of the null reference;",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "Any instance of the null reference null is equal by reference to any other instance of the null reference;",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -80,7 +90,8 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "If these values are non-equal by value, they are also non-equal by reference;",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -93,7 +104,8 @@
           "casesNumber": 0,
           "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
