@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
-import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -88,7 +86,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if ((propertyParent.isEnumClass || propertyParent.isEnumEntry) && (propertyName == "name" || propertyName == "ordinal"))
                 return propertyName
 
-            val accessorName = if (function.isPropertyGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
+            val accessorName = if (function.isGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
             return mangleMemberNameIfRequired(accessorName, function)
         }
 
@@ -159,10 +157,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     }
 
     private fun hasVoidReturnType(function: IrFunction): Boolean =
-        function is IrConstructor || (function.returnType.isUnit() && !function.isPropertyGetter)
-
-    private val IrFunction.isPropertyGetter: Boolean
-        get() = isPropertyAccessor && valueParameters.isEmpty()
+        function is IrConstructor || (function.returnType.isUnit() && !function.isGetter)
 
     // Copied from KotlinTypeMapper.forceBoxedReturnType.
     private fun forceBoxedReturnType(function: IrFunction): Boolean {
