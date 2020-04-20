@@ -143,10 +143,15 @@ object JdkRequirements {
         val javaVersion = JavaVersion.tryParse(version) ?: return@run
         val matcher = versionMatcher(javaVersion)
 
-        return object : JdkRequirement {
-          override fun matches(sdk: Sdk) = false /*TODO[jo]: no vendor information*/
-          override fun matches(sdk: UnknownSdkLocalSdkFix) = false /*TODO[jo]: no vendor information*/
-          override fun matches(sdk: JdkItem) = matcher.matchVersion(sdk.versionString) && sdk.matchesVendor(vendor)
+        return object : VersionRequirement(matcher) {
+          fun findJdkItem(home: String) = JdkInstaller.getInstance().findJdkItemForInstalledJdk(home)
+          fun findJdkItem(sdk: Sdk) = sdk.homePath?.let { findJdkItem(it) }
+          fun findJdkItem(sdk: UnknownSdkLocalSdkFix) = findJdkItem(sdk.existingSdkHome)
+
+          override fun matches(sdk: Sdk) = super.matches(sdk) && findJdkItem(sdk)?.matchesVendor(vendor) == true
+          override fun matches(sdk: UnknownSdkLocalSdkFix) = super.matches(sdk) && findJdkItem(sdk)?.matchesVendor(vendor) == true
+          override fun matches(sdk: JdkItem) = super.matches(sdk) && sdk.matchesVendor(vendor)
+
           override fun toString() = "JdkRequirement { $vendor && $matcher }"
         }
       }
@@ -156,11 +161,7 @@ object JdkRequirements {
         if (!text.matches(JAVA_VERSION_REGEX)) return@run
         val javaVersion = JavaVersion.tryParse(text) ?: return@run
         val matcher = versionMatcher(javaVersion)
-        return object : JdkRequirement {
-          fun matches(version: String) = matcher.matchVersion(version)
-          override fun matches(sdk: Sdk) = sdk.versionString?.let { matches(it) } == true
-          override fun matches(sdk: JdkItem) = matches(sdk.versionString)
-          override fun matches(sdk: UnknownSdkLocalSdkFix) = matcher.matchVersion(sdk.versionString)
+        return object : VersionRequirement(matcher) {
           override fun toString() = "JdkRequirement { $matcher }"
         }
       }
@@ -169,5 +170,12 @@ object JdkRequirements {
       LOG.warn("Failed to parse requirement $request. ${t.message}", t)
     }
     return null
+  }
+
+  private open class VersionRequirement(val matcher: VersionMatcher) : JdkRequirement {
+    fun matches(version: String) = matcher.matchVersion(version)
+    override fun matches(sdk: Sdk) = runCatching { sdk.versionString }.getOrNull()?.let { matches(it) } == true
+    override fun matches(sdk: JdkItem) = matches(sdk.versionString)
+    override fun matches(sdk: UnknownSdkLocalSdkFix) = matcher.matchVersion(sdk.versionString)
   }
 }

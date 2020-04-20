@@ -3,10 +3,11 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.idea.TestFor
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkLocalSdkFix
+import com.intellij.testFramework.LightPlatformTestCase
 import org.junit.Assert
 import org.junit.Test
 
-class JdkRequirementTest {
+class JdkRequirementTest : LightPlatformTestCase() {
 
   @Test
   @TestFor(issues = ["IDEA-235968"])
@@ -107,8 +108,12 @@ class JdkRequirementTest {
 
   @Test
   fun test_6() = doTest("1.6", matches = listOf("1.6", "1.6.0", "1.6.0_123", "6"), fails = listOf("1.5", "7", "1.7", "8", "11"))
+
+  @Test
   fun test_6_0() = doTest("1.6.0", matches = listOf("1.6", "1.6.0", "1.6.0_123", "6"), fails = listOf("1.5", "7", "1.7", "8", "11"))
-  fun test_6_0_b() = doTest("1.6.0_234", matches = listOf("1.6", "1.6.0", "1.6.0_123", "6"), fails = listOf("1.5", "7", "1.7", "8", "11"))
+
+  @Test
+  fun test_6_0_b() = doTest("1.6.0_234", matches = listOf("1.6.0_235", "1.6.0_444"), fails = listOf("1.5", "7", "1.7", "8", "11", "1.6", "1.6.0", "1.6.0_123", "6"))
 
   @Test
   fun test_custom() = doFailedTest("idea jdk")

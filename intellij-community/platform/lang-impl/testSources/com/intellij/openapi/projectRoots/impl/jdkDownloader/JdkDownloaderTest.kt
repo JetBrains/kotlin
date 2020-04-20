@@ -35,7 +35,8 @@ internal fun jdkItemForTest(url: String,
     packageToBinJavaPrefix = packageToHomePrefix,
     archiveFileName = url.split("/").last(),
     installFolderName = url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip"),
-    sharedIndexAliases = listOf()
+    sharedIndexAliases = listOf(),
+    saveToFile = {}
   )
 }
 
@@ -89,7 +90,7 @@ class JdkDownloaderTest : LightPlatformTestCase() {
       assertThat(installDir / "bin" / "java").isFile()
       assertThat(installDir / "bin" / "javac").isFile()
       assertThat(installDir / "file").isFile()
-      assertThat((installDir / "bin" / "symlink").toPath()).isSymbolicLink().hasSameContentAs(File(installDir, "file").toPath())
+      assertThat((installDir / "bin" / "symlink").toPath()).isSymbolicLink().hasSameTextualContentAs(File(installDir, "file").toPath())
     }
   }
 

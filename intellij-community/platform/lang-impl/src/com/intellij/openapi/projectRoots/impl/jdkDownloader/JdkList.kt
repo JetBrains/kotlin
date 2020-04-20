@@ -82,8 +82,14 @@ data class JdkItem(
   val archiveFileName: String,
   val installFolderName: String,
 
-  val sharedIndexAliases: List<String>
+  val sharedIndexAliases: List<String>,
+
+  private val saveToFile: (File) -> Unit
 ) {
+
+  fun writeMarkerFile(file: File) {
+    saveToFile(file)
+  }
 
   val vendorPrefix
     get() = suggestedSdkName.split("-").dropLast(1).joinToString("-")
@@ -279,6 +285,7 @@ object JdkListParser {
       flavour = item["flavour"]?.asText()
     )
 
+    val contents = ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(item)
     return JdkItem(product = product,
                    isDefaultItem = item["default"]?.let { filters.testPredicate(it) == true } ?: false,
                    isVisibleOnUI = item["listed"]?.let { filters.testPredicate(it) == true } ?: true,
@@ -300,7 +307,9 @@ object JdkListParser {
                    unpackedSize = pkg["unpacked_size"]?.asLong() ?: return null,
                    installFolderName = pkg["install_folder_name"]?.asText() ?: return null,
 
-                   sharedIndexAliases = (item["shared_index_aliases"] as? ArrayNode)?.mapNotNull { it.asText() } ?: listOf()
+                   sharedIndexAliases = (item["shared_index_aliases"] as? ArrayNode)?.mapNotNull { it.asText() } ?: listOf(),
+
+                   saveToFile = { file -> file.writeBytes(contents) }
     )
   }
 }

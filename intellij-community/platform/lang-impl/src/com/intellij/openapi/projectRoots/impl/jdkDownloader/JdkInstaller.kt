@@ -18,7 +18,6 @@ import com.intellij.util.io.HttpRequests
 import org.jetbrains.annotations.Nls
 import java.io.File
 import java.io.IOException
-import java.util.*
 import kotlin.math.absoluteValue
 
 interface JdkInstallRequest {
@@ -171,6 +170,7 @@ class JdkInstaller {
     catch (t: Throwable) {
       //if we were cancelled in the middle or failed, let's clean up
       FileUtil.delete(targetDir)
+      FileUtil.delete(markerFile(targetDir))
       throw t
     }
     finally {
@@ -210,9 +210,31 @@ class JdkInstaller {
     return request
   }
 
+  private fun markerFile(installDir: File) = File(installDir.parent, ".${installDir.name}.intellij")
+
   private fun writeMarkerFile(request: JdkInstallRequest) {
-    val markerFile = File(request.installDir.path + "-intellij-downloader-info.txt")
-    markerFile.writeText("Download started on ${Date()}\n${request.item}")
+    val installDir = request.installDir
+    val markerFile = markerFile(installDir)
+    try {
+      request.item.writeMarkerFile(markerFile)
+    } catch (t: Throwable) {
+      if (t is ControlFlowException) throw t
+      LOG.warn("Failed to write marker file to $markerFile. ${t.message}", t)
+    }
+  }
+
+  fun findJdkItemForInstalledJdk(jdkHome: String) = findJdkItem(File(jdkHome))
+
+  private fun findJdkItem(jdkHome: File): JdkItem? {
+    // Java package install dir have several folders up from it, e.g. Contents/Home on macOS
+    val markerFile = generateSequence(jdkHome, { file -> file.parentFile })
+                       .take(3)
+                       .firstOrNull { it.isFile } ?: return null
+    try {
+      val json = JdkListParser.readTree(markerFile.readBytes())
+      return JdkListParser.parseJdkItem(json, JdkPredicate.createInstance())
+    } catch (e: Throwable) {
+      return null
+    }
   }
 }
-
