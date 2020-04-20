@@ -7,22 +7,19 @@ Thread stack trace:
 		($completion, b, bParam)
 	a:21, SuspendFunKt (coroutine1)
 		($completion, $continuation, $result, a, aParam)
-	test1:15, SuspendFunKt (coroutine1)
-		($completion, $continuation, $result, i, test1)
-	invoke:9, SuspendFunKt$main$result$1 (coroutine1)
+CoroutineNameIdState(name=coroutine, id=-1, state=UNKNOWN, dispatcher=null)
+	test1:15, coroutine1.SuspendFunKt
+		(i, test1)
+	invoke:9, coroutine1.SuspendFunKt$main$result$1
 		(continuation, p1, this)
-	invoke:-1, SuspendFunKt$main$result$1 (coroutine1)
-		(this)
-	invokeSuspend:121, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3 (kotlin.coroutines.intrinsics)
+	invokeSuspend:121, kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3
 		($i$a$-createCoroutineFromSuspendFunction-IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$2, it, result, this)
-	resumeWith:33, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
+	resumeWith:33, kotlin.coroutines.jvm.internal.BaseContinuationImpl
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
-	startCoroutine:128, ContinuationKt (kotlin.coroutines)
+	startCoroutine:128, kotlin.coroutines.ContinuationKt
 		($this$startCoroutine, completion, receiver)
-	main:9, SuspendFunKt (coroutine1)
+	main:9, coroutine1.SuspendFunKt
 		(cnt)
-	main:-1, SuspendFunKt (coroutine1)
-		()
 Disconnected from the target VM
 
 Process finished with exit code 0
