@@ -48,10 +48,10 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
         object User : LibraryGroup(2)
     }
 
-    private val cachedIncompatibleLibraries = HashSet<String>()
+    private val cachedIncompatibleLibrariesPerProject = mutableMapOf<Project, MutableSet<String>>()
 
     override fun runActivity(project: Project) {
-        project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
+        project.messageBus.connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
                 // run when project roots are changes, e.g. on project import
                 validateKotlinNativeLibraries(project)
@@ -66,7 +66,10 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
             return
 
         val backgroundJob: Ref<CancellablePromise<*>> = Ref()
-        val disposable = Disposable { backgroundJob.get()?.let(CancellablePromise<*>::cancel) }
+        val disposable = Disposable {
+            cachedIncompatibleLibrariesPerProject.remove(project)
+            backgroundJob.get()?.let(CancellablePromise<*>::cancel)
+        }
         Disposer.register(project, disposable)
 
         backgroundJob.set(
@@ -95,6 +98,7 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
+        val cachedIncompatibleLibraries = cachedIncompatibleLibrariesPerProject.computeIfAbsent(project) { mutableSetOf() }
         val newEntries = if (cachedIncompatibleLibraries.isNotEmpty())
             incompatibleLibraries.filterKeys { it !in cachedIncompatibleLibraries }
         else
