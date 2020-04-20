@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.FirResolvedTypeRefBuilder
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -223,8 +222,8 @@ fun createFunctionalType(
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
-    isKFunctionType: Boolean = false,
-    isSuspend: Boolean = false
+    isSuspend: Boolean,
+    isKFunctionType: Boolean = false
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
