@@ -16,6 +16,9 @@ import org.junit.Test
 
 class NativePlatformLibsIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+
     private val oldCompilerVersion = "1.3.61"
     private val currentCompilerVersion = NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 

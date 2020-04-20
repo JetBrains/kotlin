@@ -45,7 +45,7 @@ class WorkersIT : BaseGradleIT() {
         isParallel: Boolean,
         jsCompilerType: KotlinJsCompilerType
     ) =
-        with(Project("new-mpp-parallel")) {
+        with(Project("new-mpp-parallel", GradleVersionRequired.FOR_MPP_SUPPORT)) {
             val options = defaultBuildOptions().copy(
                 parallelTasksInProject = isParallel,
                 withDaemon = false,

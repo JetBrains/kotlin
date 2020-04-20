@@ -196,7 +196,6 @@ private fun associateDependenciesWithActualModuleDependencies(
 
 private fun KotlinTargetComponent.findUsageContext(configurationName: String): UsageContext? {
     val usageContexts = when (this) {
-        is KotlinVariantWithMetadataDependency -> originalUsages
         is SoftwareComponentInternal -> usages
         else -> emptySet()
     }

@@ -16,6 +16,9 @@ import kotlin.test.fail
 
 class CocoaPodsIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+
     // We use Kotlin DSL. Earlier Gradle versions fail at accessors codegen.
     val gradleVersion = GradleVersionRequired.None
 

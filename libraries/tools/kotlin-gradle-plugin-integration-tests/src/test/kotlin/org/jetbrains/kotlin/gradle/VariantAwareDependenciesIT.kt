@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 
 class VariantAwareDependenciesIT : BaseGradleIT() {
-    private val gradleVersion = GradleVersionRequired.None
+    private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
     fun testJvmKtAppResolvesMppLib() {
@@ -89,19 +89,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                     .replace("\"org.jetbrains.kotlin:kotlin-stdlib\"", "\"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\"")
             }
 
-            if (testGradleVersionAtLeast("5.3-rc-1")) {
-                gradleBuildScript().appendText(
-                    // In Gradle 5.3, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
-                    // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
-                    "\n" + """
-                    configurations {
-                        configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
-                            canBeResolved = false
-                        }
+            gradleBuildScript().appendText(
+                // In Gradle 5.3+, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
+                // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
+                "\n" + """
+                configurations {
+                    configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
+                        canBeResolved = false
                     }
-                    """.trimIndent()
-                )
-            }
+                }
+                """.trimIndent()
+            )
         }
 
         with(outerProject) {
@@ -133,6 +131,18 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         with(outerProject) {
             embedProject(innerProject)
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { compile rootProject }")
+
+            gradleBuildScript(innerProject.projectName).appendText(
+                // Newer Gradle versions fail to resolve the deprecated configurations because of variant-aware resolution ambiguity between
+                // the *Elements configuration and its sub-variants (classes, resources)
+                "\n" + """
+                configurations {
+                    configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
+                        canBeResolved = false
+                    }
+                }
+                """.trimIndent()
+            )
 
             testResolveAllConfigurations(innerProject.projectName)
         }
@@ -260,7 +270,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
     @Test
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations() =
-        with(Project("new-mpp-jvm-with-java-multi-module")) {
+        with(Project("new-mpp-jvm-with-java-multi-module", GradleVersionRequired.FOR_MPP_SUPPORT)) {
             testResolveAllConfigurations("app")
         }
 

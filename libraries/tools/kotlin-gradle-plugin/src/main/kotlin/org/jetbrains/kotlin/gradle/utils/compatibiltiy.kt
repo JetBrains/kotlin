@@ -51,12 +51,15 @@ internal fun TaskInputs.dirCompatible(dirPath: Any) {
     inputsDirMethod(this, dirPath)
 }
 
-internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("4.9")) {
+internal fun checkGradleCompatibility(
+    withComponent: String = "the Kotlin Gradle plugin",
+    minSupportedVersion: GradleVersion = GradleVersion.version("4.9")
+) {
     val currentVersion = GradleVersion.current()
     if (currentVersion < minSupportedVersion) {
         throw GradleException(
-            "Current version of Gradle $currentVersion is not compatible with Kotlin plugin. " +
-                    "Please use Gradle $minSupportedVersion or newer or previous version of Kotlin plugin."
+            "The current Gradle version ${currentVersion.version} is not compatible with $withComponent. " +
+                    "Please use Gradle ${minSupportedVersion.version} or newer, or the previous version of the Kotlin plugin."
         )
     }
 }

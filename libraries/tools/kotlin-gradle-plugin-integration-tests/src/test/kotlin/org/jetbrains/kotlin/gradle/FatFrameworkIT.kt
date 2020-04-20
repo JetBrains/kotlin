@@ -15,6 +15,9 @@ import kotlin.test.assertTrue
 
 class FatFrameworkIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+
     @Test
     fun smokeIos() {
         Assume.assumeTrue(HostManager.hostIsMac)

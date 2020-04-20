@@ -170,14 +170,7 @@ abstract class AbstractKotlinTarget(
                 val metadataTarget =
                     kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as AbstractKotlinTarget
 
-                if (kotlinExtension.isGradleMetadataAvailable) {
-                    KotlinVariantWithMetadataVariant(compilation, usageContexts, metadataTarget)
-                } else {
-                    // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
-                    // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
-                    // same platform, not Kotlin metadata modules
-                    KotlinVariantWithMetadataDependency(compilation, usageContexts, metadataTarget)
-                }
+                KotlinVariantWithMetadataVariant(compilation, usageContexts, metadataTarget)
             }
 
         result.componentName = componentName

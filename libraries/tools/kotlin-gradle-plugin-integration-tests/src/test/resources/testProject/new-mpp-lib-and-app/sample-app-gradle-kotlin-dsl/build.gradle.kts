@@ -13,8 +13,11 @@ repositories {
 }
 
 kotlin {
-	val jvm6 = jvm("jvm6")
+	val jvm6 = jvm("jvm6") {
+        attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
+    }
 	val jvm8 = jvm("jvm8") {
+        attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
 		compilations["main"].kotlinOptions.jvmTarget = "1.8"
 	}
 	val nodeJs = js("nodeJs")
