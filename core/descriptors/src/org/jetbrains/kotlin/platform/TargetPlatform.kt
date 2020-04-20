@@ -84,7 +84,15 @@ interface TargetPlatformVersion {
     }
 }
 
-fun TargetPlatform?.isCommon(): Boolean = this != null && size > 1 && iterator().let { i ->
+/**
+ * Whether this is a [TargetPlatform] that targets multiple [SimplePlatform]s.
+ */
+fun TargetPlatform?.isMultiPlatform(): Boolean = this != null && size > 1
+
+/**
+ * Whether this is "Common" platform in its classical sense (MPP v1).
+ */
+fun TargetPlatform?.isCommon(): Boolean = isMultiPlatform() && this!!.iterator().let { i ->
     val firstPlatformName = i.next().platformName
     while (i.hasNext()) {
         if (i.next().platformName != firstPlatformName) return@let true
