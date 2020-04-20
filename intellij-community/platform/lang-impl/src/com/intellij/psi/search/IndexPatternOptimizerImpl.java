@@ -3,6 +3,8 @@ package com.intellij.psi.search;
 
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectLocator;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PlatformUtils;
@@ -20,7 +22,13 @@ public class IndexPatternOptimizerImpl implements IndexPatternOptimizer {
     if (ApplicationManager.getApplication().isUnitTestMode() && PlatformUtils.isDataGrip()) {
       return Collections.emptyList();
     }
-    String stringToFind = FindInProjectUtil.extractStringToFind(regexp, ProjectManager.getInstance().getDefaultProject());
+
+    Project project = ProjectLocator.getInstance().guessProjectForFile(null);
+    if (project == null) {
+      project = ProjectManager.getInstance().getDefaultProject();
+    }
+
+    String stringToFind = FindInProjectUtil.extractStringToFind(regexp, project);
     return StringUtil.getWordsIn(stringToFind);
   }
 }
