@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProviders;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSettingListener;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfile;
+import com.intellij.codeInspection.actions.CleanupInspectionIntention;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
@@ -604,6 +605,10 @@ public final class DaemonListeners implements Disposable {
   private static boolean isContributedByPlugin(@NotNull HighlightInfo.IntentionActionDescriptor intentionActionDescriptor,
                                                @NotNull IdeaPluginDescriptor descriptor) {
     IntentionAction action = intentionActionDescriptor.getAction();
+    if (action instanceof CleanupInspectionIntention) {
+      PluginId pluginId = PluginManagerCore.getPluginByClassName(((CleanupInspectionIntention) action).getToolWrapper().getClass().getName());
+      return descriptor.getPluginId().equals(pluginId);
+    }
     PluginId pluginId = PluginManagerCore.getPluginByClassName(action.getClass().getName());
     return descriptor.getPluginId().equals(pluginId);
   }

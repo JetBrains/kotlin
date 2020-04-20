@@ -38,6 +38,10 @@ public class CleanupInspectionIntention implements IntentionAction, HighPriority
     myText = text;
   }
 
+  public InspectionToolWrapper getToolWrapper() {
+    return myToolWrapper;
+  }
+
   @Override
   @NotNull
   public String getText() {
