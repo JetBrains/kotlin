@@ -6,11 +6,12 @@
         <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4-SNAPSHOT/kotlin-dist-for-ide-1.4-SNAPSHOT.jar" path-in-jar="/" />
       </element>
       <element id="directory" name="lib">
+        <element id="library" level="project" name="kotlinc.android-extensions-compiler-plugin" />
+        <element id="library" level="project" name="kotlinc.kotlin-android-extensions-runtime" />
         <element id="library" level="project" name="kotlinc.allopen-compiler-plugin" />
         <element id="library" level="project" name="kotlinc.kotlinx-serialization-compiler-plugin" />
         <element id="library" level="project" name="kotlinc.sam-with-receiver-compiler-plugin" />
         <element id="library" level="project" name="kotlinc.noarg-compiler-plugin" />
-        <element id="library" level="project" name="kotlinc.kotlin-scripting-compiler" />
         <element id="library" level="project" name="kotlinc.kotlin-compiler" />
         <element id="library" level="project" name="kotlinc.kotlin-scripting-compiler-impl" />
         <element id="directory" name="jps">
@@ -87,9 +88,6 @@
         <element id="archive" name="kotlin-project-wizard-cli.jar">
           <element id="module-output" name="kotlin.project-wizard.cli" />
         </element>
-        <element id="library" level="module" name="org.yaml:snakeyaml:1.24" module-name="kotlin.project-wizard.cli" />
-        <element id="library" level="project" name="kotlinx-collections-immutable" />
-        <element id="library" level="module" name="org.apache.velocity:velocity:1.7" module-name="kotlin.project-wizard.core" />
         <element id="archive" name="kotlin-project-wizard-core.jar">
           <element id="module-output" name="kotlin.project-wizard.core" />
         </element>
@@ -152,6 +150,8 @@
         <element id="archive" name="kotlin-scripting.jar">
           <element id="module-output" name="kotlin.scripting" />
         </element>
+        <element id="library" level="project" name="javaslang" />
+        <element id="library" level="project" name="kotlinx-collections-immutable-jvm" />
       </element>
     </root>
   </artifact>
