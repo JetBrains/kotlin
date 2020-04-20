@@ -233,7 +233,8 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         val resultingType: ConeKotlinType = when (fir) {
             is FirFunction -> createKFunctionType(
                 fir, resultingReceiverType, returnTypeRef,
-                expectedParameterNumberWithReceiver = expectedType?.let { it.typeArguments.size - 1 }
+                expectedParameterNumberWithReceiver = expectedType?.let { it.typeArguments.size - 1 },
+                isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true
             )
             is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
@@ -289,7 +290,8 @@ private fun createKFunctionType(
     function: FirFunction<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef,
-    expectedParameterNumberWithReceiver: Int?
+    expectedParameterNumberWithReceiver: Int?,
+    isSuspend: Boolean
 ): ConeKotlinType {
     val parameterTypes = mutableListOf<ConeKotlinType>()
     val expectedParameterNumber = when {
@@ -307,7 +309,8 @@ private fun createKFunctionType(
     return createFunctionalType(
         parameterTypes, receiverType = receiverType,
         rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function"),
-        isKFunctionType = true
+        isKFunctionType = true,
+        isSuspend = isSuspend
     )
 }
 
