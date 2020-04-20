@@ -75,7 +75,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
                                 @Nullable SnapshotInputMappings<Key, Value> snapshotInputMappings) throws IOException {
     this(extension,
          storage,
-         snapshotInputMappings != null ? new IntMapForwardIndex(extension, snapshotInputMappings.getInputIndexStorageFile(), true)
+         snapshotInputMappings != null ? new IntMapForwardIndex(snapshotInputMappings.getInputIndexStorageFile(), true)
                                        : getForwardIndexMap(extension),
          snapshotInputMappings != null ? snapshotInputMappings.getForwardIndexAccessor() : getForwardIndexAccessor(extension),
          snapshotInputMappings, null);

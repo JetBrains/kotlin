@@ -44,7 +44,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class IndexingStamp {
   private static final long INDEX_DATA_OUTDATED_STAMP = -2L;
 
-  private static final int VERSION = 15 + (SharedIndicesData.ourFileSharedIndicesEnabled ? 15 : 0) + (SharedIndicesData.DO_CHECKS ? 15 : 0);
+  private static final int VERSION = 15;
   private static final ConcurrentMap<ID<?, ?>, IndexVersion> ourIndexIdToCreationStamp = new ConcurrentHashMap<>();
   private static final long ourVfsCreationStamp = FSRecords.getCreationTimestamp();
 
@@ -114,7 +114,6 @@ public class IndexingStamp {
     if (FileBasedIndexImpl.LOG.isDebugEnabled()) {
       FileBasedIndexImpl.LOG.debug("Rewriting " + file + "," + version);
     }
-    SharedIndicesData.beforeSomeIndexVersionInvalidation();
     IndexVersion newIndexVersion = getIndexVersion(indexId).nextVersion(version, FSRecords.getCreationTimestamp());
 
     if (file.exists()) {

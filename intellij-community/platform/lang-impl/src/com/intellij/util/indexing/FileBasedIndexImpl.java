@@ -494,7 +494,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
         FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.shutdown());
         IndexedHashesSupport.flushContentHashes();
-        SharedIndicesData.flushData();
         if (!keepConnection) {
           myConnection.disconnect();
         }
@@ -581,7 +580,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
 
     IndexedHashesSupport.flushContentHashes();
-    SharedIndicesData.flushData();
   }
 
   private static final ThreadLocal<Integer> myUpToDateCheckState = new ThreadLocal<>();
