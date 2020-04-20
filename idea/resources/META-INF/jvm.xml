@@ -4,6 +4,7 @@
         <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerStartupActivity"/>
         <postStartupActivity implementation="org.jetbrains.kotlin.idea.JvmPluginStartupActivity"/>
         <postStartupActivity implementation="org.jetbrains.kotlin.idea.compiler.KotlinCompilerStartupActivity"/>
+        <postStartupActivity implementation="org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider"/>
 
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService"/>
     </extensions>
