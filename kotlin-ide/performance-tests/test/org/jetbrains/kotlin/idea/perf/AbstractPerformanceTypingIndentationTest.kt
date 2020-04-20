@@ -33,7 +33,7 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightPlatformCod
         val originalFileText = FileUtil.loadFile(File(originFilePath), true)
 
         try {
-            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project))
+            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project_))
             configurator.configureSettings()
 
             performanceTest<Unit, Unit> {
@@ -46,8 +46,8 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightPlatformCod
                     executeAction(IdeActions.ACTION_EDITOR_ENTER)
                 }
                 tearDown {
-                    val actualTextWithCaret = StringBuilder(editor.document.text).insert(
-                        editor.caretModel.offset,
+                    val actualTextWithCaret = StringBuilder(editor_.document.text).insert(
+                        editor_.caretModel.offset,
                         EditorTestUtil.CARET_TAG
                     ).toString()
 
@@ -55,7 +55,7 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightPlatformCod
                 }
             }
         } finally {
-            CodeStyle.getSettings(project).clearCodeStyleSettings()
+            CodeStyle.getSettings(project_).clearCodeStyleSettings()
         }
     }
 
