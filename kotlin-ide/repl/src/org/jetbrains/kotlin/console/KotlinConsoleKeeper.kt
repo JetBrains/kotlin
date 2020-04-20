@@ -11,7 +11,10 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
+import org.jetbrains.kotlin.platform.jvm.JdkPlatform
+import org.jetbrains.kotlin.platform.subplatformsOfType
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -66,6 +69,10 @@ class KotlinConsoleKeeper(val project: Project) {
                     javaParameters.programParametersList.add(
                         classPath.joinToString(File.pathSeparator)
                     )
+                }
+                TargetPlatformDetector.getPlatform(module).subplatformsOfType<JdkPlatform>().firstOrNull()?.targetVersion?.let {
+                    javaParameters.programParametersList.add("-jvm-target")
+                    javaParameters.programParametersList.add(it.description)
                 }
             }
 
