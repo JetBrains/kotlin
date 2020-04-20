@@ -25,10 +25,8 @@ import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.Name
 
-class JvmIrLinker(currentModule: ModuleDescriptor?, logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable, private val stubGenerator: DeclarationStubGenerator, private val manglerDesc: JvmManglerDesc) :
+class JvmIrLinker(currentModule: ModuleDescriptor?, logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable, override val functionalInteraceFactory: IrAbstractFunctionFactory, private val stubGenerator: DeclarationStubGenerator, private val manglerDesc: JvmManglerDesc) :
     KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
-
-    override val functionalInteraceFactory: IrAbstractFunctionFactory = IrFunctionFactory(builtIns, symbolTable)
 
     private val javaName = Name.identifier("java")
 

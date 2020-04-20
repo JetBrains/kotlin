@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +50,8 @@ class JsScriptDependencyCompiler(
         }
 
         val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
-        val jsLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, null)
+        val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
+        val jsLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null)
 
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it, it.kotlinLibrary) }
