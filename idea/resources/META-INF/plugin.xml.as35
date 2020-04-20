@@ -59,6 +59,12 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <xi:include href="scripting-support.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <application-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
+    </component>
+  </application-components>
+
   <project-components>
       <component>
         <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>

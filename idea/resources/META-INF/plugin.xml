@@ -78,41 +78,44 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
   </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-      <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
-      <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
-      <postStartupActivity implementation="org.jetbrains.kotlin.idea.completion.LookupCancelWatcher"/>
-      <postStartupActivity implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener"/>
-      <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
 
-      <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
-      <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginStartupActivity" />
 
-      <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
-      <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
-      <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Registrar"/>
-      <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.completion.LookupCancelWatcher"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent"/>
 
-      <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
-      <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
-      <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
-      <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.refactoring" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="2"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.migrationTool" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.new.wizard" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.gradle.performance" version="1"/>
-      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.IDESettingsFUSCollector"/>
-      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
-      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
 
-      <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
 
-      <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
-      <completion.ml.contextFeatures language="kotlin" implementationClass="org.jetbrains.kotlin.idea.completion.ml.KotlinContextFeatureProvider"/>
-    </extensions>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.refactoring" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.migrationTool" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.new.wizard" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.performance" version="1"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.IDESettingsFUSCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+
+    <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
+
+    <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
+    <completion.ml.contextFeatures language="kotlin" implementationClass="org.jetbrains.kotlin.idea.completion.ml.KotlinContextFeatureProvider"/>
+  </extensions>
 </idea-plugin>

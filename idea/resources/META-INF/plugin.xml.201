@@ -74,7 +74,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
+
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginStartupActivity" />
+
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.completion.LookupCancelWatcher"/>
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener"/>
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent"/>
