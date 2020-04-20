@@ -73,8 +73,11 @@ fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Visibi
 fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
-fun IrPropertyBuilder.buildProperty(): IrProperty {
-    val wrappedDescriptor = WrappedPropertyDescriptor()
+fun IrPropertyBuilder.buildProperty(originalDescriptor: PropertyDescriptor? = null): IrProperty {
+    val wrappedDescriptor = when (originalDescriptor) {
+        is DescriptorWithContainerSource -> WrappedPropertyDescriptorWithContainerSource(originalDescriptor.containerSource)
+        else -> WrappedPropertyDescriptor()
+    }
     return IrPropertyImpl(
         startOffset, endOffset, origin,
         IrPropertySymbolImpl(wrappedDescriptor),
@@ -86,14 +89,14 @@ fun IrPropertyBuilder.buildProperty(): IrProperty {
     }
 }
 
-inline fun buildProperty(builder: IrPropertyBuilder.() -> Unit) =
+inline fun buildProperty(originalDescriptor: PropertyDescriptor? = null, builder: IrPropertyBuilder.() -> Unit) =
     IrPropertyBuilder().run {
         builder()
-        buildProperty()
+        buildProperty(originalDescriptor)
     }
 
-inline fun IrDeclarationContainer.addProperty(builder: IrPropertyBuilder.() -> Unit): IrProperty =
-    buildProperty(builder).also { property ->
+inline fun IrDeclarationContainer.addProperty(originalDescriptor: PropertyDescriptor? = null, builder: IrPropertyBuilder.() -> Unit): IrProperty =
+    buildProperty(originalDescriptor, builder).also { property ->
         declarations.add(property)
         property.parent = this@addProperty
     }
@@ -120,7 +123,7 @@ inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
     }
 
 fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrFunctionImpl {
-    val wrappedDescriptor = when(originalDescriptor) {
+    val wrappedDescriptor = when (originalDescriptor) {
         is DescriptorWithContainerSource -> WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
         is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)
         is PropertySetterDescriptor -> WrappedPropertySetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)

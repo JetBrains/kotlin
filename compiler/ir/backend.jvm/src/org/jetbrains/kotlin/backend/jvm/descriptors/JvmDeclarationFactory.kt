@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -22,12 +23,18 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -292,23 +299,7 @@ class JvmDeclarationFactory(
                     overriddenSymbols = fakeOverride.overriddenSymbols
                     copyParameterDeclarationsFrom(fakeOverride)
                     annotations = fakeOverride.annotations
-                    fakeOverride.correspondingPropertySymbol?.owner?.let { fakeOverrideProperty ->
-                        // NB: property is only generated for the sake of the type mapper.
-                        // If both setter and getter are present, original property will be duplicated.
-                        val newPropertyDescriptor = DescriptorsToIrRemapper.remapDeclaredProperty(fakeOverrideProperty.descriptor)
-                        correspondingPropertySymbol = with(fakeOverrideProperty) {
-                            IrPropertyImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(newPropertyDescriptor),
-                                name, visibility, modality, isVar, isConst, isLateinit, isDelegated,
-                                isExternal = false,
-                                isExpect = isExpect
-                            ).apply {
-                                newPropertyDescriptor.bind(this)
-                                parent = irClass
-                            }.symbol
-                        }
-                    }
+                    copyCorrespondingPropertyFrom(fakeOverride)
                 }
             }
 
