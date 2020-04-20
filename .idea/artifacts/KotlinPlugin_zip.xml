@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="KotlinPlugin.zip">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin_zip</output-path>
+    <root id="root">
+      <element id="archive" name="KotlinPlugin.jar">
+        <element id="artifact" artifact-name="KotlinPlugin" />
+      </element>
+    </root>
+  </artifact>
+</component>
