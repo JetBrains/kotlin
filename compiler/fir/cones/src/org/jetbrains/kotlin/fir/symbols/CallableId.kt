@@ -14,7 +14,8 @@ data class CallableId(
     val packageName: FqName,
     val className: FqName?,
     val callableName: Name,
-    val pathToLocal: FqName? = null
+    // Currently, it's only used for debug info
+    private val pathToLocal: FqName? = null
 ) {
     private companion object {
         val LOCAL_NAME = Name.special("<local>")
@@ -38,6 +39,7 @@ data class CallableId(
     @Deprecated("TODO: Better solution for local callables?")
     constructor(
         callableName: Name,
+        // Currently, it's only used for debug info
         pathToLocal: FqName? = null
     ) : this(
         PACKAGE_FQ_NAME_FOR_LOCAL,
@@ -49,8 +51,7 @@ data class CallableId(
     fun asFqNameForDebugInfo(): FqName {
         if (pathToLocal != null) return pathToLocal.child(callableName)
 
-        if (className == null) return packageName.child(callableName)
-        return classId!!.asSingleFqName().child(callableName)
+        return classId?.asSingleFqName()?.child(callableName) ?: packageName.child(callableName)
     }
 
     override fun toString(): String {
