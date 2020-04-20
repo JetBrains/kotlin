@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class ContinuationHolder(val context: DefaultExecutionContext) {
+class ContinuationHolder private constructor(val context: DefaultExecutionContext) {
     private val debugMetadata: DebugMetadata? = DebugMetadata.instance(context)
     private val locationCache = LocationCache(context)
     private val debugProbesImpl = DebugProbesImpl.instance(context)
@@ -70,6 +70,7 @@ class ContinuationHolder(val context: DefaultExecutionContext) {
             val id = standAloneCoroutineMirror.context.id
             val name = standAloneCoroutineMirror.context.name ?: CoroutineInfoData.DEFAULT_COROUTINE_NAME
             val toString = reference.string(value, context)
+            // trying to get coroutine information by calling JobSupport.toString(), ${nameString()}{${stateString(state)}}@$hexAddress
             val r = """\w+\{(\w+)\}\@([\w\d]+)""".toRegex()
             val matcher = r.toPattern().matcher(toString)
             if (matcher.matches()) {
@@ -94,6 +95,9 @@ class ContinuationHolder(val context: DefaultExecutionContext) {
     companion object {
         val log by logger
 
+        fun instance(context: DefaultExecutionContext) =
+            ContinuationHolder(context)
+
         private fun stateOf(state: String?): State =
             when (state) {
                 "Active" -> State.RUNNING
@@ -104,8 +108,6 @@ class ContinuationHolder(val context: DefaultExecutionContext) {
                 "New" -> State.NEW
                 else -> State.UNKNOWN
             }
-
-
     }
 }
 
@@ -129,5 +131,4 @@ fun FieldVariable.toJavaValue(continuation: ObjectReference, context: DefaultExe
         context.debugProcess.xdebugProcess!!.nodeManager,
         false
     )
-
 }

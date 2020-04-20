@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 
 import com.sun.jdi.ArrayReference
-import com.sun.jdi.ClassType
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.StringReference
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.isBaseContinuationImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
@@ -20,10 +18,8 @@ class DebugMetadata private constructor(context: DefaultExecutionContext) :
         makeMethod("getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;")
     val baseContinuationImpl = BaseContinuationImpl(context, this)
 
-    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfDebugProbesImpl? {
-        // @TODO fix this
-        return null
-    }
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfDebugProbesImpl? =
+        throw IllegalStateException("Not meant to be mirrored.")
 
     fun fetchContinuationStack(continuation: ObjectReference, context: DefaultExecutionContext): MirrorOfContinuationStack {
         val coroutineStack = mutableListOf<MirrorOfStackFrame>()
@@ -45,13 +41,14 @@ class DebugMetadata private constructor(context: DefaultExecutionContext) :
     companion object {
         val log by logger
 
-        fun instance(context: DefaultExecutionContext) =
+        fun instance(context: DefaultExecutionContext): DebugMetadata? {
             try {
-                DebugMetadata(context)
+                return DebugMetadata(context)
             } catch (e: IllegalStateException) {
                 log.warn("Attempt to access DebugMetadata", e)
-                null
             }
+            return null
+        }
     }
 }
 
@@ -87,7 +84,8 @@ class BaseContinuationImpl(context: DefaultExecutionContext, private val debugMe
         val length = getSpilledVariableFieldMappingReference.length() / 2
         val fieldVariables = ArrayList<FieldVariable>()
         for (index in 0 until length) {
-            fieldVariables.add(getFieldVariableName(getSpilledVariableFieldMappingReference, index) ?: continue)
+            var fieldVariable = getFieldVariableName(getSpilledVariableFieldMappingReference, index) ?: continue
+            fieldVariables.add(fieldVariable)
         }
         return fieldVariables
     }

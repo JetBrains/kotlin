@@ -151,7 +151,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class CoroutineGroupContainer(val suspendContext: SuspendContextImpl) : XValueContainer() {
         override fun computeChildren(node: XCompositeNode) {
             if (suspendContext.suspendPolicy == EventRequest.SUSPEND_ALL) {
-                managerThreadExecutor.on(suspendContext).schedule {
+                managerThreadExecutor.on(suspendContext).invoke {
                     val debugProbesProxy = CoroutineDebugProbesProxy(suspendContext)
 
                     val emptyDispatcherName = KotlinDebuggerCoroutinesBundle.message("coroutine.view.dispatcher.empty")
@@ -210,7 +210,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     ) : RendererContainer(renderer.render(infoData)) {
 
         override fun computeChildren(node: XCompositeNode) {
-            managerThreadExecutor.on(suspendContext).schedule {
+            managerThreadExecutor.on(suspendContext).invoke {
                 val children = XValueChildrenList()
                 val doubleFrameList = CoroutineFrameBuilder.build(infoData, suspendContext)
                 doubleFrameList?.stackTrace?.forEach {

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
+import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
@@ -79,6 +81,24 @@ fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) ->
             managerThread.invoke(command)
         else ->
             managerThread.invokeAndWait(command)
+    }
+
+    return result
+}
+
+fun <T : Any> SuspendContextImpl.invokeInSuspendManagerThread(debugProcessImpl: DebugProcessImpl, f: (SuspendContextImpl) -> T?): T? {
+    var result: T? = null
+    val command: SuspendContextCommandImpl = object : SuspendContextCommandImpl(this) {
+        override fun contextAction() {
+            result = runReadAction { f(this@invokeInSuspendManagerThread) }
+        }
+    }
+
+    when {
+        DebuggerManagerThreadImpl.isManagerThread() ->
+            debugProcessImpl.managerThread.invoke(command)
+        else ->
+            debugProcessImpl.managerThread.invokeAndWait(command)
     }
 
     return result

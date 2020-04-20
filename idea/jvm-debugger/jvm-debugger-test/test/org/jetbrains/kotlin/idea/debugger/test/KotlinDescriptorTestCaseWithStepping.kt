@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.test
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.debugger.impl.PositionUtil
@@ -155,6 +156,21 @@ abstract class KotlinDescriptorTestCaseWithStepping : KotlinDescriptorTestCase()
                 is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                 else -> null
             }
+        }
+    }
+
+    protected fun SuspendContextImpl.runActionInSuspendCommand(action: SuspendContextImpl.() -> Unit) {
+        if (myInProgress) {
+            action()
+        } else {
+            val command = object : SuspendContextCommandImpl(this) {
+                override fun contextAction(suspendContext: SuspendContextImpl) {
+                    action(suspendContext)
+                }
+            }
+
+            // Try to execute the action inside a command if we aren't already inside it.
+            debuggerSession.process.managerThread?.invoke(command) ?: command.contextAction(this)
         }
     }
 }
