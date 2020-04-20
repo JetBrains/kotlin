@@ -1,11 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
-import com.intellij.index.PrebuiltIndexProviderBase;
+import com.intellij.index.PrebuiltIndexProvider;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.fileTypes.FileType;
@@ -126,51 +125,49 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       @Override
       @Nullable
       public SerializedStubTree computeValue(@NotNull final FileContent inputData, @NotNull StubBuilderType type) {
-        return ReadAction.compute(() -> {
-          SerializedStubTree serializedStubTree = null;
+        SerializedStubTree serializedStubTree = null;
 
-          try {
-            if (Registry.is("use.prebuilt.indices")) {
-              PrebuiltStubsProvider prebuiltStubsProvider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(inputData.getFileType());
-              if (prebuiltStubsProvider != null) {
-                serializedStubTree = prebuiltStubsProvider.findStub(inputData);
-                if (PrebuiltIndexProviderBase.DEBUG_PREBUILT_INDICES) {
-                  Stub stub = StubTreeBuilder.buildStubTree(inputData);
-                  if (serializedStubTree != null && stub != null) {
-                    check(serializedStubTree.getStub(), stub);
-                    checkStubIndexes(serializedStubTree, stub);
-                  }
-                }
-              }
-            }
-
-            if (serializedStubTree == null) {
-              Stub rootStub = StubTreeBuilder.buildStubTree(inputData, type);
-              if (rootStub != null) {
-                serializedStubTree = SerializedStubTree.serializeStub(
-                  rootStub,
-                  mySerializationManager,
-                  myStubIndexesExternalizer
-                );
-                if (DebugAssertions.DEBUG) {
-                  Stub deserialized = serializedStubTree.getStub(mySerializationManager);
-                  check(deserialized, rootStub);
+        try {
+          if (Registry.is("use.prebuilt.indices")) {
+            PrebuiltStubsProvider prebuiltStubsProvider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(inputData.getFileType());
+            if (prebuiltStubsProvider != null) {
+              serializedStubTree = prebuiltStubsProvider.findStub(inputData);
+              if (PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
+                Stub stub = StubTreeBuilder.buildStubTree(inputData);
+                if (serializedStubTree != null && stub != null) {
+                  check(serializedStubTree.getStub(), stub);
+                  checkStubIndexes(serializedStubTree, stub);
                 }
               }
             }
           }
-          catch (ProcessCanceledException pce) {
-            throw pce;
-          }
-          catch (SerializerNotFoundException e) {
-            throw new RuntimeException(e);
-          }
-          catch (Throwable t) {
-            LOG.error("Error indexing:" + inputData.getFile(), t);
-          }
 
-          return serializedStubTree;
-        });
+          if (serializedStubTree == null) {
+            Stub rootStub = StubTreeBuilder.buildStubTree(inputData, type);
+            if (rootStub != null) {
+              serializedStubTree = SerializedStubTree.serializeStub(
+                rootStub,
+                mySerializationManager,
+                myStubIndexesExternalizer
+              );
+              if (DebugAssertions.DEBUG) {
+                Stub deserialized = serializedStubTree.getStub(mySerializationManager);
+                check(deserialized, rootStub);
+              }
+            }
+          }
+        }
+        catch (ProcessCanceledException pce) {
+          throw pce;
+        }
+        catch (SerializerNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+        catch (Throwable t) {
+          LOG.error("Error indexing:" + inputData.getFile(), t);
+        }
+
+        return serializedStubTree;
       }
     };
   }
