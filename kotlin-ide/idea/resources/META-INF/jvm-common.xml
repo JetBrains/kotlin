@@ -1,9 +1,6 @@
 <idea-plugin>
     <project-components>
         <component>
-            <implementation-class>org.jetbrains.kotlin.idea.compiler.KotlinCompilerManager</implementation-class>
-        </component>
-        <component>
             <implementation-class>org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider</implementation-class>
         </component>
     </project-components>
