@@ -161,7 +161,7 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
     atomic(new Runnable() {
       @Override
       public void run() {
-        if (isDisabled() || getContext().myPostponedCounter == 0 && !ApplicationManager.getApplication().isUnitTestMode()) return;
+        if (isDisabled() || getContext().myPostponedCounter == 0) return;
         final TreeChangeEvent changeSet = (TreeChangeEvent)event.getChangeSet(myTreeAspect.getValue());
         if (changeSet == null) return;
         final PsiElement psiElement = changeSet.getRootElement().getPsi();
