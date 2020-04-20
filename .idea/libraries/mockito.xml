@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="mockito" type="repository">
     <properties maven-id="org.mockito:mockito-core:3.0.0">

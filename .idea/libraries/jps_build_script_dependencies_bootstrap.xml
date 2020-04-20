@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="jps-build-script-dependencies-bootstrap" type="repository">
     <properties maven-id="com.jetbrains.intellij.tools:jps-build-script-dependencies:202.2395" />

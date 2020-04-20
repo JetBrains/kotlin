@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="XMLUnit Matchers" type="repository">
     <properties maven-id="org.xmlunit:xmlunit-matchers:2.6.3" />

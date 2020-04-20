@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="JUnit4" type="repository">
     <properties maven-id="junit:junit:4.12" />

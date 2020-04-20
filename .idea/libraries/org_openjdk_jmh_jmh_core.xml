@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="org.openjdk.jmh:jmh-core" type="repository">
     <properties maven-id="org.openjdk.jmh:jmh-core:1.19" />

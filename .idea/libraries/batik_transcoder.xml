@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="batik-transcoder" type="repository">
     <properties maven-id="org.jetbrains.intellij.deps.batik:batik-transcoder:1.12.0-8">

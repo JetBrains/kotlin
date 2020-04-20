@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="plexus-utils" type="repository">
     <properties maven-id="org.codehaus.plexus:plexus-utils:3.2.0" />
