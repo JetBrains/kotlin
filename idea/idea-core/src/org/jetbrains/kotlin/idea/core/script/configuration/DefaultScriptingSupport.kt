@@ -167,11 +167,13 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return null
         val scriptDefinition = file.findScriptDefinition() ?: return null
 
-        if (!loader.shouldRunInBackground(scriptDefinition)) {
-            loader.loadDependencies(false, file, scriptDefinition, loadingContext)
-        } else {
-            backgroundExecutor.ensureScheduled(virtualFile) {
+        rootsIndexer.transaction {
+            if (!loader.shouldRunInBackground(scriptDefinition)) {
                 loader.loadDependencies(false, file, scriptDefinition, loadingContext)
+            } else {
+                backgroundExecutor.ensureScheduled(virtualFile) {
+                    loader.loadDependencies(false, file, scriptDefinition, loadingContext)
+                }
             }
         }
 
