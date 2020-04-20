@@ -28,8 +28,7 @@ fun createGeneratorContext(
     bindingContext: BindingContext,
     languageVersionSettings: LanguageVersionSettings,
     symbolTable: SymbolTable,
-    extensions: GeneratorExtensions,
-    signaturer: IdSignatureComposer
+    extensions: GeneratorExtensions
 ): GeneratorContext {
     val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns)
     val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
@@ -44,7 +43,7 @@ fun createGeneratorContext(
         extensions,
         typeTranslator,
         constantValueGenerator,
-        IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
+        IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
     )
 }
 

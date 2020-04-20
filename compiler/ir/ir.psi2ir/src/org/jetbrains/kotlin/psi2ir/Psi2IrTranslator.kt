@@ -63,7 +63,9 @@ class Psi2IrTranslator(
         symbolTable: SymbolTable = SymbolTable(signaturer),
         extensions: GeneratorExtensions = GeneratorExtensions()
     ): GeneratorContext =
-        createGeneratorContext(configuration, moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, extensions, signaturer)
+        createGeneratorContext(
+            configuration, moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, extensions
+        )
 
     fun generateModuleFragment(
         context: GeneratorContext,

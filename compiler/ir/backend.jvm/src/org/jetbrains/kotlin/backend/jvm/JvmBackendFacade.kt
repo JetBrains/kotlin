@@ -56,7 +56,9 @@ object JvmBackendFacade {
         val stubGenerator = DeclarationStubGenerator(
             psi2irContext.moduleDescriptor, psi2irContext.symbolTable, psi2irContext.irBuiltIns.languageVersionSettings, extensions
         )
-        val irLinker = JvmIrLinker(psi2irContext.moduleDescriptor, EmptyLoggingContext, psi2irContext.irBuiltIns, psi2irContext.symbolTable, stubGenerator, mangler)
+        val irLinker = JvmIrLinker(
+            psi2irContext.moduleDescriptor, EmptyLoggingContext, psi2irContext.irBuiltIns, psi2irContext.symbolTable, stubGenerator, mangler
+        )
         val dependencies = psi2irContext.moduleDescriptor.allDependencyModules.map {
             val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
@@ -65,7 +67,8 @@ object JvmBackendFacade {
 
         stubGenerator.setIrProviders(irProviders)
 
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, expectDescriptorToSymbol = null, pluginExtensions)
+        val irModuleFragment =
+            psi2ir.generateModuleFragment(psi2irContext, files, irProviders, expectDescriptorToSymbol = null, pluginExtensions)
         irLinker.postProcess()
 
         stubGenerator.unboundSymbolGeneration = true

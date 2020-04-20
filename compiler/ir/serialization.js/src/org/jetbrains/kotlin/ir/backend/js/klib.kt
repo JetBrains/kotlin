@@ -229,7 +229,7 @@ fun loadIr(
             )
             typeTranslator.constantValueGenerator = constantValueGenerator
             constantValueGenerator.typeTranslator = typeTranslator
-            val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
+            val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val irLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, null)
 
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
@@ -264,8 +264,7 @@ private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): Gene
         analysisResult.bindingContext,
         depsDescriptors.compilerConfiguration.languageVersionSettings,
         SymbolTable(signaturer),
-        GeneratorExtensions(),
-        signaturer
+        GeneratorExtensions()
     )
 }
 

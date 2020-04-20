@@ -48,8 +48,7 @@ class JsScriptDependencyCompiler(
             it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         }
 
-        val signaturer = IdSignatureDescriptor(JsManglerDesc)
-        val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, signaturer, symbolTable)
+        val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
         val jsLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, null)
 
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)

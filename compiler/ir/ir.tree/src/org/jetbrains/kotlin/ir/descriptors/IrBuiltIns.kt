@@ -36,14 +36,11 @@ import org.jetbrains.kotlin.types.*
 class IrBuiltIns(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
-    signaturer: IdSignatureComposer,
-    outerSymbolTable: SymbolTable? = null
+    private val symbolTable: SymbolTable
 ) {
     val languageVersionSettings = typeTranslator.languageVersionSettings
 
     private val builtInsModule = builtIns.builtInsModule
-
-    private val symbolTable = outerSymbolTable ?: SymbolTable(signaturer)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     val packageFragment =

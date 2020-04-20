@@ -169,7 +169,7 @@ class Fir2IrConverter(
             val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns)
             constantValueGenerator.typeTranslator = typeTranslator
             typeTranslator.constantValueGenerator = constantValueGenerator
-            val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
+            val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val sourceManager = PsiSourceManager()
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
