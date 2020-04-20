@@ -71,7 +71,7 @@ public class DocRenderItem {
     int endOffset = range.getEndOffset();
     int startLine = document.getLineNumber(startOffset);
     int endLine = document.getLineNumber(endOffset);
-    return startLine > 0 && endLine < document.getLineCount() - 1 &&
+    return endLine < document.getLineCount() - 1 &&
            CharArrayUtil.containsOnlyWhiteSpaces(text.subSequence(document.getLineStartOffset(startLine), startOffset)) &&
            CharArrayUtil.containsOnlyWhiteSpaces(text.subSequence(endOffset, document.getLineEndOffset(endLine)));
   }
@@ -244,14 +244,17 @@ public class DocRenderItem {
     updateIcon();
   }
 
-  private int calcFoldStartOffset() {
+  private TextRange calcFoldRange() {
     Document document = highlighter.getDocument();
     int startLine = document.getLineNumber(highlighter.getStartOffset());
-    return startLine == 0 ? 0 : document.getLineEndOffset(startLine - 1);
-  }
-
-  private int calcFoldEndOffset() {
-    return highlighter.getEndOffset();
+    int endLine = document.getLineNumber(highlighter.getEndOffset());
+    int endOffset = document.getLineEndOffset(endLine);
+    if (startLine == 0) {
+      return new TextRange(0, endLine < document.getLineCount() - 1 ? document.getLineStartOffset(endLine + 1) : endOffset);
+    }
+    else {
+      return new TextRange(document.getLineEndOffset(startLine - 1), endOffset);
+    }
   }
 
   private int calcInlayOffset() {
@@ -264,8 +267,7 @@ public class DocRenderItem {
   private boolean isValid() {
     if (!highlighter.isValid() || highlighter.getStartOffset() >= highlighter.getEndOffset()) return false;
     return foldRegion == null && inlay == null ||
-           foldRegion != null && foldRegion.isValid() &&
-           foldRegion.getStartOffset() == calcFoldStartOffset() && foldRegion.getEndOffset() == calcFoldEndOffset() &&
+           foldRegion != null && foldRegion.isValid() && TextRange.areSegmentsEqual(foldRegion, calcFoldRange()) &&
            inlay != null && inlay.isValid() && inlay.getOffset() == calcInlayOffset();
   }
 
@@ -301,11 +303,10 @@ public class DocRenderItem {
       int inlayOffset = calcInlayOffset();
       inlay = editor.getInlayModel().addBlockElement(inlayOffset, false, true, BlockInlayPriority.DOC_RENDER, new DocRenderer(this));
       if (inlay != null) {
-        int foldStartOffset = calcFoldStartOffset();
-        int foldEndOffset = calcFoldEndOffset();
+        TextRange foldRange = calcFoldRange();
         Runnable foldingTask = () -> {
           // if this fails (setting 'foldRegion' to null), 'cleanup' method will fix the mess
-          foldRegion = foldingModel.createFoldRegion(foldStartOffset, foldEndOffset, "", null, true);
+          foldRegion = foldingModel.createFoldRegion(foldRange.getStartOffset(), foldRange.getEndOffset(), "", null, true);
           if (foldRegion != null) foldRegion.putUserData(OUR_ITEM, this);
         };
         if (foldingTasks == null) {
