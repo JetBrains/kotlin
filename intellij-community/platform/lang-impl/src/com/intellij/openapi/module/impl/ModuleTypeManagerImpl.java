@@ -29,6 +29,11 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   }
 
   @Override
+  public void unregisterModuleType(ModuleType<?> type) {
+    myModuleTypes.remove(type);
+  }
+
+  @Override
   public void registerModuleType(ModuleType type, boolean classpathProvider) {
     for (ModuleType<?> oldType : myModuleTypes.keySet()) {
       if (oldType.getId().equals(type.getId())) {
