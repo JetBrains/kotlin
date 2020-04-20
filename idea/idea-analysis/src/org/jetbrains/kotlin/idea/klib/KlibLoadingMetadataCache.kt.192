@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.idea.klib
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.BaseComponent
 
 // BUNCH: 192
-class KlibLoadingMetadataCache : KlibLoadingMetadataCacheCompat() {
+class KlibLoadingMetadataCache : KlibLoadingMetadataCacheCompat(), BaseComponent {
 
     companion object {
         @JvmStatic
         fun getInstance(): KlibLoadingMetadataCache =
-            ApplicationManager.getApplication().getService(KlibLoadingMetadataCache::class.java)
+            ApplicationManager.getApplication().getComponent(KlibLoadingMetadataCache::class.java)
     }
 
 }

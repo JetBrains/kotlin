@@ -1,4 +1,10 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache</implementation-class>
+        </component>
+    </application-components>
+
     <project-components>
         <component>
             <implementation-class>org.jetbrains.kotlin.ide.konan.KotlinNativeABICompatibilityChecker</implementation-class>
