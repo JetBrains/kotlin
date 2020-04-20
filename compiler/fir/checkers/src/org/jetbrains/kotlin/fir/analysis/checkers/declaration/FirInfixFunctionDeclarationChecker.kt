@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInfix
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.isInfix
 object FirInfixFunctionDeclarationChecker : FirDeclarationChecker<FirMemberDeclaration>() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirSimpleFunction && declaration.isInfix) {
-            if (declaration.valueParameters.size != 1 || declaration.receiverTypeRef == null) {
+            if (declaration.valueParameters.size != 1 || !hasExtensionOrDispatchReceiver(declaration, context)) {
                 reporter.report(declaration.source)
             }
             return
@@ -24,6 +25,14 @@ object FirInfixFunctionDeclarationChecker : FirDeclarationChecker<FirMemberDecla
         if (declaration.isInfix) {
             reporter.report(declaration.source)
         }
+    }
+
+    private fun hasExtensionOrDispatchReceiver(
+        function: FirSimpleFunction,
+        context: CheckerContext
+    ): Boolean {
+        if (function.receiverTypeRef != null) return true
+        return context.containingDeclarations.lastOrNull() is FirClass<*>
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {

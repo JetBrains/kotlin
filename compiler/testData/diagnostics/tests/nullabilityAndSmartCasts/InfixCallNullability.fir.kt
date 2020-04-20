@@ -1,8 +1,8 @@
 // !WITH_NEW_INFERENCE
 class A() {
-    <!INAPPLICABLE_INFIX_MODIFIER!>operator infix fun plus(i : Int) {}<!>
+    operator infix fun plus(i : Int) {}
     operator fun unaryMinus() {}
-    <!INAPPLICABLE_INFIX_MODIFIER!>operator infix fun contains(a : Any?) : Boolean = true<!>
+    operator infix fun contains(a : Any?) : Boolean = true
 }
 
 operator infix fun A.div(i : Int) {}

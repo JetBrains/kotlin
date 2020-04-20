@@ -1,7 +1,7 @@
 package o
 
 class A {
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun foo(b: B) = b<!>
+    infix fun foo(b: B) = b
 }
 
 class B {

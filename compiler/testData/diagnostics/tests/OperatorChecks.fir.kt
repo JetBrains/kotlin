@@ -59,9 +59,9 @@ interface Example {
     operator fun hasNext(): Boolean
     operator fun hasNext(n: Int): String
 
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun i1(n: Int)<!>
+    infix fun i1(n: Int)
     <!INAPPLICABLE_INFIX_MODIFIER!>infix fun i1(n: Int, n2: Int)<!>
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun i1(vararg n: Int)<!>
+    infix fun i1(vararg n: Int)
 }
 
 class OkDelegates {

@@ -29,5 +29,5 @@ infix fun String.on(predicate :  (s : URI) -> Boolean) : URI {
 }
 
 class URI(val body : Any) {
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun to(dest : String) {}<!>
+    infix fun to(dest : String) {}
 }

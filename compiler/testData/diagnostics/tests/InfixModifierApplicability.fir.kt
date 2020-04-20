@@ -6,7 +6,7 @@ infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 // OK
 infix fun String.ok1(o: String) {}
 class OkTest {
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun ok2(o: String) {}<!>
+    infix fun ok2(o: String) {}
     infix fun String.ok3(o: String) {}
 }
 
