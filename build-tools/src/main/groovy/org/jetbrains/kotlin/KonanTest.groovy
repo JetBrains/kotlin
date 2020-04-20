@@ -533,7 +533,8 @@ fun runTest() {
             def settings = languageSettings.first()
             if (settings.contains('-ProperIeee754Comparisons') ||  // K/N supports only proper IEEE754 comparisons
                     settings.contains('-ReleaseCoroutines') ||     // only release coroutines
-                    settings.contains('-DataClassInheritance')) {  // old behavior is not supported
+                    settings.contains('-DataClassInheritance') ||  // old behavior is not supported
+                    settings.contains('-ProhibitAssigningSingleElementsToVarargsInNamedForm')) { // Prohibit these assignments
                 return false
             }
         }
