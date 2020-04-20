@@ -228,7 +228,7 @@ class JdkInstaller {
   private fun findJdkItem(jdkHome: File): JdkItem? {
     // Java package install dir have several folders up from it, e.g. Contents/Home on macOS
     val markerFile = generateSequence(jdkHome, { file -> file.parentFile })
-                       .take(3)
+                       .take(5)
                        .firstOrNull { it.isFile } ?: return null
     try {
       val json = JdkListParser.readTree(markerFile.readBytes())
