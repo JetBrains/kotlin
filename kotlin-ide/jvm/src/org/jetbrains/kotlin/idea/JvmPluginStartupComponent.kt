@@ -13,34 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.idea
 
-package org.jetbrains.kotlin.idea;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.BaseComponent
+import org.jetbrains.kotlin.idea.ThreadTrackerPatcherForTeamCityTesting.patchThreadTracker
+import org.jetbrains.kotlin.idea.debugger.filter.addKotlinStdlibDebugFilterIfNeeded
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.BaseComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
+class JvmPluginStartupComponent : BaseComponent {
+    override fun getComponentName(): String = JvmPluginStartupComponent::class.java.name
 
-public class JvmPluginStartupComponent implements BaseComponent {
-    public static JvmPluginStartupComponent getInstance() {
-        return ApplicationManager.getApplication().getComponent(JvmPluginStartupComponent.class);
-    }
-
-    @Override
-    @NotNull
-    public String getComponentName() {
-        return JvmPluginStartupComponent.class.getName();
-    }
-
-    @Override
-    public void initComponent() {
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            ThreadTrackerPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
+    override fun initComponent() {
+        if (isUnitTestMode()) {
+            patchThreadTracker()
         }
-
-        DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
+        addKotlinStdlibDebugFilterIfNeeded()
     }
 
-    @Override
-    public void disposeComponent() {}
+    override fun disposeComponent() {}
+
+    companion object {
+        fun getInstance(): JvmPluginStartupComponent =
+            ApplicationManager.getApplication().getComponent(JvmPluginStartupComponent::class.java)
+    }
 }
