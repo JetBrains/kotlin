@@ -52,8 +52,6 @@
     <externalProjectDataService implementation="org.jetbrains.plugins.gradle.service.project.data.BuildClasspathModuleGradleDataService"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.service.GradleBuildClasspathManager"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.plugins.gradle.codeInsight.UseDistributionWithSourcesNotificationProvider"/>
-
     <compiler.updateResourcesBuildContributor
         implementation="org.jetbrains.plugins.gradle.execution.build.GradleUpdateResourcesBuildContributor"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.config.GradleResourceCompilerConfigurationGenerator"/>
