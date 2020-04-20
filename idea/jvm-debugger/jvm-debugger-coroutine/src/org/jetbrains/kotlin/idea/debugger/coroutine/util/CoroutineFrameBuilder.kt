@@ -10,13 +10,9 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
-import com.intellij.util.containers.addIfNotNull
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder
-import org.jetbrains.kotlin.idea.debugger.safeLineNumber
-import org.jetbrains.kotlin.idea.debugger.safeLocation
-import org.jetbrains.kotlin.idea.debugger.safeMethod
 import java.lang.Integer.min
 
 
@@ -42,12 +38,17 @@ class CoroutineFrameBuilder {
             for (runningStackFrameProxy in realFrames) {
                 val preflightStackFrame = coroutineExitFrame(runningStackFrameProxy, suspendContext)
                 if (preflightStackFrame != null) {
-                    coroutineStackFrameList.addIfNotNull(buildRealStackFrameItem(preflightStackFrame.stackFrameProxy))
+                    buildRealStackFrameItem(preflightStackFrame.stackFrameProxy)?.let {
+                        coroutineStackFrameList.add(it)
+                    }
+
                     val doubleFrameList = build(preflightStackFrame, suspendContext)
                     coroutineStackFrameList.addAll(doubleFrameList.stackTrace)
                     return DoubleFrameList(coroutineStackFrameList, doubleFrameList.creationStackTrace)
                 } else {
-                    coroutineStackFrameList.addIfNotNull(buildRealStackFrameItem(runningStackFrameProxy))
+                    buildRealStackFrameItem(runningStackFrameProxy)?.let {
+                        coroutineStackFrameList.add(it)
+                    }
                 }
             }
             return DoubleFrameList(coroutineStackFrameList, emptyList())
@@ -62,6 +63,7 @@ class CoroutineFrameBuilder {
             stackFrames.addAll(preflightFrame.restoredStackTrace())
 
             // rest of the stack
+            // @TODO perhaps we need to merge the dropped frame below with the last restored (at least variables).
             val framesLeft = preflightFrame.threadPreCoroutineFrames.drop(1)
             stackFrames.addAll(framesLeft.mapIndexedNotNull { index, stackFrameProxyImpl ->
                 suspendContext.invokeInManagerThread { buildRealStackFrameItem(stackFrameProxyImpl) }
@@ -95,17 +97,11 @@ class CoroutineFrameBuilder {
             return suspendContext.invokeInManagerThread {
                 val sem = frame.location().isPreFlight()
                 if (sem.isCoroutineFound()) {
-                    if (coroutineDebuggerTraceEnabled())
-                        ContinuationHolder.log.debug("Entry frame found: ${frame.format()}")
                     lookupContinuation(suspendContext, frame, sem)
                 } else
                     null
-            }
-        }
 
-        private fun filterNegativeLineNumberInvokeSuspendFrames(frame: StackFrameProxyImpl): Boolean {
-            val method = frame.safeLocation()?.safeMethod() ?: return false
-            return method.isInvokeSuspend() && frame.safeLocation()?.safeLineNumber() ?: 0 < 0
+            }
         }
 
         fun lookupContinuation(
@@ -117,13 +113,14 @@ class CoroutineFrameBuilder {
                 return null
 
             val theFollowingFrames = theFollowingFrames(frame) ?: emptyList()
-            if (mode.isSuspendMethodParameter()) {
+            val suspendParameterFrame = if (mode.isSuspendMethodParameter()) {
                 if (theFollowingFrames.isNotEmpty()) {
                     // have to check next frame if that's invokeSuspend:-1 before proceed, otherwise skip
-                    val invokeSuspendFrame = lookForTheFollowingFrame(theFollowingFrames) ?: return null
+                    lookForTheFollowingFrame(theFollowingFrames) ?: return null
                 } else
                     return null
-            }
+            } else
+                null
 
             if (threadAndContextSupportsEvaluation(suspendContext, frame)) {
                 val context = suspendContext.executionContext() ?: return null
@@ -133,7 +130,8 @@ class CoroutineFrameBuilder {
                     else -> null
                 } ?: return null
 
-                val coroutineInfo = ContinuationHolder(context).extractCoroutineInfoData(continuation) ?: return null
+                val continuationHolder = ContinuationHolder.instance(context) ?: return null
+                val coroutineInfo = continuationHolder.extractCoroutineInfoData(continuation) ?: return null
                 return preflight(frame, theFollowingFrames, coroutineInfo, mode)
             }
             return null

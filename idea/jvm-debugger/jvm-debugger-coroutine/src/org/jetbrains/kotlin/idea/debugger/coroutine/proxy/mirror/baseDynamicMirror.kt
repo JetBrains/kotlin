@@ -18,10 +18,10 @@ abstract class BaseDynamicMirror<T>(val value: ObjectReference, val name: String
     fun makeField(fieldName: String): Field? =
         cls?.let { it.fieldByName(fieldName) }
 
-    fun makeMethod(methodName: String): Method? =
+    fun findMethod(methodName: String): Method? =
         cls?.let { it.methodsByName(methodName).single() }
 
-    fun makeMethod(methodName: String, signature: String): Method? =
+    fun findMethod(methodName: String, signature: String): Method? =
         cls?.let { it.methodsByName(methodName, signature).single() }
 
     fun isCompatible(value: ObjectReference?) =

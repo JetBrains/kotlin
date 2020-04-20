@@ -1,23 +1,23 @@
-LineBreakpoint created at coroutineSuspendFun.kt:29
+LineBreakpoint created at coroutineSuspendFun136.kt:29
 Run Java
 Connected to the target VM
-coroutineSuspendFun.kt:29
+coroutineSuspendFun136.kt:29
 Thread stack trace:
-	c:29, CoroutineSuspendFunKt (continuation)
+	c:29, CoroutineSuspendFun136Kt (continuation)
 		($completion, c, paramB)
-	b:23, CoroutineSuspendFunKt (continuation)
+	b:23, CoroutineSuspendFun136Kt (continuation)
 		($completion, $continuation, $result, b, paramA)
-CoroutineNameIdState(name=coroutine, id=1, state=RUNNING, dispatcher=BlockingEventLoop@6f45df59)
-	a:16, CoroutineSuspendFunKt (continuation)
+CoroutineNameIdState(name=coroutine, id=1, state=RUNNING, dispatcher=BlockingEventLoop@305fd85d)
+	a:16, CoroutineSuspendFun136Kt (continuation)
 		(a)
-	invokeSuspend:10, CoroutineSuspendFunKt$main$1 (continuation)
+	invokeSuspend:10, CoroutineSuspendFun136Kt$main$1 (continuation)
 		($this$runBlocking)
 	resumeWith:33, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	run:56, DispatchedTask (kotlinx.coroutines)
 		($i$a$-withCoroutineContext-DispatchedTask$run$1, $i$f$withCoroutineContext, context, continuation, countOrElement$iv, delegate, exception, fatalException, job, oldValue$iv, state, taskContext, this)
-	processNextEvent:272, EventLoopImplBase (kotlinx.coroutines)
-		(delayed, this)
+	processNextEvent:274, EventLoopImplBase (kotlinx.coroutines)
+		(delayed, task, this)
 	joinBlocking:79, BlockingCoroutine (kotlinx.coroutines)
 		(this)
 	runBlocking:54, BuildersKt__BuildersKt (kotlinx.coroutines)
@@ -28,7 +28,7 @@ CoroutineNameIdState(name=coroutine, id=1, state=RUNNING, dispatcher=BlockingEve
 		()
 	runBlocking$default:1, BuildersKt (kotlinx.coroutines)
 		()
-	main:9, CoroutineSuspendFunKt (continuation)
+	main:9, CoroutineSuspendFun136Kt (continuation)
 		(main)
 Creation stack frame
 	createCoroutineUnintercepted:116, IntrinsicsKt__IntrinsicsJvmKt (kotlin.coroutines.intrinsics)
@@ -37,9 +37,9 @@ Creation stack frame
 		()
 	runBlocking$default:1, BuildersKt (kotlinx.coroutines)
 		()
-	main:9, CoroutineSuspendFunKt (continuation)
+	main:9, CoroutineSuspendFun136Kt (continuation)
 		()
-	main:-1, CoroutineSuspendFunKt (continuation)
+	main:-1, CoroutineSuspendFun136Kt (continuation)
 		()
 Disconnected from the target VM
 

@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine
 
 import com.intellij.debugger.DebuggerInvocationUtil
-import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaDebugProcess
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.impl.PrioritizedTask
 import com.intellij.execution.configurations.DebuggingRunnerData
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
@@ -18,7 +16,6 @@ import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.content.Content
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.xdebugger.XDebugProcess
@@ -49,15 +46,15 @@ class DebuggerConnection(
             val kotlinxCoroutinesDebug = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-debug") }
 
             val mode = if (kotlinxCoroutinesDebug != null) {
-                CoroutineDebuggerMode.VERSION_UP_TO_1_3_4
+                CoroutineDebuggerMode.VERSION_UP_TO_1_3_5
             } else if (kotlinxCoroutinesCore != null) {
                 determineCoreVersionMode(kotlinxCoroutinesCore)
             } else
                 CoroutineDebuggerMode.DISABLED
 
             when (mode) {
-                CoroutineDebuggerMode.VERSION_1_3_5_AND_UP -> initializeCoroutineAgent(params, kotlinxCoroutinesCore)
-                CoroutineDebuggerMode.VERSION_UP_TO_1_3_4 -> initializeCoroutineAgent(params, kotlinxCoroutinesDebug)
+                CoroutineDebuggerMode.VERSION_1_3_6_AND_UP -> initializeCoroutineAgent(params, kotlinxCoroutinesCore)
+                CoroutineDebuggerMode.VERSION_UP_TO_1_3_5 -> initializeCoroutineAgent(params, kotlinxCoroutinesDebug)
                 else -> log.debug("CoroutineDebugger disabled.")
             }
         }
@@ -69,9 +66,9 @@ class DebuggerConnection(
         val matchResult = regex.matchEntire(kotlinxCoroutinesCore) ?: return CoroutineDebuggerMode.DISABLED
 
         val coroutinesCoreVersion = DefaultArtifactVersion(matchResult.groupValues.get(1))
-        val versionToCompareTo = DefaultArtifactVersion("1.3.4")
+        val versionToCompareTo = DefaultArtifactVersion("1.3.5")
         return if (versionToCompareTo.compareTo(coroutinesCoreVersion) < 0)
-            CoroutineDebuggerMode.VERSION_1_3_5_AND_UP
+            CoroutineDebuggerMode.VERSION_1_3_6_AND_UP
         else
             CoroutineDebuggerMode.DISABLED
     }
@@ -96,7 +93,7 @@ class DebuggerConnection(
     override fun processStopped(debugProcess: XDebugProcess) {
         val rootDisposable = disposable
         if (rootDisposable is Disposable && debugProcess is JavaDebugProcess && debugProcess.session.suspendContext is SuspendContextImpl) {
-            ManagerThreadExecutor(debugProcess).on(debugProcess.session.suspendContext).schedule {
+            ManagerThreadExecutor(debugProcess).on(debugProcess.session.suspendContext).invoke {
                 Disposer.dispose(rootDisposable)
                 disposable = null
             }
@@ -124,6 +121,6 @@ class DebuggerConnection(
 
 enum class CoroutineDebuggerMode {
     DISABLED,
-    VERSION_UP_TO_1_3_4,
-    VERSION_1_3_5_AND_UP
+    VERSION_UP_TO_1_3_5,
+    VERSION_1_3_6_AND_UP
 }

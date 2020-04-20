@@ -34,16 +34,18 @@ class ManagerThreadExecutor(val debugProcess: DebugProcessImpl) {
 
         constructor(sc: XSuspendContext, priority: PrioritizedTask.Priority) : this(sc as SuspendContextImpl, priority)
 
-        fun schedule(f: (SuspendContextImpl) -> Unit) {
-            val suspendContextCommand = object : SuspendContextCommandImpl(suspendContext) {
+        fun invoke(f: (SuspendContextImpl) -> Unit) {
+            debugProcess.managerThread.invoke(makeCommand(f))
+        }
+
+        private fun makeCommand(f: (SuspendContextImpl) -> Unit) =
+            object : SuspendContextCommandImpl(suspendContext) {
                 override fun getPriority() = this@ManagerThreadExecutorInstance.priority
 
                 override fun contextAction(suspendContext: SuspendContextImpl) {
                     f(suspendContext)
                 }
             }
-            debugProcess.managerThread.invoke(suspendContextCommand)
-        }
     }
 }
 
@@ -53,7 +55,7 @@ class ApplicationThreadExecutor {
     }
 
     fun schedule(f: () -> Unit, component: Component) {
-        return ApplicationManager.getApplication().invokeLater( { f() }, ModalityState.stateForComponent(component))
+        return ApplicationManager.getApplication().invokeLater({ f() }, ModalityState.stateForComponent(component))
     }
 
     fun schedule(f: () -> Unit) {

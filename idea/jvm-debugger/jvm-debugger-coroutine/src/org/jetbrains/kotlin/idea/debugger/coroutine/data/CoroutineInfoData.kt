@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.ThreadReference
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData.Companion.DEFAULT_COROUTINE_NAME
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData.Companion.DEFAULT_COROUTINE_STATE
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 
@@ -56,9 +58,9 @@ data class CoroutineNameIdState(val name: String, val id: String, val state: Sta
     companion object {
         fun instance(mirror: MirrorOfCoroutineInfo): CoroutineNameIdState =
             CoroutineNameIdState(
-                mirror.context?.name ?: "coroutine",
+                mirror.context?.name ?: DEFAULT_COROUTINE_NAME,
                 "${mirror.sequenceNumber}",
-                State.valueOf(mirror.state ?: "UNKNOWN"),
+                State.valueOf(mirror.state ?: DEFAULT_COROUTINE_STATE),
                 mirror.context?.dispatcher
             )
     }

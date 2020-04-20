@@ -49,14 +49,12 @@ class CoroutinePreflightStackFrame(
 
     override fun getVisibleVariables(): List<LocalVariableProxyImpl> {
         // skip restored variables
-        return super.getVisibleVariables().filter { v -> firstFrameVariables.find { it.name == v.name() } == null }
+        return super.getVisibleVariables().filter { v -> ! firstFrameVariables.any { it.name == v.name() } }
     }
 
-    override fun isInLibraryContent() =
-        false
+    override fun isInLibraryContent() = false
 
-    override fun isSynthetic() =
-        false
+    override fun isSynthetic() = false
 
     fun restoredStackTrace() =
         coroutineInfoData.restoredStackTrace(mode)
@@ -69,7 +67,7 @@ enum class SuspendExitMode {
         this == SUSPEND_LAMBDA || this == SUSPEND_METHOD_PARAMETER
 
     fun isSuspendMethodParameter() =
-        this == SuspendExitMode.SUSPEND_METHOD_PARAMETER
+        this == SUSPEND_METHOD_PARAMETER
 }
 
 class CreationCoroutineStackFrame(debugProcess: DebugProcessImpl, item: StackFrameItem) : CoroutineStackFrame(debugProcess, item) {
@@ -81,18 +79,13 @@ class CreationCoroutineStackFrame(debugProcess: DebugProcessImpl, item: StackFra
 
 open class CoroutineStackFrame(debugProcess: DebugProcessImpl, val item: StackFrameItem, val realStackFrame: XStackFrame? = null) :
     StackFrameItem.CapturedStackFrame(debugProcess, item) {
-    override fun customizePresentation(component: ColoredTextContainer) {
-        if (coroutineDebuggerTraceEnabled())
-            component.append("${item.javaClass.simpleName} / ${this.javaClass.simpleName} ", SimpleTextAttributes.GRAYED_ATTRIBUTES)
-        super.customizePresentation(component)
-    }
+
     override fun computeChildren(node: XCompositeNode) {
         if (realStackFrame != null)
             realStackFrame.computeChildren(node)
         else
             super.computeChildren(node)
     }
-
 
     override fun getCaptionAboveOf() = "CoroutineExit"
 

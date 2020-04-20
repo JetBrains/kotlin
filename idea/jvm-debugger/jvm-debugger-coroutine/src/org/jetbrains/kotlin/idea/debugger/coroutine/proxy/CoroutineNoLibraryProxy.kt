@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : CoroutineInfoProvider {
     val log by logger
     val debugMetadataKtType = executionContext.findCoroutineMetadataType()
-    val holder = ContinuationHolder(executionContext)
+    val holder = ContinuationHolder.instance(executionContext)
 
     override fun dumpCoroutinesInfo(): List<CoroutineInfoData> {
         val vm = executionContext.vm
@@ -55,7 +55,7 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
     ): CoroutineInfoData? {
         val mirror = ccMirrorProvider.mirror(dispatchedContinuation, executionContext) ?: return null
         val continuation = mirror.delegate?.continuation ?: return null
-        return holder.extractCoroutineInfoData(continuation)
+        return holder?.extractCoroutineInfoData(continuation)
     }
 
     private fun dispatchedContinuation(resultList: MutableList<CoroutineInfoData>): Boolean {
@@ -75,7 +75,7 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
     private fun extractDispatchedContinuation(dispatchedContinuation: ObjectReference, continuation: Field): CoroutineInfoData? {
         debugMetadataKtType ?: return null
         val initialContinuation = dispatchedContinuation.getValue(continuation) as ObjectReference
-        return holder.extractCoroutineInfoData(initialContinuation)
+        return holder?.extractCoroutineInfoData(initialContinuation)
     }
 }
 
