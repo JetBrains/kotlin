@@ -29,7 +29,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
    */
   @Nullable
   public static TreeStructureProvider get(@Nullable Project project) {
-    if (project == null || project.isDisposed()) return null;
+    if (project == null || project.isDisposed() || project.isDefault()) return null;
     TreeStructureProvider provider = project.getUserData(KEY);
     if (provider != null) return provider;
     provider = new CompoundTreeStructureProvider(project);
@@ -37,7 +37,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
     return provider;
   }
 
-  public CompoundTreeStructureProvider(@NotNull Project project) {
+  private CompoundTreeStructureProvider(@NotNull Project project) {
     myProject = project;
   }
 
@@ -46,6 +46,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
   public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
                                                 @NotNull Collection<AbstractTreeNode<?>> children,
                                                 ViewSettings settings) {
+    if (myProject.isDisposed()) return children;
     for (TreeStructureProvider provider : EP.getExtensions(myProject)) {
       try {
         children = provider.modify(parent, children, settings);
@@ -71,7 +72,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
   @Nullable
   @Override
   public Object getData(@NotNull Collection<AbstractTreeNode<?>> selection, @NotNull String dataId) {
-    if (!selection.isEmpty()) {
+    if (!myProject.isDisposed() && !selection.isEmpty()) {
       for (TreeStructureProvider provider : EP.getExtensions(myProject)) {
         try {
           Object data = provider.getData(selection, dataId);
