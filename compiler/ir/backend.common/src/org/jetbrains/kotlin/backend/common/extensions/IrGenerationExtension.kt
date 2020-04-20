@@ -25,7 +25,7 @@ class IrPluginContext(
     val symbolTable: SymbolTable,
     val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
-    val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns.builtIns, symbolTable)
+    val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, irBuiltIns.builtIns, symbolTable)
 ) : IrGeneratorContext()
 
 interface IrGenerationExtension : IrExtensionGenerator {
