@@ -34,7 +34,7 @@ object JvmBackendFacade {
         val mangler = JvmManglerDesc(MainFunctionDetector(state.bindingContext, state.languageVersionSettings))
         val signaturer = JvmIdSignatureDescriptor(mangler)
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, signaturer = signaturer)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, JvmNameProvider, extensions = extensions)
         val pluginExtensions = IrGenerationExtension.getInstances(state.project)
 
         for (extension in pluginExtensions) {
