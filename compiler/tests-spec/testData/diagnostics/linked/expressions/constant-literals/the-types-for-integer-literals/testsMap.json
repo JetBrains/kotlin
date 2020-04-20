@@ -6,6 +6,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Various integer literals with not allowed long literal mark in lower case (type checking).",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 4,
           "description": "Check of integer type selection depends on the context (incopatible types).",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Type checking (comparison with invalid types) of too a big integers.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 6,
           "description": "Type checking (comparison with invalid types) of various integer literals.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -34,6 +38,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Type checking (comparison with invalid types) of various integer literals with long literal mark.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -43,6 +48,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 4,
           "description": "Various integer literals with a not allowed underscore before the long literal mark.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -50,6 +56,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 4,
           "description": "Various integer literals with not allowed long literal mark in lower case.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -57,6 +64,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 8,
           "description": "Binary and hexadecimal integer literals with a long literal mark only.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -68,6 +76,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Type checking of various integer literals with long literal mark.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -75,6 +84,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 4,
           "description": "Check of integer type selection depends on the context.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -82,6 +92,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 5,
           "description": "Type checking of binary integer literals.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -89,6 +100,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 5,
           "description": "Type checking of hexadecimal integer literals.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -96,6 +108,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 5,
           "description": "Type checking of decimal integer literals.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

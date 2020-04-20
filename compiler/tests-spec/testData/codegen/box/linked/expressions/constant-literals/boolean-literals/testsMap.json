@@ -6,6 +6,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the companionObject.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.10.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the variableDeclarationEntry.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.24.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the infixFunctionCall.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.20.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -34,6 +38,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the typeParameter.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.14.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -41,6 +46,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the packageComplex.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -48,6 +54,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the catchBlock.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.21.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -55,6 +62,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the parameter.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.15.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -62,6 +70,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the fileAnnotationSimple.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -69,6 +78,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the function.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.11.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -76,6 +86,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the valueArgument.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.25.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -83,6 +94,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the unescapedAnnotation.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.9.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -90,6 +102,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the typeAlias.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.18.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -97,6 +110,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the stringTemplateElement.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.8.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -104,6 +118,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the import.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.19.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -111,6 +126,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the labelDefinition.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.22.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -118,6 +134,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the fileAnnotationComplex.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.16.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -125,6 +142,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the enumEntry.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.7.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -132,6 +150,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the setter.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.12.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -139,6 +158,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the callableReference.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.26.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -146,6 +166,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the typeConstraint.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -153,6 +174,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the simpleUserType.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.13.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -160,6 +182,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the labelReference.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -167,6 +190,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the atomicExpression.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.23.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -174,6 +198,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the object.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.17.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -181,6 +206,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 0,
           "description": "The use of Boolean literals as the identifier (with backtick) in the packageSimple.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.6.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

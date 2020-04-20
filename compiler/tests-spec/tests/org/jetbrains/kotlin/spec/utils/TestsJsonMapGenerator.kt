@@ -67,7 +67,7 @@ object TestsJsonMapGenerator {
                         collectInfoFromTestsTemp(
                             testsMap = testsMap,
                             specTest = specTest,
-                            testInfoForMainLink = getTestInfo(specTest),
+                            testInfoForMainLink = getTestInfo(specTest, file, LinkType.MAIN),
                             testInfoForPrimaryLink = getTestInfo(specTest, file, LinkType.PRIMARY),
                             testInfoForSecondaryLink = getTestInfo(specTest, file, LinkType.SECONDARY)
                         )

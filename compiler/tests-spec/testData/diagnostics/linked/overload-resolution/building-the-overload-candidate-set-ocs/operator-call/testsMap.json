@@ -14,6 +14,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 8,
           "description": "properties available through the invoke convention are non-eligible for operator calls",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg/1.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         }
@@ -25,6 +26,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "properties available through the invoke convention are non-eligible for operator calls",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos/1.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -98,6 +100,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 4,
           "description": "Extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -105,6 +108,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 3,
           "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -112,6 +116,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 10,
           "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -119,6 +124,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -126,6 +132,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 5,
           "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -133,6 +140,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 4,
           "description": "Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

@@ -6,6 +6,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 4,
           "description": "A character literal defines a constant holding a unicode character value",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -27,6 +28,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 1,
           "description": "A character literal defines a constant holding a unicode character value",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -104,6 +106,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 2,
           "description": "to define a character the unicode codepoint escaped symbol \\u could be used with followed by exactly four hexadecimal digits.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -123,6 +126,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 512,
           "description": "to define a character the unicode code point escaped symbol \\u could be used with followed by exactly four hexadecimal digits",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -130,6 +134,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 1,
           "description": "to define a character the unicode codepoint escaped symbol \\u could be used with followed by exactly four hexadecimal digits.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

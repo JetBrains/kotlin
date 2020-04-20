@@ -6,6 +6,7 @@
           "specVersion": "0.1-253",
           "casesNumber": 3,
           "description": "do-while-loop statement body contains zero statements",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -53,6 +54,7 @@
           "specVersion": "0.1-253",
           "casesNumber": 3,
           "description": "condition expression is not a subtype of kotlin.Boolean.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

@@ -6,6 +6,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Sequences with not all decimal digit symbols",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -17,6 +18,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Integers with underscore symbols in the valid places.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -24,6 +26,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Integers with underscore symbols before the first digit (it\u0027s considered as identifiers).",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -31,6 +34,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Integers with underscore symbol in the last position.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -40,6 +44,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Sequences with decimal digit symbols.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

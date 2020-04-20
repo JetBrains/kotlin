@@ -6,6 +6,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg/1.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         }
@@ -17,6 +18,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

@@ -140,6 +140,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 6,
           "description": "sets of extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -147,6 +148,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "sets of declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -228,6 +230,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "set of star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -293,6 +296,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 2,
           "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -300,6 +304,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 3,
           "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -323,6 +328,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -338,6 +344,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "extension calls with explicit and implicit receiver",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         }
@@ -387,6 +394,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -444,6 +452,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -451,6 +460,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 3,
           "description": "The sets of non-extension member callables named f of type T;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -458,6 +468,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 3,
           "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -465,6 +476,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 5,
           "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -472,6 +484,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "sets of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -481,6 +494,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "set of implicitly-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/6.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

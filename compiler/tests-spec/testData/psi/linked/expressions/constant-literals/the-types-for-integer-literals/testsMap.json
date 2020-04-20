@@ -6,6 +6,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Various integer literals with a long literal mark in not allowed places.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Various integer literals with underscores after a long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "The long literal mark after not integer literals.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Various integer literals with a long literal mark doublicate.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -38,6 +42,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Binary integer literals suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.6.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -45,6 +50,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Decimal integer literals with underscores suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -52,6 +58,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -59,6 +66,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Binary prefix only suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.7.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -66,6 +74,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Long literal mark in not allowed places (it\u0027s considered as identifiers).",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.10.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -73,6 +82,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Binary integer literals with underscores suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.8.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -80,6 +90,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Various integer literals with long literal mark in not allowed lower case (but valid in opinion the parser).",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.9.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -87,6 +98,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal prefix only suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -94,6 +106,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with underscores suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -101,6 +114,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Decimal integer literals suffixed by the long literal mark.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

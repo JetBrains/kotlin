@@ -6,6 +6,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with invalid else condition.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/12.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -15,6 +16,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with type checking operator and non-type value.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.2.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -22,6 +24,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and type test condition, but missed type in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -31,6 +34,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without contains operator.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -40,6 +44,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and not allowed spread operator in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/9.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -53,6 +58,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Empty \u0027when\u0027 with missed bound value.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -60,6 +66,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Empty \u0027when\u0027 with missed \u0027when entries\u0027 section.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -71,6 +78,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Empty \u0027when\u0027 with bound value.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -78,6 +86,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Empty \u0027when\u0027 without bound value.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -91,6 +100,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "\u0027When\u0027 without bound value and with invalid \u0027else\u0027 branch.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -98,6 +108,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "\u0027When\u0027 without bound value and with invalid list of the boolean conditions in \u0027when entry\u0027.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -107,6 +118,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "\u0027When\u0027 without bound value and missed \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -114,6 +126,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "\u0027When\u0027 without bound value and missed control structure body.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -127,6 +140,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and empty \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -134,6 +148,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and with invalid list of the conditions in \u0027when entry\u0027.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -141,6 +156,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and empty control structure body.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

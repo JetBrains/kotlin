@@ -6,6 +6,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 6,
           "description": "Non-exhaustive when using nullable enum values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 10,
           "description": "Non-exhaustive when using subclasses of the nullable sealed class.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Non-exhaustive when using nullable boolean values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -61,6 +64,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Non-exhaustive when, with bound value, without else branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -68,6 +72,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Non-exhaustive when, without bound value, without else branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -117,6 +122,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 5,
           "description": "Non-exhaustive when using boolean values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -182,6 +188,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 12,
           "description": "Non-exhaustive when using subclasses of the sealed class.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/6.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -411,6 +418,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 7,
           "description": "Exhaustive when using subclasses of the nullable sealed class.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.3.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -418,6 +426,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Exhaustive when using nullable enum values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.2.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -425,6 +434,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Exhaustive when using nullable boolean values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -458,6 +468,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 4,
           "description": "Exhaustive when, with bound value, with else branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -465,6 +476,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 8,
           "description": "Exhaustive when, with bound value (sealed, enum, boolean), with redundant else branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -472,6 +484,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Exhaustive when, without bound value, with else branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -529,6 +542,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Exhaustive when using boolean values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -562,6 +576,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Exhaustive when using enum values.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/8.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -571,6 +586,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 9,
           "description": "Exhaustive when using subclasses of the sealed class.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/6.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         }

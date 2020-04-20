@@ -6,6 +6,7 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "two values are equal (\u003d\u003d\u003d) or non-equal (!\u003d\u003d) by reference",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if values are non-equal (!\u003d\u003d) by reference",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if two values are non-equal (!\u003d\u003d) by reference",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -34,6 +38,7 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check if two values are equal (\u003d\u003d\u003d) by reference",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -51,6 +56,7 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check equallity by refference via constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -74,6 +80,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "Any instance of the null reference null is equal by reference to any other instance of the null reference;",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -81,6 +88,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "Any instance of the null reference null is equal by reference to any other instance of the null reference;",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -90,6 +98,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "If these values are non-equal by value, they are also non-equal by reference;",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

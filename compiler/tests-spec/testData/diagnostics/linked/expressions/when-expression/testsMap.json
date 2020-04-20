@@ -6,6 +6,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 3,
           "description": "\u0027When\u0027 without bound value and with \u0027else\u0027 branch not in the last position.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/12.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -15,6 +16,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 1,
           "description": "\u0027When\u0027 with bound value and type test condition on the non-type operand of the type checking operator.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -22,6 +24,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and type test condition (without companion object in classes), but without type checking operator.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -87,6 +90,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 1,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without containment checking operator.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -94,6 +98,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with contains operator and type without defined contains operator.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -111,6 +116,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and with else branch not in the last position.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -120,6 +126,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and non-expressions in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/11.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -209,6 +216,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 2,
           "description": "\u0027When\u0027 without bound value and with else branch in the last position.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/12.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -218,6 +226,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 5,
           "description": "\u0027When\u0027 with bound value and type test condition (invert type checking operator).",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.2.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -225,6 +234,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 6,
           "description": "\u0027When\u0027 with bound value and enumaration of type test conditions.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.3.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -232,6 +242,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 7,
           "description": "\u0027When\u0027 with bound value and enumaration of type test conditions (with invert type checking operator).",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.4.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -239,6 +250,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 6,
           "description": "\u0027When\u0027 with bound value and type test condition.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -272,6 +284,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 26,
           "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/10.2.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -279,6 +292,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 23,
           "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/10.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -288,6 +302,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and containment operator.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -295,6 +310,7 @@
           "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and enumeration of the containment operators.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -304,6 +320,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and else branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -313,6 +330,7 @@
           "specVersion": "0.1-201",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/11.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -352,6 +370,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Empty when with bound value.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -359,6 +378,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Empty when without bound value.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -410,6 +430,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": " it is possible to  replace the else condition with an always-true condition",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -421,6 +442,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": " it is possible to  replace the else condition with an always-true condition",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -434,6 +456,7 @@
           "specVersion": "0.1-218",
           "casesNumber": 3,
           "description": "The else condition must also be in the last when entry of when expression, otherwise it is a compile-time error",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -447,6 +470,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "When with non-boolean value in the when condition.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -454,6 +478,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "When without bound value, forbidden comma in the when condition.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -501,6 +526,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 9,
           "description": "When without bound value, various boolean values in the when condition.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -508,6 +534,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 6,
           "description": "\u0027When\u0027 without bound value and with Nothing in condition (subtype of Boolean).",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -515,6 +542,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "\u0027When\u0027 without bound value and only one \u0027else\u0027 branch.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
@@ -524,6 +552,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Allowed break and continue in the control structure body of when.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -531,6 +560,7 @@
           "specVersion": "0.1-100",
           "casesNumber": 25,
           "description": "When without bound value, various expressions in the control structure body.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -596,6 +626,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and allowed break and continue expression (without labels) in the control structure body.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -603,6 +634,7 @@
           "specVersion": "0.1-313",
           "casesNumber": 25,
           "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },

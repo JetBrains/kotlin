@@ -304,6 +304,7 @@
           "specVersion": "0.1-312",
           "casesNumber": 2,
           "description": " filtering is done before selection of the overload candidate set is perfomed",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

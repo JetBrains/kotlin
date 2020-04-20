@@ -6,6 +6,7 @@
           "specVersion": "0.1-220",
           "casesNumber": 0,
           "description": "A[I_0,I_1,...,I_N] is exactly the same as A.get(I_0,I_1,...,I_N), where get is a valid operator function available in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-220",
           "casesNumber": 0,
           "description": "A[I_0,I_1,...,I_N] is exactly the same as A.get(I_0,I_1,...,I_N), where get is a valid operator function available in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-220",
           "casesNumber": 0,
           "description": "A[I_0,I_1,...,I_N] is exactly the same as A.get(I_0,I_1,...,I_N), where get is a valid operator function available in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-220",
           "casesNumber": 0,
           "description": "A[I_0,I_1,...,I_N] is exactly the same as A.get(I_0,I_1,...,I_N), where get is a valid operator function available in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -34,6 +38,7 @@
           "specVersion": "0.1-220",
           "casesNumber": 0,
           "description": "A[I_0,I_1,...,I_N] is exactly the same as A.get(I_0,I_1,...,I_N), where get is a valid operator function available in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

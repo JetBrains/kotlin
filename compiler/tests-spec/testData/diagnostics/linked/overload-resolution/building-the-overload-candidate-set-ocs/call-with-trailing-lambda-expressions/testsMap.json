@@ -6,6 +6,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Callables star-imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.10.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 5,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.1.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 2,
           "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.14.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -34,6 +38,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 1,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: set of star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -41,6 +46,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 1,
           "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -48,6 +54,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.15.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -55,6 +62,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 1,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: sets of declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -62,6 +70,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 2,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Implicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.11.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -69,6 +78,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Callables declared in the same package",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.9.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -76,6 +86,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 4,
           "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -83,6 +94,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Callables explicitly imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.8.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -90,6 +102,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 2,
           "description": "infix fun: Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -97,6 +110,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.16.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -104,6 +118,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 1,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: set of implicitly-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.7.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -111,6 +126,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver:  The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.12.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -118,6 +134,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 1,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.3.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -125,6 +142,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.13.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
         },
@@ -132,6 +150,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -139,6 +158,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 6,
           "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -146,6 +166,7 @@
           "specVersion": "0.1-300",
           "casesNumber": 1,
           "description": "call-with-trailing-lambda-expressions,Implicit receiver: set of implicitly-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.6.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },

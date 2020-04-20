@@ -6,6 +6,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.6.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -13,6 +14,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -20,6 +22,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.7.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -27,6 +30,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.10.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -34,6 +38,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.8.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -41,6 +46,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.9.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -48,6 +54,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.4.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -55,6 +62,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.5.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
@@ -62,6 +70,7 @@
           "specVersion": "0.1-268",
           "casesNumber": 0,
           "description": "function-like prio is higher than property-like callables",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
