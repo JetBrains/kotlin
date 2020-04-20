@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.*;
@@ -254,12 +253,11 @@ public abstract class AnnotationCodegen {
         jvm8.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
 
         annotationTargetMaps.put(JvmTarget.JVM_1_6, jvm6);
-        annotationTargetMaps.put(JvmTarget.JVM_1_8, jvm8);
-        annotationTargetMaps.put(JvmTarget.JVM_9, jvm8);
-        annotationTargetMaps.put(JvmTarget.JVM_10, jvm8);
-        annotationTargetMaps.put(JvmTarget.JVM_11, jvm8);
-        annotationTargetMaps.put(JvmTarget.JVM_12, jvm8);
-        annotationTargetMaps.put(JvmTarget.JVM_13, jvm8);
+        for (JvmTarget target : JvmTarget.values()) {
+            if (target != JvmTarget.JVM_1_6) {
+                annotationTargetMaps.put(target, jvm8);
+            }
+        }
     }
 
     private void generateTargetAnnotation(

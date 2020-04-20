@@ -188,15 +188,9 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     )
 
     private val annotationTargetMaps: Map<JvmTarget, Map<KotlinTarget, IrEnumEntry>> =
-        mapOf(
-            JvmTarget.JVM_1_6 to jvm6TargetMap,
-            JvmTarget.JVM_1_8 to jvm8TargetMap,
-            JvmTarget.JVM_9 to jvm8TargetMap,
-            JvmTarget.JVM_10 to jvm8TargetMap,
-            JvmTarget.JVM_11 to jvm8TargetMap,
-            JvmTarget.JVM_12 to jvm8TargetMap,
-            JvmTarget.JVM_13 to jvm8TargetMap
-        )
+        JvmTarget.values().associate { target ->
+            target to (if (target == JvmTarget.JVM_1_6) jvm6TargetMap else jvm8TargetMap)
+        }
 
     private fun generateTargetAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Target"))) return
