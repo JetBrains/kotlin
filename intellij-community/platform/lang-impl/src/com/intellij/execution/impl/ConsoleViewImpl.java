@@ -1061,7 +1061,10 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
       FoldRegion existingRegion =
         startLine > 0 ? myEditor.getFoldingModel().getCollapsedRegionAtOffset(document.getLineStartOffset(startLine - 1)) : null;
-      ConsoleFolding lastFolding = USED_FOLDING_KEY.get(existingRegion);
+      String lastFoldingFqn = USED_FOLDING_FQN_KEY.get(existingRegion);
+      ConsoleFolding lastFolding = lastFoldingFqn != null
+                                   ? ConsoleFolding.EP_NAME.getByKey(lastFoldingFqn, consoleFolding -> consoleFolding.getClass().getName())
+                                   : null;
       int lastStartLine = lastFolding == null ? Integer.MAX_VALUE :
                           existingRegion.getStartOffset() == 0 ? 0 :
                           document.getLineNumber(existingRegion.getStartOffset()) + 1;
@@ -1094,7 +1097,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     });
   }
 
-  private static final Key<ConsoleFolding> USED_FOLDING_KEY = Key.create("USED_FOLDING_KEY");
+  private static final Key<String> USED_FOLDING_FQN_KEY = Key.create("USED_FOLDING_KEY");
 
   private void addFoldRegion(@NotNull Document document, @NotNull ConsoleFolding folding, int startLine, int endLine) {
     List<String> toFold = new ArrayList<>(endLine - startLine + 1);
@@ -1110,7 +1113,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     FoldRegion region = placeholder == null ? null : myEditor.getFoldingModel().addFoldRegion(oStart, oEnd, placeholder);
     if (region != null) {
       region.setExpanded(false);
-      region.putUserData(USED_FOLDING_KEY, folding);
+      region.putUserData(USED_FOLDING_FQN_KEY, folding.getClass().getName());
     }
   }
 
