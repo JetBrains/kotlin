@@ -1,4 +1,10 @@
 <idea-plugin>
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.kotlin.idea.JvmPluginStartupComponent</implementation-class>
+        </component>
+    </application-components>
+
     <project-components>
         <component>
             <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent</implementation-class>
