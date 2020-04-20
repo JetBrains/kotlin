@@ -183,11 +183,11 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                     // If the direction is unknown, we check depending on the "step" value:
                     //   // (use `<` if last is exclusive)
                     //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
-                    val stepType = progressionType.stepType(builtIns)
+                    val stepTypeClassifier = progressionType.stepClassifier(builtIns)
                     val isLong = progressionType == ProgressionType.LONG_PROGRESSION
                     context.oror(
                         context.andand(
-                            irCall(builtIns.greaterFunByOperandType[stepType.classifierOrFail]!!).apply {
+                            irCall(builtIns.greaterFunByOperandType[stepTypeClassifier]!!).apply {
                                 putValueArgument(0, irGet(stepVariable))
                                 putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
@@ -196,7 +196,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                                 putValueArgument(1, lastExpression)
                             }),
                         context.andand(
-                            irCall(builtIns.lessFunByOperandType[stepType.classifierOrFail]!!).apply {
+                            irCall(builtIns.lessFunByOperandType[stepTypeClassifier]!!).apply {
                                 putValueArgument(0, irGet(stepVariable))
                                 putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },

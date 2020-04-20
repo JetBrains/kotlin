@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -95,11 +96,14 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
     val progressionClasses = listOf(charProgression, intProgression, longProgression)
     val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
 
-    val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal").getContributedFunctions(
-        Name.identifier("getProgressionLastElement"),
-        NoLookupLocation.FROM_BACKEND
-    ).filter { it.containingDeclaration !is BuiltInsPackageFragment }
-        .map { Pair(it.returnType!!, symbolTable.referenceSimpleFunction(it)) }.toMap()
+    val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal")
+        .getContributedFunctions(Name.identifier("getProgressionLastElement"), NoLookupLocation.FROM_BACKEND)
+        .filter { it.containingDeclaration !is BuiltInsPackageFragment }
+        .map { d ->
+            val c = d.returnType?.constructor?.declarationDescriptor?.let { symbolTable.referenceClassifier(it) }
+            val f = symbolTable.referenceSimpleFunction(d)
+            c to f
+        }.toMap()
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)

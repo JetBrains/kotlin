@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
@@ -40,6 +41,12 @@ internal enum class ProgressionType(val elementCastFunctionName: Name, val stepC
     fun stepType(builtIns: IrBuiltIns): IrType = when (this) {
         INT_PROGRESSION, CHAR_PROGRESSION -> builtIns.intType
         LONG_PROGRESSION -> builtIns.longType
+    }
+
+    /** Returns the [IrClassSymbol] of the `step` property type constructor in the progression. */
+    fun stepClassifier(builtIns: IrBuiltIns): IrClassSymbol = when(this) {
+        INT_PROGRESSION, CHAR_PROGRESSION -> builtIns.intClass
+        LONG_PROGRESSION -> builtIns.longClass
     }
 
     companion object {

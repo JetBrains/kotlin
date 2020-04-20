@@ -257,7 +257,7 @@ internal class StepHandler(
             //
             // We insert this check in the lowered form only if necessary.
             val stepType = data.stepType(context.irBuiltIns)
-            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[stepType.classifierOrFail]!!
+            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[data.stepClassifier(context.irBuiltIns)]!!
             val zeroStep = if (data == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
             val throwIllegalStepExceptionCall = {
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
@@ -459,9 +459,9 @@ internal class StepHandler(
         }
 
         // Call `getProgressionLastElement(first, last, step)`
-        val stepType = progressionType.stepType(context.irBuiltIns).toKotlinType()
-        val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[stepType]
-            ?: throw IllegalArgumentException("No `getProgressionLastElement` for step type $stepType")
+        val stepTypeClassifier = progressionType.stepClassifier(context.irBuiltIns)
+        val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[stepTypeClassifier]
+            ?: throw IllegalArgumentException("No `getProgressionLastElement` for step type $stepTypeClassifier")
         return irCall(getProgressionLastElementFun).apply {
             putValueArgument(
                 0, first.deepCopyWithSymbols().castIfNecessary(
