@@ -152,7 +152,7 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
     final RangeHighlighterEx highlighter;
     int line = getLine();
     if (line >= 0) {
-      highlighter = markup.addPersistentLineHighlighter(line, HighlighterLayer.ERROR + 1, null);
+      highlighter = markup.addPersistentLineHighlighter(line, HighlighterLayer.ERROR + 1, null, null);
       if (highlighter != null) {
         highlighter.setGutterIconRenderer(new MyGutterIconRenderer(this));
 

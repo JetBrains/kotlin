@@ -442,7 +442,7 @@ public class BraceHighlightingHandler {
     LineMarkerRenderer renderer = createLineMarkerRenderer(matched);
 
     RangeHighlighter highlighter = editor.getMarkupModel()
-      .addRangeHighlighterAndChangeAttributes(startOffset, endOffset, 0, null, HighlighterTargetArea.LINES_IN_RANGE, false,
+      .addRangeHighlighterAndChangeAttributes(startOffset, endOffset, 0, null, null, HighlighterTargetArea.LINES_IN_RANGE, false,
                                               h -> h.setLineMarkerRenderer(renderer));
     editor.putUserData(LINE_MARKER_IN_EDITOR_KEY, highlighter);
   }
