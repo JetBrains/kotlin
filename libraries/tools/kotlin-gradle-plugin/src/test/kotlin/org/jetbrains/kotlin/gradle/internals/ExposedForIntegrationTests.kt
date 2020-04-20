@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.internals
 
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_12X_MPP_DEPRECATION_WARNING
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.GRADLE_NO_METADATA_WARNING
 import org.jetbrains.kotlin.gradle.targets.native.internal.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.targets.native.internal.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
@@ -18,8 +17,6 @@ import org.w3c.dom.Document
 fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStructureMetadata? = parseKotlinSourceSetMetadataFromXml(document)
 
 const val MULTIPLATFORM_PROJECT_METADATA_FILE_NAME = MULTIPLATFORM_PROJECT_METADATA_FILE_NAME
-
-const val GRADLE_NO_METADATA_WARNING = GRADLE_NO_METADATA_WARNING
 
 const val DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME = DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME
 

@@ -47,8 +47,12 @@ kotlin {
     }
 
     targets {
-        fromPreset(presets.jvm, 'jvm6')
+        fromPreset(presets.jvm, 'jvm6') {
+        	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
+        }
         fromPreset(presets.jvm, 'jvm8') {
+        	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
+
              compilations.main {
                 tasks.getByName(compileKotlinTaskName) {
                     kotlinOptions {

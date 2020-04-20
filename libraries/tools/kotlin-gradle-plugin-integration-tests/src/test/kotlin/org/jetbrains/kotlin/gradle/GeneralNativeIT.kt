@@ -10,6 +10,9 @@ import org.junit.Test
 
 class GeneralNativeIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+
     @Test
     fun testParallelExecutionDetection(): Unit = with(transformProjectWithPluginsDsl("native-parallel")) {
         val compileTasks = arrayOf(":one:compileKotlinLinux", ":two:compileKotlinLinux")

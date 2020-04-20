@@ -32,7 +32,7 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
             val usageContexts = mutableSetOf<DefaultKotlinUsageContext>()
 
             // This usage value is only needed for Maven scope mapping. Don't replace it with a custom Kotlin Usage value
-            val javaApiUsage = project.usageByName(if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else JAVA_API)
+            val javaApiUsage = project.usageByName("java-api-jars")
 
             usageContexts += run {
                 val allMetadataJar = project.tasks.getByName(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)

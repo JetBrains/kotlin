@@ -21,8 +21,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class HierarchicalMppIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = gradleVersion
+
     companion object {
-        private val gradleVersion = GradleVersionRequired.AtLeast("5.0")
+        private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
     }
 
     @Test
@@ -397,12 +400,7 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(
-        Project(
-            "hierarchical-mpp-project-dependency",
-            GradleVersionRequired.AtLeast("5.0") // Bug in Gradle versions < 5.0: Gradle can't pick build dependencies from nested provider
-        )
-    ) {
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(Project("hierarchical-mpp-project-dependency")) {
         publishThirdPartyLib(withGranularMetadata = true)
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)

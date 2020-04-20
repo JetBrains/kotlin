@@ -3,8 +3,6 @@
           package="platform.kotlin.android.test"
           >
 
-    <uses-sdk android:minSdkVersion="19" />
-
     <application/>
 
 </manifest>

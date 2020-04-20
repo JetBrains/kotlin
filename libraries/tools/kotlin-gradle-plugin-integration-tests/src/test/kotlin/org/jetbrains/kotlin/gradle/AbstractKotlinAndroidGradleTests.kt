@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assume
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -16,12 +17,15 @@ open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
         get() = GradleVersionRequired.AtLeast("5.0")
 }
 
-open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
+open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_2_0
+        get() = AGPVersion.v3_6_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("6.0")
 
     @Test
-    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
+    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
 
@@ -206,7 +210,7 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
-    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
+    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         // Test the fix for KT-29343
         setupWorkingDir()
 
@@ -260,7 +264,7 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
-    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
+    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         // Test the fix for KT-27714
 
         setupWorkingDir()
@@ -336,6 +340,11 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
             assertTasksExecuted(lintTask) // Check that the lint task ran successfully, KT-27170
         }
     }
+}
+
+open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_2_0
 
     @Test
     fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
@@ -444,6 +453,11 @@ class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
     @Test
     fun testApplyWithFeaturePlugin() {
+        Assume.assumeTrue(
+            "The com.android.feature plugin has been deprecated and removed in newer versions",
+            androidGradlePluginVersion < AGPVersion.v3_6_0
+        )
+
         val project = Project("AndroidProject")
 
         project.setupWorkingDir()
@@ -666,6 +680,11 @@ fun getSomething() = 10
 
     @Test
     fun testAndroidExtensionsIncremental() {
+        Assume.assumeTrue(
+            "Ignored for newer AGP versions because of KT-38622",
+            androidGradlePluginVersion < AGPVersion.v3_6_0
+        )
+
         val project = Project("AndroidExtensionsProject")
         val options = defaultBuildOptions().copy(incremental = true)
 
@@ -750,6 +769,10 @@ fun getSomething() = 10
     @Test
     fun testMultiplatformAndroidCompile() = with(Project("multiplatformAndroidProject")) {
         setupWorkingDir()
+
+        if (androidGradlePluginVersion >= AGPVersion.v3_6_0) {
+
+        }
 
         // Check that the common module is not added to the deprecated configuration 'compile' (KT-23719):
         gradleBuildScript("libAndroid").appendText(
