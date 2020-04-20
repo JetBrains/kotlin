@@ -105,7 +105,9 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val (code, outputs) = compileLocally(messageCollector, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath,
                                              "-d", jar, "-Xreport-output-files")
-        Assert.assertEquals(0, code)
+        if (code != 0) {
+            Assert.fail("Result code: $code\n${messageCollector.messages.joinToString("\n")}")
+        }
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
         run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")

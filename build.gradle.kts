@@ -610,6 +610,7 @@ tasks {
         dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
+        dependsOn(":compiler:daemon:daemon-tests:test")
         dependsOn("scriptingTest")
         dependsOn(":kotlin-build-common:test")
         dependsOn(":compiler:incremental-compilation-impl:test")
