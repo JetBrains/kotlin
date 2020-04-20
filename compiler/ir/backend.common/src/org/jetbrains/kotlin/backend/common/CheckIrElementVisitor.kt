@@ -76,6 +76,19 @@ class CheckIrElementVisitor(
         }
     }
 
+    private fun IrElement.checkFunction(function: IrFunction) {
+        if (function is IrSimpleFunction && config.checkProperties) {
+            val property = function.correspondingPropertySymbol?.owner
+            if (property != null && property.getter != function && property.setter != function) {
+                reportError(this, "Orphaned property getter/setter ${function.render()}")
+            }
+        }
+
+        if (function.dispatchReceiverParameter?.type is IrDynamicType) {
+            reportError(this, "Dispatch receivers with 'dynamic' type are not allowed")
+        }
+    }
+
     override fun <T> visitConst(expression: IrConst<T>) {
         super.visitConst(expression)
 
@@ -152,10 +165,8 @@ class CheckIrElementVisitor(
         super.visitCall(expression)
 
         val function = expression.symbol.owner
+        expression.checkFunction(function)
 
-        if (function.dispatchReceiverParameter?.type is IrDynamicType) {
-            reportError(expression, "Dispatch receivers with 'dynamic' type are not allowed")
-        }
         // TODO: Why don't we check parameters as well?
 
         val returnType = expression.symbol.owner.returnType
@@ -267,10 +278,7 @@ class CheckIrElementVisitor(
 
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
-
-        if (declaration.dispatchReceiverParameter?.type is IrDynamicType) {
-            reportError(declaration, "Dispatch receivers with 'dynamic' type are not allowed")
-        }
+        declaration.checkFunction(declaration)
 
         for ((i, p) in declaration.valueParameters.withIndex()) {
             if (p.index != i) {
@@ -323,7 +331,7 @@ class CheckIrElementVisitor(
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
         super.visitFunctionReference(expression)
-
+        expression.checkFunction(expression.symbol.owner)
         expression.symbol.ensureBound(expression)
     }
 

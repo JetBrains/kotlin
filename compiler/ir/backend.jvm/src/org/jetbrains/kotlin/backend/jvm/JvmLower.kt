@@ -46,13 +46,13 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
 )
 
 private val validateIrBeforeLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, module -> validationCallback(context, module) },
+    { context, module -> validationCallback(context, module, checkProperties = true) },
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
 private val validateIrAfterLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, module -> validationCallback(context, module) },
+    { context, module -> validationCallback(context, module, checkProperties = true) },
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )

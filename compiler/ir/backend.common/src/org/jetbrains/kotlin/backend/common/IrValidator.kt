@@ -53,7 +53,8 @@ data class IrValidatorConfig(
     val abortOnError: Boolean,
     val ensureAllNodesAreDifferent: Boolean,
     val checkTypes: Boolean = true,
-    val checkDescriptors: Boolean = true
+    val checkDescriptors: Boolean = true,
+    val checkProperties: Boolean = false,
 )
 
 class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
