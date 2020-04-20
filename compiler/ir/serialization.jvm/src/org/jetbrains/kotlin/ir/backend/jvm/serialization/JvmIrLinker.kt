@@ -33,7 +33,7 @@ class JvmIrLinker(currentModule: ModuleDescriptor?, logger: LoggingContext, buil
     private val javaName = Name.identifier("java")
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
-        moduleDescriptor.name.asString() == "<built-ins module>"
+        moduleDescriptor.name.asString().startsWith("<dependencies of ")
 
     // TODO: implement special Java deserializer
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {

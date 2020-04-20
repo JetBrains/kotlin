@@ -38,7 +38,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
     abstract fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol
 
     open fun declareIrSymbol(symbol: IrSymbol) {
-        assert(symbol.isPublicApi)
+        assert(symbol.isPublicApi) { "Symbol is not public API: ${symbol.descriptor}" }
         assert(symbol.descriptor !is WrappedDeclarationDescriptor<*>)
         deserializeIrSymbol(symbol.signature, symbol.kind())
     }
@@ -173,6 +173,12 @@ class IrModuleDeserializerWithBuiltIns(
         if (checkIsFunctionInterface(idSig)) return resolveFunctionalInterface(idSig, symbolKind)
 
         return delegate.deserializeIrSymbol(idSig, symbolKind)
+    }
+
+    override fun declareIrSymbol(symbol: IrSymbol) {
+        if (symbol.isPublicApi && checkIsFunctionInterface(symbol.signature))
+            resolveFunctionalInterface(symbol.signature, symbol.kind())
+        else delegate.declareIrSymbol(symbol)
     }
 
     override fun postProcess() {
