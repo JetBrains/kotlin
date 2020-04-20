@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
     <module name="intellij.idea.ultimate.main" />
     <shortenClasspath name="CLASSPATH_FILE" />
-    <option name="VM_PARAMETERS" value="-Xmx1250m -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:+HeapDumpOnOutOfMemoryError -XX:SoftRefLRUPolicyMSPerMB=50 -XX:MaxJavaStackTraceDepth=10000 -ea -Dsun.io.useCanonCaches=false -Dapple.laf.useScreenMenuBar=true -Didea.jre.check=true -Didea.is.internal=true -Didea.debug.mode=true -Didea.config.path=$PROJECT_DIR$/out/idea-config -Didea.system.path=$PROJECT_DIR$/out/idea-system -Djdk.attach.allowAttachSelf -Dfus.internal.test.mode=true -XX:CICompilerCount=2 -Dkotlinx.coroutines.debug=off -Djdk.module.illegalAccess.silent=true -Didea.initially.ask.config=true -Dapple.awt.graphics.UseQuartz=true -Dplugin.path=$PROJECT_DIR$/out/artifacts/KotlinPlugin -Didea.home.path=$PROJECT_DIR$/intellij" />
+    <option name="VM_PARAMETERS" value="-Xmx1250m -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:+HeapDumpOnOutOfMemoryError -XX:SoftRefLRUPolicyMSPerMB=50 -XX:MaxJavaStackTraceDepth=10000 -ea -Dsun.io.useCanonCaches=false -Dapple.laf.useScreenMenuBar=true -Didea.jre.check=true -Didea.is.internal=true -Didea.debug.mode=true -Didea.config.path=$PROJECT_DIR$/out/idea-config -Didea.system.path=$PROJECT_DIR$/out/idea-system -Djdk.attach.allowAttachSelf -Dfus.internal.test.mode=true -XX:CICompilerCount=2 -Dkotlinx.coroutines.debug=off -Djdk.module.illegalAccess.silent=true -Didea.initially.ask.config=true -Dapple.awt.graphics.UseQuartz=true -Dplugin.path=$PROJECT_DIR$/out/artifacts/KotlinPlugin" />
     <method v="2">
       <option name="Make" enabled="true" />
       <option name="BuildArtifacts" enabled="true">
