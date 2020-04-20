@@ -1,9 +1,13 @@
 public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel in)
+    public final Test createFromParcel(android.os.Parcel in)
 
-    public final java.lang.Object[] newArray(int size)
+    public java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final Test[] newArray(int size)
+
+    public java.lang.Object[] newArray(int p0)
 }
 
 public final class Test : java/lang/Object {
