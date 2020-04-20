@@ -33,8 +33,8 @@ public class XCoroutinesStackTraceTestGenerated extends AbstractXCoroutinesStack
         runTest("idea/jvm-debugger/jvm-debugger-test/testData/xcoroutines/coroutineSuspendFun.kt");
     }
 
-    @TestMetadata("coroutineSuspendFun135.kt")
-    public void testCoroutineSuspendFun135() throws Exception {
-        runTest("idea/jvm-debugger/jvm-debugger-test/testData/xcoroutines/coroutineSuspendFun135.kt");
+    @TestMetadata("coroutineSuspendFun136.kt")
+    public void testCoroutineSuspendFun136() throws Exception {
+        runTest("idea/jvm-debugger/jvm-debugger-test/testData/xcoroutines/coroutineSuspendFun136.kt");
     }
 }

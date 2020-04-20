@@ -211,21 +211,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         super.expandAll(tree, runnable, HashSet(), filter, suspendContext)
     }
 
-    private fun SuspendContextImpl.runActionInSuspendCommand(action: SuspendContextImpl.() -> Unit) {
-        if (myInProgress) {
-            action()
-        } else {
-            val command = object : SuspendContextCommandImpl(this) {
-                override fun contextAction(suspendContext: SuspendContextImpl) {
-                    action(suspendContext)
-                }
-            }
-
-            // Try to execute the action inside a command if we aren't already inside it.
-            debuggerSession.process.managerThread?.invoke(command) ?: command.contextAction(this)
-        }
-    }
-
     private fun mayThrow(collector: MutableMap<String, Throwable>, expression: String, f: () -> Unit) {
         try {
             f()

@@ -170,8 +170,8 @@ data class MirrorOfCoroutineInfo(
 class CoroutineStackFrame(value: ObjectReference, context: DefaultExecutionContext) :
     BaseDynamicMirror<MirrorOfCoroutineStackFrame>(value, "kotlin.coroutines.jvm.internal.CoroutineStackFrame", context) {
     private val stackTraceElementMirror = StackTraceElement(context)
-    private val callerFrameMethod = makeMethod("getCallerFrame")
-    private val getStackTraceElementMethod = makeMethod("getStackTraceElement")
+    private val callerFrameMethod = findMethod("getCallerFrame")
+    private val getStackTraceElementMethod = findMethod("getStackTraceElement")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCoroutineStackFrame? {
         val objectReference = objectValue(value, callerFrameMethod, context)

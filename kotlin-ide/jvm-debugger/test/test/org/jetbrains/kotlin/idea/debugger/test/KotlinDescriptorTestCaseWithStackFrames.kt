@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.test
 import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.jarRepository.JarRepositoryManager
@@ -25,8 +24,7 @@ import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.PreflightProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackFrameItem
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.format
-import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
+import org.jetbrains.kotlin.idea.debugger.invokeInSuspendManagerThread
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.idea.debugger.test.util.XDebuggerTestUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -45,14 +43,7 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
     val agentList = mutableListOf<JpsMavenRepositoryLibraryDescriptor>()
     val classPath = mutableListOf<String>()
 
-    protected fun out(stackFrame: StackFrameItem) {
-        if (stackFrame is CreationCoroutineStackFrameItem && stackFrame.first)
-            out(0, "Creation stack frame")
-        out(INDENT_FRAME, stackFrame.format())
-        outVariables(debugProcess.invokeInManagerThread { stackFrame.createFrame(debugProcess) } ?: return)
-    }
-
-    protected fun out(frame: JavaStackFrame) {
+    protected fun out(frame: XStackFrame) {
         out(INDENT_FRAME, XDebuggerTestUtil.getFramePresentation(frame))
         outVariables(frame)
     }
@@ -92,18 +83,33 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
                 try {
                     out("Thread stack trace:")
                     val stackFrames: List<XStackFrame> = XDebuggerTestUtil.collectFrames(executionStack)
-                    for (frame in stackFrames) {
-                        if (frame is JavaStackFrame) {
-                            out(frame)
-                            val stackFrames = asyncStackTraceProvider?.getAsyncStackTrace(frame, suspendContext as SuspendContextImpl)
-                            if (stackFrames != null) {
-                                if (stackFrames is PreflightProvider) {
-                                    val preflightFrame = stackFrames.getPreflight()
-                                    out(0, preflightFrame.coroutineInfoData.key.toString())
+                    val suspendContextImpl = suspendContext as SuspendContextImpl
+                    suspendContextImpl.runActionInSuspendCommand {
+                        for (frame in stackFrames) {
+                            if (frame is JavaStackFrame) {
+                                out(frame)
+                                val stackFrames = suspendContext.invokeInSuspendManagerThread(debugProcess) {
+                                    asyncStackTraceProvider?.getAsyncStackTrace(frame, suspendContextImpl)
                                 }
-                                for (frameItem in stackFrames)
-                                    out(frameItem)
-                                return@doWhenXSessionPausedThenResume
+                                if (stackFrames != null) {
+                                    if (stackFrames is PreflightProvider) {
+                                        val preflightFrame = stackFrames.getPreflight()
+                                        out(0, preflightFrame.coroutineInfoData.key.toString())
+                                    }
+                                    for (frameItem in stackFrames) {
+                                        if (frameItem is CreationCoroutineStackFrameItem && frameItem.first)
+                                            out(0, "Creation stack frame")
+
+                                        val frame: XStackFrame? = suspendContext.invokeInSuspendManagerThread(debugProcess) {
+                                            frameItem.createFrame(debugProcess)
+                                        }
+                                        frame?.let {
+                                            out(frame)
+                                        }
+
+                                    }
+                                    return@runActionInSuspendCommand
+                                }
                             }
                         }
                     }
@@ -117,7 +123,6 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
             }
         }
     }
-
 
     protected fun getAsyncStackTraceProvider(): CoroutineAsyncStackTraceProvider? {
         val area = Extensions.getArea(null)
