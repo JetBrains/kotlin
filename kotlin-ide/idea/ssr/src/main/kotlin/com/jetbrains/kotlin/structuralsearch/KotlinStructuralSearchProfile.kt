@@ -5,10 +5,9 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
+import com.intellij.psi.impl.DebugUtil
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.structuralsearch.StructuralSearchProfile
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
@@ -48,7 +47,6 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         return KotlinTemplateContextType::class.java
     }
 
-    // Useful to debug the PSI tree
     override fun createPatternTree(
         text: String,
         context: PatternTreeContext,
@@ -77,11 +75,15 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             PatternTreeContext.Expression -> {
                 val fragment = KtPsiFactory(project).createExpressionCodeFragment(text, null)
                 val content = fragment.getContentElement() ?: return PsiElement.EMPTY_ARRAY
+                if (content != PsiElement.EMPTY_ARRAY) println(DebugUtil.psiToString(content.parent, false))
                 return arrayOf(content)
             }
-            else -> return arrayOf(
-                PsiFileFactory.getInstance(project).createFileFromText("__dummy.kt", KotlinFileType.INSTANCE, text)
-            )
+            else -> {
+                val psiFile =
+                    PsiFileFactory.getInstance(project).createFileFromText("__dummy.kt", KotlinFileType.INSTANCE, text)
+                if (psiFile != PsiElement.EMPTY_ARRAY) println(DebugUtil.psiToString(psiFile, false))
+                return arrayOf(psiFile)
+            }
         }
     }
 
