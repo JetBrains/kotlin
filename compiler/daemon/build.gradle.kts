@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-description = "Kotlin Daemon New"
+description = "Kotlin Daemon"
 
 plugins {
     kotlin("jvm")
