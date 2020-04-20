@@ -8,6 +8,7 @@ import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent
 import com.intellij.openapi.actionSystem.CommonShortcuts.ESCAPE
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.ShortcutSet
+import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Editor
@@ -19,7 +20,6 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiFile
 import com.intellij.ui.ScreenUtil
 import com.intellij.ui.popup.PopupPositionManager
@@ -33,7 +33,7 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
                                            private val originalFile: PsiFile,
                                            private val originalEditor: Editor) : PopupUpdateProcessor(project) {
   private var index: Int = LOADING_PREVIEW
-  private var show = Registry.`is`("editor.intention.action.auto.preview")
+  private var show = Experiments.getInstance().isFeatureEnabled("editor.intention.action.auto.preview")
   private val editorsToRelease = mutableListOf<EditorEx>()
 
   private lateinit var popup: JBPopup
