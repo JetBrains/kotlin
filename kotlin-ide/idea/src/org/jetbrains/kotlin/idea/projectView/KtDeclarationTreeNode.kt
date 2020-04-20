@@ -35,6 +35,9 @@ internal class KtDeclarationTreeNode(
 
     companion object {
         private val CLASS_INITIALIZER = "<" + KotlinBundle.message("project.view.class.initializer") + ">"
+        private val ERROR_NAME = "<" + KotlinBundle.message("project.view.class.error.name") + ">"
+
+        private fun String?.orErrorName() = if (!isNullOrBlank()) this else ERROR_NAME
 
         fun tryGetRepresentableText(declaration: KtDeclaration, project: Project): String? {
 
@@ -46,7 +49,7 @@ internal class KtDeclarationTreeNode(
             }
 
             fun KtProperty.presentableText() = buildString {
-                append(name)
+                append(name.orErrorName())
                 typeReference?.text?.let { reference ->
                     appendColon()
                     append(reference)
@@ -58,7 +61,7 @@ internal class KtDeclarationTreeNode(
                     append(receiverReference)
                     append('.')
                 }
-                append(name)
+                append(name.orErrorName())
                 append("(")
                 val valueParameters = valueParameters
                 valueParameters.forEachIndexed { index, parameter ->
@@ -86,21 +89,7 @@ internal class KtDeclarationTreeNode(
                 if (isCompanion()) {
                     append("companion object")
                 } else {
-                    append("object")
-                    if (!name.isNullOrEmpty()) {
-                        append(" $name")
-                    }
-                }
-
-                if (superTypeListEntries.any()) {
-                    appendColon()
-                    val lastIndex = superTypeListEntries.size - 1
-                    superTypeListEntries.forEachIndexed { index, entry ->
-                        entry.typeReference?.text?.let {
-                            if (index > 0 && index != lastIndex) append(", ")
-                            append(it)
-                        }
-                    }
+                    append(name.orErrorName())
                 }
             }
 
@@ -109,7 +98,7 @@ internal class KtDeclarationTreeNode(
                 is KtFunction -> declaration.presentableText()
                 is KtObjectDeclaration -> declaration.presentableText()
                 is KtAnonymousInitializer -> CLASS_INITIALIZER
-                else -> declaration.name
+                else -> declaration.name.orErrorName()
             }
         }
     }
