@@ -872,7 +872,7 @@ open class WrappedPropertyDescriptor(
 }
 
 class WrappedPropertyDescriptorWithContainerSource(
-    override var containerSource: DeserializedContainerSource
+    override var containerSource: DeserializedContainerSource?
 ) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
 
 abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :
