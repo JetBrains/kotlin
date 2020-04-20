@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
+import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  */
 class MemoizedInlineClassReplacements {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
+    private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -124,7 +127,7 @@ class MemoizedInlineClassReplacements {
         }
     }
 
-    internal fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
+    private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
             val newValueParameters = ArrayList<IrValueParameter>()
@@ -176,33 +179,49 @@ class MemoizedInlineClassReplacements {
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
         body: IrFunctionImpl.() -> Unit
-    ) =
-        buildFunWithDescriptorForInlining(function.descriptor) {
-            updateFrom(function)
-            origin = if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
-                JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
-            } else {
-                replacementOrigin
-            }
-            if (noFakeOverride) {
-                isFakeOverride = false
-            }
-            name = mangledNameFor(function)
-            returnType = function.returnType
-        }.apply {
-            parent = function.parent
-            annotations += function.annotations
-            copyTypeParameters(function.allTypeParameters)
-            metadata = function.metadata
-            function.safeAs<IrFunctionBase<*>>()?.metadata = null
+    ) = buildFunWithDescriptorForInlining(function.descriptor) {
+        updateFrom(function)
+        origin = if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
+            JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
+        } else {
+            replacementOrigin
+        }
+        if (noFakeOverride) {
+            isFakeOverride = false
+        }
+        name = mangledNameFor(function)
+        returnType = function.returnType
+    }.apply {
+        parent = function.parent
+        annotations += function.annotations
+        copyTypeParameters(function.allTypeParameters)
+        metadata = function.metadata
+        function.safeAs<IrFunctionBase<*>>()?.metadata = null
 
-            if (function is IrSimpleFunction) {
-                correspondingPropertySymbol = function.correspondingPropertySymbol
-                overriddenSymbols = function.overriddenSymbols.map {
-                    getReplacementFunction(it.owner)?.symbol ?: it
+        if (function is IrSimpleFunction) {
+            val propertySymbol = function.correspondingPropertySymbol
+            if (propertySymbol != null) {
+                val property = propertyMap.getOrPut(propertySymbol) {
+                    buildProperty(propertySymbol.descriptor) {
+                        name = propertySymbol.owner.name
+                        updateFrom(propertySymbol.owner)
+                    }.apply {
+                        parent = propertySymbol.owner.parent
+                    }
+                }
+                correspondingPropertySymbol = property.symbol
+                when (function) {
+                    propertySymbol.owner.getter -> property.getter = this
+                    propertySymbol.owner.setter -> property.setter = this
+                    else -> error("Orphaned property getter/setter: ${function.render()}")
                 }
             }
 
-            body()
+            overriddenSymbols = function.overriddenSymbols.map {
+                getReplacementFunction(it.owner)?.symbol ?: it
+            }
         }
+
+        body()
+    }
 }
