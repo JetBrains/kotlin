@@ -1,9 +1,4 @@
 <idea-plugin>
-  <application-components>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
-    </component>
-  </application-components>
 
   <actions>
     <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">

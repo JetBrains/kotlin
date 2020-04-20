@@ -17,45 +17,39 @@
 package org.jetbrains.kotlin.idea.versions
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.BaseComponent
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import java.io.File
-
-private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
 
 /**
  * Component forces update for built-in libraries in plugin directory. They are ignored because of
  * com.intellij.util.indexing.FileBasedIndex.isUnderConfigOrSystem()
  */
-class KotlinUpdatePluginComponent : BaseComponent {
-    override fun initComponent() {
-        if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
-            return
-        }
+// BUNCH: 192
+class KotlinUpdatePluginStartupActivity : StartupActivity {
 
-        val installedKotlinVersion = PropertiesComponent.getInstance()?.getValue(INSTALLED_KOTLIN_VERSION)
+    override fun runActivity(project: Project) {
+        if (isUnitTestMode()) return
 
-        if (installedKotlinVersion == null || KotlinPluginUtil.getPluginVersion() != installedKotlinVersion) {
+        val propertiesComponent = PropertiesComponent.getInstance() ?: return
+
+        val installedKotlinVersion = propertiesComponent.getValue(INSTALLED_KOTLIN_VERSION)
+
+        if (KotlinPluginUtil.getPluginVersion() != installedKotlinVersion) {
             // Force refresh jar handlers
             for (libraryJarDescriptor in LibraryJarDescriptor.values()) {
                 requestFullJarUpdate(libraryJarDescriptor.getPathInPlugin())
             }
 
-            PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, KotlinPluginUtil.getPluginVersion())
+            propertiesComponent.setValue(INSTALLED_KOTLIN_VERSION, KotlinPluginUtil.getPluginVersion())
         }
-    }
-
-    override fun getComponentName(): String {
-        return "ReindexBundledRuntimeComponent"
-    }
-
-    override fun disposeComponent() {
     }
 
     private fun requestFullJarUpdate(jarFilePath: File) {
@@ -65,5 +59,9 @@ class KotlinUpdatePluginComponent : BaseComponent {
         val jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(localVirtualFile) ?: return
         VfsUtilCore.visitChildrenRecursively(jarFile, object : VirtualFileVisitor<Any?>() {})
         ((jarFile as NewVirtualFile)).markDirtyRecursively()
+    }
+
+    companion object {
+        private const val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
     }
 }
