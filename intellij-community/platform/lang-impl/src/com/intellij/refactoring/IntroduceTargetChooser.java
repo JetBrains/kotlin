@@ -7,6 +7,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.TextRange;
@@ -17,7 +18,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.Function;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +42,7 @@ public class IntroduceTargetChooser {
                                                         @NotNull List<? extends T> expressions,
                                                         @NotNull Pass<? super T> callback,
                                                         @NotNull Function<? super T, String> renderer,
-                                                        @NotNull @Nls String title) {
+                                                        @NotNull @NlsContexts.PopupTitle String title) {
     showChooser(editor, expressions, callback, renderer, title, ScopeHighlighter.NATURAL_RANGER);
   }
 
@@ -50,7 +50,7 @@ public class IntroduceTargetChooser {
                                                         @NotNull List<? extends T> expressions,
                                                         @NotNull Pass<? super T> callback,
                                                         @NotNull Function<? super T, String> renderer,
-                                                        @NotNull @Nls String title,
+                                                        @NotNull @NlsContexts.PopupTitle String title,
                                                         @NotNull NotNullFunction<? super PsiElement, ? extends TextRange> ranger) {
     showChooser(editor, expressions, callback, renderer, title, -1, ranger);
   }
@@ -59,7 +59,7 @@ public class IntroduceTargetChooser {
                                                         @NotNull List<? extends T> expressions,
                                                         @NotNull Pass<? super T> callback,
                                                         @NotNull Function<? super T, String> renderer,
-                                                        @NotNull @Nls String title,
+                                                        @NotNull @NlsContexts.PopupTitle String title,
                                                         int selection,
                                                         @NotNull NotNullFunction<? super PsiElement, ? extends TextRange> ranger) {
     List<MyIntroduceTarget<T>> targets = ContainerUtil.map(expressions, t -> new MyIntroduceTarget<>(t, ranger, renderer));
@@ -75,7 +75,7 @@ public class IntroduceTargetChooser {
   public static <T extends IntroduceTarget> void showIntroduceTargetChooser(@NotNull Editor editor,
                                                                             @NotNull List<T> expressions,
                                                                             @NotNull Pass<? super T> callback,
-                                                                            @NotNull @Nls String title,
+                                                                            @NotNull @NlsContexts.PopupTitle String title,
                                                                             int selection) {
     showIntroduceTargetChooser(editor, expressions, callback, title, null, selection);
   }
@@ -83,7 +83,7 @@ public class IntroduceTargetChooser {
   public static <T extends IntroduceTarget> void showIntroduceTargetChooser(@NotNull Editor editor,
                                                                             @NotNull List<T> expressions,
                                                                             @NotNull Pass<? super T> callback,
-                                                                            @NotNull @Nls String title,
+                                                                            @NotNull @NlsContexts.PopupTitle String title,
                                                                             @Nullable JComponent southComponent,
                                                                             int selection) {
     AtomicReference<ScopeHighlighter> highlighter = new AtomicReference<>(new ScopeHighlighter(editor));
