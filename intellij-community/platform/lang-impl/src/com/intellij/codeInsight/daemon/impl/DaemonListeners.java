@@ -23,7 +23,10 @@ import com.intellij.lang.LanguageAnnotators;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.ApplicationListener;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.impl.LaterInvocator;
 import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
@@ -65,6 +68,7 @@ import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.ThreeState;
 import com.intellij.util.messages.MessageBus;
@@ -523,9 +527,7 @@ public final class DaemonListeners implements Disposable {
 
     @Override
     public void profilesInitialized() {
-      UIUtil.invokeLaterIfNeeded(() -> {
-        if (myProject.isDisposed()) return;
-
+      AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
         stopDaemonAndRestartAllFiles("Inspection profiles activated");
       });
     }

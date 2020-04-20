@@ -23,9 +23,9 @@ import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.UIBundle;
 import com.intellij.util.Consumer;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,7 +124,7 @@ public final class TogglePopupHintsPanel extends EditorBasedWidget implements St
   }
 
   public void updateStatus() {
-    UIUtil.invokeLaterIfNeeded(() -> updateStatus(getCurrentFile()));
+    AppUIUtil.invokeOnEdt(() -> updateStatus(getCurrentFile()));
   }
 
   private void updateStatus(PsiFile file) {
