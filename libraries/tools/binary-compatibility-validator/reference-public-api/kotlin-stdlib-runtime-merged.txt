@@ -51,6 +51,13 @@ public abstract interface annotation class kotlin/ExtensionFunctionType : java/l
 public abstract interface class kotlin/Function {
 }
 
+public final class kotlin/KotlinNothingValueException : java/lang/RuntimeException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun <init> (Ljava/lang/Throwable;)V
+}
+
 public class kotlin/KotlinNullPointerException : java/lang/NullPointerException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V

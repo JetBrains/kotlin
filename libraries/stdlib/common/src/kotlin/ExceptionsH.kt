@@ -109,7 +109,11 @@ public expect class UninitializedPropertyAccessException : RuntimeException {
     constructor(cause: Throwable?)
 }
 
+/**
+ * Thrown after invocation of a function or property that was expected to return `Nothing`, but returned something instead.
+ */
 @SinceKotlin("1.4")
+@PublishedApi
 internal class KotlinNothingValueException : RuntimeException {
     constructor() : super()
     constructor(message: String?) : super(message)
