@@ -1,7 +1,8 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
+
+// TODO (SPECIAL IGNORE_BACKEND_FIR): this test isn't run in FIR mode at all due to infinite loop
 import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
