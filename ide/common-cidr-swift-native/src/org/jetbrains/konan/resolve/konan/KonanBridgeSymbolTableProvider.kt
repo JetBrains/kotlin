@@ -18,14 +18,15 @@ import com.jetbrains.cidr.lang.symbols.symtable.OCSymbolTablesBuildingActivity
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
 import com.jetbrains.cidr.lang.util.OCImmutableList
 import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
-import org.jetbrains.konan.resolve.translation.KtFileTranslator
+import org.jetbrains.konan.resolve.translation.KtFileTranslator.Companion.isKtTranslationSupported
+import org.jetbrains.konan.resolve.translation.KtFileTranslator.Companion.ktTranslator
 import org.jetbrains.konan.resolve.translation.KtFrameworkTranslator
 
 class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(file: PsiFile): Boolean = file is KonanBridgePsiFile
     override fun isSource(project: Project, virtualFile: VirtualFile): Boolean = virtualFile is KonanBridgeVirtualFile
     override fun isSource(project: Project, virtualFile: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
-        isSource(project, virtualFile) && KtFileTranslator.isSupported(inclusionContext)
+        isSource(project, virtualFile) && inclusionContext.isKtTranslationSupported
 
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = false
 
@@ -46,10 +47,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         if (context.isSurrogate) return table // don't build surrogate tables
 
         table.append(OCMacroSymbol(null, 0, PRODUCT_MODULE_NAME_KEY, OCImmutableList.emptyList(), virtualFile.target.productModuleName))
-
-        val fileTranslator = KtFileTranslator.createTranslator(context)
-        KtFrameworkTranslator.translateModule(context.project, virtualFile, fileTranslator).forEach { table.append(it) }
-
+        KtFrameworkTranslator.translateModule(context.project, virtualFile, context.ktTranslator, table.contents)
         return table
     }
 

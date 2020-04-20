@@ -11,9 +11,10 @@ import com.jetbrains.swift.symbols.SwiftParameterSymbol
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTypeSymbol<*, *>, SwiftMemberSymbol>() {
-    override fun translate(stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile): List<KtSwiftTypeSymbol<*, *>> {
-        val topLevelSymbols = ArrayList<KtSwiftTypeSymbol<*, *>>(stubs.size)
+object KtSwiftSymbolTranslator : KtFileTranslator<KtSwiftTypeSymbol<*, *>, SwiftMemberSymbol>() {
+    override fun translate(
+        stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile, destination: MutableList<in KtSwiftTypeSymbol<*, *>>
+    ) {
         val containingSymbols = HashMap<String, KtSwiftTypeSymbol<*, *>>(stubs.size)
         for (stub in stubs) {
             val qualifiedName = stub.swiftName
@@ -30,15 +31,16 @@ class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTy
             val symbol = translate(stubTrace, stub, containingSymbol?.let { name } ?: qualifiedName, file) ?: continue
             containingSymbols.putIfAbsent(qualifiedName, symbol)
 
-            val symbols: MutableList<in KtSwiftTypeSymbol<*, *>> = containingSymbol?.let {
-                symbol.containingSymbol = it
-                it.mutableContainedSymbols()
-            } ?: topLevelSymbols
-            symbols.add(symbol)
+            when (containingSymbol) {
+                null -> destination.add(symbol)
+                else -> {
+                    symbol.containingSymbol = containingSymbol
+                    containingSymbol.addContainedSymbol(symbol)
+                }
+            }
 
             LOG.assertTrue(symbol.qualifiedName == qualifiedName, "Qualified name does not match input")
         }
-        return topLevelSymbols
     }
 
     private fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, swiftName: String, file: VirtualFile): KtSwiftTypeSymbol<*, *>? =
@@ -54,15 +56,18 @@ class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTy
             }
         }
 
-    override fun translateMember(stub: Stub<*>, clazz: KtSwiftTypeSymbol<*, *>, file: VirtualFile, processor: (SwiftMemberSymbol) -> Unit) {
+    override fun translateMember(
+        stub: Stub<*>, project: Project, file: VirtualFile, containingClass: KtSwiftTypeSymbol<*, *>,
+        processor: (SwiftMemberSymbol) -> Unit
+    ) {
         when (stub) {
             is ObjCMethod -> {
                 val isConstructor = stub.swiftName == "init" // works due to the attributes set by Kotlin ObjC export
                 when (isConstructor) {
-                    true -> KtSwiftInitializerSymbol(stub, file, project, clazz)
-                    false -> KtSwiftMethodSymbol(stub, file, project, clazz)
+                    true -> KtSwiftInitializerSymbol(stub, file, project, containingClass)
+                    false -> KtSwiftMethodSymbol(stub, file, project, containingClass)
                 }.also { method ->
-                    val parameters = translateParameters(stub, method, file)
+                    val parameters = translateParameters(stub, method, project, file)
                     val returnType = stub.returnType.convertType(method)
                     method.swiftType = SwiftTypeFactory.getInstance().run {
                         val functionType = createFunctionType(createDomainType(parameters), returnType, false)
@@ -73,7 +78,7 @@ class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTy
                     }
                 }.also(processor)
             }
-            is ObjCProperty -> KtSwiftPropertySymbol(stub, project, file, clazz).also { property ->
+            is ObjCProperty -> KtSwiftPropertySymbol(stub, project, file, containingClass).also { property ->
                 property.swiftType = stub.type.convertType(property)
             }.also(processor)
             else -> OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
@@ -81,9 +86,7 @@ class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTy
     }
 
     private fun translateParameters(
-        methodStub: ObjCMethod,
-        callableSymbol: SwiftCallableSymbol,
-        file: VirtualFile
+        methodStub: ObjCMethod, callableSymbol: SwiftCallableSymbol, project: Project, file: VirtualFile
     ): List<SwiftParameterSymbol> =
         methodStub.parameters.map { parameterStub ->
             KtSwiftParameterSymbol(parameterStub, project, file, callableSymbol).apply {

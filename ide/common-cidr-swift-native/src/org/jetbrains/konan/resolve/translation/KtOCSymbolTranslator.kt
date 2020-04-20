@@ -13,9 +13,12 @@ import com.jetbrains.cidr.lang.types.OCVoidType
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSymbol>() {
-    override fun translate(stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile): List<KtOCClassSymbol<*, *>> =
-        stubs.mapNotNull { translate(stubTrace, it, file) }
+object KtOCSymbolTranslator : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSymbol>() {
+    override fun translate(
+        stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile, destination: MutableList<in KtOCClassSymbol<*, *>>
+    ) {
+        stubs.mapNotNullTo(destination) { translate(stubTrace, it, file) }
+    }
 
     private fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
         return when (stub) {
@@ -28,18 +31,23 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSym
         }
     }
 
-    override fun translateMember(stub: Stub<*>, clazz: KtOCClassSymbol<*, *>, file: VirtualFile, processor: (OCMemberSymbol) -> Unit) {
+    override fun translateMember(
+        stub: Stub<*>, project: Project, file: VirtualFile, containingClass: KtOCClassSymbol<*, *>,
+        processor: (OCMemberSymbol) -> Unit
+    ) {
         when (stub) {
-            is ObjCMethod -> KtOCMethodSymbol(stub, project, file, clazz, translateParameters(stub, clazz, file)).also(processor)
-            is ObjCProperty -> KtOCPropertySymbol(stub, project, file, clazz).also(processor).also { property ->
+            is ObjCMethod -> KtOCMethodSymbol(
+                stub, project, file, containingClass, translateParameters(stub, project, file, containingClass)
+            ).also(processor)
+            is ObjCProperty -> KtOCPropertySymbol(stub, project, file, containingClass).also(processor).also { property ->
                 property.getterName.let {
-                    KtOCMethodSymbol(property, stub, it, property.type, file, clazz, listOf(SelectorPartSymbolImpl(null, it)))
+                    KtOCMethodSymbol(property, stub, it, property.type, file, containingClass, listOf(SelectorPartSymbolImpl(null, it)))
                 }.also(processor)
 
                 if (!property.isReadonly) {
                     property.setterName.let {
-                        val selectors = listOf(SelectorPartSymbolImpl(KtOCParameterSymbol(property, stub, file, clazz), it))
-                        KtOCMethodSymbol(property, stub, it, OCVoidType.instance(), file, clazz, selectors)
+                        val selectors = listOf(SelectorPartSymbolImpl(KtOCParameterSymbol(property, stub, file, containingClass), it))
+                        KtOCMethodSymbol(property, stub, it, OCVoidType.instance(), file, containingClass, selectors)
                     }.also(processor)
                 }
             }
@@ -47,7 +55,9 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSym
         }
     }
 
-    private fun translateParameters(stub: ObjCMethod, clazz: KtOCClassSymbol<*, *>, file: VirtualFile): List<SelectorPartSymbol> {
+    private fun translateParameters(
+        stub: ObjCMethod, project: Project, file: VirtualFile, containingClass: KtOCClassSymbol<*, *>
+    ): List<SelectorPartSymbol> {
         val selectors = stub.selectors
         val parameters = stub.parameters
 
@@ -56,7 +66,7 @@ class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSym
         } else {
             assert(selectors.size == parameters.size)
             ContainerUtil.zip(parameters, selectors).map { (param, selector) ->
-                SelectorPartSymbolImpl(KtOCParameterSymbol(param, project, file, clazz), selector)
+                SelectorPartSymbolImpl(KtOCParameterSymbol(param, project, file, containingClass), selector)
             }
         }
     }

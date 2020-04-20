@@ -26,14 +26,14 @@ import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 object KtFrameworkTranslator {
-    fun translateModule(project: Project, konanFile: KonanBridgeVirtualFile, translator: KtFileTranslator<*, *>): List<OCSymbol> {
+    fun translateModule(
+        project: Project, konanFile: KonanBridgeVirtualFile, translator: KtFileTranslator<*, *>, destination: MutableList<in OCSymbol>
+    ) {
         val sources = collectSources(project, konanFile)
-        val ktFile = sources.firstOrNull()?.let { PsiManager.getInstance(project).findFile(it) } as? KtFile ?: return emptyList()
+        val ktFile = sources.firstOrNull()?.let { PsiManager.getInstance(project).findFile(it) } as? KtFile ?: return
 
-        val baseDeclarations = translator.translateBase(ktFile, konanFile.target.productModuleName)
-        val includes = sources.map { include(konanFile, it) }
-
-        return baseDeclarations + includes
+        translator.translateBase(ktFile, konanFile.target.productModuleName, destination)
+        sources.mapTo(destination) { include(konanFile, it) }
     }
 
     private fun collectSources(project: Project, konanFile: KonanBridgeVirtualFile): List<VirtualFile> {

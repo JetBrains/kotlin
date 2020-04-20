@@ -18,6 +18,7 @@ import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanBridgePsiFile
 import org.jetbrains.konan.resolve.konan.KonanTarget
+import org.jetbrains.konan.resolve.symbols.KtSymbol
 import org.jetbrains.konan.resolve.symbols.objc.KtOCClassSymbol
 import org.jetbrains.konan.resolve.symbols.objc.KtOCInterfaceSymbol
 import org.jetbrains.konan.resolve.symbols.swift.KtSwiftClassSymbol
@@ -34,9 +35,6 @@ import java.util.*
 abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCase() {
     protected val cache: FileSymbolTablesCache
         get() = FileSymbolTablesCache.getInstance(project)
-
-    protected open val translator: KtFileTranslator<*, *>
-        get() = KtOCSymbolTranslator(project)
 
     protected object TestTarget : KonanTarget {
         override val moduleId: String
@@ -99,6 +97,9 @@ abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCas
         )
         assertEquals("unexpected loaded state", expectLoaded, translatedSymbol.stateLoaded)
     }
+
+    protected fun <T : KtSymbol> KtFileTranslator<T, *>.translate(file: KtFile): List<T> =
+        mutableListOf<T>().also { translate(file, TestTarget.productModuleName, it) }
 
     protected val KtOCClassSymbol<*, *>.members: Collection<OCMemberSymbol>
         get() = CommonProcessors.CollectProcessor<OCMemberSymbol>().also {

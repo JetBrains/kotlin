@@ -5,13 +5,11 @@
 
 package org.jetbrains.konan.resolve.symbols.objc
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.VirtualFileOwner
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
-import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 
@@ -43,10 +41,5 @@ abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel
 
     override fun init(file: VirtualFile) {
         this.file = file
-    }
-
-    companion object {
-        @JvmStatic
-        protected fun createTranslator(project: Project): KtOCSymbolTranslator = KtOCSymbolTranslator(project)
     }
 }

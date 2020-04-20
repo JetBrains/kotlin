@@ -8,6 +8,7 @@ import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftGenericParametersInfo
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
+import org.jetbrains.konan.resolve.translation.KtSwiftSymbolTranslator
 import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
@@ -22,8 +23,10 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stb : ObjC
     @Transient
     private var containedSymbols: MutableList<SwiftTypeSymbol>? = null // should only be mutated during symbol building
 
-    internal fun mutableContainedSymbols(): MutableList<SwiftTypeSymbol> =
-        containedSymbols ?: mutableListOf<SwiftTypeSymbol>().also { containedSymbols = it }
+    internal fun addContainedSymbol(symbol: SwiftTypeSymbol) {
+        val containedSymbols = containedSymbols ?: mutableListOf<SwiftTypeSymbol>().also { containedSymbols = it }
+        containedSymbols.add(symbol)
+    }
 
     override fun clearTranslationState() {
         super.clearTranslationState()
@@ -49,7 +52,7 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stb : ObjC
         var members: MostlySingularMultiMap<String, SwiftMemberSymbol>?
 
         constructor(clazz: KtSwiftTypeSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            val members = createTranslator(project).translateMembers(stub, clazz)
+            val members = KtSwiftSymbolTranslator.translateMembers(stub, project, clazz)
             this.members = clazz.containedSymbols?.let { containedSymbols ->
                 (members ?: MostlySingularMultiMap<String, SwiftMemberSymbol>()).apply {
                     for (containedSymbol in containedSymbols) {

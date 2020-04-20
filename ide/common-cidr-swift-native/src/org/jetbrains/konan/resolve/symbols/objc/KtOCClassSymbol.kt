@@ -19,6 +19,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCImplementationSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
+import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
@@ -84,7 +85,7 @@ abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCCl
 
         constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
             protocolNames = stub.superProtocols.nullize() ?: emptyList()
-            members = createTranslator(project).translateMembers(stub, clazz)
+            members = KtOCSymbolTranslator.translateMembers(stub, project, clazz)
         }
 
         constructor() : super() {

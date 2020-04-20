@@ -1,5 +1,6 @@
 package org.jetbrains.konan.resolve.translation
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.MostlySingularMultiMap
 import com.jetbrains.cidr.lang.CLanguageKind
@@ -17,55 +18,50 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.util.getValueOrNull
 
 abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
-    fun translate(file: KtFile, frameworkName: String): List<T> {
-        val (stubTrace, lazy) = createStubProvider(file, frameworkName)
-        return translate(stubTrace, lazy.translate(file), file.virtualFile)
+    fun translate(file: KtFile, frameworkName: String, destination: MutableList<in T>) {
+        translate(file, frameworkName, destination, ObjCExportLazy::translate)
     }
 
-    fun translateBase(file: KtFile, frameworkName: String): List<T> {
-        val (stubTrace, lazy) = createStubProvider(file, frameworkName)
-        return translate(stubTrace, lazy.generateBase(), file.virtualFile)
+    fun translateBase(file: KtFile, frameworkName: String, destination: MutableList<in T>) {
+        translate(file, frameworkName, destination) { lazy, _ -> lazy.generateBase() }
     }
 
-    fun translateMembers(stub: ObjCClass<*>, clazz: T): MostlySingularMultiMap<String, M>? {
+    fun translateMembers(containingStub: ObjCClass<*>, project: Project, containingClass: T): MostlySingularMultiMap<String, M>? {
         val map = lazy(LazyThreadSafetyMode.NONE) { MostlySingularMultiMap<String, M>() }
-        for (member in stub.members) {
-            translateMember(member, clazz, clazz.containingFile) {
+        for (member in containingStub.members) {
+            translateMember(member, project, containingClass.containingFile, containingClass) {
                 map.value.add(it.name, it)
             }
         }
         return map.getValueOrNull()
     }
 
-    protected abstract fun translate(stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile): List<T>
-    protected abstract fun translateMember(stub: Stub<*>, clazz: T, file: VirtualFile, processor: (M) -> Unit)
+    protected abstract fun translate(
+        stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile, destination: MutableList<in T>
+    )
 
-    private fun createStubProvider(file: KtFile, frameworkName: String): Pair<StubTrace, ObjCExportLazy> {
-        val configuration = object : ObjCExportLazy.Configuration {
-            override val frameworkName: String get() = frameworkName
+    protected abstract fun translateMember(stub: Stub<*>, project: Project, file: VirtualFile, containingClass: T, processor: (M) -> Unit)
 
-            override fun getCompilerModuleName(moduleInfo: ModuleInfo): String =
-                TODO() // no implementation in `KonanCompilerFrontendServices.kt` either
+    private class ObjCExportConfiguration(override val frameworkName: String) : ObjCExportLazy.Configuration {
+        override fun getCompilerModuleName(moduleInfo: ModuleInfo): String =
+            TODO() // no implementation in `KonanCompilerFrontendServices.kt` either
 
-            override fun isIncluded(moduleInfo: ModuleInfo): Boolean =
-                true // always return true in `KonanCompilerFrontendServices.kt` as well
+        override fun isIncluded(moduleInfo: ModuleInfo): Boolean =
+            true // always return true in `KonanCompilerFrontendServices.kt` as well
 
-            override val objcGenerics: Boolean get() = false
-        }
+        override val objcGenerics: Boolean get() = false
+    }
 
+    private inline fun translate(
+        file: KtFile, frameworkName: String, destination: MutableList<in T>, provideStubs: (ObjCExportLazy, KtFile) -> List<ObjCTopLevel<*>>
+    ) {
         val resolutionFacade = file.getResolutionFacade()
         val moduleDescriptor = resolutionFacade.moduleDescriptor
         val resolveSession = resolutionFacade.frontendService<ResolveSession>()
         val deprecationResolver = resolutionFacade.frontendService<DeprecationResolver>()
 
-        val stubTrace = StubTrace(
-            file.virtualFile,
-            resolutionFacade,
-            moduleDescriptor
-        )
-
-        return stubTrace to createObjCExportLazy(
-            configuration,
+        val lazy = createObjCExportLazy(
+            ObjCExportConfiguration(frameworkName),
             ObjCExportWarningCollector.SILENT,
             resolveSession,
             resolveSession.typeResolver,
@@ -74,16 +70,21 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
             moduleDescriptor.builtIns,
             deprecationResolver
         )
+
+        translate(StubTrace(file.virtualFile, resolutionFacade, moduleDescriptor), provideStubs(lazy, file), file.virtualFile, destination)
     }
 
     companion object {
-        internal fun isSupported(context: OCInclusionContext): Boolean =
-            context.languageKind.let { it == SwiftLanguageKind || it is CLanguageKind }
+        @JvmStatic
+        val OCInclusionContext.isKtTranslationSupported: Boolean
+            get() = languageKind.let { it == SwiftLanguageKind || it is CLanguageKind }
 
-        internal fun createTranslator(context: OCInclusionContext): KtFileTranslator<*, *> = when (context.languageKind) {
-            SwiftLanguageKind -> KtSwiftSymbolTranslator(context.project)
-            is CLanguageKind -> KtOCSymbolTranslator(context.project)
-            else -> throw UnsupportedOperationException("Unsupported language kind ${context.languageKind}")
-        }
+        @JvmStatic
+        val OCInclusionContext.ktTranslator: KtFileTranslator<*, *>
+            get() = when (languageKind) {
+                SwiftLanguageKind -> KtSwiftSymbolTranslator
+                is CLanguageKind -> KtOCSymbolTranslator
+                else -> throw UnsupportedOperationException("Unsupported language kind $languageKind")
+            }
     }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
     fun `test stop translating after invalidation`() {
         val file = configure("class A")
-        val translatedSymbol = translator.translate(file, TestTarget.productModuleName).single() as KtOCInterfaceSymbol
+        val translatedSymbol = KtOCSymbolTranslator.translate(file).single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         runWriteAction {
@@ -24,7 +24,7 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
 
     fun `test stop translating after invalidation by adjacent file`() {
         val file = configure("class A")
-        val translatedSymbol = translator.translate(file, TestTarget.productModuleName).single() as KtOCInterfaceSymbol
+        val translatedSymbol = KtOCSymbolTranslator.translate(file).single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         configure("typealias B = Unit", fileName = "other")

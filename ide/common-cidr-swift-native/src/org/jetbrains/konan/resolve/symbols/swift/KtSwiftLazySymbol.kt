@@ -11,7 +11,6 @@ import com.jetbrains.swift.presentation.calculateMaybeDeferredFullIcon
 import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.symbols.*
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
-import org.jetbrains.konan.resolve.translation.KtSwiftSymbolTranslator
 import org.jetbrains.konan.resolve.translation.TranslationState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import javax.swing.Icon
@@ -77,9 +76,4 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLe
 
     final override lateinit var objcName: String //todo???
         private set
-
-    companion object {
-        @JvmStatic
-        protected fun createTranslator(project: Project): KtSwiftSymbolTranslator = KtSwiftSymbolTranslator(project)
-    }
 }
