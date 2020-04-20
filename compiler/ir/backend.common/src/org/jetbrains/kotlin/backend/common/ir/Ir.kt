@@ -206,8 +206,8 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, private val 
     val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
     val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
 
-    open fun functionN(n: Int): IrClassSymbol = symbolTable.lazyWrapper.referenceClass(builtIns.getFunction(n))
-    open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.lazyWrapper.referenceClass(builtIns.getSuspendFunction(n))
+    open fun functionN(n: Int): IrClassSymbol = irBuiltIns.function(n)
+    open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunction(n)
 
     fun kproperty0(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty0)
     fun kproperty1(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty1)
