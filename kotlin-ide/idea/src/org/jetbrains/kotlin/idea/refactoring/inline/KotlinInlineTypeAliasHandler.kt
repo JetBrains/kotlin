@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class KotlinInlineTypeAliasHandler : InlineActionHandler() {
     companion object {
-        val REFACTORING_NAME = KotlinBundle.message("name.inline.type.alias")
+        val REFACTORING_NAME get() = KotlinBundle.message("name.inline.type.alias")
     }
 
     private fun showErrorHint(project: Project, editor: Editor?, message: String) {
