@@ -21,6 +21,7 @@
 #include "Atomic.h"
 #include "KAssert.h"
 #include "Memory.h"
+#include "MemoryPrivate.hpp"
 #include "Natives.h"
 #include "Porting.h"
 #include "Types.h"
@@ -381,17 +382,31 @@ class CyclicCollector {
     // We are not doing that on the UI thread, as taking lock is slow, unless
     // it happens on deinit of the collector or if there are no other workers.
     if ((atomicGet(&pendingRelease_) != 0) && ((worker != mainWorker_) || (currentAliveWorkers_ == 1))) {
-      suggestLockRelease();
-      Locker locker(&lock_);
-      COLLECTOR_LOG("clearing %d release candidates on %p\n", toRelease_.size(), worker);
-      for (auto* it: toRelease_) {
-        COLLECTOR_LOG("clear references in %p\n", it)
-        traverseObjectFields(it, [](ObjHeader** location) {
-          ZeroHeapRef(location);
-        });
+      KStdVector<ObjHeader*> heapRefsToRelease;
+
+      {
+        suggestLockRelease();
+        Locker locker(&lock_);
+        COLLECTOR_LOG("clearing %d release candidates on %p\n", toRelease_.size(), worker);
+        for (auto* it: toRelease_) {
+          COLLECTOR_LOG("clear references in %p\n", it)
+          traverseObjectFields(it, [&heapRefsToRelease](ObjHeader** location) {
+            // Avoid using ZeroHeapRef here: it can provoke garbageCollect() which would then stuck on taking [lock_]
+            // (which is already taken above).
+            auto* value = *location;
+            if (reinterpret_cast<uintptr_t>(value) > 1) {
+              *location = nullptr;
+              heapRefsToRelease.push_back(value);
+            }
+          });
+        }
+        toRelease_.clear();
+        atomicSet(&pendingRelease_, 0);
       }
-      toRelease_.clear();
-      atomicSet(&pendingRelease_, 0);
+
+      for (auto* it: heapRefsToRelease) {
+        ReleaseHeapRef(it);
+      }
     }
   }
 

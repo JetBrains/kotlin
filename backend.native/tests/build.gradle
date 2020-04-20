@@ -2787,6 +2787,10 @@ standaloneTest("cycle_collector") {
     source = "runtime/memory/cycle_collector.kt"
 }
 
+standaloneTest("cycle_collector_deadlock1") {
+    source = "runtime/memory/cycle_collector_deadlock1.kt"
+}
+
 standaloneTest("leakMemory") {
     disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     source = "runtime/memory/leak_memory.kt"
