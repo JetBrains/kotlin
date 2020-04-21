@@ -3467,6 +3467,14 @@ createInterop("cmangling2") {
     it.defFile 'interop/basics/mangling2.def'
 }
 
+createInterop("cmangling_keywords") {
+    it.defFile 'interop/basics/mangling_keywords.def'
+}
+
+createInterop("cmangling_keywords2") {
+    it.defFile 'interop/basics/mangling_keywords2.def'
+}
+
 createInterop("auxiliaryCppSources") {
     // We need to provide empty def file to create correct `KonanInteropTask`.
     it.defFile 'interop/auxiliary_sources/auxiliaryCppSources.def'
@@ -3668,6 +3676,18 @@ interopTest("interop_mangling2") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/mangling2.kt"
     interop = 'cmangling2'
+}
+
+interopTest("interop_mangling_keywords") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/mangling_keywords.kt"
+    interop = 'cmangling_keywords'
+}
+
+interopTest("interop_mangling_keywords2") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/mangling_keywords2.kt"
+    interop = 'cmangling_keywords2'
 }
 
 interopTest("interop_auxiliarySources") {
