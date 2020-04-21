@@ -65,6 +65,7 @@ class FirElementSerializer private constructor(
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
                 is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
             }
         }
 
