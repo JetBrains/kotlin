@@ -43,7 +43,6 @@ dependencies {
 
     compileOnly(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
     testRuntime(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
-    testRuntime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
