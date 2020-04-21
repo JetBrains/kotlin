@@ -127,6 +127,32 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    fun testNoEvaluationError() {
+        checkEvaluateInReplDiags(
+            sequenceOf(
+                """
+                    fun stack(vararg tup: Int): Int = tup.sum()
+                    val X = 1
+                    val x = stack(1, X)
+                """.trimIndent(),
+                "val y = 42"
+            ),
+            sequenceOf(
+                ResultValue.NotEvaluated.asSuccess(
+                    listOf(
+                        ScriptDiagnostic(
+                            ScriptDiagnostic.unspecifiedError,
+                            "Unable to instantiate class Line_0_simplescript: java.lang.ClassFormatError: " +
+                                    "Duplicate method name \"getX\" with signature \"()I\" in class file Line_0_simplescript"
+                        )
+                    )
+                ),
+                makeFailureResult("Snippet cannot be evaluated due to history mismatch")
+            )
+        )
+    }
+
+    @Test
     fun testLongEval() {
         checkEvaluateInRepl(
             sequence {
@@ -178,7 +204,8 @@ class ReplTest : TestCase() {
             expected: Sequence<ResultWithDiagnostics<Any?>>,
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-            limit: Int = 0
+            limit: Int = 0,
+            ignoreDiagnostics: Boolean = false
         ) {
             val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
             evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
@@ -202,19 +229,32 @@ class ReplTest : TestCase() {
                     }
                     res is ResultWithDiagnostics.Success && expectedRes is ResultWithDiagnostics.Success -> {
                         val expectedVal = expectedRes.value
-                        val resVal = res.value.result
-                        when (resVal) {
+                        val actualVal = res.value.result
+                        when (actualVal) {
                             is ResultValue.Value -> Assert.assertEquals(
-                                "#$index: Expected $expectedVal, got $resVal",
+                                "#$index: Expected $expectedVal, got $actualVal",
                                 expectedVal,
-                                resVal.value
+                                actualVal.value
                             )
                             is ResultValue.Unit -> Assert.assertNull("#$index: Expected $expectedVal, got Unit", expectedVal)
                             is ResultValue.Error -> Assert.assertTrue(
-                                "#$index: Expected $expectedVal, got Error: ${resVal.error}",
-                                expectedVal is Throwable && expectedVal.message == resVal.error?.message
+                                "#$index: Expected $expectedVal, got Error: ${actualVal.error}",
+                                expectedVal is Throwable && expectedVal.message == actualVal.error.message
                             )
-                            else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $resVal", expectedVal == null)
+                            is ResultValue.NotEvaluated -> Assert.assertEquals(
+                                "#$index: Expected $expectedVal, got NotEvaluated",
+                                expectedVal, actualVal
+                            )
+                            else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $actualVal", expectedVal == null)
+                        }
+                        if (!ignoreDiagnostics) {
+                            val expectedDiag = expectedRes.reports
+                            val actualDiag = res.reports
+                            Assert.assertEquals(
+                                "Diagnostics should be same",
+                                expectedDiag.map { it.toString() },
+                                actualDiag.map { it.toString() }
+                            )
                         }
                     }
                     else -> {
@@ -234,7 +274,7 @@ class ReplTest : TestCase() {
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
             limit: Int = 0
         ) = checkEvaluateInReplDiags(
-            snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit
+            snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit, true
         )
 
         class TestReceiver(
