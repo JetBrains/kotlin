@@ -919,13 +919,14 @@ KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt value) {
   RuntimeAssert(toArray->count_ >= 11 + position, "must be true");
   char cstring[12];
   auto length = konan::snprintf(cstring, sizeof(cstring), "%d", value);
+  RuntimeAssert(length >= 0, "This should never happen"); // may be overkill
+  RuntimeAssert(length < sizeof(cstring), "Unexpectedly large value"); // Can't be, but this is what sNprintf for
   auto* from = &cstring[0];
   auto* to = CharArrayAddressOfElementAt(toArray, position);
-  auto* end = from + length;
-  while (from != end) {
+  while (*from) {
     *to++ = *from++;
   }
-  return length;
+  return from - cstring;
 }
 
 

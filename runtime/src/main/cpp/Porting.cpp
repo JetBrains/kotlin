@@ -110,16 +110,21 @@ void consolePrintf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, sizeof(buffer) - 1, format, args);
+  int rv = vsnprintf_impl(buffer, sizeof(buffer), format, args);
+  if (rv < 0) return; // TODO: this may be too much exotic, but should i try to print itoa(error) and terminate?
+  if (rv >= sizeof(buffer)) rv = sizeof(buffer) - 1;  // TODO: Consider realloc or report truncating.
   va_end(args);
   consoleWriteUtf8(buffer, rv);
 }
 
+// TODO: Avoid code duplication.
 void consoleErrorf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, sizeof(buffer) - 1, format, args);
+  int rv = vsnprintf_impl(buffer, sizeof(buffer), format, args);
+  if (rv < 0) return; // TODO: this may be too much exotic, but should i try to print itoa(error) and terminate?
+  if (rv >= sizeof(buffer)) rv = sizeof(buffer) - 1;  // TODO: Consider realloc or report truncating.
   va_end(args);
   consoleErrorUtf8(buffer, rv);
 }
