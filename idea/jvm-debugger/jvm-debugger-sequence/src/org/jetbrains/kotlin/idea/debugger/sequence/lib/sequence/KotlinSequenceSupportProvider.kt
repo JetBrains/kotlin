@@ -24,20 +24,18 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpress
 class KotlinSequenceSupportProvider : LibrarySupportProvider {
     override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id
 
-    private companion object {
-        val builder: StreamChainBuilder = TerminatedChainBuilder(
-            KotlinChainTransformerImpl(SequenceTypeExtractor()),
-            SequenceCallCheckerWithNameHeuristics(SequenceCallChecker())
-        )
-        val support = KotlinSequencesSupport()
-        val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
-        val expressionBuilder = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
-    }
+    private val builder: StreamChainBuilder = TerminatedChainBuilder(
+        KotlinChainTransformerImpl(SequenceTypeExtractor()),
+        SequenceCallCheckerWithNameHeuristics(SequenceCallChecker())
+    )
+    private val support: LibrarySupport by lazy { KotlinSequencesSupport() }
+    private val dsl: DslImpl by lazy { DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory())) }
 
     override fun getChainBuilder(): StreamChainBuilder = builder
 
     override fun getLibrarySupport(): LibrarySupport = support
 
-    override fun getExpressionBuilder(project: Project): TraceExpressionBuilder = expressionBuilder
+    override fun getExpressionBuilder(project: Project): TraceExpressionBuilder =
+        KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
 
 }
