@@ -29,6 +29,11 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
         configuration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<LinkedSnippet<KJvmEvaluatedSnippet>> {
 
+        if (!verifyHistoryConsistency(snippet))
+            return ResultWithDiagnostics.Failure(
+                ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, "Snippet cannot be evaluated due to history mismatch")
+            )
+
         val lastSnippetClass = history.lastItem()?.first
         val historyBeforeSnippet = history.items.map { it.second }
         val currentConfiguration = ScriptEvaluationConfiguration(configuration) {
@@ -60,6 +65,21 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
         val newNode = lastEvaluatedSnippet.add(newEvalRes)
         lastEvaluatedSnippet = newNode
         return newNode.asSuccess(evalRes.reports)
+    }
+
+    private fun verifyHistoryConsistency(compiledSnippet: LinkedSnippet<out CompiledSnippet>): Boolean {
+        var compiled = compiledSnippet.previous
+        var evaluated = lastEvaluatedSnippet
+        while (compiled != null && evaluated != null) {
+            val evaluatedVal = evaluated.get()
+            if (evaluatedVal.compiledSnippet !== compiled.get())
+                return false
+            if (evaluatedVal.result.scriptClass == null)
+                return false
+            compiled = compiled.previous
+            evaluated = evaluated.previous
+        }
+        return compiled == null && evaluated == null
     }
 }
 
