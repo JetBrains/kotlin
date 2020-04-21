@@ -146,39 +146,29 @@ public final class PsiCopyPasteManager {
 
 
   public static class MyData {
-    private PsiElement[] myElements;
+    private final Project myProject;
+    private final List<SmartPsiElementPointer> myPointers = new ArrayList<>();
     private final boolean myIsCopied;
 
     public MyData(PsiElement[] elements, boolean copied) {
-      myElements = elements;
+      myProject = elements.length == 0 ? null : elements[0].getProject();
+      for (PsiElement element : elements) {
+        myPointers.add(SmartPointerManager.createPointer(element));
+      }
       myIsCopied = copied;
     }
 
     public PsiElement[] getElements() {
-      if (myElements == null) return PsiElement.EMPTY_ARRAY;
-
-      ReadAction.run(() -> {
-        int validElementsCount = 0;
-        for (PsiElement element : myElements) {
-          if (element.isValid()) {
-            validElementsCount++;
+      return ReadAction.compute(() -> {
+        List<PsiElement> result = new ArrayList<>();
+        for (SmartPsiElementPointer pointer : myPointers) {
+          PsiElement element = pointer.getElement();
+          if (element != null) {
+            result.add(element);
           }
         }
-
-        if (validElementsCount != myElements.length) {
-          PsiElement[] validElements = new PsiElement[validElementsCount];
-          int j = 0;
-          for (PsiElement element : myElements) {
-            if (element.isValid()) {
-              validElements[j++] = element;
-            }
-          }
-
-          myElements = validElements;
-        }
+        return result.toArray(PsiElement.EMPTY_ARRAY);
       });
-
-      return myElements;
     }
 
     public boolean isCopied() {
@@ -186,16 +176,12 @@ public final class PsiCopyPasteManager {
     }
 
     public boolean isValid() {
-      return myElements.length > 0 && myElements[0].isValid();
+      return myPointers.size() > 0 && myPointers.get(0).getElement() != null;
     }
 
     @Nullable
     public Project getProject() {
-      if (myElements == null || myElements.length == 0) {
-        return null;
-      }
-      final PsiElement element = myElements[0];
-      return element.isValid() ? element.getProject() : null;
+      return myProject;
     }
   }
 
