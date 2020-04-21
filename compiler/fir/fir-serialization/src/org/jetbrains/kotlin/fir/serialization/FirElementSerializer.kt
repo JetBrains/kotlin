@@ -52,7 +52,7 @@ class FirElementSerializer private constructor(
     private val containingDeclaration: FirDeclaration?,
     private val typeParameters: Interner<FirTypeParameter>,
     private val extension: FirSerializerExtension,
-    val typeTable: MutableTypeTable,
+    private val typeTable: MutableTypeTable,
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
 ) {
@@ -90,7 +90,7 @@ class FirElementSerializer private constructor(
         val regularClass = klass as? FirRegularClass
         val modality = regularClass?.modality ?: Modality.FINAL
         val flags = Flags.getClassFlags(
-            klass.annotations.isNotEmpty(),
+            klass.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.LOCAL),
             ProtoEnumFlags.modality(modality),
             ProtoEnumFlags.classKind(klass.classKind, regularClass?.isCompanion == true),
@@ -201,7 +201,7 @@ class FirElementSerializer private constructor(
         //val compileTimeConstant = property.compileTimeInitializer
         val hasConstant = false // TODO: compileTimeConstant != null && compileTimeConstant !is NullValue
 
-        val hasAnnotations = property.annotations.isNotEmpty()
+        val hasAnnotations = property.nonSourceAnnotations(session).isNotEmpty()
         // TODO: hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
 
         val modality = property.modality!!
@@ -230,7 +230,7 @@ class FirElementSerializer private constructor(
             }
 
             if (setter !is FirDefaultPropertyAccessor ||
-                setter.annotations.isNotEmpty() ||
+                setter.nonSourceAnnotations(session).isNotEmpty() ||
                 setter.visibility != property.visibility
             ) {
                 val setterLocal = local.createChildSerializer(setter)
@@ -299,7 +299,7 @@ class FirElementSerializer private constructor(
         val local = createChildSerializer(function)
 
         val flags = Flags.getFunctionFlags(
-            function.annotations.isNotEmpty(),
+            function.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.LOCAL),
             ProtoEnumFlags.modality(simpleFunction?.modality ?: Modality.FINAL),
             ProtoEnumFlags.memberKind(CallableMemberDescriptor.Kind.DECLARATION),
@@ -383,7 +383,7 @@ class FirElementSerializer private constructor(
         val local = createChildSerializer(typeAlias)
 
         val flags = Flags.getTypeAliasFlags(
-            typeAlias.annotations.isNotEmpty(),
+            typeAlias.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(typeAlias))
         )
         if (flags != builder.flags) {
@@ -414,7 +414,7 @@ class FirElementSerializer private constructor(
             builder.addAllVersionRequirement(serializeVersionRequirements(typeAlias))
         }
 
-        for (annotation in typeAlias.annotations) {
+        for (annotation in typeAlias.nonSourceAnnotations(session)) {
             builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
         }
 
@@ -436,7 +436,7 @@ class FirElementSerializer private constructor(
         val local = createChildSerializer(constructor)
 
         val flags = Flags.getConstructorFlags(
-            constructor.annotations.isNotEmpty(),
+            constructor.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
             !constructor.isPrimary
         )
@@ -471,7 +471,7 @@ class FirElementSerializer private constructor(
         val declaresDefaultValue = parameter.defaultValue != null // TODO: || parameter.isActualParameterWithAnyExpectedDefault
 
         val flags = Flags.getValueParameterFlags(
-            parameter.annotations.isNotEmpty(), declaresDefaultValue,
+            parameter.nonSourceAnnotations(session).isNotEmpty(), declaresDefaultValue,
             parameter.isCrossinline, parameter.isNoinline
         )
         if (flags != builder.flags) {
@@ -687,7 +687,7 @@ class FirElementSerializer private constructor(
         val isDefault = accessor is FirDefaultPropertyAccessor &&
                 accessor.annotations.isEmpty() && accessor.visibility == property.visibility
         return Flags.getAccessorFlags(
-            accessor.annotations.isNotEmpty(),
+            accessor.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
             ProtoEnumFlags.modality(accessor.modality!!),
             !isDefault,
@@ -735,8 +735,7 @@ class FirElementSerializer private constructor(
     private fun MutableVersionRequirementTable.serializeVersionRequirements(annotations: List<FirAnnotationCall>): List<Int> =
         annotations
             .filter {
-                val annotationConeType = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
-                annotationConeType?.lookupTag?.classId?.asSingleFqName() == RequireKotlinConstants.FQ_NAME
+                it.toAnnotationClassId().asSingleFqName() == RequireKotlinConstants.FQ_NAME
             }
             .mapNotNull(::serializeVersionRequirementFromRequireKotlin)
             .map(::get)
