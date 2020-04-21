@@ -66,7 +66,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 reload()
             }
         }
-        project.messageBus.connect(project).subscribe(GradleSettingsListener.TOPIC, listener)
+        project.messageBus.connect().subscribe(GradleSettingsListener.TOPIC, listener)
     }
 
     // NOTE: control flow here depends on suppressing exceptions from loadGradleTemplates calls

@@ -3,5 +3,6 @@
         <postStartupActivity implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeABICompatibilityChecker"/>
 
         <applicationService serviceImplementation="org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache" />
+        <projectService serviceImplementation="org.jetbrains.kotlin.ide.konan.KotlinNativeABICompatibilityCheckerService" />
     </extensions>
 </idea-plugin>

@@ -38,6 +38,7 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
+// BUNCH: 193
 class KotlinCodeBlockModificationListener(
     modificationTracker: PsiModificationTracker,
     project: Project,

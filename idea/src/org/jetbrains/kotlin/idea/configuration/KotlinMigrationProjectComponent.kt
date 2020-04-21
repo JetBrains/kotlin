@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.runUnderDisposeAwar
 class KotlinMigrationProjectComponent : StartupActivity {
 
     override fun runActivity(project: Project) {
-        val connection = project.messageBus.connect(project)
+        val connection = project.messageBus.connect()
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             runUnderDisposeAwareIndicator(project) {
                 KotlinMigrationProjectService.getInstance(project).onImportFinished()
