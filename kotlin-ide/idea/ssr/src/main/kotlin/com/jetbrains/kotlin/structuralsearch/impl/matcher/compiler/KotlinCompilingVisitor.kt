@@ -12,6 +12,7 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElement
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.nj2k.postProcessing.resolve
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
@@ -43,39 +44,11 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         visitElement(expression)
-        val parent = expression.parent
         val pattern = myCompilingVisitor.context.pattern
         val handler = pattern.getHandler(expression)
 
-        // Sets a SubstitutionHandler if TYPED_VAR_PREFIX is recognized
-        if (handler !is SubstitutionHandler && expression.getReferencedName()
-                .startsWith(KotlinCompiledPattern.TYPED_VAR_PREFIX)
-        ) {
-            val resolve = expression.resolve()
-            val text = if (resolve != null) {
-                (resolve as KtClass).name ?: expression.text
-            } else {
-                expression.text
-            }
-            createAndSetSubstitutionHandlerFromReference(expression, text, parent is KtReferenceExpression)
+        if (handler is SubstitutionHandler) {
+            handler.setFilter { it is KtExpression }
         }
-    }
-
-    private fun createAndSetSubstitutionHandlerFromReference(
-        expr: PsiElement,
-        referenceText: String,
-        classQualifier: Boolean
-    ) {
-        val substitutionHandler =
-            SubstitutionHandler("__${referenceText.replace('.', '_')}", false, if (classQualifier) 0 else 1, 1, true)
-        val caseSensitive = myCompilingVisitor.context.options.isCaseSensitiveMatch
-        substitutionHandler.predicate = RegExpPredicate(
-            StructuralSearchUtil.shieldRegExpMetaChars(referenceText),
-            caseSensitive,
-            null,
-            false,
-            false
-        )
-        myCompilingVisitor.context.pattern.setHandler(expr, substitutionHandler)
     }
 }
