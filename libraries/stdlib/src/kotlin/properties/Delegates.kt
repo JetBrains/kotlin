@@ -35,6 +35,48 @@ public object Delegates {
         }
 
     /**
+     * Returns a property delegate for a read/write property that calls a specified callback function when changed.
+     * @param initialValue the initial value of the property.
+     * @param onChange the callback which is called after the change of the property is made. The value of the property
+     *  has already been changed when this callback is invoked.
+     *
+     *  @sample samples.properties.Delegates.observableDelegate
+     */
+    public inline fun observable(initialValue: Int, crossinline onChange: (property: KProperty<*>, oldValue: Int, newValue: Int) -> Unit):
+            ReadWriteIntProperty<Any?> =
+        object : ObservableIntProperty(initialValue) {
+            override fun afterChange(property: KProperty<*>, oldValue: Int, newValue: Int) = onChange(property, oldValue, newValue)
+        }
+
+    /**
+     * Returns a property delegate for a read/write property that calls a specified callback function when changed.
+     * @param initialValue the initial value of the property.
+     * @param onChange the callback which is called after the change of the property is made. The value of the property
+     *  has already been changed when this callback is invoked.
+     *
+     *  @sample samples.properties.Delegates.observableDelegate
+     */
+    public inline fun observable(initialValue: Long, crossinline onChange: (property: KProperty<*>, oldValue: Long, newValue: Long) -> Unit):
+            ReadWriteLongProperty<Any?> =
+        object : ObservableLongProperty(initialValue) {
+            override fun afterChange(property: KProperty<*>, oldValue: Long, newValue: Long) = onChange(property, oldValue, newValue)
+        }
+
+    /**
+     * Returns a property delegate for a read/write property that calls a specified callback function when changed.
+     * @param initialValue the initial value of the property.
+     * @param onChange the callback which is called after the change of the property is made. The value of the property
+     *  has already been changed when this callback is invoked.
+     *
+     *  @sample samples.properties.Delegates.observableDelegate
+     */
+    public inline fun observable(initialValue: Double, crossinline onChange: (property: KProperty<*>, oldValue: Double, newValue: Double) -> Unit):
+            ReadWriteDoubleProperty<Any?> =
+        object : ObservableDoubleProperty(initialValue) {
+            override fun afterChange(property: KProperty<*>, oldValue: Double, newValue: Double) = onChange(property, oldValue, newValue)
+        }
+
+    /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed,
      * allowing the callback to veto the modification.
      * @param initialValue the initial value of the property.

@@ -27,6 +27,66 @@ public interface ReadOnlyProperty<in T, out V> {
 }
 
 /**
+ * Base interface that can be used for implementing property delegates of read-only properties.
+ * This is the int-parameterized primitive specialization for ReadOnlyProperty<T, U>. 
+ *
+ * This is provided only for convenience; you don't have to extend this interface
+ * as long as your property delegate has methods with the same signatures.
+ *
+ * @param T the type of object which owns the delegated property.
+ * @param V the type of the property value.
+ */
+public interface ReadOnlyIntProperty<in T> {
+    /**
+     * Returns the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @return the property value.
+     */
+    public operator fun getValue(thisRef: T, property: KProperty<*>): Int
+}
+
+/**
+ * Base interface that can be used for implementing property delegates of read-only properties.
+ * This is the long-parameterized primitive specialization for ReadOnlyProperty<T, U>.
+ *
+ * This is provided only for convenience; you don't have to extend this interface
+ * as long as your property delegate has methods with the same signatures.
+ *
+ * @param T the type of object which owns the delegated property.
+ * @param V the type of the property value.
+ */
+public interface ReadOnlyLongProperty<in T> {
+    /**
+     * Returns the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @return the property value.
+     */
+    public operator fun getValue(thisRef: T, property: KProperty<*>): Long
+}
+
+/**
+ * Base interface that can be used for implementing property delegates of read-only properties.
+ * This is the double-parameterized primitive specialization for ReadOnlyProperty<T, U>.
+ *
+ * This is provided only for convenience; you don't have to extend this interface
+ * as long as your property delegate has methods with the same signatures.
+ *
+ * @param T the type of object which owns the delegated property.
+ * @param V the type of the property value.
+ */
+public interface ReadOnlyDoubleProperty<in T> {
+    /**
+     * Returns the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @return the property value.
+     */
+    public operator fun getValue(thisRef: T, property: KProperty<*>): Double
+}
+
+/**
  * Base interface that can be used for implementing property delegates of read-write properties.
  *
  * This is provided only for convenience; you don't have to extend this interface
@@ -51,6 +111,90 @@ public interface ReadWriteProperty<in T, V> : ReadOnlyProperty<T, V> {
      * @param value the value to set.
      */
     public operator fun setValue(thisRef: T, property: KProperty<*>, value: V)
+}
+
+/**
+ * Base interface that can be used for implementing property delegates of read-write properties.
+ * This is the int-parameterized primitive specialization for ReadWriteProperty<T, U>.
+ *
+ * This is provided only for convenience; you don't have to extend this interface
+ * as long as your property delegate has methods with the same signatures.
+ *
+ * @param T the type of object which owns the delegated property.
+ * @param V the type of the property value.
+ */
+public interface ReadWriteIntProperty<in T> : ReadOnlyIntProperty<T> {
+    /**
+     * Returns the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @return the property value.
+     */
+    public override operator fun getValue(thisRef: T, property: KProperty<*>): Int
+
+    /**
+     * Sets the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @param value the value to set.
+     */
+    public operator fun setValue(thisRef: T, property: KProperty<*>, value: Int)
+}
+
+/**
+ * Base interface that can be used for implementing property delegates of read-write properties.
+ * This is the long-parameterized primitive specialization for ReadWriteProperty<T, U>.
+ *
+ * This is provided only for convenience; you don't have to extend this interface
+ * as long as your property delegate has methods with the same signatures.
+ *
+ * @param T the type of object which owns the delegated property.
+ * @param V the type of the property value.
+ */
+public interface ReadWriteLongProperty<in T> : ReadOnlyLongProperty<T> {
+    /**
+     * Returns the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @return the property value.
+     */
+    public override operator fun getValue(thisRef: T, property: KProperty<*>): Long
+
+    /**
+     * Sets the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @param value the value to set.
+     */
+    public operator fun setValue(thisRef: T, property: KProperty<*>, value: Long)
+}
+
+/**
+ * Base interface that can be used for implementing property delegates of read-write properties.
+ * This is the double-parameterized primitive specialization for ReadWriteProperty<T, U>.
+ *
+ * This is provided only for convenience; you don't have to extend this interface
+ * as long as your property delegate has methods with the same signatures.
+ *
+ * @param T the type of object which owns the delegated property.
+ * @param V the type of the property value.
+ */
+public interface ReadWriteDoubleProperty<in T> : ReadOnlyDoubleProperty<T> {
+    /**
+     * Returns the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @return the property value.
+     */
+    public override operator fun getValue(thisRef: T, property: KProperty<*>): Double
+
+    /**
+     * Sets the value of the property for the given object.
+     * @param thisRef the object for which the value is requested.
+     * @param property the metadata for the property.
+     * @param value the value to set.
+     */
+    public operator fun setValue(thisRef: T, property: KProperty<*>, value: Double)
 }
 
 /**
