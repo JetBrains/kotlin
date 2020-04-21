@@ -283,8 +283,11 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                     return renderKotlinDeclaration(calledElement as KtExpression, quickNavigation)
                 } else if (calledElement is ClsMethodImpl || calledElement is PsiMethod) { // In case of java function or constructor
                     val documentationManager = DocumentationManager.getInstance(calledElement.project)
-                    return documentationManager.generateDocumentation(calledElement, referenceExpression)
+                    return documentationManager.generateDocumentation(calledElement, referenceExpression, false)
                 }
+            } else if (element is KtCallExpression) {
+                val calledElement = element.referenceExpression()?.mainReference?.resolve()
+                return calledElement?.let { getTextImpl(it, originalElement, quickNavigation) }
             } else if (element.isModifier()) {
                 when (element.text) {
                     KtTokens.LATEINIT_KEYWORD.value -> return KotlinBundle.message("quick.doc.text.lateinit")
