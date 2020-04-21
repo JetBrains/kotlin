@@ -15,7 +15,7 @@ abstract class ITNReporterCompat : ITNReporter() {
     final override fun submit(
         events: Array<IdeaLoggingEvent>,
         additionalInfo: String?,
-        parentComponent: Component?,
+        parentComponent: Component,
         consumer: Consumer<SubmittedReportInfo>
     ): Boolean {
         return submitCompat(events, additionalInfo, parentComponent, consumer)
@@ -28,6 +28,6 @@ abstract class ITNReporterCompat : ITNReporter() {
         consumer: Consumer<SubmittedReportInfo>
     ): Boolean {
         @Suppress("IncompatibleAPI")
-        return super.submit(events, additionalInfo, parentComponent, consumer)
+        return super.submit(events, additionalInfo, parentComponent ?: error("Should never happen in Intellij Idea"), consumer)
     }
 }
