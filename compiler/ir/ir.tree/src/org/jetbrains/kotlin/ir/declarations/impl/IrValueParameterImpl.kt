@@ -35,12 +35,12 @@ class IrValueParameterImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrValueParameterSymbol,
-    override val name: Name,
-    override val index: Int,
+    override val name: Name = symbol.descriptor.name,
+    override val index: Int = symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
     override val type: IrType,
     override val varargElementType: IrType?,
-    override val isCrossinline: Boolean,
-    override val isNoinline: Boolean
+    override val isCrossinline: Boolean = symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
+    override val isNoinline: Boolean = symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
 ) :
     IrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
     IrValueParameter,

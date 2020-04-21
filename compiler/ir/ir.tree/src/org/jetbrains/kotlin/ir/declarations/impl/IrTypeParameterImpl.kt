@@ -34,28 +34,14 @@ class IrTypeParameterImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
-    override val name: Name,
-    override val index: Int,
-    override val isReified: Boolean,
-    override val variance: Variance
+    override val name: Name = symbol.descriptor.name,
+    override val index: Int = symbol.descriptor.index,
+    override val isReified: Boolean = symbol.descriptor.isReified,
+    override val variance: Variance = symbol.descriptor.variance
 ) :
     IrDeclarationBase<TypeParameterCarrier>(startOffset, endOffset, origin),
     IrTypeParameter,
     TypeParameterCarrier {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol
-    ) :
-            this(
-                startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name,
-                symbol.descriptor.index,
-                symbol.descriptor.isReified,
-                symbol.descriptor.variance
-            )
 
     constructor(
         startOffset: Int,

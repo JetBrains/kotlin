@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface IrProvider {
@@ -87,7 +86,10 @@ interface ReferenceSymbolTable {
     fun leaveScope(owner: DeclarationDescriptor)
 }
 
-open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: NameProvider = NameProvider.DEFAULT) : ReferenceSymbolTable {
+open class SymbolTable(
+    val signaturer: IdSignatureComposer,
+    private val nameProvider: NameProvider = NameProvider.DEFAULT
+) : ReferenceSymbolTable {
 
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
@@ -375,15 +377,8 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
         classFactory: (IrClassSymbol) -> IrClass = {
             IrClassImpl(
                 startOffset, endOffset, origin, it,
-                nameProvider.nameForDeclaration(descriptor), descriptor.kind,
-                visibility, modality,
-                isCompanion = descriptor.isCompanionObject,
-                isInner = descriptor.isInner,
-                isData = descriptor.isData,
-                isExternal = descriptor.isExternal,
-                isInline = descriptor.isInline,
-                isExpect = descriptor.isExpect,
-                isFun = descriptor.isFun
+                nameProvider.nameForDeclaration(descriptor),
+                visibility = visibility, modality = modality,
             ).apply { metadata = MetadataSource.Class(it.descriptor) }
         }
     ): IrClass {
@@ -430,12 +425,7 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
             IrConstructorImpl(
                 startOffset, endOffset, origin, it,
                 nameProvider.nameForDeclaration(descriptor),
-                descriptor.visibility,
-                returnType = IrUninitializedType,
-                isInline = descriptor.isInline,
-                isExternal = descriptor.isEffectivelyExternal(),
-                isPrimary = descriptor.isPrimary,
-                isExpect = descriptor.isExpect
+                returnType = IrUninitializedType
             ).apply {
                 metadata = MetadataSource.Function(it.descriptor)
             }
@@ -530,10 +520,6 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
                 startOffset, endOffset, origin, it,
                 nameProvider.nameForDeclaration(descriptor),
                 type, visibility ?: it.descriptor.visibility,
-                isFinal = !descriptor.isVar,
-                isExternal = descriptor.isExternal,
-                isStatic = descriptor.dispatchReceiverParameter == null,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).apply {
                 metadata = MetadataSource.Property(it.descriptor)
             }
@@ -678,16 +664,7 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
             IrFunctionImpl(
                 startOffset, endOffset, origin, it,
                 nameProvider.nameForDeclaration(descriptor),
-                returnType = IrUninitializedType,
-                visibility = descriptor.visibility,
-                modality = descriptor.modality,
-                isInline = descriptor.isInline,
-                isExternal = descriptor.isExternal,
-                isTailrec = descriptor.isTailrec,
-                isSuspend = descriptor.isSuspend,
-                isOperator = descriptor.isOperator,
-                isExpect = descriptor.isExpect,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                returnType = IrUninitializedType
             ).apply {
                 metadata = MetadataSource.Function(it.descriptor)
             }
@@ -739,11 +716,7 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(
-                startOffset, endOffset, origin, it,
-                nameProvider.nameForDeclaration(descriptor),
-                descriptor.index, descriptor.isReified, descriptor.variance
-            )
+            IrTypeParameterImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
         }
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
@@ -767,11 +740,7 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(
-                startOffset, endOffset, origin, it,
-                nameProvider.nameForDeclaration(descriptor),
-                descriptor.index, descriptor.isReified, descriptor.variance
-            )
+            IrTypeParameterImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
         }
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
@@ -799,14 +768,10 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
         type: IrType,
         varargElementType: IrType? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
-            val valueParameterDescriptor = descriptor as? ValueParameterDescriptor
             IrValueParameterImpl(
                 startOffset, endOffset, origin, it,
                 nameProvider.nameForDeclaration(descriptor),
-                valueParameterDescriptor?.index ?: -1,
-                type, varargElementType,
-                isCrossinline = valueParameterDescriptor?.isCrossinline ?: false,
-                isNoinline = valueParameterDescriptor?.isNoinline ?: false
+                type = type, varargElementType = varargElementType,
             )
         }
     ): IrValueParameter =
@@ -843,14 +808,7 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
         descriptor: VariableDescriptor,
         type: IrType,
         variableFactory: (IrVariableSymbol) -> IrVariable = {
-            IrVariableImpl(
-                startOffset, endOffset, origin, it,
-                nameProvider.nameForDeclaration(descriptor),
-                type,
-                isVar = descriptor.isVar,
-                isConst = descriptor.isConst,
-                isLateinit = descriptor.isLateInit
-            )
+            IrVariableImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type)
         }
 
     ): IrVariable =
@@ -885,11 +843,7 @@ open class SymbolTable(val signaturer: IdSignatureComposer, val nameProvider: Na
         localDelegatedPropertySymbolTable.declareLocal(
             descriptor,
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
-            {
-                IrLocalDelegatedPropertyImpl(
-                    startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
-                )
-            }
+            { IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type) }
         )
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =

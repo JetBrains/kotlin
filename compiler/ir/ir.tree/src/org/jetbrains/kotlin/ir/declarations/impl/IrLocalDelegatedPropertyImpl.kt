@@ -32,9 +32,9 @@ class IrLocalDelegatedPropertyImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrLocalDelegatedPropertySymbol,
-    override val name: Name,
+    override val name: Name = symbol.descriptor.name,
     override val type: IrType,
-    override val isVar: Boolean
+    override val isVar: Boolean = symbol.descriptor.isVar
 ) :
     IrDeclarationBase<LocalDelegatedPropertyCarrier>(startOffset, endOffset, origin),
     IrLocalDelegatedProperty,

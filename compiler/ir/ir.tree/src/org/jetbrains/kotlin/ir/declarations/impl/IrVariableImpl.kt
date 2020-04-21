@@ -36,11 +36,11 @@ class IrVariableImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrVariableSymbol,
-    override val name: Name,
+    override val name: Name = symbol.descriptor.name,
     override val type: IrType,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean
+    override val isVar: Boolean = symbol.descriptor.isVar,
+    override val isConst: Boolean = symbol.descriptor.isConst,
+    override val isLateinit: Boolean = symbol.descriptor.isLateInit
 ) : IrVariable {
 
     private var _parent: IrDeclarationParent? = null

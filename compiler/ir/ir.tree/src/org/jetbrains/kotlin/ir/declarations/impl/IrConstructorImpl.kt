@@ -32,13 +32,13 @@ class IrConstructorImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrConstructorSymbol,
-    name: Name,
-    visibility: Visibility,
+    name: Name = symbol.descriptor.name,
+    visibility: Visibility = symbol.descriptor.visibility,
     returnType: IrType,
-    isInline: Boolean,
-    isExternal: Boolean,
-    override val isPrimary: Boolean,
-    isExpect: Boolean
+    isInline: Boolean = symbol.descriptor.isInline,
+    isExternal: Boolean = symbol.descriptor.isEffectivelyExternal(),
+    override val isPrimary: Boolean = symbol.descriptor.isPrimary,
+    isExpect: Boolean = symbol.descriptor.isExpect
 ) :
     IrFunctionBase<ConstructorCarrier>(
         startOffset, endOffset, origin, name,

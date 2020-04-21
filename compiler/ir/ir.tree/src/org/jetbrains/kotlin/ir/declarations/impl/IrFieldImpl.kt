@@ -36,13 +36,13 @@ class IrFieldImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrFieldSymbol,
-    override val name: Name,
+    override val name: Name = symbol.descriptor.name,
     override val type: IrType,
-    override val visibility: Visibility,
-    override val isFinal: Boolean,
-    override val isExternal: Boolean,
-    override val isStatic: Boolean,
-    override val isFakeOverride: Boolean
+    override val visibility: Visibility = symbol.descriptor.visibility,
+    override val isFinal: Boolean = !symbol.descriptor.isVar,
+    override val isExternal: Boolean = symbol.descriptor.isEffectivelyExternal(),
+    override val isStatic: Boolean = symbol.descriptor.dispatchReceiverParameter == null,
+    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) : IrDeclarationBase<FieldCarrier>(startOffset, endOffset, origin),
     IrField,
     FieldCarrier {
