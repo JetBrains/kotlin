@@ -1919,7 +1919,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
         if (!context.shouldContainLocationDebugInfo())
             return null
-        val functionLlvmValue = codegen.llvmFunctionOrNull(this)
+        val functionLlvmValue =
+                // TODO: May be tie up inline lambdas to their outer function?
+                if (codegen.isExternal(this) && !KonanBinaryInterface.isExported(this))
+                    null
+                else
+                    codegen.llvmFunctionOrNull(this)
         return if (!isReifiedInline && functionLlvmValue != null) {
             context.debugInfo.subprograms.getOrPut(functionLlvmValue) {
                 memScoped {
