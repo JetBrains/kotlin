@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.util.NlsContexts.HintText;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -87,6 +88,7 @@ public abstract class SelectionBasedPsiElementInternalAction<T extends PsiElemen
   @Nullable
   protected abstract String getInformationHint(@NotNull T element);
 
+  @HintText
   @NotNull
   protected abstract String getErrorHint();
 
