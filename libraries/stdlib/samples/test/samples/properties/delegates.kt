@@ -112,11 +112,11 @@ class Delegates {
             observed = true
         }
 
-        assertPrints(max, "0")
+        assertPrints(max, "0.0")
         assertFalse(observed)
 
         max = 10.0
-        assertPrints(max, "10")
+        assertPrints(max, "10.0")
         assertTrue(observed)
     }
 }
