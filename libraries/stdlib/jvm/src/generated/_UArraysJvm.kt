@@ -135,10 +135,17 @@ public actual fun UShortArray.asList(): List<UShort> {
  * 
  * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
  * 
+ * @param element the to search for.
+ * @param fromIndex the start of the range (inclusive) to search in, 0 by default.
+ * @param toIndex the end of the range (exclusive) to search in, size of this array by default.
+ * 
  * @return the index of the element, if it is contained in the array within the specified range;
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
+ * 
+ * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -167,10 +174,17 @@ public fun UIntArray.binarySearch(element: UInt, fromIndex: Int = 0, toIndex: In
  * 
  * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
  * 
+ * @param element the to search for.
+ * @param fromIndex the start of the range (inclusive) to search in, 0 by default.
+ * @param toIndex the end of the range (exclusive) to search in, size of this array by default.
+ * 
  * @return the index of the element, if it is contained in the array within the specified range;
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
+ * 
+ * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -199,10 +213,17 @@ public fun ULongArray.binarySearch(element: ULong, fromIndex: Int = 0, toIndex: 
  * 
  * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
  * 
+ * @param element the to search for.
+ * @param fromIndex the start of the range (inclusive) to search in, 0 by default.
+ * @param toIndex the end of the range (exclusive) to search in, size of this array by default.
+ * 
  * @return the index of the element, if it is contained in the array within the specified range;
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
+ * 
+ * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -231,10 +252,17 @@ public fun UByteArray.binarySearch(element: UByte, fromIndex: Int = 0, toIndex: 
  * 
  * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
  * 
+ * @param element the to search for.
+ * @param fromIndex the start of the range (inclusive) to search in, 0 by default.
+ * @param toIndex the end of the range (exclusive) to search in, size of this array by default.
+ * 
  * @return the index of the element, if it is contained in the array within the specified range;
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
+ * 
+ * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

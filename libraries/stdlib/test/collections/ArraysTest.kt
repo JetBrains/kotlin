@@ -1886,6 +1886,8 @@ class ArraysTest {
             }
         }
 
+        testStableSort({ sort(1, 5) }, { sort(1, 5) })
+        testStableSort({ sort(0, 6) }, { sort(0, 6) })
         doTest(build = { map {it.toString()}.toTypedArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
 
@@ -1927,6 +1929,8 @@ class ArraysTest {
             }
         }
 
+        testStableSort({ sortDescending(1, 5) }, { sortDescending(1, 5) })
+        testStableSort({ sortDescending(0, 6) }, { sortDescending(0, 6) })
         doTest(build = { map {it.toString()}.toTypedArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
 
@@ -1941,39 +1945,6 @@ class ArraysTest {
         doTest(build = { map {it.toULong()}.toULongArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
         doTest(build = { map {it.toUByte()}.toUByteArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
         doTest(build = { map {it.toUShort()}.toUShortArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
-    }
-
-    @Test
-    fun sortDescendingRangeInPlace_Objects() {
-        data class Text(val data: String) : Comparable<Text> {
-            override fun compareTo(other: Text): Int = data.compareTo(other.data)
-        }
-
-        val first1 = Text("first")
-        val first2 = Text(first1.data)
-        val first3 = Text(first1.data)
-        val second1 = Text("second")
-        val second2 = Text(second1.data)
-        val third1 = Text("third")
-
-        assertEquals(first1, first2)
-        assertEquals(first1, first3)
-        assertNotSame(first1, first2)
-        assertNotSame(first1, first3)
-        assertNotSame(first2, first3)
-
-        assertEquals(second1, second2)
-        assertNotSame(second1, second2)
-
-        val original = arrayOf(first3, third1, second2, first2, first1, second1)
-        original.copyOf().apply { sortDescending(1, 5) }.forEachIndexed { i, e ->
-            assertSame(original[i], e)
-        }
-
-        val sorted = arrayOf(third1, second2, second1, first3, first2, first1)
-        original.apply { sortDescending(0, 6) }.forEachIndexed { i, e ->
-            assertSame(sorted[i], e)
-        }
     }
 
     @Test fun sortedTests() {
@@ -2093,6 +2064,61 @@ class ArraysTest {
         val array = Array(6) { it }
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
+
+        testStableSort({ sortWith(reverseOrder()) }, { sortWith(reverseOrder()) })
+        testStableSort({ sortWith(naturalOrder()) }, { sortWith(naturalOrder()) })
+
+        val from = 2
+        val to = 5
+        val comp = comparator.reversed()
+        val sorted = array.sliceArray(from until to).sortedWith(comp).toTypedArray()
+        val expected = array.sliceArray(0 until from) + sorted + array.sliceArray(to until 6)
+        array.sortWith(comp, from, to)
+        assertTrue(expected contentEquals array)
+
+        testStableSort({ sortWith(reverseOrder(), from, to) }, { sortWith(reverseOrder(), from, to) })
+        testStableSort({ sortWith(naturalOrder(), from, to) }, { sortWith(naturalOrder(), from, to) })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.sortWith(comp, -1, 6) }
+        assertFailsWith<IndexOutOfBoundsException> { array.sortWith(comp, 0, 7) }
+        assertFailsWith<IllegalArgumentException> { array.sortWith(comp, 0, -1) }
+    }
+
+    private data class Text(val data: String) : Comparable<Text> {
+        override fun compareTo(other: Text): Int = data.compareTo(other.data)
+    }
+
+    private fun testStableSort(stableSort: Array<Text>.() -> Unit, intSort: Array<Int>.() -> Unit) {
+
+        fun checkEqualsButNotSame(array: Array<Text>) {
+            for (i in array.indices) {
+                for (j in i + 1 until array.size) {
+                    assertEquals(array[i], array[j])
+                    assertNotSame(array[i], array[j])
+                }
+            }
+        }
+
+        val first = arrayOf(Text("first"), Text("first"), Text("first"))
+        val second = arrayOf(Text("second"), Text("second"))
+        val third = arrayOf(Text("third"))
+
+        val text = arrayOf(first, second, third)
+
+        text.forEach { array ->
+            checkEqualsButNotSame(array)
+        }
+
+        val sorted = arrayOf(first[0], third[0], second[0], first[1], first[2], second[1]).apply(stableSort)
+        val indexes = arrayOf(0, 2, 1, 0, 0, 1).apply(intSort)
+
+        val counters = IntArray(3)
+        for (i in 0 until 6) {
+            val index = indexes[i]
+            val expected = text[index][counters[index]++]
+            val actual = sorted[i]
+            assertSame(expected, actual)
+        }
     }
 
     private inline fun <T> testShuffle(array: T, shuffle: T.() -> Unit, toList: T.() -> List<*>) {
