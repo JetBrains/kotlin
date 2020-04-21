@@ -17,13 +17,14 @@ package com.intellij.packaging.impl.artifacts;
 
 import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.packaging.elements.PackagingElementFactory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.artifact.ArtifactState;
 
 public class InvalidArtifact extends ArtifactImpl {
   private final ArtifactState myState;
   private final String myErrorMessage;
 
-  public InvalidArtifact(ArtifactState state, String errorMessage, ProjectModelExternalSource externalSource) {
+  public InvalidArtifact(@NotNull ArtifactState state, String errorMessage, ProjectModelExternalSource externalSource) {
     super(state.getName(), InvalidArtifactType.getInstance(), false, PackagingElementFactory.getInstance().createArtifactRootElement(), "",
           externalSource);
     myState = state;

@@ -79,13 +79,17 @@ public class ArtifactModelImpl extends ArtifactModelBase implements ModifiableAr
     final String uniqueName = generateUniqueName(name);
     final String outputPath = ArtifactUtil.getDefaultArtifactOutputPath(uniqueName, myArtifactManager.getProject());
     final ArtifactImpl artifact = new ArtifactImpl(uniqueName, artifactType, false, rootElement, outputPath, externalSource, myDispatcher);
+    addArtifact(artifact);
+    return artifact;
+  }
+
+  void addArtifact(ArtifactImpl artifact) {
     myOriginalArtifacts.add(artifact);
     myArtifact2ModifiableCopy.put(artifact, artifact);
     myModifiable2Original.put(artifact, artifact);
 
     artifactsChanged();
     myDispatcher.getMulticaster().artifactAdded(artifact);
-    return artifact;
   }
 
   private String generateUniqueName(String baseName) {

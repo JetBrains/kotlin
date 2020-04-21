@@ -35,6 +35,7 @@ import org.jetbrains.jps.model.serialization.artifact.ArtifactPropertiesState;
 import org.jetbrains.jps.model.serialization.artifact.ArtifactState;
 
 import java.util.*;
+import java.util.function.Function;
 
 @State(name = ArtifactManagerImpl.COMPONENT_NAME, storages = @Storage(value = "artifacts", stateSplitter = ArtifactManagerStateSplitter.class))
 public final class ArtifactManagerImpl extends ArtifactManager implements PersistentStateComponent<ArtifactManagerState>, Disposable {
@@ -55,6 +56,7 @@ public final class ArtifactManagerImpl extends ArtifactManager implements Persis
     myModel = new ArtifactManagerModel();
     myResolvingContext = new DefaultPackagingElementResolvingContext(myProject);
     ((ArtifactPointerManagerImpl)ArtifactPointerManager.getInstance(project)).setArtifactManager(this);
+    new DynamicArtifactExtensionsLoader(this).installListeners(this);
   }
 
   @Override
@@ -94,34 +96,49 @@ public final class ArtifactManagerImpl extends ArtifactManager implements Persis
   public ArtifactManagerState getState() {
     final ArtifactManagerState state = new ArtifactManagerState();
     for (Artifact artifact : getAllArtifactsIncludingInvalid()) {
-      final ArtifactState artifactState;
-      if (artifact instanceof InvalidArtifact) {
-        artifactState = ((InvalidArtifact)artifact).getState();
-      }
-      else {
-        artifactState = new ArtifactState();
-        artifactState.setBuildOnMake(artifact.isBuildOnMake());
-        artifactState.setName(artifact.getName());
-        artifactState.setOutputPath(artifact.getOutputPath());
-        artifactState.setRootElement(serializePackagingElement(artifact.getRootElement()));
-        artifactState.setArtifactType(artifact.getArtifactType().getId());
-        ProjectModelExternalSource externalSource = artifact.getExternalSource();
-        if (externalSource != null && ProjectUtilCore.isExternalStorageEnabled(myProject)) {
-          //we can add this attribute only if the artifact configuration will be stored separately, otherwise we will get modified files in .idea/artifacts.
-          artifactState.setExternalSystemId(externalSource.getId());
-        }
-
-        for (ArtifactPropertiesProvider provider : artifact.getPropertiesProviders()) {
-          final ArtifactPropertiesState propertiesState = serializeProperties(provider, artifact.getProperties(provider));
-          if (propertiesState != null) {
-            artifactState.getPropertiesList().add(propertiesState);
-          }
-        }
-        artifactState.getPropertiesList().sort(Comparator.comparing(ArtifactPropertiesState::getId));
-      }
-      state.getArtifacts().add(artifactState);
+      state.getArtifacts().add(saveArtifact(artifact));
     }
     return state;
+  }
+
+  ArtifactState saveArtifact(Artifact artifact) {
+    ArtifactState artifactState;
+    if (artifact instanceof InvalidArtifact) {
+      artifactState = ((InvalidArtifact)artifact).getState();
+    }
+    else {
+      artifactState = new ArtifactState();
+      artifactState.setBuildOnMake(artifact.isBuildOnMake());
+      artifactState.setName(artifact.getName());
+      artifactState.setOutputPath(artifact.getOutputPath());
+      artifactState.setRootElement(serializePackagingElement(artifact.getRootElement()));
+      artifactState.setArtifactType(artifact.getArtifactType().getId());
+      ProjectModelExternalSource externalSource = artifact.getExternalSource();
+      if (externalSource != null && ProjectUtilCore.isExternalStorageEnabled(myProject)) {
+        //we can add this attribute only if the artifact configuration will be stored separately, otherwise we will get modified files in .idea/artifacts.
+        artifactState.setExternalSystemId(externalSource.getId());
+      }
+
+      for (ArtifactPropertiesProvider provider : artifact.getPropertiesProviders()) {
+        final ArtifactPropertiesState propertiesState = serializeProperties(provider, artifact.getProperties(provider));
+        if (propertiesState != null) {
+          artifactState.getPropertiesList().add(propertiesState);
+        }
+      }
+      artifactState.getPropertiesList().sort(Comparator.comparing(ArtifactPropertiesState::getId));
+    }
+    return artifactState;
+  }
+
+  public void replaceArtifacts(@NotNull Collection<? extends Artifact> toReplace, Function<Artifact, ArtifactImpl> replacement) {
+    if (toReplace.isEmpty()) return;
+    
+    ArtifactModelImpl model = createModifiableModel();
+    for (Artifact artifact : toReplace) {
+      model.removeArtifact(artifact);
+      model.addArtifact(replacement.apply(artifact));
+    }
+    model.commit();
   }
 
   @Nullable
@@ -196,7 +213,7 @@ public final class ArtifactManagerImpl extends ArtifactManager implements Persis
     }
   }
 
-  private ArtifactImpl loadArtifact(ArtifactState state) {
+  ArtifactImpl loadArtifact(ArtifactState state) {
     ArtifactType type = ArtifactType.findById(state.getArtifactType());
     ProjectModelExternalSource externalSource = findExternalSource(state.getExternalSystemId());
     if (type == null) {
@@ -299,7 +316,7 @@ public final class ArtifactManagerImpl extends ArtifactManager implements Persis
   }
 
   @Override
-  public ModifiableArtifactModel createModifiableModel() {
+  public ArtifactModelImpl createModifiableModel() {
     return new ArtifactModelImpl(this, getArtifactsList());
   }
 
