@@ -418,6 +418,3 @@ class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent
         return State(addedSources.sorted())
     }
 }
-
-private val Module.kotlinImporterComponent: KotlinImporterComponent
-    get() = getComponent(KotlinImporterComponent::class.java) ?: throw IllegalStateException("No maven importer state configured")
