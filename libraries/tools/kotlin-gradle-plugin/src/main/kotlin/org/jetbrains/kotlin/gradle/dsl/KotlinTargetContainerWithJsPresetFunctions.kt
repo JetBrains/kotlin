@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
@@ -26,10 +31,7 @@ interface KotlinTargetContainerWithJsPresetFunctions :
         configure: KotlinJsTargetDsl.() -> Unit = { }
     ) = js(
         name = name,
-        compiler = KotlinJsCompilerType.byArgument(compiler)
-            ?: throw IllegalArgumentException(
-                "Unable to find $compiler setting. Use [${KotlinJsCompilerType.values().toList().joinToString()}]"
-            ),
+        compiler = KotlinJsCompilerType.byArgument(compiler),
         configure = configure
     )
 

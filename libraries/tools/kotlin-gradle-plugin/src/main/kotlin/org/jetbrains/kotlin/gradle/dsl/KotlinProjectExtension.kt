@@ -163,12 +163,25 @@ open class KotlinJsProjectExtension :
     ): KotlinJsTargetDsl = jsInternal(compiler, body)
 
     fun js(
+        compiler: String,
+        body: KotlinJsTargetDsl.() -> Unit = { }
+    ): KotlinJsTargetDsl = js(
+        KotlinJsCompilerType.byArgument(compiler),
+        body
+    )
+
+    fun js(
         body: KotlinJsTargetDsl.() -> Unit = { }
     ) = jsInternal(body = body)
 
     fun js() = js { }
 
     fun js(compiler: KotlinJsCompilerType, configure: Closure<*>) =
+        js(compiler = compiler) {
+            ConfigureUtil.configure(configure, this)
+        }
+
+    fun js(compiler: String, configure: Closure<*>) =
         js(compiler = compiler) {
             ConfigureUtil.configure(configure, this)
         }
