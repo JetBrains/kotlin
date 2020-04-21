@@ -71,6 +71,22 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         )
     }
 
+    private fun computeDependsOnAdjustment(project: Project): Map<String, String> {
+        if (!isHMPPEnabled(project)) return emptyMap()
+
+        val kotlinExt = project.extensions.findByName("kotlin") ?: return emptyMap()
+        val kotlinJvmAndroidTargetUtilsClass = kotlinExt::class.java.classLoader.loadClass(
+            "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidTargetUtilsKt"
+        )
+
+        val buildDependsOnAdjustmentMethod = kotlinJvmAndroidTargetUtilsClass.methods.single {
+            "buildDependsOnAdjustmentForAndroidSourceSets" in it.name
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return buildDependsOnAdjustmentMethod.invoke(null, project) as Map<String, String>
+    }
+
     private fun filterOrphanSourceSets(
         sourceSets: Map<String, KotlinSourceSetImpl>,
         targets: Collection<KotlinTarget>,
@@ -119,18 +135,30 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun calculateDependsOnClosure(
         sourceSet: KotlinSourceSetImpl?,
         sourceSetsMap: Map<String, KotlinSourceSetImpl>,
-        cache: MutableMap<String, Set<String>>
+        cache: MutableMap<String, Set<String>>,
+        additionalDependsOnEdges: Map<String, String>
     ): Set<String> {
-        return if (sourceSet == null) {
-            emptySet()
-        } else {
-            cache[sourceSet.name] ?: sourceSet.dependsOnSourceSets.flatMap { name ->
-                calculateDependsOnClosure(
-                    sourceSetsMap[name],
-                    sourceSetsMap,
-                    cache
-                ).union(setOf(name))
-            }.toSet().also { cache[sourceSet.name] = it }
+        return when {
+            sourceSet == null -> emptySet()
+
+            sourceSet.name in cache -> cache[sourceSet.name]!!
+
+            else -> {
+                val immediateDependsOn = sourceSet.dependsOnSourceSets + listOfNotNull(additionalDependsOnEdges[sourceSet.name])
+
+                val dependsOnClosure = immediateDependsOn.flatMap { name ->
+                    calculateDependsOnClosure(
+                        sourceSetsMap[name],
+                        sourceSetsMap,
+                        cache,
+                        additionalDependsOnEdges
+                    ).union(setOf(name))
+                }.toSet()
+
+                cache[sourceSet.name] = dependsOnClosure
+
+                dependsOnClosure
+            }
         }
     }
 
@@ -161,6 +189,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
         val map = allSourceSets.map { it.name to it }.toMap()
         val dependsOnCache = HashMap<String, Set<String>>()
+        val additionalDependsOnEdges = computeDependsOnAdjustment(project)
         return allSourceSets.map { sourceSet ->
             KotlinSourceSetImpl(
                 sourceSet.name,
@@ -168,7 +197,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 sourceSet.sourceDirs,
                 sourceSet.resourceDirs,
                 sourceSet.dependencies,
-                calculateDependsOnClosure(sourceSet, map, dependsOnCache),
+                calculateDependsOnClosure(sourceSet, map, dependsOnCache, additionalDependsOnEdges),
                 sourceSet.actualPlatforms as KotlinPlatformContainerImpl,
                 sourceSet.isTestModule
             )

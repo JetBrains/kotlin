@@ -16,15 +16,12 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 // TODO: Klibs still need to better handle source in deserialized descriptors.
-internal val DeclarationDescriptorWithSource.couldHaveASource: Boolean
+val DeclarationDescriptorWithSource.couldHaveASource: Boolean
     get() =
         this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
-                this is DeserializedMemberDescriptor ||
-                this is DeserializedClassDescriptor
+                this is DeserializedDescriptor
 
 internal fun CallableMemberDescriptor.findNamesakesFromModule(
     module: ModuleDescriptor

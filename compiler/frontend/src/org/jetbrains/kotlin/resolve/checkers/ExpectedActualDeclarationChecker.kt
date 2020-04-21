@@ -136,8 +136,8 @@ class ExpectedActualDeclarationChecker(
     ) {
         val compatibility = moduleDescriptors
             .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it) }
-            .ifEmpty { return }
             .foldMaps()
+            .ifEmpty { return }
 
         // Several compatible actuals on one path: report AMBIGUIOUS_ACTUALS here
         val atLeastWeaklyCompatibleActuals = compatibility
