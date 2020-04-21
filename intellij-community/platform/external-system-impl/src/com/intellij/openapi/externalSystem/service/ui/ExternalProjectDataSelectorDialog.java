@@ -43,7 +43,6 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.tree.TreeUtil;
-import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,9 +80,8 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
   @Nullable
   private final Object myPreselectedNodeObject;
   private CheckboxTree myTree;
-  @SuppressWarnings("unchecked")
   private final MultiMap<DataNode<Identifiable>, DataNode<Identifiable>> dependentNodeMap =
-    MultiMap.create(TObjectHashingStrategy.IDENTITY);
+    MultiMap.create(ContainerUtil.identityStrategy());
 
   private final SimpleModificationTracker myModificationTracker = new SimpleModificationTracker();
   private final CachedValue<SelectionState> selectionState = new CachedValueImpl<>(
