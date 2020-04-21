@@ -70,6 +70,9 @@
 
     <moduleService serviceInterface="org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager"
                    serviceImplementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidCommonLayoutXmlFileManager"/>
+
+    <registryKey key="konan.enable.lazy.symbol.translation" defaultValue="false"
+                 description="Enables lazy translation of Kotlin symbols into Swift, Obj-C symbols."/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">

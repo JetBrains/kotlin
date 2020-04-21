@@ -2,6 +2,7 @@ package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.CidrLog
 import com.jetbrains.cidr.lang.symbols.DeepEqual
@@ -128,5 +129,7 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
             StubState::class.java,
             "_state"
         )
+
+        fun useLazyTranslation(): Boolean = Registry.`is`("konan.enable.lazy.symbol.translation", false)
     }
 }

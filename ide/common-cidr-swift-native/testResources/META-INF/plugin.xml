@@ -15,4 +15,9 @@
       <implementation-class>com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl</implementation-class>
     </component>
   </project-components>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="konan.enable.lazy.symbol.translation" defaultValue="true"
+                 description="Enables lazy translation of Kotlin symbols into Swift, Obj-C symbols."/>
+  </extensions>
 </idea-plugin>

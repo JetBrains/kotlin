@@ -8,6 +8,7 @@ import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftCallableSymbol
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftParameterSymbol
+import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
@@ -29,7 +30,11 @@ object KtSwiftSymbolTranslator : KtFileTranslator<KtSwiftTypeSymbol<*, *>, Swift
             LOG.assertTrue(containingName == null || containingSymbol != null, "Containing class expected to appear before contained class")
 
             val symbol = translate(stubTrace, stub, containingSymbol?.let { name } ?: qualifiedName, file) ?: continue
-            containingSymbols.putIfAbsent(qualifiedName, symbol)
+            val previousSymbolWithSameName = containingSymbols.putIfAbsent(qualifiedName, symbol)
+            LOG.assertTrue(
+                previousSymbolWithSameName == null,
+                "Two classes with same qualified name ($qualifiedName):\n$previousSymbolWithSameName\n$symbol"
+            )
 
             when (containingSymbol) {
                 null -> destination.add(symbol)
@@ -41,6 +46,7 @@ object KtSwiftSymbolTranslator : KtFileTranslator<KtSwiftTypeSymbol<*, *>, Swift
 
             LOG.assertTrue(symbol.qualifiedName == qualifiedName, "Qualified name does not match input")
         }
+        if (!KtLazySymbol.useLazyTranslation()) containingSymbols.values.forEach { it.ensureStateLoaded() }
     }
 
     private fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, swiftName: String, file: VirtualFile): KtSwiftTypeSymbol<*, *>? =

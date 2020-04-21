@@ -10,6 +10,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol.SelectorPartSymbol
 import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
 import com.jetbrains.cidr.lang.types.OCVoidType
+import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
@@ -17,7 +18,8 @@ object KtOCSymbolTranslator : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSy
     override fun translate(
         stubTrace: StubTrace, stubs: Collection<ObjCTopLevel<*>>, file: VirtualFile, destination: MutableList<in KtOCClassSymbol<*, *>>
     ) {
-        stubs.mapNotNullTo(destination) { translate(stubTrace, it, file) }
+        val allowLazy = KtLazySymbol.useLazyTranslation()
+        stubs.mapNotNullTo(destination) { translate(stubTrace, it, file)?.apply { if (!allowLazy) ensureStateLoaded() } }
     }
 
     private fun translate(stubTrace: StubTrace, stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
