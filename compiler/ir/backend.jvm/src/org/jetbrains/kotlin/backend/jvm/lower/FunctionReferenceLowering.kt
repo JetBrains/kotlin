@@ -247,11 +247,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val constructor = if (samSuperType != null) {
                     context.irBuiltIns.anyClass.owner.constructors.single()
                 } else {
-                    val expectedArity = when {
-                        adaptedReferenceOriginalTarget != null -> 5 + (if (boundReceiver != null) 1 else 0)
-                        isLambda -> 1
-                        else -> 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
-                    }
+                    val expectedArity =
+                        if (isLambda && adaptedReferenceOriginalTarget == null) 1
+                        else 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
                     superType.getClass()!!.constructors.single {
                         it.valueParameters.size == expectedArity
                     }
@@ -259,34 +257,38 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
                 body = context.createJvmIrBuilder(symbol).run {
                     irBlockBody(startOffset, endOffset) {
-                        +irDelegatingConstructorCall(constructor).apply {
+                        +irDelegatingConstructorCall(constructor).also { call ->
                             if (samSuperType == null) {
-                                var index = 0
-                                putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
-                                if (boundReceiver != null) {
-                                    putValueArgument(index++, irGet(valueParameters.first()))
-                                }
-                                val callableReferenceTarget = when {
-                                    adaptedReferenceOriginalTarget != null -> adaptedReferenceOriginalTarget
-                                    !isLambda && useOptimizedSuperClass -> callee
-                                    else -> null
-                                }
-                                if (callableReferenceTarget != null) {
-                                    val owner = calculateOwnerKClass(callableReferenceTarget.parent, backendContext)
-                                    putValueArgument(index++, kClassToJavaClass(owner, backendContext))
-                                    putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
-                                    putValueArgument(index++, generateSignature(callableReferenceTarget.symbol))
-                                    putValueArgument(
-                                        index,
-                                        irInt(getFunctionReferenceFlags(callableReferenceTarget))
-                                    )
-                                }
+                                generateConstructorCallArguments(call) { irGet(valueParameters.first()) }
                             }
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
                     }
                 }
             }
+
+        private fun JvmIrBuilder.generateConstructorCallArguments(
+            call: IrFunctionAccessExpression,
+            generateBoundReceiver: IrBuilder.() -> IrExpression
+        ) {
+            var index = 0
+            call.putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
+            if (boundReceiver != null) {
+                call.putValueArgument(index++, generateBoundReceiver())
+            }
+            val callableReferenceTarget = when {
+                adaptedReferenceOriginalTarget != null -> adaptedReferenceOriginalTarget
+                !isLambda && useOptimizedSuperClass -> callee
+                else -> null
+            }
+            if (callableReferenceTarget != null) {
+                val owner = calculateOwnerKClass(callableReferenceTarget.parent, backendContext)
+                call.putValueArgument(index++, kClassToJavaClass(owner, backendContext))
+                call.putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
+                call.putValueArgument(index++, generateSignature(callableReferenceTarget.symbol))
+                call.putValueArgument(index, irInt(getFunctionReferenceFlags(callableReferenceTarget)))
+            }
+        }
 
         private fun getFunctionReferenceFlags(callableReferenceTarget: IrFunction): Int {
             val isTopLevelBit = if (callableReferenceTarget.parent.let { it is IrClass && it.isFileClass }) 1 else 0
