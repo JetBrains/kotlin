@@ -366,22 +366,22 @@ class DocRenderer implements EditorCustomElementRenderer {
       String escapedFontName = StringUtil.escapeQuotes(editorFontName);
       ourCachedStyleSheet = StartupUiUtil.createStyleSheet(
         "body {overflow-wrap: anywhere}" + // supported by JetBrains Runtime
-        "code {font-family:\"" + escapedFontName + "\"}" +
-        "pre {font-family:\"" + escapedFontName + "\";" +
+        "code {font-family: \"" + escapedFontName + "\"}" +
+        "pre {font-family: \"" + escapedFontName + "\";" +
              "white-space: pre-wrap}" + // supported by JetBrains Runtime
-        "h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }" +
-        "a { color: #" + linkColorHex + "; text-decoration: none;}" +
-        "p { padding: 6px 0 2px 0; }" +
-        "ol { padding: 0 16px 0 0; }" +
-        "ul { padding: 0 16px 0 0; }" +
-        "li { padding: 1px 0 2px 0; }" +
-        "table p { padding-bottom: 0}" +
-        "th { text-align: left; }" +
-        "td {padding: 2px 0 2px 0}" +
+        "h1, h2, h3, h4, h5, h6 {margin-top: 0; padding-top: 1}" +
+        "a {color: #" + linkColorHex + "; text-decoration: none}" +
+        "p {padding: 7 0 2 0}" +
+        "ol {padding: 0 20 0 0}" +
+        "ul {padding: 0 20 0 0}" +
+        "li {padding: 1 0 2 0}" +
+        "table p {padding-bottom: 0}" +
+        "th {text-align: left}" +
+        "td {padding: 2 0 2 0}" +
         "td p {padding-top: 0}" +
         ".sections {border-spacing: 0}" +
-        ".section {padding-right: 4px; white-space: nowrap}" +
-        ".content {padding: 2px 0 2px 0}"
+        ".section {padding-right: 5; white-space: nowrap}" +
+        ".content {padding: 2 0 2 0}"
       );
       ourCachedStyleSheetLinkColor = linkColorHex;
       ourCachedStyleSheetMonoFont = editorFontName;
