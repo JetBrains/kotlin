@@ -43,9 +43,10 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
         }
 
         val snippetVal = snippet.get()
-        val newEvalRes = when (val res = scriptEvaluator(snippetVal, currentConfiguration)) {
+        val evalRes = scriptEvaluator(snippetVal, currentConfiguration)
+        val newEvalRes = when (evalRes) {
             is ResultWithDiagnostics.Success -> {
-                val retVal = res.value.returnValue
+                val retVal = evalRes.value.returnValue
                 when (retVal) {
                     is ResultValue.Error -> history.add(retVal.scriptClass, null)
                     is ResultValue.Value, is ResultValue.Unit -> history.add(retVal.scriptClass, retVal.scriptInstance)
@@ -58,7 +59,7 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
 
         val newNode = lastEvaluatedSnippet.add(newEvalRes)
         lastEvaluatedSnippet = newNode
-        return newNode.asSuccess()
+        return newNode.asSuccess(evalRes.reports)
     }
 }
 
