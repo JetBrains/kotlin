@@ -246,15 +246,15 @@ class DocRenderer implements EditorCustomElementRenderer {
     if (location == null) return;
 
     PsiDocCommentBase comment = myItem.getComment();
-    PsiElement owner = comment == null ? null : comment.getOwner();
-    if (owner == null) return;
+    if (comment == null) return;
 
+    PsiElement context = ObjectUtils.notNull(comment.getOwner(), comment);
     String url = event.getDescription();
     if (isGotoDeclarationEvent()) {
-      navigateToDeclaration(owner, url);
+      navigateToDeclaration(context, url);
     }
     else {
-      showDocumentation(myItem.editor, owner, url, location);
+      showDocumentation(myItem.editor, context, url, location);
     }
   }
 

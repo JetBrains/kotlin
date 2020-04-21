@@ -20,6 +20,7 @@ import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,10 +91,8 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
     try {
       String text = null;
       if (comment != null) {
-        PsiElement owner = comment.getOwner();
-        if (owner != null) {
-          text = DocumentationManager.getProviderFromElement(owner).generateRenderedDoc(owner);
-        }
+        PsiElement target = ObjectUtils.notNull(comment.getOwner(), comment);
+        text = DocumentationManager.getProviderFromElement(target).generateRenderedDoc(target);
       }
       return text == null ? CodeInsightBundle.message("doc.render.not.available.text") : preProcess(text);
     }
