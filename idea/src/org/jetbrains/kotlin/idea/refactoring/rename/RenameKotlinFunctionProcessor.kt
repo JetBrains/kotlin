@@ -214,10 +214,10 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         val simpleUsages = ArrayList<UsageInfo>(usages.size)
         val ambiguousImportUsages = SmartList<UsageInfo>()
-        for (usage in usages) {
+        ForeignUsagesRenameProcessor.processAll(element, newName, usages, fallbackHandler = { usage ->
             if (usage is LostDefaultValuesInOverridingFunctionUsageInfo) {
                 usage.apply()
-                continue
+                return@processAll
             }
 
             if (usage.isAmbiguousImportUsage()) {
@@ -227,7 +227,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                     simpleUsages += usage
                 }
             }
-        }
+        })
         element.ambiguousImportUsages = ambiguousImportUsages
 
         RenameUtil.doRenameGenericNamedElement(element, newName, simpleUsages.toTypedArray(), listener)
