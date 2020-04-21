@@ -468,7 +468,7 @@ public final class ExternalSystemUtil {
                   contentDescriptor.setAutoFocusContent(reportRefreshError);
                   return contentDescriptor;
                 });
-              eventDispatcher.onEvent(id, new StartBuildEventImpl(buildDescriptor, "syncing..."));
+              eventDispatcher.onEvent(id, new StartBuildEventImpl(buildDescriptor, BuildBundle.message("build.event.message.syncing")));
             }
 
             @Override
@@ -485,14 +485,15 @@ public final class ExternalSystemUtil {
               DataProvider dataProvider = BuildConsoleUtils.getDataProvider(id, syncViewManager);
               com.intellij.build.events.FailureResult failureResult =
                 createFailureResult(title, e, externalSystemId, project, dataProvider);
-              finishSyncEventSupplier.set(() -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
+              finishSyncEventSupplier.set(() -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(),
+                                                                         BuildBundle.message("build.status.failed"), failureResult));
               processHandler.notifyProcessTerminated(1);
             }
 
             @Override
             public void onSuccess(@NotNull ExternalSystemTaskId id) {
               finishSyncEventSupplier.set(
-                () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "finished", new SuccessResultImpl()));
+                () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), BuildBundle.message("build.status.finished"), new SuccessResultImpl()));
               processHandler.notifyProcessTerminated(0);
             }
 
@@ -587,7 +588,8 @@ public final class ExternalSystemUtil {
         }
         String message = "Sync finish event has not been received";
         LOG.warn(message, exception);
-        return new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(), "failed",
+        return new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(),
+                                        BuildBundle.message("build.status.failed"),
                                         new FailureResultImpl(new Exception(message, exception)));
       }
 

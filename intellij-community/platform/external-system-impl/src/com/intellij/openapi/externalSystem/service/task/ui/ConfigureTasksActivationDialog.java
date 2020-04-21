@@ -376,12 +376,12 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
 
   private class ChooseProjectStep extends BaseListPopupStep<ProjectPopupItem> {
     protected ChooseProjectStep(List<? extends ProjectPopupItem> values) {
-      super("Choose project", values);
+      super(ExternalSystemBundle.message("popup.title.choose.project"), values);
     }
 
     @Override
     public PopupStep onChosen(final ProjectPopupItem projectPopupItem, final boolean finalChoice) {
-      return new BaseListPopupStep<Phase>("Choose activation phase", Phase.values()) {
+      return new BaseListPopupStep<Phase>(ExternalSystemBundle.message("popup.title.choose.activation.phase"), Phase.values()) {
         @Override
         public PopupStep onChosen(final Phase selectedPhase, boolean finalChoice) {
           final Map<String, TaskActivationState> activationMap =
@@ -391,7 +391,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
 
           final List<String> tasksToSuggest = new ArrayList<>(projectPopupItem.myTasks);
           tasksToSuggest.removeAll(tasks);
-          return new BaseListPopupStep<String>("Choose task", tasksToSuggest) {
+          return new BaseListPopupStep<String>(ExternalSystemBundle.message("popup.title.choose.task"), tasksToSuggest) {
             @Override
             public PopupStep onChosen(final String taskName, boolean finalChoice) {
               return doFinalStep(() -> {
