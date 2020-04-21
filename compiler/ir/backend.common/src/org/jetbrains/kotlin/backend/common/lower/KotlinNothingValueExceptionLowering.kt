@@ -43,12 +43,12 @@ class KotlinNothingValueExceptionLowering(val backendContext: CommonBackendConte
                 // (although doing so by subverting the type system).
                 backendContext.createIrBuilder(parent, expression.startOffset, expression.endOffset).run {
                     irBlock(expression, null, context.irBuiltIns.nothingType) {
-                        +changeTypeToUnit(expression)
+                        +super.visitCall(changeTypeToUnit(expression))
                         +irCall(backendContext.ir.symbols.ThrowKotlinNothingValueException)
                     }
                 }
             } else {
-                expression
+                super.visitCall(expression)
             }
 
         private fun changeTypeToUnit(call: IrCall): IrCall =

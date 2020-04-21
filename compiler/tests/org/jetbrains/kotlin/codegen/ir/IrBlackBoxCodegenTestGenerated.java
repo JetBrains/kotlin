@@ -17403,6 +17403,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nothingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("inNestedCall.kt")
+        public void testInNestedCall() throws Exception {
+            runTest("compiler/testData/codegen/box/nothingValue/inNestedCall.kt");
+        }
+
         @TestMetadata("nothingValueException.kt")
         public void testNothingValueException() throws Exception {
             runTest("compiler/testData/codegen/box/nothingValue/nothingValueException.kt");
