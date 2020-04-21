@@ -1,12 +1,18 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
 import com.intellij.psi.PsiElement
+import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
+import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
+import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.nj2k.postProcessing.resolve
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
 
@@ -25,8 +31,38 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer
 
     override fun visitElement(element: PsiElement) {
-        myCompilingVisitor.handle(element)
         super.visitElement(element)
+        myCompilingVisitor.handle(element)
     }
 
+    override fun visitReferenceExpression(reference: KtReferenceExpression) {
+        visitElement(reference)
+        val referenceParent = reference.parent
+        val handler = reference
+        super.visitReferenceExpression(reference)
+    }
+
+    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+        visitElement(expression)
+        val parent = expression.parent
+        val pattern = myCompilingVisitor.context.pattern
+        val handler = pattern.getHandler(expression)
+
+        if (handler !is SubstitutionHandler) {
+            val resolve = expression.resolve()
+            val text = if (resolve != null) {
+                (resolve as KtClass).name ?: expression.text
+            } else {
+                expression.text
+            }
+            createAndSetSubstitutionHandlerFromReference(expression, text, parent is KtReferenceExpression)
+        }
+    }
+
+    private fun createAndSetSubstitutionHandlerFromReference(expr: PsiElement, referenceText: String, classQualifier: Boolean) {
+        val substitutionHandler = SubstitutionHandler("__${referenceText.replace('.', '_')}", false, if (classQualifier) 0 else 1, 1, true)
+        val caseSensitive = myCompilingVisitor.context.options.isCaseSensitiveMatch
+        substitutionHandler.predicate = RegExpPredicate(StructuralSearchUtil.shieldRegExpMetaChars(referenceText), caseSensitive, null, false, false)
+        myCompilingVisitor.context.pattern.setHandler(expr, substitutionHandler)
+    }
 }
