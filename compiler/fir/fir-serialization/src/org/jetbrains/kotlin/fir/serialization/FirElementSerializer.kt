@@ -550,10 +550,6 @@ class FirElementSerializer private constructor(
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
-            is ConeIntegerLiteralType -> {
-                // Questionable, I'm not sure we should expect this type here
-                return typeProto(type.getApproximatedType())
-            }
             is ConeKotlinErrorType -> {
                 extension.serializeErrorType(type, builder)
                 return builder
@@ -568,20 +564,6 @@ class FirElementSerializer private constructor(
                     lowerBound.setFlexibleUpperBound(upperBound)
                 }
                 return lowerBound
-            }
-            is ConeCapturedType -> {
-                val lowerType = type.lowerType
-                return if (lowerType != null) {
-                    typeProto(lowerType)
-                } else {
-                    typeProto(type.constructor.supertypes!!.first())
-                }
-            }
-            is ConeDefinitelyNotNullType -> {
-                return typeProto(type.original)
-            }
-            is ConeIntersectionType -> {
-                return typeProto(type.intersectedTypes.first())
             }
             is ConeClassLikeType -> {
                 if (type.isSuspendFunctionType(session)) {
@@ -600,8 +582,8 @@ class FirElementSerializer private constructor(
                     builder.typeParameter = getTypeParameterId(typeParameter)
                 }
             }
-            is ConeLookupTagBasedType, is ConeStubType -> {
-                throw AssertionError("Should not be here")
+            else -> {
+                throw AssertionError("Should not be here: ${type::class.java}")
             }
         }
 

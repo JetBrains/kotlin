@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
 // SKIP_JDK6
