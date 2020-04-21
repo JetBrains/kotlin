@@ -311,7 +311,7 @@ abstract class KotlinFile(
         }
         alreadyDeclared.add(topLevelName)
 
-        return topLevelName.asSimpleName()
+        return topLevelName
     }
 
     override fun declareProperty(name: String): String? =
@@ -320,7 +320,7 @@ abstract class KotlinFile(
                 // TODO: using original global name should be preferred to importing the clashed name.
             } else {
                 declaredProperties.add(name)
-                name.asSimpleName()
+                name
             }
 
     fun buildImports(): List<String> = importedNameToPkg.mapNotNull { (name, pkg) ->
