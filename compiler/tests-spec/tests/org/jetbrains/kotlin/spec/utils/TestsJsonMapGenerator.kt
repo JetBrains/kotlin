@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns
 import java.io.File
 
 object TestsJsonMapGenerator {
-    private const val LINKED_TESTS_PATH = "linked"
+    const val LINKED_TESTS_PATH = "linked"
     const val TESTS_MAP_FILENAME = "testsMap.json"
 
     private inline fun <reified T : JsonElement> JsonObject.getOrCreate(key: String): T {
@@ -61,56 +61,29 @@ object TestsJsonMapGenerator {
 
     private fun collectInfoFromTests(
         testsMap: JsonObject,
-        testDataPath: String,
-        linkedTestsPath: String = ""
+        testOrigin: TestOrigin,
     ) {
+        val isImplementationTest = testOrigin == TestOrigin.IMPLEMENTATION
         TestArea.values().forEach { testArea ->
-            val filePath = buildString {
-                append("${testDataPath}/${testArea.testDataPath}")
-                if (linkedTestsPath.isNotEmpty())
-                    append("/${linkedTestsPath}")
-            }
-            File(filePath).walkTopDown()
+            File(testOrigin.getFilePath(testArea)).walkTopDown()
                 .forEach testFiles@{ file ->
                     if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
-                    val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
-                    if (specTest is LinkedSpecTest) {
-                        collectInfoFromTests(testsMap = testsMap, specTest = specTest, file = file)
-                    }
-                }
-        }
-    }
-
-    private fun collectInfoFromSpecTests(testsMap: JsonObject) {
-        TestArea.values().forEach { testArea ->
-            File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/$LINKED_TESTS_PATH").walkTopDown()
-                .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
-                    val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()))
-                    if (specTest is LinkedSpecTest) {
-                        collectInfoFromTests(testsMap = testsMap, specTest = specTest, file = file)
-                    }
-                }
-        }
-    }
-
-    private fun collectInfoFromImplementationTests(testsMap: JsonObject) {
-        TestArea.values().forEach { testArea ->
-            File("${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}").walkTopDown()
-                .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt") return@testFiles
-                    if (!LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
+                    if (isImplementationTest && !LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
                         return@testFiles
-                    val (specTest, _) = CommonParser.parseSpecTest(file.canonicalPath, mapOf("main.kt" to file.readText()), true)
+
+                    val (specTest, _) = CommonParser.parseSpecTest(
+                        file.canonicalPath,
+                        mapOf("main.kt" to file.readText()),
+                        isImplementationTest
+                    )
                     if (specTest is LinkedSpecTest) {
-                        collectInfoFromTests(testsMap = testsMap, specTest = specTest, file = file)
+                        collectInfoFromTest(testsMap, specTest, file)
                     }
                 }
         }
     }
 
-
-    private fun collectInfoFromTests(
+    private fun collectInfoFromTest(
         testsMap: JsonObject, specTest: LinkedSpecTest, file: File
     ) {
 
@@ -128,8 +101,8 @@ object TestsJsonMapGenerator {
 
     fun buildTestsMapPerSection() {
         val testsMap = JsonObject().apply {
-            collectInfoFromTests(this, GeneralConfiguration.SPEC_TESTDATA_PATH, LINKED_TESTS_PATH)
-            collectInfoFromImplementationTests(this)
+            collectInfoFromTests(this, TestOrigin.SPEC)
+            collectInfoFromTests(this, TestOrigin.IMPLEMENTATION)
         }
 
         val gson = GsonBuilder().setPrettyPrinting().create()

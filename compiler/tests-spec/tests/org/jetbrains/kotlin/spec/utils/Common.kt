@@ -33,6 +33,17 @@ enum class TestType(val type: String) {
     }
 }
 
+enum class TestOrigin(private val testDataPath: String, private val testsPath: String? = null) {
+    IMPLEMENTATION(GeneralConfiguration.TESTDATA_PATH),
+    SPEC(GeneralConfiguration.SPEC_TESTDATA_PATH, TestsJsonMapGenerator.LINKED_TESTS_PATH);
+
+    fun getFilePath(testArea: TestArea) = buildString {
+        append("${testDataPath}/${testArea.testDataPath}")
+        if (testsPath != null)
+            append("/${testsPath}")
+    }
+}
+
 enum class TestArea(val testDataPath: String) {
     PSI("psi"),
     DIAGNOSTICS("diagnostics"),
