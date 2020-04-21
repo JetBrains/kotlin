@@ -11,7 +11,7 @@
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
 
-    <group id = "ConvertJavaToKotlinGroup">
+    <group id="ConvertJavaToKotlinGroup">
       <separator/>
       <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction">
         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>

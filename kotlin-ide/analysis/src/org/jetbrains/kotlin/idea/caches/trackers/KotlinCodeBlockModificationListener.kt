@@ -39,6 +39,7 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
+ // BUNCH: 193
 class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePreprocessor {
     private val treeAspect: TreeAspect = TreeAspect.getInstance(project)
 

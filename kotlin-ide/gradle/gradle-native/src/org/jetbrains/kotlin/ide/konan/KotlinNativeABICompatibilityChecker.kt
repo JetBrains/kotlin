@@ -9,7 +9,6 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.project.Project
@@ -27,6 +26,8 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.isGradleLibraryName
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
 import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
@@ -34,6 +35,20 @@ import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 // BUNCH: 192
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
 class KotlinNativeABICompatibilityChecker : StartupActivity {
+    override fun runActivity(project: Project) {
+        val service = KotlinNativeABICompatibilityCheckerService.getInstance(project)
+        project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
+            override fun rootsChanged(event: ModuleRootEvent) {
+                // run when project roots are changes, e.g. on project import
+                service.validateKotlinNativeLibraries()
+            }
+        })
+
+        service.validateKotlinNativeLibraries()
+    }
+}
+
+class KotlinNativeABICompatibilityCheckerService(private val project: Project) {
 
     private sealed class LibraryGroup(private val ordinal: Int) : Comparable<LibraryGroup> {
 
@@ -48,34 +63,21 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
         object User : LibraryGroup(2)
     }
 
-    private val cachedIncompatibleLibrariesPerProject = mutableMapOf<Project, MutableSet<String>>()
+    private val cachedIncompatibleLibraries = mutableSetOf<String>()
 
-    override fun runActivity(project: Project) {
-        project.messageBus.connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                // run when project roots are changes, e.g. on project import
-                validateKotlinNativeLibraries(project)
-            }
-        })
-
-        validateKotlinNativeLibraries(project)
-    }
-
-    private fun validateKotlinNativeLibraries(project: Project) {
-        if (ApplicationManager.getApplication().isUnitTestMode || project.isDisposed)
-            return
+    internal fun validateKotlinNativeLibraries() {
+        if (isUnitTestMode() || project.isDisposed) return
 
         val backgroundJob: Ref<CancellablePromise<*>> = Ref()
         val disposable = Disposable {
-            cachedIncompatibleLibrariesPerProject.remove(project)
             backgroundJob.get()?.let(CancellablePromise<*>::cancel)
         }
         Disposer.register(project, disposable)
 
         backgroundJob.set(
             nonBlocking<List<Notification>> {
-                val librariesToNotify = getLibrariesToNotifyAbout(project)
-                prepareNotifications(project, librariesToNotify)
+                val librariesToNotify = getLibrariesToNotifyAbout()
+                prepareNotifications(librariesToNotify)
             }
                 .finishOnUiThread(ModalityState.defaultModalityState()) { notifications ->
                     notifications.forEach {
@@ -83,7 +85,7 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
                     }
                 }
                 .expireWith(project) // cancel job when project is disposed
-                .coalesceBy(this@KotlinNativeABICompatibilityChecker) // cancel previous job when new one is submitted
+                .coalesceBy(this@KotlinNativeABICompatibilityCheckerService) // cancel previous job when new one is submitted
                 .withDocumentsCommitted(project)
                 .submit(AppExecutorUtil.getAppExecutorService())
                 .onProcessed {
@@ -92,13 +94,12 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
                 })
     }
 
-    private fun getLibrariesToNotifyAbout(project: Project): Map<String, NativeKlibLibraryInfo> {
+    private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
         val incompatibleLibraries = getModuleInfosFromIdeaModel(project)
             .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
-        val cachedIncompatibleLibraries = cachedIncompatibleLibrariesPerProject.computeIfAbsent(project) { mutableSetOf() }
         val newEntries = if (cachedIncompatibleLibraries.isNotEmpty())
             incompatibleLibraries.filterKeys { it !in cachedIncompatibleLibraries }
         else
@@ -110,7 +111,7 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
         return newEntries
     }
 
-    private fun prepareNotifications(project: Project, librariesToNotify: Map<String, NativeKlibLibraryInfo>): List<Notification> {
+    private fun prepareNotifications(librariesToNotify: Map<String, NativeKlibLibraryInfo>): List<Notification> {
         if (librariesToNotify.isEmpty())
             return emptyList()
 
@@ -222,5 +223,7 @@ class KotlinNativeABICompatibilityChecker : StartupActivity {
 
         private val NOTIFICATION_TITLE get() = KotlinGradleNativeBundle.message("error.incompatible.libraries.title")
         private const val NOTIFICATION_GROUP_ID = "Incompatible Kotlin/Native libraries"
+
+        fun getInstance(project: Project): KotlinNativeABICompatibilityCheckerService = project.getServiceSafe()
     }
 }
