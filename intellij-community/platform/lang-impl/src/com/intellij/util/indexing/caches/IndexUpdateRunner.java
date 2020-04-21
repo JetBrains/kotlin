@@ -138,7 +138,7 @@ public final class IndexUpdateRunner {
           catch (ProcessCanceledException e) {
             return;
           }
-          if (job.myProject.isDisposed() || job.myIsFinished.get() || job.myIndicator.isCanceled()) {
+          if (job.isOutdated()) {
             ourIndexingJobs.remove(job);
             return;
           }
