@@ -57,7 +57,6 @@ class DebugProbesImpl private constructor(context: DefaultExecutionContext) :
             try {
                 DebugProbesImpl(context)
             } catch (e: IllegalStateException) {
-                log.warn("Attempt to access DebugProbesImpl", e)
                 null
             }
     }
