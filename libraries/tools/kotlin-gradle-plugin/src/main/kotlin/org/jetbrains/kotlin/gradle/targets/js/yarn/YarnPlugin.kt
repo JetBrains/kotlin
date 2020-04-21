@@ -20,9 +20,8 @@ open class YarnPlugin : Plugin<Project> {
             "YarnPlugin can be applied only to root project"
         }
 
-        val nodeJs = NodeJsRootPlugin.apply(this)
-
         val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
+        val nodeJs = NodeJsRootPlugin.apply(this)
 
         tasks.create(YarnSetupTask.NAME, YarnSetupTask::class.java) {
             it.dependsOn(nodeJs.nodeJsSetupTask)
