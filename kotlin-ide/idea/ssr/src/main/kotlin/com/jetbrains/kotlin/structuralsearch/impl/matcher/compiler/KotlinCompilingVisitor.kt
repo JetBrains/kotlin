@@ -7,6 +7,7 @@ import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.nj2k.postProcessing.resolve
@@ -37,8 +38,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitReferenceExpression(reference: KtReferenceExpression) {
         visitElement(reference)
-        val referenceParent = reference.parent
-        val handler = reference
         super.visitReferenceExpression(reference)
     }
 
@@ -48,7 +47,10 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         val pattern = myCompilingVisitor.context.pattern
         val handler = pattern.getHandler(expression)
 
-        if (handler !is SubstitutionHandler) {
+        // Sets a SubstitutionHandler if TYPED_VAR_PREFIX is recognized
+        if (handler !is SubstitutionHandler && expression.getReferencedName()
+                .startsWith(KotlinCompiledPattern.TYPED_VAR_PREFIX)
+        ) {
             val resolve = expression.resolve()
             val text = if (resolve != null) {
                 (resolve as KtClass).name ?: expression.text
@@ -59,10 +61,21 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
-    private fun createAndSetSubstitutionHandlerFromReference(expr: PsiElement, referenceText: String, classQualifier: Boolean) {
-        val substitutionHandler = SubstitutionHandler("__${referenceText.replace('.', '_')}", false, if (classQualifier) 0 else 1, 1, true)
+    private fun createAndSetSubstitutionHandlerFromReference(
+        expr: PsiElement,
+        referenceText: String,
+        classQualifier: Boolean
+    ) {
+        val substitutionHandler =
+            SubstitutionHandler("__${referenceText.replace('.', '_')}", false, if (classQualifier) 0 else 1, 1, true)
         val caseSensitive = myCompilingVisitor.context.options.isCaseSensitiveMatch
-        substitutionHandler.predicate = RegExpPredicate(StructuralSearchUtil.shieldRegExpMetaChars(referenceText), caseSensitive, null, false, false)
+        substitutionHandler.predicate = RegExpPredicate(
+            StructuralSearchUtil.shieldRegExpMetaChars(referenceText),
+            caseSensitive,
+            null,
+            false,
+            false
+        )
         myCompilingVisitor.context.pattern.setHandler(expr, substitutionHandler)
     }
 }

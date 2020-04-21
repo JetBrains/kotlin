@@ -1,10 +1,8 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
-import com.intellij.psi.PsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -58,6 +56,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 if (myMatchingVisitor.setResult(handler.validate(other, context))) {
                     handler.addResult(other, context)
                 }
+            }
+        } else {
+            if (other is KtSimpleNameExpression) {
+                myMatchingVisitor.result =
+                    myMatchingVisitor.matchText(referencedNameElement.text, other.getReferencedNameElement().text)
             }
         }
     }
