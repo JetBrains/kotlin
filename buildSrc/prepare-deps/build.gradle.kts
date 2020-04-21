@@ -380,7 +380,7 @@ fun writeIvyXml(
 
     val ivyFile = targetDir.resolve("$fileName.ivy.xml")
     ivyFile.parentFile.mkdirs()
-    with(XMLWriter(FileWriter(ivyFile))) {
+    with(XMLWriter(ivyFile.writer())) {
         document("UTF-8", "1.0") {
             element("ivy-module") {
                 attribute("version", "2.0")
