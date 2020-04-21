@@ -42,7 +42,7 @@ public object Delegates {
      *
      *  @sample samples.properties.Delegates.observableDelegate
      */
-    public inline fun observable(initialValue: Int, crossinline onChange: (property: KProperty<*>, oldValue: Int, newValue: Int) -> Unit):
+    public inline fun observableInt(initialValue: Int, crossinline onChange: (property: KProperty<*>, oldValue: Int, newValue: Int) -> Unit):
             ReadWriteIntProperty<Any?> =
         object : ObservableIntProperty(initialValue) {
             override fun afterChange(property: KProperty<*>, oldValue: Int, newValue: Int) = onChange(property, oldValue, newValue)
@@ -56,7 +56,7 @@ public object Delegates {
      *
      *  @sample samples.properties.Delegates.observableDelegate
      */
-    public inline fun observable(initialValue: Long, crossinline onChange: (property: KProperty<*>, oldValue: Long, newValue: Long) -> Unit):
+    public inline fun observableLong(initialValue: Long, crossinline onChange: (property: KProperty<*>, oldValue: Long, newValue: Long) -> Unit):
             ReadWriteLongProperty<Any?> =
         object : ObservableLongProperty(initialValue) {
             override fun afterChange(property: KProperty<*>, oldValue: Long, newValue: Long) = onChange(property, oldValue, newValue)
@@ -70,7 +70,7 @@ public object Delegates {
      *
      *  @sample samples.properties.Delegates.observableDelegate
      */
-    public inline fun observable(initialValue: Double, crossinline onChange: (property: KProperty<*>, oldValue: Double, newValue: Double) -> Unit):
+    public inline fun observableDouble(initialValue: Double, crossinline onChange: (property: KProperty<*>, oldValue: Double, newValue: Double) -> Unit):
             ReadWriteDoubleProperty<Any?> =
         object : ObservableDoubleProperty(initialValue) {
             override fun afterChange(property: KProperty<*>, oldValue: Double, newValue: Double) = onChange(property, oldValue, newValue)

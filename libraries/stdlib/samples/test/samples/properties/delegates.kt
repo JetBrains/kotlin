@@ -63,7 +63,22 @@ class Delegates {
     @Sample
     fun observableDelegate() {
         var observed = false
-        var max: Int by Delegates.observable(0) { property, oldValue, newValue ->
+        var max: String by Delegates.observable("0") { property, oldValue, newValue ->
+            observed = true
+        }
+
+        assertPrints(max, "0")
+        assertFalse(observed)
+
+        max = "10"
+        assertPrints(max, "10")
+        assertTrue(observed)
+    }
+
+    @Sample
+    fun observableDelegateInt() {
+        var observed = false
+        var max: Int by Delegates.observableInt(0) { property, oldValue, newValue ->
             observed = true
         }
 
@@ -71,6 +86,36 @@ class Delegates {
         assertFalse(observed)
 
         max = 10
+        assertPrints(max, "10")
+        assertTrue(observed)
+    }
+
+    @Sample
+    fun observableDelegateLong() {
+        var observed = false
+        var max: Long by Delegates.observableLong(0L) { property, oldValue, newValue ->
+            observed = true
+        }
+
+        assertPrints(max, "0")
+        assertFalse(observed)
+
+        max = 10L
+        assertPrints(max, "10")
+        assertTrue(observed)
+    }
+
+    @Sample
+    fun observableDelegateDouble() {
+        var observed = false
+        var max: Double by Delegates.observableDouble(0.0) { property, oldValue, newValue ->
+            observed = true
+        }
+
+        assertPrints(max, "0")
+        assertFalse(observed)
+
+        max = 10.0
         assertPrints(max, "10")
         assertTrue(observed)
     }
