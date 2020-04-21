@@ -351,7 +351,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   private static JBHtmlEditorKit createEditorKit(@NotNull Editor editor) {
-    JBHtmlEditorKit editorKit = new JBHtmlEditorKit(true);
+    JBHtmlEditorKit editorKit = new JBHtmlEditorKit();
     editorKit.getStyleSheet().addStyleSheet(getStyleSheet(editor));
     return editorKit;
   }
@@ -371,7 +371,7 @@ class DocRenderer implements EditorCustomElementRenderer {
              "white-space: pre-wrap}" + // supported by JetBrains Runtime
         "h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }" +
         "a { color: #" + linkColorHex + "; text-decoration: none;}" +
-        "p { padding: 1px 0 2px 0; }" +
+        "p { padding: 6px 0 2px 0; }" +
         "ol { padding: 0 16px 0 0; }" +
         "ul { padding: 0 16px 0 0; }" +
         "li { padding: 1px 0 2px 0; }" +
