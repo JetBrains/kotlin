@@ -58,6 +58,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         runTest("idea/testData/slicer/inflow/compositeAssignments.kt");
     }
 
+    @TestMetadata("dataClassCopy.kt")
+    public void testDataClassCopy() throws Exception {
+        runTest("idea/testData/slicer/inflow/dataClassCopy.kt");
+    }
+
     @TestMetadata("defaultGetterFieldInSetter.kt")
     public void testDefaultGetterFieldInSetter() throws Exception {
         runTest("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");

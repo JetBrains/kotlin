@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
+import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
@@ -128,8 +130,29 @@ class InflowSlicer(
             processCalls(function, includeOverriders, ArgumentSliceProducer(parameterDescriptor))
         }
 
-        if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
-            processAssignments(parameter, analysisScope)
+        val valVar = parameter.valOrVarKeyword.toValVar()
+        if (valVar != KotlinValVar.None) {
+            val classOrObject = (parameter.ownerFunction as? KtPrimaryConstructor)?.getContainingClassOrObject()
+            if (classOrObject != null && classOrObject.hasModifier(KtTokens.DATA_KEYWORD)) {
+                // Search usages of constructor parameter in form of named argument of call to "copy" function.
+                // We will miss calls of "copy" with positional parameters but it's unlikely someone write such code.
+                // Also, we will find named arguments of constructor calls but we need them anyway (already found above).
+                val options = KotlinPropertyFindUsagesOptions(project).apply {
+                    searchScope = analysisScope
+                }
+                //TODO: optimizations to search only in files where "copy" word is present and also not resolve anything except named arguments
+                parameter.processAllUsages(options) { usageInfo ->
+                    (((usageInfo.element as? KtNameReferenceExpression)
+                        ?.parent as? KtValueArgumentName)
+                        ?.parent as? KtValueArgument)
+                        ?.getArgumentExpression()
+                        ?.passToProcessorAsValue()
+                }
+            }
+
+            if (valVar == KotlinValVar.Var) {
+                processAssignments(parameter, analysisScope)
+            }
         }
     }
 
