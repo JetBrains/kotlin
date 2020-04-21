@@ -246,8 +246,8 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     private fun findCorrespondingLightClass(
         decompiledClassOrObject: KtClassOrObject,
         rootLightClassForDecompiledFile: KtLightClassForDecompiledDeclaration
-    ): KtLightClassForDecompiledDeclaration {
-        val relativeFqName = getClassRelativeName(decompiledClassOrObject)
+    ): KtLightClassForDecompiledDeclaration? {
+        val relativeFqName = getClassRelativeName(decompiledClassOrObject) ?: return null
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
         assert(rootLightClassForDecompiledFile.name == base.asString()) {
@@ -267,8 +267,8 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
         return current
     }
 
-    private fun getClassRelativeName(decompiledClassOrObject: KtClassOrObject): FqName {
-        val name = decompiledClassOrObject.nameAsName!!
+    private fun getClassRelativeName(decompiledClassOrObject: KtClassOrObject): FqName? {
+        val name = decompiledClassOrObject.nameAsName ?: return null
         val parent = PsiTreeUtil.getParentOfType(
             decompiledClassOrObject,
             KtClassOrObject::class.java,
@@ -278,7 +278,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
             assert(decompiledClassOrObject.isTopLevel())
             return FqName.topLevel(name)
         }
-        return getClassRelativeName(parent).child(name)
+        return getClassRelativeName(parent)?.child(name)
     }
 
     private fun createLightClassForDecompiledKotlinFile(file: KtClsFile): KtLightClassForDecompiledDeclaration? {
