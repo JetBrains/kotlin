@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile;
+import com.intellij.diff.util.DiffUserDataKeys;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.Language;
@@ -389,7 +390,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   public AnalyzerStatus getStatus(@NotNull Editor editor) {
     if (PowerSaveMode.isEnabled()) {
       return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
-                                  "Code analysis is disabled in power save mode", "", this::createUIController);
+                                  "Code analysis is disabled in power save mode", "", () -> createUIController(editor));
     }
     else {
       DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
@@ -432,7 +433,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         if (mainIcon == null) {
           mainIcon = AllIcons.General.InspectionsOK;
         }
-        AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, "", this::createUIController).
+        AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, "", () -> createUIController(editor)).
           withNavigation().
           withExpandedStatus(statusItems);
 
@@ -444,28 +445,28 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
                                   DaemonBundle.message("no.analysis.performed"),
-                                  status.reasonWhyDisabled, this::createUIController).
+                                  status.reasonWhyDisabled, () -> createUIController(editor)).
           withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.off")));
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   DaemonBundle.message("analysis.suspended"),
-                                  status.reasonWhySuspended, this::createUIController).
+                                  status.reasonWhySuspended, () -> createUIController(editor)).
           withExpandedStatus(new StatusItem(status.heavyProcessType != null ?
                                             status.heavyProcessType.toString() :
                                             DaemonBundle.message("iw.status.paused")));
       }
       if (status.errorAnalyzingFinished) {
         return isDumb ?
-          new AnalyzerStatus(AllIcons.General.InspectionsPause, title, details, this::createUIController).
+          new AnalyzerStatus(AllIcons.General.InspectionsPause, title, details, () -> createUIController(editor)).
             withExpandedStatus(new StatusItem(UtilBundle.message("heavyProcess.type.indexing"))) :
           new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
-                                  details, this::createUIController);
+                                  details, () -> createUIController(editor));
       }
 
       //noinspection ConstantConditions
       return new AnalyzerStatus(AllIcons.General.InspectionsEye, title,
-                                details, this::createUIController).
+                                details, () -> createUIController(editor)).
         withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.analyzing"))).
         withAnalyzingType(AnalyzingType.EMPTY).
         withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
@@ -473,17 +474,17 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   @NotNull
-  protected UIController createUIController() {
-    return new DefaultUIController();
+  protected UIController createUIController(@NotNull Editor editor) {
+    boolean mergeEditor = editor.getUserData(DiffUserDataKeys.MERGE_EDITOR_FLAG) == Boolean.TRUE;
+    return editor.getEditorKind() == EditorKind.DIFF && !mergeEditor ? new SimplifiedUIController() : new DefaultUIController();
   }
 
-  protected class DefaultUIController implements UIController {
+  protected abstract class AbstractUIController implements UIController {
     private final boolean inLibrary;
-    private final List<AnAction> myMenuActions;
     private final List<LanguageHighlightLevel> myLevelsList;
     private final List<HectorComponentPanel> myAdditionalPanels;
 
-    protected DefaultUIController() {
+    protected AbstractUIController() {
       PsiFile psiFile = getPsiFile();
       if (psiFile != null) {
         ProjectFileIndex fileIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
@@ -498,62 +499,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         myAdditionalPanels = Collections.emptyList();
       }
 
-      myMenuActions = initActions();
       myLevelsList = initLevels();
-    }
-
-    @NotNull
-    protected List<AnAction> initActions() {
-      List<AnAction> result = new ArrayList<>();
-      result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
-        @Override
-        public void update(@NotNull AnActionEvent e) {
-          e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-          if (!getProject().isDisposed()) {
-            Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(getProject(),
-                                                                                                       ErrorsConfigurableProvider.class);
-            if (projectConfigurable != null) {
-              ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
-            }
-          }
-        }
-      });
-
-      result.add(DaemonEditorPopup.createGotoGroup());
-
-      result.add(Separator.create());
-      result.add(new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
-        @Override
-        public boolean isSelected(@NotNull AnActionEvent e) {
-          PsiFile psiFile = getPsiFile();
-          return psiFile != null && myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile);
-        }
-
-        @Override
-        public void setSelected(@NotNull AnActionEvent e, boolean state) {
-          PsiFile psiFile = getPsiFile();
-          if (psiFile != null) {
-            myDaemonCodeAnalyzer.setImportHintsEnabled(psiFile, state);
-          }
-        }
-
-        @Override
-        public void update(@NotNull AnActionEvent e) {
-          super.update(e);
-          e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isAutohintsAvailable(getPsiFile()));
-        }
-
-        @Override
-        public boolean isDumbAware() {
-          return true;
-        }
-      });
-
-      return result;
     }
 
     private @NotNull List<LanguageHighlightLevel> initLevels() {
@@ -568,12 +514,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         }
       }
       return result;
-    }
-
-    @NotNull
-    @Override
-    public List<AnAction> getActions() {
-      return myMenuActions;
     }
 
     @Override
@@ -658,11 +598,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
 
     @Override
-    public boolean enableToolbar() {
-      return true;
-    }
-
-    @Override
     public void openProblemsView() {
       ProblemsViewToolWindowFactory.wakeup(getProject(), true);
     }
@@ -680,5 +615,85 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     if (!highlight && !inspect) return InspectionsLevel.NONE;
     else if (highlight && !inspect) return InspectionsLevel.ERRORS;
     else return InspectionsLevel.ALL;
+  }
+
+  public class DefaultUIController extends AbstractUIController {
+    private final List<AnAction> myMenuActions = initActions();
+
+    private @NotNull List<AnAction> initActions() {
+        List<AnAction> result = new ArrayList<>();
+        result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
+          @Override
+          public void update(@NotNull AnActionEvent e) {
+            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
+          }
+
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            if (!getProject().isDisposed()) {
+              Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(getProject(),
+                                                                                                         ErrorsConfigurableProvider.class);
+              if (projectConfigurable != null) {
+                ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
+              }
+            }
+          }
+        });
+
+        result.add(DaemonEditorPopup.createGotoGroup());
+
+        result.add(Separator.create());
+        result.add(new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
+          @Override
+          public boolean isSelected(@NotNull AnActionEvent e) {
+            PsiFile psiFile = getPsiFile();
+            return psiFile != null && myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile);
+          }
+
+          @Override
+          public void setSelected(@NotNull AnActionEvent e, boolean state) {
+            PsiFile psiFile = getPsiFile();
+            if (psiFile != null) {
+              myDaemonCodeAnalyzer.setImportHintsEnabled(psiFile, state);
+            }
+          }
+
+          @Override
+          public void update(@NotNull AnActionEvent e) {
+            super.update(e);
+            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isAutohintsAvailable(getPsiFile()));
+          }
+
+          @Override
+          public boolean isDumbAware() {
+            return true;
+          }
+        });
+
+        return result;
+    }
+
+    @Override
+    public @NotNull List<AnAction> getActions() {
+      return myMenuActions;
+    }
+
+    @Override
+    public boolean enableToolbar() {
+      return true;
+    }
+  }
+
+  public class SimplifiedUIController extends AbstractUIController {
+    @Override
+    public boolean enableToolbar() {
+      return false;
+    }
+
+    @NotNull
+    @Override
+    public List<AnAction> getActions() {
+      return Collections.emptyList();
+    }
   }
 }
