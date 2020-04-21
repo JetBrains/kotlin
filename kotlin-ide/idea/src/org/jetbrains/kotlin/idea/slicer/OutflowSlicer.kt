@@ -103,6 +103,8 @@ class OutflowSlicer(
                 return
             }
 
+            if (refElement.parent is KtValueArgumentName) return // named argument reference is not a read or write
+
             val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
             if (withDereferences) {
                 refExpression.processDereferences()

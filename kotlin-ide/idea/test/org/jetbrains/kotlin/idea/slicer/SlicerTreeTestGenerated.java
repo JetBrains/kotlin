@@ -688,6 +688,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/outflow/memberPropertyUsages.kt");
         }
 
+        @TestMetadata("namedArgumentForConstructorParameter.kt")
+        public void testNamedArgumentForConstructorParameter() throws Exception {
+            runTest("idea/testData/slicer/outflow/namedArgumentForConstructorParameter.kt");
+        }
+
         @TestMetadata("nonInlineLetResult.kt")
         public void testNonInlineLetResult() throws Exception {
             runTest("idea/testData/slicer/outflow/nonInlineLetResult.kt");
