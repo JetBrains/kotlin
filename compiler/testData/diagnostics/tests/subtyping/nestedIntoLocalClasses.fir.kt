@@ -6,14 +6,14 @@ package p
 private fun foo(a: Int) = run {
     object {
         inner class A
-        fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = A()
+        fun foo() = A()
     }.foo()
 }
 
 private fun foo() = run {
     object {
         inner class A
-        fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = A()
+        fun foo() = A()
     }.foo()
 }
 

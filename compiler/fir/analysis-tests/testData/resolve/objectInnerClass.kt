@@ -17,11 +17,11 @@ val case1 = object : A {
             hoo()
         }
     }
-    fun <!EXPOSED_RECEIVER_TYPE!>Child<!>.voo() {
+    fun Child.voo() {
         val x = property
     }
 
-    fun <!EXPOSED_RECEIVER_TYPE!>Base<!>.hoo() {
+    fun Base.hoo() {
         val x = property
     }
 
@@ -111,10 +111,10 @@ class Case3() {
             }
         }
 
-        fun <!EXPOSED_RECEIVER_TYPE!>Child<!>.voo() {
+        fun Child.voo() {
             val x = property
         }
-        fun <!EXPOSED_RECEIVER_TYPE!>Base<!>.hoo() {
+        fun Base.hoo() {
             val x = property
         }
 

@@ -54,7 +54,7 @@ private class FirStatusResolveTransformer(override val session: FirSession) :
     }
 
     private inline fun storeClass(
-        klass: FirRegularClass,
+        klass: FirClass<*>,
         computeResult: () -> CompositeTransformResult<FirDeclaration>
     ): CompositeTransformResult<FirDeclaration> {
         classes += klass
@@ -74,6 +74,15 @@ private class FirStatusResolveTransformer(override val session: FirSession) :
         return storeClass(regularClass) {
             regularClass.typeParameters.forEach { it.transformSingle(this, data) }
             transformDeclaration(regularClass, data)
+        } as CompositeTransformResult<FirStatement>
+    }
+
+    override fun transformAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        data: FirDeclarationStatus?
+    ): CompositeTransformResult<FirStatement> {
+        return storeClass(anonymousObject) {
+            transformElement(anonymousObject, data)
         } as CompositeTransformResult<FirStatement>
     }
 
@@ -153,7 +162,11 @@ fun FirDeclaration.resolveStatus(
 ): FirDeclarationStatus {
     if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
         val visibility = when (status.visibility) {
-            Visibilities.UNKNOWN -> if (isLocal) Visibilities.LOCAL else resolveVisibility(containingClass)
+            Visibilities.UNKNOWN -> when {
+                isLocal -> Visibilities.LOCAL
+                this is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.PRIVATE
+                else -> resolveVisibility(containingClass)
+            }
             else -> status.visibility
         }
         val modality = status.modality ?: resolveModality(containingClass)

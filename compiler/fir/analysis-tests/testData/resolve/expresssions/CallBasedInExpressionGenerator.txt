@@ -34,12 +34,12 @@ FILE: CallBasedInExpressionGenerator.kt
                     super<R|ERROR CLASS: Symbol not found, for `BranchedValue`|>(R|<local>/argument|, Null(null), R|<local>/argument|.<Unresolved name: type>#, <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#)
                 }
 
-                public final override fun putSelector(type: R|ERROR CLASS: Symbol not found, for `Type`|, kotlinType: R|ERROR CLASS: Symbol not found, for `KotlinType?`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
+                public[local] final override fun putSelector(type: R|ERROR CLASS: Symbol not found, for `Type`|, kotlinType: R|ERROR CLASS: Symbol not found, for `KotlinType?`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
                     this@R|/anonymous|.R|/anonymous.invokeFunction|(R|<local>/v|)
                     <Unresolved name: coerceTo>#(R|<local>/type|, R|<local>/kotlinType|, R|<local>/v|)
                 }
 
-                public final override fun condJump(jumpLabel: R|ERROR CLASS: Symbol not found, for `Label`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|, jumpIfFalse: R|kotlin/Boolean|): R|kotlin/Unit| {
+                public[local] final override fun condJump(jumpLabel: R|ERROR CLASS: Symbol not found, for `Label`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|, jumpIfFalse: R|kotlin/Boolean|): R|kotlin/Unit| {
                     this@R|/anonymous|.R|/anonymous.invokeFunction|(R|<local>/v|)
                     R|<local>/v|.<Unresolved name: visitJumpInsn>#(when () {
                         R|<local>/jumpIfFalse| ->  {

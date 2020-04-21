@@ -5,11 +5,11 @@ FILE: localImplicitBodies.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun sss(): R|kotlin/Int| {
+            public[local] final fun sss(): R|kotlin/Int| {
                 ^sss this@R|/anonymous|.R|/anonymous.abc|()
             }
 
-            public final fun abc(): R|kotlin/Int| {
+            public[local] final fun abc(): R|kotlin/Int| {
                 ^abc Int(1)
             }
 

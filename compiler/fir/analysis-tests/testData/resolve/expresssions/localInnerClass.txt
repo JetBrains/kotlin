@@ -7,7 +7,7 @@ FILE: localInnerClass.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun foo(): R|Foo| {
+            public[local] final fun foo(): R|Foo| {
                 ^foo this@R|/anonymous|.R|/<anonymous>.Derived.Derived|(Int(42))
             }
 

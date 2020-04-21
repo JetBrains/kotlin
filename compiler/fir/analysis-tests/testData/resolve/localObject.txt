@@ -13,7 +13,7 @@ FILE: localObject.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final override fun foo(): R|kotlin/Int| {
+                public[local] final override fun foo(): R|kotlin/Int| {
                     ^foo R|<local>/x|.R|kotlin/Int.plus|(Int(1))
                 }
 
@@ -39,7 +39,7 @@ FILE: localObject.kt
                         super<R|kotlin/Any|>()
                     }
 
-                    public final override fun foo(): R|kotlin/Int| {
+                    public[local] final override fun foo(): R|kotlin/Int| {
                         ^foo this@R|/TestProperty|.R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
                     }
 
@@ -55,7 +55,7 @@ FILE: localObject.kt
                         super<R|kotlin/Any|>()
                     }
 
-                    public final override fun foo(): R|kotlin/Int| {
+                    public[local] final override fun foo(): R|kotlin/Int| {
                         ^foo this@R|/TestProperty|.R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
                     }
 
@@ -70,7 +70,7 @@ FILE: localObject.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final override fun foo(): R|kotlin/Int| {
+                public[local] final override fun foo(): R|kotlin/Int| {
                     ^foo this@R|special/anonymous|.R|/TestProperty.x|.R|kotlin/Int.plus|(Int(1))
                 }
 

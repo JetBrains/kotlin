@@ -9,11 +9,11 @@ FILE: foo.kt
                 private get(): R|kotlin/Boolean|
                 private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
 
-            public final fun bar(): R|kotlin/Boolean| {
+            public[local] final fun bar(): R|kotlin/Boolean| {
                 ^bar this@R|/anonymous|.R|/anonymous.result|.R|kotlin/Boolean.not|()
             }
 
-            public final override fun result(): R|kotlin/Boolean| {
+            public[local] final override fun result(): R|kotlin/Boolean| {
                 ^result this@R|/anonymous|.R|/anonymous.result|
             }
 

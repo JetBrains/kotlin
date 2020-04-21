@@ -9,7 +9,7 @@ FILE: privateObjectLiteral.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun foo(): R|kotlin/Int| {
+            public[local] final fun foo(): R|kotlin/Int| {
                 ^foo Int(42)
             }
 
@@ -25,7 +25,7 @@ FILE: privateObjectLiteral.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun foo(): R|kotlin/Int| {
+            public[local] final fun foo(): R|kotlin/Int| {
                 ^foo Int(13)
             }
 

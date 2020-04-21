@@ -11,7 +11,7 @@ FILE: enumEntryUse.kt
                 super<R|TestEnum|>()
             }
 
-            public final fun foo(): R|kotlin/Unit| {
+            public[local] final fun foo(): R|kotlin/Unit| {
             }
 
         }

@@ -27,7 +27,7 @@ FILE: localScopes.kt
                 super<R|Bar|>()
             }
 
-            public final fun baz(): R|kotlin/Unit| {
+            public[local] final fun baz(): R|kotlin/Unit| {
             }
 
         }

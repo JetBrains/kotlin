@@ -30,7 +30,7 @@ FILE: enums.kt
                 super<R|Planet|>(Double(1.0), Double(2.0))
             }
 
-            public final override fun sayHello(): R|kotlin/Unit| {
+            public[local] final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Hello!!!))
             }
 
@@ -41,7 +41,7 @@ FILE: enums.kt
                 super<R|Planet|>(Double(3.0), Double(4.0))
             }
 
-            public final override fun sayHello(): R|kotlin/Unit| {
+            public[local] final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Ola!!!))
             }
 
@@ -52,7 +52,7 @@ FILE: enums.kt
                 super<R|Planet|>(Double(5.0), Double(6.0))
             }
 
-            public final override fun sayHello(): R|kotlin/Unit| {
+            public[local] final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Privet!!!))
             }
 
