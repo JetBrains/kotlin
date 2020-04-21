@@ -25,7 +25,7 @@ class KotlinCompiledPattern : CompiledPattern() {
     }
 
     companion object {
-        const val TYPED_VAR_PREFIX = "__"
+        const val TYPED_VAR_PREFIX = "_____"
     }
 
 }
