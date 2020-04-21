@@ -100,7 +100,7 @@ fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings
     return gradleSettings.getLinkedProjectsSettings()
 }
 
-class RootsIndex<T : Any> {
+class RootsIndex<T : Any>(val listener: () -> Unit) {
     internal val tree = TreeMap<String, T>()
     var values: Collection<T> = listOf()
         internal set
@@ -114,24 +114,37 @@ class RootsIndex<T : Any> {
         return tree.floorEntry(path).takeIf { path.startsWith(it.key) }?.value
     }
 
-    internal inline fun update(updater: (insert: (prefix: String, value: T) -> Unit) -> Unit) {
+    internal inline fun <R> update(updater: (insert: (prefix: String, value: T?) -> T?) -> R): R {
         synchronized(this) {
-            updater { prefix, value -> tree[prefix] = value }
+            val result = updater { prefix, value ->
+                val moreCommon = tree.floorKey(prefix)
+                check(moreCommon == null || !prefix.startsWith(moreCommon)) {
+                    "Cannot add root `${prefix}`. More common root already added: `$moreCommon`"
+                }
+
+                if (value == null) tree.remove(prefix)
+                else tree.put(prefix, value)
+            }
+
             values = tree.values
+
+            listener()
+
+            return result
         }
     }
 
     @Synchronized
     operator fun set(prefix: String, value: T) {
-        val moreCommon = tree.floorKey(prefix)
-        check(moreCommon == null || !prefix.startsWith(moreCommon)) {
-            "Cannot add root `${prefix}`. More common root already added: `$moreCommon`"
-        }
-
-        tree[prefix] = value
-        values = tree.values
+        update { it(prefix, value) }
     }
 
     @Synchronized
-    fun remove(prefix: String) = tree.remove(prefix)
+    fun remove(prefix: String): T? {
+        update { set ->
+            set(prefix, null)
+        }
+
+        return tree.remove(prefix)
+    }
 }

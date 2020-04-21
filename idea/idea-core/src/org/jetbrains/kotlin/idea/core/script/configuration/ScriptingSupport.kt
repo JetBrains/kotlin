@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
@@ -26,6 +28,10 @@ abstract class ScriptingSupport {
 
         abstract fun getSupport(file: VirtualFile): ScriptingSupport?
 
+        abstract fun updateProjectRoots()
+
+        var scopesListener: (() -> Unit)? = null
+
         companion object {
             val EPN: ExtensionPointName<Provider> =
                 ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupportProvider")
@@ -36,45 +42,13 @@ abstract class ScriptingSupport {
     abstract fun hasCachedConfiguration(file: KtFile): Boolean
     abstract fun getOrLoadConfiguration(virtualFile: VirtualFile, preloadedKtFile: KtFile? = null): ScriptCompilationConfigurationWrapper?
 
+    abstract fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope
+
     abstract val updater: ScriptConfigurationUpdater
 
-    private val classpathRootsLock = ReentrantLock()
+    abstract val firstScriptSdk: Sdk?
 
-    @Volatile
-    private var _classpathRoots: ScriptClassRootsCache? = null
-    val classpathRoots: ScriptClassRootsCache
-        get() {
-            val value1 = _classpathRoots
-            if (value1 != null) return value1
+    abstract fun getScriptSdk(file: VirtualFile): Sdk?
 
-            classpathRootsLock.withLock {
-                val value2 = _classpathRoots
-                if (value2 != null) return value2
-
-                val value3 = recreateRootsCache()
-                value3.saveClassRootsToStorage()
-                _classpathRoots = value3
-                return value3
-            }
-        }
-
-    protected abstract fun recreateRootsCache(): ScriptClassRootsCache
-
-    fun clearClassRootsCaches(project: Project) {
-        debug { "class roots caches cleared" }
-
-        classpathRootsLock.withLock {
-            _classpathRoots = null
-        }
-
-        val kotlinScriptDependenciesClassFinder =
-            Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
-                .single()
-
-        kotlinScriptDependenciesClassFinder.clearCache()
-
-        ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
-    }
+    abstract fun addSearchScopeListener(scopesChanged: () -> Unit)
 }

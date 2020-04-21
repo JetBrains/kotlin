@@ -9,8 +9,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage.Companion.ScriptClassRoots
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
@@ -23,25 +21,22 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
+fun findFile(pathString: String): VirtualFile? {
+    val path = FileSystems.getDefault().getPath(pathString)
+    return VfsUtil.findFile(path, true)
+}
+
 fun GradleScriptingSupport.createRootsCache(): ScriptClassRootsCache? {
     if (configuration.data.models.isEmpty()) return null
 
-    val key = ScriptClassRootsStorage.Companion.Key(buildRoot.path)
     val sdk = ScriptClassRootsCache.getScriptSdk(context.javaHome) ?: return null
 
-    val anyScriptPathString = configuration.data.models.first().file
-    val anyScriptPath = FileSystems.getDefault().getPath(anyScriptPathString)
-    val anyScriptVFile = VfsUtil.findFile(anyScriptPath, true) ?: return null
-
-    val definition = anyScriptVFile.findScriptDefinition(project) ?: return null
-
-    val scriptRoots = ScriptClassRoots(
-        configuration.classFilePath,
-        configuration.sourcePath,
-        setOf(sdk)
-    )
+    val anyScriptPath = configuration.data.models.first().file
+    val definition = findFile(anyScriptPath)?.findScriptDefinition(project)
 
     fun KotlinDslScriptModel.toScriptConfiguration(): ScriptCompilationConfigurationWrapper? {
+        if (definition == null) return null
+
         val scriptFile = File(file)
         val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
 
@@ -58,13 +53,19 @@ fun GradleScriptingSupport.createRootsCache(): ScriptClassRootsCache? {
         )
     }
 
-    return object : ScriptClassRootsCache(project, key, scriptRoots) {
+    return object : ScriptClassRootsCache() {
         override fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? =
             configuration.scriptModel(file)?.toScriptConfiguration()
 
         override fun getScriptSdk(file: VirtualFile) = sdk
 
         override val firstScriptSdk: Sdk? = sdk
+
+        override val allDependenciesClassFiles: List<VirtualFile> =
+            configuration.classFilePath.mapNotNull { findFile(it) }
+
+        override val allDependenciesSources: List<VirtualFile> =
+            configuration.sourcePath.mapNotNull { findFile(it) }
 
         // called to ensure that configuration for file is loaded
         // as we cannot force loading, we always return true

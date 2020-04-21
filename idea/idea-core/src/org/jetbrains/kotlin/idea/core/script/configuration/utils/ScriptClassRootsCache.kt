@@ -20,11 +20,7 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrap
 import java.io.File
 import java.nio.file.FileSystems
 
-abstract class ScriptClassRootsCache(
-    private val project: Project,
-    private val rootsCacheKey: ScriptClassRootsStorage.Companion.Key,
-    private val roots: ScriptClassRootsStorage.Companion.ScriptClassRoots
-) {
+abstract class ScriptClassRootsCache {
     protected abstract fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper?
 
     abstract val firstScriptSdk: Sdk?
@@ -38,13 +34,9 @@ abstract class ScriptClassRootsCache(
         val classFilesScope: GlobalSearchScope
     )
 
-    val allDependenciesClassFiles by lazy {
-        ScriptClassRootsStorage.getInstance(project).loadClasspathRoots(rootsCacheKey)
-    }
+    abstract val allDependenciesClassFiles: List<VirtualFile>
 
-    val allDependenciesSources by lazy {
-        ScriptClassRootsStorage.getInstance(project).loadSourcesRoots(rootsCacheKey)
-    }
+    abstract val allDependenciesSources: List<VirtualFile>
 
     val allDependenciesClassFilesScope by lazy {
         NonClasspathDirectoriesScope.compose(allDependenciesClassFiles)
@@ -85,17 +77,6 @@ abstract class ScriptClassRootsCache(
         return scriptsDependenciesCache[file]?.scriptConfiguration
     }
 
-    fun hasNotCachedRoots(roots: ScriptClassRootsStorage.Companion.ScriptClassRoots): Boolean {
-        return !ScriptClassRootsStorage.getInstance(project).containsAll(rootsCacheKey, roots)
-    }
-
-    fun saveClassRootsToStorage() {
-        val rootsStorage = ScriptClassRootsStorage.getInstance(project)
-        if (roots.classpathFiles.isNotEmpty() || roots.sourcesFiles.isNotEmpty() || roots.sdks.isNotEmpty()) {
-            rootsStorage.save(rootsCacheKey, roots)
-        }
-    }
-
     companion object {
         fun toStringValues(prop: Collection<File>): Set<String> {
             return prop.mapNotNull { it.absolutePath }.toSet()
@@ -120,11 +101,7 @@ abstract class ScriptClassRootsCache(
             return ModuleManager.getInstance(project).modules.any { ModuleRootManager.getInstance(it).sdk == this }
         }
 
-        fun empty(project: Project) = object : ScriptClassRootsCache(
-            project,
-            ScriptClassRootsStorage.Companion.Key("EMPTY"),
-            ScriptClassRootsStorage.EMPTY
-        ) {
+        fun empty(project: Project) = object : ScriptClassRootsCache() {
             override fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = null
 
             override val firstScriptSdk: Sdk? = null
@@ -132,6 +109,12 @@ abstract class ScriptClassRootsCache(
             override fun getScriptSdk(file: VirtualFile) = null
 
             override fun contains(file: VirtualFile): Boolean = false
+
+            override val allDependenciesClassFiles: List<VirtualFile>
+                get() = listOf()
+
+            override val allDependenciesSources: List<VirtualFile>
+                get() = listOf()
         }
     }
 }

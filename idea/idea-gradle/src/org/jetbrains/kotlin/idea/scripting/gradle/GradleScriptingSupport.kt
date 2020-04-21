@@ -54,8 +54,6 @@ class GradleScriptingSupport(
         rootsIndexer.transaction {
             rootsIndexer.markNewRoot()
 
-            clearClassRootsCaches(project)
-
             ScriptingSupportHelper.updateHighlighting(project) {
                 configuration.scriptModel(it) != null
             }

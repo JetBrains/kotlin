@@ -9,8 +9,10 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotifications
@@ -420,11 +422,49 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         cache.clear()
     }
 
-    override fun recreateRootsCache(): ScriptClassRootsCache {
+    fun recreateRootsCache(): ScriptClassRootsCache {
         return DefaultClassRootsCache(
             project,
             cache.allApplied()
         )
+    }
+
+    private val classpathRootsLock = ReentrantLock()
+
+    @Volatile
+    private var _classpathRoots: ScriptClassRootsCache? = null
+    val classpathRoots: ScriptClassRootsCache
+        get() {
+            val value1 = _classpathRoots
+            if (value1 != null) return value1
+
+            classpathRootsLock.withLock {
+                val value2 = _classpathRoots
+                if (value2 != null) return value2
+
+                val value3 = recreateRootsCache()
+                value3.saveClassRootsToStorage()
+                _classpathRoots = value3
+                return value3
+            }
+        }
+
+    fun clearClassRootsCaches(project: Project) {
+        debug { "class roots caches cleared" }
+
+        classpathRootsLock.withLock {
+            _classpathRoots = null
+        }
+
+        val kotlinScriptDependenciesClassFinder =
+            Extensions.getArea(project)
+                .getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
+                .single()
+
+        kotlinScriptDependenciesClassFinder.clearCache()
+
+        ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
     }
 }
 

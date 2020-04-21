@@ -35,7 +35,7 @@ import java.nio.file.Paths
 class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Provider() {
     private val rootsIndexer = ScriptClassRootsIndexer(project)
 
-    val roots = RootsIndex<GradleScriptingSupport>()
+    val roots = RootsIndex<GradleScriptingSupport>(listener = { scopesListener?.invoke() })
     override val all get() = roots.values
 
     private val VirtualFile.localPath
@@ -45,7 +45,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
 
     override fun getSupport(file: VirtualFile): ScriptingSupport? =
         when {
-            isGradleKotlinScript(file) -> findRoot(file) ?: unlinkedFilesSupport
+            isGradleKotlinScript(file) -> findRoot(file)
             else -> null
         }
 
@@ -98,6 +98,16 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         roots[newSupport.buildRoot.localPath] = newSupport
     }
 
+    override fun updateProjectRoots() {
+        roots.update { set ->
+            roots.values.forEach { old ->
+                val buildRoot = old.buildRoot.path
+                val support = createSupport(buildRoot) { old.configuration.data }
+                set(buildRoot, support)
+            }
+        }
+    }
+
     private fun createSupport(
         externalProjectPath: String,
         dataProvider: (buildRoot: VirtualFile) -> ConfigurationData?
@@ -131,31 +141,6 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         val definition = anyScript.findScriptDefinition(project) ?: return null
         return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()
             ?.templateClasspath?.map { it.path }
-    }
-
-    private val unlinkedFilesSupport = object : ScriptingSupport() {
-        override fun clearCaches() {
-        }
-
-        override fun hasCachedConfiguration(file: KtFile): Boolean = false
-
-        override fun getOrLoadConfiguration(
-            virtualFile: VirtualFile,
-            preloadedKtFile: KtFile?
-        ): ScriptCompilationConfigurationWrapper? = null
-
-        override val updater: ScriptConfigurationUpdater
-            get() = object : ScriptConfigurationUpdater {
-                override fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
-                }
-
-                override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean = false
-
-                override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
-                }
-            }
-
-        override fun recreateRootsCache(): ScriptClassRootsCache = ScriptClassRootsCache.empty(project)
     }
 
     companion object {

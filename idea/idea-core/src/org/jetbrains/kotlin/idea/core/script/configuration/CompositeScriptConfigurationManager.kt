@@ -73,55 +73,40 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         val connection = project.messageBus.connect(project)
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
-                managers.forEach {
-                    it.clearClassRootsCaches(project)
+                default.clearClassRootsCaches(project)
+                providers.forEach {
+                    it.updateProjectRoots()
                 }
             }
         })
     }
 
-    /**
-     * Returns script classpath roots
-     * Loads script configuration if classpath roots don't contain [file] yet
-     */
-    private fun getActualClasspathRoots(file: VirtualFile): ScriptClassRootsCache {
-        val manager = getRelatedManager(file)
-
-        val classpathRoots = manager.classpathRoots
-        if (classpathRoots.contains(file)) {
-            return classpathRoots
-        }
-
-        getOrLoadConfiguration(file)
-
-        return manager.classpathRoots
-    }
-
     override fun getScriptSdk(file: VirtualFile): Sdk? =
-        getActualClasspathRoots(file).getScriptSdk(file)
+        getRelatedManager(file).getScriptSdk(file)
 
     override fun getFirstScriptsSdk(): Sdk? {
         managers.forEach {
-            it.classpathRoots.firstScriptSdk?.let { sdk -> return sdk }
+            val sdk = it.firstScriptSdk
+            if (sdk != null) return sdk
         }
 
         return null
     }
 
     override fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
-        getActualClasspathRoots(file).getScriptDependenciesClassFilesScope(file)
+        getRelatedManager(file).getScriptDependenciesClassFilesScope(file)
 
     override fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope =
-        GlobalSearchScope.union(managers.map { it.classpathRoots.allDependenciesClassFilesScope })
+        GlobalSearchScope.union(managers.map { it.allDependenciesClassFilesScope })
 
     override fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope =
-        GlobalSearchScope.union(managers.map { it.classpathRoots.allDependenciesSourcesScope })
+        GlobalSearchScope.union(managers.map { it.allDependenciesSourcesScope })
 
     override fun getAllScriptsDependenciesClassFiles(): List<VirtualFile> =
-        managers.flatMap { it.classpathRoots.allDependenciesClassFiles }
+        managers.flatMap { it.allDependenciesClassFiles }
 
     override fun getAllScriptDependenciesSources(): List<VirtualFile> =
-        managers.flatMap { it.classpathRoots.allDependenciesSources }
+        managers.flatMap { it.allDependenciesSources }
 
     override fun forceReloadConfiguration(file: VirtualFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper? {
         val ktFile = project.getKtFile(file, null) ?: return null
