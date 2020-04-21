@@ -3,6 +3,7 @@
 package com.intellij.conversion;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
@@ -25,7 +26,7 @@ public abstract class ConverterProvider {
     return myId;
   }
 
-  @Nls
+  @NlsContexts.DialogMessage
   @NotNull
   public abstract String getConversionDescription();
 
