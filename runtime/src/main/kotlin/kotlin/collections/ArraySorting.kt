@@ -11,7 +11,7 @@ private fun <T: Comparable<T>> mergeSort(array: Array<T>, start: Int, endInclusi
     val buffer = arrayOfNulls<Any?>(array.size) as Array<T>
     val result = mergeSort(array, buffer, start, endInclusive)
     if (result !== array) {
-        result.forEachIndexed { i, v -> array[i] = v }
+        for (i in start..endInclusive) array[i] = result[i]
     }
 }
 
@@ -64,7 +64,7 @@ private fun <T> mergeSort(array: Array<T>, start: Int, endInclusive: Int, compar
     val buffer = arrayOfNulls<Any?>(array.size) as Array<T>
     val result = mergeSort(array, buffer, start, endInclusive, comparator)
     if (result !== array) {
-        result.forEachIndexed { i, v -> array[i] = v }
+        for (i in start..endInclusive) array[i] = result[i]
     }
 }
 
@@ -364,10 +364,11 @@ private fun quickSort(
  * Sorts the subarray specified by [fromIndex] (inclusive) and [toIndex] (exclusive) parameters
  * using the merge sort algorithm with the given [comparator].
  */
-internal fun <T> sortArrayWith(
-        array: Array<out T>, fromIndex: Int = 0, toIndex: Int = array.size, comparator: Comparator<T>) {
-    @Suppress("UNCHECKED_CAST")
-    mergeSort(array as Array<T>, fromIndex, toIndex - 1, comparator)
+internal fun <T> sortArrayWith(array: Array<out T>, fromIndex: Int, toIndex: Int, comparator: Comparator<T>) {
+    if (fromIndex < toIndex - 1) {
+        @Suppress("UNCHECKED_CAST")
+        mergeSort(array as Array<T>, fromIndex, toIndex - 1, comparator)
+    }
 }
 
 /**
@@ -375,8 +376,10 @@ internal fun <T> sortArrayWith(
  * [toIndex] (exclusive) parameters using the merge sort algorithm.
  */
 internal fun <T: Comparable<T>> sortArray(array: Array<out T>, fromIndex: Int, toIndex: Int) {
-    @Suppress("UNCHECKED_CAST")
-    mergeSort(array as Array<T>, fromIndex, toIndex - 1)
+    if (fromIndex < toIndex - 1) {
+        @Suppress("UNCHECKED_CAST")
+        mergeSort(array as Array<T>, fromIndex, toIndex - 1)
+    }
 }
 
 /**
