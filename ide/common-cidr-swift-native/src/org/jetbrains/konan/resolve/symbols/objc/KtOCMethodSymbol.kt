@@ -20,7 +20,6 @@ import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
-import java.util.*
 
 class KtOCMethodSymbol : KtOCMemberSymbol, OCMethodSymbol {
     private lateinit var selectors: List<SelectorPartSymbol>
@@ -73,8 +72,7 @@ class KtOCMethodSymbol : KtOCMemberSymbol, OCMethodSymbol {
 
     override fun getSelectors(): List<SelectorPartSymbol> = selectors
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getParameterSymbols(): List<OCDeclaratorSymbol> = Collections.unmodifiableList(selectors) as List<OCDeclaratorSymbol>
+    override fun getParameterSymbols(): List<OCDeclaratorSymbol> = selectors.mapNotNull { it.parameter }
 
     override fun getAssociatedSymbol(project: Project): OCMethodSymbol? = null
 
