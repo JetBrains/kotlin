@@ -70,6 +70,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             runTest("idea/testData/slicer/inflow/compositeAssignments.kt");
         }
 
+        @TestMetadata("dataClassCopy.kt")
+        public void testDataClassCopy() throws Exception {
+            runTest("idea/testData/slicer/inflow/dataClassCopy.kt");
+        }
+
         @TestMetadata("defaultGetterFieldInSetter.kt")
         public void testDefaultGetterFieldInSetter() throws Exception {
             runTest("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
@@ -481,6 +486,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         @TestMetadata("cast.kt")
         public void testCast() throws Exception {
             runTest("idea/testData/slicer/outflow/cast.kt");
+        }
+
+        @TestMetadata("dataClassCopy.kt")
+        public void testDataClassCopy() throws Exception {
+            runTest("idea/testData/slicer/outflow/dataClassCopy.kt");
         }
 
         @TestMetadata("defaultExplicitPrimaryConstructorCalls.kt")
