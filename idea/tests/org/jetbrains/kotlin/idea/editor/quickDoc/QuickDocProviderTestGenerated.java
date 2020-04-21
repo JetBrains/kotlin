@@ -98,6 +98,11 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         runTest("idea/testData/editor/quickDoc/IndentedCodeBlock.kt");
     }
 
+    @TestMetadata("JavaClassConstructorUsedInKotlin.kt")
+    public void testJavaClassConstructorUsedInKotlin() throws Exception {
+        runTest("idea/testData/editor/quickDoc/JavaClassConstructorUsedInKotlin.kt");
+    }
+
     @TestMetadata("JavaClassUsedInKotlin.kt")
     public void testJavaClassUsedInKotlin() throws Exception {
         runTest("idea/testData/editor/quickDoc/JavaClassUsedInKotlin.kt");
@@ -116,6 +121,11 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("JavaMethodUsedInKotlin.kt")
     public void testJavaMethodUsedInKotlin() throws Exception {
         runTest("idea/testData/editor/quickDoc/JavaMethodUsedInKotlin.kt");
+    }
+
+    @TestMetadata("JavaMethodUsedInKotlinInParen.kt")
+    public void testJavaMethodUsedInKotlinInParen() throws Exception {
+        runTest("idea/testData/editor/quickDoc/JavaMethodUsedInKotlinInParen.kt");
     }
 
     @TestMetadata("KotlinClassUsedFromJava.java")
@@ -201,6 +211,11 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("OnMethodUsage.kt")
     public void testOnMethodUsage() throws Exception {
         runTest("idea/testData/editor/quickDoc/OnMethodUsage.kt");
+    }
+
+    @TestMetadata("OnMethodUsageInParen.kt")
+    public void testOnMethodUsageInParen() throws Exception {
+        runTest("idea/testData/editor/quickDoc/OnMethodUsageInParen.kt");
     }
 
     @TestMetadata("OnMethodUsageMultiline.kt")
