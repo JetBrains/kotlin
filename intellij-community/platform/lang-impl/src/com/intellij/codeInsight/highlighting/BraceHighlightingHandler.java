@@ -331,15 +331,13 @@ public class BraceHighlightingHandler {
   }
 
   private void highlightBrace(@NotNull TextRange braceRange, boolean matched) {
+    TextAttributesKey attributesKey = matched ? CodeInsightColors.MATCHED_BRACE_ATTRIBUTES : CodeInsightColors.UNMATCHED_BRACE_ATTRIBUTES;
     EditorColorsScheme scheme = myEditor.getColorsScheme();
-    final TextAttributes attributes =
-        matched ? scheme.getAttributes(CodeInsightColors.MATCHED_BRACE_ATTRIBUTES)
-        : scheme.getAttributes(CodeInsightColors.UNMATCHED_BRACE_ATTRIBUTES);
-
+    final TextAttributes attributes = scheme.getAttributes(attributesKey);
 
     RangeHighlighter rbraceHighlighter =
-        myEditor.getMarkupModel().addRangeHighlighter(
-          braceRange.getStartOffset(), braceRange.getEndOffset(), LAYER, attributes, HighlighterTargetArea.EXACT_RANGE);
+        myEditor.getMarkupModel().addRangeHighlighter(braceRange.getStartOffset(), braceRange.getEndOffset(),
+                                                      LAYER, attributes, attributesKey, HighlighterTargetArea.EXACT_RANGE);
     rbraceHighlighter.setGreedyToLeft(false);
     rbraceHighlighter.setGreedyToRight(false);
     registerHighlighter(rbraceHighlighter);

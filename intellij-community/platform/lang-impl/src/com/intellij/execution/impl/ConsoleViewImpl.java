@@ -34,6 +34,7 @@ import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
 import com.intellij.openapi.editor.actions.ScrollToTheEndToolbarAction;
 import com.intellij.openapi.editor.actions.ToggleUseSoftWrapsToolbarAction;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -814,10 +815,11 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
                                            int endOffset) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     TextAttributes attributes = contentType.getAttributes();
+    TextAttributesKey attributesKey = contentType.getAttributesKey();
     MarkupModel model = DocumentMarkupModel.forDocument(myEditor.getDocument(), getProject(), true);
     int layer = HighlighterLayer.SYNTAX + 1; // make custom filters able to draw their text attributes over the default ones
     RangeHighlighter tokenMarker = model.addRangeHighlighter(startOffset, endOffset, layer,
-                                                             attributes, HighlighterTargetArea.EXACT_RANGE);
+                                                             attributes, attributesKey, HighlighterTargetArea.EXACT_RANGE);
     tokenMarker.putUserData(CONTENT_TYPE, contentType);
   }
 
