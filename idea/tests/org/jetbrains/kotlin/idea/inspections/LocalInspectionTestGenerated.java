@@ -9727,6 +9727,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOf.kt");
         }
 
+        @TestMetadata("intArrayOfWithoutArguments.kt")
+        public void testIntArrayOfWithoutArguments() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments.kt");
+        }
+
+        @TestMetadata("intArrayOfWithoutArguments2.kt")
+        public void testIntArrayOfWithoutArguments2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments2.kt");
+        }
+
+        @TestMetadata("intArrayOfWithoutArguments3.kt")
+        public void testIntArrayOfWithoutArguments3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments3.kt");
+        }
+
         @TestMetadata("literal.kt")
         public void testLiteral() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/literal.kt");

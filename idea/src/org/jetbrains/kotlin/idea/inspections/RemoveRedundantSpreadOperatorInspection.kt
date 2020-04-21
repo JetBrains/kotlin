@@ -13,11 +13,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.isArrayOfMethod
+import org.jetbrains.kotlin.idea.refactoring.replaceWithCopyWithResolveCheck
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -31,6 +36,18 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
                 when (argumentExpression) {
                     is KtCallExpression -> {
                         if (!argumentExpression.isArrayOfMethod()) return
+                        if (argumentExpression.valueArguments.isEmpty()) {
+                            val call = argument.getStrictParentOfType<KtCallExpression>()
+                            if (call != null) {
+                                val bindingContext = call.analyze(BodyResolveMode.PARTIAL)
+                                if (call.replaceWithCopyWithResolveCheck(
+                                        resolveStrategy = { expr, context -> expr.getResolvedCall(context)?.resultingDescriptor },
+                                        context = bindingContext,
+                                        preHook = { valueArgumentList?.removeArgument(call.valueArguments.indexOfFirst { it == argument }) }
+                                    ) == null
+                                ) return
+                            }
+                        }
                         argumentExpression.calleeExpression!!.endOffset - argumentOffset
                     }
                     is KtCollectionLiteralExpression -> startOffset + 1
