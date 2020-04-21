@@ -33,6 +33,7 @@ object CopyTBXReferenceAction {
                                PYCHARM_PREFIX to "pycharm",
                                PYCHARM_CE_PREFIX to "pycharm",
                                PYCHARM_EDU_PREFIX to "pycharm",
+                               PYCHARM_DS_PREFIX to "pycharm",
                                PHP_PREFIX to "php-storm",
                                RUBY_PREFIX to "rubymine",
                                WEB_PREFIX to "web-storm",
