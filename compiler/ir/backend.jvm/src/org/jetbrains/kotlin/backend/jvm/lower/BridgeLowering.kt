@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
@@ -341,14 +342,10 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             returnType = irFunction.returnType
             isFakeOverride = false
         }.apply {
-            // If the function is a property accessor, link in the new function as the new accessor for the property.
-            correspondingPropertySymbol = irFunction.correspondingPropertySymbol?.also {
-                if (irFunction.isGetter) {
-                    it.owner.getter = this
-                } else {
-                    it.owner.setter = this
-                }
-            }
+            // If the function is a property accessor, we need to mark the abstract stub as a property accessor as well.
+            // However, we cannot link in the new function as the new accessor for the property, since there might still
+            // be references to the original fake override stub.
+            copyCorrespondingPropertyFrom(irFunction)
             copyParametersWithErasure(this@addAbstractMethodStub, irFunction, needsArgumentBoxing)
         }
 
