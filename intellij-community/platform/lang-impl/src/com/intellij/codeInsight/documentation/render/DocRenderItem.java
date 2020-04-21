@@ -244,31 +244,10 @@ public class DocRenderItem {
     updateIcon();
   }
 
-  private TextRange calcFoldRange() {
-    Document document = highlighter.getDocument();
-    int startLine = document.getLineNumber(highlighter.getStartOffset());
-    int endLine = document.getLineNumber(highlighter.getEndOffset());
-    int endOffset = document.getLineEndOffset(endLine);
-    if (startLine == 0) {
-      return new TextRange(0, endLine < document.getLineCount() - 1 ? document.getLineStartOffset(endLine + 1) : endOffset);
-    }
-    else {
-      return new TextRange(document.getLineEndOffset(startLine - 1), endOffset);
-    }
-  }
-
-  private int calcInlayOffset() {
-    Document document = highlighter.getDocument();
-    int endOffset = highlighter.getEndOffset();
-    int endLine = document.getLineNumber(endOffset);
-    return endLine < document.getLineCount() - 1 ? document.getLineStartOffset(endLine + 1) : endOffset;
-  }
-
   private boolean isValid() {
-    if (!highlighter.isValid() || highlighter.getStartOffset() >= highlighter.getEndOffset()) return false;
-    return foldRegion == null && inlay == null ||
-           foldRegion != null && foldRegion.isValid() && TextRange.areSegmentsEqual(foldRegion, calcFoldRange()) &&
-           inlay != null && inlay.isValid() && inlay.getOffset() == calcInlayOffset();
+    return highlighter.isValid() &&
+           highlighter.getStartOffset() < highlighter.getEndOffset() &&
+           new RelevantOffsets(highlighter).match(foldRegion, inlay);
   }
 
   private void cleanup() {
@@ -300,13 +279,13 @@ public class DocRenderItem {
         generateHtmlInBackgroundAndToggle();
         return false;
       }
-      int inlayOffset = calcInlayOffset();
-      inlay = editor.getInlayModel().addBlockElement(inlayOffset, false, true, BlockInlayPriority.DOC_RENDER, new DocRenderer(this));
+      RelevantOffsets offsets = new RelevantOffsets(highlighter);
+      inlay = editor.getInlayModel().addBlockElement(offsets.inlayOffset, false, true, BlockInlayPriority.DOC_RENDER,
+                                                     new DocRenderer(this));
       if (inlay != null) {
-        TextRange foldRange = calcFoldRange();
         Runnable foldingTask = () -> {
           // if this fails (setting 'foldRegion' to null), 'cleanup' method will fix the mess
-          foldRegion = foldingModel.createFoldRegion(foldRange.getStartOffset(), foldRange.getEndOffset(), "", null, true);
+          foldRegion = foldingModel.createFoldRegion(offsets.foldStartOffset, offsets.foldEndOffset, "", null, true);
           if (foldRegion != null) foldRegion.putUserData(OUR_ITEM, this);
         };
         if (foldingTasks == null) {
@@ -417,6 +396,37 @@ public class DocRenderItem {
   private void repaintGutter(int startY) {
     JComponent gutter = (JComponent)editor.getGutter();
     gutter.repaint(0, startY, gutter.getWidth(), startY + editor.getLineHeight());
+  }
+
+  private static class RelevantOffsets {
+    private final int foldStartOffset;
+    private final int foldEndOffset;
+    private final int inlayOffset;
+
+    private RelevantOffsets(@NotNull RangeHighlighter highlighter) {
+      Document document = highlighter.getDocument();
+      int startLine = document.getLineNumber(highlighter.getStartOffset());
+      int endLine = document.getLineNumber(highlighter.getEndOffset());
+      int endOffset = document.getLineEndOffset(endLine);
+      int nextLineOffset = endLine < document.getLineCount() - 1 ? document.getLineStartOffset(endLine + 1) : endOffset;
+      if (startLine == 0) {
+        inlayOffset = 0;
+        foldStartOffset = 0;
+        foldEndOffset = nextLineOffset;
+      }
+      else {
+        inlayOffset = nextLineOffset;
+        foldStartOffset = document.getLineEndOffset(startLine - 1);
+        foldEndOffset = endOffset;
+      }
+    }
+
+    private boolean match(FoldRegion foldRegion, Inlay inlay) {
+      return foldRegion == null && inlay == null ||
+             foldRegion != null && foldRegion.isValid() &&
+             foldRegion.getStartOffset() == foldStartOffset && foldRegion.getEndOffset() == foldEndOffset &&
+             inlay != null && inlay.isValid() && inlay.getOffset() == inlayOffset;
+    }
   }
 
   private static class MyCaretListener implements CaretListener {
