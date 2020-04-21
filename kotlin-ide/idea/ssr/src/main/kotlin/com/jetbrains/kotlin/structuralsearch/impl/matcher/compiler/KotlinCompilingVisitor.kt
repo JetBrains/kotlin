@@ -1,12 +1,20 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
 import com.intellij.psi.PsiElement
+import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
+import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
+import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
+import org.jetbrains.kotlin.nj2k.postProcessing.resolve
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
 
@@ -25,8 +33,22 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer
 
     override fun visitElement(element: PsiElement) {
-        myCompilingVisitor.handle(element)
         super.visitElement(element)
+        myCompilingVisitor.handle(element)
     }
 
+    override fun visitReferenceExpression(reference: KtReferenceExpression) {
+        visitElement(reference)
+        super.visitReferenceExpression(reference)
+    }
+
+    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+        visitElement(expression)
+        val pattern = myCompilingVisitor.context.pattern
+        val handler = pattern.getHandler(expression)
+
+        if (handler is SubstitutionHandler) {
+            handler.setFilter { it is KtExpression }
+        }
+    }
 }

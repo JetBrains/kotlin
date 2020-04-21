@@ -1,6 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
+import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.psi.*
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -48,22 +49,37 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.element.text == expression.text
     }
 
-    private inline fun <reified T : KtSimpleNameExpression> matchSimpleNameReferencedName(patternElement: T, treeElement: KtReferenceExpression) {
-        myMatchingVisitor.result =
-            treeElement is T && patternElement.getReferencedName() == treeElement.getReferencedName()
-    }
-
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-        val other = getTreeElement<KtSimpleNameExpression>() ?: return
-        when (expression) {
-            is KtNameReferenceExpression -> matchSimpleNameReferencedName(expression, other)
-            is KtLabelReferenceExpression -> matchSimpleNameReferencedName(expression, other)
-            is KtOperationReferenceExpression -> matchSimpleNameReferencedName(expression, other)
-            is KtEnumEntrySuperclassReferenceExpression -> matchSimpleNameReferencedName(expression, other)
+        val context = myMatchingVisitor.matchContext
+        val pattern = context.pattern
+        val referencedNameElement = expression.getReferencedNameElement()
+
+        var handler = pattern.getHandlerSimple(referencedNameElement)
+        if (handler == null) {
+            handler = pattern.getHandlerSimple(expression)
+        }
+
+        val other = myMatchingVisitor.element
+        if (handler is SubstitutionHandler) {
+            if (handler.isSubtype || handler.isStrictSubtype) {
+                // TODO
+            } else {
+                if (myMatchingVisitor.setResult(handler.validate(other, context))) {
+                    handler.addResult(other, context)
+                }
+            }
+        } else {
+            if (other is KtSimpleNameExpression) {
+                myMatchingVisitor.result =
+                    myMatchingVisitor.matchText(referencedNameElement.text, other.getReferencedNameElement().text)
+            }
         }
     }
 
-    private inline fun <reified T : KtExpressionWithLabel> matchExpressionWithLabel(patternElement: T, treeElement: KtExpressionWithLabel) {
+    private inline fun <reified T : KtExpressionWithLabel> matchExpressionWithLabel(
+        patternElement: T,
+        treeElement: KtExpressionWithLabel
+    ) {
         myMatchingVisitor.result =
             treeElement is T && myMatchingVisitor.match(patternElement.getTargetLabel(), treeElement.getTargetLabel())
     }
@@ -90,6 +106,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElement<KtTypeReference>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference.typeElement, other.typeElement)
+    }
+
+    override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+        val other = getTreeElement<KtDotQualifiedExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+                && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
+    }
+
+    override fun visitCallExpression(expression: KtCallExpression) {
+        val other = getTreeElement<KtCallExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
 }
