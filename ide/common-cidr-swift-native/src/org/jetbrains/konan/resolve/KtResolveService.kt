@@ -14,10 +14,7 @@ import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanConsumer
 import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
@@ -25,6 +22,14 @@ fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
     if (containingFile.isCompiled) return emptyList()
 
     val offset = textOffset // we have to use same offset as in `org.jetbrains.konan.resolve.symbols.KtSymbolUtilKt.getOffset`
+    if (kind == SwiftLanguageKind && this is KtClassOrObject) {
+        // In swift, nested classes more than 2 levels deep are all children of the topmost class
+        var topParent: KtClassOrObject? = containingClassOrObject
+        while (true) {
+            topParent = topParent?.containingClassOrObject ?: break
+        }
+        topParent?.findMemberSymbols(offset, kind)?.let { return it }
+    }
     if (kind == SwiftLanguageKind || this !is KtClassOrObject || this is KtEnumEntry) {
         containingClassOrObject?.findMemberSymbols(offset, kind)?.let { return it }
     }
