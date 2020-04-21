@@ -4,4 +4,10 @@
       <implementation-class>org.jetbrains.kotlin.idea.maven.MavenImportListener</implementation-class>
     </component>
   </project-components>
+
+  <module-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.maven.KotlinImporterComponent</implementation-class>
+    </component>
+  </module-components>
 </idea-plugin>

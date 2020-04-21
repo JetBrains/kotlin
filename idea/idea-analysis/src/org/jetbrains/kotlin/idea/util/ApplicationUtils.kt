@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.util.application
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.Nls
 
@@ -54,5 +55,5 @@ inline fun invokeLater(crossinline action: () -> Unit) =
 
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
 
-inline fun <reified T : Any> Project.getServiceSafe(): T =
+inline fun <reified T : Any> ComponentManager.getServiceSafe(): T =
     this.getService(T::class.java) ?: error("Unable to locate service ${T::class.java.name}")

@@ -3036,7 +3036,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     private fun assertImporterStatePresent() {
-        assertNotNull("Kotlin importer component is not present", myTestFixture.module.getComponent(KotlinImporterComponent::class.java))
+        assertNotNull("Kotlin importer component is not present", myTestFixture.module.kotlinImporterComponent)
     }
 
     private fun facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
