@@ -3,7 +3,6 @@ package com.jetbrains.kotlin.structuralsearch.impl.matcher
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import org.jetbrains.kotlin.psi.*
 
-
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
 
     /**
@@ -31,6 +30,18 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             myMatchingVisitor.result = myMatchingVisitor.match(expression.left, other.left)
                     && myMatchingVisitor.match(expression.right, other.right)
         }
+    }
+
+    override fun visitPrefixExpression(expression: KtPrefixExpression) {
+        val other = getTreeElement<KtPrefixExpression>() ?: return
+        myMatchingVisitor.result = expression.operationToken == other.operationToken
+                && myMatchingVisitor.match(expression.lastChild, other.lastChild) // check operand
+    }
+
+    override fun visitPostfixExpression(expression: KtPostfixExpression) {
+        val other = getTreeElement<KtPostfixExpression>() ?: return
+        myMatchingVisitor.result = expression.operationToken == other.operationToken
+                && myMatchingVisitor.match(expression.firstChild, other.firstChild) // check operand
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression) {
