@@ -64,7 +64,7 @@ public class TargetPlatformDetector {
         final ScriptDefinition scriptDefinition =
                 ReadAction.compute(() -> file.isScript() ? DefinitionsKt.findScriptDefinition(file) : null);
         if (scriptDefinition != null) {
-            return getPlatform4Script(file, scriptDefinition);
+            return getPlatform4Script(file.getProject(), file.getOriginalFile().getVirtualFile(), scriptDefinition);
         }
 
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
@@ -84,16 +84,13 @@ public class TargetPlatformDetector {
     }
 
     @NotNull
-    public static TargetPlatform getPlatform4Script(@NotNull Project project, @NotNull ScriptDefinition scriptDefinition) {
+    public static TargetPlatform getPlatform4Script(
+            @NotNull Project project,
+            @NotNull VirtualFile file,
+            @NotNull ScriptDefinition scriptDefinition
+    ) {
         TargetPlatformVersion targetPlatformVersion =
-                IDELanguageSettingsProviderKt.getTargetPlatformVersionForScripts(project, scriptDefinition);
-        return getPlatform4ScriptImpl(targetPlatformVersion, scriptDefinition);
-    }
-
-    @NotNull
-    public static TargetPlatform getPlatform4Script(@NotNull KtFile file, @NotNull ScriptDefinition scriptDefinition) {
-        TargetPlatformVersion targetPlatformVersion =
-                IDELanguageSettingsProviderKt.getTargetPlatformVersionForScript(file, scriptDefinition);
+                IDELanguageSettingsProviderKt.getTargetPlatformVersionForScript(project, file, scriptDefinition);
         return getPlatform4ScriptImpl(targetPlatformVersion, scriptDefinition);
     }
 

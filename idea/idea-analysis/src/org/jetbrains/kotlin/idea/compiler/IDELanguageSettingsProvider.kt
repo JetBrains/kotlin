@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.subplatformsOfType
@@ -58,10 +60,20 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             is LibraryInfo -> project.getLanguageVersionSettings(
                 jsr305State = computeJsr305State(project), isReleaseCoroutines = isReleaseCoroutines
             )
-            is ScriptModuleInfo ->
-                getLanguageSettingsForScripts(project, null, moduleInfo.scriptDefinition).languageVersionSettings
+            is ScriptModuleInfo -> {
+                getLanguageSettingsForScripts(
+                    project,
+                    moduleInfo.scriptFile,
+                    moduleInfo.scriptDefinition
+                ).languageVersionSettings
+            }
+
             is ScriptDependenciesInfo.ForFile ->
-                getLanguageSettingsForScripts(project, null, moduleInfo.scriptDefinition).languageVersionSettings
+                getLanguageSettingsForScripts(
+                    project,
+                    moduleInfo.scriptFile,
+                    moduleInfo.scriptDefinition
+                ).languageVersionSettings
             is PlatformModuleInfo -> moduleInfo.platformModule.module.languageVersionSettings
             else -> project.getLanguageVersionSettings()
         }
@@ -87,10 +99,8 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             is ModuleSourceInfo ->
                 moduleInfo.module.platform?.subplatformsOfType<JdkPlatform>()?.firstOrNull()?.targetVersion
                     ?: TargetPlatformVersion.NoVersion
-            is ScriptModuleInfo ->
-                getLanguageSettingsForScripts(project, null, moduleInfo.scriptDefinition).targetPlatformVersion
-            is ScriptDependenciesInfo.ForFile ->
-                getLanguageSettingsForScripts(project, null, moduleInfo.scriptDefinition).targetPlatformVersion
+            is ScriptModuleInfo,
+            is ScriptDependenciesInfo.ForFile -> detectDefaultTargetPlatformVersion(moduleInfo.platform)
             else -> TargetPlatformVersion.NoVersion
         }
 }
@@ -102,37 +112,30 @@ private data class ScriptLanguageSettings(
 
 private val SCRIPT_LANGUAGE_SETTINGS = Key.create<CachedValue<ScriptLanguageSettings>>("SCRIPT_LANGUAGE_SETTINGS")
 
-fun getTargetPlatformVersionForScript(file: KtFile, scriptDefinition: ScriptDefinition): TargetPlatformVersion {
-    val scriptModule =
-        file.originalFile.virtualFile?.let {
-            it.scriptRelatedModuleName?.let { ModuleManager.getInstance(file.project).findModuleByName(it) }
-                ?: ProjectFileIndex.SERVICE.getInstance(file.project).getModuleForFile(it);
-        }
-
-    return getLanguageSettingsForScripts(file.project, scriptModule, scriptDefinition).targetPlatformVersion
+fun getTargetPlatformVersionForScript(project: Project, file: VirtualFile, scriptDefinition: ScriptDefinition): TargetPlatformVersion {
+    return getLanguageSettingsForScripts(project, file, scriptDefinition).targetPlatformVersion
 }
 
-fun getTargetPlatformVersionForScripts(project: Project, scriptDefinition: ScriptDefinition): TargetPlatformVersion {
-    return getLanguageSettingsForScripts(project, null, scriptDefinition).targetPlatformVersion
+private fun detectDefaultTargetPlatformVersion(platform: TargetPlatform?): TargetPlatformVersion {
+    return platform?.subplatformsOfType<JdkPlatform>()?.firstOrNull()?.targetVersion ?: TargetPlatformVersion.NoVersion
 }
 
-private fun getLanguageSettingsForScripts(project: Project, module: Module?, scriptDefinition: ScriptDefinition): ScriptLanguageSettings {
-
-    fun detectDefaultTargetPlatformVersion(): TargetPlatformVersion {
-        val platform = module?.let { TargetPlatformDetector.getPlatform(it) } ?: project.platform
-        return platform?.subplatformsOfType<JdkPlatform>()?.firstOrNull()?.targetVersion ?: TargetPlatformVersion.NoVersion
+private fun getLanguageSettingsForScripts(project: Project, file: VirtualFile, scriptDefinition: ScriptDefinition): ScriptLanguageSettings {
+    val scriptModule = file.let {
+        it.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
+            ?: ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(it)
     }
 
     val args = scriptDefinition.compilerOptions
     return if (args == null || args.none()) {
-        ScriptLanguageSettings(project.getLanguageVersionSettings(), detectDefaultTargetPlatformVersion())
+        ScriptLanguageSettings(project.getLanguageVersionSettings(), detectDefaultTargetPlatformVersion(scriptModule?.platform))
     } else {
         val settings = scriptDefinition.getUserData(SCRIPT_LANGUAGE_SETTINGS) ?: createCachedValue(project) {
             val compilerArguments = K2JVMCompilerArguments()
             parseCommandLineArguments(args.toList(), compilerArguments)
             // TODO: reporting
             val verSettings = compilerArguments.toLanguageVersionSettings(MessageCollector.NONE)
-            val jvmTarget = compilerArguments.jvmTarget?.let { JvmTarget.fromString(it) } ?: detectDefaultTargetPlatformVersion()
+            val jvmTarget = compilerArguments.jvmTarget?.let { JvmTarget.fromString(it) } ?: detectDefaultTargetPlatformVersion(scriptModule?.platform)
             ScriptLanguageSettings(verSettings, jvmTarget)
         }.also { scriptDefinition.putUserData(SCRIPT_LANGUAGE_SETTINGS, it) }
         settings.value
