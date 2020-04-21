@@ -71,13 +71,29 @@ class JvmMappedScope(
         }
 
         // NOTE: No-arg constructors
-        private val additionalConstructorBlackList = setOf(
-            "java/lang/String.<init>()V",
-            "java/lang/Throwable.<init>()V",
-            "java/lang/Throwable.<init>(Ljava/lang/String;Ljava/lang/Throwable;)V",
-            "java/lang/Throwable.<init>(Ljava/lang/Throwable;)V",
-            "java/lang/Throwable.<init>(Ljava/lang/String;)V"
-        )
+        @OptIn(ExperimentalStdlibApi::class)
+        private val additionalConstructorBlackList = buildSet<String> {
+            // kotlin.text.String pseudo-constructors should be used instead of java.lang.String constructors
+            listOf(
+                "",
+                "Lkotlin/ByteArray;IILjava/nio/charset/Charset;",
+                "Lkotlin/ByteArray;Ljava/nio/charset/Charset;",
+                "Lkotlin/ByteArray;II",
+                "Lkotlin/ByteArray;",
+                "Lkotlin/CharArray;",
+                "Lkotlin/CharArray;II",
+                "Lkotlin/IntArray;II",
+                "Ljava/lang/StringBuffer;",
+                "Ljava/lang/StringBuilder;",
+            ).mapTo(this) { arguments -> "java/lang/String.<init>($arguments)V" }
+
+            listOf(
+                "",
+                "Ljava/lang/String;Ljava/lang/Throwable;",
+                "Ljava/lang/Throwable;",
+                "Ljava/lang/String;"
+            ).mapTo(this) { arguments -> "java/lang/Throwable.<init>($arguments)V" }
+        }
 
         fun prepareSignatures(klass: FirRegularClass): Signatures {
 

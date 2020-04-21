@@ -233,6 +233,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/simpleLazy.kt");
     }
 
+    @TestMetadata("stringConstructors.kt")
+    public void testStringConstructors() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/stringConstructors.kt");
+    }
+
     @TestMetadata("toSortedMapWithComparator.kt")
     public void testToSortedMapWithComparator() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/toSortedMapWithComparator.kt");
