@@ -6,6 +6,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.*;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,17 +16,17 @@ import java.util.List;
 public class ModuleTypeManagerImpl extends ModuleTypeManager {
   private static final Logger LOG = Logger.getInstance(ModuleTypeManagerImpl.class);
   @ApiStatus.Internal
-  public static final ExtensionPointName<ModuleTypeEP> EP_NAME = ExtensionPointName.create("com.intellij.moduleType");
+  public static final ExtensionPointName<ModuleTypeEP> EP_NAME = new ExtensionPointName<>("com.intellij.moduleType");
 
   private final LinkedHashMap<ModuleType<?>, Boolean> myModuleTypes = new LinkedHashMap<>();
 
   public ModuleTypeManagerImpl() {
     registerModuleType(getDefaultModuleType(), true);
-    for (ModuleTypeEP ep : EP_NAME.getExtensions()) {
+    EP_NAME.processWithPluginDescriptor((ep, pluginDescriptor) -> {
       if (ep.id == null) {
-        LOG.error(new PluginException("'id' attribute isn't specified for <moduleType implementationClass='" + ep.implementationClass + "'> extension", ep.pluginDescriptor.getPluginId()));
+        LOG.error(new PluginException("'id' attribute isn't specified for <moduleType implementationClass='" + ep.implementationClass + "'> extension", pluginDescriptor.getPluginId()));
       }
-    }
+    });
   }
 
   @Override
@@ -62,31 +64,33 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   }
 
   @Override
-  public ModuleType<?> findByID(String moduleTypeID) {
-    if (moduleTypeID == null) return getDefaultModuleType();
+  public ModuleType<?> findByID(@Nullable String moduleTypeId) {
+    if (moduleTypeId == null) {
+      return getDefaultModuleType();
+    }
+
     for (ModuleType<?> type : myModuleTypes.keySet()) {
-      if (type.getId().equals(moduleTypeID)) {
+      if (type.getId().equals(moduleTypeId)) {
         return type;
       }
     }
-    for (ModuleTypeEP ep : EP_NAME.getExtensionList()) {
-      if (moduleTypeID.equals(ep.id)) {
-        return ep.getModuleType();
-      }
-    }
 
-    return new UnknownModuleType(moduleTypeID, getDefaultModuleType());
+    ModuleTypeEP result = EP_NAME.getByKey(moduleTypeId, it -> it.id);
+    if (result != null) {
+      return result.getModuleType();
+    }
+    return new UnknownModuleType(moduleTypeId, getDefaultModuleType());
   }
 
   @Override
-  public boolean isClasspathProvider(ModuleType moduleType) {
+  public boolean isClasspathProvider(@NotNull ModuleType moduleType) {
     for (ModuleTypeEP ep : EP_NAME.getExtensionList()) {
       if (moduleType.getId().equals(ep.id)) {
         return ep.classpathProvider;
       }
     }
 
-    final Boolean provider = myModuleTypes.get(moduleType);
+    Boolean provider = myModuleTypes.get(moduleType);
     return provider != null && provider;
   }
 

@@ -4,6 +4,7 @@ package com.intellij.openapi.module
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.module.impl.ModuleTypeManagerImpl
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.systemIndependentPath
@@ -15,18 +16,19 @@ import javax.swing.Icon
 class ModuleTypeRegistrationTest : HeavyPlatformTestCase() {
   fun `test unregister module type and register again`() {
     val moduleTypeManager = ModuleTypeManager.getInstance()
+    val moduleManager = ModuleManager.getInstance(myProject)
     runWithRegisteredType {
       val moduleType = moduleTypeManager.findByID(MockModuleType.ID)
       assertInstanceOf(moduleType, MockModuleType::class.java)
       val module = runWriteAction {
-        ModuleManager.getInstance(myProject).newModule(File(createTempDirectory(), "test.iml").systemIndependentPath, MockModuleType.ID)
+        moduleManager.newModule(File(createTempDirectory(), "test.iml").systemIndependentPath, MockModuleType.ID)
       }
       assertSame(moduleType, ModuleType.get(module))
     }
 
     val unknownType = moduleTypeManager.findByID(MockModuleType.ID)
     assertInstanceOf(unknownType, UnknownModuleType::class.java)
-    val module = ModuleManager.getInstance(myProject).findModuleByName("test")!!
+    val module = moduleManager.findModuleByName("test")!!
     assertInstanceOf(ModuleType.get(module), UnknownModuleType::class.java)
 
     registerModuleType(testRootDisposable)
@@ -54,6 +56,7 @@ class ModuleTypeRegistrationTest : HeavyPlatformTestCase() {
       }
     })
     val extension = ModuleTypeEP()
+    extension.setPluginDescriptor(DefaultPluginDescriptor("test"))
     extension.id = MockModuleType.ID
     extension.implementationClass = MockModuleType::class.qualifiedName
     ModuleTypeManagerImpl.EP_NAME.getPoint(null).registerExtension(extension, moduleTypeDisposable)
