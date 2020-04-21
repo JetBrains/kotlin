@@ -4,10 +4,7 @@ import AppleProjectExtension
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.Key
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.ContentRootData
-import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
-import com.intellij.openapi.externalSystem.model.project.ModuleData
-import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.project.*
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.externalSystem.util.Order
@@ -15,6 +12,9 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PathUtilRt
 import org.gradle.tooling.model.idea.IdeaModule
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
+import org.jetbrains.kotlin.gradle.KotlinPlatform
+import org.jetbrains.kotlin.gradle.KotlinSourceSet
 import org.jetbrains.plugins.gradle.model.DefaultExternalSourceDirectorySet
 import org.jetbrains.plugins.gradle.model.DefaultExternalSourceSet
 import org.jetbrains.plugins.gradle.model.ExternalProject
@@ -80,6 +80,37 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
     override fun populateModuleContentRoots(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         populateContentRoots(gradleModule, ideModule, resolverCtx)
         super.populateModuleContentRoots(gradleModule, ideModule)
+    }
+
+    override fun populateModuleDependencies(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>, ideProject: DataNode<ProjectData>) {
+        super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+
+        resolverCtx.getExtraProject(gradleModule, AppleProjectModel::class.java) ?: return
+        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
+
+        // WARNING: the following code is incorrect and here only temporarily. It simply finds K/N modules and adds them as dependencies
+        // to the Apple iOS module. Gradle model currently does not represent this dependency, and it's required for the project model
+        // in order for the language support to work correctly.
+        val deps = mppModel.sourceSets.values.filter { it.actualPlatforms.supports(KotlinPlatform.NATIVE) && !it.isTestModule }
+
+        val addDependency = { dataNode: DataNode<GradleSourceSetData>, sourceSetNameToAdd: String ->
+            val moduleId = GradleProjectResolverUtil.getModuleId(resolverCtx, gradleModule) + ":" + sourceSetNameToAdd
+
+            @Suppress("UNCHECKED_CAST")
+            val depData = (ideModule.children.firstOrNull { (it.data as? ModuleData)?.id == moduleId } as? DataNode<out ModuleData>)?.data
+
+            if (depData != null) {
+                dataNode.createChild(ProjectKeys.MODULE_DEPENDENCY, ModuleDependencyData(dataNode.data, depData))
+            }
+        }
+
+        for (dataNode in ExternalSystemApiUtil.findAll(ideModule, GradleSourceSetData.KEY)) {
+            dataNode.appleSourceSet ?: continue
+            for (sourceSet in deps) {
+                addDependency(dataNode, sourceSet.name)
+                sourceSet.dependsOnSourceSets.forEach { addDependency(dataNode, it) }
+            }
+        }
     }
 
     companion object {
