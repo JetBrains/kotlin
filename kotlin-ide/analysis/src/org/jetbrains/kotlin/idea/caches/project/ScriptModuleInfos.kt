@@ -56,7 +56,7 @@ data class ScriptModuleInfo(
     }
 
     override val platform: TargetPlatform
-        get() = TargetPlatformDetector.getPlatform(project, scriptDefinition)
+        get() = TargetPlatformDetector.getPlatform4Script(project, scriptFile, scriptDefinition)
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices
