@@ -31,6 +31,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.module.Module;
@@ -1677,6 +1678,13 @@ public final class BuildManager implements Disposable {
         getInstance().cancelPreloadedBuilds(projectPath);
         getInstance().myProjectDataMap.remove(projectPath);
       });
+
+      BuildProcessParametersProvider.EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointChangeListener() {
+        @Override
+        public void extensionListChanged() {
+          getInstance().cancelAllPreloadedBuilds();
+        }
+      }, false, null);
 
       getInstance().runCommand(() -> {
         File projectSystemDir = getInstance().getProjectSystemDirectory(project);
