@@ -591,7 +591,7 @@
     <inspection_tool class="CdiUnproxyableBeanTypesInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="CfmlFileReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CfmlReferenceInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ChainedEquality" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ChainedEquality" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ChainedEqualityJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ChainedFunctionCallJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ChainedMethodCall" enabled="false" level="WARNING" enabled_by_default="false">
@@ -1246,7 +1246,9 @@
     <inspection_tool class="FunctionWithMultipleLoopsJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FunctionWithMultipleReturnPointsJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FunctionalExpressionCanBeFolded" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="FuseStreamOperations" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="FuseStreamOperations" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false"/>
+    </inspection_tool>
     <inspection_tool class="GWTRemoteServiceAsyncCheck" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GWTStyleCheck" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1576,7 +1578,9 @@
     </inspection_tool>
     <inspection_tool class="ImplicitlyExposedWebServiceMethods" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="IncompatibleAPI" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="IncompatibleMask" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="IncompatibleMask" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="IncompatibleMaskJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="IncompleteProperty" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="InconsistentLanguageLevel" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -3213,7 +3217,9 @@
     <inspection_tool class="SetupIsPublicVoidNoArg" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SharedThreadLocalRandom" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ShellCheck" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="ShiftOutOfRange" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ShiftOutOfRange" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ShiftOutOfRangeJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SignalWithoutCorrespondingAwait" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SillyAssignment" enabled="false" level="WARNING" enabled_by_default="false" />

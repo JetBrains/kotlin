@@ -41,11 +41,14 @@
       <w>async</w>
       <w>autodetecting</w>
       <w>autodetection</w>
+      <w>codable</w>
       <w>configurables</w>
       <w>conformances</w>
+      <w>decodable</w>
       <w>deployable</w>
       <w>descendent</w>
       <w>doctype</w>
+      <w>encodable</w>
       <w>existentials</w>
       <w>fabrique</w>
       <w>firefox</w>

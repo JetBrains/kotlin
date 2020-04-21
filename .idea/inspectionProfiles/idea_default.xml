@@ -182,7 +182,7 @@
     <inspection_tool class="CdiUnproxyableBeanTypesInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="CfmlFileReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CfmlReferenceInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ChainedEquality" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ChainedEquality" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CheckNodeTest" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CloneCallsSuperClone" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CloneDeclaresCloneNotSupported" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -278,6 +278,7 @@
       <option name="m_ignoreLoopsWithoutConditions" value="true" />
     </inspection_tool>
     <inspection_tool class="ForLoopThatDoesntUseLoopVariable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FuseStreamOperations" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="GemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Geronimo" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GlassFish" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -373,6 +374,7 @@
       <option name="FLAG_EXPLICIT_CONVERSION" value="true" />
       <option name="IGNORE_NODESET_TO_BOOLEAN_VIA_STRING" value="true" />
     </inspection_tool>
+    <inspection_tool class="IncompatibleMask" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="IncompatibleMaskJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="IndexZeroUsage" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="InfiniteLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1289,6 +1291,7 @@
     <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SetupCallsSuperSetup" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SetupIsPublicVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ShiftOutOfRange" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ShiftOutOfRangeJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SillyAssignmentJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
