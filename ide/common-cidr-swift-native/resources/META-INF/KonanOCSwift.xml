@@ -14,6 +14,12 @@
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinSwiftUsageSearcher"/>
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
+    <automaticRenamerFactory implementation="org.jetbrains.konan.refactoring.rename.AdditionalKotlinReferencesInSwiftAndObjCRenamer"/>
+    <renamePsiElementProcessor implementation="org.jetbrains.konan.refactoring.rename.ObjcKotlinClassRenameProcessor"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <foreignUsagesRenameProcessor implementation="org.jetbrains.konan.refactoring.rename.KotlinUsagesInSwiftAndObjCRenameProcessor" />
   </extensions>
 
   <extensions defaultExtensionNs="swift">
