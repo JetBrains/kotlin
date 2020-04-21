@@ -77,7 +77,7 @@ private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
     "Char" to "C",
     "Short" to "S",
     "Int" to "I",
-    "Long" to "L",
+    "Long" to "J",
     "Float" to "F",
     "Double" to "D",
 )
