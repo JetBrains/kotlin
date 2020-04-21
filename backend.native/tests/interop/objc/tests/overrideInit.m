@@ -1,4 +1,4 @@
-#import "OverrideInit.h"
+#import "overrideInit.h"
 
 @implementation TestOverrideInit
 -(instancetype)initWithValue:(int)value {
