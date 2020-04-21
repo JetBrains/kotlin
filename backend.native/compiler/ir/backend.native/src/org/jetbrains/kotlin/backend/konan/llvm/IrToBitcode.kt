@@ -184,7 +184,7 @@ internal interface CodeContext {
     /**
      * Returns location information for given source location [LocationInfo].
      */
-    fun location(line:Int, column: Int): LocationInfo?
+    fun location(offset: Int): LocationInfo?
 
     /**
      * Returns [DIScopeOpaqueRef] instance for corresponding scope.
@@ -263,7 +263,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun returnableBlockScope(): CodeContext? = null
 
-        override fun location(line: Int, column: Int): LocationInfo? = unsupported()
+        override fun location(offset: Int): LocationInfo? = unsupported()
 
         override fun scope(): DIScopeOpaqueRef? = unsupported()
     }
@@ -314,13 +314,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
          * We can't switch context safely, only for symbolzation needs: location, scope detection.
          */
         using(object: InnerScopeImpl() {
-            override fun location(line: Int, column: Int): LocationInfo? {
-                return functionContext.location(line, column)
-            }
+            override fun location(offset: Int): LocationInfo? = functionContext.location(offset)
 
-            override fun scope(): DIScopeOpaqueRef? {
-                return functionContext.scope()
-            }
+            override fun scope(): DIScopeOpaqueRef? = functionContext.scope()
 
         }) {
             return block()
@@ -684,7 +680,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
         }
 
-        override fun location(line: Int, column: Int) = scope?.let { LocationInfo(it, line, column) }
+        private val fileScope = (fileScope() as? FileScope)
+        override fun location(offset: Int) = scope?.let { scope -> fileScope?.let{LocationInfo(scope, it.file.fileEntry.line(offset), it.file.fileEntry.column(offset)) } }
 
         override fun scope() = scope
     }
@@ -1670,9 +1667,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         private fun getExit(): LLVMBasicBlockRef {
             val location = returnableBlock.inlineFunctionSymbol?.let {
-                location(it.owner.endLine(), it.owner.endColumn())
+                location(it.owner.endOffset)
             } ?: returnableBlock.statements.lastOrNull()?.let {
-                location(it.endLine(), it.endColumn())
+                location(it.endOffset)
             }
             if (bbExit == null) bbExit = functionGenerationContext.basicBlock("returnable_block_exit", location)
             return bbExit!!
@@ -1703,17 +1700,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun returnableBlockScope(): CodeContext? = this
 
-        override fun location(line: Int, column: Int): LocationInfo? {
+        override fun location(offset: Int): LocationInfo? {
             return if (returnableBlock.inlineFunctionSymbol != null) {
                 val diScope = functionScope ?: return null
                 val outerFileEntry = outerFileEntry()
-                val inlinedAt = outerContext.location(outerFileEntry.line(returnableBlock.startOffset), outerFileEntry.column(returnableBlock.startOffset))
+                val inlinedAt = outerContext.location(returnableBlock.startOffset)
                         ?: error("no location for inlinedAt:\n" +
                                 "${returnableBlock.startOffset} ${returnableBlock.endOffset}\n" +
                                 returnableBlock.render())
-                LocationInfo(diScope, line, column, inlinedAt)
+                LocationInfo(diScope, file.fileEntry.line(offset), file.fileEntry.column(offset), inlinedAt)
             } else {
-                outerContext.location(line, column)
+                outerContext.location(offset)
             }
         }
 
@@ -1741,7 +1738,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private open inner class FileScope(val file: IrFile) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
 
-        override fun location(line: Int, column: Int) = scope()?.let { LocationInfo(it, line, column) }
+        override fun location(offset: Int) = scope()?.let { LocationInfo(it, file.fileEntry.line(offset), file.fileEntry.column(offset)) }
 
         @Suppress("UNCHECKED_CAST")
         private val scope by lazy {
@@ -1856,11 +1853,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private val IrElement.startLocation: LocationInfo?
         get() = if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) null
-            else currentCodeContext.location(startLine(), startColumn())
+            else currentCodeContext.location(startOffset)
 
     private val IrElement.endLocation: LocationInfo?
         get() = if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) null
-            else currentCodeContext.location(endLine(), endColumn())
+            else currentCodeContext.location(endOffset)
 
     //-------------------------------------------------------------------------//
     private fun IrElement.startLine() = file().fileEntry.line(this.startOffset)
