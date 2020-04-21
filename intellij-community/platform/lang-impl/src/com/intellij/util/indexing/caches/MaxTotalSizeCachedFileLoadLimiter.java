@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.caches;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,16 @@ public final class MaxTotalSizeCachedFileLoadLimiter implements CachedFileLoadLi
   @Override
   public long getMaxLoadedBytes() {
     return myMaxLoadedBytes;
+  }
+
+  @VisibleForTesting
+  public long getLoadedBytes() {
+    myLock.lock();
+    try {
+      return myLoadedBytes;
+    } finally {
+      myLock.unlock();
+    }
   }
 
   @Override

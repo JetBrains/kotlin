@@ -224,6 +224,12 @@ class LimitedCachedFileContentQueueTest : BareTestFixtureTestCase() {
     thread.waitForFinish()
 
     assertEquals(largeFile, exception.get().file)
+
+    val checkEmptyThread = createThread {
+      assertNull(queue.loadNextContent(createEmptyIndicator()))
+    }
+    checkEmptyThread.waitForStart()
+    checkEmptyThread.waitForFinish()
   }
 
   @Test
@@ -253,6 +259,128 @@ class LimitedCachedFileContentQueueTest : BareTestFixtureTestCase() {
     onUnlockFile.countDown()
     firstThread.waitForFinish()
     secondThread.waitForFinish()
+  }
+
+  @Test
+  fun `queue must not return null until the last content has been loaded`() {
+    val singleFile = BinaryLightVirtualFile("a", createByteArray(1))
+
+    val limiter = MaxTotalSizeCachedFileLoadLimiter(10)
+
+    val finishLoadingContent = CountDownLatch(1)
+    val contentLoader = CachedFileContentLoader {
+      finishLoadingContent.await()
+      CachedFileContent(it)
+    }
+
+    val queue = LimitedCachedFileContentQueue.createNonAppendableForFiles(listOf(singleFile), limiter, contentLoader)
+    val loadingThread = createThread {
+      val token = queue.loadNextContent(createEmptyIndicator())!!
+      token.release()
+    }
+
+    val blockedThreadGotNull = AtomicBoolean()
+    val blockedThread = createThread {
+      blockedThreadGotNull.set(queue.loadNextContent(createEmptyIndicator()) == null)
+    }
+
+    loadingThread.waitForStart()
+    loadingThread.waitForBlock() // Blocks on loading the only content.
+
+    blockedThread.waitForStart()
+    blockedThread.waitForBlock() // Blocks because the 1st thread is loading the content.
+
+    finishLoadingContent.countDown()
+
+    loadingThread.waitForFinish()
+    blockedThread.waitForFinish()
+
+    assertTrue(blockedThreadGotNull.get())
+  }
+
+  @Test
+  fun `add file to the queue after the queue has been emptied`() {
+    val limiter = MaxTotalSizeCachedFileLoadLimiter(10)
+
+    val contentLoader = CachedFileContentLoader { CachedFileContent(it) }
+
+    val queue = LimitedCachedFileContentQueue.createEmptyAppendable(limiter, contentLoader)
+
+    val firstFile = BinaryLightVirtualFile("a", createByteArray(1))
+    queue.addFileToLoad(firstFile)
+
+    val loadFirstFileThread = createThread {
+      val token = queue.loadNextContent(createEmptyIndicator())!!
+      assertEquals(firstFile, token.content.virtualFile)
+      token.release()
+    }
+
+    loadFirstFileThread.waitForStart()
+    loadFirstFileThread.waitForFinish()
+
+    val checkEmptyThread = createThread {
+      assertNull(queue.loadNextContent(createEmptyIndicator()))
+    }
+    checkEmptyThread.waitForStart()
+    checkEmptyThread.waitForFinish()
+
+    val secondFile = BinaryLightVirtualFile("b", createByteArray(1))
+    queue.addFileToLoad(secondFile)
+
+    val loadSecondFileThread = createThread {
+      val token = queue.loadNextContent(createEmptyIndicator())!!
+      assertEquals(secondFile, token.content.virtualFile)
+      token.release()
+    }
+    loadSecondFileThread.waitForStart()
+    loadSecondFileThread.waitForFinish()
+  }
+
+  @Test
+  fun `stress test that queue does not hold reserved bytes when it gets emptied`() {
+    val threadsN = 8
+    val executor = Executors.newFixedThreadPool(threadsN)
+
+    val filesN = 100
+    val fileSize = 1
+    val maxFilesInMemory = 3L
+    val files = (0 until filesN).map { BinaryLightVirtualFile("a-$it", createByteArray(fileSize)) }
+
+    repeat(100) {
+      val limiter = MaxTotalSizeCachedFileLoadLimiter(maxFilesInMemory)
+      val contentLoader = CachedFileContentLoader { CachedFileContent(it) }
+
+      val queue = LimitedCachedFileContentQueue.createNonAppendableForFiles(files, limiter, contentLoader)
+
+      val anyException = AtomicReference<Throwable>()
+      val threadsFinished = CountDownLatch(threadsN)
+      repeat(threadsN) {
+        executor.submit {
+          try {
+            while (true) {
+              if (anyException.get() != null) break
+              val token = queue.loadNextContent(createEmptyIndicator())
+              if (token == null) {
+                assertEquals(0, limiter.loadedBytes)
+                break
+              }
+              token.release()
+            }
+          } catch (e: Throwable) {
+            anyException.set(e)
+          } finally {
+            threadsFinished.countDown()
+          }
+        }
+      }
+
+      if (!threadsFinished.await(60, TimeUnit.SECONDS)) {
+        fail("The test is too slow")
+      }
+      anyException.get()?.let { throw it }
+    }
+    executor.shutdownNow()
+    executor.awaitTermination(1, TimeUnit.MINUTES)
   }
 
   @Test
