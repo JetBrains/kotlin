@@ -23,22 +23,33 @@ class GradleScriptOutOfSourceNotificationProvider(private val project: Project) 
         if (!isGradleKotlinScript(file)) return null
         if (file.fileType != KotlinFileType.INSTANCE) return null
 
-        if (isInAffectedGradleProjectFiles(project, file.path)) return null
-
-        return EditorNotificationPanel().apply {
-            text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
-            val loadScriptConfigurationText = KotlinIdeaGradleBundle.message("action.label.text.load.script.configuration")
-            createActionLabel(loadScriptConfigurationText) {
-                ScriptConfigurationManager.getInstance(project).forceReloadConfiguration(file, loaderForOutOfProjectScripts)
+        if (!isInAffectedGradleProjectFiles(project, file.path)) {
+            return EditorNotificationPanel().apply {
+                text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
+                val loadScriptConfigurationText = KotlinIdeaGradleBundle.message("action.label.text.load.script.configuration")
+                createActionLabel(loadScriptConfigurationText) {
+                    ScriptConfigurationManager.getInstance(project).forceReloadConfiguration(file, loaderForOutOfProjectScripts)
+                }
+                val link = createActionLabel("") {}
+                link.setIcon(AllIcons.General.ContextHelp)
+                link.setUseIconAsLink(true)
+                link.toolTipText = KotlinIdeaGradleBundle.message(
+                    "tool.tip.text.the.external.gradle.project.needs.to.be.imported.to.get.this.script.analyzed",
+                    loadScriptConfigurationText
+                )
             }
-            val link = createActionLabel("") {}
-            link.setIcon(AllIcons.General.ContextHelp)
-            link.setUseIconAsLink(true)
-            link.toolTipText = KotlinIdeaGradleBundle.message(
-                "tool.tip.text.the.external.gradle.project.needs.to.be.imported.to.get.this.script.analyzed",
-                loadScriptConfigurationText
-            )
         }
+
+        if (GradleScriptingSupportProvider.getInstance(project).shouldShowNotificationToRunGradleImport(file)) {
+            return EditorNotificationPanel().apply {
+                text(getMissingConfigurationNotificationText())
+                createActionLabel(getMissingConfigurationActionText()) {
+                    runPartialGradleImport(project)
+                }
+            }
+        }
+
+        return null
     }
 
     private val loaderForOutOfProjectScripts by lazy {

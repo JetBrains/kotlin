@@ -30,10 +30,7 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
             if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
                 status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.definitions")
                 status.errorAnalyzingFinished = false
-            } else if (
-                !ScriptConfigurationManager.getInstance(project).hasConfiguration(file)
-                && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
-            ) {
+             } else if (ScriptConfigurationManager.getInstance(project).isConfigurationLoadingInProgress(file)) {
                 status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
                 status.errorAnalyzingFinished = false
             }

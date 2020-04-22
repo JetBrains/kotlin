@@ -31,6 +31,9 @@ fun runPartialGradleImport(project: Project) {
     }
 }
 
+fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.import")
+fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
+
 private const val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
 private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))

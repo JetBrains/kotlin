@@ -55,6 +55,9 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
     override fun hasConfiguration(file: KtFile): Boolean =
         getRelatedManager(file).hasCachedConfiguration(file)
 
+    override fun isConfigurationLoadingInProgress(file: KtFile): Boolean =
+        getRelatedManager(file).isConfigurationLoadingInProgress(file)
+
     override val updater: ScriptConfigurationUpdater
         get() = object : ScriptConfigurationUpdater {
             override fun ensureUpToDatedConfigurationSuggested(file: KtFile) =
