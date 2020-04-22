@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.gradle.settings.GradleLocalSettings
+import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -69,7 +70,8 @@ fun getGradleScriptInputsStamp(
                                 super.visitElement(element)
                                 when (element) {
                                     is PsiWhiteSpace -> if (element.text.contains("\n")) result.append("\n")
-                                    is PsiComment -> { }
+                                    is PsiComment -> {
+                                    }
                                     is LeafPsiElement -> result.append(element.text)
                                 }
                             }
@@ -93,7 +95,7 @@ fun useScriptConfigurationFromImportOnly(): Boolean {
     return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
 }
 
-fun getGradleVersion(externalProjectPath: String): String? {
+fun getGradleVersion(project: Project, externalProjectPath: String): String? {
     val localVersion = GradleLocalSettings.getInstance(project).getGradleVersion(externalProjectPath)
     if (localVersion != null) return localVersion
 
@@ -101,13 +103,26 @@ fun getGradleVersion(externalProjectPath: String): String? {
 }
 
 fun getGradleVersion(project: Project): String? {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    val projectSettings = gradleSettings.getLinkedProjectsSettings()
-        .filterIsInstance<GradleProjectSettings>()
-        .firstOrNull()
+    val projectSettings = getGradleProjectSettings(project).firstOrNull()
 
     if (projectSettings != null) {
         return getGradleVersion(projectSettings.externalProjectPath)
     }
     return null
+}
+
+fun getJavaHomeForGradleProject(project: Project): String? {
+    val projectSettings = getGradleProjectSettings(project).firstOrNull() ?: return null
+
+    val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
+        project,
+        projectSettings.externalProjectPath,
+        GradleConstants.SYSTEM_ID
+    )
+    return gradleExeSettings.javaHome
+}
+
+fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> {
+    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings
+    return gradleSettings.getLinkedProjectsSettings()
 }

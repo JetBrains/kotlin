@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
-import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
-import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
     override fun onEnd(id: ExternalSystemTaskId) {
@@ -27,17 +24,8 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
 
         if (models.isEmpty()) return
 
-        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        val projectSettings = gradleSettings.getLinkedProjectsSettings()
-            .filterIsInstance<GradleProjectSettings>().firstOrNull()
-            ?: return
+        val javaHome = getJavaHomeForGradleProject(project)
 
-        val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
-            project,
-            projectSettings.externalProjectPath,
-            GradleConstants.SYSTEM_ID
-        )
-
-        saveScriptModels(project, id, gradleExeSettings.javaHome, models)
+        saveScriptModels(project, id, javaHome, models)
     }
 }

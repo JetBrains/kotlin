@@ -22,16 +22,13 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 fun runPartialGradleImport(project: Project) {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    val projectSettings = gradleSettings.getLinkedProjectsSettings()
-        .filterIsInstance<GradleProjectSettings>()
-        .firstOrNull() ?: return
-
-    ExternalSystemUtil.refreshProject(
-        projectSettings.externalProjectPath,
-        ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-            .build()
-    )
+    getGradleProjectSettings(project).forEach {
+        ExternalSystemUtil.refreshProject(
+            it.externalProjectPath,
+            ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+                .build()
+        )
+    }
 }
 
 private const val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
