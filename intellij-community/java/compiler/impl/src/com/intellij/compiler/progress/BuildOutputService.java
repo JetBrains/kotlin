@@ -219,14 +219,18 @@ public class BuildOutputService implements BuildViewService {
       return;
     }
     ((ProgressIndicatorEx)indicator).addStateDelegate(new CompilerMessagesService.DummyProgressIndicator() {
-
       private String lastMessage = null;
 
       @Override
       public void setText(@Nls(capitalization = Nls.Capitalization.Sentence) String text) {
         if (isEmptyOrSpaces(text) || text.equals(lastMessage)) return;
-        myBuildProgress.progress(text);
+        lastMessage = text;
         myBuildProgress.output(text + '\n', true);
+      }
+
+      @Override
+      public void setFraction(double fraction) {
+        myBuildProgress.progress(lastMessage, 100, (long)(fraction * 100), "%");
       }
     });
   }
