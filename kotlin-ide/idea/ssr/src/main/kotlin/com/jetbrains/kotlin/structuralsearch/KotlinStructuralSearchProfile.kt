@@ -5,9 +5,11 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.structuralsearch.StructuralSearchProfile
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
@@ -20,6 +22,8 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompili
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class KotlinStructuralSearchProfile : StructuralSearchProfile() {
@@ -56,21 +60,21 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
+        fun retryWith(ctx: PatternTreeContext) =
+            createPatternTree(text, ctx, fileType, language, contextId, project, physical)
         when (context) {
             PatternTreeContext.Block -> {
                 val fragment = KtPsiFactory(project).createBlockCodeFragment(text, null)
                 val result = getNonWhitespaceChildren(fragment)
                 if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
-                // TODO: Do not always redirect to [PatternTreeContext.Expression]
-                return createPatternTree(
-                    text,
-                    PatternTreeContext.Expression,
-                    fileType,
-                    language,
-                    contextId,
-                    project,
-                    physical
-                )
+
+                return when {
+                    shouldTryExpressionPattern(result) -> retryWith(PatternTreeContext.Expression)
+                    else -> {
+                        println(DebugUtil.psiToString(result.first().parent, false))
+                        arrayOf(result.first())
+                    }
+                }
             }
             PatternTreeContext.Expression -> {
                 val fragment = KtPsiFactory(project).createExpressionCodeFragment(text, null)
@@ -100,6 +104,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 element = element.nextSibling
             }
             return result
+        }
+
+        private fun shouldTryExpressionPattern(elements: List<PsiElement>): Boolean {
+            val element = elements.first().firstChild
+            return elements.first().children.size == 1 && element is KtExpression && element !is KtClass
         }
 
     }

@@ -126,4 +126,23 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
+    override fun visitClass(klass: KtClass) {
+        val other = getTreeElement<KtClass>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchText(klass.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
+                && myMatchingVisitor.matchSons(klass, other)
+    }
+
+    override fun visitElement(element: PsiElement) {
+        if (element is LeafPsiElement) {
+            val other = getTreeElement<LeafPsiElement>() ?: return
+            myMatchingVisitor.result = element.elementType.index == other.elementType.index
+        }
+    }
+
+    override fun visitModifierList(list: KtModifierList) {
+        val other = getTreeElement<KtModifierList>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSons(list, other)
+    }
+
 }
