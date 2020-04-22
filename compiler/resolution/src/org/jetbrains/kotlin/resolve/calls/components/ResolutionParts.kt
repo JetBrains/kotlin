@@ -483,10 +483,10 @@ private fun KotlinResolutionCandidate.prepareExpectedType(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor
 ): UnwrappedType {
-    val argumentType = getExpectedTypeWithSAMConversion(argument, candidateParameter) ?: argument.getExpectedType(
-        candidateParameter,
-        callComponents.languageVersionSettings
-    )
+    val argumentType =
+        getExpectedTypeWithSAMConversion(argument, candidateParameter)
+            ?: getExpectedTypeWithSuspendConversion(argument, candidateParameter)
+            ?: argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
     val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
     return resolvedCall.freshVariablesSubstitutor.safeSubstitute(resultType)
 }

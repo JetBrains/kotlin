@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.UnwrappedType
 
 
 abstract class ResolutionPart {
@@ -185,13 +186,20 @@ class MutableResolvedCallAtom(
     override lateinit var knownParametersSubstitutor: TypeSubstitutor
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
     private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
+    private var suspendAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
     private var signedUnsignedConstantConversions: HashMap<KotlinCallArgument, IntegerValueTypeConstant>? = null
 
     val hasSamConversion: Boolean
         get() = samAdapterMap != null
 
+    val hasSuspendConversion: Boolean
+        get() = suspendAdapterMap != null
+
     override val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
         get() = samAdapterMap ?: emptyMap()
+
+    override val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
+        get() = suspendAdapterMap ?: emptyMap()
 
     override val argumentsWithConstantConversion: Map<KotlinCallArgument, IntegerValueTypeConstant>
         get() = signedUnsignedConstantConversions ?: emptyMap()
@@ -201,6 +209,13 @@ class MutableResolvedCallAtom(
             samAdapterMap = hashMapOf()
 
         samAdapterMap!![argument] = samConversionDescription
+    }
+
+    fun registerArgumentWithSuspendConversion(argument: KotlinCallArgument, convertedType: UnwrappedType) {
+        if (suspendAdapterMap == null)
+            suspendAdapterMap = hashMapOf()
+
+        suspendAdapterMap!![argument] = convertedType
     }
 
     fun registerArgumentWithConstantConversion(argument: KotlinCallArgument, convertedConstant: IntegerValueTypeConstant) {

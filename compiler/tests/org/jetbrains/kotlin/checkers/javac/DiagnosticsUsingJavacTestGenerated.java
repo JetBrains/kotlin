@@ -22996,6 +22996,39 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/suspendConversion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SuspendConversion extends AbstractDiagnosticsUsingJavacTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSuspendConversion() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("basicSuspendConversion.kt")
+            public void testBasicSuspendConversion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/basicSuspendConversion.kt");
+            }
+
+            @TestMetadata("basicSuspendConversionGenerics.kt")
+            public void testBasicSuspendConversionGenerics() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/basicSuspendConversionGenerics.kt");
+            }
+
+            @TestMetadata("severalConversionsInOneCall.kt")
+            public void testSeveralConversionsInOneCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/severalConversionsInOneCall.kt");
+            }
+
+            @TestMetadata("suspendConversionDisabled.kt")
+            public void testSuspendConversionDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionDisabled.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/syntheticExtensions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

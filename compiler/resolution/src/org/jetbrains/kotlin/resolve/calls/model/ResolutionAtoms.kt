@@ -71,6 +71,7 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
     abstract val knownParametersSubstitutor: TypeSubstitutor
     abstract val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
+    abstract val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithConstantConversion: Map<KotlinCallArgument, IntegerValueTypeConstant>
 }
 

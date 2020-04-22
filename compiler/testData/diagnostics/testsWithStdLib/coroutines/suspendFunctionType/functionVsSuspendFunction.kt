@@ -1,3 +1,4 @@
+// !LANGUAGE: -SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun useSuspendFn(sfn: suspend () -> Unit) = sfn
