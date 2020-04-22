@@ -6,9 +6,7 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.LineMarkerProviders;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSettingListener;
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.actions.CleanupInspectionIntention;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
@@ -16,7 +14,6 @@ import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
 import com.intellij.lang.ExternalLanguageAnnotators;
@@ -38,11 +35,11 @@ import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -353,7 +350,7 @@ public final class DaemonListeners implements Disposable {
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
-        removeQuickFixesContributedByPlugin(pluginDescriptor);
+        removeAllNonPersistentHighlighters();
       }
     });
     connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) -> {
@@ -573,43 +570,24 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
-  private void removeQuickFixesContributedByPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+  private void removeAllNonPersistentHighlighters() {
     for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getAllEditors()) {
       if (fileEditor instanceof TextEditor) {
         Editor editor = ((TextEditor)fileEditor).getEditor();
-        removeHighlightersContributedByPlugin(pluginDescriptor, editor.getMarkupModel().getAllHighlighters());
+        removeNonPersistentHighlighters(editor.getMarkupModel());
         MarkupModel documentMarkupModel = DocumentMarkupModel.forDocument(editor.getDocument(), myProject, false);
         if (documentMarkupModel != null) {
-          removeHighlightersContributedByPlugin(pluginDescriptor, documentMarkupModel.getAllHighlighters());
+          removeNonPersistentHighlighters(documentMarkupModel);
         }
       }
     }
   }
 
-  private static void removeHighlightersContributedByPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor,
-                                                            RangeHighlighter[] highlighters) {
-    for (RangeHighlighter highlighter : highlighters) {
-      HighlightInfo info = HighlightInfo.fromRangeHighlighter(highlighter);
-      if (info == null) continue;
-      List<Pair<HighlightInfo.IntentionActionDescriptor, TextRange>> ranges = info.quickFixActionRanges;
-      if (ranges != null) {
-        ranges.removeIf(pair -> isContributedByPlugin(pair.first, pluginDescriptor));
-      }
-      List<Pair<HighlightInfo.IntentionActionDescriptor, RangeMarker>> markers = info.quickFixActionMarkers;
-      if (markers != null) {
-        markers.removeIf(pair -> isContributedByPlugin(pair.first, pluginDescriptor));
+  private static void removeNonPersistentHighlighters(MarkupModel model) {
+    for (RangeHighlighter highlighter: model.getAllHighlighters()) {
+      if (!(highlighter instanceof RangeHighlighterEx && ((RangeHighlighterEx)highlighter).isPersistent())) {
+        model.removeHighlighter(highlighter);
       }
     }
-  }
-
-  private static boolean isContributedByPlugin(@NotNull HighlightInfo.IntentionActionDescriptor intentionActionDescriptor,
-                                               @NotNull IdeaPluginDescriptor descriptor) {
-    IntentionAction action = intentionActionDescriptor.getAction();
-    if (action instanceof CleanupInspectionIntention) {
-      PluginId pluginId = PluginManagerCore.getPluginByClassName(((CleanupInspectionIntention) action).getToolWrapper().getClass().getName());
-      return descriptor.getPluginId().equals(pluginId);
-    }
-    PluginId pluginId = PluginManagerCore.getPluginByClassName(action.getClass().getName());
-    return descriptor.getPluginId().equals(pluginId);
   }
 }
