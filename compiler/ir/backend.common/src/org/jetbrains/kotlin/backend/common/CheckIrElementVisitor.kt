@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -109,11 +107,16 @@ class CheckIrElementVisitor(
         }
 
         var type = expression.type
+        /*
+        TODO: This check used to have JS inline class helpers. Rewrite it in a common way.
         while (true) {
             val inlinedClass = type.getInlinedClass() ?: break
+            if (getInlineClassUnderlyingType(inlinedClass) == type)
+                break
             type = getInlineClassUnderlyingType(inlinedClass)
         }
         expression.ensureTypesEqual(type, naturalType)
+        */
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
