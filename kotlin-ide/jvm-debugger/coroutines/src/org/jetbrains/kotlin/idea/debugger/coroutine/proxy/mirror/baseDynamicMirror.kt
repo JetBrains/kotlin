@@ -13,26 +13,26 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 abstract class BaseDynamicMirror<T>(val value: ObjectReference, val name: String, val context: DefaultExecutionContext) {
     val log by logger
 
-    val cls: ReferenceType? = value.referenceType()
+    private val cls: ReferenceType? = value.referenceType()
 
-    fun makeField(fieldName: String): Field? =
-        cls?.let { it.fieldByName(fieldName) }
+    private fun makeField(fieldName: String): Field? =
+        cls?.fieldByName(fieldName)
 
     fun findMethod(methodName: String): Method? =
-        cls?.let { it.methodsByName(methodName).single() }
+        cls?.methodsByName(methodName)?.single()
 
     fun findMethod(methodName: String, signature: String): Method? =
-        cls?.let { it.methodsByName(methodName, signature).single() }
+        cls?.methodsByName(methodName, signature)?.single()
 
     fun isCompatible(value: ObjectReference?) =
-        value?.let { it.referenceType().isSubTypeOrSame(name) } ?: false
+        value?.referenceType()?.isSubTypeOrSame(name) ?: false
 
     fun mirror(): T? {
-        if (!isCompatible(value)) {
+        return if (!isCompatible(value)) {
             log.trace("Value ${value.referenceType()} is not compatible with $name.")
-            return null
+            null
         } else
-            return fetchMirror(value, context)
+            fetchMirror(value, context)
     }
 
     fun staticObjectValue(fieldName: String): ObjectReference? {

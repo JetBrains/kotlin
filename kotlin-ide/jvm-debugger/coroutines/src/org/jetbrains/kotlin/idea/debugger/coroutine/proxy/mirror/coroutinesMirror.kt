@@ -9,36 +9,35 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
-import java.lang.IllegalStateException
 
 abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) {
     val log by logger
     protected val cls = context.findClassSafe(name) ?: throw IllegalStateException("coroutine-debugger: class $name not found.")
 
     fun makeField(fieldName: String): Field? =
-        cls?.let { it.fieldByName(fieldName) }
+        cls.fieldByName(fieldName)
 
     fun makeMethod(methodName: String): Method? =
-        cls?.let { it.methodsByName(methodName).singleOrNull() }
+        cls.methodsByName(methodName).singleOrNull()
 
     fun makeMethod(methodName: String, signature: String): Method? =
-        cls?.let { it.methodsByName(methodName, signature).singleOrNull() }
+        cls.methodsByName(methodName, signature).singleOrNull()
 
     fun isCompatible(value: ObjectReference?) =
-        value?.let { it.referenceType().isSubTypeOrSame(name) } ?: false
+        value?.referenceType()?.isSubTypeOrSame(name) ?: false
 
     fun mirror(value: ObjectReference?, context: DefaultExecutionContext): T? {
         value ?: return null
-        if (!isCompatible(value)) {
+        return if (!isCompatible(value)) {
             log.trace("Value ${value.referenceType()} is not compatible with $name.")
-            return null
+            null
         } else
-            return fetchMirror(value, context)
+            fetchMirror(value, context)
     }
 
     fun staticObjectValue(fieldName: String): ObjectReference? {
         val keyFieldRef = makeField(fieldName)
-        return cls?.let { it.getValue(keyFieldRef) as? ObjectReference }
+        return cls.let { it.getValue(keyFieldRef) as? ObjectReference }
     }
 
     fun staticMethodValue(instance: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value?) =
@@ -49,7 +48,7 @@ abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext)
         }
 
     fun staticMethodValue(method: Method?, context: DefaultExecutionContext, vararg values: Value?) =
-        cls?.let {
+        cls.let {
             method?.let {
                 context.invokeMethodSafe(cls, method, values.asList()) as? ObjectReference
             }
@@ -109,7 +108,7 @@ abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext)
     protected abstract fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): T?
 }
 
-class StandaloneCoroutine(context: DefaultExecutionContext) :
+class StandaloneCoroutine private constructor(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfStandaloneCoroutine>("kotlinx.coroutines.StandaloneCoroutine", context) {
     private val coroutineContextMirror = CoroutineContext(context)
     private val childContinuationMirror = ChildContinuation(context)
@@ -118,19 +117,22 @@ class StandaloneCoroutine(context: DefaultExecutionContext) :
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfStandaloneCoroutine {
         val state = objectValue(value, stateFieldRef)
-        val childcontinuation = childContinuationMirror.mirror(state, context)
+        val childContinuation = childContinuationMirror.mirror(state, context)
         val cc = objectValue(value, contextFieldRef)
         val coroutineContext = coroutineContextMirror.mirror(cc, context)
-        return MirrorOfStandaloneCoroutine(value, childcontinuation, coroutineContext)
+        return MirrorOfStandaloneCoroutine(value, childContinuation, coroutineContext)
     }
 
     companion object {
+        val log by logger
+
         fun instance(context: DefaultExecutionContext): StandaloneCoroutine? {
-            val sc = StandaloneCoroutine(context)
-            if (sc.cls == null)
-                return null
-            else
-                return sc
+            return try {
+                StandaloneCoroutine(context)
+            } catch (e: IllegalStateException) {
+                log.debug("Attempt to access DebugProbesImpl but none found.", e)
+                null
+            }
         }
     }
 }
@@ -160,7 +162,7 @@ data class MirrorOfChildContinuation(
 class CancellableContinuationImpl(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCancellableContinuationImpl>("kotlinx.coroutines.CancellableContinuationImpl", context) {
     private val coroutineContextMirror = CoroutineContext(context)
-    private val dispatchedContinuationtMirror = DispatchedContinuation(context)
+    private val dispatchedContinuationMirror = DispatchedContinuation(context)
     private val decisionFieldRef = makeField("_decision")
     private val delegateFieldRef = makeField("delegate") // DispatchedContinuation
     private val resumeModeFieldRef = makeField("resumeMode")
@@ -169,7 +171,7 @@ class CancellableContinuationImpl(context: DefaultExecutionContext) :
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCancellableContinuationImpl? {
         val decision = intValue(value, decisionFieldRef)
-        val dispatchedContinuation = dispatchedContinuationtMirror.mirror(objectValue(value, delegateFieldRef), context)
+        val dispatchedContinuation = dispatchedContinuationMirror.mirror(objectValue(value, delegateFieldRef), context)
         val submissionTime = longValue(value, submissionTimeFieldRef)
         val resumeMode = intValue(value, resumeModeFieldRef)
         val coroutineContext = objectValue(value, contextFieldRef)
@@ -183,7 +185,7 @@ data class MirrorOfCancellableContinuationImpl(
     val decision: Int?,
     val delegate: MirrorOfDispatchedContinuation?,
     val resumeMode: Int?,
-    val submissionTyme: Long?,
+    val submissionTime: Long?,
     val jobContext: MirrorOfCoroutineContext?
 )
 

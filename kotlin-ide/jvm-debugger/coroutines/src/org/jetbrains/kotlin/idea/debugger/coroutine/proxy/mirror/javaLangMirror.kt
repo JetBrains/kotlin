@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 class JavaLangMirror(context: DefaultExecutionContext) {
     // java.lang.Object
-    val classClsRef = context.findClass("java.lang.Object") as ClassType
+    private val classClsRef = context.findClass("java.lang.Object") as ClassType
     val toString: Method = classClsRef.concreteMethodByName("toString", "()Ljava/lang/String;")
 
     // java.util.List
@@ -24,9 +24,6 @@ class JavaLangMirror(context: DefaultExecutionContext) {
     private val declaringClassFieldRef: Field = stackTraceElementClsRef.fieldByName("declaringClass")
     private val fileNameFieldRef: Field = stackTraceElementClsRef.fieldByName("fileName")
     private val lineNumberFieldRef: Field = stackTraceElementClsRef.fieldByName("lineNumber")
-
-    // java.lang.Class
-    val classType = context.findClass("java.lang.Class") as ClassType
 
     fun string(state: ObjectReference, context: DefaultExecutionContext): String =
         (context.invokeMethod(state, toString, emptyList()) as StringReference).value()
@@ -63,14 +60,14 @@ class JavaLangMirror(context: DefaultExecutionContext) {
 
 class JavaUtilAbstractCollection(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfJavaLangAbstractCollection>("java.util.AbstractCollection", context) {
-    val abstractList = JavaUtilAbstractList(context)
-    val sizeMethod = makeMethod("size")
+    private val abstractList = JavaUtilAbstractList(context)
+    private val sizeMethod = makeMethod("size")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfJavaLangAbstractCollection? {
         val list = mutableListOf<ObjectReference>()
         val size = intValue(value, sizeMethod, context) ?: 0
         for (index in 0 until size) {
-            val reference =  abstractList.get(value, index, context) ?: continue
+            val reference = abstractList.get(value, index, context) ?: continue
             list.add(reference)
         }
         return MirrorOfJavaLangAbstractCollection(value, list)
@@ -81,7 +78,7 @@ class JavaUtilAbstractList(context: DefaultExecutionContext) :
     BaseMirror<ObjectReference>("java.util.AbstractList", context) {
     val getMethod = makeMethod("get")
 
-    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext) =
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): Nothing? =
         null
 
     fun get(value: ObjectReference, index: Int, context: DefaultExecutionContext): ObjectReference? =

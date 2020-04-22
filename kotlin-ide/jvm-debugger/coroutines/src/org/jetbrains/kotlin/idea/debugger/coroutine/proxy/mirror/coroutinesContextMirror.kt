@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 
-import com.sun.jdi.Method
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
-import java.lang.StackTraceElement
 
 class CoroutineContext(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCoroutineContext>("kotlin.coroutines.CombinedContext", context) {
-    val coroutineNameRef = CoroutineName(context)
-    val coroutineIdRef = CoroutineId(context)
-    val jobRef = Job(context)
-    val dispatcherRef = CoroutineDispatcher(context)
-    val getContextElement = makeMethod("get")
+    private val coroutineNameRef = CoroutineName(context)
+    private val coroutineIdRef = CoroutineId(context)
+    private val jobRef = Job(context)
+    private val dispatcherRef = CoroutineDispatcher(context)
+    private val getContextElement = makeMethod("get")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCoroutineContext? {
         val coroutineName = getElementValue(value, context, coroutineNameRef)
@@ -26,7 +24,7 @@ class CoroutineContext(context: DefaultExecutionContext) :
         return MirrorOfCoroutineContext(value, coroutineName, coroutineId, dispatcher, job)
     }
 
-    fun <T> getElementValue(value: ObjectReference, context: DefaultExecutionContext, keyProvider: ContextKey<T>): T? {
+    private fun <T> getElementValue(value: ObjectReference, context: DefaultExecutionContext, keyProvider: ContextKey<T>): T? {
         val key = keyProvider.key() ?: return null
         val elementValue = objectValue(value, getContextElement, context, key) ?: return null
         return keyProvider.mirror(elementValue, context)
@@ -42,12 +40,12 @@ data class MirrorOfCoroutineContext(
 )
 
 abstract class ContextKey<T>(name: String, context: DefaultExecutionContext) : BaseMirror<T>(name, context) {
-    abstract fun key() : ObjectReference?
+    abstract fun key(): ObjectReference?
 }
 
 class CoroutineName(context: DefaultExecutionContext) : ContextKey<String>("kotlinx.coroutines.CoroutineName", context) {
     val key = staticObjectValue("Key")
-    val getNameRef = makeMethod("getName")
+    private val getNameRef = makeMethod("getName")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): String? {
         return stringValue(value, getNameRef, context)
@@ -57,8 +55,8 @@ class CoroutineName(context: DefaultExecutionContext) : ContextKey<String>("kotl
 }
 
 class CoroutineId(context: DefaultExecutionContext) : ContextKey<Long>("kotlinx.coroutines.CoroutineId", context) {
-    val key = staticObjectValue("Key")
-    val getIdRef = makeMethod("getId")
+    private val key = staticObjectValue("Key")
+    private val getIdRef = makeMethod("getId")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): Long? {
         return longValue(value, getIdRef, context)
@@ -79,8 +77,8 @@ class Job(context: DefaultExecutionContext) : ContextKey<ObjectReference>("kotli
 
 
 class CoroutineDispatcher(context: DefaultExecutionContext) : ContextKey<String>("kotlinx.coroutines.CoroutineDispatcher", context) {
-    val key = staticObjectValue("Key")
-    val jlm = JavaLangMirror(context)
+    private val key = staticObjectValue("Key")
+    private val jlm = JavaLangMirror(context)
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): String? {
         return jlm.string(value, context)

@@ -12,13 +12,12 @@ import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.intellij.openapi.project.Project
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.Value
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder
 
 class ContinuationValueDescriptorImpl(
     project: Project,
     val continuation: ObjectReference,
     val fieldName: String,
-    val variableName: String
+    private val variableName: String
 ) : ValueDescriptorImpl(project) {
     override fun calcValueName() = variableName
 

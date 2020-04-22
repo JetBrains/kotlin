@@ -24,9 +24,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.text.DateFormatUtil
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
-import org.jetbrains.kotlin.idea.debugger.coroutine.view.CoroutineDumpPanel
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutineDebugProbesProxy
+import org.jetbrains.kotlin.idea.debugger.coroutine.view.CoroutineDumpPanel
 
 @Suppress("ComponentNotRegistered")
 class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
@@ -49,7 +49,7 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
                         ApplicationManager.getApplication().invokeLater(f, ModalityState.NON_MODAL)
                     } else {
                         val message = KotlinDebuggerCoroutinesBundle.message("coroutine.dump.failed")
-                        XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(message,MessageType.ERROR).notify(project)
+                        XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(message, MessageType.ERROR).notify(project)
                     }
                 }
             })

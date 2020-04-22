@@ -9,7 +9,7 @@ import com.sun.jdi.ObjectReference
 import com.sun.jdi.ThreadReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData.Companion.DEFAULT_COROUTINE_NAME
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData.Companion.DEFAULT_COROUTINE_STATE
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.MirrorOfCoroutineInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 
 /**
@@ -31,9 +31,9 @@ data class CoroutineInfoData(
 
     fun isRunning() = key.state == State.RUNNING
 
-    fun topRestoredFrame() = stackTrace.firstOrNull()
+    private fun topRestoredFrame() = stackTrace.firstOrNull()
 
-    fun topFrameVariables() = stackTrace.firstOrNull()?.spilledVariables ?: emptyList()
+    fun topFrameVariables() = topRestoredFrame()?.spilledVariables ?: emptyList()
 
     fun restoredStackTrace(mode: SuspendExitMode): List<CoroutineStackFrameItem> =
         if (stackTrace.isNotEmpty() && stackTrace.first().isInvokeSuspend())

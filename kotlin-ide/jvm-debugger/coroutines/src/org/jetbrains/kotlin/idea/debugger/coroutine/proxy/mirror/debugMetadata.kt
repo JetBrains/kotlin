@@ -45,7 +45,7 @@ class DebugMetadata private constructor(context: DefaultExecutionContext) :
             try {
                 return DebugMetadata(context)
             } catch (e: IllegalStateException) {
-                log.warn("Attempt to access DebugMetadata", e)
+                log.debug("Attempt to access DebugMetadata but none found.", e)
             }
             return null
         }
@@ -73,7 +73,8 @@ class BaseContinuationImpl(context: DefaultExecutionContext, private val debugMe
         val fieldVariables = getSpilledVariableFieldMapping(value, context)
         val completionValue = objectValue(value, getCompletion, context)
         val completion = if (completionValue != null && isCompatible(completionValue)) completionValue else null
-        val coroutineOwner = if (completionValue != null && DebugProbesImpl_CoroutineOwner.instanceOf(completionValue)) completionValue else null
+        val coroutineOwner =
+            if (completionValue != null && DebugProbesImplCoroutineOwner.instanceOf(completionValue)) completionValue else null
         return MirrorOfBaseContinuationImpl(value, stackTraceElementMirror, fieldVariables, completion, coroutineOwner)
     }
 
@@ -84,7 +85,7 @@ class BaseContinuationImpl(context: DefaultExecutionContext, private val debugMe
         val length = getSpilledVariableFieldMappingReference.length() / 2
         val fieldVariables = ArrayList<FieldVariable>()
         for (index in 0 until length) {
-            var fieldVariable = getFieldVariableName(getSpilledVariableFieldMappingReference, index) ?: continue
+            val fieldVariable = getFieldVariableName(getSpilledVariableFieldMappingReference, index) ?: continue
             fieldVariables.add(fieldVariable)
         }
         return fieldVariables

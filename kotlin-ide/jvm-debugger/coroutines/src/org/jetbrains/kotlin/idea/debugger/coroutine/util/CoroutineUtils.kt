@@ -30,9 +30,6 @@ fun Method.isInvokeSuspend(): Boolean =
 fun Method.isInvoke(): Boolean =
     name() == "invoke" && signature().contains("Ljava/lang/Object;)Ljava/lang/Object;")
 
-fun Method.isContinuation() =
-    isInvokeSuspend() && declaringType().isContinuation() /* Perhaps need to check for "Lkotlin/coroutines/Continuation;)" in signature() ? */
-
 fun Method.isSuspendLambda() =
     isInvokeSuspend() && declaringType().isSuspendLambda()
 
@@ -79,16 +76,13 @@ fun StackFrameProxyImpl.variableValue(variableName: String): ObjectReference? {
     return getValue(continuationVariable) as? ObjectReference ?: return null
 }
 
-fun StackFrameProxyImpl.completionVariableValue(): ObjectReference? =
-    variableValue("completion")
-
 fun StackFrameProxyImpl.continuationVariableValue(): ObjectReference? =
     variableValue("\$continuation")
 
 fun StackFrameProxyImpl.thisVariableValue(): ObjectReference? =
     this.thisObject()
 
-private fun Method.isGetCOROUTINE_SUSPENDED() =
+private fun Method.isGetCoroutineSuspended() =
     signature() == "()Ljava/lang/Object;" && name() == "getCOROUTINE_SUSPENDED" && declaringType().name() == "kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsKt"
 
 fun DefaultExecutionContext.findCoroutineMetadataType() =
@@ -101,7 +95,7 @@ fun DefaultExecutionContext.findCancellableContinuationImplReferenceType(): List
     vm.classesByName("kotlinx.coroutines.CancellableContinuationImpl")
 
 fun hasGetCoroutineSuspended(frames: List<StackFrameProxyImpl>) =
-    frames.indexOfFirst { it.safeLocation()?.safeMethod()?.isGetCOROUTINE_SUSPENDED() == true }
+    frames.indexOfFirst { it.safeLocation()?.safeMethod()?.isGetCoroutineSuspended() == true }
 
 fun StackTraceElement.isCreationSeparatorFrame() =
     className.startsWith(CREATION_STACK_TRACE_SEPARATOR)
@@ -111,9 +105,6 @@ fun StackTraceElement.findPosition(project: Project): XSourcePosition? =
 
 fun Location.findPosition(project: Project) =
     getPosition(project, declaringType().name(), lineNumber())
-
-fun ClassType.completionField() =
-    fieldByName("completion")
 
 private fun getPosition(project: Project, className: String, lineNumber: Int): XSourcePosition? {
     val psiFacade = JavaPsiFacade.getInstance(project)
@@ -130,7 +121,7 @@ private fun getPosition(project: Project, className: String, lineNumber: Int): X
 fun SuspendContextImpl.executionContext() =
     invokeInManagerThread { DefaultExecutionContext(EvaluationContextImpl(this, this.frameProxy)) }
 
-fun <T : Any> SuspendContextImpl.invokeInManagerThread(f: () -> T?) : T? =
+fun <T : Any> SuspendContextImpl.invokeInManagerThread(f: () -> T?): T? =
     debugProcess.invokeInManagerThread { f() }
 
 fun ThreadReferenceProxyImpl.supportsEvaluation(): Boolean =

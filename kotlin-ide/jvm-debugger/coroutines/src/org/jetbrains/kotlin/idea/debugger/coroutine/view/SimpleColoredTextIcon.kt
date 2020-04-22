@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.view
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.settings.ThreadsViewSettings
 import com.intellij.icons.AllIcons
-import com.intellij.icons.AllIcons.General.Information
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.ui.ColoredTextContainer
@@ -25,11 +24,11 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.data.State
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import javax.swing.Icon
 
-class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
-    val texts = mutableListOf<String>()
-    val textKeyAttributes = mutableListOf<TextAttributesKey>()
+class SimpleColoredTextIcon(val icon: Icon?, val hasChildren: Boolean) {
+    private val texts = mutableListOf<String>()
+    private val textKeyAttributes = mutableListOf<TextAttributesKey>()
 
-    constructor(icon: Icon?, hasChildrens: Boolean, text: String) : this(icon, hasChildrens) {
+    constructor(icon: Icon?, hasChildren: Boolean, text: String) : this(icon, hasChildren) {
         append(text)
     }
 
@@ -43,14 +42,14 @@ class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
         textKeyAttributes.add(CoroutineDebuggerColors.VALUE_ATTRIBUTES)
     }
 
-    fun appendToComponent(component: ColoredTextContainer) {
+    private fun appendToComponent(component: ColoredTextContainer) {
         val size: Int = texts.size
         for (i in 0 until size) {
-            val text: String = texts.get(i)
-            val attribute: TextAttributesKey = textKeyAttributes.get(i)
-            val simpleTextAttrinbute = toSimpleTextAttribute(attribute)
+            val text: String = texts[i]
+            val attribute: TextAttributesKey = textKeyAttributes[i]
+            val simpleTextAttribute = toSimpleTextAttribute(attribute)
 
-            component.append(text, simpleTextAttrinbute)
+            component.append(text, simpleTextAttribute)
         }
     }
 
@@ -90,7 +89,7 @@ class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
 
 interface CoroutineDebuggerColors {
     companion object {
-        val REGULAR_ATTRIBUTES = HighlighterColors.TEXT
+        val REGULAR_ATTRIBUTES: TextAttributesKey = HighlighterColors.TEXT
         val VALUE_ATTRIBUTES = TextAttributesKey.createTextAttributesKey("KOTLIN_COROUTINE_DEBUGGER_VALUE", HighlighterColors.TEXT)
     }
 }
@@ -185,7 +184,7 @@ class SimpleColoredTextIconPresentationRenderer {
         )
 
     fun renderErrorNode(error: String) =
-        SimpleColoredTextIcon(AllIcons.Actions.Lightning,false, KotlinDebuggerCoroutinesBundle.message(error))
+        SimpleColoredTextIcon(AllIcons.Actions.Lightning, false, KotlinDebuggerCoroutinesBundle.message(error))
 
     fun renderInfoNode(text: String) =
         SimpleColoredTextIcon(AllIcons.General.Information, false, KotlinDebuggerCoroutinesBundle.message(text))
