@@ -6,19 +6,19 @@ import com.intellij.openapi.project.Project
 
 
 object HintUtils {
-  private fun getAllMetaProviders() : List<InlayHintsProviderFactory> {
+  private fun getAllProvidersFactories() : List<InlayHintsProviderFactory> {
     return InlayHintsProviderFactory.EP.extensionList
   }
 
   fun getLanguagesWithNewInlayHints(project: Project) : Set<Language> {
     val languages = HashSet<Language>()
-    getAllMetaProviders().flatMapTo(languages) { it.getProvidersInfo(project).map { info -> info.language } }
+    getAllProvidersFactories().flatMapTo(languages) { it.getProvidersInfo(project).map { info -> info.language } }
     return languages
   }
 
   fun getHintProvidersForLanguage(language: Language, project: Project): List<ProviderWithSettings<out Any>> {
     val config = InlayHintsSettings.instance()
-    return getAllMetaProviders()
+    return getAllProvidersFactories()
       .flatMap { it.getProvidersInfo(project) }
       .filter { language.isKindOf(it.language) && it.provider.isLanguageSupported(language) }
       .map { it.provider.withSettings(it.language, config) }
