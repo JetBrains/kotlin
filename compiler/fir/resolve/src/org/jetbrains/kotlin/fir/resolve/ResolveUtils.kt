@@ -56,6 +56,8 @@ val FirSession.firSymbolProvider: FirSymbolProvider by componentArrayAccessor()
 val FirSession.firProvider: FirProvider by componentArrayAccessor()
 val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by componentArrayAccessor()
 val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by componentArrayAccessor()
+val FirSession.qualifierResolver: FirQualifierResolver by componentArrayAccessor()
+val FirSession.typeResolver: FirTypeResolver by componentArrayAccessor()
 
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
     if (this is ConeClassLookupTagWithFixedSymbol) {

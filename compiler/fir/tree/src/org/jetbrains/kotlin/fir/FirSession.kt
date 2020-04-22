@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.utils.Jsr305State
 import kotlin.properties.ReadOnlyProperty
@@ -21,17 +20,13 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) {
 
     val builtinTypes: BuiltinTypes = BuiltinTypes()
 
-    val components: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val registeredComponents: MutableSet<KClass<*>> = mutableSetOf()
 
     internal val componentArray = ComponentArray()
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getService(kclass: KClass<T>): T =
-        components[kclass] as T
-
     protected fun <T : Any /* TODO: FirSessionComponent */> registerComponent(tClass: KClass<T>, t: T) {
-        assert(tClass !in components) { "Already registered component" }
-        components[tClass] = t
+        assert(tClass !in registeredComponents) { "Already registered component" }
+        registeredComponents += tClass
 
         // TODO: Make t of FirSessionComponent
         if (t is FirSessionComponent) {
@@ -59,10 +54,6 @@ interface FirSessionProvider {
 
     fun getSession(moduleInfo: ModuleInfo): FirSession?
 }
-
-@Deprecated("This is very slow, introduce & use componentArrayAccessor instead")
-inline fun <reified T : Any> FirSession.service(): T =
-    getService(T::class)
 
 internal object ComponentTypeRegistry {
     private val idPerType = mutableMapOf<KClass<out FirSessionComponent>, Int>()

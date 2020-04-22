@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.impl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -49,7 +46,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
             is FirUserTypeRef -> {
 
-                val qualifierResolver = FirQualifierResolver.getInstance(session)
+                val qualifierResolver = session.qualifierResolver
 
                 var resolvedSymbol: FirClassifierSymbol<*>? = null
                 for (typeScope in scope.scopes) {

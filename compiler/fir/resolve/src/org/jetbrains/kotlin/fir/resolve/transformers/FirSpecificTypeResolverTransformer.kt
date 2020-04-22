@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedFunctionTypeRef
@@ -19,7 +20,7 @@ class FirSpecificTypeResolverTransformer(
     private val towerScope: FirIterableScope,
     override val session: FirSession
 ) : FirAbstractTreeTransformer<Nothing?>(phase = FirResolvePhase.SUPER_TYPES) {
-    private val typeResolver = FirTypeResolver.getInstance(session)
+    private val typeResolver = session.typeResolver
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
         typeRef.transformChildren(this, null)
