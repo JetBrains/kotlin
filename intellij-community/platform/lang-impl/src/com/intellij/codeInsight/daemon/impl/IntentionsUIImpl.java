@@ -59,7 +59,7 @@ public class IntentionsUIImpl extends IntentionsUI {
     IntentionHintComponent hint = myLastIntentionHint;
     if (hint != null && !hint.isDisposed() && hint.isVisible()) {
       hint.hide();
-      myLastIntentionHint = null;
     }
+    myLastIntentionHint = null;
   }
 }
