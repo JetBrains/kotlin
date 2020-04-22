@@ -19,9 +19,7 @@ import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.settings.XDebuggerSettingsManager
 import com.sun.jdi.*
-import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
-import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
-import org.jetbrains.kotlin.idea.debugger.canRunEvaluation
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.util.*
 
@@ -33,12 +31,7 @@ class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
     private val rendererSettings = NodeRendererSettings.getInstance()
 
     override fun isApplicable(jdiType: Type?): Boolean {
-        if (!super.isApplicable(jdiType)) return false
-
-        if (jdiType !is ReferenceType) return false
-
-        if (!jdiType.isPrepared) {
-            LOG.info(notPreparedClassMessage(jdiType))
+        if (!super.isApplicable(jdiType) || jdiType !is ReferenceType || !jdiType.isPrepared || !jdiType.isInKotlinSources()) {
             return false
         }
 
