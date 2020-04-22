@@ -34,6 +34,7 @@ import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.actions.ToggleUseSoftWrapsToolbarAction;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
+import com.intellij.openapi.progress.util.ProgressWindow;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -44,6 +45,7 @@ import com.intellij.pom.Navigatable;
 import com.intellij.pom.NonNavigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.*;
+import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
 import com.intellij.ui.tree.TreeVisitor;
@@ -55,7 +57,6 @@ import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SmartHashSet;
 import com.intellij.util.text.DateFormatUtil;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.*;
 import org.jetbrains.concurrency.Promise;
@@ -83,7 +84,7 @@ import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
 import static com.intellij.ui.render.RenderingHelper.SHRINK_LONG_RENDERER;
 import static com.intellij.util.ObjectUtils.chooseNotNull;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
-import static com.intellij.util.ui.UIUtil.getTreeSelectionForeground;
+import static com.intellij.util.ui.UIUtil.*;
 
 /**
  * @author Vladislav.Soroka
@@ -160,7 +161,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   private void installContextMenu() {
-    UIUtil.invokeLaterIfNeeded(() -> {
+    invokeLaterIfNeeded(() -> {
       final DefaultActionGroup rerunActionGroup = new DefaultActionGroup();
       List<AnAction> restartActions = myBuildDescriptor.getRestartActions();
       rerunActionGroup.addAll(restartActions);
@@ -350,9 +351,10 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
     }
     else {
+      boolean isProgress = event instanceof ProgressBuildEvent;
       currentNode = nodesMap.get(eventId);
       if (currentNode == null) {
-        if (event instanceof ProgressBuildEvent) {
+        if (isProgress) {
           currentNode = new ExecutionNode(myProject, parentNode, parentNode == buildProgressRootNode, this::isCorrectThread);
           nodesMap.put(eventId, currentNode);
           if (parentNode != null) {
@@ -362,6 +364,15 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         }
         else if (event instanceof OutputBuildEvent && parentNode != null) {
           myConsoleViewHandler.addOutput(parentNode, buildId, event);
+        }
+      }
+
+      if (isProgress) {
+        ProgressBuildEvent progressBuildEvent = (ProgressBuildEvent)event;
+        long total = progressBuildEvent.getTotal();
+        long progress = progressBuildEvent.getProgress();
+        if (currentNode == myBuildProgressRootNode) {
+          myConsoleViewHandler.updateProgressBar(total, progress, progressBuildEvent.getUnit());
         }
       }
     }
@@ -403,6 +414,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       if (myConsoleViewHandler.myExecutionNode == null) {
         invokeLater(() -> myConsoleViewHandler.setNode(buildProgressRootNode));
       }
+      myConsoleViewHandler.stopProgressBar();
     }
     if (structureChanged.isEmpty()) {
       scheduleUpdate(currentNode, false);
@@ -684,7 +696,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   public void hideRootNode() {
-    UIUtil.invokeLaterIfNeeded(() -> {
+    invokeLaterIfNeeded(() -> {
       if (myTree != null) {
         myTree.setRootVisible(false);
         myTree.setShowsRootHandles(true);
@@ -791,7 +803,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     private final Map<String, List<Consumer<BuildTextConsoleView>>> deferredNodeOutput = new ConcurrentHashMap<>();
     private final @NotNull BuildViewSettingsProvider myViewSettingsProvider;
     private @Nullable ExecutionNode myExecutionNode;
-    private @NotNull List<Filter> myExecutionConsoleFilters;
+    private @NotNull final List<Filter> myExecutionConsoleFilters;
+    private final BuildProgressStripe myPanelWithProgress;
 
     ConsoleViewHandler(@NotNull Project project,
                        @NotNull Tree tree,
@@ -801,7 +814,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                        @NotNull List<Filter> executionConsoleFilters,
                        @NotNull BuildViewSettingsProvider buildViewSettingsProvider) {
       myProject = project;
-      myPanel = new JPanel(new BorderLayout());
+      myPanel = new NonOpaquePanel(new BorderLayout());
+      myPanelWithProgress = new BuildProgressStripe(myPanel, parentDisposable, ProgressWindow.DEFAULT_PROGRESS_DIALOG_POSTPONE_TIME_MILLIS);
       myViewSettingsProvider = buildViewSettingsProvider;
       myExecutionConsoleFilters = executionConsoleFilters;
       Disposer.register(parentDisposable, this);
@@ -809,7 +823,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         @Override
         public void addView(@NotNull ExecutionConsole view, @NotNull String viewName) {
           super.addView(view, viewName);
-          UIUtil.removeScrollBorder(view.getComponent());
+          removeScrollBorder(view.getComponent());
         }
       };
       Disposer.register(this, myView);
@@ -844,6 +858,10 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         TreePath selectionPath = tree.getSelectionPath();
         setNode(selectionPath != null ? (DefaultMutableTreeNode)selectionPath.getLastPathComponent() : null);
       });
+    }
+
+    private void updateProgressBar(long total, long progress, String unit) {
+      myPanelWithProgress.updateProgress(total, progress);
     }
 
     private @Nullable ExecutionConsole getCurrentConsole() {
@@ -931,6 +949,10 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       deferredNodeOutput.clear();
     }
 
+    private void stopProgressBar() {
+      myPanelWithProgress.stopLoading();
+    }
+
     private static @NotNull String getNodeConsoleViewName(@NotNull ExecutionNode node) {
       return String.valueOf(System.identityHashCode(node));
     }
@@ -956,7 +978,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     }
 
     public JComponent getComponent() {
-      return myPanel;
+      return myPanelWithProgress;
     }
 
     public void clear() {

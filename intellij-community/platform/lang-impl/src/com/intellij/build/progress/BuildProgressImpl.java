@@ -75,8 +75,14 @@ class BuildProgressImpl implements BuildProgress<BuildProgressDescriptor> {
   @NotNull
   @Override
   public BuildProgress<BuildProgressDescriptor> progress(@NotNull String title) {
+    return progress(title, -1, -1 , "");
+  }
+
+  @NotNull
+  @Override
+  public BuildProgress<BuildProgressDescriptor> progress(@NotNull String title, long total, long progress, String unit) {
     Object parentId = myParentProgress != null ? myParentProgress.getId() : null;
-    myListener.onEvent(getBuildId(), new ProgressBuildEventImpl(getId(), parentId, System.currentTimeMillis(), title, -1, -1, ""));
+    myListener.onEvent(getBuildId(), new ProgressBuildEventImpl(getId(), parentId, System.currentTimeMillis(), title, total, progress, unit));
     return this;
   }
 

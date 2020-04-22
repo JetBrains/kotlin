@@ -16,6 +16,8 @@ public interface BuildProgress<T extends BuildProgressDescriptor> {
 
   @NotNull BuildProgress<T> progress(@NotNull String title);
 
+  @NotNull BuildProgress<T> progress(@NotNull String title, long total, long progress, String unit);
+
   @NotNull BuildProgress<T> output(@NotNull String text, boolean stdOut);
 
   @NotNull BuildProgress<T> message(@NotNull String title,
