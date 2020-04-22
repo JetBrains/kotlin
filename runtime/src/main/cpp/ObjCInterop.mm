@@ -16,6 +16,9 @@
 
 #if KONAN_OBJC_INTEROP
 
+#import <Foundation/NSException.h>
+#import <objc/objc-exception.h>
+
 #include <objc/objc.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
@@ -95,7 +98,22 @@ BOOL _tryRetainImp(id self, SEL _cmd) {
   // this is a regression for instances of Kotlin subclasses of Obj-C classes:
   // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
   // unless the object is frozen.
-  return getBackRef(self)->tryAddRef();
+  try {
+    return getBackRef(self)->tryAddRef();
+  } catch (ExceptionObjHolder& e) {
+    // TODO: check for IncorrectDereferenceException and possible weak property access
+    @try {
+      // try and catch with objc_terminate: this is a workaround to terminate immediately
+      // with libc default_terminate_handler() to be called instead of custom `TerminateWithUnhandledException`.
+      // See `KonanTerminateHandler`.
+      // TerminateWithUnhandledException shall not be used here because in debug mode it uses
+      // CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress) which fails at recursive retain lock.
+      [NSException raise:NSGenericException
+                  format:@"Possible illegal attempt to access weak property from non-owning thread"];
+    } @catch (...) {
+      objc_terminate();
+    }
+  }
 }
 
 void releaseImp(id self, SEL _cmd) {

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#ifndef RUNTIME_SOURCEINFO_H
+#define RUNTIME_SOURCEINFO_H
+
 struct SourceInfo {
     const char* fileName;
     int lineNumber;
@@ -29,3 +32,5 @@ struct SourceInfo Kotlin_getSourceInfo(void* addr);
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif // RUNTIME_SOURCEINFO_H

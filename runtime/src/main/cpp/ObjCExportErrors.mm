@@ -46,7 +46,7 @@ extern "C" RUNTIME_NORETURN void Kotlin_ObjCExport_trapOnUndeclaredException(KRe
 static char kotlinExceptionOriginChar;
 
 static bool isExceptionOfType(KRef exception, const TypeInfo** types) {
-  for (int i = 0; types[i] != nullptr; ++i) {
+  if (types) for (int i = 0; types[i] != nullptr; ++i) {
     // TODO: use fast instance check when possible.
     if (IsInstance(exception, types[i])) return true;
   }

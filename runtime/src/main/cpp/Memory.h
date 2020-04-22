@@ -601,6 +601,7 @@ class ObjHolder {
    ObjHeader* obj_;
 };
 
+//! TODO Follow the Rule of Zero to prevent dangling on unintented copy ctor
 class ExceptionObjHolder {
  public:
    explicit ExceptionObjHolder(const ObjHeader* obj) {
