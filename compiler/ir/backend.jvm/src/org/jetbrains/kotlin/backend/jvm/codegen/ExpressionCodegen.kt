@@ -539,7 +539,17 @@ class ExpressionCodegen(
             ownerType.internalName
         } ?: typeMapper.mapClass(callee.parentAsClass).internalName
         return if (expression is IrSetField) {
-            expression.value.accept(this, data).materializeAt(fieldType, callee.type)
+            val value = expression.value.accept(this, data)
+
+            // We only initialize enum entries with a subtype of `fieldType` and can avoid the CHECKCAST.
+            // This is important for some tools which analyze bytecode for enum classes by looking at the
+            // initializer of the $VALUES field.
+            if (callee.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+                value.materialize()
+            } else {
+                value.materializeAt(fieldType, callee.type)
+            }
+
             when {
                 isStatic -> mv.putstatic(ownerName, fieldName, fieldType.descriptor)
                 else -> mv.putfield(ownerName, fieldName, fieldType.descriptor)
