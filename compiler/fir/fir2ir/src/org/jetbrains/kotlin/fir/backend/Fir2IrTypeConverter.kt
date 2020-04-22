@@ -99,7 +99,7 @@ class Fir2IrTypeConverter(
                 intersectedTypes.first().toIrType(typeContext)
             }
             is ConeStubType -> createErrorType()
-            is ConeIntegerLiteralType -> getApproximatedType().toIrType(typeContext)
+            is ConeIntegerLiteralType -> createErrorType()
         }
     }
 
