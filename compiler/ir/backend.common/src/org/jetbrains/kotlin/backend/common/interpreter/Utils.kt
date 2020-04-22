@@ -74,6 +74,7 @@ private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boo
 
 private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
     return (this is VariableDescriptor && other is VariableDescriptor && this.name == other.name) ||
+            (this is TypeParameterDescriptor && other is TypeParameterDescriptor && this.name == other.name) ||
             (this is FunctionDescriptor && other is FunctionDescriptor && //this == other
                     this.valueParameters.map { it.type.toString() } == other.valueParameters.map { it.type.toString() } &&
                     this.name == other.name)
@@ -239,4 +240,18 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
     val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
     return this.getTypeArgument(typeParameter.index)
+}
+
+fun getTypeArguments(
+    container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (TypeParameterDescriptor) -> State
+): List<Variable> {
+    return container.typeParameters.mapIndexed { index, typeParameter ->
+        val argumentState = expression.getTypeArgument(index)?.classOrNull?.owner?.let { Common(it) } ?: mapper(typeParameter.descriptor)
+        Variable(typeParameter.descriptor, argumentState)
+    }
+}
+
+fun State?.extractNonLocalDeclarations(): List<Variable> {
+    this ?: return listOf()
+    return this.fields.filterNot { it.descriptor.containingDeclaration == this.irClass.descriptor }
 }

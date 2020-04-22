@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import kotlin.NoSuchElementException
 
 interface Frame {
@@ -16,6 +17,7 @@ interface Frame {
     fun getVariableState(variableDescriptor: DeclarationDescriptor): State
     fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State?
     fun getAll(): List<Variable>
+    fun getAllTypeArguments(): List<Variable> // TODO try to get rid of this method; possibly by finding all type arguments in local class
     fun contains(descriptor: DeclarationDescriptor): Boolean
     fun pushReturnValue(state: State)
     fun pushReturnValue(frame: Frame) // TODO rename to getReturnValueFrom
@@ -25,7 +27,10 @@ interface Frame {
 }
 
 // TODO replace exceptions with InterpreterException
-class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Frame {
+class InterpreterFrame(
+    private val pool: MutableList<Variable> = mutableListOf(),
+    private val typeArguments: List<Variable> = listOf()
+) : Frame {
     private val returnStack: MutableList<State> = mutableListOf()
 
     override fun addVar(variable: Variable) {
@@ -37,7 +42,8 @@ class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Fram
     }
 
     override fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State? {
-        return pool.firstOrNull { it.descriptor.equalTo(variableDescriptor) }?.state
+        return (if (variableDescriptor is TypeParameterDescriptor) typeArguments else pool)
+            .firstOrNull { it.descriptor.equalTo(variableDescriptor) }?.state
     }
 
     override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
@@ -49,8 +55,12 @@ class InterpreterFrame(val pool: MutableList<Variable> = mutableListOf()) : Fram
         return pool
     }
 
+    override fun getAllTypeArguments(): List<Variable> {
+        return typeArguments
+    }
+
     override fun contains(descriptor: DeclarationDescriptor): Boolean {
-        return pool.any { it.descriptor == descriptor }
+        return (typeArguments + pool).any { it.descriptor == descriptor }
     }
 
     override fun pushReturnValue(state: State) {

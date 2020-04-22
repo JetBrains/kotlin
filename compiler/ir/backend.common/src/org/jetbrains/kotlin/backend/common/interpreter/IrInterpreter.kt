@@ -309,19 +309,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         interpretValueParameters(expression, irFunction, valueArguments).check { return it }
 
-        // TODO fun saveReifiedParameters
-        irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
-            if (typeParameter.isReified) {
-                val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner)
-                valueArguments.add(Variable(typeParameter.descriptor, typeArgumentState))
-            }
-        }
+        valueArguments.addAll(getTypeArguments(irFunction, expression) { stack.getVariableState(it) })
+        if (dispatchReceiver is Common) valueArguments.addAll(dispatchReceiver.typeArguments)
+        if (extensionReceiver is Common) valueArguments.addAll(extensionReceiver.typeArguments)
 
-        // load data from declaration if it is local
-        if (dispatchReceiver != null && (irFunction.isLocal || dispatchReceiver.irClass.isLocal)) {
-            with(dispatchReceiver) { this.fields.filterNot { it.descriptor.containingDeclaration == this.irClass.descriptor } }
-                .apply { valueArguments.addAll(this) }
-        }
+        if (irFunction.isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
 
         return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
             val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
@@ -376,9 +368,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
 
         val state = Common(parent)
+        state.typeArguments.addAll(getTypeArguments(parent, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments())
         if (parent.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
         valueArguments.add(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
-        return stack.newFrame(initPool = valueArguments) {
+        return stack.newFrame(initPool = valueArguments + state.typeArguments) {
             val statements = constructorCall.getBody()!!.statements
             // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
             ((statements[0] as? IrTypeOperatorCall)?.argument ?: statements[0]).interpret().check { return@newFrame it }
@@ -550,7 +543,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val objectState = when {
             owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(owner)
-            else -> Common(owner).apply { setSuperClassRecursive() }
+            else -> Common(owner).apply { setSuperClassRecursive() } // TODO test type arguments
         }
         mapOfObjects[objectSignature] = objectState
         stack.pushReturnValue(objectState)
@@ -600,29 +593,30 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
         val executionResult = expression.argument.interpret().check { return it }
+        val typeOperandDescriptor = expression.typeOperand.classifierOrFail.descriptor
+        val typeOperandClass = expression.typeOperand.classOrNull?.owner ?: stack.getVariableState(typeOperandDescriptor).irClass
 
         when (expression.operator) {
             // coercion to unit means that return value isn't used
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                if (!stack.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
+                if (!stack.peekReturnValue().irClass.isSubclassOf(typeOperandClass)) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-                    val castClassName = expression.type.classOrNull?.owner?.fqNameWhenAvailable
-                    throw ClassCastException("$convertibleClassName cannot be cast to $castClassName")
+                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperandClass.fqNameWhenAvailable}")
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                if (!stack.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
+                if (!stack.peekReturnValue().irClass.isSubclassOf(typeOperandClass)) {
                     stack.popReturnValue()
                     stack.pushReturnValue(null.toState(irBuiltIns.nothingType))
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = stack.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
+                val isInstance = stack.popReturnValue().irClass.isSubclassOf(typeOperandClass)
                 stack.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = stack.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
+                val isInstance = stack.popReturnValue().irClass.isSubclassOf(typeOperandClass)
                 stack.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
             }
             else -> TODO("${expression.operator} not implemented")

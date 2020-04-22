@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 
 class Common private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>, superClass: Complex?, subClass: Complex?
+    override val irClass: IrClass, override val fields: MutableList<Variable>, val typeArguments: MutableList<Variable>,
+    superClass: Complex?, subClass: Complex?
 ) : Complex(irClass, fields, superClass, subClass) {
 
-    constructor(irClass: IrClass) : this(irClass, mutableListOf(), null, null)
+    constructor(irClass: IrClass) : this(irClass, mutableListOf(), mutableListOf(), null, null)
 
     fun setSuperClassRecursive() {
         var thisClass: Common? = this
@@ -48,7 +49,7 @@ class Common private constructor(
     }
 
     override fun copy(): State {
-        return Common(irClass, fields, superClass, subClass ?: this)
+        return Common(irClass, fields, typeArguments, superClass, subClass ?: this)
     }
 
     override fun toString(): String {

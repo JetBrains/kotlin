@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.interpreter.ExecutionResult
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.util.file
@@ -29,6 +30,7 @@ interface Stack {
     fun addAll(variables: List<Variable>)
     fun getVariableState(variableDescriptor: DeclarationDescriptor): State
     fun getAll(): List<Variable>
+    fun getAllTypeArguments(): List<Variable>
 
     fun contains(descriptor: DeclarationDescriptor): Boolean
     fun hasReturnValue(): Boolean
@@ -42,7 +44,9 @@ class StackImpl : Stack {
     private fun getCurrentFrame() = frameList.last()
 
     override suspend fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: suspend () -> ExecutionResult): ExecutionResult {
-        val newFrame = InterpreterFrame(initPool.toMutableList())
+        val typeArgumentsPool = initPool.filter { it.descriptor is TypeParameterDescriptor }
+        val valueArguments = initPool.filter { it.descriptor !is TypeParameterDescriptor }
+        val newFrame = InterpreterFrame(valueArguments.toMutableList(), typeArgumentsPool)
         if (asSubFrame) getCurrentFrame().addSubFrame(newFrame) else frameList.add(FrameContainer(newFrame))
 
         return try {
@@ -90,6 +94,10 @@ class StackImpl : Stack {
         return getCurrentFrame().getAll()
     }
 
+    override fun getAllTypeArguments(): List<Variable> {
+        return getCurrentFrame().getAllTypeArguments()
+    }
+
     override fun contains(descriptor: DeclarationDescriptor): Boolean {
         return getCurrentFrame().contains(descriptor)
     }
@@ -128,6 +136,7 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun addVar(variable: Variable) = getTopFrame().addVar(variable)
     fun addAll(variables: List<Variable>) = getTopFrame().addAll(variables)
     fun getAll() = innerStack.flatMap { it.getAll() }
+    fun getAllTypeArguments() = innerStack.flatMap { it.getAllTypeArguments() }
     fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
         return innerStack.firstNotNullResult { it.tryGetVariableState(variableDescriptor) }
             ?: throw InterpreterException("$variableDescriptor not found") // TODO better message
