@@ -23021,6 +23021,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/suspendConversion/basicSuspendConversionGenerics.kt");
         }
 
+        @TestMetadata("chainedFunSuspendConversionForSimpleExpression.kt")
+        public void testChainedFunSuspendConversionForSimpleExpression() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suspendConversion/chainedFunSuspendConversionForSimpleExpression.kt");
+        }
+
         @TestMetadata("severalConversionsInOneCall.kt")
         public void testSeveralConversionsInOneCall() throws Exception {
             runTest("compiler/testData/diagnostics/tests/suspendConversion/severalConversionsInOneCall.kt");
