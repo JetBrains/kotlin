@@ -109,7 +109,7 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
         Couple<Long> oldProgress = myDownloadStatusEventIds.get(operationName);
         if (oldProgress == null) {
           String totalSizeInfo = statusEvent.getTotal() > 0 ? (" (" + formatFileSize(statusEvent.getTotal()) + ")") : "";
-          myListener.onTaskOutput(myTaskId, operationName + totalSizeInfo/* + "\n"*/, true);
+          myListener.onTaskOutput(myTaskId, operationName + totalSizeInfo, true);
           myDownloadStatusEventIds.put(operationName, Couple.of(statusEvent.getTotal(), statusEvent.getProgress()));
         }
         else {

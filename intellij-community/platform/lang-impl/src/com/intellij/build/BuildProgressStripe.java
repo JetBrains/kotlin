@@ -58,9 +58,9 @@ class BuildProgressStripe extends JBPanel {
   }
 
   void stopLoading() {
-    boolean isProgressBarIndeterminate = getProgressBar().isIndeterminate();
-    if (!isProgressBarIndeterminate) {
-      getProgressBar().setValue(100);
+    JProgressBar progressBar = getProgressBar();
+    if (!progressBar.isIndeterminate()) {
+      progressBar.setValue(100);
     }
     myDecorator.stopLoading();
   }

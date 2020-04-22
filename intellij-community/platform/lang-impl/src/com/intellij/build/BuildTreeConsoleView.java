@@ -372,7 +372,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         long total = progressBuildEvent.getTotal();
         long progress = progressBuildEvent.getProgress();
         if (currentNode == myBuildProgressRootNode) {
-          myConsoleViewHandler.updateProgressBar(total, progress, progressBuildEvent.getUnit());
+          myConsoleViewHandler.updateProgressBar(total, progress);
         }
       }
     }
@@ -860,7 +860,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       });
     }
 
-    private void updateProgressBar(long total, long progress, String unit) {
+    private void updateProgressBar(long total, long progress) {
       myPanelWithProgress.updateProgress(total, progress);
     }
 
