@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 import org.jetbrains.kotlin.CompileToBitcode
+import org.jetbrains.kotlin.CompilationDatabaseKt
 import org.jetbrains.kotlin.UtilsKt
 
 // TODO: consider using some Gradle plugins to build and test
@@ -76,6 +77,8 @@ targetList.each { targetName ->
         includeRuntime(delegate)
     }
 }
+
+CompilationDatabaseKt.createCompilationDatabaseFromCompileToBitcodeTasks(project, "compdb")
 
 task hostRuntime(dependsOn: "${hostName}Runtime")
 

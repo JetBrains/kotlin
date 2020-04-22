@@ -46,10 +46,44 @@ open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: Fil
 
     private val targetDir by lazy { File(project.buildDir, target) }
 
-    private val objDir by lazy { File(targetDir, folderName) }
+    val objDir by lazy { File(targetDir, folderName) }
 
     private val KonanTarget.isMINGW
         get() = this.family == Family.MINGW
+
+    val executable
+        get() = when (language) {
+            Language.C -> "clang"
+            Language.CPP -> "clang++"
+        }
+
+    val compilerFlags: List<String>
+        get() {
+            val commonFlags = listOf("-c", "-emit-llvm", "-I$headersDir")
+            val languageFlags = when (language) {
+                Language.C ->
+                    // Used flags provided by original build of allocator C code.
+                    listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Wno-unknown-pragmas",
+                            "-Werror", "-ftls-model=initial-exec", "-Wno-unused-function")
+                Language.CPP ->
+                    listOfNotNull("-std=c++14", "-Werror", "-O2",
+                            "-fPIC".takeIf { !HostManager().targetByName(target).isMINGW })
+            }
+            return commonFlags + languageFlags + compilerArgs
+        }
+
+    val inputFiles: Iterable<File>
+        get() {
+            val srcFilesPatterns =
+                when (language) {
+                    Language.C -> listOf("**/*.c")
+                    Language.CPP -> listOf("**/*.cpp", "**/*.mm")
+                }
+            return project.fileTree(srcDir) {
+                it.include(srcFilesPatterns)
+                it.exclude(excludeFiles)
+            }.files
+        }
 
     @OutputFile
     val outFile = File(targetDir, "${folderName}.bc")
@@ -59,28 +93,11 @@ open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: Fil
         if (target in excludedTargets) return
         objDir.mkdirs()
         val plugin = project.convention.getPlugin(ExecClang::class.java)
-        val commonFlags = listOf("-c", "-emit-llvm", "-I$headersDir")
-        val (executable, defaultFlags, srcFilesPatterns) =
-                when (language) {
-                    Language.C -> Triple("clang",
-                            // Used flags provided by original build of allocator C code.
-                            commonFlags + listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Wno-unknown-pragmas",
-                                    "-Werror", "-ftls-model=initial-exec", "-Wno-unused-function"),
-                            listOf("**/*.c"))
-                    Language.CPP -> Triple("clang++",
-                            commonFlags + listOfNotNull("-std=c++14", "-Werror", "-O2",
-                                    "-fPIC".takeIf { !HostManager().targetByName(target).isMINGW }),
-                            listOf("**/*.cpp", "**/*.mm"))
-                }
 
         plugin.execKonanClang(target, Action {
             it.workingDir = objDir
             it.executable = executable
-            it.args = defaultFlags + compilerArgs +
-                    project.fileTree(srcDir) {
-                        it.include(srcFilesPatterns)
-                        it.exclude(excludeFiles)
-                    }.files.map { it.absolutePath }
+            it.args = compilerFlags + inputFiles.map { it.absolutePath }
         })
 
         if (!skipLinkagePhase) {

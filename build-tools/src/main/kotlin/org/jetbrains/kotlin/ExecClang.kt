@@ -34,9 +34,20 @@ class ExecClang(private val project: Project) {
         return platformManager.platform(target).clang.clangArgsForKonanSources.asList()
     }
 
-    private fun konanArgs(targetName: String?): List<String> {
+    fun konanArgs(targetName: String?): List<String> {
         val target = platformManager.targetManager(targetName).target
         return konanArgs(target)
+    }
+
+    fun resolveExecutable(executable: String?): String {
+        val executable = executable ?: "clang"
+
+        if (listOf("clang", "clang++").contains(executable)) {
+            val llvmDir = project.findProperty("llvmDir")
+            return "${llvmDir}/bin/$executable"
+        } else {
+            throw GradleException("unsupported clang executable: $executable")
+        }
     }
 
     // The bare ones invoke clang with system default sysroot.
@@ -82,16 +93,7 @@ class ExecClang(private val project: Project) {
                 action.execute(execSpec)
 
                 execSpec.apply {
-                    if (executable == null) {
-                        executable = "clang"
-                    }
-
-                    if (listOf("clang", "clang++").contains(executable)) {
-                        val llvmDir = project.findProperty("llvmDir")
-                        executable = "${llvmDir}/bin/$executable" }
-                    else {
-                        throw GradleException("unsupported clang executable: $executable")
-                    }
+                    executable = resolveExecutable(executable)
 
                     val hostPlatform = project.findProperty("hostPlatform") as Platform
                     environment["PATH"] = project.files(hostPlatform.clang.clangPaths).asPath +

@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 import org.jetbrains.kotlin.CompileToBitcode
+import org.jetbrains.kotlin.CompilationDatabaseKt
 
 // TODO: consider using some Gradle plugins to build and test
 
@@ -13,6 +14,8 @@ targetList.each { targetName ->
 targetList.each { targetName ->
     tasks.create("${targetName}Files", CompileToBitcode, file("src/files"), 'files', targetName)
 }
+
+CompilationDatabaseKt.createCompilationDatabaseFromCompileToBitcodeTasks(project, "compdb")
 
 task build {
     dependsOn "${hostName}Hash"

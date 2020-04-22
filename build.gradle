@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
 import org.jetbrains.kotlin.CollisionDetector
 import org.jetbrains.kotlin.CollisionTransformer
+import org.jetbrains.kotlin.CompilationDatabaseKt
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
@@ -738,6 +739,7 @@ task clean {
     doLast {
         delete distDir
         delete bundle.outputs.files
+        delete tasks.findByName("compdb").outputFile
     }
 }
 
@@ -748,4 +750,11 @@ task pusher(type: KotlinBuildPusher){
     compilerConfigurationId = System.getenv("TEAMCITY_COMPILER_ID") ?: "Kotlin_KotlinDev_Compiler"
     overrideConfigurationId = System.getenv("TEAMCITY_OVERRIDE_NATIVE_ID") ?: "Kotlin_KotlinDev_DeployMavenArtifacts_OverrideNative"
     token = project.findProperty("teamcityBearToken") ?: System.getenv("TEAMCITY_BEAR_TOKEN")
+}
+
+CompilationDatabaseKt.mergeCompilationDatabases(project, "compdb", [
+    ":common:compdb",
+    ":runtime:compdb"
+]).configure {
+    outputFile = file("$projectDir/compile_commands.json")
 }
