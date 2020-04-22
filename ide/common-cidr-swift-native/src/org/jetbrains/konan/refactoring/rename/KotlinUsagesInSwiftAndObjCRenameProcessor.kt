@@ -10,12 +10,13 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameUtil
 import com.intellij.usageView.UsageInfo
 import com.jetbrains.cidr.CidrLog
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cidr.lang.psi.OCQualifiedExpression
+import com.jetbrains.cidr.lang.psi.OCSendMessageExpression
+import com.jetbrains.cidr.lang.psi.impl.OCExpressionWithReferenceBase
 import com.jetbrains.swift.SwiftLanguage
 import org.jetbrains.konan.resolve.konan.KonanConsumer
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
@@ -58,11 +59,14 @@ class KotlinUsagesInSwiftAndObjCRenameProcessor : ForeignUsagesRenameProcessor()
                 usages.forEach { RenameUtil.rename(it, name) }
             }
 
-            if (language == OCLanguage.getInstance() && element is KtObjectDeclaration && element.isCompanion()) {
+            if (language == OCLanguage.getInstance() && element is KtObjectDeclaration) {
+                val oldName = namer.getObjectInstanceSelector(element.descriptor as ClassDescriptor)
                 val renamedDescriptor = element.renamedDescriptor(newNameIdentifier)
                 for (usage in usages) {
-                    val expression = PsiTreeUtil.getParentOfType(usage.reference?.element, OCQualifiedExpression::class.java)
-                    expression?.reference?.handleElementRename(namer.getObjectInstanceSelector(renamedDescriptor))
+                    val expr = usage.reference?.element?.parent?.parent as? OCExpressionWithReferenceBase<*>
+                    if ((expr as? OCQualifiedExpression)?.name == oldName || (expr as? OCSendMessageExpression)?.messageSelector == oldName) {
+                        expr.reference?.handleElementRename(namer.getObjectInstanceSelector(renamedDescriptor))
+                    }
                 }
             }
         }
