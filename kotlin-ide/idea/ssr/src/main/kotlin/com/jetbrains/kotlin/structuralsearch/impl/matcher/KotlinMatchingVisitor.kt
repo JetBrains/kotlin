@@ -119,4 +119,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
+    override fun visitIfExpression(expression: KtIfExpression) {
+        val other = getTreeElement<KtIfExpression>() ?: return
+        val elseBranch = expression.`else`
+        myMatchingVisitor.result =  myMatchingVisitor.match(expression.condition, other.condition)
+                && myMatchingVisitor.match(expression.then, other.then)
+                && (elseBranch == null || myMatchingVisitor.match(elseBranch, other.`else`))
+    }
 }
