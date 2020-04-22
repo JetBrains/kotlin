@@ -20,7 +20,7 @@ class CoroutineFrameBuilder {
 
     companion object {
         val log by logger
-        const val PRE_FETCH_FRAME_COUNT = 5
+        private const val PRE_FETCH_FRAME_COUNT = 5
 
         fun build(coroutine: CoroutineInfoData, suspendContext: SuspendContextImpl): DoubleFrameList? =
             when {
@@ -81,10 +81,10 @@ class CoroutineFrameBuilder {
             frame: StackFrameProxyImpl
         ): RunningCoroutineStackFrameItem? {
             val location = frame.location()
-            if (!location.safeCoroutineExitPointLineNumber())
-                return RunningCoroutineStackFrameItem(frame, location)
+            return if (!location.safeCoroutineExitPointLineNumber())
+                RunningCoroutineStackFrameItem(frame, location)
             else
-                return null
+                null
         }
 
         /**
@@ -130,7 +130,7 @@ class CoroutineFrameBuilder {
                     else -> null
                 } ?: return null
 
-                val continuationHolder = ContinuationHolder.instance(context) ?: return null
+                val continuationHolder = ContinuationHolder.instance(context)
                 val coroutineInfo = continuationHolder.extractCoroutineInfoData(continuation) ?: return null
                 return preflight(frame, theFollowingFrames, coroutineInfo, mode)
             }
@@ -139,7 +139,7 @@ class CoroutineFrameBuilder {
 
         private fun lookForTheFollowingFrame(theFollowingFrames: List<StackFrameProxyImpl>): StackFrameProxyImpl? {
             for (i in 0 until min(PRE_FETCH_FRAME_COUNT, theFollowingFrames.size)) { // pre-scan PRE_FETCH_FRAME_COUNT frames
-                val nextFrame = theFollowingFrames.get(i)
+                val nextFrame = theFollowingFrames[i]
                 if (nextFrame.location().isPreFlight() == SuspendExitMode.SUSPEND_METHOD) {
                     return nextFrame
                 }
@@ -168,7 +168,7 @@ class CoroutineFrameBuilder {
         private fun getThisContinuation(frame: StackFrameProxyImpl?): ObjectReference? =
             frame?.thisVariableValue()
 
-        fun theFollowingFrames(frame: StackFrameProxyImpl): List<StackFrameProxyImpl>? {
+        private fun theFollowingFrames(frame: StackFrameProxyImpl): List<StackFrameProxyImpl>? {
             val frames = frame.threadProxy().frames()
             val indexOfCurrentFrame = frames.indexOf(frame)
             if (indexOfCurrentFrame >= 0) {

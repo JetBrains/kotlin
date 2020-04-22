@@ -50,15 +50,7 @@ class ManagerThreadExecutor(val debugProcess: DebugProcessImpl) {
 }
 
 class ApplicationThreadExecutor {
-    fun <T> readAction(f: () -> T): T {
-        return ApplicationManager.getApplication().runReadAction(Computable(f))
-    }
-
     fun schedule(f: () -> Unit, component: Component) {
         return ApplicationManager.getApplication().invokeLater({ f() }, ModalityState.stateForComponent(component))
-    }
-
-    fun schedule(f: () -> Unit) {
-        return ApplicationManager.getApplication().invokeLater { f() }
     }
 }

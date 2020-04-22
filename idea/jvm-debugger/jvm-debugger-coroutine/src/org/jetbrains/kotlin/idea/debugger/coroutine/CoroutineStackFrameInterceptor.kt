@@ -7,16 +7,12 @@ package org.jetbrains.kotlin.idea.debugger.coroutine
 
 import com.intellij.debugger.actions.AsyncStacksToggleAction
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.xdebugger.frame.XStackFrame
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.debugger.StackFrameInterceptor
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.SkipCoroutineStackFrameProxyImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CoroutineFrameBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isInUnitTest

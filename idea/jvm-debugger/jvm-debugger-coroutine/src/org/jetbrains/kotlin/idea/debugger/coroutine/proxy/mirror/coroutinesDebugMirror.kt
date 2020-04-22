@@ -5,29 +5,31 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 
-import com.sun.jdi.*
+import com.sun.jdi.ObjectReference
+import com.sun.jdi.ThreadReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 class DebugProbesImpl private constructor(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfDebugProbesImpl>("kotlinx.coroutines.debug.internal.DebugProbesImpl", context) {
-    val javaLangListMirror = JavaUtilAbstractCollection(context)
-    val stackTraceElement = StackTraceElement(context)
-    val coroutineInfo = CoroutineInfo.instance(this, context) ?: throw IllegalStateException("CoroutineInfo implementation not found.")
-    val debugProbesCoroutineOwner = DebugProbesImpl_CoroutineOwner(coroutineInfo, context)
-    val instance = staticObjectValue("INSTANCE")
-    val isInstalledMethod = makeMethod("isInstalled\$kotlinx_coroutines_debug", "()Z")
+    private val javaLangListMirror = JavaUtilAbstractCollection(context)
+    private val stackTraceElement = StackTraceElement(context)
+    private val coroutineInfo =
+        CoroutineInfo.instance(this, context) ?: throw IllegalStateException("CoroutineInfo implementation not found.")
+    private val debugProbesCoroutineOwner = DebugProbesImplCoroutineOwner(coroutineInfo, context)
+    private val instance = staticObjectValue("INSTANCE")
+    private val isInstalledMethod = makeMethod("isInstalled\$kotlinx_coroutines_debug", "()Z")
         ?: makeMethod("isInstalled\$kotlinx_coroutines_core", "()Z") ?: throw IllegalStateException("isInstalledMethod not found")
     val isInstalledValue = booleanValue(instance, isInstalledMethod, context)
-    val enhanceStackTraceWithThreadDumpMethod = makeMethod("enhanceStackTraceWithThreadDump")
-    val dumpMethod = makeMethod("dumpCoroutinesInfo", "()Ljava/util/List;")
+    private val enhanceStackTraceWithThreadDumpMethod = makeMethod("enhanceStackTraceWithThreadDump")
+    private val dumpMethod = makeMethod("dumpCoroutinesInfo", "()Ljava/util/List;")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfDebugProbesImpl? {
         return MirrorOfDebugProbesImpl(value, instance, isInstalledValue)
     }
 
-    fun enchanceStackTraceWithThreadDump(
+    fun enhanceStackTraceWithThreadDump(
         context: DefaultExecutionContext,
         coroutineInfo: ObjectReference,
         lastObservedStackTrace: ObjectReference
@@ -57,12 +59,13 @@ class DebugProbesImpl private constructor(context: DefaultExecutionContext) :
             try {
                 DebugProbesImpl(context)
             } catch (e: IllegalStateException) {
+                log.debug("Attempt to access DebugProbesImpl but none found.", e)
                 null
             }
     }
 }
 
-class DebugProbesImpl_CoroutineOwner(val coroutineInfo: CoroutineInfo, context: DefaultExecutionContext) :
+class DebugProbesImplCoroutineOwner(private val coroutineInfo: CoroutineInfo, context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCoroutineOwner>(COROUTINE_OWNER_CLASS_NAME, context) {
     private val infoField = makeField("info")
 
@@ -75,7 +78,7 @@ class DebugProbesImpl_CoroutineOwner(val coroutineInfo: CoroutineInfo, context: 
         const val COROUTINE_OWNER_CLASS_NAME = "kotlinx.coroutines.debug.internal.DebugProbesImpl\$CoroutineOwner"
 
         fun instanceOf(value: ObjectReference?) =
-            value?.let { it.referenceType().isSubTypeOrSame(COROUTINE_OWNER_CLASS_NAME) } ?: false
+            value?.referenceType()?.isSubTypeOrSame(COROUTINE_OWNER_CLASS_NAME) ?: false
     }
 }
 
@@ -84,13 +87,13 @@ data class MirrorOfCoroutineOwner(val that: ObjectReference, val coroutineInfo: 
 data class MirrorOfDebugProbesImpl(val that: ObjectReference, val instance: ObjectReference?, val isInstalled: Boolean?)
 
 class CoroutineInfo private constructor(
-    val debugProbesImplMirror: DebugProbesImpl,
+    private val debugProbesImplMirror: DebugProbesImpl,
     context: DefaultExecutionContext,
     val className: String = AGENT_134_CLASS_NAME
 ) :
     BaseMirror<MirrorOfCoroutineInfo>(className, context) {
-    val javaLangMirror = JavaLangMirror(context)
-    val javaLangListMirror = JavaUtilAbstractCollection(context)
+    private val javaLangMirror = JavaLangMirror(context)
+    private val javaLangListMirror = JavaUtilAbstractCollection(context)
     private val coroutineContextMirror = CoroutineContext(context)
     private val stackTraceElement = StackTraceElement(context)
     private val contextFieldRef = makeField("context")
@@ -105,16 +108,16 @@ class CoroutineInfo private constructor(
 
     companion object {
         val log by logger
-        const val AGENT_134_CLASS_NAME = "kotlinx.coroutines.debug.CoroutineInfo"
-        const val AGENT_135_AND_UP_CLASS_NAME = "kotlinx.coroutines.debug.internal.DebugCoroutineInfo"
+        private const val AGENT_134_CLASS_NAME = "kotlinx.coroutines.debug.CoroutineInfo"
+        private const val AGENT_135_AND_UP_CLASS_NAME = "kotlinx.coroutines.debug.internal.DebugCoroutineInfo"
 
         fun instance(debugProbesImplMirror: DebugProbesImpl, context: DefaultExecutionContext): CoroutineInfo? {
             val classType = context.findClassSafe(AGENT_134_CLASS_NAME) ?: context.findClassSafe(AGENT_135_AND_UP_CLASS_NAME) ?: return null
-            try {
-                return CoroutineInfo(debugProbesImplMirror, context, classType.name())
+            return try {
+                CoroutineInfo(debugProbesImplMirror, context, classType.name())
             } catch (e: IllegalStateException) {
                 log.warn("coroutine-debugger: $classType not found", e)
-                return null
+                null
             }
         }
     }
@@ -133,9 +136,9 @@ class CoroutineInfo private constructor(
         val creationStackTrace = creationStackTraceMirror?.values?.mapNotNull { stackTraceElement.mirror(it, context) }
 
         val lastObservedStackTrace = objectValue(value, lastObservedStackTraceMethod, context)
-        val enchancedList =
+        val enhancedList =
             if (lastObservedStackTrace != null)
-                debugProbesImplMirror.enchanceStackTraceWithThreadDump(context, value, lastObservedStackTrace)
+                debugProbesImplMirror.enhanceStackTraceWithThreadDump(context, value, lastObservedStackTrace)
             else emptyList()
         val lastObservedThread = threadValue(value, lastObservedThreadField)
         val lastObservedFrame = threadValue(value, lastObservedFrameField)
@@ -144,7 +147,7 @@ class CoroutineInfo private constructor(
             coroutineContext,
             creationStackBottom,
             sequenceNumber,
-            enchancedList,
+            enhancedList,
             creationStackTrace,
             state,
             lastObservedThread,
@@ -159,7 +162,7 @@ data class MirrorOfCoroutineInfo(
     val context: MirrorOfCoroutineContext?,
     val creationStackBottom: MirrorOfCoroutineStackFrame?,
     val sequenceNumber: Long?,
-    val enchancedStackTrace: List<MirrorOfStackTraceElement>?,
+    val enhancedStackTrace: List<MirrorOfStackTraceElement>?,
     val creationStackTrace: List<MirrorOfStackTraceElement>?,
     val state: String?,
     val lastObservedThread: ThreadReference?,
@@ -234,11 +237,8 @@ data class MirrorOfStackTraceElement(
     val lineNumber: Int?,
     val format: Byte?
 ) {
-    fun isInvokeSuspend() =
-        "invokeSuspend" == methodName
-
     fun stackTraceElement() =
-        java.lang.StackTraceElement(
+        StackTraceElement(
             declaringClass,
             methodName,
             fileName,

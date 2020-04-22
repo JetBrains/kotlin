@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.openapi.util.registry.Registry
-import com.sun.jdi.*
+import com.sun.jdi.Field
+import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.CancellableContinuationImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.findCancellableContinuationImplReferenceType
@@ -15,10 +16,10 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.util.findDispatchedContinuat
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : CoroutineInfoProvider {
+class CoroutineNoLibraryProxy(private val executionContext: DefaultExecutionContext) : CoroutineInfoProvider {
     val log by logger
-    val debugMetadataKtType = executionContext.findCoroutineMetadataType()
-    val holder = ContinuationHolder.instance(executionContext)
+    private val debugMetadataKtType = executionContext.findCoroutineMetadataType()
+    private val holder = ContinuationHolder.instance(executionContext)
 
     override fun dumpCoroutinesInfo(): List<CoroutineInfoData> {
         val vm = executionContext.vm
@@ -49,13 +50,13 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
         return false
     }
 
-    fun extractCancellableContinuation(
+    private fun extractCancellableContinuation(
         dispatchedContinuation: ObjectReference,
         ccMirrorProvider: CancellableContinuationImpl
     ): CoroutineInfoData? {
         val mirror = ccMirrorProvider.mirror(dispatchedContinuation, executionContext) ?: return null
         val continuation = mirror.delegate?.continuation ?: return null
-        return holder?.extractCoroutineInfoData(continuation)
+        return holder.extractCoroutineInfoData(continuation)
     }
 
     private fun dispatchedContinuation(resultList: MutableList<CoroutineInfoData>): Boolean {
@@ -75,7 +76,7 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
     private fun extractDispatchedContinuation(dispatchedContinuation: ObjectReference, continuation: Field): CoroutineInfoData? {
         debugMetadataKtType ?: return null
         val initialContinuation = dispatchedContinuation.getValue(continuation) as ObjectReference
-        return holder?.extractCoroutineInfoData(initialContinuation)
+        return holder.extractCoroutineInfoData(initialContinuation)
     }
 }
 

@@ -45,7 +45,12 @@ import javax.swing.event.DocumentEvent
 /**
  * Panel with dump of coroutines
  */
-class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActions: DefaultActionGroup, val dump: List<CoroutineInfoData>) :
+class CoroutineDumpPanel(
+    project: Project,
+    consoleView: ConsoleView,
+    toolbarActions: DefaultActionGroup,
+    val dump: List<CoroutineInfoData>
+) :
     JPanel(BorderLayout()), DataProvider {
     private var exporterToTextFile: ExporterToTextFile
     private var mergedDump = ArrayList<CoroutineInfoData>()
@@ -180,14 +185,6 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
 
     override fun getData(dataId: String): Any? = if (PlatformDataKeys.EXPORTER_TO_TEXT_FILE.`is`(dataId)) exporterToTextFile else null
 
-    private fun getCoroutineStateIcon(infoData: CoroutineInfoData): Icon {
-        return when (infoData.key.state) {
-            State.RUNNING -> LayeredIcon(AllIcons.Actions.Resume, Daemon_sign)
-            State.SUSPENDED -> AllIcons.Actions.Pause
-            else -> EmptyIcon.create(6)
-        }
-    }
-
     private fun getAttributes(infoData: CoroutineInfoData): SimpleTextAttributes {
         return when {
             infoData.isSuspended() -> SimpleTextAttributes.GRAY_ATTRIBUTES
@@ -296,9 +293,9 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
 
 private fun stringStackTrace(info: CoroutineInfoData) =
     buildString {
-        appendln("\"${info.key.name}\", state: ${info.key.state}")
+        appendLine("\"${info.key.name}\", state: ${info.key.state}")
         info.stackTrace.forEach {
-            appendln("\t$it")
+            appendLine("\t$it")
         }
     }
 
