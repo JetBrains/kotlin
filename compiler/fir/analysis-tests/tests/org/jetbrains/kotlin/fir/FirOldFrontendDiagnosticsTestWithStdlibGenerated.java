@@ -1788,6 +1788,29 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/factoryPattern")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FactoryPattern extends AbstractFirOldFrontendDiagnosticsTestWithStdlib {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFactoryPattern() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/factoryPattern"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @TestMetadata("overloadByLambdaReturnType_disabled.kt")
+        public void testOverloadByLambdaReturnType_disabled() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_disabled.kt");
+        }
+
+        @TestMetadata("overloadByLambdaReturnType_enabled.kt")
+        public void testOverloadByLambdaReturnType_enabled() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_enabled.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -220,6 +220,24 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     return resolvedLambdaAtom
 }
 
+fun ResolvedLambdaAtom.transformToResolvedLambda(
+    csBuilder: ConstraintSystemBuilder,
+    diagnosticsHolder: KotlinDiagnosticsHolder,
+    expectedType: UnwrappedType,
+    returnTypeVariable: TypeVariableForLambdaReturnType? = null
+): ResolvedLambdaAtom {
+    val resolvedLambdaAtom = preprocessLambdaArgument(
+        csBuilder,
+        atom,
+        expectedType,
+        diagnosticsHolder,
+        forceResolution = true,
+        returnTypeVariable = returnTypeVariable
+    ) as ResolvedLambdaAtom
+
+    return resolvedLambdaAtom
+}
+
 private fun preprocessCallableReference(
     csBuilder: ConstraintSystemBuilder,
     argument: CallableReferenceKotlinCallArgument,

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePri
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -196,8 +197,10 @@ class KotlinResolutionCallbacksImpl(
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
         (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
+        val inferedReturnType = functionTypeInfo.type?.arguments?.last()?.type?.takeIf { functionTypeInfo.type?.isFunctionTypeOrSubtype == true }
+
         if (coroutineSession?.hasInapplicableCall() == true) {
-            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, hasInapplicableCallForBuilderInference = true)
+            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, inferedReturnType, hasInapplicableCallForBuilderInference = true)
         } else {
             temporaryTrace?.commit()
         }
@@ -244,7 +247,8 @@ class KotlinResolutionCallbacksImpl(
                 lastExpressionCoercedToUnit,
                 returnArgumentFound
             ),
-            coroutineSession
+            coroutineSession,
+            inferedReturnType
         )
     }
 

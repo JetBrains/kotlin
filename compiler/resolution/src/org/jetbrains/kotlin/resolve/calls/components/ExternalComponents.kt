@@ -59,6 +59,7 @@ data class ReturnArgumentsInfo(
 data class ReturnArgumentsAnalysisResult(
     val returnArgumentsInfo: ReturnArgumentsInfo,
     val inferenceSession: InferenceSession?,
+    val lambdaReturnType: KotlinType? = null,
     val hasInapplicableCallForBuilderInference: Boolean = false
 )
 

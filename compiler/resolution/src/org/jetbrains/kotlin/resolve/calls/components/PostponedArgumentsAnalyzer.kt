@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -65,12 +66,12 @@ class PostponedArgumentsAnalyzer(
         }
     }
 
-    private fun analyzeLambda(
+    fun analyzeLambda(
         c: Context,
         resolutionCallbacks: KotlinResolutionCallbacks,
         lambda: ResolvedLambdaAtom,
         diagnosticHolder: KotlinDiagnosticsHolder
-    ) {
+    ): ReturnArgumentsAnalysisResult {
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
@@ -120,20 +121,21 @@ class PostponedArgumentsAnalyzer(
             else FilteredAnnotations(annotations, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
         }
 
-        val (returnArgumentsInfo, inferenceSession, hasInapplicableCallForBuilderInference) =
-            resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
-                lambda.atom,
-                lambda.isSuspend,
-                receiver,
-                parameters,
-                expectedTypeForReturnArguments,
-                convertedAnnotations ?: Annotations.EMPTY,
-                stubsForPostponedVariables.cast()
-            )
+        val returnArgumentsAnalysisResult = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
+            lambda.atom,
+            lambda.isSuspend,
+            receiver,
+            parameters,
+            expectedTypeForReturnArguments,
+            convertedAnnotations ?: Annotations.EMPTY,
+            stubsForPostponedVariables.cast()
+        )
+        val (returnArgumentsInfo, inferenceSession, inferedReturnType, hasInapplicableCallForBuilderInference) =
+            returnArgumentsAnalysisResult
 
         if (hasInapplicableCallForBuilderInference) {
             c.getBuilder().removePostponedVariables()
-            return
+            return returnArgumentsAnalysisResult
         }
 
         val returnArguments = returnArgumentsInfo.nonErrorArguments
@@ -169,7 +171,7 @@ class PostponedArgumentsAnalyzer(
             val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, diagnosticHolder)
             if (postponedVariables == null) {
                 c.getBuilder().removePostponedVariables()
-                return
+                return returnArgumentsAnalysisResult
             }
 
             for ((constructor, resultType) in postponedVariables) {
@@ -180,6 +182,8 @@ class PostponedArgumentsAnalyzer(
                 c.getBuilder().addEqualityConstraint(variable.defaultType(c), resultType, CoroutinePosition())
             }
         }
+
+        return returnArgumentsAnalysisResult
     }
 
     private fun UnwrappedType?.receiver(): UnwrappedType? {

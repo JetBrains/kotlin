@@ -119,6 +119,8 @@ class FirCallCompleter(
                 inferenceSession.addPartiallyResolvedCall(approximatedCall)
                 CompletionResult(approximatedCall, false)
             }
+
+            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()
         }
     }
 

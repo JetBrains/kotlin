@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
@@ -15,11 +16,15 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.utils.addToStdlib.same
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -66,9 +71,88 @@ class KotlinCallCompleter(
                 candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
                 candidate.asCallResolutionResult(completionMode, diagnosticHolder)
             }
+            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException("Should not be here")
 
         }
     }
+
+    fun chooseCandidateRegardingFactoryPatternResolution(
+        candidates: Set<KotlinResolutionCandidate>,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ): Set<KotlinResolutionCandidate> {
+        val lambdas = candidates.flatMap { candidate ->
+            candidate.getSubResolvedAtoms()
+                .filter { it is ResolvedLambdaAtom && !it.analyzed }
+                .map { candidate to it as ResolvedLambdaAtom }
+        }.groupBy { (_, atom) -> atom.atom }
+            .values
+            .singleOrNull()
+            ?.toMap() ?: return candidates
+
+        if (!lambdas.values.same { it.parameters.size }) return candidates
+        if (!lambdas.values.all { it.expectedType?.isFunctionTypeOrSubtype == true }) return candidates
+
+        for (candidate in lambdas.keys) {
+            candidate.runCompletion(
+                ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
+                candidate,
+                resolutionCallbacks
+            )
+        }
+        if (!lambdas.entries.same { (candidate, atom) -> candidate.getInputTypesOfLambdaAtom(atom) }) {
+            return candidates
+        }
+
+        val newAtoms = mutableMapOf<KotlinResolutionCandidate, ResolvedLambdaAtom>()
+        for ((candidate, atom) in lambdas.entries) {
+            newAtoms[candidate] = kotlinConstraintSystemCompleter.prepareLambdaAtomForFactoryPattern(atom, candidate, candidate)
+        }
+
+        val diagnosticHolderForLambda = KotlinDiagnosticsHolder.SimpleHolder()
+        val iterator = newAtoms.entries.iterator()
+        val (firstCandidate, firstAtom) = iterator.next()
+        val results = postponedArgumentsAnalyzer.analyzeLambda(
+            firstCandidate.getSystem().asPostponedArgumentsAnalyzerContext(),
+            resolutionCallbacks,
+            firstAtom,
+            diagnosticHolderForLambda
+        )
+        lambdas.getValue(firstCandidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(firstAtom))
+
+        val lambdaReturnType = results.lambdaReturnType ?: return candidates
+        while (iterator.hasNext()) {
+            val (candidate, atom) = iterator.next()
+            atom.setAnalyzedResults(results.returnArgumentsInfo, firstAtom.subResolvedAtoms!!)
+            lambdas.getValue(candidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(atom))
+            candidate.csBuilder.addSubtypeConstraint(lambdaReturnType, atom.returnType, LambdaArgumentConstraintPosition(atom))
+        }
+
+        val errorCandidates = mutableSetOf<KotlinResolutionCandidate>()
+        val successfulCandidates = mutableSetOf<KotlinResolutionCandidate>()
+
+        for (candidate in candidates) {
+            if (candidate.isSuccessful) {
+                successfulCandidates += candidate
+            } else {
+                errorCandidates += candidate
+            }
+        }
+        return when {
+            successfulCandidates.isNotEmpty() -> successfulCandidates
+            else -> errorCandidates
+        }
+    }
+
+    private fun KotlinResolutionCandidate.getInputTypesOfLambdaAtom(atom: ResolvedLambdaAtom): List<UnwrappedType> {
+        val result = mutableListOf<UnwrappedType>()
+        val substitutor = csBuilder.buildCurrentSubstitutor()
+        val ctx = getSystem().asConstraintSystemCompleterContext()
+        for (inputType in atom.inputTypes) {
+            result += substitutor.safeSubstitute(ctx, inputType) as UnwrappedType
+        }
+        return result
+    }
+
 
     private fun KotlinResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
         val samConversionPerArgumentWithWarningsForVarargAfterSam =
