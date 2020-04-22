@@ -50,6 +50,10 @@ fun box(): String {
     checkNotEqual(captureVararg1Bound(v0::target), captureVarargAsArrayBound(v0::target))
     checkNotEqual(captureVararg1Bound(v0::target), captureVarargAsArrayBoundFromOtherFile(v0))
 
+    val v1 = V()
+    checkNotEqual(captureVararg0Bound(v0::target), captureVararg0Bound(v1::target))
+    checkNotEqual(captureVarargAsArrayBound(v0::target), captureVarargAsArrayBound(v1::target))
+
     return "OK"
 }
 

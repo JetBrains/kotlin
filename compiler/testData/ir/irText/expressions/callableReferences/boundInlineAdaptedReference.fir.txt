@@ -1,0 +1,18 @@
+FILE fqName:test fileName:/boundInlineAdaptedReference.kt
+  FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+  FUN name:id visibility:public modality:FINAL <> ($receiver:kotlin.String, s:kotlin.String, xs:kotlin.IntArray) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+      EXPRESSION_BODY
+        GET_VAR '<this>: kotlin.String declared in test.id' type=kotlin.String origin=null
+    VALUE_PARAMETER name:xs index:1 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun id (s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test'
+        GET_VAR 's: kotlin.String declared in test.id' type=kotlin.String origin=null
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [test/foo]>#' type=IrErrorType
+        FUNCTION_REFERENCE 'public final fun id (s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
+          $receiver: CONST String type=kotlin.String value="Fail"

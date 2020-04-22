@@ -39,6 +39,10 @@ fun box(): String {
     checkNotEqual(captureStringBound(v0::target), captureUnitBound(v0::target))
     checkNotEqual(captureString(V::target), captureUnitBoundFromOtherFile(v0))
 
+    val v1 = V()
+    checkNotEqual(captureStringBound(v0::target), captureStringBound(v1::target))
+    checkNotEqual(captureUnitBound(v0::target), captureUnitBound(v1::target))
+
     return "OK"
 }
 

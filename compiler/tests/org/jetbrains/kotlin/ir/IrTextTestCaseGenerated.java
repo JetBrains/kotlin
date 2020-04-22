@@ -1403,6 +1403,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("boundInlineAdaptedReference.kt")
+            public void testBoundInlineAdaptedReference() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/boundInlineAdaptedReference.kt");
+            }
+
             @TestMetadata("boundInnerGenericConstructor.kt")
             public void testBoundInnerGenericConstructor() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/boundInnerGenericConstructor.kt");

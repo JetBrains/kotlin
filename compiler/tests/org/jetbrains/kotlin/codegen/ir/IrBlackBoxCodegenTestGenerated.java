@@ -2025,6 +2025,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/emptyVarargAndDefault.kt");
             }
 
+            @TestMetadata("inlineBound.kt")
+            public void testInlineBound() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineBound.kt");
+            }
+
             @TestMetadata("inlineDefault.kt")
             public void testInlineDefault() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineDefault.kt");
