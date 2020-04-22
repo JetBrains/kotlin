@@ -34,6 +34,7 @@ abstract class ScriptingSupport {
 
     abstract fun clearCaches()
     abstract fun hasCachedConfiguration(file: KtFile): Boolean
+    abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
     abstract fun getOrLoadConfiguration(virtualFile: VirtualFile, preloadedKtFile: KtFile? = null): ScriptCompilationConfigurationWrapper?
 
     abstract val updater: ScriptConfigurationUpdater

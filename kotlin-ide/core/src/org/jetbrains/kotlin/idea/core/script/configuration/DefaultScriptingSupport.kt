@@ -314,6 +314,10 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
     override fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
+    override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
+        return !hasCachedConfiguration(file) && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
+    }
+
     override fun getOrLoadConfiguration(
         virtualFile: VirtualFile,
         preloadedKtFile: KtFile?

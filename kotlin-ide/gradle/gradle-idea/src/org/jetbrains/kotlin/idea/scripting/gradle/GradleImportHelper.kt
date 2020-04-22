@@ -42,6 +42,9 @@ fun runPartialGradleImport(project: Project) {
     }
 }
 
+fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.load.changes")
+fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
+
 private var Project.shouldShowLoadConfiguraionsAction: Boolean?
         by UserDataProperty<Project, Boolean>(Key.create("load.script.configuration.action"))
 

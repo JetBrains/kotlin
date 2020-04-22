@@ -93,6 +93,11 @@ interface ScriptConfigurationManager {
     fun hasConfiguration(file: KtFile): Boolean
 
     /**
+     * returns true when there is no configuration and highlighting should be suspended
+     */
+    fun isConfigurationLoadingInProgress(file: KtFile): Boolean
+
+    /**
      * See [ScriptConfigurationUpdater].
      */
     val updater: ScriptConfigurationUpdater

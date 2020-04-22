@@ -146,6 +146,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         }
 
         override fun hasCachedConfiguration(file: KtFile): Boolean = false
+        override fun isConfigurationLoadingInProgress(file: KtFile): Boolean = false
 
         override fun getOrLoadConfiguration(
             virtualFile: VirtualFile,
@@ -164,6 +165,16 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             }
 
         override fun recreateRootsCache(): ScriptClassRootsCache = ScriptClassRootsCache.empty(project)
+    }
+
+    fun shouldShowNotificationToRunGradleImport(file: VirtualFile): Boolean {
+        if (isGradleKotlinScript(file)) {
+            findRoot(file)?.let { return false }
+
+            val externalProjectSettings = findExternalProjectSettings(file) ?: return false
+            return kotlinDslScriptsModelImportSupported(getGradleVersion(project, externalProjectSettings))
+        }
+        return false
     }
 
     companion object {

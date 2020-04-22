@@ -87,6 +87,9 @@ class GradleScriptingSupport(
     override fun hasCachedConfiguration(file: KtFile): Boolean =
         configuration.scriptModel(file.originalFile.virtualFile) != null
 
+    // TODO: can be true during import
+    override fun isConfigurationLoadingInProgress(file: KtFile): Boolean = false
+
     override fun getOrLoadConfiguration(virtualFile: VirtualFile, preloadedKtFile: KtFile?): ScriptCompilationConfigurationWrapper? {
         return classpathRoots.getScriptConfiguration(virtualFile)
     }
