@@ -154,10 +154,15 @@ class KotlinCallResolver(
         if (
             maximallySpecificCandidates.size > 1 &&
             callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FactoryPatternResolution) &&
-            candidates.any { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(FACTORY_PATTERN_ANNOTATION) } &&
             candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
         ) {
-            maximallySpecificCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
+            val candidateWithAnnotation = candidates.firstOrNull { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(FACTORY_PATTERN_ANNOTATION) }
+            if (candidateWithAnnotation != null) {
+                maximallySpecificCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
+                if (maximallySpecificCandidates.size > 1) {
+                    maximallySpecificCandidates = setOf(candidateWithAnnotation)
+                }
+            }
         }
 
         return kotlinCallCompleter.runCompletion(candidateFactory, maximallySpecificCandidates, expectedType, resolutionCallbacks)
