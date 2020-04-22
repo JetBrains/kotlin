@@ -69,19 +69,20 @@ class FirCallResolver(
                 functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
             }
 
-        var result = collectCandidates(functionCall)
+        val name = functionCall.calleeReference.name
+        var result = collectCandidates(functionCall, name)
 
         if (
             (result.candidates.isEmpty() || result.applicability < CandidateApplicability.SYNTHETIC_RESOLVED) &&
             functionCall.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
         ) {
             functionCall = functionCall.transformExplicitReceiver(integerLiteralTypeApproximator, null)
-            result = collectCandidates(functionCall)
+            result = collectCandidates(functionCall, name)
         }
 
         val nameReference = createResolvedNamedReference(
             functionCall.calleeReference,
-            functionCall.calleeReference.name,
+            name,
             result.candidates,
             result.applicability,
         )
@@ -112,18 +113,20 @@ class FirCallResolver(
         val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>,
     )
 
-    private fun collectCandidates(functionCall: FirFunctionCall): ResolutionResult {
-        val explicitReceiver = functionCall.explicitReceiver
-        val argumentList = functionCall.argumentList
-        val typeArguments = functionCall.typeArguments
+    private fun <T : FirQualifiedAccess> collectCandidates(qualifiedAccess: T, name: Name): ResolutionResult {
+        val explicitReceiver = qualifiedAccess.explicitReceiver
+        val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
+        val typeArguments = (qualifiedAccess as? FirFunctionCall)?.typeArguments.orEmpty()
 
         val info = CallInfo(
-            CallKind.Function,
-            functionCall.calleeReference.name,
+            if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
+            name,
             explicitReceiver,
             argumentList,
-            functionCall.safe,
-            isPotentialQualifierPart = false,
+            qualifiedAccess.safe,
+            isPotentialQualifierPart = qualifiedAccess !is FirFunctionCall &&
+                    qualifiedAccess.explicitReceiver is FirResolvedQualifier &&
+                    qualifiedResolver.isPotentialQualifierPartPosition(),
             typeArguments,
             session,
             file,
@@ -138,7 +141,7 @@ class FirCallResolver(
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            val onSuperReference = (functionCall.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             conflictResolver.chooseMaximallySpecificCandidates(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
@@ -157,42 +160,17 @@ class FirCallResolver(
             return resolvedQualifierPart
         }
 
-        val info = CallInfo(
-            CallKind.VariableAccess,
-            callee.name,
-            qualifiedAccess.explicitReceiver,
-            FirEmptyArgumentList,
-            qualifiedAccess.safe,
-            qualifiedAccess.explicitReceiver is FirResolvedQualifier && qualifiedResolver.isPotentialQualifierPartPosition(),
-            emptyList(),
-            session,
-            file,
-            transformer.components.implicitReceiverStack,
-        )
-        towerResolver.reset()
-        val result = towerResolver.runResolver(
-            implicitReceiverStack.receiversAsReversed(),
-            info,
-        )
-
-        val bestCandidates = result.bestCandidates()
-        val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
-            bestCandidates.toSet()
-        } else {
-            val onSuperReference = (qualifiedAccess.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
-            conflictResolver.chooseMaximallySpecificCandidates(
-                bestCandidates, discriminateGenerics = false, discriminateAbstracts = onSuperReference
-            )
-        }
+        val result = collectCandidates(qualifiedAccess, callee.name)
+        val reducedCandidates = result.candidates
         val nameReference = createResolvedNamedReference(
             callee,
             callee.name,
             reducedCandidates,
-            result.currentApplicability,
+            result.applicability,
         )
 
         if (qualifiedAccess.explicitReceiver == null) {
-            if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
+            if (result.applicability < CandidateApplicability.SYNTHETIC_RESOLVED
             ) {
                 // We should run QualifierResolver if no successful candidates are available
                 // Otherwise expression (even ambiguous) beat qualifier
