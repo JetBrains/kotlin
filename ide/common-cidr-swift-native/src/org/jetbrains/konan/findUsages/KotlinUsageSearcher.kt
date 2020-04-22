@@ -14,8 +14,9 @@ import com.intellij.psi.search.searches.ReferencesSearch.SearchParameters
 import com.intellij.util.Processor
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import org.jetbrains.konan.resolve.symbols.KtSymbolPsiWrapper
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.collectAllExpectAndActualDeclaration
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -24,9 +25,14 @@ abstract class KotlinUsageSearcher<T : OCSymbol, E : KtDeclaration> : QueryExecu
     final override fun processQuery(parameters: SearchParameters, consumer: Processor<in PsiReference>) {
         val target = parameters.getTarget() ?: return
 
-        val symbols = target.collectAllExpectAndActualDeclaration().filter { it.platform.isNative() }.flatMap {
-            @Suppress("UNCHECKED_CAST")
-            (it as E).toLightSymbols()
+        val isMPP = (target.descriptor as? MemberDescriptor)?.let { it.isExpect || it.isActual } ?: false
+        val symbols = if (!isMPP) {
+            target.toLightSymbols()
+        } else {
+            target.collectAllExpectAndActualDeclaration().filter { it.platform.isNative() }.flatMap {
+                @Suppress("UNCHECKED_CAST")
+                (it as E).toLightSymbols()
+            }
         }
 
         var effectiveSearchScope: SearchScope? = null
