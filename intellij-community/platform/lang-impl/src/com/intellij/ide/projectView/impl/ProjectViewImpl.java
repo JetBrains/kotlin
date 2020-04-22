@@ -553,6 +553,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
         toolWindowVisible = window.isVisible();
       }
     });
+
+    AbstractProjectViewPane.EP.addExtensionPointListener(project, this::reloadPanes, project);
   }
 
   private void constructUi() {
@@ -855,28 +857,49 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     viewSelectionChanged();
   }
 
-  private void ensurePanesLoaded() {
-    // avoid recursive loading
-    if (myExtensionsLoaded.getAndSet(true)) {
-      return;
-    }
+  private synchronized void reloadPanes() {
+    if (myProject.isDisposed() || !myExtensionsLoaded.get()) return; // panes will be loaded later
 
-    AbstractProjectViewPane[] extensions = AbstractProjectViewPane.EP_NAME.getExtensions(myProject);
-    Arrays.sort(extensions, PANE_WEIGHT_COMPARATOR);
-    for (AbstractProjectViewPane pane : extensions) {
-      if (myUninitializedPaneState.containsKey(pane.getId())) {
-        try {
-          pane.readExternal(myUninitializedPaneState.get(pane.getId()));
-        }
-        catch (InvalidDataException e) {
-          // ignore
-        }
-        myUninitializedPaneState.remove(pane.getId());
+    Map<String, AbstractProjectViewPane> newPanes = loadPanes();
+    Map<AbstractProjectViewPane, Boolean> oldPanes = new IdentityHashMap<>();
+    myUninitializedPanes.forEach(pane -> oldPanes.put(pane, pane == newPanes.get(pane.getId())));
+    myId2Pane.forEach((id, pane) -> oldPanes.put(pane, pane == newPanes.get(id)));
+    oldPanes.forEach((pane, exists) -> {
+      if (Boolean.FALSE.equals(exists)) {
+        removeProjectPane(pane);
+        Disposer.dispose(pane);
       }
-      if (pane.isInitiallyVisible() && !myId2Pane.containsKey(pane.getId())) {
+    });
+    for (AbstractProjectViewPane pane : newPanes.values()) {
+      if (!Boolean.TRUE.equals(oldPanes.get(pane)) && pane.isInitiallyVisible()) {
         addProjectPane(pane);
       }
     }
+  }
+
+  private void ensurePanesLoaded() {
+    if (myProject.isDisposed() || myExtensionsLoaded.getAndSet(true)) return; // avoid recursive loading
+
+    for (AbstractProjectViewPane pane : loadPanes().values()) {
+      if (pane.isInitiallyVisible()) {
+        addProjectPane(pane);
+      }
+    }
+  }
+
+  private Map<String, AbstractProjectViewPane> loadPanes() {
+    HashMap<String, AbstractProjectViewPane> map = new LinkedHashMap<>();
+    AbstractProjectViewPane.EP.getExtensions(myProject).stream().sorted(PANE_WEIGHT_COMPARATOR).forEach(pane -> {
+      AbstractProjectViewPane added = map.computeIfAbsent(pane.getId(), id -> pane);
+      if (pane != added) {
+        LOG.warn("ignore duplicated pane with id=" + pane.getId() + "\nold " + added.getClass() + "\nnew " + pane.getClass());
+      }
+      else {
+        Element element = myUninitializedPaneState.remove(pane.getId());
+        if (element != null) applyPaneState(pane, element);
+      }
+    });
+    return map;
   }
 
   private void viewSelectionChanged() {
@@ -1561,7 +1584,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       return "AndroidView";
     }
     else {
-      for (AbstractProjectViewPane extension : AbstractProjectViewPane.EP_NAME.getExtensions(myProject)) {
+      for (AbstractProjectViewPane extension : AbstractProjectViewPane.EP.getExtensions(myProject)) {
         if (extension.isDefaultPane(myProject)) {
           return extension.getId();
         }
@@ -1580,15 +1603,19 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
       AbstractProjectViewPane pane = myId2Pane.get(paneId);
       if (pane != null) {
-        try {
-          pane.readExternal(paneElement);
-        }
-        catch (InvalidDataException ignore) {
-        }
+        applyPaneState(pane, paneElement);
       }
       else {
         myUninitializedPaneState.put(paneId, paneElement);
       }
+    }
+  }
+
+  private static void applyPaneState(@NotNull AbstractProjectViewPane pane, @NotNull Element element) {
+    try {
+      pane.readExternal(element);
+    }
+    catch (InvalidDataException ignored) {
     }
   }
 
