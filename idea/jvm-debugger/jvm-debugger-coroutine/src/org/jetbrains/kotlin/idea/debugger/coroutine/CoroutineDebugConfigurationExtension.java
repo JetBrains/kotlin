@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.idea.debugger.coroutine;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunConfigurationExtension;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.RunConfigurationBase;
@@ -19,7 +18,7 @@ public class CoroutineDebugConfigurationExtension extends RunConfigurationExtens
 
     @Override
     public <T extends RunConfigurationBase> void updateJavaParameters(
-            @NotNull T configuration, @NotNull JavaParameters params, RunnerSettings runnerSettings
+            T configuration, @NotNull JavaParameters params, RunnerSettings runnerSettings
     ) {
         if (configuration != null) {
             Project project = configuration.getProject();

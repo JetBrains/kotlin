@@ -10,16 +10,11 @@ import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
-import com.intellij.ui.ColoredTextContainer
-import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.frame.XCompositeNode
 import com.intellij.xdebugger.frame.XNamedValue
 import com.intellij.xdebugger.frame.XStackFrame
 import com.intellij.xdebugger.frame.XValueChildrenList
 import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.SkipCoroutineStackFrameProxyImpl
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.coroutineDebuggerTraceEnabled
-import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.debugger.stackFrame.KotlinStackFrame
 
 
@@ -32,10 +27,10 @@ import org.jetbrains.kotlin.idea.debugger.stackFrame.KotlinStackFrame
 
 class CoroutinePreflightStackFrame(
     val coroutineInfoData: CoroutineInfoData,
-    val stackFrameDescriptorImpl: StackFrameDescriptorImpl,
+    private val stackFrameDescriptorImpl: StackFrameDescriptorImpl,
     val threadPreCoroutineFrames: List<StackFrameProxyImpl>,
     val mode: SuspendExitMode,
-    val firstFrameVariables: List<XNamedValue> = coroutineInfoData.topFrameVariables()
+    private val firstFrameVariables: List<XNamedValue> = coroutineInfoData.topFrameVariables()
 ) : KotlinStackFrame(stackFrameDescriptorImpl), JVMStackFrameInfoProvider {
 
     override fun computeChildren(node: XCompositeNode) {
@@ -49,7 +44,7 @@ class CoroutinePreflightStackFrame(
 
     override fun getVisibleVariables(): List<LocalVariableProxyImpl> {
         // skip restored variables
-        return super.getVisibleVariables().filter { v -> ! firstFrameVariables.any { it.name == v.name() } }
+        return super.getVisibleVariables().filter { v -> !firstFrameVariables.any { it.name == v.name() } }
     }
 
     override fun isInLibraryContent() = false
@@ -77,7 +72,7 @@ class CreationCoroutineStackFrame(debugProcess: DebugProcessImpl, item: StackFra
         true
 }
 
-open class CoroutineStackFrame(debugProcess: DebugProcessImpl, val item: StackFrameItem, val realStackFrame: XStackFrame? = null) :
+open class CoroutineStackFrame(debugProcess: DebugProcessImpl, val item: StackFrameItem, private val realStackFrame: XStackFrame? = null) :
     StackFrameItem.CapturedStackFrame(debugProcess, item) {
 
     override fun computeChildren(node: XCompositeNode) {

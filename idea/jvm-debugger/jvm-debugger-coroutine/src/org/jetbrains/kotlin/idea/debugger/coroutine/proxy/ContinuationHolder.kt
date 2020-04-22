@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.debugger.engine.JavaValue
-import com.sun.jdi.*
+import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.isAbstractCoroutine
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 class ContinuationHolder private constructor(val context: DefaultExecutionContext) {
@@ -46,8 +47,8 @@ class ContinuationHolder private constructor(val context: DefaultExecutionContex
             val ci = debugProbesImpl?.getCoroutineInfo(input, context)
             if (ci != null) {
                 if (ci.creationStackTrace != null)
-                    for (index in 0 until ci.creationStackTrace.size) {
-                        val frame = ci.creationStackTrace.get(index)
+                    for (index in ci.creationStackTrace.indices) {
+                        val frame = ci.creationStackTrace[index]
                         val ste = frame.stackTraceElement()
                         val location = locationCache.createLocation(ste)
                         creationStackTrace.add(CreationCoroutineStackFrameItem(ste, location, index == 0))
@@ -64,14 +65,14 @@ class ContinuationHolder private constructor(val context: DefaultExecutionContex
     fun state(value: ObjectReference?): CoroutineNameIdState? {
         value ?: return null
         val reference = JavaLangMirror(context)
-        val standaloneCoroutine = StandaloneCoroutine(context)
+        val standaloneCoroutine = StandaloneCoroutine.instance(context) ?: return null
         val standAloneCoroutineMirror = standaloneCoroutine.mirror(value, context)
         if (standAloneCoroutineMirror?.context is MirrorOfCoroutineContext) {
             val id = standAloneCoroutineMirror.context.id
             val name = standAloneCoroutineMirror.context.name ?: CoroutineInfoData.DEFAULT_COROUTINE_NAME
             val toString = reference.string(value, context)
             // trying to get coroutine information by calling JobSupport.toString(), ${nameString()}{${stateString(state)}}@$hexAddress
-            val r = """\w+\{(\w+)\}\@([\w\d]+)""".toRegex()
+            val r = """\w+\{(\w+)}@([\w\d]+)""".toRegex()
             val matcher = r.toPattern().matcher(toString)
             if (matcher.matches()) {
                 val state = stateOf(matcher.group(1))

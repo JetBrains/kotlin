@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBund
 import javax.swing.Icon
 
 @Deprecated("moved to XCoroutineView")
-class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorImpl() {
+class CoroutineDescriptorImpl(private val infoData: CoroutineInfoData) : NodeDescriptorImpl() {
     lateinit var icon: Icon
 
     override fun getName() = infoData.key.name
@@ -74,9 +74,8 @@ class SuspendStackFrameDescriptor(
         }
     }
 
-    override fun getName() : String? = frame.methodName
+    override fun getName(): String? = frame.methodName
 }
-
 
 /**
  * For the case when no data inside frame is available

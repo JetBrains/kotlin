@@ -5,27 +5,29 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.util
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.DefaultLogger
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebugSessionListener
-import org.apache.log4j.Level
-import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import javax.swing.Icon
 import javax.swing.JComponent
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 interface CreateContentParamsProvider {
-    fun createContentParams() : CreateContentParams
+    fun createContentParams(): CreateContentParams
 }
 
-data class CreateContentParams(val id: String, val component: JComponent, val displayName: String, val icon: Icon?, val parentComponent: JComponent)
+data class CreateContentParams(
+    val id: String,
+    val component: JComponent,
+    val displayName: String,
+    val icon: Icon?,
+    val parentComponent: JComponent
+)
 
 
 interface XDebugSessionListenerProvider {
-    fun debugSessionListener(session: XDebugSession) : XDebugSessionListener
+    fun debugSessionListener(session: XDebugSession): XDebugSessionListener
 }
 
 /**
