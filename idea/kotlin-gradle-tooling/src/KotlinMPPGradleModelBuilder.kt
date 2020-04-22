@@ -75,9 +75,13 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         if (!isHMPPEnabled(project)) return emptyMap()
 
         val kotlinExt = project.extensions.findByName("kotlin") ?: return emptyMap()
-        val kotlinJvmAndroidTargetUtilsClass = kotlinExt::class.java.classLoader.loadClass(
-            "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidTargetUtilsKt"
-        )
+        val kotlinJvmAndroidTargetUtilsClass = try {
+            kotlinExt::class.java.classLoader.loadClass(
+                "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidTargetUtilsKt"
+            )
+        } catch (_: ClassNotFoundException) {
+            return emptyMap()
+        }
 
         val buildDependsOnAdjustmentMethod = kotlinJvmAndroidTargetUtilsClass.methods.single {
             "buildDependsOnAdjustmentForAndroidSourceSets" in it.name

@@ -46,23 +46,51 @@ internal fun buildDependsOnAdjustmentForAndroidSourceSets(project: Project): Map
         }
     }
 
-    val rootMainSourceSet = mainCompilations.map { it.allKotlinSourceSets.toSet() }.intersectSets()
-        .singleOrLogError(mainCompilations) ?: return emptyMap()
-    val rootUnitTestSourceSet = unitTestCompilations.map { it.allKotlinSourceSets.toSet() }.intersectSets()
-        .singleOrLogError(unitTestCompilations) ?: return emptyMap()
-    val rootAndroidTestSourceSet = androidTestCompilations.map { it.allKotlinSourceSets.toSet() }.intersectSets()
-        .singleOrLogError(androidTestCompilations) ?: return emptyMap()
+    val rootMainSourceSet = mainCompilations.findRootSourceSets().singleOrLogError(mainCompilations) ?: return emptyMap()
+    val rootUnitTestSourceSet = unitTestCompilations.findRootSourceSets().singleOrLogError(unitTestCompilations) ?: return emptyMap()
+
+    // Android-tests are a little bit tricker: they don't have a release-compilation, so normally two source-sets
+    // will participate in all compilations: androidTest and androidTestDebug
+    val rootAndroidTestSourceSets = androidTestCompilations.findRootSourceSets().toList()
+    if (rootAndroidTestSourceSets.size != 2) {
+        rootAndroidTestSourceSets.logAmbigousRootSourceSets(androidTestCompilations)
+        return emptyMap()
+    }
+
+    // Now we want to chose one -- it should be androidTest
+    // Solution: assume that the name of less specific source-set is always a substring of a more specific one
+    // (that's a hack, but more or less reasonable one)
+    val firstRootSourceSet = rootAndroidTestSourceSets[0].name
+    val secondRootSourceSet = rootAndroidTestSourceSets[1].name
+    val actualRootAndroidTestSourceSetName = when {
+        firstRootSourceSet in secondRootSourceSet -> firstRootSourceSet
+        secondRootSourceSet in firstRootSourceSet -> secondRootSourceSet
+        else -> {
+            rootAndroidTestSourceSets.logAmbigousRootSourceSets(androidTestCompilations)
+            return emptyMap()
+        }
+    }
 
     return mapOf(
         rootMainSourceSet.name to KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME,
         rootUnitTestSourceSet.name to KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME,
-        rootAndroidTestSourceSet.name to KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
+        actualRootAndroidTestSourceSetName to KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
     )
 }
 
-private fun Set<KotlinSourceSet>.singleOrLogError(resultedFromCompilations: Collection<KotlinJvmAndroidCompilation>): KotlinSourceSet? {
-    if (size == 1) return single()
+// Finds non-trivial (i.e. excluding commonMain/commonTest) source-sets which participate in each passed compilation
+private fun Collection<KotlinJvmAndroidCompilation>.findRootSourceSets(): Set<KotlinSourceSet> {
+    return map { it.allKotlinSourceSets.toSet() }
+        .intersectSets()
+        .filterTo(mutableSetOf()) {
+            it.name != KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME && it.name != KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
+        }
+}
 
+private fun Set<KotlinSourceSet>.singleOrLogError(resultedFromCompilations: Collection<KotlinJvmAndroidCompilation>): KotlinSourceSet? =
+    singleOrNull().also { if (it == null) logAmbigousRootSourceSets(resultedFromCompilations) }
+
+private fun Collection<KotlinSourceSet>.logAmbigousRootSourceSets(resultedFromCompilations: Collection<KotlinJvmAndroidCompilation>) {
     val logger = Logging.getLogger(KotlinAndroidTarget::class.java)
     logger.kotlinDebug(
         "ERROR. Couldn't find a single source-set, instead got: $this\n" +
@@ -71,8 +99,6 @@ private fun Set<KotlinSourceSet>.singleOrLogError(resultedFromCompilations: Coll
                     it.toString() + ", source-sets = " + it.allKotlinSourceSets.joinToString(prefix = "[", postfix = "]", separator = ", ")
                 }
     )
-
-    return null
 }
 
 private fun <T> Collection<Set<T>>.intersectSets(): Set<T> {
