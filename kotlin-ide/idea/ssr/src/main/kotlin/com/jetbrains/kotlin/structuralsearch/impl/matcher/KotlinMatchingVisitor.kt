@@ -1,5 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.psi.*
@@ -31,6 +33,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             myMatchingVisitor.result = myMatchingVisitor.match(expression.left, other.left)
                     && myMatchingVisitor.match(expression.right, other.right)
         }
+    }
+
+    override fun visitBlockExpression(expression: KtBlockExpression) {
+        val other = getTreeElement<KtBlockExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSons(expression, other)
     }
 
     override fun visitPrefixExpression(expression: KtPrefixExpression) {
@@ -71,7 +78,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         } else {
             if (other is KtSimpleNameExpression) {
                 myMatchingVisitor.result =
-                    myMatchingVisitor.matchText(referencedNameElement.text, other.getReferencedNameElement().text)
+                    myMatchingVisitor.matchText(referencedNameElement, other.getReferencedNameElement())
             }
         }
     }
