@@ -733,8 +733,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             "\n" + """
                 kotlin.sourceSets.all {
                     it.languageSettings {
-                        languageVersion = '1.3'
-                        apiVersion = '1.3'
+                        // languageVersion = '1.3' // can't do this with Kotlin/Native 1.4+, done below for non-Native tasks
+                        // apiVersion = '1.3' // can't do this with Kotlin/Native 1.4+, done below for non-Native tasks
                         enableLanguageFeature('InlineClasses')
                         useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')
                         useExperimentalAnnotation('kotlin.contracts.ExperimentalContracts')
@@ -752,11 +752,28 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
                 assertContains(
-                    "-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses",
+                    "-XXLanguage:+InlineClasses",
                     " -progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
                     "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                     "-Xno-inline"
                 )
+            }
+        }
+
+        gradleBuildScript().appendText("\n" + """
+            kotlin.sourceSets.all {
+                it.languageSettings {
+                    languageVersion = '1.3'
+                    apiVersion = '1.3' 
+                }
+            }
+        """.trimIndent())
+
+        listOf( "compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
+            build(it) {
+                assertSuccessful()
+                assertTasksExecuted(":$it")
+                assertContains("-language-version 1.3", "-api-version 1.3")
             }
         }
     }
