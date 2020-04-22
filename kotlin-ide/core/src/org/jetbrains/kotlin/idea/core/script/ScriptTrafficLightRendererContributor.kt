@@ -34,7 +34,7 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
                 !ScriptConfigurationManager.getInstance(project).hasConfiguration(file)
                 && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
             ) {
-                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.dependencies")
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
                 status.errorAnalyzingFinished = false
             }
             return status
