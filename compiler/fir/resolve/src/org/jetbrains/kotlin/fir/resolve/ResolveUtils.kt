@@ -52,12 +52,12 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
     }
 }
 
-val FirSession.firSymbolProvider: FirSymbolProvider by componentArrayAccessor()
-val FirSession.firProvider: FirProvider by componentArrayAccessor()
-val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by componentArrayAccessor()
-val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by componentArrayAccessor()
-val FirSession.qualifierResolver: FirQualifierResolver by componentArrayAccessor()
-val FirSession.typeResolver: FirTypeResolver by componentArrayAccessor()
+val FirSession.firSymbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
+val FirSession.firProvider: FirProvider by FirSession.sessionComponentAccessor()
+val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by FirSession.sessionComponentAccessor()
+val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by FirSession.sessionComponentAccessor()
+val FirSession.qualifierResolver: FirQualifierResolver by FirSession.sessionComponentAccessor()
+val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()
 
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
     if (this is ConeClassLookupTagWithFixedSymbol) {

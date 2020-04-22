@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.componentArrayAccessor
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
@@ -29,4 +28,4 @@ abstract class ConeCallConflictResolverFactory : FirSessionComponent {
     abstract fun create(typeSpecificityComparator: TypeSpecificityComparator, components: InferenceComponents): ConeCallConflictResolver
 }
 
-val FirSession.callConflictResolverFactory by componentArrayAccessor<ConeCallConflictResolverFactory>()
+val FirSession.callConflictResolverFactory: ConeCallConflictResolverFactory by FirSession.sessionComponentAccessor()
