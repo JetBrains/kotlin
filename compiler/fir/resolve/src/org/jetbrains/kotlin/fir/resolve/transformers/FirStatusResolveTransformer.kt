@@ -40,8 +40,9 @@ fun <F : FirClass<F>> F.runStatusResolveForLocalClass(session: FirSession): F {
     return this.transform<F, Nothing?>(transformer, null).single
 }
 
-private class FirStatusResolveTransformer(override val session: FirSession) :
-    FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
+private class FirStatusResolveTransformer(
+    override val session: FirSession
+) : FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
     private val classes = mutableListOf<FirClass<*>>()
 
     private val containingClass: FirClass<*>? get() = classes.lastOrNull()
@@ -63,6 +64,27 @@ private class FirStatusResolveTransformer(override val session: FirSession) :
         return result
     }
 
+    override fun transformDeclaration(declaration: FirDeclaration, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
+        declaration.replaceResolvePhase(transformerPhase)
+        return if (declaration is FirCallableDeclaration<*>) {
+            when (declaration) {
+                is FirProperty -> {
+                    declaration.getter?.let { transformPropertyAccessor(it, data) }
+                    declaration.setter?.let { transformPropertyAccessor(it, data) }
+                }
+                is FirFunction<*> -> {
+                    // Should we do it here?
+                    for (valueParameter in declaration.valueParameters) {
+                        transformValueParameter(valueParameter, data)
+                    }
+                }
+            }
+            declaration.compose()
+        } else {
+            transformElement(declaration, data)
+        }
+    }
+
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
         typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
         typeAlias.transformStatus(this, typeAlias.resolveStatus(typeAlias.status, containingClass, isLocal = false))
@@ -82,7 +104,7 @@ private class FirStatusResolveTransformer(override val session: FirSession) :
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirStatement> {
         return storeClass(anonymousObject) {
-            transformElement(anonymousObject, data)
+            transformDeclaration(anonymousObject, data)
         } as CompositeTransformResult<FirStatement>
     }
 
