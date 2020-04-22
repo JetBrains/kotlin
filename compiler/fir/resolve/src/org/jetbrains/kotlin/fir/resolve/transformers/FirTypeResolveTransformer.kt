@@ -77,6 +77,10 @@ private class FirTypeResolveTransformer(
         return resolveNestedClassesSupertypes(regularClass, data)
     }
 
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
+        return resolveNestedClassesSupertypes(anonymousObject, data)
+    }
+
     override fun transformConstructor(constructor: FirConstructor, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
             constructor.addTypeParametersScope()

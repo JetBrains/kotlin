@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -32,25 +33,28 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
     }
 
     protected fun resolveNestedClassesSupertypes(
-        regularClass: FirRegularClass,
+        firClass: FirClass<*>,
         data: Nothing?
     ): CompositeTransformResult<FirStatement> {
         return withScopeCleanup {
             // ? Is it Ok to use original file session here ?
-            val superTypes = lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session).asReversed()
+            val superTypes = lookupSuperTypes(firClass, lookupInterfaces = false, deep = true, useSiteSession = session).asReversed()
             for (superType in superTypes) {
                 session.getNestedClassifierScope(superType.lookupTag)?.let {
                     towerScope.addScope(it)
                 }
             }
-            regularClass.addTypeParametersScope()
-            val companionObject = regularClass.companionObject
-            if (companionObject != null) {
-                towerScope.addScope(nestedClassifierScope(companionObject))
+            if (firClass is FirRegularClass) {
+                firClass.addTypeParametersScope()
+                val companionObject = firClass.companionObject
+                if (companionObject != null) {
+                    towerScope.addScope(nestedClassifierScope(companionObject))
+                }
             }
-            towerScope.addScope(nestedClassifierScope(regularClass))
 
-            transformElement(regularClass, data)
+            towerScope.addScope(nestedClassifierScope(firClass))
+
+            transformElement(firClass, data)
         }
     }
 
