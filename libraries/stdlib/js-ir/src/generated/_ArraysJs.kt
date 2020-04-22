@@ -1926,8 +1926,7 @@ public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Uni
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<CharArray>()
-    subarray.sort()
+    sortArrayWith(this.unsafeCast<Array<Char>>(), fromIndex, toIndex, naturalOrder())
 }
 
 /**
