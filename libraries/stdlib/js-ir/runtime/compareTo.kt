@@ -8,7 +8,7 @@ package kotlin.js
 
 // Adopted from misc.js
 
-fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
+internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
     "number" -> when {
         jsTypeOf(b) == "number" ->
             doubleCompareTo(a, b)
@@ -27,14 +27,14 @@ fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
 private fun <T : Comparable<T>> compareToDoNotIntrinsicify(a: Comparable<T>, b: T) =
     a.compareTo(b)
 
-fun primitiveCompareTo(a: dynamic, b: dynamic): Int =
+internal fun primitiveCompareTo(a: dynamic, b: dynamic): Int =
     when {
         a < b -> -1
         a > b -> 1
         else -> 0
     }
 
-fun doubleCompareTo(a: dynamic, b: dynamic): Int =
+internal fun doubleCompareTo(a: dynamic, b: dynamic): Int =
     when {
         a < b -> -1
         a > b -> 1
