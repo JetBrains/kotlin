@@ -48,7 +48,7 @@ public abstract class FileOrDirectoryCopyPackagingElement<T extends FileOrDirect
   public boolean isEqualTo(@NotNull PackagingElement<?> element) {
     return element instanceof FileOrDirectoryCopyPackagingElement &&
            myFilePath != null &&
-           myFilePath.equals(((FileOrDirectoryCopyPackagingElement)element).getFilePath());
+           myFilePath.equals(((FileOrDirectoryCopyPackagingElement<?>)element).getFilePath());
   }
 
   @Attribute(PATH_ATTRIBUTE)
@@ -71,7 +71,7 @@ public abstract class FileOrDirectoryCopyPackagingElement<T extends FileOrDirect
       boolean containsJars = false;
       for (VirtualFile child : file.getChildren()) {
         if (child.isDirectory() && child.isInLocalFileSystem()) {
-          containsDirectories |= true;
+          containsDirectories = true;
         }
         else {
           containsJars |= isJar(child);
