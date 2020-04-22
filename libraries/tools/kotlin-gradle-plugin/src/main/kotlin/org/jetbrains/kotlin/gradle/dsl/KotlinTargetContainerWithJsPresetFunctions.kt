@@ -31,10 +31,7 @@ interface KotlinTargetContainerWithJsPresetFunctions :
         configure: KotlinJsTargetDsl.() -> Unit = { }
     ) = js(
         name = name,
-        compiler = KotlinJsCompilerType.byArgumentOrNull(compiler)
-            ?: throw IllegalArgumentException(
-                "Unable to find $compiler setting. Use [${KotlinJsCompilerType.values().toList().joinToString()}]"
-            ),
+        compiler = KotlinJsCompilerType.byArgument(compiler),
         configure = configure
     )
 

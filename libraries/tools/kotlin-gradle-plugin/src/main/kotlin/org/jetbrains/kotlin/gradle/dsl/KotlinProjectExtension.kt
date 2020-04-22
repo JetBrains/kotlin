@@ -166,10 +166,7 @@ open class KotlinJsProjectExtension :
         compiler: String,
         body: KotlinJsTargetDsl.() -> Unit = { }
     ): KotlinJsTargetDsl = js(
-        KotlinJsCompilerType.byArgumentOrNull(compiler)
-            ?: throw IllegalArgumentException(
-                "Unable to find $compiler setting. Use [${KotlinJsCompilerType.values().toList().joinToString()}]"
-            ),
+        KotlinJsCompilerType.byArgument(compiler),
         body
     )
 

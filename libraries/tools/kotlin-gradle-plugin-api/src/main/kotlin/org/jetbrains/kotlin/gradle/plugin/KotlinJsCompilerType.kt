@@ -15,6 +15,12 @@ enum class KotlinJsCompilerType {
 
         fun byArgumentOrNull(argument: String): KotlinJsCompilerType? =
             values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+
+        fun byArgument(argument: String): KotlinJsCompilerType =
+            byArgumentOrNull(argument)
+                ?: throw IllegalArgumentException(
+                    "Unable to find $argument setting. Use [${values().toList().joinToString()}]"
+                )
     }
 }
 
