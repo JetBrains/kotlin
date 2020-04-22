@@ -28,16 +28,13 @@ internal class DefaultClassRootsCache(
 
     private val scriptsSdksCache: Map<VirtualFile, Sdk?> =
         ConcurrentFactoryMap.createWeakMap { file ->
-            return@createWeakMap getScriptSdk(
-                all[file]?.javaHome
-            ) ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
+            return@createWeakMap getScriptSdkOrDefault(all[file]?.javaHome, project)
         }
 
     override fun getScriptSdk(file: VirtualFile): Sdk? = scriptsSdksCache[file]
 
     override val firstScriptSdk: Sdk? by lazy {
-        val firstCachedScript = all.keys.firstOrNull() ?: return@lazy null
-        return@lazy getScriptSdk(firstCachedScript)
+        getScriptSdkOrDefault(all.values.firstOrNull()?.javaHome, project)
     }
 
     companion object {
@@ -45,7 +42,7 @@ internal class DefaultClassRootsCache(
             project: Project,
             configuration: ScriptCompilationConfigurationWrapper
         ): ScriptClassRootsStorage.Companion.ScriptClassRoots {
-            val scriptSdk = getScriptSdk(configuration.javaHome)
+            val scriptSdk = getScriptSdkOrDefault(configuration.javaHome, project)
             if (scriptSdk != null && !scriptSdk.isAlreadyIndexed(project)) {
                 return ScriptClassRootsStorage.Companion.ScriptClassRoots(
                     toStringValues(configuration.dependenciesClassPath),
@@ -70,8 +67,7 @@ internal class DefaultClassRootsCache(
             val sdks = mutableSetOf<Sdk>()
 
             for ((_, configuration) in all) {
-                val scriptSdk =
-                    getScriptSdk(configuration.javaHome)
+                val scriptSdk = getScriptSdkOrDefault(configuration.javaHome, project)
                 if (scriptSdk != null && !scriptSdk.isAlreadyIndexed(project)) {
                     sdks.add(scriptSdk)
                 }

@@ -10,6 +10,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache.Companion.getScriptSdkOrDefault
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage.Companion.ScriptClassRoots
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
@@ -58,7 +59,7 @@ class GradleClassRootsCache(
         return firstScriptSdk
     }
 
-    override val firstScriptSdk: Sdk? = configuration?.let { getScriptSdk(context.javaHome) }
+    override val firstScriptSdk: Sdk? = getScriptSdkOrDefault(context.javaHome, project)
 
     // called to ensure that configuration for file is loaded
     // as we cannot force loading, we always return true
@@ -69,8 +70,8 @@ class GradleClassRootsCache(
             if (configuration == null) {
                 return ScriptClassRootsStorage.EMPTY
             }
-            val scriptSdk = getScriptSdk(configuration.context.javaHome)
-            if (scriptSdk != null && !scriptSdk.isAlreadyIndexed(configuration.context.project)) {
+            val scriptSdk = getScriptSdkOrDefault(context.javaHome, project)
+            if (scriptSdk != null && !scriptSdk.isAlreadyIndexed(project)) {
                 return ScriptClassRootsStorage.Companion.ScriptClassRoots(
                     configuration.classFilePath,
                     configuration.sourcePath,
@@ -80,7 +81,7 @@ class GradleClassRootsCache(
             return ScriptClassRoots(
                 configuration.classFilePath,
                 configuration.sourcePath,
-                getScriptSdk(context.javaHome)?.let { setOf(it) } ?: setOf()
+                getScriptSdkOrDefault(context.javaHome, project)?.let { setOf(it) } ?: setOf()
             )
         }
     }
