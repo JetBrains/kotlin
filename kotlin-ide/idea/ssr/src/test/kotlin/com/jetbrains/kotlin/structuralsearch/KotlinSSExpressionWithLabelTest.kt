@@ -8,6 +8,7 @@ class KotlinSSExpressionWithLabelTest : KotlinSSTest() {
 
     fun testContinue() { doTest("continue") }
     fun testContinueLabel() { doTest("continue@loop") }
+    fun testContinueLabelRegex() { doTest("continue@'_foo:[regex( foo.* )]") }
 
     fun testReturn() { doTest("return 1") }
     fun testReturnLabel() { doTest("return@lit") }

@@ -5,5 +5,7 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClass() { doTest("class Foo") }
 
+    fun testClassWithVarIdentifier() { doTest("class '_:[regex( Foo.* )]") }
+
     fun testClassWithOpenModifier() { doTest("open class Foo") }
 }

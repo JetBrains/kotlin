@@ -3,6 +3,7 @@ package com.jetbrains.kotlin.structuralsearch.impl.matcher
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
+import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.psi.*
 
@@ -68,12 +69,13 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         val other = myMatchingVisitor.element
         if (handler is SubstitutionHandler) {
-            if (handler.isSubtype || handler.isStrictSubtype) {
-                // TODO
-            } else {
-                if (myMatchingVisitor.setResult(handler.validate(other, context))) {
-                    handler.addResult(other, context)
-                }
+            val validated = when (other) {
+                // For labels, get rid of the starting '@'
+                is KtSimpleNameExpression -> handler.validate(other.getReferencedNameElement(), context)
+                else -> handler.validate(other, context)
+            }
+            if (myMatchingVisitor.setResult(validated)) {
+                handler.addResult(other, context)
             }
         } else {
             if (other is KtSimpleNameExpression) {
@@ -126,11 +128,21 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
+    private fun matchNameIdentifiers(el1: PsiElement?, el2: PsiElement?, context: MatchContext): Boolean {
+        if (el1 == null || el2 == null) return el1 == el2
+        val pattern = context.pattern
+        return when (val handler = pattern.getHandler(el1)) {
+            is SubstitutionHandler -> handler.validate(el2, context)
+            else -> myMatchingVisitor.matchText(el1, el2)
+        }
+    }
+
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchText(klass.nameIdentifier, other.nameIdentifier)
+        myMatchingVisitor.result = matchNameIdentifiers(klass.nameIdentifier, other.nameIdentifier, myMatchingVisitor.matchContext)
                 && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
-                && myMatchingVisitor.matchSons(klass, other)
+                && myMatchingVisitor.match(klass.modifierList, other.modifierList)
+                && myMatchingVisitor.matchSons(klass.body, other.body)
     }
 
     override fun visitElement(element: PsiElement) {
