@@ -114,7 +114,7 @@ public class GeneratedParserUtilBase {
 
   public static boolean recursion_guard_(PsiBuilder builder, int level, String funcName) {
     if (level > MAX_RECURSION_LEVEL) {
-      builder.mark().error("Maximum recursion level (" + MAX_RECURSION_LEVEL + ") reached in '" + funcName + "'");
+      builder.mark().error(LangBundle.message("parsing.error.maximum.recursion.level.reached.in", MAX_RECURSION_LEVEL, funcName));
       return false;
     }
     return true;
@@ -123,7 +123,7 @@ public class GeneratedParserUtilBase {
   public static boolean empty_element_parsed_guard_(PsiBuilder builder, String funcName, int pos) {
     if (pos == current_position_(builder)) {
       // sometimes this is a correct situation, therefore no explicit marker
-      builder.error("Empty element parsed in '" + funcName + "' at offset " + builder.getCurrentOffset());
+      builder.error(LangBundle.message("parsing.error.empty.element.parsed.in.at.offset", funcName, builder.getCurrentOffset()));
       return false;
     }
     return true;
@@ -537,7 +537,7 @@ public class GeneratedParserUtilBase {
     if (state.hooks == null) return;
     PsiBuilder.Marker marker = elementType == null ? null : (PsiBuilder.Marker)builder.getLatestDoneMarker();
     if (elementType != null && marker == null) {
-      builder.mark().error("No expected done marker at offset " + builder.getCurrentOffset());
+      builder.mark().error(LangBundle.message("parsing.error.no.expected.done.marker.at.offset", builder.getCurrentOffset()));
     }
     while (state.hooks != null && state.hooks.level >= state.level) {
       if (state.hooks.level == state.level) {

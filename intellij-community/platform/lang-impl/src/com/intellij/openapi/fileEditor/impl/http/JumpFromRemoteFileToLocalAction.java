@@ -4,6 +4,7 @@ package com.intellij.openapi.fileEditor.impl.http;
 import com.intellij.CommonBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PsiNavigationSupport;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -31,7 +32,7 @@ class JumpFromRemoteFileToLocalAction extends AnAction {
   private final Project myProject;
 
   JumpFromRemoteFileToLocalAction(HttpVirtualFile file, Project project) {
-    super("Find Local File", "", AllIcons.General.AutoscrollToSource);
+    super(LangBundle.message("action.JumpFromRemoteFileToLocalAction.find.local.file.text"), "", AllIcons.General.AutoscrollToSource);
 
     myFile = file;
     myProject = project;
@@ -46,7 +47,7 @@ class JumpFromRemoteFileToLocalAction extends AnAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     Collection<VirtualFile> files = findLocalFiles(myProject, Urls.newFromVirtualFile(myFile), myFile.getName());
     if (files.isEmpty()) {
-      Messages.showErrorDialog(myProject, "Cannot find local file for '" + myFile.getUrl() + "'", CommonBundle.getErrorTitle());
+      Messages.showErrorDialog(myProject, LangBundle.message("dialog.message.cannot.find.local.file.for", myFile.getUrl()), CommonBundle.getErrorTitle());
       return;
     }
 
@@ -66,7 +67,7 @@ class JumpFromRemoteFileToLocalAction extends AnAction {
             FileAppearanceService.getInstance().forVirtualFile(value).customize(this);
           }
         })
-       .setTitle("Select Target File")
+       .setTitle(LangBundle.message("popup.title.select.target.file"))
        .setMovable(true)
        .setItemsChosenCallback((selectedValues) -> {
          for (VirtualFile value : selectedValues) {

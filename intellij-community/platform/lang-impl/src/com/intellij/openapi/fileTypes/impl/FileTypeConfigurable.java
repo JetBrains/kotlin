@@ -4,6 +4,7 @@ package com.intellij.openapi.fileTypes.impl;
 import com.intellij.CommonBundle;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.highlighter.custom.SyntaxTable;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.*;
@@ -533,7 +534,7 @@ public final class FileTypeConfigurable implements SearchableConfigurable, Confi
 
       ToolbarDecorator decorator = ToolbarDecorator.createDecorator(myList)
         .setAddAction(__ -> editHashBang(null))
-        .setAddActionName("Add HashBang Pattern")
+        .setAddActionName(LangBundle.message("action.HashBangPanel.add.hashbang.pattern.text"))
         .setEditAction(__ -> editHashBang())
         .setRemoveAction(__ -> removeHashBang())
         .disableUpDownActions();

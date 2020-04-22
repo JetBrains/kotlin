@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.boilerplate;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -153,18 +154,18 @@ public abstract class AbstractGithubTagDownloadedProjectGenerator extends WebPro
   }
 
   private void reportError(@NotNull Project project, @NotNull GeneratorException e) {
-    String message = "Error creating " + getDisplayName() + " project";
+    String message = LangBundle.message("dialog.message.error.creating.project", getDisplayName());
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       LOG.error(message, e);
       return;
     }
     LOG.info(message, e);
-    String title = "Create " + getDisplayName() + " Project";
+    String title = LangBundle.message("dialog.title.create.project", getDisplayName());
     Messages.showErrorDialog(project, message + ". " + e.getMessage(), title);
   }
 
   public ActionLink createGitHubLink() {
-    ActionLink link = new ActionLink(getName() + " on GitHub", DumbAwareAction.create(e ->
+    ActionLink link = new ActionLink(LangBundle.message("link.label.on.github", getName()), DumbAwareAction.create(e ->
         BrowserUtil.open("https://github.com/" + getGithubUserName() + "/" + getGithubRepositoryName())));
     link.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
     return link;

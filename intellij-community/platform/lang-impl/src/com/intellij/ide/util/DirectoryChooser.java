@@ -5,6 +5,7 @@ package com.intellij.ide.util;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.GotoClassPresentationUpdater;
 import com.intellij.ide.util.gotoByName.*;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -160,11 +161,11 @@ public class DirectoryChooser extends DialogWrapper {
 
     installEnterAction(component);
     panel.add(jScrollPane, BorderLayout.CENTER);
-    myTabbedPaneWrapper.addTab("Directory Structure", panel);
+    myTabbedPaneWrapper.addTab(LangBundle.message("tab.title.directory.structure"), panel);
     if (myByClassPanel != null) {
-      myTabbedPaneWrapper.addTab("By Class", myByClassPanel.getPanel());
+      myTabbedPaneWrapper.addTab(LangBundle.message("tab.title.by.class"), myByClassPanel.getPanel());
     }
-    myTabbedPaneWrapper.addTab("By File", myByFilePanel.getPanel());
+    myTabbedPaneWrapper.addTab(LangBundle.message("tab.title.by.file"), myByFilePanel.getPanel());
     return myTabbedPaneWrapper.getComponent();
   }
 

@@ -45,7 +45,7 @@ public class InspectionFilterAction extends DefaultActionGroup implements Toggle
                                 @NotNull InspectionsFilter inspectionsFilter,
                                 @NotNull Project project,
                                 @NotNull FilterComponent filterComponent) {
-    super("Filter Inspections", true);
+    super(ActionsBundle.message("action.InspectionFilterAction.filter.inspections.text"), true);
     myInspectionsFilter = inspectionsFilter;
     myFilterComponent = filterComponent;
     mySeverityRegistrar = profile.getProfileManager().getSeverityRegistrar();
@@ -96,7 +96,7 @@ public class InspectionFilterAction extends DefaultActionGroup implements Toggle
 
     if (!languages.isEmpty()) {
       final DefaultActionGroup languageActionGroupParent =
-        new DefaultActionGroup("Filter by Language", languages.size() >= MIN_LANGUAGE_COUNT_TO_WRAP);
+        new DefaultActionGroup(ActionsBundle.message("action.InspectionFilterAction.filter.by.language.text"), languages.size() >= MIN_LANGUAGE_COUNT_TO_WRAP);
       add(languageActionGroupParent);
       languages.sort(Comparator.comparing(Language::getDisplayName));
       for (Language language : languages) {

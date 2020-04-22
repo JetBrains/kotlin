@@ -5,6 +5,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.ui.RegistryBooleanOptionDescriptor;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -95,7 +96,7 @@ public class RegistryUi implements Disposable {
     final JScrollPane label = ScrollPaneFactory.createScrollPane(myDescriptionLabel);
     final JPanel descriptionPanel = new JPanel(new BorderLayout());
     descriptionPanel.add(label, BorderLayout.CENTER);
-    descriptionPanel.setBorder(IdeBorderFactory.createTitledBorder("Description:", false, JBUI.insetsTop(8)).setShowLine(false));
+    descriptionPanel.setBorder(IdeBorderFactory.createTitledBorder(LangBundle.message("label.export.plugin.description"), false, JBUI.insetsTop(8)).setShowLine(false));
 
     myContent.add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
     myContent.add(descriptionPanel, BorderLayout.SOUTH);
@@ -293,7 +294,7 @@ public class RegistryUi implements Disposable {
   public boolean show() {
     DialogWrapper dialog = new DialogWrapper(true) {
       {
-        setTitle("Registry");
+        setTitle(LangBundle.message("dialog.title.registry"));
         setModal(true);
         init();
         invalidateActions();
@@ -395,8 +396,8 @@ public class RegistryUi implements Disposable {
   }
 
   private void restoreDefaults() {
-    String message = "Are you sure you want to revert registry settings to default values?";
-    int r = Messages.showYesNoDialog(myContent, message, "Revert To Defaults", Messages.getQuestionIcon());
+    String message = LangBundle.message("dialog.message.are.you.sure.you.want.to.revert.registry.settings.to.default.values");
+    int r = Messages.showYesNoDialog(myContent, message, LangBundle.message("dialog.title.revert.to.defaults"), Messages.getQuestionIcon());
     if (r == Messages.YES) {
       Registry.getInstance().restoreDefaults();
       myModel.fireChanged();
@@ -521,7 +522,7 @@ public class RegistryUi implements Disposable {
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
       myValue = ((MyTableModel)table.getModel()).getRegistryValue(row);
       if (myValue.asColor(null) != null) {
-        final Color color = ColorChooser.chooseColor(table, "Choose Color", myValue.asColor(Color.WHITE));
+        final Color color = ColorChooser.chooseColor(table, IdeBundle.message("dialog.title.choose.color"), myValue.asColor(Color.WHITE));
         if (color != null) {
           setValue(myValue, color.getRed() + "," + color.getGreen() + "," + color.getBlue());
           keyChanged(myValue.getKey());

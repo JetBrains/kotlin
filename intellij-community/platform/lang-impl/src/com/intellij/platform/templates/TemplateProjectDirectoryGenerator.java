@@ -19,6 +19,7 @@ import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WizardInputField;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -72,7 +73,7 @@ public class TemplateProjectDirectoryGenerator<T> extends DirectoryProjectGenera
   @NotNull
   @Override
   public ValidationResult validate(@NotNull String baseDirPath) {
-    String message = "Invalid settings";
+    String message = LangBundle.message("dialog.message.invalid.settings");
     for (WizardInputField field : myTemplate.getInputFields()) {
       try {
         if (field.validate()) {

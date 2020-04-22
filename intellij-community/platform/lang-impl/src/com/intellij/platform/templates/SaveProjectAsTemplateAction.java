@@ -10,6 +10,7 @@ import com.intellij.ide.fileTemplates.impl.FileTemplateBase;
 import com.intellij.ide.util.projectWizard.ProjectTemplateFileProcessor;
 import com.intellij.ide.util.projectWizard.ProjectTemplateParameterFactory;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -70,8 +71,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     final Project project = getEventProject(e);
     assert project != null;
     if (!ProjectKt.isDirectoryBased(project)) {
-      Messages.showErrorDialog(project, "Project templates do not support old .ipr (file-based) format.\n" +
-                                        "Please convert your project via File->Save as Directory-Based format.", CommonBundle.getErrorTitle());
+      Messages.showErrorDialog(project, LangBundle.message("dialog.message.project.templates.do.support.old.ipr.file"), CommonBundle.getErrorTitle());
       return;
     }
 
@@ -85,7 +85,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
 
       FileDocumentManager.getInstance().saveAllDocuments();
 
-      ProgressManager.getInstance().run(new Task.Backgroundable(project, "Saving Project as Template", true, PerformInBackgroundOption.DEAF) {
+      ProgressManager.getInstance().run(new Task.Backgroundable(project, LangBundle.message("progress.title.saving.project.as.template"), true, PerformInBackgroundOption.DEAF) {
         @Override
         public void run(@NotNull final ProgressIndicator indicator) {
           saveProject(project, file, moduleToSave, description, dialog.isReplaceParameters(), indicator, shouldEscape());
@@ -97,9 +97,9 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
           newProjectAction.getTemplatePresentation().setText(ActionsBundle.actionText("NewDirectoryProject"));
           AnAction manageAction = ActionManager.getInstance().getAction("ManageProjectTemplates");
           Notification notification = new Notification("Project Template",
-                                                       "Template Created",
-                                                       FileUtilRt.getNameWithoutExtension(file.getFileName().toString()) +
-                                                       " was successfully created",
+                                                       LangBundle.message("notification.title.template.created"),
+                                                       LangBundle.message("notification.content.was.successfully.created",
+                                                                          FileUtilRt.getNameWithoutExtension(file.getFileName().toString())),
                                                        NotificationType.INFORMATION);
           notification.addAction(newProjectAction);
           if (manageAction != null) {
@@ -134,10 +134,10 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
                                  ProgressIndicator indicator,
                                  boolean shouldEscape) {
     Map<String, String> parameters = computeParameters(project, replaceParameters);
-    indicator.setText("Saving project...");
+    indicator.setText(LangBundle.message("progress.text.saving.project"));
     StoreUtil.saveSettings(project, true);
 
-    indicator.setText("Processing project files...");
+    indicator.setText(LangBundle.message("progress.text.processing.project.files"));
     VirtualFile dir = getDirectoryToSave(project, moduleToSave);
     List<LocalArchivedTemplate.RootDescription> roots = collectStructure(project, moduleToSave);
     LocalArchivedTemplate.RootDescription basePathRoot = findOrAddBaseRoot(roots, dir);
@@ -167,7 +167,9 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     catch (ProcessCanceledException ignored) { }
     catch (Exception ex) {
       LOG.error(ex);
-      UIUtil.invokeLaterIfNeeded(() -> Messages.showErrorDialog(project, "Can't save project as template", "Internal Error"));
+      UIUtil.invokeLaterIfNeeded(() -> Messages.showErrorDialog(project,
+                                                                LangBundle.message("dialog.message.can.t.save.project.as.template"),
+                                                                LangBundle.message("dialog.message.internal.error")));
     }
   }
 

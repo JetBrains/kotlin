@@ -13,6 +13,7 @@ import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.ExporterToTextFile;
 import com.intellij.ide.impl.FlattenModulesToggleAction;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
@@ -625,7 +626,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
   }
 
   private void setEmptyText(boolean flag) {
-    final String emptyText = flag ? "No illegal dependencies found" : "Nothing to show";
+    final String emptyText = flag ? LangBundle.message("status.text.no.illegal.dependencies.found") : LangBundle.message("status.text.nothing.to.show");
     myLeftTree.getEmptyText().setText(emptyText);
     myRightTree.getEmptyText().setText(emptyText);
   }
@@ -773,7 +774,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
       final Dimension dimension = pane.getPreferredSize();
       scrollPane.setMinimumSize(new Dimension(dimension.width, dimension.height + 20));
       scrollPane.setPreferredSize(new Dimension(dimension.width, dimension.height + 20));
-      JBPopupFactory.getInstance().createComponentPopupBuilder(scrollPane, pane).setTitle("Dependencies")
+      JBPopupFactory.getInstance().createComponentPopupBuilder(scrollPane, pane).setTitle(LangBundle.message("popup.title.dependencies"))
         .setMovable(true).createPopup().showInBestPositionFor(e.getDataContext());
     }
 

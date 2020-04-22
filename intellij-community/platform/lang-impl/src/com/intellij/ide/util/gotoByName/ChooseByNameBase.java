@@ -15,6 +15,7 @@ import com.intellij.ide.actions.CopyReferenceAction;
 import com.intellij.ide.actions.GotoFileAction;
 import com.intellij.ide.ui.laf.darcula.ui.DarculaTextBorder;
 import com.intellij.ide.ui.laf.darcula.ui.DarculaTextFieldUI;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.MnemonicHelper;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -1567,7 +1568,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
             ApplicationManager.getApplication().runReadAction(() -> {
               myCalcUsagesThread.addElementsByPattern(text, collected, indicator, everywhere);
 
-              indicator.setText("Prepare...");
+              indicator.setText(LangBundle.message("progress.text.prepare"));
               fillUsages(collected, usages, targets);
             });
           }

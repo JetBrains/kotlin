@@ -17,6 +17,7 @@
 package com.intellij.ide.util.scopeChooser;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.packageDependencies.DependencyUISettings;
@@ -26,8 +27,8 @@ public class ShowModuleGroupsAction extends ToggleAction {
   private final Runnable myUpdate;
 
   public ShowModuleGroupsAction(final Runnable update) {
-    super("Show Module Groups",
-          "Show/hide module groups", AllIcons.Actions.GroupByModuleGroup);
+    super(LangBundle.message("action.ShowModuleGroupsAction.show.module.groups.text"),
+          LangBundle.message("action.ShowModuleGroupsAction.show.hide.module.groups.description"), AllIcons.Actions.GroupByModuleGroup);
     myUpdate = update;
   }
 

@@ -17,6 +17,7 @@
 package com.intellij.openapi.module.impl;
 
 import com.intellij.CommonBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.notification.*;
 import com.intellij.openapi.module.ConfigurationErrorDescription;
 import com.intellij.openapi.module.ConfigurationErrorType;
@@ -80,7 +81,8 @@ public class ProjectLoadingErrorsNotifierImpl extends ProjectLoadingErrorsNotifi
       if (descriptions.isEmpty()) continue;
 
       final String invalidElements = getInvalidElementsString(type, descriptions);
-      final String errorText = ProjectBundle.message("error.message.configuration.cannot.load") + " " + invalidElements + " <a href=\"\">Details...</a>";
+      final String errorText = LangBundle
+        .message("notification.content.details", ProjectBundle.message("error.message.configuration.cannot.load"), invalidElements);
 
       Notifications.Bus.notify(new Notification(NotificationGroup.createIdWithTitle("Project Loading Error", ProjectBundle.message("notification.group.project.loading.error")),
                                                 ProjectBundle.message("notification.title.error.loading.project"), errorText, NotificationType.ERROR,

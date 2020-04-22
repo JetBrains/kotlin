@@ -2,6 +2,7 @@
 package com.intellij.psi.codeStyle.extractor;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageFormatting;
 import com.intellij.openapi.actionSystem.*;
@@ -76,7 +77,7 @@ public class ExtractCodeStyleAction extends AnAction implements DumbAware {
 
     final CodeStyleDeriveProcessor genProcessor = new GenProcessor(extractor);
     final PsiFile finalFile = file;
-    final Task.Backgroundable task = new Task.Backgroundable(project, "Code Style Extractor", true) {
+    final Task.Backgroundable task = new Task.Backgroundable(project, LangBundle.message("progress.title.code.style.extractor"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {
@@ -106,9 +107,7 @@ public class ExtractCodeStyleAction extends AnAction implements DumbAware {
       final Balloon balloon = JBPopupFactory
         .getInstance()
         .createHtmlTextBalloonBuilder(
-          "<html>Formatting Options were extracted for " + file.getName()
-          + (!htmlReport.isEmpty() ? ("<br/>" + htmlReport) : "")
-          + "<br/><a href=\"apply\">Apply</a> <a href=\"details\">Details...</a></html>",
+          LangBundle.message("popup.content.formatting.options", file.getName(), !htmlReport.isEmpty() ? ("<br/>" + htmlReport) : ""),
           MessageType.INFO,
           new HyperlinkListener() {
             @Override

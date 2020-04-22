@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.codeStyle.extractor.ui;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -54,7 +55,7 @@ public class ExtractedSettingsDialog extends DialogWrapper {
     myValues = values;
     setModal(true);
     init();
-    setTitle("Extracted Code Style Settings");
+    setTitle(LangBundle.message("dialog.title.extracted.code.style.settings"));
   }
 
   @Nullable

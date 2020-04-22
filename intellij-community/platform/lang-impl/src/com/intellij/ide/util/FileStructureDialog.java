@@ -12,6 +12,7 @@ import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.ide.structureView.newStructureView.TreeModelWrapper;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.smartTree.*;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.LanguageStructureViewBuilder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -386,7 +387,7 @@ public class FileStructureDialog extends DialogWrapper {
       commandProcessor.executeCommand(myProject, () -> {
         succeeded.set(super.navigateSelectedElement());
         IdeDocumentHistory.getInstance(myProject).includeCurrentCommandAsNavigation();
-      }, "Navigate", null);
+      }, LangBundle.message("command.name.navigate"), null);
       if (succeeded.get()) {
         close(CANCEL_EXIT_CODE);
       }

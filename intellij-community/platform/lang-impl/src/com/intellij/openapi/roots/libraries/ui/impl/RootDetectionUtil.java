@@ -16,6 +16,7 @@
 package com.intellij.openapi.roots.libraries.ui.impl;
 
 import com.intellij.ide.util.ChooseElementsDialog;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -30,6 +31,8 @@ import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsDetector;
 import com.intellij.openapi.roots.libraries.ui.OrderRoot;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsContexts.DialogTitle;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -119,10 +122,10 @@ public class RootDetectionUtil {
       LOG.assertTrue(!types.isEmpty(), "No allowed root types found for " + detector);
       List<String> names = new ArrayList<>(types.keySet());
       if (names.size() == 1) {
-        String title = "Attach Roots";
+        String title = LangBundle.message("dialog.title.attach.roots");
         String typeName = names.get(0);
-        String message = ApplicationNamesInfo.getInstance().getProductName() + " cannot determine what kind of files the chosen items contain. " +
-                         "Do you want to attach them as '" + typeName + "'?";
+        String message =
+          LangBundle.message("dialog.message.cannot.determine", ApplicationNamesInfo.getInstance().getProductName(), typeName);
         int answer = parentComponent != null
                      ? Messages.showYesNoDialog(parentComponent, message, title, null)
                      : Messages.showYesNoDialog(project, message, title, null);
@@ -134,7 +137,7 @@ public class RootDetectionUtil {
         }
       }
       else {
-        String title = "Choose Categories of Selected Files";
+        String title = LangBundle.message("dialog.title.choose.categories.selected.files");
         String description = XmlStringUtil.wrapInHtml(ApplicationNamesInfo.getInstance().getProductName() + " cannot determine what kind of files the chosen items contain.<br>" +
                                                       "Choose the appropriate categories from the list.");
         ChooseElementsDialog<String> dialog;
@@ -166,11 +169,14 @@ public class RootDetectionUtil {
   }
 
   private static class ChooseRootTypeElementsDialog extends ChooseElementsDialog<String> {
-    ChooseRootTypeElementsDialog(Project project, List<String> names, String title, String description) {
+    ChooseRootTypeElementsDialog(Project project, List<String> names, @DialogTitle String title, @NlsContexts.Label String description) {
       super(project, names, title, description, true);
     }
 
-    private ChooseRootTypeElementsDialog(Component parent, List<String> names, String title, String description) {
+    private ChooseRootTypeElementsDialog(Component parent,
+                                         List<String> names,
+                                         @DialogTitle String title,
+                                         @NlsContexts.Label String description) {
       super(parent, names, title, description, true);
     }
 

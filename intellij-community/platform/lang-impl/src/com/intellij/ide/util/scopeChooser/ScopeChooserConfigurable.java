@@ -6,6 +6,7 @@ import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -134,7 +135,7 @@ public class ScopeChooserConfigurable extends MasterDetailsComponent implements 
       final String name = scopeConfigurable.getDisplayName();
       if (predefinedScopes.contains(name)) {
         selectNodeInTree(node);
-        throw new ConfigurationException("Scope name equals to predefined one", ProjectBundle.message("rename.scope.title"));
+        throw new ConfigurationException(LangBundle.message("dialog.message.scope.name.equals.to.predefined.one"), ProjectBundle.message("rename.scope.title"));
       }
     }
   }

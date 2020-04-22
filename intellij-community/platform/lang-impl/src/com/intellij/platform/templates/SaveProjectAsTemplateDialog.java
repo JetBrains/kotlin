@@ -2,6 +2,7 @@
 package com.intellij.platform.templates;
 
 import com.intellij.ide.util.projectWizard.ProjectTemplateParameterFactory;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
@@ -46,7 +47,7 @@ public class SaveProjectAsTemplateDialog extends DialogWrapper {
     super(project);
     myProject = project;
 
-    setTitle("Save Project As Template");
+    setTitle(LangBundle.message("dialog.title.save.project.as.template"));
     myName.setText(project.getName());
 
     Module[] modules = ModuleManager.getInstance(project).getModules();
@@ -99,7 +100,7 @@ public class SaveProjectAsTemplateDialog extends DialogWrapper {
   @Override
   protected ValidationInfo doValidate() {
     if (StringUtil.isEmpty(myName.getText())) {
-      return new ValidationInfo("Template name should not be empty");
+      return new ValidationInfo(LangBundle.message("dialog.message.template.name.should.be.empty"));
     }
     return null;
   }
@@ -109,8 +110,9 @@ public class SaveProjectAsTemplateDialog extends DialogWrapper {
     Path file = getTemplateFile();
     if (PathKt.exists(file)) {
       if (Messages.showYesNoDialog(myPanel,
-                                   FileUtilRt.getNameWithoutExtension(file.getFileName().toString()) + " exists already.\n" +
-                                   "Do you want to replace it with the new one?", "Template Already Exists",
+                                   LangBundle.message("dialog.message.exists.already.do.you.want.to.replace.it.with.new.one",
+                                                      FileUtilRt.getNameWithoutExtension(file.getFileName().toString())),
+                                   LangBundle.message("dialog.title.template.already.exists"),
                                    Messages.getWarningIcon()) == Messages.NO) {
         return;
       }

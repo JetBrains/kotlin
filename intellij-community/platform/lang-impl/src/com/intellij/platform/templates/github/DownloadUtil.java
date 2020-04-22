@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform.templates.github;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -157,7 +158,7 @@ public final class DownloadUtil {
     String originalText = progress != null ? progress.getText() : null;
     substituteContentLength(progress, originalText, -1);
     if (progress != null) {
-      progress.setText2("Downloading " + location);
+      progress.setText2(IdeBundle.message("progress.download.0.title", location));
     }
     HttpRequests.request(location)
       .productNameAsUserAgent()

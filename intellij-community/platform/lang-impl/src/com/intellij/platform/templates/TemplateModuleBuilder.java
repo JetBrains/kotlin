@@ -11,6 +11,7 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.util.projectWizard.*;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
@@ -249,7 +250,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
           if(reportFailuresWithDialog) {
             String dialogMessage;
             if (myFailures.size() == 1) {
-              dialogMessage = "Failed to decode file \'" + myFailures.get(0).getFirst() + "\'";
+              dialogMessage = LangBundle.message("dialog.message.failed.to.decode.file", myFailures.get(0).getFirst());
             }
             else {
               StringBuilder dialogMessageBuilder = new StringBuilder();
@@ -259,7 +260,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
               }
               dialogMessage = dialogMessageBuilder.toString();
             }
-            Messages.showErrorDialog(dialogMessage, "Decoding Template");
+            Messages.showErrorDialog(dialogMessage, LangBundle.message("dialog.title.decoding.template"));
           }
 
           StringBuilder reportBuilder = new StringBuilder();
@@ -306,7 +307,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
       });
 
       if (pI != null) {
-        pI.setText("Refreshing...");
+        pI.setText(LangBundle.message("progress.title.refreshing"));
       }
 
       String iml = ContainerUtil.find(ObjectUtils.chooseNotNull(dir.list(), ArrayUtilRt.EMPTY_STRING_ARRAY), s -> s.endsWith(".iml"));
@@ -397,7 +398,8 @@ public class TemplateModuleBuilder extends ModuleBuilder {
     boolean isSomehowOverwriting = children.size() > 1 ||
                                    (children.size() == 1 && !PathMacroUtil.DIRECTORY_STORE_NAME.equals(children.get(0).getFileName().toString()));
 
-    return ProgressManager.getInstance().run(new Task.WithResult<Project, RuntimeException>(null, "Applying Template", true) {
+    return ProgressManager.getInstance().run(new Task.WithResult<Project, RuntimeException>(null, LangBundle
+      .message("progress.title.applying.template"), true) {
       @Override
       public Project compute(@NotNull ProgressIndicator indicator) {
         try {

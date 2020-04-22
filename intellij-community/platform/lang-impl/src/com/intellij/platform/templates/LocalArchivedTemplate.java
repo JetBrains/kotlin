@@ -2,6 +2,7 @@
 package com.intellij.platform.templates;
 
 import com.intellij.facet.ui.ValidationResult;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
@@ -93,12 +94,12 @@ public class LocalArchivedTemplate extends ArchivedProjectTemplate {
           if (rootFile.exists()) {
             String[] list = rootFile.list();
             if (list == null) {
-              return new ValidationResult("<html>File '" + rootFile.getAbsolutePath() + "' already exists," +
-                                          " so project root can't be created</html>");
+              return new ValidationResult(
+                LangBundle.message("dialog.message.already.exists.so.project.root.can.t.be.created.html", rootFile.getAbsolutePath()));
             }
             if (list.length > 0) {
-              return new ValidationResult("<html>Directory '" + rootFile.getAbsolutePath() + "' already exists and is not empty, " +
-                                          "so project root can't be created</html>");
+              return new ValidationResult(
+                LangBundle.message("dialog.message.directory.already.exists.and.is.not.empty", rootFile.getAbsolutePath()));
             }
           }
         }

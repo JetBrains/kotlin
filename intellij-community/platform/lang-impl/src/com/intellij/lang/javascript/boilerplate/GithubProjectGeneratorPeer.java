@@ -6,6 +6,7 @@ import com.intellij.BundleBase;
 import com.intellij.CommonBundle;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
@@ -87,7 +88,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
         box.setRenderer(SimpleListCellRenderer.create((label, tag, index) -> {
           final String text;
           if (tag == null) {
-            text = isBackgroundJobRunning() ? CommonBundle.getLoadingTreeNodeText() : "Unavailable";
+            text = isBackgroundJobRunning() ? CommonBundle.getLoadingTreeNodeText() : LangBundle.message("label.unavailable");
           }
           else {
             text = tag.getName();

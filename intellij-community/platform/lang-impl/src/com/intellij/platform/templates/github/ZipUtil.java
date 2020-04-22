@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform.templates.github;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -64,9 +65,9 @@ public class ZipUtil {
     if (result == null) {
       Exception e = outcome.getException();
       if (e != null) {
-        throw new GeneratorException("Unpacking failed, downloaded archive is broken");
+        throw new GeneratorException(LangBundle.message("dialog.message.unpacking.failed.downloaded.archive.broken"));
       }
-      throw new GeneratorException("Unpacking was cancelled");
+      throw new GeneratorException(LangBundle.message("dialog.message.unpacking.was.cancelled"));
     }
   }
 
@@ -74,7 +75,7 @@ public class ZipUtil {
                                     @NotNull File targetDir,
                                     boolean unwrapSingleTopLevelFolder) throws IOException {
     if (progress != null) {
-      progress.setText("Extracting...");
+      progress.setText(LangBundle.message("progress.text.extracting"));
     }
     if (unwrapSingleTopLevelFolder) {
       return FileUtil.createTempDirectory("unzip-dir-", null);
@@ -158,7 +159,7 @@ public class ZipUtil {
       return;
     }
     if (progress != null) {
-      progress.setText("Extracting " + relativeExtractPath + " ...");
+      progress.setText(LangBundle.message("progress.text.extracting.path", relativeExtractPath));
     }
     if (contentProcessor == null) {
       try (FileOutputStream fileOutputStream = new FileOutputStream(child)) {

@@ -17,6 +17,7 @@ package com.intellij.platform.templates;
 
 import com.intellij.CommonBundle;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
@@ -50,7 +51,7 @@ class ManageProjectTemplatesDialog extends DialogWrapper {
 
   ManageProjectTemplatesDialog() {
     super(false);
-    setTitle("Manage Project Templates");
+    setTitle(LangBundle.message("dialog.title.manage.project.templates"));
     final ProjectTemplate[] templates =
       new ArchivedTemplatesFactory().createTemplates(ProjectTemplatesFactory.CUSTOM_GROUP, new WizardContext(null, getDisposable()));
     myTemplatesList = new JBList<>(new CollectionListModel<ProjectTemplate>(Arrays.asList(templates)) {
@@ -63,7 +64,7 @@ class ManageProjectTemplatesDialog extends DialogWrapper {
         }
       }
     });
-    myTemplatesList.setEmptyText("No user-defined project templates");
+    myTemplatesList.setEmptyText(LangBundle.message("status.text.no.user.defined.project.templates"));
     myTemplatesList.setCellRenderer(SimpleListCellRenderer.create("", ProjectTemplate::getName));
     myTemplatesList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       @Override

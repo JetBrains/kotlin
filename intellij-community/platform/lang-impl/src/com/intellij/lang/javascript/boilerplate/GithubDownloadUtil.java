@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.boilerplate;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -83,7 +84,8 @@ public class GithubDownloadUtil {
         if (!retryOnError) {
           return false;
         }
-        return IOExceptionDialog.showErrorDialog("Download Error", "Can not download '" + url + "'");
+        return IOExceptionDialog.showErrorDialog(LangBundle.message("dialog.title.download.error"),
+                                                 LangBundle.message("text.can.download", url));
       }
     );
     File out = outcome.get();

@@ -21,6 +21,7 @@ import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.ide.util.treeView.smartTree.*;
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsEventLogGroup;
 import com.intellij.internal.statistic.eventLog.EventFields;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.navigation.LocationPresentation;
 import com.intellij.openapi.Disposable;
@@ -324,7 +325,9 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
       public void run() {
         alarm.cancelAllRequests();
         String prefix = mySpeedSearch.getEnteredPrefix();
-        myTree.getEmptyText().setText(StringUtil.isEmpty(prefix) ? "Structure is empty" : "'" + prefix + "' not found");
+        myTree.getEmptyText().setText(StringUtil.isEmpty(prefix) ? LangBundle.message("status.text.structure.empty")
+                                                                 : "'" + prefix + "' " +
+                                                                   LangBundle.message("status.text.structure.empty.not.found"));
         if (prefix == null) prefix = "";
 
         if (!filter.equals(prefix)) {
@@ -759,7 +762,7 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
       }
 
       IdeDocumentHistory.getInstance(myProject).includeCurrentCommandAsNavigation();
-    }, "Navigate", null);
+    }, LangBundle.message("command.name.navigate"), null);
     return succeeded.get();
   }
 
