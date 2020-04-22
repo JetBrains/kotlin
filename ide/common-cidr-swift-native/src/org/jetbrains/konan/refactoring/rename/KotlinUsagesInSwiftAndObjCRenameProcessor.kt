@@ -42,7 +42,7 @@ class KotlinUsagesInSwiftAndObjCRenameProcessor : ForeignUsagesRenameProcessor()
         }
 
         val moduleGraph = ModuleManager.getInstance(element.project).moduleGraph()
-        val allModules = element.module?.let { ModuleUtil.getAllDependentModules(it).toHashSet() } ?: return false
+        val allModules = element.module?.let { (ModuleUtil.getAllDependentModules(it) + it).toHashSet() } ?: return false
         for ((module, usages) in allUsages.groupBy { it.element?.module }) {
             if (module == null) continue
 
