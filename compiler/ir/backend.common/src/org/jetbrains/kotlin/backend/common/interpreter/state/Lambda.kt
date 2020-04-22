@@ -28,7 +28,7 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State 
     }
 
     override fun copy(): State {
-        return Lambda(irFunction, irClass)
+        return Lambda(irFunction, irClass).apply { this.fields.addAll(this@Lambda.fields) }
     }
 
     override fun toString(): String {

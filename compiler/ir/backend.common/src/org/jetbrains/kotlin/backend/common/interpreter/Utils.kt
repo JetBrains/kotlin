@@ -234,3 +234,9 @@ fun State?.getFunctionReceiver(superIrClass: IrClass?): State? {
         else -> (this as Complex).superClass
     }
 }
+
+fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
+    val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
+    val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
+    return this.getTypeArgument(typeParameter.index)
+}

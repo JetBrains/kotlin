@@ -121,6 +121,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrFunctionReference -> interpretFunctionReference(this)
                 is IrComposite -> interpretComposite(this)
 
+                is IrClass -> if (this.isLocal) Next else TODO("Only local classes are supported")
                 else -> TODO("${this.javaClass} not supported")
             }
 
@@ -274,9 +275,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         return stack.newFrame(asSubFrame = true, initPool = pool) {
             for (i in valueArguments.indices) {
-                (valueArguments[i] ?: defaultValues[i])!!.interpret().check { return@newFrame it }
+                (valueArguments[i] ?: defaultValues[i])?.interpret()?.check { return@newFrame it }
+                    ?: stack.pushReturnValue(listOf<Any?>().toPrimitiveStateArray(expression.getVarargType(i)!!))
+
                 with(Variable(valueParametersDescriptors[i], stack.popReturnValue())) {
-                    stack.addVar(this)
+                    stack.addVar(this)  //must add value argument in current stack because it can be used later as default argument
                     pool.add(this)
                 }
             }
@@ -312,6 +315,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner)
                 valueArguments.add(Variable(typeParameter.descriptor, typeArgumentState))
             }
+        }
+
+        // load data from declaration if it is local
+        if (dispatchReceiver != null && (irFunction.isLocal || dispatchReceiver.irClass.isLocal)) {
+            with(dispatchReceiver) { this.fields.filterNot { it.descriptor.containingDeclaration == this.irClass.descriptor } }
+                .apply { valueArguments.addAll(this) }
         }
 
         return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
@@ -367,6 +376,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
 
         val state = Common(parent)
+        if (parent.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
         valueArguments.add(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments) {
             val statements = constructorCall.getBody()!!.statements
@@ -709,7 +719,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun interpretFunctionExpression(expression: IrFunctionExpression): ExecutionResult {
-        stack.pushReturnValue(Lambda(expression.function, expression.type.classOrNull!!.owner))
+        val lambda = Lambda(expression.function, expression.type.classOrNull!!.owner)
+        if (expression.function.isLocal) lambda.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+        stack.pushReturnValue(lambda)
         return Next
     }
 
