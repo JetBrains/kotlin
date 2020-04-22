@@ -7,6 +7,14 @@ configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
 
+def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
+
+sourceSets {
+    if (includeJava9) {
+        java9
+    }
+}
+
 project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
@@ -18,7 +26,10 @@ dependencies {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Test')
+    manifestAttributes(manifest, project, 'Test', true)
+    if (includeJava9) {
+        from sourceSets.java9.output
+    }
 }
 
 artifacts {
@@ -39,6 +50,10 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}
+
+if (includeJava9) {
+    compileJava9Sources(project, 'kotlin.test.junit5')
 }
 
 test {
