@@ -75,8 +75,13 @@ class CallableReferenceAdaptation(
     val argumentTypes: Array<KotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: Map<ValueParameterDescriptor, ResolvedCallArgument>
+    val mappedArguments: Map<ValueParameterDescriptor, ResolvedCallArgument>,
+    val suspendConversionStrategy: SuspendConversionStrategy
 )
+
+enum class SuspendConversionStrategy {
+    SUSPEND_CONVERSION, NO_CONVERSION
+}
 
 /**
  * cases: class A {}, class B { companion object }, object C, enum class D { E }
@@ -332,10 +337,21 @@ class CallableReferencesCandidateFactory(
             else
                 mappedArguments
 
+        val suspendConversionStrategy =
+            if (
+                callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion) &&
+                !descriptor.isSuspend && expectedType?.isSuspendFunctionType == true
+            ) {
+                SuspendConversionStrategy.SUSPEND_CONVERSION
+            } else {
+                SuspendConversionStrategy.NO_CONVERSION
+            }
+
         return CallableReferenceAdaptation(
             @Suppress("UNCHECKED_CAST") (mappedArgumentTypes as Array<KotlinType>),
             coercion, defaults,
-            adaptedArguments
+            adaptedArguments,
+            suspendConversionStrategy
         )
     }
 
@@ -428,9 +444,12 @@ class CallableReferencesCandidateFactory(
                         descriptorReturnType
                 }
 
+                val suspendConversionStrategy = callableReferenceAdaptation?.suspendConversionStrategy
+                val isSuspend = descriptor.isSuspend || suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+
                 return callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
-                    returnType, descriptor.builtIns, descriptor.isSuspend
+                    returnType, descriptor.builtIns, isSuspend
                 ) to callableReferenceAdaptation
             }
             else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null

@@ -23093,6 +23093,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/basicSuspendConversion.kt");
             }
 
+            @TestMetadata("basicSuspendConversionForCallableReference.kt")
+            public void testBasicSuspendConversionForCallableReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/basicSuspendConversionForCallableReference.kt");
+            }
+
             @TestMetadata("basicSuspendConversionGenerics.kt")
             public void testBasicSuspendConversionGenerics() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/basicSuspendConversionGenerics.kt");
@@ -23106,6 +23111,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("suspendConversionDisabled.kt")
             public void testSuspendConversionDisabled() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionDisabled.kt");
+            }
+
+            @TestMetadata("suspendConversionWithFunInterfaces.kt")
+            public void testSuspendConversionWithFunInterfaces() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionWithFunInterfaces.kt");
+            }
+
+            @TestMetadata("suspendConversionWithReferenceAdaptation.kt")
+            public void testSuspendConversionWithReferenceAdaptation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionWithReferenceAdaptation.kt");
             }
         }
 
