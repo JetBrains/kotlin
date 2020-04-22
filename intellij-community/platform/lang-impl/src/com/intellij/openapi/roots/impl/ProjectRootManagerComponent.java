@@ -18,10 +18,7 @@ import com.intellij.openapi.module.impl.ModuleEx;
 import com.intellij.openapi.project.DumbModeTask;
 import com.intellij.openapi.project.DumbServiceImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.AdditionalLibraryRootsProvider;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.WatchedRootsProvider;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.EmptyRunnable;
@@ -119,7 +116,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
         myFileTypesChanged.levelDown();
       }
     });
-    AdditionalLibraryRootsProvider.EP_NAME.addExtensionPointListener(new ExtensionPointChangeListener() {
+    ExtensionPointChangeListener rootsExtensionPointListener = new ExtensionPointChangeListener() {
       @Override
       public void extensionListChanged() {
         ApplicationManager.getApplication().invokeLater(() -> {
@@ -128,7 +125,9 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
           });
         });
       }
-    }, project);
+    };
+    AdditionalLibraryRootsProvider.EP_NAME.addExtensionPointListener(rootsExtensionPointListener, project);
+    OrderEnumerationHandler.EP_NAME.addExtensionPointListener(rootsExtensionPointListener, project);
   }
 
   @Override
