@@ -655,7 +655,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     private var smartCastDispatchReceiverType: KotlinType? = null
-    private var expedtedTypeForSamConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
+    private var expectedTypeForSamConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
     private var argumentTypeForConstantConvertedMap: MutableMap<KtExpression, IntegerValueTypeConstant>? = null
 
 
@@ -803,7 +803,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     }
 
     fun getExpectedTypeForSamConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
-        expedtedTypeForSamConvertedArgumentMap?.get(valueArgument)
+        expectedTypeForSamConvertedArgumentMap?.get(valueArgument)
 
     private fun calculateExpectedTypeForConstantConvertedArgumentMap() {
         if (resolvedCallAtom.argumentsWithConstantConversion.isEmpty()) return
@@ -818,12 +818,12 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private fun calculateExpectedTypeForSamConvertedArgumentMap(substitutor: NewTypeSubstitutor?) {
         if (resolvedCallAtom.argumentsWithConversion.isEmpty()) return
 
-        expedtedTypeForSamConvertedArgumentMap = hashMapOf()
+        expectedTypeForSamConvertedArgumentMap = hashMapOf()
         for ((argument, description) in resolvedCallAtom.argumentsWithConversion) {
             val typeWithFreshVariables =
                 resolvedCallAtom.freshVariablesSubstitutor.safeSubstitute(description.convertedTypeByCandidateParameter)
             val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
-            expedtedTypeForSamConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
+            expectedTypeForSamConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
         }
     }
 
