@@ -134,7 +134,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitElement(element: PsiElement) {
-        myMatchingVisitor.result = myMatchingVisitor.matchText(element, myMatchingVisitor.element)
+        if (element is LeafPsiElement) {
+            val other = getTreeElement<LeafPsiElement>() ?: return
+            myMatchingVisitor.result = element.elementType.index == other.elementType.index
+        }
     }
 
     override fun visitModifierList(list: KtModifierList) {
