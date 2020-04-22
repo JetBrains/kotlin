@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
+
 //BUNCH: 193
 fun makeConfigurationNamesDefault(dependencyMapper: KotlinDependencyMapper) {
+    dependencyMapper.toDependencyMap().values.forEach {
+        (it as? DefaultExternalProjectDependency)?.configurationName = "default"
+    }
 }

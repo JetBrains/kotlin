@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.idea.navigationToolbar
 
-import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension
+import com.intellij.ide.navigationToolbar.StructureAwareNavBarModelExtension
+import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
 // BUNCH 201
-abstract class AbstractNavBarModelExtensionCompatBase : AbstractNavBarModelExtension() {
+abstract class AbstractNavBarModelExtensionCompatBase : StructureAwareNavBarModelExtension() {
 
     protected abstract fun adjustElementImpl(psiElement: PsiElement?): PsiElement?
 
     override fun adjustElement(psiElement: PsiElement): PsiElement? =
         adjustElementImpl(psiElement)
+
+    override val language: Language
+        get() = KotlinLanguage.INSTANCE
 }
