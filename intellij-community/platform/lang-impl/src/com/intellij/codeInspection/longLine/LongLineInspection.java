@@ -21,6 +21,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.ide.DataManager;
 import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Document;
@@ -46,7 +47,7 @@ public class LongLineInspection extends LocalInspectionTool {
   @Nullable
   @Override
   public JComponent createOptionsPanel() {
-    final HyperlinkLabel codeStyleHyperlink = new HyperlinkLabel("Edit Code Style settings");
+    final HyperlinkLabel codeStyleHyperlink = new HyperlinkLabel(LangBundle.message("link.label.edit.code.style.settings"));
     codeStyleHyperlink.addHyperlinkListener(new HyperlinkListener() {
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {

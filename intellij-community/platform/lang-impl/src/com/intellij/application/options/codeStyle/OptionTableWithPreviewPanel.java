@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
@@ -899,7 +900,7 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
   public void apply(CodeStyleSettings settings) throws ConfigurationException {
     TableCellEditor editor = myTreeTable.getCellEditor();
     if (editor != null && !editor.stopCellEditing()) {
-      throw new ConfigurationException("Editing cannot be stopped");
+      throw new ConfigurationException(LangBundle.message("dialog.message.editing.cannot.be.stopped"));
     }
     TreeModel treeModel = myTreeTable.getTree().getModel();
     TreeNode root = (TreeNode)treeModel.getRoot();

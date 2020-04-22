@@ -4,6 +4,7 @@ package com.intellij.ide.bookmarks.actions;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.bookmarks.BookmarkManager;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -29,7 +30,8 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
     final BookmarkInContextInfo info = getBookmarkInfo(event);
     final boolean selected = info != null && info.getBookmarkAtPlace() != null;
     if (ActionPlaces.isPopupPlace(event.getPlace())) {
-      event.getPresentation().setText(selected ? "Clear Bookmark" : "Set Bookmark");
+      event.getPresentation().setText(selected ? LangBundle.message("action.clear.bookmark.text") :
+                                      LangBundle.message("action.set.bookmark.text"));
     }
     else {
       event.getPresentation().setText(IdeBundle.messagePointer("action.bookmark.toggle"));

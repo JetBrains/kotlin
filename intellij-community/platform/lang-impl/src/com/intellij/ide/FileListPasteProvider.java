@@ -18,6 +18,7 @@ package com.intellij.ide;
 
 import com.intellij.ide.dnd.FileCopyPasteUtil;
 import com.intellij.ide.dnd.LinuxDragAndDropSupport;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -57,7 +58,8 @@ public class FileListPasteProvider implements PasteProvider {
     if (fileList == null) return;
 
     if (DumbService.isDumb(project)) {
-      DumbService.getInstance(project).showDumbModeNotification("Sorry, file copy/paste is not available during indexing");
+      DumbService.getInstance(project).showDumbModeNotification(
+        LangBundle.message("popup.content.sorry.file.copy.paste.available.during.indexing"));
       return;
     }
 

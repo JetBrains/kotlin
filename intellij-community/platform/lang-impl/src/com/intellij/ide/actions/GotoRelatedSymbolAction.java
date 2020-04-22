@@ -17,6 +17,7 @@ package com.intellij.ide.actions;
 
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.lang.LangBundle;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -61,7 +62,7 @@ public class GotoRelatedSymbolAction extends AnAction {
 
     List<GotoRelatedItem> items = NavigationUtil.collectRelatedItems(element, dataContext);
     if (items.isEmpty()) {
-      final JComponent label = HintUtil.createErrorLabel("No related symbols");
+      final JComponent label = HintUtil.createErrorLabel(LangBundle.message("hint.text.no.related.symbols"));
       label.setBorder(JBUI.Borders.empty(2, 7));
       JBPopupFactory.getInstance().createBalloonBuilder(label)
         .setFadeoutTime(3000)

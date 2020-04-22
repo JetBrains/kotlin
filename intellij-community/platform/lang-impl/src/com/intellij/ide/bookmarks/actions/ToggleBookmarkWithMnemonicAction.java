@@ -4,6 +4,7 @@ package com.intellij.ide.bookmarks.actions;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.bookmarks.BookmarkManager;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -88,12 +89,16 @@ public class ToggleBookmarkWithMnemonicAction extends ToggleBookmarkAction {
       };
 
       popup[0] = JBPopupFactory.getInstance().createComponentPopupBuilder(mc, mc).
-        setTitle("Bookmark Mnemonic").
+        setTitle(LangBundle.message("popup.title.bookmark.mnemonic")).
         setFocusable(true).
         setRequestFocus(true).
         setMovable(false).
         setCancelKeyEnabled(false).
-        setAdText(bookmarks.hasBookmarksWithMnemonics() ? (StartupUiUtil.isUnderDarcula() ? "Brown" : "Yellow") + " cells are in use" : null).
+        setAdText(bookmarks.hasBookmarksWithMnemonics()
+                  ? LangBundle.message("popup.advertisement.cells.are.in.use",
+                                       StartupUiUtil.isUnderDarcula() ?
+                                       LangBundle.message("popup.advertisement.cells.are.in.use.brown") :
+                                       LangBundle.message("popup.advertisement.cells.are.in.use.yellow")) : null).
         setResizable(false).
         createPopup();
       popup[0].addListener(new JBPopupListener() {

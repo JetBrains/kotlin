@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -26,7 +27,7 @@ public class GeneratedFileEditingNotificationProvider extends EditorNotification
     if (!GeneratedSourceFileChangeTracker.getInstance(project).isEditedGeneratedFile(file)) return null;
 
     EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("Generated source files should not be edited. The changes will be lost when sources are regenerated.");
+    panel.setText(LangBundle.message("link.label.generated.source.files"));
     return panel;
   }
 }

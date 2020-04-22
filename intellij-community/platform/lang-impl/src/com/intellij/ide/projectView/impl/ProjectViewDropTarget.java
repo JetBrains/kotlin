@@ -4,6 +4,7 @@ package com.intellij.ide.projectView.impl;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.dnd.*;
 import com.intellij.ide.projectView.impl.nodes.DropTargetNode;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
@@ -242,12 +243,14 @@ abstract class ProjectViewDropTarget implements DnDNativeTarget {
       if (target == null) return;
 
       if (DumbService.isDumb(myProject)) {
-        Messages.showMessageDialog(myProject, "Move refactoring is not available while indexing is in progress", "Indexing", null);
+        Messages.showMessageDialog(myProject, LangBundle.message("dialog.message.move.refactoring.available.while.indexing.in.progress"),
+                                   LangBundle.message("dialog.title.indexing"), null);
         return;
       }
 
       if (!myProject.isInitialized()) {
-        Messages.showMessageDialog(myProject, "Move refactoring is not available while project initialization is in progress", "Project Initialization", null);
+        Messages.showMessageDialog(myProject, LangBundle.message("dialog.message.move.refactoring.available"),
+                                   LangBundle.message("dialog.title.project.initialization"), null);
         return;
       }
 
@@ -327,7 +330,8 @@ abstract class ProjectViewDropTarget implements DnDNativeTarget {
       if (targetElement == null) return;
 
       if (DumbService.isDumb(myProject)) {
-        Messages.showMessageDialog(myProject, "Copy refactoring is not available while indexing is in progress", "Indexing", null);
+        Messages.showMessageDialog(myProject, LangBundle.message("dialog.message.copy.refactoring.available.while.indexing.in.progress"),
+                                   LangBundle.message("dialog.title.indexing"), null);
         return;
       }
 

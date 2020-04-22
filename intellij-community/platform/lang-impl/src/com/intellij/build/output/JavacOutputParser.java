@@ -6,6 +6,7 @@ import com.intellij.build.events.BuildEvent;
 import com.intellij.build.events.MessageEvent;
 import com.intellij.build.events.impl.FileMessageEventImpl;
 import com.intellij.build.events.impl.MessageEventImpl;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Contract;
@@ -158,7 +159,7 @@ public class JavacOutputParser implements BuildOutputParser {
 
     if (line.endsWith("java.lang.OutOfMemoryError")) {
       messageConsumer.accept(new MessageEventImpl(reader.getParentEventId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP,
-                                                  "Out of memory.", line));
+                                                  LangBundle.message("build.event.message.out.memory"), line));
       return true;
     }
 

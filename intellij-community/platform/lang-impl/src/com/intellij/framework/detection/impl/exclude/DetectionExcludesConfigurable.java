@@ -3,6 +3,7 @@ package com.intellij.framework.detection.impl.exclude;
 
 import com.intellij.framework.FrameworkType;
 import com.intellij.framework.detection.impl.FrameworkDetectorRegistry;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -117,7 +118,8 @@ public class DetectionExcludesConfigurable implements Configurable {
     }
     types.sort((o1, o2) -> o1.getPresentableName().compareToIgnoreCase(o2.getPresentableName()));
     types.add(0, null);
-    final ListPopup popup = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<FrameworkType>("Framework to Exclude", types) {
+    final ListPopup popup = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<FrameworkType>(
+      LangBundle.message("popup.title.framework.to.exclude"), types) {
       @Override
       public Icon getIconFor(FrameworkType value) {
         return value != null ? value.getIcon() : null;
@@ -207,7 +209,9 @@ public class DetectionExcludesConfigurable implements Configurable {
 
   private void chooseDirectoryAndAdd(final @Nullable FrameworkType type) {
     final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    descriptor.setDescription((type != null ? type.getPresentableName() + " framework detection" : "Detection for all frameworks") + " will be disabled in selected directory");
+    descriptor.setDescription(LangBundle.message("label.will.be.disabled.in.selected.directory",
+                                                 type != null ? LangBundle.message("label.framework.detection", type.getPresentableName())
+                                                              : LangBundle.message("label.detection.for.all.frameworks")));
     final VirtualFile[] files = FileChooser.chooseFiles(descriptor, myMainPanel, myProject, myProject.getBaseDir());
     final VirtualFile file = files.length > 0 ? files[0] : null;
     if (file != null) {

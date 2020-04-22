@@ -35,6 +35,7 @@ public class ReplacementView extends JPanel {
   public ReplacementView(@Nullable String replacement) {
     String textToShow = StringUtil.notNullize(replacement, MALFORMED_REPLACEMENT_STRING);
     textToShow = StringUtil.escapeXmlEntities(StringUtil.shortenTextWithEllipsis(textToShow, 500, 0, true)).replaceAll("\n+", "\n").replace("\n", "<br>");
+    //noinspection HardCodedStringLiteral
     JLabel jLabel = new JBLabel("<html>"+ textToShow).setAllowAutoWrapping(true);
     jLabel.setForeground(replacement != null ? new JBColor(Gray._240, Gray._200) : JBColor.RED);
     add(jLabel);

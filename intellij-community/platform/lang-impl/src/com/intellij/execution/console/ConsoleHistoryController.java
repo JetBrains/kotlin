@@ -8,6 +8,7 @@ import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.console.ConsoleHistoryModel.Entry;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -346,7 +347,7 @@ public class ConsoleHistoryController implements Disposable {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      String title = myConsole.getTitle() + " History";
+      String title = LangBundle.message("dialog.title.history", myConsole.getTitle());
       final ContentChooser<String> chooser = new ContentChooser<String>(myConsole.getProject(), title, true, true) {
         {
           setOKButtonText(ActionsBundle.actionText(IdeActions.ACTION_EDITOR_PASTE));

@@ -3,6 +3,7 @@ package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
@@ -173,8 +174,9 @@ public class TaskDefaultFavoriteListProvider extends AbstractFavoritesListProvid
     final JBScrollPane pane = new JBScrollPane(textArea);
     final ComponentPopupBuilder builder = JBPopupFactory.getInstance().createComponentPopupBuilder(pane, textArea)
       .setCancelOnClickOutside(true)
-      .setAdText(KeymapUtil.getShortcutsText(CommonShortcuts.CTRL_ENTER.getShortcuts()) + " to finish")
-      .setTitle("Comment")
+      .setAdText(
+        LangBundle.message("popup.advertisement.to.finish", KeymapUtil.getShortcutsText(CommonShortcuts.CTRL_ENTER.getShortcuts())))
+      .setTitle(LangBundle.message("popup.title.comment"))
       .setMovable(true)
       .setRequestFocus(true).setResizable(true).setMayBeParent(true);
     final JBPopup popup = builder.createPopup();

@@ -4,10 +4,7 @@ package com.intellij.ide.scratch;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.FileIconProvider;
 import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension;
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageUtil;
-import com.intellij.lang.PerFileMappings;
-import com.intellij.lang.PerFileMappingsBase;
+import com.intellij.lang.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -61,7 +58,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @State(name = "ScratchFileService", storages = @Storage(value = "scratches.xml", roamingType = RoamingType.DISABLED))
 public class ScratchFileServiceImpl extends ScratchFileService implements PersistentStateComponent<Element>, Disposable {
-  private static final RootType NO_ROOT_TYPE = new RootType("", "NO_ROOT_TYPE") {};
+  @SuppressWarnings("HardCodedStringLiteral") private static final RootType NO_ROOT_TYPE = new RootType("", "NO_ROOT_TYPE") {};
 
   private final LightDirectoryIndex<RootType> myIndex;
   private final MyLanguages myScratchMapping = new MyLanguages();
@@ -316,7 +313,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
 
   public static class UsageTypeExtension implements UsageTypeProvider {
     private static final ConcurrentMap<RootType, UsageType> ourUsageTypes =
-      ConcurrentFactoryMap.createMap(key -> new UsageType("Usage in " + key.getDisplayName()));
+      ConcurrentFactoryMap.createMap(key -> new UsageType(LangBundle.message("usage.type.usage.in.0", key.getDisplayName())));
 
     @Nullable
     @Override

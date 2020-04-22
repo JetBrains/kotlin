@@ -7,6 +7,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.dnd.*;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -137,15 +138,17 @@ public class TemplateListPanel extends JPanel implements Disposable {
       for (TemplateImpl template : templates) {
         String key = template.getKey();
         if (StringUtil.isEmptyOrSpaces(key)) {
-          throw new ConfigurationException("A live template with an empty abbreviation has been found in '" + templateGroup.getName() + "' group, such live templates are not allowed");
+          throw new ConfigurationException(
+            LangBundle.message("dialog.message.live.template.with.empty.abbreviation", templateGroup.getName()));
         }
 
         if (StringUtil.isEmptyOrSpaces(template.getString())) {
-          throw new ConfigurationException("A live template '" + key + "' with an empty text has been found in '" + templateGroup.getName() + "' group, such live templates make no sense");
+          throw new ConfigurationException(LangBundle.message("dialog.message.live.template.with.empty.text", key, templateGroup.getName()));
         }
 
         if (!names.add(key)) {
-          throw new ConfigurationException("Duplicate `" + key + "` live templates in " + templateGroup.getName() + " group");
+          throw new ConfigurationException(
+            LangBundle.message("dialog.message.duplicate.live.templates.in.group", key, templateGroup.getName()));
         }
       }
     }

@@ -16,6 +16,7 @@
 
 package com.intellij.codeInspection;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.properties.charset.Native2AsciiCharset;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
@@ -112,8 +113,12 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
               .mapToObj(b -> StringUtil.toUpperCase(Integer.toString(b & 0x00ff, 16)))
               .collect(Collectors.joining());
             Charset charsetFromBOM = CharsetToolkit.guessFromBOM(bom);
-            holder.registerProblem(file, "File contains BOM: '" + hex +"'"+
-                                         (charsetFromBOM == null ? "" : " (charset '"+charsetFromBOM.displayName()+"' signature)"),
+            holder.registerProblem(file,
+                                   LangBundle.message("inspection.message.file.contains.bom", hex, charsetFromBOM == null
+                                                                                                   ? ""
+                                                                                                   : LangBundle.message(
+                                                                                                     "inspection.message.charset.signature",
+                                                                                                     charsetFromBOM.displayName())),
                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
           }
         }
@@ -144,8 +149,8 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
     if (scripts.size() > 1) {
       List<Character.UnicodeScript> list = new ArrayList<>(scripts);
       Collections.sort(list); // a little bit of stability
-      holder.registerProblem(element, "Identifier contains symbols from different languages: " + list,
-                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+      holder.registerProblem(element, LangBundle.message("inspection.message.identifier.contains.symbols.from.different.languages", list),
+                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
     }
   }
 
@@ -154,7 +159,7 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
                                  ProblemsHolder holder,
                                  String where) {
     if (!IOUtil.isAscii(text)) {
-      holder.registerProblem(element, "Non-ASCII characters in " + where, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+      holder.registerProblem(element, LangBundle.message("inspection.message.non.ascii.characters.in", where), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
     }
   }
   private static void checkAsciiRange(PsiElement element,
@@ -168,7 +173,7 @@ public class NonAsciiCharactersInspection extends LocalInspectionTool {
       if (i == text.length() || c<128) {
         if (start != -1) {
           TextRange range = new TextRange(start, i);
-          String message = "Non-ASCII characters in " + where;
+          String message = LangBundle.message("inspection.message.non.ascii.characters.in", where);
           holder.registerProblem(element, range, message);
           start = -1;
           //do not report too many errors

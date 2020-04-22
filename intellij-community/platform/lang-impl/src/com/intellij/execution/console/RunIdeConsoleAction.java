@@ -15,6 +15,7 @@ import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.script.IdeConsoleScriptBindings;
 import com.intellij.ide.script.IdeScriptEngine;
 import com.intellij.ide.script.IdeScriptEngineManager;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -102,7 +103,8 @@ public final class RunIdeConsoleAction extends DumbAwareAction {
       if (StringUtil.toLowerCase(eng).equals(eng)) eng = StringUtil.capitalize(eng);
       String name = lang + " (" + eng + ")";
       PluginDescriptor plugin = engineInfo.plugin;
-      String description = lang + " (engine: " + eng + (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
+      String description = LangBundle.message("action.engine.description", lang, eng,
+                                              plugin == null ? "" : LangBundle.message("action.plugin.description") + plugin.getName());
       return new DumbAwareAction(name, description, null) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e1) {

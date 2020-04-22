@@ -4,6 +4,7 @@ package com.intellij.application.options.colors;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
@@ -105,12 +106,12 @@ public class JumpToColorsAndFontsAction extends DumbAwareAction {
     }
 
     if (keyMap.isEmpty()) {
-      HintManager.getInstance().showErrorHint(editor, "No text attributes found");
+      HintManager.getInstance().showErrorHint(editor, LangBundle.message("hint.text.no.text.attributes.found"));
     }
     else if (keyMap.size() == 1) {
       Pair<ColorAndFontDescriptorsProvider, AttributesDescriptor> p = keyMap.values().iterator().next();
       if (!openSettingsAndSelectKey(project, p.first, p.second)) {
-        HintManager.getInstance().showErrorHint(editor, "No appropriate settings page found");
+        HintManager.getInstance().showErrorHint(editor, LangBundle.message("hint.text.no.appropriate.settings.page.found"));
       }
     }
     else {
@@ -163,7 +164,7 @@ public class JumpToColorsAndFontsAction extends DumbAwareAction {
         .setRequestFocus(true)
         .setItemChosenCallback((p) -> {
           if (!openSettingsAndSelectKey(project, p.first, p.second)) {
-            HintManager.getInstance().showErrorHint(editor, "No appropriate settings page found");
+            HintManager.getInstance().showErrorHint(editor, LangBundle.message("hint.text.no.appropriate.settings.page.found"));
           }
         })
         .createPopup().showInBestPositionFor(editor);

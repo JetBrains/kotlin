@@ -7,6 +7,7 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.documentation.CompositeDocumentationProvider;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.documentation.ExternalDocumentationHandler;
@@ -104,8 +105,9 @@ public class ExternalJavaDocAction extends AnAction {
           BrowserUtil.browse(finalUrls.get(0));
         }
         else {
-          JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<String>("Choose external documentation root",
-                                                                                     ArrayUtilRt.toStringArray(finalUrls)) {
+          JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<String>(
+            LangBundle.message("popup.title.choose.external.documentation.root"),
+            ArrayUtilRt.toStringArray(finalUrls)) {
             @Override
             public PopupStep onChosen(final String selectedValue, final boolean finalChoice) {
               BrowserUtil.browse(selectedValue);

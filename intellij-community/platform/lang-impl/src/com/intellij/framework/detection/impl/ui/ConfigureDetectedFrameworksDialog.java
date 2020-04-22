@@ -18,6 +18,7 @@ package com.intellij.framework.detection.impl.ui;
 import com.intellij.framework.detection.DetectedFrameworkDescription;
 import com.intellij.framework.detection.DetectionExcludesConfiguration;
 import com.intellij.framework.detection.impl.FrameworkDetectionContextImpl;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
@@ -31,7 +32,7 @@ public class ConfigureDetectedFrameworksDialog extends DialogWrapper {
   public ConfigureDetectedFrameworksDialog(Project project, List<? extends DetectedFrameworkDescription> descriptions) {
     super(project, true);
     myProject = project;
-    setTitle("Setup Frameworks");
+    setTitle(LangBundle.message("dialog.title.setup.frameworks"));
     myComponent = new DetectedFrameworksComponent(new FrameworkDetectionContextImpl(project));
     myComponent.getTree().rebuildTree(descriptions);
     init();

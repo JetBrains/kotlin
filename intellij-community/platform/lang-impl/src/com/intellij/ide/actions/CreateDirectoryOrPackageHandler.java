@@ -6,6 +6,7 @@ import com.intellij.history.LocalHistory;
 import com.intellij.history.LocalHistoryAction;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.DirectoryUtil;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileTypes.FileType;
@@ -156,11 +157,13 @@ public class CreateDirectoryOrPackageHandler implements InputValidatorEx {
     if (StringUtil.countChars(subDirName, '.') == 1 && Registry.is("ide.suggest.file.when.creating.filename.like.directory")) {
       FileType fileType = findFileTypeBoundToName(subDirName);
       if (fileType != null) {
-        String message = "The name you entered looks like a file name. Do you want to create a file named " + subDirName + " instead?";
+        String message = LangBundle.message("dialog.message.name.you.entered", subDirName);
         int ec = Messages.showYesNoCancelDialog(myProject, message,
-                                                "File Name Detected",
-                                                "&Yes, create file",
-                                                "&No, create " + (myIsDirectory ? "directory" : "packages"),
+                                                LangBundle.message("dialog.title.file.name.detected"),
+                                                LangBundle.message("button.yes.create.file"),
+                                                LangBundle.message("button.no.create", myIsDirectory ?
+                                                                                       LangBundle.message("button.no.create.directory") :
+                                                                                       LangBundle.message("button.no.create.package")),
                                                 CommonBundle.getCancelButtonText(),
                                                 fileType.getIcon());
         if (ec == Messages.CANCEL) {

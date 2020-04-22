@@ -8,30 +8,17 @@ import com.intellij.application.options.schemes.SchemesModel;
 import com.intellij.application.options.schemes.SimpleSchemesPanel;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
-import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.ide.fileTemplates.FileTemplatesScheme;
-import com.intellij.ide.fileTemplates.InternalTemplateBean;
+import com.intellij.ide.fileTemplates.*;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.IdeLanguageCustomization;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonShortcuts;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurableProvider;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.options.*;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -48,29 +35,16 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.*;
 
 public final class AllFileTemplatesConfigurable implements SearchableConfigurable, Configurable.NoMargin, Configurable.NoScroll,
                                                      Configurable.VariableProjectAppLevel {
@@ -375,7 +349,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     FileTemplate selected = myCurrentTab.getSelectedTemplate();
     if (selected instanceof BundledFileTemplate) {
       if (Messages.showOkCancelDialog(IdeBundle.message("prompt.reset.to.original.template"),
-                                      IdeBundle.message("title.reset.template"), "Reset", CommonBundle.getCancelButtonText(), Messages.getQuestionIcon()) !=
+                                      IdeBundle.message("title.reset.template"), LangBundle.message("button.reset"), CommonBundle.getCancelButtonText(), Messages.getQuestionIcon()) !=
           Messages.OK) {
         return;
       }
@@ -534,7 +508,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
       }
       if (allNames.contains(currName)) {
         itemWithError = template;
-        errorString = "Template with name \'" + currName + "\' already exists. Please specify a different template name";
+        errorString = LangBundle.message("dialog.message.template.with.name.already.exists", currName);
         break;
       }
       allNames.add(currName);

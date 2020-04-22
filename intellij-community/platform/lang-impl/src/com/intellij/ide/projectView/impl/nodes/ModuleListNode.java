@@ -6,6 +6,7 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -55,7 +56,7 @@ public class ModuleListNode extends ProjectViewNode<Module> {
 
   @Override
   public void update(@NotNull PresentationData presentation) {
-    presentation.setPresentableText("Module Dependencies");
+    presentation.setPresentableText(LangBundle.message("presentable.text.module.dependencies"));
     presentation.setIcon(PlatformIcons.CLOSED_MODULE_GROUP_ICON);
   }
 

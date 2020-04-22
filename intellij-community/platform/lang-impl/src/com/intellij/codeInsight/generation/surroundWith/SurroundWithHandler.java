@@ -11,6 +11,7 @@ import com.intellij.codeInsight.template.impl.SurroundWithTemplateHandler;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageSurrounders;
 import com.intellij.lang.folding.CustomFoldingSurroundDescriptor;
@@ -54,7 +55,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
   public static void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, Surrounder surrounder) {
     if (!EditorModificationUtil.checkModificationAllowed(editor)) return;
     if (file instanceof PsiCompiledElement) {
-      HintManager.getInstance().showErrorHint(editor, "Can't modify decompiled code");
+      HintManager.getInstance().showErrorHint(editor, LangBundle.message("hint.text.can.t.modify.decompiled.code"));
       return;
     }
 
@@ -63,7 +64,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
       showPopup(editor, applicable);
     }
     else if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      HintManager.getInstance().showErrorHint(editor, "Couldn't find Surround With variants applicable to the current context");
+      HintManager.getInstance().showErrorHint(editor, LangBundle.message("hint.text.couldn.t.find.surround"));
     }
   }
 

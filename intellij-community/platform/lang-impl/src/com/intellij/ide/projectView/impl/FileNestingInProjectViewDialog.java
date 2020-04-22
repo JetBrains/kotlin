@@ -3,6 +3,7 @@ package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.projectView.impl.ProjectViewFileNestingService.NestingRule;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -165,16 +166,16 @@ public class FileNestingInProjectViewDialog extends DialogWrapper {
       final CombinedNestingRule rule = items.get(i);
       final int row = i + 1;
       if (rule.parentSuffix.isEmpty()) {
-        return new ValidationInfo("Parent file suffix must not be empty (see row " + row + ")", null);
+        return new ValidationInfo(LangBundle.message("dialog.message.parent.file.suffix.must.be.empty.see.row", row), null);
       }
       if (rule.childSuffixes.isEmpty()) {
-        return new ValidationInfo("Child file suffix must not be empty (see row " + row + ")", null);
+        return new ValidationInfo(LangBundle.message("dialog.message.child.file.suffix.must.be.empty.see.row", row), null);
       }
 
       for (String childSuffix : StringUtil.split(rule.childSuffixes, ";")) {
         if (rule.parentSuffix.equals(childSuffix.trim())) {
           return new ValidationInfo(
-            "Parent and child file suffixes must not be equal ('" + rule.parentSuffix + "', see row " + row + ")", null);
+            LangBundle.message("dialog.message.parent.child.file.suffixes.must.be.equal.see.row", rule.parentSuffix, row), null);
         }
       }
     }

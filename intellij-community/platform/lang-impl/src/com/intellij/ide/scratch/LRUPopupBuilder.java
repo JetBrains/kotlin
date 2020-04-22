@@ -2,6 +2,7 @@
 package com.intellij.ide.scratch;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageUtil;
 import com.intellij.lang.PerFileMappings;
@@ -61,7 +62,7 @@ public abstract class LRUPopupBuilder<T> {
     Arrays.sort(filesCopy, (o1, o2) -> StringUtil.compare(o1.getName(), o2.getName(), !o1.getFileSystem().isCaseSensitive()));
     return forFileLanguages(project, title, null, t -> {
       try {
-        WriteCommandAction.writeCommandAction(project).withName("Change Language").run(
+        WriteCommandAction.writeCommandAction(project).withName(LangBundle.message("command.name.change.language")).run(
           () -> changeLanguageWithUndo(project, t, filesCopy, mappings));
       }
       catch (UnexpectedUndoException e) {

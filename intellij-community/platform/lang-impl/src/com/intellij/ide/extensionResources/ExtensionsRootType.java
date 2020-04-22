@@ -7,6 +7,7 @@ import com.intellij.ide.plugins.PluginDependency;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.ide.scratch.ScratchFileService;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
@@ -46,7 +47,7 @@ public final class ExtensionsRootType extends RootType {
   private static final String BACKUP_FILE_EXTENSION = "old";
 
   ExtensionsRootType() {
-    super(EXTENSIONS_PATH, "Extensions");
+    super(EXTENSIONS_PATH, LangBundle.message("root.type.extensions"));
   }
 
   @NotNull

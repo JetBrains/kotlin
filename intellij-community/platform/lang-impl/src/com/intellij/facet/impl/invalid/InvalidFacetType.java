@@ -7,6 +7,7 @@ import com.intellij.facet.FacetTypeId;
 import com.intellij.facet.ui.FacetEditor;
 import com.intellij.facet.ui.MultipleFacetSettingsEditor;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -24,7 +25,7 @@ public class InvalidFacetType extends FacetType<InvalidFacet, InvalidFacetConfig
   }
 
   public InvalidFacetType() {
-    super(TYPE_ID, "invalid", "Invalid");
+    super(TYPE_ID, "invalid", LangBundle.message("facet.type.invalid.node.text"));
   }
 
   @Override

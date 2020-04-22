@@ -18,6 +18,7 @@ package com.intellij.find.impl;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.find.FindUtil;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
@@ -121,7 +122,7 @@ public class RegExHelpPopup extends JPanel {
           .setMovable(true)
           .setResizable(true)
           .setCancelOnOtherWindowOpen(false).setCancelButton(new MinimizeButton("Hide"))
-          .setTitle("Regular expressions syntax").setDimensionServiceKey(null, "RegExHelpPopup", true).createPopup();
+          .setTitle(LangBundle.message("popup.title.regular.expressions.syntax")).setDimensionServiceKey(null, "RegExHelpPopup", true).createPopup();
         Disposer.register(helpPopup, new Disposable() {
           @Override
           public void dispose() {

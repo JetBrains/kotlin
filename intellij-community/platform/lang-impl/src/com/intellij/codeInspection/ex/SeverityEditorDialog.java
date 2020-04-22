@@ -10,6 +10,7 @@ import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
 import com.intellij.codeInsight.daemon.impl.SeverityUtil;
 import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.ide.DataManager;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.diagnostic.Logger;
@@ -161,7 +162,8 @@ public class SeverityEditorDialog extends DialogWrapper {
             select(newSeverityBasedTextAttributes);
           }
         }
-      }).setEditActionUpdater(e -> myCurrentSelection != null && !SeverityRegistrar.isDefaultSeverity(myCurrentSelection.getSeverity())).setEditActionName("Rename").createPanel();
+      }).setEditActionUpdater(e -> myCurrentSelection != null && !SeverityRegistrar.isDefaultSeverity(myCurrentSelection.getSeverity())).setEditActionName(
+        LangBundle.message("action.rename.text")).createPanel();
     ToolbarDecorator.findRemoveButton(leftPanel).addCustomUpdater(
       e -> !SeverityRegistrar.isDefaultSeverity(myOptionsList.getSelectedValue().getSeverity()));
     ToolbarDecorator.findUpButton(leftPanel).addCustomUpdater(e -> {

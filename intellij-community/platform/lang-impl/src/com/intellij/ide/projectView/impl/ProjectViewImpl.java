@@ -18,6 +18,7 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -569,7 +570,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   @NotNull
   @Override
   public List<AnAction> getActions(boolean originalProvider) {
-    DefaultActionGroup views = DefaultActionGroup.createPopupGroup(() -> "Change View");
+    DefaultActionGroup views = DefaultActionGroup.createPopupGroup(() -> LangBundle.message("action.change.view.text"));
 
     ChangeViewAction lastHeader = null;
     for (int i = 0; i < myContentManager.getContentCount(); i++) {
@@ -2012,7 +2013,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     @Override
     public void update(@NotNull AnActionEvent event) {
       Presentation presentation = event.getPresentation();
-      presentation.setText("Select Opened File" + getScrollToSourceShortcut());
+      presentation.setText(LangBundle.message("action.select.opened.file.text", getScrollToSourceShortcut()));
       presentation.setEnabledAndVisible(!isAutoscrollFromSource(myCurrentViewId));
     }
   }

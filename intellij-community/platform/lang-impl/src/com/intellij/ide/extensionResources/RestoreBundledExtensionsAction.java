@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.extensionResources;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.extensions.PluginId;
@@ -35,7 +36,7 @@ public class RestoreBundledExtensionsAction extends DumbAwareAction {
 
     Task.Backgroundable extractResourcesInBackground = new Task.Backgroundable(
       e.getProject(),
-      "Extracting bundled extensions for plugin: " + pluginId.getIdString()) {
+      LangBundle.message("progress.title.extracting.bundled.extensions.for.plugin", pluginId.getIdString())) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {

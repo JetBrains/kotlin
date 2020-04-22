@@ -22,6 +22,7 @@ import com.intellij.concurrency.JobLauncher;
 import com.intellij.concurrency.JobLauncherImpl;
 import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.diagnostic.ThreadDumper;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.annotation.ProblemGroup;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.notification.NotificationGroup;
@@ -731,7 +732,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
                           final @Nullable Runnable postRunnable,
                           final boolean modal,
                           @NotNull Predicate<? super ProblemDescriptor> shouldApplyFix) {
-    String title = "Inspect Code...";
+    String title = LangBundle.message("progress.title.inspect.code");
     Task task = modal ? new Task.Modal(getProject(), title, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {

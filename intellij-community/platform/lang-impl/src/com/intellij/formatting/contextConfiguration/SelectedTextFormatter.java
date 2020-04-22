@@ -16,6 +16,7 @@
 package com.intellij.formatting.contextConfiguration;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -56,7 +57,7 @@ public class SelectedTextFormatter {
     final int end = mySelectionRangeMarker.getEndOffset();
 
     WriteCommandAction.writeCommandAction(myProject)
-                      .withName("Configure code style on selected fragment: restore text before")
+                      .withName(LangBundle.message("command.name.configure.code.style.on.selected.fragment.restore.text.before"))
                       .run(() -> document.replaceString(start, end, myTextBefore));
 
     myEditor.getSelectionModel().setSelection(start, start + myTextBefore.length());
@@ -75,7 +76,8 @@ public class SelectedTextFormatter {
 
   private static void reformatRange(final @NotNull PsiFile file, final @NotNull TextRange range) {
     final Project project = file.getProject();
-    CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> CodeStyleManager.getInstance(project).reformatText(file, range.getStartOffset(), range.getEndOffset())), "Reformat", null);
+    CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> CodeStyleManager.getInstance(project).reformatText(file, range.getStartOffset(), range.getEndOffset())),
+                                                  LangBundle.message("command.name.reformat"), null);
   }
 
   @NotNull

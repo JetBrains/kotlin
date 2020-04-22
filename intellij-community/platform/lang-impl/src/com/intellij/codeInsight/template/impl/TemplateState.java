@@ -8,6 +8,7 @@ import com.intellij.codeInsight.template.*;
 import com.intellij.codeInsight.template.macro.TemplateCompletionProcessor;
 import com.intellij.diagnostic.AttachmentFactory;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -648,7 +649,7 @@ public class TemplateState implements Disposable {
       ActionManager am = ActionManager.getInstance();
       String enterShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM));
       String tabShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE));
-      lookup.addAdvertisement("Press " + enterShortcut + " or " + tabShortcut + " to replace", null);
+      lookup.addAdvertisement(LangBundle.message("popup.advertisement.press.or.to.replace", enterShortcut, tabShortcut), null);
     }
     lookup.setLookupFocusDegree(lookupFocusDegree);
     lookup.refreshUi(true, true);

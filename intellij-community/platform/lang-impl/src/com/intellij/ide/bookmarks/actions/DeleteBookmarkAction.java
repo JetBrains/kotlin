@@ -19,6 +19,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.bookmarks.BookmarkItem;
 import com.intellij.ide.bookmarks.BookmarkManager;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -34,7 +35,8 @@ class DeleteBookmarkAction extends DumbAwareAction {
   private final JList<? extends BookmarkItem> myList;
 
   DeleteBookmarkAction(Project project, JList<? extends BookmarkItem> list) {
-    super("Delete", "Delete current bookmark", AllIcons.General.Remove);
+    super(LangBundle.messagePointer("action.DeleteBookmarkAction.delete.text"),
+          LangBundle.messagePointer("action.delete.current.bookmark.description"), AllIcons.General.Remove);
     setEnabledInModalContext(true);
     myProject = project;
     myList = list;

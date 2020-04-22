@@ -8,10 +8,7 @@ import com.intellij.formatting.FormatterEx;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.ide.DataManager;
-import com.intellij.lang.CodeDocumentationAwareCommenter;
-import com.intellij.lang.Commenter;
-import com.intellij.lang.LanguageCommenters;
-import com.intellij.lang.LanguageFormatting;
+import com.intellij.lang.*;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -88,7 +85,7 @@ public class JoinLinesHandler extends EditorActionHandler {
     int line = startLine;
 
     ((ApplicationImpl)ApplicationManager.getApplication()).runWriteActionWithCancellableProgressInDispatchThread(
-      "Join Lines", project, null, indicator -> {
+      LangBundle.message("progress.title.join.lines"), project, null, indicator -> {
         indicator.setIndeterminate(false);
         JoinLineProcessor processor = new JoinLineProcessor(doc, psiFile, line, indicator);
         processor.process(editor, caret, lineCount);

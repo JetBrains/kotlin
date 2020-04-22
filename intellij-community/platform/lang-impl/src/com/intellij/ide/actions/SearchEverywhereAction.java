@@ -31,6 +31,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.gotoByName.*;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguagePsiElementExternalizer;
 import com.intellij.navigation.ItemPresentation;
@@ -908,7 +909,8 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
               @Override
               public void navigate(boolean requestFocus) {
                 Executor executor = findExecutor((RunnerAndConfigurationSettings)config);
-                RunDialog.editConfiguration(project, (RunnerAndConfigurationSettings)config, "Edit Configuration", executor);
+                RunDialog.editConfiguration(project, (RunnerAndConfigurationSettings)config,
+                                            LangBundle.message("dialog.title.edit.configuration"), executor);
               }
 
               @Override

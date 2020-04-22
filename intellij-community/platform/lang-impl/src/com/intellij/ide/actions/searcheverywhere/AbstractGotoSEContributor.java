@@ -7,24 +7,13 @@ import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.actions.QualifiedNameProviderUtil;
 import com.intellij.ide.actions.SearchEverywherePsiRenderer;
 import com.intellij.ide.util.EditSourceUtil;
-import com.intellij.ide.util.gotoByName.ChooseByNameInScopeItemProvider;
-import com.intellij.ide.util.gotoByName.ChooseByNameItemProvider;
-import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
-import com.intellij.ide.util.gotoByName.ChooseByNameWeightedItemProvider;
-import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
+import com.intellij.ide.util.gotoByName.*;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
 import com.intellij.ide.util.scopeChooser.ScopeDescriptor;
+import com.intellij.lang.LangBundle;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.MnemonicHelper;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText;
@@ -64,28 +53,18 @@ import com.intellij.util.containers.JBIterable;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import java.awt.Component;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.AbstractAction;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JSeparator;
-import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractGotoSEContributor implements WeightedSearchEverywhereContributor<Object> {
   private static final Logger LOG = Logger.getInstance(AbstractGotoSEContributor.class);
@@ -527,8 +506,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
         CHOOSE, MnemonicHelper.getFocusAcceleratorKeyMask(), true));
       String shortcutText2 = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(
         TOGGLE, MnemonicHelper.getFocusAcceleratorKeyMask(), true));
-      e.getPresentation().setDescription("Choose scope (" + shortcutText + ")<p/>" +
-                                         "Toggle scope (" + shortcutText2 + ")");
+      e.getPresentation().setDescription(LangBundle.message("action.choose.scope.p.toggle.scope.description", shortcutText, shortcutText2));
       JComponent button = e.getPresentation().getClientProperty(CustomComponentAction.COMPONENT_KEY);
       if (button != null) {
         button.setBackground(selection.getColor());

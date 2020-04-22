@@ -92,7 +92,7 @@ public class EditorColorSchemeDropHandler extends CustomFileDropHandler {
         }
       }
       catch (SchemeImportException e) {
-        String title = e.isWarning() ? ADDED : "Color scheme import failed";
+        String title = e.isWarning() ? ADDED : LangBundle.message("notification.title.color.scheme.import.failed");
         NotificationType type = e.isWarning() ? NotificationType.WARNING : NotificationType.ERROR;
         Notification notification = new Notification("", title, e.getMessage(), type);
         notification.notify(project);

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.PresentationFactory;
@@ -56,8 +57,8 @@ public class CopyReferencePopup extends DumbAwareAction {
 
     DataContext dataContext = cloneDataContext(e);
     ListPopup popup =
-      new PopupFactoryImpl.ActionGroupPopup("Copy", actionGroup, e.getDataContext(), true, true, false, true, null, -1, null,
-                                            COPY_REFERENCE_POPUP_PLACE) {
+      new PopupFactoryImpl.ActionGroupPopup(LangBundle.message("popup.title.copy"), actionGroup, e.getDataContext(), true, true, false,
+                                            true, null, -1, null, COPY_REFERENCE_POPUP_PLACE) {
       @Override
       protected ListCellRenderer<PopupFactoryImpl.ActionItem> getListElementRenderer() {
         return new PopupListElementRenderer<PopupFactoryImpl.ActionItem>(this) {

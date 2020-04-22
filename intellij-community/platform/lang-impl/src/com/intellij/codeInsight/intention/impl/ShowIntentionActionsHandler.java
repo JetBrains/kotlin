@@ -27,6 +27,7 @@ import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.internal.statistic.IntentionsCollector;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -98,7 +99,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       });
     }
     else if (showFeedbackOnEmptyMenu) {
-      HintManager.getInstance().showInformationHint(editor, "No context actions available at this location");
+      HintManager.getInstance().showInformationHint(editor, LangBundle.message("hint.text.no.context.actions.available.at.this.location"));
     }
   }
 

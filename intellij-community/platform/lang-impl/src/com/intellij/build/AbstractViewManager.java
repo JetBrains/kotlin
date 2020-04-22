@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicClearableLazyValue;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.SystemNotifications;
@@ -25,7 +26,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +77,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     return true;
   }
 
-  protected abstract @NotNull @Nls(capitalization = Nls.Capitalization.Title) String getViewName();
+  protected abstract @NotNull @NlsContexts.TabTitle String getViewName();
 
   protected Map<BuildDescriptor, BuildView> getBuildsMap() {
     return myBuildsViewValue.getValue().getBuildsMap();

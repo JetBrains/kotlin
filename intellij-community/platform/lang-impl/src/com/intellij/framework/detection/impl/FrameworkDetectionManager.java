@@ -12,6 +12,7 @@ import com.intellij.framework.detection.impl.exclude.DetectionExcludesConfigurat
 import com.intellij.framework.detection.impl.ui.ConfigureDetectedFrameworksDialog;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.lang.LangBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
@@ -233,7 +234,8 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
     }
 
     if (descriptions.isEmpty()) {
-      Messages.showInfoMessage(myProject, "No frameworks are detected", "Framework Detection");
+      Messages.showInfoMessage(myProject, LangBundle.message("dialog.message.no.frameworks.are.detected"),
+                               LangBundle.message("dialog.title.framework.detection"));
       return;
     }
     final ConfigureDetectedFrameworksDialog dialog = new ConfigureDetectedFrameworksDialog(myProject, descriptions);

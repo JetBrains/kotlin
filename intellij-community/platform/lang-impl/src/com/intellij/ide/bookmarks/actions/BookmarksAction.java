@@ -5,6 +5,7 @@ import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.bookmarks.BookmarkItem;
 import com.intellij.ide.bookmarks.BookmarkManager;
 import com.intellij.ide.bookmarks.BookmarksListener;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -112,7 +113,7 @@ public class BookmarksAction extends AnAction implements DumbAware, MasterDetail
       popup.showInBestPositionFor(e.getDataContext());
     }
 
-    list.getEmptyText().setText("No Bookmarks");
+    list.getEmptyText().setText(LangBundle.message("status.text.no.bookmarks"));
     list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
     project.getMessageBus().connect(popup).subscribe(BookmarksListener.TOPIC, new BookmarksListener() {
