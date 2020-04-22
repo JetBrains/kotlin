@@ -207,7 +207,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         reference = SmartPointerManager.createPointer(elem as KtExpression)
                     }
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
-                    property = emptyBody.addAfter(property, firstChild) as KtProperty
+                    property = emptyBody.addAfter(property, firstChild) as KtDeclaration
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
                     actualExpression = reference?.element ?: return
                     diff = actualExpression.textRange.startOffset - emptyBody.textRange.startOffset
@@ -232,7 +232,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                     val copyTo = parent.lastChild
                     val copyFrom = anchor.nextSibling
 
-                    property = emptyBody.addAfter(property, firstChild) as KtProperty
+                    property = emptyBody.addAfter(property, firstChild) as KtDeclaration
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
                     if (copyFrom != null && copyTo != null) {
                         emptyBody.addRangeAfter(copyFrom, copyTo, property)
