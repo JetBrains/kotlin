@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerCompat
 import org.jetbrains.kotlin.idea.caches.trackers.inBlockModificationCount
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -58,7 +59,7 @@ class ResolveElementCache(
                 // data on any modification of the file
                 !file.isPhysical -> file.modificationStamp
 
-                resolveElement is KtDeclaration && KotlinCodeBlockModificationListener.isBlockDeclaration(resolveElement) -> resolveElement.getModificationStamp()
+                resolveElement is KtDeclaration && KotlinCodeBlockModificationListenerCompat.isBlockDeclaration(resolveElement) -> resolveElement.getModificationStamp()
                 resolveElement is KtSuperTypeList -> resolveElement.modificationStamp
                 else -> null
             }
