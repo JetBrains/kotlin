@@ -32,9 +32,12 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
 
 fun Location.isInKotlinSources(): Boolean {
-    val declaringType = declaringType()
-    val fileExtension = declaringType.safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
-    return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || declaringType.containsKotlinStrata()
+    return declaringType().isInKotlinSources()
+}
+
+fun ReferenceType.isInKotlinSources(): Boolean {
+    val fileExtension = safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
+    return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || containsKotlinStrata()
 }
 
 fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
