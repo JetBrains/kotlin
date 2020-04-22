@@ -63,22 +63,14 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
-        var functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+        val functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
             .also {
                 dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall)
                 functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
             }
 
         val name = functionCall.calleeReference.name
-        var result = collectCandidates(functionCall, name)
-
-        if (
-            (result.candidates.isEmpty() || result.applicability < CandidateApplicability.SYNTHETIC_RESOLVED) &&
-            functionCall.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
-        ) {
-            functionCall = functionCall.transformExplicitReceiver(integerLiteralTypeApproximator, null)
-            result = collectCandidates(functionCall, name)
-        }
+        val result = collectCandidates(functionCall, name)
 
         val nameReference = createResolvedNamedReference(
             functionCall.calleeReference,
@@ -146,6 +138,15 @@ class FirCallResolver(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
         }
+        if ((reducedCandidates.isEmpty() || result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) &&
+            explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
+        ) {
+            val approximatedQualifiedAccess = qualifiedAccess.transformExplicitReceiver(integerLiteralTypeApproximator, null)
+            if (approximatedQualifiedAccess.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null) {
+                return collectCandidates(approximatedQualifiedAccess, name)
+            }
+        }
+
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
