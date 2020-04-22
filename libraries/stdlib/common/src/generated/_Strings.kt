@@ -616,7 +616,7 @@ public inline fun String.reversed(): String {
  * @sample samples.text.Strings.associate
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = mapCapacity(length).coerceAtLeast(16)
+    val capacity = mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -631,7 +631,7 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * @sample samples.text.Strings.associateBy
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    val capacity = mapCapacity(length).coerceAtLeast(16)
+    val capacity = mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
 
@@ -645,7 +645,7 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
  * @sample samples.text.Strings.associateByWithValueTransform
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    val capacity = mapCapacity(length).coerceAtLeast(16)
+    val capacity = mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -805,7 +805,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(mapCapacity(length.coerceAtMost(128))), keySelector)
 }
 
 /**
@@ -818,7 +818,7 @@ public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, Lis
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(length.coerceAtMost(128))), keySelector, valueTransform)
 }
 
 /**

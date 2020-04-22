@@ -1226,7 +1226,7 @@ public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination
  * Returns a new [HashSet] of all elements.
  */
 public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
-    return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))
+    return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(10))))
 }
 
 /**
@@ -1304,7 +1304,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(mapCapacity(collectionSizeOrDefault(10))), keySelector)
 }
 
 /**
@@ -1317,7 +1317,7 @@ public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(collectionSizeOrDefault(10))), keySelector, valueTransform)
 }
 
 /**
@@ -1536,7 +1536,8 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
+    val capacity = collectionSizeOrDefault(10) + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<T>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }

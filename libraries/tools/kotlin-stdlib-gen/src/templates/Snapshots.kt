@@ -62,13 +62,11 @@ object Snapshots : TemplateGroupBase() {
         body(Sequences) { "return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()" }
 
         body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            val size = f.code.size
-            val capacity = if (f == CharSequences || primitive == PrimitiveType.Char) "$size.coerceAtMost(128)" else size
             """
-            return when ($size) {
+            return when (${f.code.size}) {
                 0 -> emptySet()
                 1 -> setOf(this[0])
-                else -> toCollection(LinkedHashSet<T>(mapCapacity($capacity)))
+                else -> toCollection(LinkedHashSet<T>(mapCapacity(${f.code.toSetSize(primitive)})))
             }
             """
         }
@@ -80,12 +78,9 @@ object Snapshots : TemplateGroupBase() {
     } builder {
         doc { "Returns a new [HashSet] of all ${f.element.pluralize()}." }
         returns("HashSet<T>")
-        body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            val size = f.code.size
-            val capacity = if (f == CharSequences || primitive == PrimitiveType.Char) "$size.coerceAtMost(128)" else size
-            "return toCollection(HashSet<T>(mapCapacity($capacity)))"
+        body(Iterables, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            "return toCollection(HashSet<T>(mapCapacity(${f.code.toSetSize(primitive)})))"
         }
     }
 
@@ -216,27 +211,15 @@ object Snapshots : TemplateGroupBase() {
             ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitives"
             else -> "samples.collections.Collections.Transformations.associate"
         })
-        body {
+        body(Iterables, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
+            val capacity = mapCapacity(${f.code.toSetSize(primitive)}).coerceAtLeast(16)
             return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
         }
         body(Sequences) {
             """
             return associateTo(LinkedHashMap<K, V>(), transform)
-            """
-        }
-        body(CharSequences) {
-            """
-            val capacity = mapCapacity(length).coerceAtLeast(16)
-            return associateTo(LinkedHashMap<K, V>(capacity), transform)
-            """
-        }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            val capacity = mapCapacity(size).coerceAtLeast(16)
-            return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
         }
     }
@@ -298,27 +281,15 @@ object Snapshots : TemplateGroupBase() {
 
         // Collection size helper methods are private, so we fall back to the calculation from HashSet's Collection
         // constructor.
-        body {
+        body(Iterables, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
+            val capacity = mapCapacity(${f.code.toSetSize(primitive)}).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
         }
         body(Sequences) {
             """
             return associateByTo(LinkedHashMap<K, T>(), keySelector)
-            """
-        }
-        body(CharSequences) {
-            """
-            val capacity = mapCapacity(length).coerceAtLeast(16)
-            return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
-            """
-        }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            val capacity = mapCapacity(size).coerceAtLeast(16)
-            return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
         }
     }
@@ -383,27 +354,15 @@ object Snapshots : TemplateGroupBase() {
          * constructor.
          */
 
-        body {
+        body(Iterables, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
+            val capacity = mapCapacity(${f.code.toSetSize(primitive)}).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
         }
         body(Sequences) {
             """
             return associateByTo(LinkedHashMap<K, V>(), keySelector, valueTransform)
-            """
-        }
-        body(CharSequences) {
-            """
-            val capacity = mapCapacity(length).coerceAtLeast(16)
-            return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
-            """
-        }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            val capacity = mapCapacity(size).coerceAtLeast(16)
-            return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
         }
     }
@@ -470,16 +429,7 @@ object Snapshots : TemplateGroupBase() {
             else -> "samples.collections.Collections.Transformations.associateWith"
         })
         body {
-            val capacity = when (family) {
-                Iterables -> "mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)"
-                CharSequences -> "mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16)"
-                ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> if (primitive == PrimitiveType.Char) {
-                    "mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)"
-                } else {
-                    "mapCapacity(size).coerceAtLeast(16)"
-                }
-                else -> ""
-            }
+            val capacity = if (f == Sequences) "" else "mapCapacity(${f.code.toSetSize(primitive)}).coerceAtLeast(16)"
             """
             val result = LinkedHashMap<K, V>($capacity)
             return associateWithTo(result, valueSelector)

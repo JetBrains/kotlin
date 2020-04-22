@@ -351,7 +351,10 @@ object Mapping : TemplateGroupBase() {
         sequenceClassification(terminal)
         typeParam("K")
         returns("Map<K, List<T>>")
-        body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)" }
+        body {
+            val capacity = if (f == Sequences) "" else "mapCapacity(${f.code.toSetSize(primitive)})"
+            "return groupByTo(LinkedHashMap<K, MutableList<T>>($capacity), keySelector)"
+        }
     }
 
     val f_groupByTo_key = fn("groupByTo(destination: M, keySelector: (T) -> K)") {
@@ -407,7 +410,10 @@ object Mapping : TemplateGroupBase() {
         typeParam("K")
         typeParam("V")
         returns("Map<K, List<V>>")
-        body { "return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)" }
+        body {
+            val capacity = if (f == Sequences) "" else "mapCapacity(${f.code.toSetSize(primitive)})"
+            "return groupByTo(LinkedHashMap<K, MutableList<V>>($capacity), keySelector, valueTransform)"
+        }
     }
 
 

@@ -8187,7 +8187,7 @@ public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>)
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(256)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -8277,7 +8277,7 @@ public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(2)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -8292,7 +8292,7 @@ public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -8322,7 +8322,7 @@ public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K,
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(256)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Byte>(capacity), keySelector)
 }
 
@@ -8412,7 +8412,7 @@ public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(2)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Boolean>(capacity), keySelector)
 }
 
@@ -8427,7 +8427,7 @@ public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
 
@@ -8455,7 +8455,7 @@ public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valu
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(256)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -8539,7 +8539,7 @@ public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, val
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(2)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -8553,7 +8553,7 @@ public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, v
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    val capacity = mapCapacity(size).coerceAtLeast(16)
+    val capacity = mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -9011,7 +9011,7 @@ public inline fun <K, V> Array<out K>.associateWith(valueSelector: (K) -> V): Ma
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> ByteArray.associateWith(valueSelector: (Byte) -> V): Map<Byte, V> {
-    val result = LinkedHashMap<Byte, V>(mapCapacity(size).coerceAtLeast(16))
+    val result = LinkedHashMap<Byte, V>(mapCapacity(size.coerceAtMost(256)).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -9119,7 +9119,7 @@ public inline fun <V> DoubleArray.associateWith(valueSelector: (Double) -> V): M
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public inline fun <V> BooleanArray.associateWith(valueSelector: (Boolean) -> V): Map<Boolean, V> {
-    val result = LinkedHashMap<Boolean, V>(mapCapacity(size).coerceAtLeast(16))
+    val result = LinkedHashMap<Boolean, V>(mapCapacity(size.coerceAtMost(2)).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -9403,7 +9403,7 @@ public fun <T> Array<out T>.toHashSet(): HashSet<T> {
  * Returns a new [HashSet] of all elements.
  */
 public fun ByteArray.toHashSet(): HashSet<Byte> {
-    return toCollection(HashSet<Byte>(mapCapacity(size)))
+    return toCollection(HashSet<Byte>(mapCapacity(size.coerceAtMost(256))))
 }
 
 /**
@@ -9445,7 +9445,7 @@ public fun DoubleArray.toHashSet(): HashSet<Double> {
  * Returns a new [HashSet] of all elements.
  */
 public fun BooleanArray.toHashSet(): HashSet<Boolean> {
-    return toCollection(HashSet<Boolean>(mapCapacity(size)))
+    return toCollection(HashSet<Boolean>(mapCapacity(size.coerceAtMost(2))))
 }
 
 /**
@@ -9655,7 +9655,7 @@ public fun ByteArray.toSet(): Set<Byte> {
     return when (size) {
         0 -> emptySet()
         1 -> setOf(this[0])
-        else -> toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
+        else -> toCollection(LinkedHashSet<Byte>(mapCapacity(size.coerceAtMost(256))))
     }
 }
 
@@ -9733,7 +9733,7 @@ public fun BooleanArray.toSet(): Set<Boolean> {
     return when (size) {
         0 -> emptySet()
         1 -> setOf(this[0])
-        else -> toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
+        else -> toCollection(LinkedHashSet<Boolean>(mapCapacity(size.coerceAtMost(2))))
     }
 }
 
@@ -9939,7 +9939,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destinati
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -9951,7 +9951,7 @@ public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, Lis
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(mapCapacity(size.coerceAtMost(256))), keySelector)
 }
 
 /**
@@ -9963,7 +9963,7 @@ public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<B
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Short>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -9975,7 +9975,7 @@ public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Int>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -9987,7 +9987,7 @@ public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Long>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -9999,7 +9999,7 @@ public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<L
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Float>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -10011,7 +10011,7 @@ public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Double>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -10023,7 +10023,7 @@ public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, Li
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(mapCapacity(size.coerceAtMost(2))), keySelector)
 }
 
 /**
@@ -10035,7 +10035,7 @@ public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(mapCapacity(size.coerceAtMost(128))), keySelector)
 }
 
 /**
@@ -10048,7 +10048,7 @@ public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<C
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -10061,7 +10061,7 @@ public inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, valueTra
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size.coerceAtMost(256))), keySelector, valueTransform)
 }
 
 /**
@@ -10074,7 +10074,7 @@ public inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valueTransf
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -10087,7 +10087,7 @@ public inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, valueTran
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -10100,7 +10100,7 @@ public inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueTransfor
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -10113,7 +10113,7 @@ public inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valueTransf
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -10126,7 +10126,7 @@ public inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, valueTran
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -10139,7 +10139,7 @@ public inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, valueTr
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size.coerceAtMost(2))), keySelector, valueTransform)
 }
 
 /**
@@ -10152,7 +10152,7 @@ public inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K, value
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size.coerceAtMost(128))), keySelector, valueTransform)
 }
 
 /**
@@ -11484,7 +11484,7 @@ public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun ByteArray.toMutableSet(): MutableSet<Byte> {
-    return toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
+    return toCollection(LinkedHashSet<Byte>(mapCapacity(size.coerceAtMost(256))))
 }
 
 /**
@@ -11538,7 +11538,7 @@ public fun DoubleArray.toMutableSet(): MutableSet<Double> {
  * The returned set preserves the element iteration order of the original array.
  */
 public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
-    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
+    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size.coerceAtMost(2))))
 }
 
 /**
@@ -11560,7 +11560,8 @@ public fun CharArray.toMutableSet(): MutableSet<Char> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
+    val capacity = size + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<T>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11575,7 +11576,8 @@ public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
-    val set = this.toMutableSet()
+    val capacity = size.coerceAtMost(256) + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Byte>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11590,7 +11592,8 @@ public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
-    val set = this.toMutableSet()
+    val capacity = size + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Short>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11605,7 +11608,8 @@ public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
-    val set = this.toMutableSet()
+    val capacity = size + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Int>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11620,7 +11624,8 @@ public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
-    val set = this.toMutableSet()
+    val capacity = size + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Long>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11635,7 +11640,8 @@ public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
-    val set = this.toMutableSet()
+    val capacity = size + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Float>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11650,7 +11656,8 @@ public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
-    val set = this.toMutableSet()
+    val capacity = size + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Double>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11665,7 +11672,8 @@ public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
-    val set = this.toMutableSet()
+    val capacity = size.coerceAtMost(2) + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Boolean>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }
@@ -11680,7 +11688,8 @@ public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
-    val set = this.toMutableSet()
+    val capacity = size.coerceAtMost(128) + other.collectionSizeOrDefault(10)
+    val set = toCollection(LinkedHashSet<Char>(mapCapacity(capacity)))
     set.addAll(other)
     return set
 }

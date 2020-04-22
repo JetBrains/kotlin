@@ -31,8 +31,7 @@ object SetOps : TemplateGroupBase() {
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
-            val capacity = "size" + if (primitive == PrimitiveType.Char) ".coerceAtMost(128)" else ""
-            "return toCollection(LinkedHashSet<T>(mapCapacity($capacity)))"
+            "return toCollection(LinkedHashSet<T>(mapCapacity(${f.code.toSetSize(primitive)})))"
         }
         body(Sequences) {
             """
@@ -122,7 +121,8 @@ object SetOps : TemplateGroupBase() {
         returns("Set<T>")
         body {
             """
-            val set = this.toMutableSet()
+            val capacity = ${f.code.toSetSize(primitive)} + other.collectionSizeOrDefault(10)
+            val set = toCollection(LinkedHashSet<T>(mapCapacity(capacity)))
             set.addAll(other)
             return set
             """

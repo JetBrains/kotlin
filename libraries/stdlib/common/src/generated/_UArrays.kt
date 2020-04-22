@@ -4263,7 +4263,7 @@ public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map<UByte, V> {
-    val result = LinkedHashMap<UByte, V>(mapCapacity(size).coerceAtLeast(16))
+    val result = LinkedHashMap<UByte, V>(mapCapacity(size.coerceAtMost(256)).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -4478,7 +4478,7 @@ public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapTo(destina
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K> UIntArray.groupBy(keySelector: (UInt) -> K): Map<K, List<UInt>> {
-    return groupByTo(LinkedHashMap<K, MutableList<UInt>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<UInt>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -4493,7 +4493,7 @@ public inline fun <K> UIntArray.groupBy(keySelector: (UInt) -> K): Map<K, List<U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K> ULongArray.groupBy(keySelector: (ULong) -> K): Map<K, List<ULong>> {
-    return groupByTo(LinkedHashMap<K, MutableList<ULong>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<ULong>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -4508,7 +4508,7 @@ public inline fun <K> ULongArray.groupBy(keySelector: (ULong) -> K): Map<K, List
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K> UByteArray.groupBy(keySelector: (UByte) -> K): Map<K, List<UByte>> {
-    return groupByTo(LinkedHashMap<K, MutableList<UByte>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<UByte>>(mapCapacity(size.coerceAtMost(256))), keySelector)
 }
 
 /**
@@ -4523,7 +4523,7 @@ public inline fun <K> UByteArray.groupBy(keySelector: (UByte) -> K): Map<K, List
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K> UShortArray.groupBy(keySelector: (UShort) -> K): Map<K, List<UShort>> {
-    return groupByTo(LinkedHashMap<K, MutableList<UShort>>(), keySelector)
+    return groupByTo(LinkedHashMap<K, MutableList<UShort>>(mapCapacity(size)), keySelector)
 }
 
 /**
@@ -4539,7 +4539,7 @@ public inline fun <K> UShortArray.groupBy(keySelector: (UShort) -> K): Map<K, Li
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V> UIntArray.groupBy(keySelector: (UInt) -> K, valueTransform: (UInt) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -4555,7 +4555,7 @@ public inline fun <K, V> UIntArray.groupBy(keySelector: (UInt) -> K, valueTransf
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V> ULongArray.groupBy(keySelector: (ULong) -> K, valueTransform: (ULong) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**
@@ -4571,7 +4571,7 @@ public inline fun <K, V> ULongArray.groupBy(keySelector: (ULong) -> K, valueTran
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V> UByteArray.groupBy(keySelector: (UByte) -> K, valueTransform: (UByte) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size.coerceAtMost(256))), keySelector, valueTransform)
 }
 
 /**
@@ -4587,7 +4587,7 @@ public inline fun <K, V> UByteArray.groupBy(keySelector: (UByte) -> K, valueTran
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V> UShortArray.groupBy(keySelector: (UShort) -> K, valueTransform: (UShort) -> V): Map<K, List<V>> {
-    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(mapCapacity(size)), keySelector, valueTransform)
 }
 
 /**

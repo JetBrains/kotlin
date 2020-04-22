@@ -20,6 +20,18 @@ val Family.CodeExtension.size: String
         else -> error("size property isn't supported for $family")
     }
 
+fun Family.CodeExtension.toSetSize(primitive: PrimitiveType?): String = when (family) {
+    Iterables -> "collectionSizeOrDefault(10)"
+    Collections, Lists, Sets, Maps, InvariantArraysOfObjects, ArraysOfObjects -> "size"
+    ArraysOfPrimitives, ArraysOfUnsigned ->
+        if (primitive == PrimitiveType.Boolean) "size.coerceAtMost(2)"
+        else if (primitive == PrimitiveType.Char) "size.coerceAtMost(128)"
+        else if (primitive == PrimitiveType.Byte || primitive == PrimitiveType.UByte) "size.coerceAtMost(256)"
+        else "size"
+    CharSequences, Strings -> "length.coerceAtMost(128)"
+    else -> error("size property isn't supported for $family")
+}
+
 object DocExtensions {
 
     val Family.element: String
