@@ -265,7 +265,9 @@ internal class ExpressionReplacementPerformer(
     private fun <TElement : KtElement> withElementToBeReplacedPreserved(action: () -> TElement): TElement {
         elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, Unit)
         val result = action()
-        elementToBeReplaced = result.findDescendantOfType { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }!!
+        elementToBeReplaced = result.findDescendantOfType { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }
+            ?: error("Element `elementToBeReplaced` not found")
+
         elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, null)
         return result
     }

@@ -311,7 +311,13 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 } ?: newReplace
             }
 
-            runRefactoring(isVar, newExpression ?: return, newCommonContainer, newCommonParent, newAllReplaces)
+            runRefactoring(
+                isVar,
+                newExpression ?: return,
+                newCommonContainer,
+                newCommonParent ?: return,
+                newAllReplaces
+            )
         }
     }
 

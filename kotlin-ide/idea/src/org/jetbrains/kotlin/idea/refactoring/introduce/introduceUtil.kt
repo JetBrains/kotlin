@@ -164,8 +164,8 @@ fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): KtExpr
     return result
 }
 
-fun PsiElement.findElementByCopyableDataAndClearIt(key: Key<Boolean>): PsiElement {
-    val result = findDescendantOfType<PsiElement> { it.getCopyableUserData(key) != null }!!
+fun PsiElement.findElementByCopyableDataAndClearIt(key: Key<Boolean>): PsiElement? {
+    val result = findDescendantOfType<PsiElement> { it.getCopyableUserData(key) != null } ?: return null
     result.putCopyableUserData(key, null)
     return result
 }
