@@ -79,6 +79,7 @@ class ServiceViewTree extends Tree {
       myDescriptor = value instanceof ServiceViewItem ? ((ServiceViewItem)value).getViewDescriptor() : null;
       myComponent = tree;
       super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
+      myDescriptor = null;
     }
 
     @Nullable
