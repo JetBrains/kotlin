@@ -204,7 +204,7 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            object : Task.Backgroundable(project, KotlinIdeaCoreBundle.message("text.kotlin.loading.script.dependencies"), true) {
+            object : Task.Backgroundable(project, KotlinIdeaCoreBundle.message("text.kotlin.loading.script.configuration"), true) {
                 override fun run(indicator: ProgressIndicator) {
                     progressIndicator = indicator
                     updateProgress()
