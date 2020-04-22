@@ -8,15 +8,27 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Usage
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.SigningExtension
+import org.gradle.plugins.signing.SigningPlugin
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
@@ -29,7 +41,7 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
         pluginManager.withPlugin("java") {
             from(testSourceSet.output)
         }
-        classifier = "tests"
+        archiveClassifier.set("tests")
         body()
         project.addArtifact(testsJarCfg, this, this)
     }
@@ -71,12 +83,14 @@ fun <T : Task> Project.runtimeJarArtifactBy(
     }
 }
 
-fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body), { })
+fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body)) { }
 
 fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {}): TaskProvider<T> {
+
     tasks.named<Jar>("jar").configure {
         removeArtifacts(configurations.getOrCreate("archives"), this)
     }
+
     task.configure {
         configurations.findByName("embedded")?.let { embedded ->
             dependsOn(embedded)
@@ -85,15 +99,35 @@ fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {})
             }
         }
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
-        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
+
     project.runtimeJarArtifactBy(task, task)
+
+    val runtimeJar = configurations.maybeCreate("runtimeJar").apply {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
+
+    val javaComponent = components.findByName("java") as AdhocComponentWithVariants
+    javaComponent.withVariantsFromConfiguration(configurations["runtimeElements"]) { skip() }
+    javaComponent.addVariantsFromConfiguration(runtimeJar) { }
+
     return task
 }
 
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
-    val task = tasks.register<Jar>("sourcesJar") {
+    configure<JavaPluginExtension> {
+        withSourcesJar()
+    }
+
+    val sourcesJar = getOrCreateTask<Jar>("sourcesJar") {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveClassifier.set("sources")
 
@@ -117,13 +151,17 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }
 
-    addArtifact("archives", task)
-    addArtifact("sources", task)
+    addArtifact("archives", sourcesJar)
+    addArtifact("sources", sourcesJar)
 
-    return task
+    return sourcesJar
 }
 
 fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
+    configure<JavaPluginExtension> {
+        withJavadocJar()
+    }
+
     val javadocTask = getOrCreateTask<Jar>("javadocJar") {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveClassifier.set("javadoc")
@@ -145,7 +183,119 @@ fun Project.standardPublicJars() {
     javadocJar()
 }
 
-fun Project.publish(body: Upload.() -> Unit = {}): Upload {
+fun Project.publish(moduleMetadata: Boolean = false) {
+    apply<MavenPublishPlugin>()
+    apply<SigningPlugin>()
+
+    if (!moduleMetadata) {
+        tasks.withType<GenerateModuleMetadata> {
+            enabled = false
+        }
+    }
+
+    val javaComponent = components.findByName("java") as AdhocComponentWithVariants?
+    if (javaComponent != null) {
+        val runtimeElements by configurations
+        val apiElements by configurations
+
+        val publishedRuntime = configurations.maybeCreate("publishedRuntime").apply {
+            attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            }
+            extendsFrom(runtimeElements)
+        }
+
+        val publishedCompile = configurations.maybeCreate("publishedCompile").apply {
+            attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))
+            }
+            extendsFrom(apiElements)
+        }
+
+        javaComponent.withVariantsFromConfiguration(apiElements) { skip() }
+
+        javaComponent.addVariantsFromConfiguration(publishedCompile) { mapToMavenScope("compile") }
+        javaComponent.addVariantsFromConfiguration(publishedRuntime) { mapToMavenScope("runtime") }
+    }
+
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("Main") {
+                if (javaComponent != null) {
+                    from(javaComponent)
+                } else {
+                    artifact(tasks["jar"])
+                }
+
+                pom {
+                    packaging = "jar"
+                    description.set(project.description)
+                    url.set("https://kotlinlang.org/")
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+                    scm {
+                        url.set("https://github.com/JetBrains/kotlin")
+                        connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+                        developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+                    }
+                    developers {
+                        developer {
+                            name.set("Kotlin Team")
+                            organization.set("JetBrains")
+                            organizationUrl.set("https://www.jetbrains.com")
+                        }
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name = "Maven"
+                url = file("${project.rootDir}/build/repo").toURI()
+            }
+        }
+    }
+
+    configure<SigningExtension> {
+        setRequired(provider {
+            project.findProperty("signingRequired")?.toString()?.toBoolean()
+                ?: project.property("isSonatypeRelease") as Boolean
+        })
+
+        sign(extensions.getByType<PublishingExtension>().publications["Main"])
+    }
+
+    tasks.register("install") {
+        dependsOn(tasks.named("publishToMavenLocal"))
+    }
+
+    tasks.named<PublishToMavenRepository>("publishMainPublicationToMavenRepository") {
+        dependsOn(project.rootProject.tasks.named("preparePublication"))
+        doFirst {
+            val preparePublication = project.rootProject.tasks.named("preparePublication").get()
+            val username: String? by preparePublication.extra
+            val password: String? by preparePublication.extra
+            val repoUrl: String by preparePublication.extra
+
+            repository.apply {
+                url = uri(repoUrl)
+                if (url.scheme != "file" && username != null && password != null) {
+                    credentials {
+                        this.username = username
+                        this.password = password
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
     apply<plugins.PublishedKotlinModule>()
 
     if (artifactsRemovedDiagnosticFlag) {
@@ -241,8 +391,8 @@ fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName
 
 fun Jar.setupPublicJar(baseName: String, classifier: String = "") {
     val buildNumber = project.rootProject.extra["buildNumber"] as String
-    this.baseName = baseName
-    this.classifier = classifier
+    this.archiveBaseName.set(baseName)
+    this.archiveClassifier.set(classifier)
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")
         put("Implementation-Title", baseName)
@@ -261,9 +411,13 @@ fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: A
 fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) =
     addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
 
-fun <T : Task> Project.addArtifact(configurationName: String, task: TaskProvider<T>, body: ConfigurablePublishArtifact.() -> Unit = {}) {
+fun <T : Task> Project.addArtifact(
+    configurationName: String,
+    task: TaskProvider<T>,
+    body: ConfigurablePublishArtifact.() -> Unit = {}
+): PublishArtifact {
     configurations.maybeCreate(configurationName)
-    artifacts.add(configurationName, task, body)
+    return artifacts.add(configurationName, task, body)
 }
 
 fun <T : Task> Project.addArtifact(
