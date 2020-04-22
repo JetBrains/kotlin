@@ -14,10 +14,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.editor.colors.CodeInsightColors;
-import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorFontType;
+import com.intellij.openapi.editor.colors.*;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -42,7 +39,6 @@ import com.intellij.ui.IconWithToolTip;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RetrievableIcon;
 import com.intellij.util.IconUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBCachingScalableIcon;
 import org.jetbrains.annotations.ApiStatus;
@@ -152,24 +148,10 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
     final RangeHighlighterEx highlighter;
     int line = getLine();
     if (line >= 0) {
-      highlighter = markup.addPersistentLineHighlighter(line, HighlighterLayer.ERROR + 1, null, null);
+      highlighter = markup.addPersistentLineHighlighter(line, HighlighterLayer.ERROR + 1, null, CodeInsightColors.BOOKMARKS_ATTRIBUTES);
       if (highlighter != null) {
         highlighter.setGutterIconRenderer(new MyGutterIconRenderer(this));
-
-        TextAttributes textAttributes =
-          ObjectUtils.notNull(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(CodeInsightColors.BOOKMARKS_ATTRIBUTES),
-                              new TextAttributes());
-        Color stripeColor = ObjectUtils.notNull(textAttributes.getErrorStripeColor(), new JBColor(0x000000, 0xdbdbdb));
-        highlighter.setErrorStripeMarkColor(stripeColor);
         highlighter.setErrorStripeTooltip(getBookmarkTooltip());
-
-        TextAttributes attributes = highlighter.getTextAttributes();
-        if (attributes == null) {
-          attributes = new TextAttributes();
-        }
-        attributes.setBackgroundColor(textAttributes.getBackgroundColor());
-        attributes.setForegroundColor(textAttributes.getForegroundColor());
-        highlighter.setTextAttributes(attributes);
       }
     }
     else {
