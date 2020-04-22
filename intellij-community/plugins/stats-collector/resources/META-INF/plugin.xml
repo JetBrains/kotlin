@@ -26,10 +26,11 @@
     </extensionPoint>
   </extensionPoints>
 
+  <resource-bundle>messages.StatsCollectorBundle</resource-bundle>
+
   <actions>
     <action id="DumpMLCompletionFeatures"
-            class="com.intellij.completion.actions.MLCompletionFeaturesUtil$CopyFeaturesToClipboard"
-            text="Copy ML Completion Features To Clipboard">
+            class="com.intellij.completion.actions.MLCompletionFeaturesUtil$CopyFeaturesToClipboard">
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt 0"/>
       <add-to-group group-id="MaintenanceGroup" anchor="before" relative-to-action="DumpLookupElementWeights"/>
     </action>
