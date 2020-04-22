@@ -509,6 +509,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   private void clearState() {
     StubIndexKeyDescriptorCache.INSTANCE.clear();
+    ((SerializationManagerImpl)SerializationManager.getInstance()).dropSerializerData();
     myCachedStubIds.clear();
     myStateFuture = null;
     myState = null;
