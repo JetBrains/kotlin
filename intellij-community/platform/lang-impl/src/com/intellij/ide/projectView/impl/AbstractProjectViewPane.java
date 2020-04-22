@@ -116,9 +116,13 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     project.getMessageBus().connect(this).subscribe(ProblemListener.TOPIC, problemListener);
     Disposer.register(project, this);
 
-    TreeStructureProvider.EP.addExtensionPointListener(project,
-                                                       () -> updateFromRoot(true).waitFor(5000),
-                                                       this);
+    TreeStructureProvider.EP.addExtensionPointListener(project, this::rebuildCompletely, this);
+    ProjectViewNodeDecorator.EP.addExtensionPointListener(project, this::rebuildCompletely, this);
+  }
+
+  private void rebuildCompletely() {
+    updateFromRoot(true).waitFor(5000);
+    myReadTreeState.clear(); // cleanup cached tree paths
   }
 
   /**
