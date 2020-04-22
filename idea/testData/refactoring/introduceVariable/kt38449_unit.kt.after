@@ -1,0 +1,10 @@
+fun b(body: () -> Unit): Unit = body()
+
+class A {
+    fun test() {
+        val i = 24
+        b {
+            i
+        }
+    }
+}
