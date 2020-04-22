@@ -232,7 +232,7 @@ public final class NavigationUtil {
       if (!((MarkupModelEx)model).processRangeHighlightersOverlappingWith(range.getStartOffset(), range.getEndOffset(),
                                                                           highlighter -> {
                                                                             if (highlighter.isValid() && highlighter.getTargetArea() == HighlighterTargetArea.LINES_IN_RANGE) {
-                                                                              TextAttributes textAttributes = highlighter.getTextAttributes();
+                                                                              TextAttributes textAttributes = highlighter.getTextAttributes(editor.getColorsScheme());
                                                                               if (textAttributes != null) {
                                                                                 Color color = textAttributes.getBackgroundColor();
                                                                                 return !(color != null && color.getBlue() > 128 && color.getRed() < 128 && color.getGreen() < 128);

@@ -151,7 +151,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     }
 
     for (RangeHighlighter highlighter : highlighters) {
-      dumpStream.println(highlighter + " : " + highlighter.getTextAttributes());
+      dumpStream.println(highlighter + " : " + highlighter.getTextAttributes(editor.getColorsScheme()));
     }
     dumpStream.println("------------");
   }
@@ -296,7 +296,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     markupModel.processRangeHighlightersOverlappingWith(startOffset, startOffset, highlighter -> {
       if (highlighter.getUserData(SEARCH_MARKER) != null &&
           highlighter.getStartOffset() == startOffset && highlighter.getEndOffset() == endOffset &&
-          Objects.equals(highlighter.getTextAttributes(), attributes)) {
+          Objects.equals(highlighter.getTextAttributes(null), attributes)) {
         existing[0] = highlighter;
         return false;
       }
