@@ -24,6 +24,10 @@
     <extensionPoint name="policy" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
       <with attribute="implementationClass" implements="com.intellij.stats.CompletionStatsPolicy"/>
     </extensionPoint>
+
+    <extensionPoint name="lookup.usageInfo" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.stats.completion.fus.LookupUsageDescriptor"/>
+    </extensionPoint>
   </extensionPoints>
 
   <resource-bundle>messages.StatsCollectorBundle</resource-bundle>

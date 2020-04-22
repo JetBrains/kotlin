@@ -9,6 +9,7 @@ import com.intellij.ide.ui.UISettings
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.project.DumbService
+import com.intellij.stats.completion.fus.LookupUsageDescriptor
 import com.intellij.stats.storage.factors.LookupStorage
 import com.intellij.stats.storage.factors.MutableLookupStorage
 
@@ -94,6 +95,10 @@ class CompletionQualityTracker : LookupTracker() {
         // Indexing
         addData("dumb_start", queryTracker.dumbStart)
         addData("dumb_finish", DumbService.isDumb(lookup.project))
+
+        for (usageDescriptor in LookupUsageDescriptor.EP_NAME.allForLanguageOrAny(storage.language)) {
+          usageDescriptor.customizeUsageData(lookup, this)
+        }
       }
 
       FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, "finished", data)
