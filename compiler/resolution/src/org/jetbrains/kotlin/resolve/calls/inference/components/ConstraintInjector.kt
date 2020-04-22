@@ -79,13 +79,14 @@ class ConstraintInjector(
             possibleNewConstraints!!.add(typeVar to constraint)
         }
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
+        var constraintsFromIsSubtype = true
 
         while (possibleNewConstraints != null) {
 
             val constraintsToProcess = possibleNewConstraints
             possibleNewConstraints = null
             for ((typeVariable, constraint) in constraintsToProcess!!) {
-                if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
+                if (c.shouldWeSkipConstraint(typeVariable, constraint, constraintsFromIsSubtype)) continue
 
                 val constraints =
                     c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
@@ -108,6 +109,7 @@ class ConstraintInjector(
             ) {
                 break
             }
+            constraintsFromIsSubtype = false
         }
     }
 
@@ -115,11 +117,17 @@ class ConstraintInjector(
         c.maxTypeDepthFromInitialConstraints = max(c.maxTypeDepthFromInitialConstraints, initialType.typeDepth())
     }
 
-    private fun Context.shouldWeSkipConstraint(typeVariable: TypeVariableMarker, constraint: Constraint): Boolean {
+    private fun Context.shouldWeSkipConstraint(
+        typeVariable: TypeVariableMarker,
+        constraint: Constraint,
+        constraintsFromIsSubtype: Boolean
+    ): Boolean {
         assert(constraint.kind != ConstraintKind.EQUALITY)
 
         val constraintType = constraint.type
-        if (!isAllowedType(constraintType)) return true
+        // TODO: seems these coditions never met, at least in the tests, we need either to find a test for it or drop the check
+        if (!constraintsFromIsSubtype && !isAllowedType(constraintType))
+            return true
 
         if (constraintType.typeConstructor() == typeVariable.freshTypeConstructor()) {
             if (constraintType.lowerBoundIfFlexible().isMarkedNullable() && constraint.kind == LOWER) return false // T? <: T
