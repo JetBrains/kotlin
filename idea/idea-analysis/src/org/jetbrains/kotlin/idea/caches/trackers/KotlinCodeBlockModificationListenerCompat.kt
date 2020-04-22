@@ -222,13 +222,23 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
 //                    }
                     if (blockDeclaration.typeReference != null) {
                         val accessors =
-                            blockDeclaration.accessors.map { it.initializer ?: it.bodyExpression } + blockDeclaration.initializer
-                        for (accessor in accessors) {
+                            blockDeclaration.accessors.map { it.initializer ?: it.bodyExpression }
+
+                        val accessorList = if (blockDeclaration.initializer.isAncestor(element) &&
+                            // call expression changes in property initializer are OCB, see KT-38443
+                            KtPsiUtil.getTopmostParentOfTypes(element, KtCallExpression::class.java) == null
+                        ) {
+                            accessors + blockDeclaration.initializer
+                        } else {
+                            accessors
+                        }
+
+                        for (accessor in accessorList) {
                             accessor?.takeIf {
-                                    it.isAncestor(element) &&
-                                            // adding annotations to accessor is the same as change contract of property
-                                            (element !is KtAnnotated || element.annotationEntries.isEmpty())
-                                }
+                                it.isAncestor(element) &&
+                                        // adding annotations to accessor is the same as change contract of property
+                                        (element !is KtAnnotated || element.annotationEntries.isEmpty())
+                            }
                                 ?.let { expression ->
                                     val declaration =
                                         KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClassOrObject::class.java) as? KtElement ?:

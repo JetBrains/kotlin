@@ -113,6 +113,21 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         runTest("idea/testData/codeInsight/outOfBlock/InClassPropertyAccessor.kt");
     }
 
+    @TestMetadata("InClassPropertyInitializer.kt")
+    public void testInClassPropertyInitializer() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/InClassPropertyInitializer.kt");
+    }
+
+    @TestMetadata("InClassPropertyInitializerWithoutInference.kt")
+    public void testInClassPropertyInitializerWithoutInference() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/InClassPropertyInitializerWithoutInference.kt");
+    }
+
+    @TestMetadata("InClassPropertyInitializerWithoutInference2.kt")
+    public void testInClassPropertyInitializerWithoutInference2() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/InClassPropertyInitializerWithoutInference2.kt");
+    }
+
     @TestMetadata("InComment.kt")
     public void testInComment() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/InComment.kt");
