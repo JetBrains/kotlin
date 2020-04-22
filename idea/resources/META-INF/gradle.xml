@@ -15,8 +15,8 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
         <listener order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListener"/>
         <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationLoader"/>
-        <scriptingSupport
-            implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupport"
+        <scriptingSupportProvider
+            implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider"
         />
     </extensions>
 

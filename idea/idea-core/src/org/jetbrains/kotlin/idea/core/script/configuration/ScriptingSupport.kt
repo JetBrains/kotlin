@@ -21,7 +21,16 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 abstract class ScriptingSupport {
-    abstract fun isRelated(file: VirtualFile): Boolean
+    abstract class Provider {
+        abstract val all: Collection<ScriptingSupport>
+
+        abstract fun getSupport(file: VirtualFile): ScriptingSupport?
+
+        companion object {
+            val EPN: ExtensionPointName<Provider> =
+                ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupportProvider")
+        }
+    }
 
     abstract fun clearCaches()
     abstract fun hasCachedConfiguration(file: KtFile): Boolean
@@ -67,10 +76,5 @@ abstract class ScriptingSupport {
         kotlinScriptDependenciesClassFinder.clearCache()
 
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
-    }
-
-    companion object {
-        val SCRIPTING_SUPPORT: ExtensionPointName<ScriptingSupport> =
-            ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupport")
     }
 }

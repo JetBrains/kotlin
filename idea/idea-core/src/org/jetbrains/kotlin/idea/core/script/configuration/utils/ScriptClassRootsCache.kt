@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
-import java.nio.file.FileSystems
 
 abstract class ScriptClassRootsCache(
     private val project: Project,
+    private val rootsCacheKey: ScriptClassRootsStorage.Companion.Key,
     private val roots: ScriptClassRootsStorage.Companion.ScriptClassRoots
 ) {
-    protected abstract val fileToConfiguration: (VirtualFile) -> ScriptCompilationConfigurationWrapper?
-
-    protected abstract val rootsCacheKey: ScriptClassRootsStorage.Companion.Key
+    protected abstract fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper?
 
     abstract val firstScriptSdk: Sdk?
 
@@ -34,7 +32,7 @@ abstract class ScriptClassRootsCache(
 
     abstract fun contains(file: VirtualFile): Boolean
 
-    class Fat(
+    private class Fat(
         val scriptConfiguration: ScriptCompilationConfigurationWrapper,
         val classFilesScope: GlobalSearchScope
     )
@@ -57,7 +55,7 @@ abstract class ScriptClassRootsCache(
 
     private val scriptsDependenciesCache: MutableMap<VirtualFile, Fat> =
         ConcurrentFactoryMap.createWeakMap { file ->
-            val configuration = fileToConfiguration(file) ?: return@createWeakMap null
+            val configuration = getConfiguration(file) ?: return@createWeakMap null
 
             val roots = configuration.dependenciesClassPath
             val sdk = getScriptSdk(file)
@@ -119,6 +117,24 @@ abstract class ScriptClassRootsCache(
 
         fun Sdk.isAlreadyIndexed(project: Project): Boolean {
             return ModuleManager.getInstance(project).modules.any { ModuleRootManager.getInstance(it).sdk == this }
+        }
+
+        fun empty(project: Project) = object : ScriptClassRootsCache(
+            project,
+            ScriptClassRootsStorage.Companion.Key("empty"),
+            ScriptClassRootsStorage.Companion.ScriptClassRoots(
+                setOf(),
+                setOf(),
+                setOf()
+            )
+        ) {
+            override fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = null
+
+            override val firstScriptSdk: Sdk? = null
+
+            override fun getScriptSdk(file: VirtualFile): Sdk? = null
+
+            override fun contains(file: VirtualFile): Boolean = true
         }
     }
 }

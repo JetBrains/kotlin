@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.roots.ProjectRootManager.*
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -30,7 +31,6 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.makeFailureResult
@@ -162,15 +161,13 @@ interface ScriptConfigurationManager {
         @TestOnly
         fun updateScriptDependenciesSynchronously(file: PsiFile) {
             // TODO: review the usages of this method
-            (getInstance(file.project) as CompositeScriptConfigurationManager).managers
-                .firstIsInstance<DefaultScriptingSupport>()
+            (getInstance(file.project) as CompositeScriptConfigurationManager).default
                 .updateScriptDependenciesSynchronously(file)
         }
 
         @TestOnly
         fun clearCaches(project: Project) {
-            (getInstance(project) as CompositeScriptConfigurationManager).managers
-                .firstIsInstance<DefaultScriptingSupport>()
+            (getInstance(project) as CompositeScriptConfigurationManager).default
                 .clearCaches()
         }
 
