@@ -1809,6 +1809,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
         public void testOverloadByLambdaReturnType_enabled() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_enabled.kt");
         }
+
+        @TestMetadata("overloadByLambdaReturnType_enabled_no_annotation.kt")
+        public void testOverloadByLambdaReturnType_enabled_no_annotation() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_enabled_no_annotation.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")

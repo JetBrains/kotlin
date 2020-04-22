@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -36,6 +37,9 @@ class KotlinCallResolver(
     private val callableReferenceResolver: CallableReferenceResolver,
     private val callComponents: KotlinCallComponents
 ) {
+    companion object {
+        private val FACTORY_PATTERN_ANNOTATION = FqName.fromSegments(listOf("annotations", "FactoryPattern"))
+    }
 
     fun resolveCall(
         scopeTower: ImplicitScopeTower,
@@ -147,13 +151,16 @@ class KotlinCallResolver(
             discriminateGenerics = true // todo
         )
 
-        if (maximallySpecificCandidates.size > 1 && callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FactoryPatternResolution)) {
+        if (
+            maximallySpecificCandidates.size > 1 &&
+            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FactoryPatternResolution) &&
+            candidates.any { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(FACTORY_PATTERN_ANNOTATION) } &&
+            candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
+        ) {
             maximallySpecificCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
         }
 
         return kotlinCallCompleter.runCompletion(candidateFactory, maximallySpecificCandidates, expectedType, resolutionCallbacks)
     }
-
-
 }
 

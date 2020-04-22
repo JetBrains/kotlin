@@ -1,8 +1,8 @@
 package
 
-public fun create(/*0*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Int
+@annotations.FactoryPattern public fun create(/*0*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Int
 public fun create(/*0*/ f: (kotlin.Int) -> kotlin.String): kotlin.String
-public fun </*0*/ K> create(/*0*/ x: K, /*1*/ f: (K) -> kotlin.Int): kotlin.Int
+@annotations.FactoryPattern public fun </*0*/ K> create(/*0*/ x: K, /*1*/ f: (K) -> kotlin.Int): kotlin.Int
 public fun </*0*/ T> create(/*0*/ x: T, /*1*/ f: (T) -> kotlin.String): kotlin.String
 public fun takeInt(/*0*/ s: kotlin.Int): kotlin.Unit
 public fun takeString(/*0*/ s: kotlin.String): kotlin.Unit
@@ -11,3 +11,13 @@ public fun test_2(): kotlin.Unit
 public fun test_3(): kotlin.Unit
 public fun test_4(): kotlin.Unit
 public fun test_5(): kotlin.Unit
+
+package annotations {
+
+    public final annotation class FactoryPattern : kotlin.Annotation {
+        public constructor FactoryPattern()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

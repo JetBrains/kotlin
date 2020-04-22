@@ -1,18 +1,7 @@
-// !LANGUAGE: +NewInference -FactoryPatternResolution
+// !LANGUAGE: +NewInference +FactoryPatternResolution
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
-// FILE: FactoryPattern.kt
-
-package annotations
-
-annotation class FactoryPattern
-
-// FILE: main.kt
-
-import annotations.FactoryPattern
-
-@FactoryPattern
 fun create(f: (Int) -> Int): Int = 1
 fun create(f: (Int) -> String): String = ""
 
@@ -33,7 +22,6 @@ fun test_3() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1.0 }
 }
 
-@FactoryPattern
 fun <K> create(x: K, f: (K) -> Int): Int = 1
 fun <T> create(x: T, f: (T) -> String): String = ""
 
