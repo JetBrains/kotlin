@@ -9,23 +9,25 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
-import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
-    override fun onEnd(id: ExternalSystemTaskId) {
-        if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT || id.projectSystemId != GRADLE_SYSTEM_ID) {
-            return
-        }
+    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
+        if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT) return
+        if (id.projectSystemId != GRADLE_SYSTEM_ID) return
 
+        if (workingDir == null) return
         val project = id.findProject() ?: return
 
-        val models: List<KotlinDslScriptModel> = project.kotlinDslModels
-        project.kotlinDslModels = arrayListOf()
+        project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
+    }
 
-        if (models.isEmpty()) return
+    override fun onEnd(id: ExternalSystemTaskId) {
+        if (id.type != ExternalSystemTaskType.RESOLVE_PROJECT) return
+        if (id.projectSystemId != GRADLE_SYSTEM_ID) return
 
-        val javaHome = getJavaHomeForGradleProject(project)
+        val project = id.findProject() ?: return
+        val sync = project.kotlinGradleDslSync.remove(id) ?: return
 
-        saveScriptModels(project, id, javaHome, models)
+        saveScriptModels(project, sync)
     }
 }

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
@@ -312,8 +311,6 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
     fun getAppliedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? =
         getCachedConfigurationState(file)?.applied
 
-    override fun isRelated(file: VirtualFile): Boolean = true
-
     override fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
@@ -438,6 +435,5 @@ object DefaultScriptConfigurationManagerExtensions {
 }
 
 val ScriptConfigurationManager.testingBackgroundExecutor
-    get() = (this as CompositeScriptConfigurationManager).managers
-        .firstIsInstance<DefaultScriptingSupport>()
+    get() = (this as CompositeScriptConfigurationManager).default
         .backgroundExecutor as TestingBackgroundExecutor

@@ -16,9 +16,7 @@ import kotlin.test.assertEquals
 class KotlinDslScriptModelsTest {
     @Test
     fun write() {
-        val buffer = ByteArrayOutputStream()
-
-        val conf = ConfigurationData(
+        val data = ConfigurationData(
             listOf("a", "b", "c"),
             listOf(
                 KotlinDslScriptModel(
@@ -40,10 +38,11 @@ class KotlinDslScriptModelsTest {
             )
         )
 
-        writeKotlinDslScriptModels(DataOutputStream(buffer), conf)
+        val buffer = ByteArrayOutputStream()
+        writeKotlinDslScriptModels(DataOutputStream(buffer), data)
 
         val restored = readKotlinDslScriptModels(DataInputStream(ByteArrayInputStream(buffer.toByteArray())))
 
-        assertEquals(conf.toString(), restored.toString())
+        assertEquals(data.toString(), restored.toString())
     }
 }

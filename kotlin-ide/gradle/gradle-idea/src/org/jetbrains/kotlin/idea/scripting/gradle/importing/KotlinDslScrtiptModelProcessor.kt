@@ -9,29 +9,22 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
-import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupport
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.idea.scripting.gradle.getJavaHomeForGradleProject
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
-import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
+import java.util.concurrent.ConcurrentHashMap
 
-var Project.kotlinDslModels: ArrayList<KotlinDslScriptModel>
-        by NotNullableUserDataProperty<Project, ArrayList<KotlinDslScriptModel>>(
-            Key("Kotlin DSL Scripts Models"), arrayListOf()
+var Project.kotlinGradleDslSync: MutableMap<ExternalSystemTaskId, KotlinDslGradleBuildSync>
+        by NotNullableUserDataProperty<Project, MutableMap<ExternalSystemTaskId, KotlinDslGradleBuildSync>>(
+            Key("Kotlin DSL Scripts Models"), ConcurrentHashMap()
         )
 
 fun processScriptModel(
@@ -44,14 +37,11 @@ fun processScriptModel(
             "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
         )
     } else {
-        val project = resolverCtx.externalSystemTaskId.findProject() ?: return
+        val task = resolverCtx.externalSystemTaskId
+        val project = task.findProject() ?: return
         val models = model.toListOfScriptModels(project)
-        project.kotlinDslModels.addAll(
-            models
-        )
-        if (models.containsErrors()) {
-            throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
-        }
+
+        project.kotlinGradleDslSync[task]?.models?.addAll(models)
 
         if (models.containsErrors()) {
             throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
@@ -111,52 +101,22 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
         )
     }
 
-fun createGradleKtsContextIfPossible(project: Project): GradleKtsContext? {
-    val javaHome = getJavaHomeForGradleProject(project)?.let { File(it)}
-
-    return GradleKtsContext(project, javaHome)
+class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
+    val models = mutableListOf<KotlinDslScriptModel>()
 }
 
-class GradleKtsContext(val project: Project, val javaHome: File?)
+fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
+    val errorReporter = KotlinGradleDslErrorReporter(project, build.taskId)
 
-fun KotlinDslScriptModel.toScriptConfiguration(context: GradleKtsContext): ScriptCompilationConfigurationWrapper? {
-    val scriptFile = File(file)
-    val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
-
-    val definition = virtualFile.findScriptDefinition(context.project) ?: return null
-
-    return ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
-        VirtualFileScriptSource(virtualFile),
-        definition.compilationConfiguration.with {
-            if (context.javaHome != null) {
-                jvm.jdkHome(context.javaHome)
-            }
-            defaultImports(imports)
-            dependencies(JvmDependency(classPath.map { File(it) }))
-            ide.dependenciesSources(JvmDependency(sourcePath.map { File(it) }))
-        }.adjustByDefinition(definition)
-    )
-}
-
-fun saveScriptModels(
-    project: Project,
-    task: ExternalSystemTaskId,
-    javaHomeStr: String?,
-    models: List<KotlinDslScriptModel>
-) {
-    val errorReporter = KotlinGradleDslErrorReporter(project, task)
-
-    val javaHome = javaHomeStr?.let { File(it) }
-    val context = GradleKtsContext(project, javaHome)
-
-    models.forEach { model ->
+    build.models.forEach { model ->
         errorReporter.reportError(File(model.file), model)
     }
 
     project.service<GradleScriptInputsWatcher>().saveGradleProjectRootsAfterImport(
-        models.map { File(it.file).parent }.toSet()
+        build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
     )
 
-    GradleScriptingSupport.getInstance(project).replace(context, models)
+    GradleScriptingSupportProvider.getInstance(project).update(build)
+
     project.service<GradleScriptInputsWatcher>().clearState()
 }
