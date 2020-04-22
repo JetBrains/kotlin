@@ -33,7 +33,7 @@ private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
     return superConstructor != null && isInterfaceImpl(superConstructor, iface)
 }
 
-public fun isInterface(obj: dynamic, iface: dynamic): Boolean {
+internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
     val ctor = obj.constructor ?: return false
 
     return isInterfaceImpl(ctor, iface)
@@ -82,7 +82,7 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     return false
 }
 
-fun isObject(obj: dynamic): Boolean {
+internal fun isObject(obj: dynamic): Boolean {
     val objTypeOf = jsTypeOf(obj)
 
     return when (objTypeOf) {
@@ -98,32 +98,32 @@ private fun isJsArray(obj: Any): Boolean {
     return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
 
-public fun isArray(obj: Any): Boolean {
+internal  fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
 
-public fun isArrayish(o: dynamic) =
+internal  fun isArrayish(o: dynamic) =
     isJsArray(o) || js("ArrayBuffer").isView(o).unsafeCast<Boolean>()
 
 
-public fun isChar(c: Any): Boolean {
+internal fun isChar(c: Any): Boolean {
     error("isChar is not implemented")
 }
 
 // TODO: Distinguish Boolean/Byte and Short/Char
-public fun isBooleanArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "BooleanArray"
-public fun isByteArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int8Array"))
-public fun isShortArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int16Array"))
-public fun isCharArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "CharArray"
-public fun isIntArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int32Array"))
-public fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Array"))
-public fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
-public fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
+internal fun isBooleanArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "BooleanArray"
+internal fun isByteArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int8Array"))
+internal fun isShortArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int16Array"))
+internal fun isCharArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "CharArray"
+internal fun isIntArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int32Array"))
+internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Array"))
+internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
+internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
 
 
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
-public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
+internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     if (jsClass === js("Object")) {
         return isObject(obj)
     }
@@ -159,9 +159,9 @@ public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     return false
 }
 
-fun isNumber(a: dynamic) = jsTypeOf(a) == "number" || a is Long
+internal fun isNumber(a: dynamic) = jsTypeOf(a) == "number" || a is Long
 
-fun isComparable(value: dynamic): Boolean {
+internal fun isComparable(value: dynamic): Boolean {
     var type = jsTypeOf(value)
 
     return type == "string" ||
@@ -170,5 +170,5 @@ fun isComparable(value: dynamic): Boolean {
            isInterface(value, Comparable::class.js)
 }
 
-fun isCharSequence(value: dynamic): Boolean =
+internal fun isCharSequence(value: dynamic): Boolean =
     jsTypeOf(value) == "string" || isInterface(value, CharSequence::class.js)

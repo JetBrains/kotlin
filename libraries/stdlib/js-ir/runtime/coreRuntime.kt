@@ -5,7 +5,7 @@
 
 package kotlin.js
 
-fun equals(obj1: dynamic, obj2: dynamic): Boolean {
+internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
         return obj2 == null
     }
@@ -27,20 +27,20 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     return obj1 === obj2
 }
 
-fun toString(o: dynamic): String = when {
+internal fun toString(o: dynamic): String = when {
     o == null -> "null"
     isArrayish(o) -> "[...]"
 
     else -> (o.toString)().unsafeCast<String>()
 }
 
-fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
+internal fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
 
 private fun hasOwnPrototypeProperty(o: Any, name: String): Boolean {
     return JsObject.getPrototypeOf(o).hasOwnProperty(name).unsafeCast<Boolean>()
 }
 
-fun hashCode(obj: dynamic): Int {
+internal fun hashCode(obj: dynamic): Int {
     if (obj == null)
         return 0
 
@@ -56,7 +56,7 @@ fun hashCode(obj: dynamic): Int {
 private const val POW_2_32 = 4294967296.0
 private const val OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
-fun getObjectHashCode(obj: dynamic): Int {
+internal fun getObjectHashCode(obj: dynamic): Int {
     if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
         var hash = jsBitwiseOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
         var descriptor = js("new Object()")
@@ -67,7 +67,7 @@ fun getObjectHashCode(obj: dynamic): Int {
     return obj[OBJECT_HASH_CODE_PROPERTY_NAME].unsafeCast<Int>();
 }
 
-fun getStringHashCode(str: String): Int {
+internal fun getStringHashCode(str: String): Int {
     var hash = 0
     val length: Int = str.length  // TODO: Implement WString.length
     for (i in 0..length-1) {
@@ -77,7 +77,7 @@ fun getStringHashCode(str: String): Int {
     return hash
 }
 
-fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
+internal fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
 internal fun captureStack(instance: Throwable) {
     if (js("Error").captureStackTrace != null) {

@@ -6,10 +6,10 @@
 package kotlin.js
 
 // Creates IntRange for {Byte, Short, Int}.rangeTo(x: {Byte, Short, Int})
-fun numberRangeToNumber(start: dynamic, endInclusive: dynamic) =
+internal fun numberRangeToNumber(start: dynamic, endInclusive: dynamic) =
     IntRange(start, endInclusive)
 
 // Create LongRange for {Byte, Short, Int}.rangeTo(x: Long)
 // Long.rangeTo(x: *) should be implemented in Long class
-fun numberRangeToLong(start: dynamic, endInclusive: dynamic) =
+internal fun numberRangeToLong(start: dynamic, endInclusive: dynamic) =
     LongRange(numberToLong(start), endInclusive)
