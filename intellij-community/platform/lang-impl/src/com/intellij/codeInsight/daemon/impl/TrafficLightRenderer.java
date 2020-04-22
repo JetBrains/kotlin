@@ -510,7 +510,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         HighlightingLevelManager hlManager = HighlightingLevelManager.getInstance(getProject());
         for (Language language : viewProvider.getLanguages()) {
           PsiFile psiRoot = viewProvider.getPsi(language);
-          result.add(new LanguageHighlightLevel(language, getHighlightLevel(hlManager.shouldHighlight(psiRoot), hlManager.shouldInspect(psiRoot))));
+          result.add(new LanguageHighlightLevel(language.getID(), getHighlightLevel(hlManager.shouldHighlight(psiRoot), hlManager.shouldInspect(psiRoot))));
         }
       }
       return result;
@@ -534,21 +534,24 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (psiFile != null && !getProject().isDisposed() && !myLevelsList.contains(level)) {
         FileViewProvider viewProvider = psiFile.getViewProvider();
 
-        PsiElement root = viewProvider.getPsi(level.getLanguage());
-        if (level.getLevel() == InspectionsLevel.NONE) {
-          HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_HIGHLIGHTING);
-        }
-        else if (level.getLevel() == InspectionsLevel.ERRORS) {
-          HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_INSPECTION);
-        }
-        else {
-          HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.FORCE_HIGHLIGHTING);
-        }
+        Language language = Language.findLanguageByID(level.getLangID());
+        if (language != null) {
+          PsiElement root = viewProvider.getPsi(language);
+          if (level.getLevel() == InspectionsLevel.NONE) {
+            HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_HIGHLIGHTING);
+          }
+          else if (level.getLevel() == InspectionsLevel.ERRORS) {
+            HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_INSPECTION);
+          }
+          else {
+            HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.FORCE_HIGHLIGHTING);
+          }
 
-        myLevelsList.replaceAll(l -> l.getLanguage().equals(level.getLanguage()) ? level : l);
+          myLevelsList.replaceAll(l -> l.getLangID().equals(level.getLangID()) ? level : l);
 
-        InjectedLanguageManager.getInstance(getProject()).dropFileCaches(psiFile);
-        myDaemonCodeAnalyzer.restart();
+          InjectedLanguageManager.getInstance(getProject()).dropFileCaches(psiFile);
+          myDaemonCodeAnalyzer.restart();
+        }
       }
     }
 
