@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -74,15 +74,12 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
     private class TypeCheckerImpl(private val project: Project) : KotlinTypeChecker by KotlinTypeChecker.DEFAULT {
         private inner class ContextImpl : ClassicTypeCheckerContext(false) {
-            override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
-                return compareDescriptors(project, a.declarationDescriptor, b.declarationDescriptor)
-            }
+            override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean =
+                compareDescriptors(project, a.declarationDescriptor, b.declarationDescriptor)
         }
 
-        override fun equalTypes(a: KotlinType, b: KotlinType): Boolean {
-            return with(NewKotlinTypeChecker.Default) {
-                ContextImpl().equalTypes(a.unwrap(), b.unwrap())
-            }
+        override fun equalTypes(a: KotlinType, b: KotlinType): Boolean = with(NewKotlinTypeChecker.Default) {
+            ContextImpl().equalTypes(a.unwrap(), b.unwrap())
         }
     }
 
@@ -105,9 +102,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         var reference: SmartPsiElementPointer<KtExpression>? = null
         val references = ArrayList<SmartPsiElementPointer<KtExpression>>()
 
-        private fun findElementByOffsetAndText(offset: Int, text: String, newContainer: PsiElement): PsiElement? {
-            return newContainer.findElementAt(offset)?.parentsWithSelf?.firstOrNull { (it as? KtExpression)?.text == text }
-        }
+        private fun findElementByOffsetAndText(offset: Int, text: String, newContainer: PsiElement): PsiElement? =
+            newContainer.findElementAt(offset)?.parentsWithSelf?.firstOrNull { (it as? KtExpression)?.text == text }
 
         private fun replaceExpression(expressionToReplace: KtExpression, addToReferences: Boolean): KtExpression {
             val isActualExpression = expression == expressionToReplace
@@ -294,7 +290,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 allReplaces
             )
 
-            commonContainer.bodyExpression.sure { "Original body is not found: " + commonContainer }
+            commonContainer.bodyExpression.sure { "Original body is not found: $commonContainer" }
 
             expression.putCopyableUserData(EXPRESSION_KEY, true)
             for (replace in allReplaces) {
@@ -304,8 +300,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
             val newDeclaration = ConvertToBlockBodyIntention.convert(commonContainer)
 
-            val newCommonContainer = newDeclaration.bodyBlockExpression
-                .sure { "New body is not found: " + newDeclaration }
+            val newCommonContainer = newDeclaration.bodyBlockExpression.sure { "New body is not found: $newDeclaration" }
 
             val newExpression = newCommonContainer.findExpressionByCopyableDataAndClearIt(EXPRESSION_KEY)
             val newCommonParent = newCommonContainer.findElementByCopyableDataAndClearIt(COMMON_PARENT_KEY)
@@ -322,18 +317,19 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
     private fun calculateAnchor(commonParent: PsiElement, commonContainer: PsiElement, allReplaces: List<KtExpression>): PsiElement? {
         if (commonParent != commonContainer) return commonParent.parentsWithSelf.firstOrNull { it.parent == commonContainer }
+        val startOffset = allReplaces.fold(commonContainer.endOffset) { offset, expr ->
+            min(offset, expr.substringContextOrThis.startOffset)
+        }
 
-        val startOffset =
-            allReplaces.fold(commonContainer.endOffset) { offset, expr -> min(offset, expr.substringContextOrThis.startOffset) }
-        return commonContainer.allChildren.lastOrNull { it.textRange.contains(startOffset) } ?: return null
+        return commonContainer.allChildren.lastOrNull { it.textRange.contains(startOffset) }
     }
 
-    private fun PsiElement.isAssignmentLHS(): Boolean {
-        return parents.any { KtPsiUtil.isAssignment(it) && (it as KtBinaryExpression).left == this }
+    private fun PsiElement.isAssignmentLHS(): Boolean = parents.any {
+        KtPsiUtil.isAssignment(it) && (it as KtBinaryExpression).left == this
     }
 
-    private fun KtExpression.findOccurrences(occurrenceContainer: PsiElement): List<KtExpression> {
-        return toRange().match(occurrenceContainer, KotlinPsiUnifier.DEFAULT).mapNotNull {
+    private fun KtExpression.findOccurrences(occurrenceContainer: PsiElement): List<KtExpression> =
+        toRange().match(occurrenceContainer, KotlinPsiUnifier.DEFAULT).mapNotNull {
             val candidate = it.range.elements.first()
 
             if (candidate.isAssignmentLHS()) return@mapNotNull null
@@ -344,7 +340,6 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 else -> throw AssertionError("Unexpected candidate element: " + candidate.text)
             }
         }
-    }
 
     private fun KtExpression.shouldReplaceOccurrence(bindingContext: BindingContext, container: PsiElement?): Boolean {
         val effectiveParent = (parent as? KtScriptInitializer)?.parent ?: parent
@@ -368,14 +363,11 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         }?.second as? KtElement
     }
 
-    private fun KtContainerNode.isBadContainerNode(place: PsiElement): Boolean {
-        val parent = parent
-        return when (parent) {
-            is KtIfExpression -> parent.condition == place
-            is KtLoopExpression -> parent.body != place
-            is KtArrayAccessExpression -> true
-            else -> false
-        }
+    private fun KtContainerNode.isBadContainerNode(place: PsiElement): Boolean = when (val parent = parent) {
+        is KtIfExpression -> parent.condition == place
+        is KtLoopExpression -> parent.body != place
+        is KtArrayAccessExpression -> true
+        else -> false
     }
 
     private fun KtExpression.getOccurrenceContainer(): KtElement? {
@@ -383,7 +375,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         for ((place, parent) in parentsWithSelf.zip(parents)) {
             when {
                 parent is KtContainerNode && place !is KtBlockExpression && !parent.isBadContainerNode(place) -> result = parent
-                parent is KtClassBody || parent is KtFile -> return if (result == null) parent as KtElement else result
+                parent is KtClassBody || parent is KtFile -> return result ?: parent as? KtElement
                 parent is KtBlockExpression -> result = parent
                 parent is KtWhenEntry && place !is KtBlockExpression -> result = parent
                 parent is KtDeclarationWithBody && parent.bodyExpression == place && place !is KtBlockExpression -> result = parent
@@ -437,20 +429,15 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 editor,
                 builder.buildInlineTemplate(),
                 object : TemplateEditingAdapter() {
-                    private fun finishMarkAction() {
-                        FinishMarkAction.finish(project, editor, startMarkAction)
-                    }
+                    private fun finishMarkAction() = FinishMarkAction.finish(project, editor, startMarkAction)
 
                     override fun templateFinished(template: Template, brokenOff: Boolean) {
-                        if (!brokenOff) {
-                            postProcess(declaration)
-                        }
+                        if (!brokenOff) postProcess(declaration)
+
                         finishMarkAction()
                     }
 
-                    override fun templateCancelled(template: Template?) {
-                        finishMarkAction()
-                    }
+                    override fun templateCancelled(template: Template?) = finishMarkAction()
                 }
             )
         }
@@ -668,14 +655,11 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             val project = file.project
             return references.all {
                 val originalDescriptor = originalContext[BindingContext.REFERENCE_TARGET, it]
-                val newDescriptor = newContext[BindingContext.REFERENCE_TARGET, it]
-
-                if (originalDescriptor is ValueParameterDescriptor
-                    && (originalContext[BindingContext.AUTO_CREATED_IT, originalDescriptor] ?: false)
-                ) {
+                if (originalDescriptor is ValueParameterDescriptor && (originalContext[BindingContext.AUTO_CREATED_IT, originalDescriptor] == true)) {
                     return@all originalDescriptor.containingDeclaration.source.getPsi().isAncestor(neighbour, true)
                 }
 
+                val newDescriptor = newContext[BindingContext.REFERENCE_TARGET, it]
                 compareDescriptors(project, newDescriptor, originalDescriptor)
             }
         }
