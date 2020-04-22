@@ -15,6 +15,7 @@
  */
 package com.intellij.codeInsight.editorActions;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -34,7 +35,7 @@ public class SimpleIndentingBackspaceHandlerTest extends LightPlatformCodeInsigh
   }
   
   public void testDeletingTabWhenIndentSizeIsSmaller() {
-    CodeStyleSettings settings = new CodeStyleSettings();
+    CodeStyleSettings settings = CodeStyle.createTestSettings();
     CommonCodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
     assertNotNull(indentOptions);
     indentOptions.INDENT_SIZE = 2;
