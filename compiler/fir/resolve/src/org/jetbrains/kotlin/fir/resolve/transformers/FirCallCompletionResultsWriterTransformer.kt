@@ -345,7 +345,16 @@ class FirCallCompletionResultsWriterTransformer(
                 anonymousFunction.constructFunctionalTypeRef(session, isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             )
         }
-        return transformElement(anonymousFunction, null)
+        val result = transformElement(anonymousFunction, null)
+        val resultFunction = result.single
+        if (resultFunction.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {
+            val blockType = resultFunction.body?.typeRef?.coneTypeSafe<ConeKotlinType>()
+            resultFunction.replaceReturnTypeRef(resultFunction.returnTypeRef.withReplacedConeType(blockType))
+            resultFunction.replaceTypeRef(
+                resultFunction.constructFunctionalTypeRef(session, isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+            )
+        }
+        return result
     }
 
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {
