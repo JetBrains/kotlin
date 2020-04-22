@@ -381,15 +381,15 @@ public final class FindUsagesManager {
         Usage usage = ReadAction.compute(() -> UsageInfoToUsageConverter.convert(primaryElements, usageInfo));
         return processor.process(usage);
       });
-      Iterable<PsiElement> elements = ContainerUtil.concat(primaryElements, secondaryElements);
+      PsiElement[] elements = ArrayUtil.mergeArrays(primaryElements, secondaryElements, PsiElement.ARRAY_FACTORY);
 
-      optionsClone.fastTrack = new SearchRequestCollector(new SearchSession());
+      optionsClone.fastTrack = new SearchRequestCollector(new SearchSession(elements));
       if (optionsClone.searchScope instanceof GlobalSearchScope) {
         // we will search in project scope always but warn if some usage is out of scope
         optionsClone.searchScope = optionsClone.searchScope.union(GlobalSearchScope.projectScope(project));
       }
       try {
-        for (PsiElement element : elements) {
+        for (PsiElement element :elements) {
           if (!handler.processElementUsages(element, usageInfoProcessor, optionsClone)) {
             return;
           }
