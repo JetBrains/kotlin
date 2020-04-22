@@ -135,7 +135,7 @@ tasks {
         failOnWarning = true
     }
 
-    named<Upload>("install") {
+    named("install") {
         dependsOn(named("validateTaskProperties"))
     }
 
