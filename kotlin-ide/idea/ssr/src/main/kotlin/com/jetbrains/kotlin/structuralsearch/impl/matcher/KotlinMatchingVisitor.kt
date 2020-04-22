@@ -6,6 +6,7 @@ import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.psi.*
+import kotlin.math.exp
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
 
@@ -135,6 +136,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElement<KtCallExpression>() ?: return
+        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.valueArgumentList, other.valueArgumentList)))
+            return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
