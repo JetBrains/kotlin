@@ -21,13 +21,14 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 //todo provide virtual files
 fun ObjCType.toOCType(project: Project, context: OCSymbolWithQualifiedName?, file: VirtualFile? = null): OCType {
-    return TypeBuilder(project, context, file).build(this, false)
+    return TypeBuilder(project, context, file, true).build(this, false)
 }
 
 private class TypeBuilder(
     private val project: Project,
     private val context: OCSymbolWithQualifiedName?,
-    private val file: VirtualFile?
+    private val file: VirtualFile?,
+    private val assumeNonNull: Boolean
 ) {
     fun build(objCType: ObjCType, nullability: Boolean = false): OCType {
         when (objCType) {
@@ -40,11 +41,8 @@ private class TypeBuilder(
 
             is ObjCClassType -> {
                 return OCPointerType.to(
-                    referenceType(
-                        objCType.className,
-                        objCType.typeArguments.map { arg -> build(arg) },
-                        nullability
-                    )
+                    referenceType(objCType.className, objCType.typeArguments.map { arg -> build(arg) }, false),
+                    null, null, nullability.toOCNullability(), false, false
                 )
             }
 
@@ -93,7 +91,10 @@ private class TypeBuilder(
 
     private fun Boolean.toOCNullability(): OCNullability = when (this) {
         true -> OCNullability.NULLABLE
-        false -> OCNullability.UNSPECIFIED
+        false -> when {
+            assumeNonNull -> OCNullability.NONNULL
+            else -> OCNullability.UNSPECIFIED
+        }
     }
 
     private fun referenceType(refName: String, arguments: List<OCType>, nullability: Boolean): OCReferenceType {
