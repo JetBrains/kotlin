@@ -39,7 +39,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.kotlin.asJava.finder.KtLightPackage
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -88,7 +88,7 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
         val withRuntime = renameObject.getNullableString("withRuntime")
         val libraryInfos = renameObject.getAsJsonArray("libraries")?.map { it.asString!! }
         if (libraryInfos != null) {
-            val jarPaths = listOf(ForTestCompileRuntime.runtimeJarForTests()) + libraryInfos.map {
+            val jarPaths = listOf(KotlinIdeForTestCompileRuntime.runtimeJarForTests()) + libraryInfos.map {
                 File(PlatformTestUtil.getCommunityPath(), it.substringAfter("@"))
             }
             return KotlinWithJdkAndRuntimeLightProjectDescriptor(jarPaths)

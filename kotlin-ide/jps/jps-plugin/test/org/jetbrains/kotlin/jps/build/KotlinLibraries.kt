@@ -9,14 +9,14 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaLibraryType
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
     MockRuntime(
         "kotlin-mock-runtime",
-        ForTestCompileRuntime.minimalRuntimeJarForTests()
+        KotlinIdeForTestCompileRuntime.minimalRuntimeJarForTests()
     ),
 
     JvmStdLib(

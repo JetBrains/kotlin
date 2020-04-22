@@ -20,7 +20,7 @@ import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -332,7 +332,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-                ForTestCompileRuntime.runtimeJarForTests(),
+                KotlinIdeForTestCompileRuntime.runtimeJarForTests(),
                 PathUtil.kotlinPathsForDistDirectory.kotlinTestPath
             )
         ) {
@@ -345,8 +345,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_SCRIPT_RUNTIME = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-                ForTestCompileRuntime.runtimeJarForTests(),
-                ForTestCompileRuntime.scriptRuntimeJarForTests()
+                KotlinIdeForTestCompileRuntime.runtimeJarForTests(),
+                KotlinIdeForTestCompileRuntime.scriptRuntimeJarForTests()
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

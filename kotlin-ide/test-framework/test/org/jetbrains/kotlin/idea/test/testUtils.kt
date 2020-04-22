@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import java.io.File
 import java.util.*
 
 fun KtFile.dumpTextWithErrors(ignoreErrors: Set<DiagnosticFactory<*>> = emptySet()): String {
@@ -63,4 +64,12 @@ fun Document.extractMultipleMarkerOffsets(project: Project, caretMarker: String 
     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(this)
 
     return offsets
+}
+
+val projectRoot: File by lazy {
+    var current: File? = File("").absoluteFile
+    while (current != null && !current.resolve("kotlin.kotlin-ide.iml").exists()) {
+        current = current.parentFile
+    }
+    current ?: throw IllegalStateException("Cannot find kotiln-ide root")
 }

@@ -14,7 +14,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import junit.framework.TestCase
 import org.jetbrains.kotlin.checkers.utils.clearFileFromDiagnosticMarkup
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
@@ -127,10 +127,10 @@ private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
                 is StdlibDependency -> {
                     when {
                         platform.isCommon() -> module.addLibrary(
-                            ForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind
+                            KotlinIdeForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind
                         )
-                        platform.isJvm() -> module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-                        platform.isJs() -> module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
+                        platform.isJvm() -> module.addLibrary(KotlinIdeForTestCompileRuntime.runtimeJarForTests())
+                        platform.isJs() -> module.addLibrary(KotlinIdeForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
                         else -> error("Unknown platform $this")
                     }
                 }
@@ -141,8 +141,8 @@ private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
                 }
                 is CoroutinesDependency -> module.enableCoroutines()
                 is KotlinTestDependency -> when {
-                    platform.isJvm() -> module.addLibrary(ForTestCompileRuntime.kotlinTestJUnitJarForTests())
-                    platform.isJs() -> module.addLibrary(ForTestCompileRuntime.kotlinTestJsJarForTests(), kind = JSLibraryKind)
+                    platform.isJvm() -> module.addLibrary(KotlinIdeForTestCompileRuntime.kotlinTestJUnitJarForTests())
+                    platform.isJs() -> module.addLibrary(KotlinIdeForTestCompileRuntime.kotlinTestJsJarForTests(), kind = JSLibraryKind)
                 }
             }
         }

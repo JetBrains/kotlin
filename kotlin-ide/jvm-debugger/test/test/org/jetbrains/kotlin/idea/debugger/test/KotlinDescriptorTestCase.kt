@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.xdebugger.XDebugSession
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.test.preference.*
@@ -167,15 +167,15 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     override fun createJavaParameters(mainClass: String?): JavaParameters {
         return super.createJavaParameters(mainClass).apply {
             ModuleRootManager.getInstance(myModule).orderEntries.asSequence().filterIsInstance<LibraryOrderEntry>()
-            classPath.add(ForTestCompileRuntime.runtimeJarForTests())
+            classPath.add(KotlinIdeForTestCompileRuntime.runtimeJarForTests())
             classPath.add(libraryOutputDirectory)
         }
     }
 
     private fun attachLibraries() {
         runWriteAction {
-            val kotlinStdlibJar = ForTestCompileRuntime.runtimeJarForTests()
-            val kotlinStdlibSourcesJar = ForTestCompileRuntime.runtimeSourcesJarForTests()
+            val kotlinStdlibJar = KotlinIdeForTestCompileRuntime.runtimeJarForTests()
+            val kotlinStdlibSourcesJar = KotlinIdeForTestCompileRuntime.runtimeSourcesJarForTests()
 
             val model = ModuleRootManager.getInstance(myModule).modifiableModel
             attachLibrary(model, KOTLIN_LIBRARY_NAME, kotlinStdlibJar, kotlinStdlibSourcesJar)

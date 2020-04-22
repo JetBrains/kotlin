@@ -12,7 +12,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.debugger.test.DEBUGGER_TESTDATA_PATH_BASE
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -34,7 +34,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
         ApplicationManager.getApplication().runWriteAction {
             @Suppress("UnstableApiUsage")
             if (ProjectLibraryTable.getInstance(project).getLibraryByName(stdLibName) == null) {
-                val stdLibPath = ForTestCompileRuntime.runtimeJarForTests()
+                val stdLibPath = KotlinIdeForTestCompileRuntime.runtimeJarForTests()
                 PsiTestUtil.addLibrary(
                     testRootDisposable,
                     module,
