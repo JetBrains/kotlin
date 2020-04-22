@@ -56,27 +56,43 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference =
             qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate ?: return qualifiedAccessExpression.compose()
 
+        val subCandidate = calleeReference.candidate
         val candidateFir = calleeReference.candidateSymbol.phasedFir
         val typeArguments = computeTypeArguments(qualifiedAccessExpression, calleeReference.candidate)
-        val typeRef = (candidateFir as? FirTypedDeclaration)?.let {
-            typeCalculator.tryCalculateReturnType(it)
+        val typeRef = (candidateFir as? FirTypedDeclaration)?.let { typedDeclaration ->
+            typeCalculator.tryCalculateReturnType(typedDeclaration).let {
+                if (qualifiedAccessExpression.safe) {
+                    val nullableType = it.coneTypeUnsafe<ConeKotlinType>().withNullability(
+                        ConeNullability.NULLABLE, session.inferenceContext
+                    )
+                    it.withReplacedConeType(nullableType)
+                } else {
+                    it
+                }
+            }
         } ?: buildErrorTypeRef {
             source = calleeReference.source
             diagnostic = ConeSimpleDiagnostic("Callee reference to candidate without return type: ${candidateFir.render()}")
         }
 
-        qualifiedAccessExpression.replaceTypeRefWithSubstituted(calleeReference, typeRef).replaceTypeArguments(typeArguments)
+        val result = qualifiedAccessExpression
+            .transformCalleeReference(
+                StoreCalleeReference,
+                buildResolvedNamedReference {
+                    source = calleeReference.source
+                    name = calleeReference.name
+                    resolvedSymbol = calleeReference.candidateSymbol
+                },
+            )
+            .transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
+            .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression())
+            .transformExplicitReceiver(integerApproximator, null)
 
-        return qualifiedAccessExpression.transformCalleeReference(
-            StoreCalleeReference,
-            buildResolvedNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeReference.candidateSymbol
-            },
-        ).apply {
-            replaceTypeArguments(typeArguments)
-        }.compose()
+        val resultType = typeRef.substituteTypeRef(subCandidate)
+        result.replaceTypeRef(resultType)
+        result.replaceTypeArguments(typeArguments)
+
+        return result.compose()
     }
 
     private fun <D : FirExpression> D.replaceTypeRefWithSubstituted(
@@ -146,7 +162,7 @@ class FirCallCompletionResultsWriterTransformer(
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
             },
-        ).apply {
+        ).transformExplicitReceiver(integerApproximator, null).apply {
             replaceTypeArguments(typeArguments)
         }.compose()
     }
