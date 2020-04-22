@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.idea.core.script.configuration.utils
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.ConcurrentFactoryMap
+import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
+import org.jetbrains.kotlin.idea.core.script.LOG
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
@@ -100,20 +104,39 @@ abstract class ScriptClassRootsCache(
             return prop.mapNotNull { it.absolutePath }.toSet()
         }
 
-        fun getScriptSdkOfDefault(javaHomeStr: File?, project: Project): Sdk? {
-            return getScriptSdk(javaHomeStr) ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
+        fun getScriptSdkOrDefault(javaHome: File?, project: Project): Sdk? {
+            return javaHome?.let { getScriptSdkByJavaHome(it) } ?: getScriptDefaultSdk(project)
         }
 
-        fun getScriptSdk(javaHomeStr: File?): Sdk? {
+        private fun getScriptSdkByJavaHome(javaHome: File): Sdk? {
             // workaround for mismatched gradle wrapper and plugin version
-            val javaHome = try {
-                javaHomeStr?.let { VfsUtil.findFileByIoFile(it, true) }
+            val javaHomeVF = try {
+                VfsUtil.findFileByIoFile(javaHome, true)
             } catch (e: Throwable) {
                 null
             } ?: return null
 
-            return getProjectJdkTableSafe().allJdks.find { it.homeDirectory == javaHome }
+            return getProjectJdkTableSafe().allJdks.find { it.homeDirectory == javaHomeVF }
         }
+
+        private fun getScriptDefaultSdk(project: Project): Sdk? {
+            val projectSdk = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
+            if (projectSdk != null) return projectSdk
+
+            val anyJavaSdk = getAllProjectSdks().find { it.canBeUsedForScript() }
+            if (anyJavaSdk != null) {
+                return anyJavaSdk
+            }
+
+            LOG.warn(
+                "Default Script SDK is null: " +
+                        "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
+                        "all sdks = ${getAllProjectSdks().joinToString("\n")}"
+            )
+            return null
+        }
+
+        private fun Sdk.canBeUsedForScript() = sdkType is JavaSdkType
 
         fun Sdk.isAlreadyIndexed(project: Project): Boolean {
             return ModuleManager.getInstance(project).modules.any { ModuleRootManager.getInstance(it).sdk == this }
