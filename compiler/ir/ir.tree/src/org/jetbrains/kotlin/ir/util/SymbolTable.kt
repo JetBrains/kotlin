@@ -367,6 +367,10 @@ open class SymbolTable(
         )
     }
 
+    fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
+        return scriptSymbolTable.referenced(descriptor) { IrScriptSymbolImpl(descriptor) }
+    }
+
     private fun createClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
         return signaturer.composeSignature(descriptor)?.let { IrClassPublicSymbolImpl(descriptor, it) } ?: IrClassSymbolImpl(descriptor)
     }
