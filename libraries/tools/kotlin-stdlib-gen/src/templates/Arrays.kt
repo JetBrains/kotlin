@@ -1357,19 +1357,17 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
             specialFor(ArraysOfPrimitives) {
-                if (primitive != PrimitiveType.Long) {
-                    body {
+                body {
+                    if (primitive == PrimitiveType.Char && target.backend == Backend.IR || primitive == PrimitiveType.Long) {
+                        """
+                        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                        sortArrayWith(this.unsafeCast<Array<T>>(), fromIndex, toIndex, naturalOrder())
+                        """
+                    } else {
                         """
                         AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
                         val subarray = this.asDynamic().subarray(fromIndex, toIndex).unsafeCast<SELF>()
                         subarray.sort()
-                        """
-                    }
-                } else {
-                    body {
-                        """
-                        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                        sortArrayWith(this.unsafeCast<Array<Long>>(), fromIndex, toIndex, naturalOrder())
                         """
                     }
                 }
