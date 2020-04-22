@@ -123,6 +123,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
     }
 
+    override fun visitArgument(argument: KtValueArgument) {
+        val other = getTreeElement<KtValueArgument>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSons(argument, other)
+    }
+
+    override fun visitValueArgumentList(list: KtValueArgumentList) {
+        val other = getTreeElement<KtValueArgumentList>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSons(list, other)
+    }
+
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElement<KtCallExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
