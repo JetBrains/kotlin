@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.intention.impl.config;
 
@@ -27,6 +13,7 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,9 +65,12 @@ public class IntentionSettingsPanel implements MasterDetails {
 
       @Override
       protected List<IntentionActionMetaData> filterModel(String filter, final boolean force) {
-        final List<IntentionActionMetaData> list = IntentionManagerSettings.getInstance().getMetaData();
-        if (filter == null || filter.length() == 0) return list;
-        final HashSet<String> quoted = new HashSet<>();
+        List<IntentionActionMetaData> list = IntentionManagerSettings.getInstance().getMetaData();
+        if (filter == null || filter.length() == 0) {
+          return list;
+        }
+
+        Set<String> quoted = new HashSet<>();
         List<Set<String>> keySetList = SearchUtil.findKeys(filter, quoted);
         List<IntentionActionMetaData> result = new ArrayList<>();
         for (IntentionActionMetaData metaData : list) {
@@ -166,10 +156,11 @@ public class IntentionSettingsPanel implements MasterDetails {
   }
 
   private static boolean isIntentionAccepted(IntentionActionMetaData metaData, @NonNls String filter, boolean forceInclude,
-                                             final List<? extends Set<String>> keySetList, final HashSet<String> quoted) {
+                                             List<? extends Set<String>> keySetList, @NotNull Set<String> quoted) {
     if (StringUtil.containsIgnoreCase(metaData.getFamily(), filter)) {
       return true;
     }
+
     for (String category : metaData.myCategory) {
       if (category != null && StringUtil.containsIgnoreCase(category, filter)) {
         return true;
