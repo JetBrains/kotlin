@@ -63,6 +63,7 @@ ext.configureJvm6Project = { Project project ->
 ext.compileJava9Sources = { Project project, String moduleName, Collection<FileCollection> moduleOutputs = [project.sourceSets.main.output] ->
     // module-info.java should be in java9 source set by convention
     SourceDirectorySet java9SourceSet = project.sourceSets.java9.java
+    project.configurations.java9CompileClasspath.extendsFrom(project.configurations.compileClasspath)
     project.tasks.getByName("compileJava9Java").configure { JavaCompile it ->
         dependsOn(moduleOutputs)
         it.sourceCompatibility = 1.9
@@ -74,7 +75,7 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
 
         doFirst {
             def moduleFiles = files(*moduleOutputs)
-            def modulePath = project.configurations.compileClasspath.filter { !(it in moduleFiles.files) }
+            def modulePath = project.configurations.java9CompileClasspath.filter { !(it in moduleFiles.files) }
 
             options.compilerArgs = [
                     '--module-path', modulePath.asPath,
