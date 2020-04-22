@@ -18,6 +18,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,7 @@ public class FileSetFormatter extends FileSetProcessor {
 
   public FileSetFormatter(@NotNull MessageOutput messageOutput) {
     myMessageOutput = messageOutput;
-    mySettings = new CodeStyleSettings();
+    mySettings = CodeStyleSettingsManager.getInstance().createSettings();
     myProjectUID = UUID.randomUUID().toString();
   }
 

@@ -46,7 +46,6 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
         @Override
         public void extensionAdded(@NotNull FileTypeIndentOptionsProvider extension,
                                    @NotNull PluginDescriptor pluginDescriptor) {
-          //noinspection deprecation
           CodeStyleSettingsManager.getInstance()
             .registerFileTypeIndentOptions(getAllSettings(), extension.getFileType(), extension.createIndentOptions());
         }
@@ -54,7 +53,6 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
         @Override
         public void extensionRemoved(@NotNull FileTypeIndentOptionsProvider extension,
                                      @NotNull PluginDescriptor pluginDescriptor) {
-          //noinspection deprecation
           CodeStyleSettingsManager.getInstance()
             .unregisterFileTypeIndentOptions(getAllSettings(), extension.getFileType());
         }
@@ -64,7 +62,6 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
       new ExtensionPointListener<LanguageCodeStyleSettingsProvider>() {
         @Override
         public void extensionAdded(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
-          //noinspection deprecation
           ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
                                        manager -> {
                                          manager.registerLanguageSettings(getAllSettings(), extension);
@@ -74,7 +71,6 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
 
         @Override
         public void extensionRemoved(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
-          //noinspection deprecation
           ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
                                        manager -> {
                                          manager.unregisterLanguageSettings(getAllSettings(), extension);
@@ -87,14 +83,12 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
       new ExtensionPointListener<CodeStyleSettingsProvider>() {
         @Override
         public void extensionAdded(@NotNull CodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
-          //noinspection deprecation
           ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
                                        instance -> instance.registerCustomSettings(getAllSettings(), extension));
         }
 
         @Override
         public void extensionRemoved(@NotNull CodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
-          //noinspection deprecation
           ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
                                        instance -> instance.unregisterCustomSettings(getAllSettings(), extension));
         }

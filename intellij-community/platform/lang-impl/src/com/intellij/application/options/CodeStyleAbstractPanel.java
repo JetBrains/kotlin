@@ -216,11 +216,15 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
         prepareForReformat(psiFile);
 
         applySettingsToModel();
-        CodeStyleSettings clone = mySettings.clone();
-        clone.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin());
         final Ref<PsiFile> formatted = Ref.create();
-        CodeStyle.doWithTemporarySettings(project, clone, () -> formatted.set(doReformat(project, psiFile)));
-        myEditor.getSettings().setTabSize(clone.getTabSize(getFileType()));
+        CodeStyle.doWithTemporarySettings(
+          project,
+          mySettings,
+          settings -> {
+            settings.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin());
+            myEditor.getSettings().setTabSize(settings.getTabSize(getFileType()));
+          },
+          () -> formatted.set(doReformat(project, psiFile)));
         Document document = myEditor.getDocument();
         document.replaceString(0, document.getTextLength(), formatted.get().getText());
         if (beforeReformat != null) {
@@ -258,9 +262,11 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
     @SuppressWarnings("deprecation")
     PsiFile psiFile = createFileFromText(project, myTextToReformat);
     prepareForReformat(psiFile);
-    CodeStyleSettings clone = mySettings.clone();
-    clone.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin());
-    CodeStyle.doWithTemporarySettings(project, clone, () -> CodeStyleManager.getInstance(project).reformat(psiFile));
+    CodeStyle.doWithTemporarySettings(
+      project,
+      mySettings,
+      settings -> settings.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin()),
+      () -> CodeStyleManager.getInstance(project).reformat(psiFile));
     return getDocumentBeforeChanges(project, psiFile);
   }
 

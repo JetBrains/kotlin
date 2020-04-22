@@ -27,6 +27,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,7 @@ public class CodeStyleSchemeXmlImporter extends CodeStyleSettingsLoader implemen
 
   private static CodeStyleScheme readSchemeFromDom(@NotNull Element rootElement, @NotNull CodeStyleScheme scheme)
     throws SchemeImportException {
-    CodeStyleSettings newSettings = new CodeStyleSettings();
+    CodeStyleSettings newSettings = CodeStyleSettingsManager.getInstance().createSettings();
     loadSettings(rootElement, newSettings);
     newSettings.resetDeprecatedFields(); // Clean up if imported from legacy settings
     ((CodeStyleSchemeImpl)scheme).setCodeStyleSettings(newSettings);

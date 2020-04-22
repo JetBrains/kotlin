@@ -21,6 +21,7 @@ import com.intellij.openapi.options.SchemeImportUtil;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +29,7 @@ public class CodeStyleSettingsLoader {
 
   public CodeStyleSettings loadSettings(@NotNull VirtualFile file) throws SchemeImportException {
     Element rootElement = SchemeImportUtil.loadSchemeDom(file);
-    CodeStyleSettings settings = new CodeStyleSettings();
+    CodeStyleSettings settings = CodeStyleSettingsManager.getInstance().createSettings();
     loadSettings(rootElement, settings);
     return settings;
   }
