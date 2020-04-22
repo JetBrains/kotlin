@@ -81,6 +81,24 @@ public final enum class EnumWithSetter : kotlin.Enum<EnumWithSetter> {
     public final /*synthesized*/ fun values(): kotlin.Array<EnumWithSetter>
 }
 
+public final enum class EnumWithSetterField : kotlin.Enum<EnumWithSetterField> {
+    enum entry ONE
+
+    private constructor EnumWithSetterField()
+    public final var fieldWithSetter: kotlin.Int
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithSetterField): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumWithSetterField
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumWithSetterField>
+}
+
 public final enum class ImmutableEnum : kotlin.Enum<ImmutableEnum> {
     enum entry ONE
 

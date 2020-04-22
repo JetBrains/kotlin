@@ -31,6 +31,14 @@ enum class EnumWithSetter {
         }
 }
 
+enum class EnumWithSetterField {
+    ONE;
+    var fieldWithSetter = 0
+        set(value) {
+            field = value
+        }
+}
+
 enum class EnumWithMutableFieldImplementedByDelegate {
     ONE;
     var delegatedField: Int by Delegate()
