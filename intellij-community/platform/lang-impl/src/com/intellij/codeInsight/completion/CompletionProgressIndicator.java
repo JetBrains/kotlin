@@ -24,7 +24,6 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
@@ -527,7 +526,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
 
   @TestOnly
   public static void cleanupForNextTest() {
-    CompletionService completionService = ServiceManager.getServiceIfCreated(CompletionService.class);
+    CompletionService completionService = ApplicationManager.getApplication().getServiceIfCreated(CompletionService.class);
     if (!(completionService instanceof CompletionServiceImpl)) {
       return;
     }
