@@ -150,7 +150,7 @@ enum class LanguageFeature(
     SamConversionPerArgument(sinceVersion = KOTLIN_1_4),
     FunctionReferenceWithDefaultValueAsOtherType(sinceVersion = KOTLIN_1_4),
     NonStrictOnlyInputTypesChecks(sinceVersion = KOTLIN_1_4),
-    SuspendConversion(sinceVersion = KOTLIN_1_4),
+    SuspendConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
 
     BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
     NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
