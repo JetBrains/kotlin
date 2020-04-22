@@ -133,7 +133,7 @@ class InflowSlicer(
         val valVar = parameter.valOrVarKeyword.toValVar()
         if (valVar != KotlinValVar.None) {
             val classOrObject = (parameter.ownerFunction as? KtPrimaryConstructor)?.getContainingClassOrObject()
-            if (classOrObject != null && classOrObject.hasModifier(KtTokens.DATA_KEYWORD)) {
+            if (classOrObject is KtClass && classOrObject.isData()) {
                 // Search usages of constructor parameter in form of named argument of call to "copy" function.
                 // We will miss calls of "copy" with positional parameters but it's unlikely someone write such code.
                 // Also, we will find named arguments of constructor calls but we need them anyway (already found above).
