@@ -8,9 +8,10 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 class SkipBlockHandler : MatchingHandler() {
 
     override fun match(patternNode: PsiElement?, matchedNode: PsiElement?, context: MatchContext?): Boolean {
+        val globalMatchingVisitor = context?.matcher ?: return false
         return when (patternNode) {
-            is KtBlockExpression -> context?.matcher?.match(patternNode.firstStatement, matchedNode) ?: false
-            else -> context?.matcher?.match(patternNode, matchedNode) ?: false
+            is KtBlockExpression -> globalMatchingVisitor.matchSequentially(patternNode.firstStatement, matchedNode)
+            else -> false
         }
     }
 

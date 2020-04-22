@@ -1,6 +1,8 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.DebugUtil
+import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
@@ -39,7 +41,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     override fun visitBlockExpression(expression: KtBlockExpression) {
         super.visitBlockExpression(expression)
 
-        if (expression.firstChild.elementType != KtTokens.LBRACE && expression.children.size == 1) {
+        if (expression.firstChild.elementType != KtTokens.LBRACE) {
             val pattern = myCompilingVisitor.context.pattern
             val handler = SkipBlockHandler().apply {
                 setFilter { it is KtExpression }
