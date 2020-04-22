@@ -156,6 +156,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         String spreadOnPolymorphicSignature = "Spread operator is prohibited for arguments to signature-polymorphic calls";
         MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL, spreadOnPolymorphicSignature);
         MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR, spreadOnPolymorphicSignature);
+
+        MAP.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH,
+                "Functional interface member cannot have this name on JVM because it clashes with an internal member getFunctionDelegate");
     }
 
     @NotNull

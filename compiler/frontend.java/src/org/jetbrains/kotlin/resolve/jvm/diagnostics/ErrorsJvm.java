@@ -137,6 +137,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> FUNCTION_DELEGATE_MEMBER_NAME_CLASH = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

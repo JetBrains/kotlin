@@ -7946,6 +7946,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/funInterface/funIsNotInheritedFromBaseInterface.kt");
             }
 
+            @TestMetadata("functionDelegateClashOnJvm.kt")
+            public void testFunctionDelegateClashOnJvm() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/functionDelegateClashOnJvm.kt");
+            }
+
             @TestMetadata("genericSubstitutionForFunInterface.kt")
             public void testGenericSubstitutionForFunInterface() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
