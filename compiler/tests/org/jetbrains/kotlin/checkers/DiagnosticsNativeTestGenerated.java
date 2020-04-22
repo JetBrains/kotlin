@@ -28,8 +28,28 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("mutableEnum.kt")
+    public void testMutableEnum() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/mutableEnum.kt");
+    }
+
+    @TestMetadata("mutableSingleton.kt")
+    public void testMutableSingleton() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/mutableSingleton.kt");
+    }
+
     @TestMetadata("throws.kt")
     public void testThrows() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/throws.kt");
+    }
+
+    @TestMetadata("uselessSharedImmutable.kt")
+    public void testUselessSharedImmutable() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/uselessSharedImmutable.kt");
+    }
+
+    @TestMetadata("uselessThreadLocal.kt")
+    public void testUselessThreadLocal() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/uselessThreadLocal.kt");
     }
 }

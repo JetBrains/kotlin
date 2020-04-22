@@ -20,6 +20,14 @@ object ErrorsNative {
     val INCOMPATIBLE_THROWS_OVERRIDE = DiagnosticFactory1.create<KtElement, DeclarationDescriptor>(Severity.ERROR)
     @JvmField
     val INCOMPATIBLE_THROWS_INHERITED = DiagnosticFactory1.create<KtDeclaration, Collection<DeclarationDescriptor>>(Severity.ERROR)
+    @JvmField
+    val MUTABLE_ENUM = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
+    @JvmField
+    val MUTABLE_SINGLETON = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
+    @JvmField
+    val USELESS_SHARED_IMMUTABLE = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
+    @JvmField
+    val USELESS_THREAD_LOCAL = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
 
     init {
         Errors.Initializer.initializeFactoryNames(ErrorsNative::class.java)
