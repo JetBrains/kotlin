@@ -5,11 +5,16 @@ import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy
 import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.LineNumberConverter
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.markup.EffectType
+import com.intellij.openapi.editor.markup.HighlighterLayer
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.progress.DumbProgressIndicator
@@ -20,6 +25,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
 import java.awt.Color
+import java.awt.Font
 
 internal class IntentionPreviewModel {
   companion object {
@@ -48,24 +54,71 @@ internal class IntentionPreviewModel {
       lines.forEach { lineFragment -> reformatRange(project, psiFileCopy, lineFragment) }
 
       val fileText = psiFileCopy.text
-      return ComparisonManager.getInstance().compareLines(originalFile.text, fileText,
-                                                          ComparisonPolicy.TRIM_WHITESPACES, DumbProgressIndicator.INSTANCE)
-        .mapNotNull {
-          val start = StringUtil.lineColToOffset(fileText, it.startLine2, 0).let { pos -> if (pos == -1) fileText.length else pos }
-          val end = StringUtil.lineColToOffset(fileText, it.endLine2, 0).let { pos -> if (pos == -1) fileText.length else pos }
+      val origText = originalFile.text
+      val diff = ComparisonManager.getInstance().compareLines(origText, fileText,
+                                                              ComparisonPolicy.TRIM_WHITESPACES, DumbProgressIndicator.INSTANCE)
+      var diffs = diff.mapNotNull { fragment ->
+        var start = getOffset(fileText, fragment.startLine2)
+        var end = getOffset(fileText, fragment.endLine2)
 
+        if (start > end) return@mapNotNull null
+
+        var text = fileText.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
+        val deleted = text.isBlank()
+        if (deleted) {
+          start = getOffset(origText, fragment.startLine1)
+          end = getOffset(origText, fragment.endLine1)
           if (start >= end) return@mapNotNull null
-
-          var text = fileText.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
+          text = origText.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
           if (text.isBlank()) return@mapNotNull null
-
-          text = text.lines().joinToString(separator = "\n") { line -> "$line    "}
-
-          return@mapNotNull createEditor(project, originalFile.fileType, text, it.startLine1)
         }
+
+        return@mapNotNull DiffInfo(text, fragment.startLine1, fragment.endLine1, deleted)
+      }
+      if (diffs.any { info -> !info.deleted }) {
+        // Do not display deleted fragments if anything is added
+        diffs = diffs.filter { info -> !info.deleted }
+      }
+      if (diffs.isNotEmpty()) {
+        val maxLine = diffs.last().endLine - 1
+        return diffs.map { it.createEditor(project, originalFile.fileType, maxLine) }
+      }
+      return emptyList()
     }
 
-    private fun createEditor(project: Project, fileType: FileType, text: String, lineShift: Int): EditorEx {
+    private data class DiffInfo(val fileText: String,
+                                val startLine: Int,
+                                val endLine: Int,
+                                val deleted: Boolean) {
+      fun createEditor(project: Project,
+                       fileType: FileType,
+                       maxLine: Int): EditorEx {
+        val editor = createEditor(project, fileType, fileText, startLine, maxLine)
+        if (deleted) {
+          val colorsScheme = editor.colorsScheme
+          val attributes = TextAttributes(null, null, colorsScheme.defaultForeground, EffectType.STRIKEOUT, Font.PLAIN)
+          val document = editor.document
+          val lineCount = document.lineCount
+          for (line in 0 until lineCount) {
+            var start = document.getLineStartOffset(line)
+            var end = document.getLineEndOffset(line) - 1
+            while (start <= end && Character.isWhitespace(fileText[start])) start++
+            while (start <= end && Character.isWhitespace(fileText[end])) end--
+            if (start <= end) {
+              editor.markupModel.addRangeHighlighter(start, end + 1, HighlighterLayer.ERROR + 1, attributes,
+                                                     HighlighterTargetArea.EXACT_RANGE)
+            }
+          }
+        }
+        return editor
+      }
+    }
+
+    private fun getOffset(fileText: String, lineNumber: Int): Int {
+      return StringUtil.lineColToOffset(fileText, lineNumber, 0).let { pos -> if (pos == -1) fileText.length else pos }
+    }
+
+    private fun createEditor(project: Project, fileType: FileType, text: String, lineShift: Int, maxLine: Int): EditorEx {
       val editorFactory = EditorFactory.getInstance()
       val document = editorFactory.createDocument(text)
       val editor = (editorFactory.createEditor(document, project, fileType, false) as EditorEx)
@@ -76,7 +129,7 @@ internal class IntentionPreviewModel {
         isCaretRowShown = false
         isLineMarkerAreaShown = false
         isFoldingOutlineShown = false
-        additionalColumnsCount = 0
+        additionalColumnsCount = 4
         additionalLinesCount = 0
         isRightMarginShown = false
         isUseSoftWraps = false
@@ -90,7 +143,10 @@ internal class IntentionPreviewModel {
 
       editor.gutterComponentEx.apply {
         setPaintBackground(false)
-        setLineNumberConverter(LineNumberConverter.Increasing { _, line -> line + lineShift })
+        setLineNumberConverter(object : LineNumberConverter {
+          override fun convert(editor: Editor, line: Int): Int? = line + lineShift
+          override fun getMaxLineNumber(editor: Editor): Int? = maxLine
+        })
       }
 
       return editor
