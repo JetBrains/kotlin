@@ -67,9 +67,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ASTORE (5)
           ALOAD (1)
           ALOAD (2)
-          ICONST_0
-          ANEWARRAY
-          INVOKEINTERFACE (kotlinx/serialization/Decoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeDecoder;)
+          INVOKEINTERFACE (kotlinx/serialization/Decoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeDecoder;)
           ASTORE (1)
           ALOAD (1)
           INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSequentially, ()Z)
@@ -104,16 +102,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
-          ILOAD (4)
-          ICONST_1
-          IAND
-          IFEQ (L4)
           ALOAD (5)
-          INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, updateSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
-          GOTO (L5)
-        LABEL (L4)
-          INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;)
-        LABEL (L5)
+          INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
           CHECKCAST
           ASTORE (5)
           ILOAD (4)
@@ -132,14 +122,14 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ACONST_NULL
           INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L6)
+        LABEL (L4)
           NEW
           DUP
           ILOAD (3)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
           CHECKCAST
           ATHROW
-        LABEL (L7)
+        LABEL (L5)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.Decoder p0) {
@@ -157,21 +147,19 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
 
     public java.lang.Object patch(kotlinx.serialization.Decoder p0, java.lang.Object p1)
 
-    public void serialize(kotlinx.serialization.Encoder encoder, ListOfUsers obj) {
+    public void serialize(kotlinx.serialization.Encoder encoder, ListOfUsers value) {
         LABEL (L0)
           ALOAD (1)
           LDC (encoder)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (2)
-          LDC (obj)
+          LDC (value)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           GETSTATIC ($$serialDesc, Lkotlinx/serialization/SerialDescriptor;)
           ASTORE (3)
           ALOAD (1)
           ALOAD (3)
-          ICONST_0
-          ANEWARRAY
-          INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeEncoder;)
+          INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeEncoder;)
           ASTORE (1)
           ALOAD (2)
           ALOAD (1)
@@ -194,6 +182,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           INVOKEVIRTUAL (ListOfUsers$$serializer, serialize, (Lkotlinx/serialization/Encoder;LListOfUsers;)V)
           RETURN
     }
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
 public final class ListOfUsers$Companion : java/lang/Object {
@@ -365,9 +355,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ASTORE (5)
           ALOAD (1)
           ALOAD (2)
-          ICONST_0
-          ANEWARRAY
-          INVOKEINTERFACE (kotlinx/serialization/Decoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeDecoder;)
+          INVOKEINTERFACE (kotlinx/serialization/Decoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeDecoder;)
           ASTORE (1)
           ALOAD (1)
           INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSequentially, ()Z)
@@ -396,16 +384,8 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ICONST_0
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
-          ILOAD (4)
-          ICONST_1
-          IAND
-          IFEQ (L4)
           ALOAD (5)
-          INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, updateSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
-          GOTO (L5)
-        LABEL (L4)
-          INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;)
-        LABEL (L5)
+          INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
           CHECKCAST
           ASTORE (5)
           ILOAD (4)
@@ -424,14 +404,14 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ACONST_NULL
           INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L6)
+        LABEL (L4)
           NEW
           DUP
           ILOAD (3)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
           CHECKCAST
           ATHROW
-        LABEL (L7)
+        LABEL (L5)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.Decoder p0) {
@@ -449,21 +429,19 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
 
     public java.lang.Object patch(kotlinx.serialization.Decoder p0, java.lang.Object p1)
 
-    public void serialize(kotlinx.serialization.Encoder encoder, OptionalUser obj) {
+    public void serialize(kotlinx.serialization.Encoder encoder, OptionalUser value) {
         LABEL (L0)
           ALOAD (1)
           LDC (encoder)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (2)
-          LDC (obj)
+          LDC (value)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           GETSTATIC ($$serialDesc, Lkotlinx/serialization/SerialDescriptor;)
           ASTORE (3)
           ALOAD (1)
           ALOAD (3)
-          ICONST_0
-          ANEWARRAY
-          INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeEncoder;)
+          INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeEncoder;)
           ASTORE (1)
           ALOAD (2)
           ALOAD (1)
@@ -486,6 +464,8 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           INVOKEVIRTUAL (OptionalUser$$serializer, serialize, (Lkotlinx/serialization/Encoder;LOptionalUser;)V)
           RETURN
     }
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
 public final class OptionalUser$Companion : java/lang/Object {
@@ -719,9 +699,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ASTORE (6)
           ALOAD (1)
           ALOAD (2)
-          ICONST_0
-          ANEWARRAY
-          INVOKEINTERFACE (kotlinx/serialization/Decoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeDecoder;)
+          INVOKEINTERFACE (kotlinx/serialization/Decoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeDecoder;)
           ASTORE (1)
           ALOAD (1)
           INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, decodeSequentially, ()Z)
@@ -805,21 +783,19 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
 
     public java.lang.Object patch(kotlinx.serialization.Decoder p0, java.lang.Object p1)
 
-    public void serialize(kotlinx.serialization.Encoder encoder, User obj) {
+    public void serialize(kotlinx.serialization.Encoder encoder, User value) {
         LABEL (L0)
           ALOAD (1)
           LDC (encoder)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (2)
-          LDC (obj)
+          LDC (value)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           GETSTATIC ($$serialDesc, Lkotlinx/serialization/SerialDescriptor;)
           ASTORE (3)
           ALOAD (1)
           ALOAD (3)
-          ICONST_0
-          ANEWARRAY
-          INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeEncoder;)
+          INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeEncoder;)
           ASTORE (1)
           ALOAD (2)
           ALOAD (1)
@@ -842,6 +818,8 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           INVOKEVIRTUAL (User$$serializer, serialize, (Lkotlinx/serialization/Encoder;LUser;)V)
           RETURN
     }
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
 public final class User$Companion : java/lang/Object {

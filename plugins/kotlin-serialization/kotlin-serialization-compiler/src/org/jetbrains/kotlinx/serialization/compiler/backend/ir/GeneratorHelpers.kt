@@ -283,9 +283,9 @@ interface IrBuilderExtension {
         }
         val fieldSymbol = irProperty.backingField!!.symbol
         irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, fieldSymbol) }
-            ?.apply { parent = propertyParent }
+            ?.apply { parent = propertyParent; correspondingPropertySymbol = irProperty.symbol }
         irProperty.setter = propertyDescriptor.setter?.let { generatePropertyAccessor(it, fieldSymbol) }
-            ?.apply { parent = propertyParent }
+            ?.apply { parent = propertyParent; correspondingPropertySymbol = irProperty.symbol }
         return irProperty
     }
 
@@ -517,17 +517,15 @@ interface IrBuilderExtension {
         nullableSerializerClass: IrClassSymbol
     ): IrExpression {
         return if (type.isMarkedNullable) {
-            val classDeclaration = nullableSerializerClass.owner
-            val nullableConstructor = classDeclaration.declarations.first { it is IrConstructor } as IrConstructor
+            val nullableConstructor =
+                compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first())
             val resultType = type.makeNotNullable()
-            val typeParameters = classDeclaration.typeParameters
-            val typeArguments = listOf(resultType.toIrType())
             irInvoke(
-                null, nullableConstructor.symbol,
-                typeArguments = typeArguments,
+                null, nullableConstructor,
+                typeArguments = listOf(resultType.toIrType()),
                 valueArguments = listOf(expression),
                 // Return type should be correctly substituted
-                returnTypeHint = nullableConstructor.returnType.substitute(typeParameters, typeArguments)
+                returnTypeHint = nullableConstructor.descriptor.returnType.replace(listOf(resultType.asTypeProjection())).toIrType()
             )
         } else {
             expression

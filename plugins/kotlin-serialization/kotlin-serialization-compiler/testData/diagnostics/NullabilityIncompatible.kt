@@ -9,7 +9,7 @@ class Nope {}
 class NopeNullableSerializer: KSerializer<Nope?> {
     override val descriptor: SerialDescriptor get() = TODO()
     override fun deserialize(decoder: Decoder): Nope? = TODO()
-    override fun serialize(encoder: Encoder, obj: Nope?) = TODO()
+    override fun serialize(encoder: Encoder, value: Nope?) = TODO()
 }
 
 @Serializable

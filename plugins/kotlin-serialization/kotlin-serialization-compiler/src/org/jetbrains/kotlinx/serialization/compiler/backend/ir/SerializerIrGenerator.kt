@@ -232,7 +232,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         //  fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): StructureEncoder
         val beginFunc = encoderClass.referenceMethod(CallingConventions.begin) { it.valueParameters.size == 1 }
 
-        val call = irCall(beginFunc, type = beginFunc.owner.returnType).mapValueParametersIndexed { _, _ ->
+        val call = irCall(beginFunc, type = kOutputClass.defaultType.toIrType()).mapValueParametersIndexed { _, _ ->
             irGet(localSerialDesc)
         }
         // can it be done in more concise way? e.g. additional builder function?
@@ -365,7 +365,8 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         val call = irInvoke(
             irGet(loadFunc.valueParameters[0]),
             beginFunc,
-            irGet(localSerialDesc)
+            irGet(localSerialDesc),
+            typeHint = inputClass.defaultType.toIrType()
         )
         val localInput = irTemporary(call, "input")
 

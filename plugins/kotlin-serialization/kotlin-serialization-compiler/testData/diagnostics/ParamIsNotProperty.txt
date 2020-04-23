@@ -15,9 +15,10 @@ package
         public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.Decoder): Test
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: Test): Test
-        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ obj: Test): kotlin.Unit
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: Test): Test
+        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ value: Test): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun typeParametersSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
     }
 
     public companion object Companion {
