@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -104,6 +105,7 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         private fun fuseIfNullExpressions(expression: IrBlock) {
             val ifNull1 = expression.matchIfNullExpr() ?: return
             val ifNull2 = ifNull1.subjectExpr.matchIfNullExpr() ?: return
+            val type = expression.type
 
             val u = ifNull1.subjectVar
             // We are going to erase 1st variable. Do so only if it is temporary (true for variables introduced for '?.' and '?:').
@@ -123,14 +125,14 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
             val b1tmp2 = b1.substituteVariable(u.symbol, tmp2.symbol)
 
             val v = ifNull2.subjectVar
-            val c0 = simplifyIfNull(tmp1, b0tmp1, b1tmp1, v.symbol, true)
-            val c1 = simplifyIfNull(tmp2, b0tmp2, b1tmp2, v.symbol, false)
+            val c0 = simplifyIfNull(tmp1, b0tmp1, b1tmp1, v.symbol, type, true)
+            val c1 = simplifyIfNull(tmp2, b0tmp2, b1tmp2, v.symbol, type, false)
 
             val sizeBeforeEstimate = a0.size() + a1.size() + b0.size() + b1.size() + 1
             val sizeAfterEstimate = c0.size() + c1.size()
             if (sizeBeforeEstimate < sizeAfterEstimate) return
 
-            val newBlock = constructIfNullExpr(v, c0, c1)
+            val newBlock = constructIfNullExpr(v, c0, c1, type)
 
             expression.statements.clear()
             expression.statements.addAll(newBlock.statements)
@@ -159,16 +161,17 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
             ifNullExpr: IrExpression,
             ifNotNullExpr: IrExpression,
             knownVariableSymbol: IrVariableSymbol,
+            type: IrType,
             knownVariableIsNull: Boolean
         ): IrExpression {
             val subjectExpr = subjectVariable.initializer
                 ?: throw AssertionError("Subject variable should have an initializer: ${subjectVariable.render()}")
 
             val ifNullResultExpr = ifNullExpr.safeReplaceSubjectVariableWithSubjectExpression(subjectVariable)
-                ?: return constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr)
+                ?: return constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr, type)
 
             val ifNotNullResultExpr = ifNotNullExpr.safeReplaceSubjectVariableWithSubjectExpression(subjectVariable)
-                ?: return constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr)
+                ?: return constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr, type)
 
             return when {
                 subjectExpr is IrConst<*> ->
@@ -198,7 +201,7 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
                     ifNotNullResultExpr
 
                 else ->
-                    constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr)
+                    constructIfNullExpr(subjectVariable, ifNullExpr, ifNotNullExpr, type)
             }
         }
 
@@ -299,13 +302,14 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
     private fun constructIfNullExpr(
         subjectVariable: IrVariable,
         ifNullExpr: IrExpression,
-        ifNotNullExpr: IrExpression
+        ifNotNullExpr: IrExpression,
+        type: IrType
     ): IrContainerExpression =
         context.createIrBuilder(subjectVariable.symbol, subjectVariable.startOffset, subjectVariable.endOffset)
             .irBlock {
                 +subjectVariable
                 +irIfNull(
-                    ifNullExpr.type,
+                    type,
                     irGet(subjectVariable),
                     ifNullExpr,
                     ifNotNullExpr
