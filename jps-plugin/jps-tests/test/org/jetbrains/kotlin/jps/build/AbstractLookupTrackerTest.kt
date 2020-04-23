@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupInfo
@@ -84,7 +84,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             sourcesToCompile = filesToCompile.toList(),
             commonSources = emptyList(),
             javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
-            classpath = listOf(outDir, KotlinIdeForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
+            classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
             friendDirs = emptyList()
         )
 
