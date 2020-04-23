@@ -12,12 +12,16 @@ class AsyncFilesChangesProviderImpl(
   private val collectRelevantFiles: () -> Set<String>
 ) : FilesChangesProvider {
   override fun subscribe(listener: FilesChangesListener, parentDisposable: Disposable) {
-    subscribeAsAsyncVirtualFilesChangesProvider(listener, parentDisposable)
+    subscribeAsAsyncVirtualFilesChangesProvider(true, listener, parentDisposable)
     subscribeAsAsyncDocumentChangesProvider(listener, parentDisposable)
   }
 
-  private fun subscribeAsAsyncVirtualFilesChangesProvider(listener: FilesChangesListener, parentDisposable: Disposable) {
-    val changesProvider = VirtualFilesChangesProvider()
+  fun subscribeAsAsyncVirtualFilesChangesProvider(
+    isIgnoreUpdatesFromSave: Boolean,
+    listener: FilesChangesListener,
+    parentDisposable: Disposable
+  ) {
+    val changesProvider = VirtualFilesChangesProvider(isIgnoreUpdatesFromSave)
     val fileManager = VirtualFileManager.getInstance()
     fileManager.addAsyncFileListener(changesProvider, parentDisposable)
 

@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.EventDispatcher
 
-class VirtualFilesChangesProvider : FilesChangesProvider, AsyncFileChangeListenerBase() {
+class VirtualFilesChangesProvider(private val isIgnoreUpdatesFromSave: Boolean) : FilesChangesProvider, AsyncFileChangeListenerBase() {
   private val eventDispatcher = EventDispatcher.create(FilesChangesListener::class.java)
 
   override fun subscribe(listener: FilesChangesListener, parentDisposable: Disposable) {
@@ -25,7 +25,7 @@ class VirtualFilesChangesProvider : FilesChangesProvider, AsyncFileChangeListene
   override fun isRelevant(path: String) = true
 
   override fun updateFile(file: VirtualFile, event: VFileEvent) {
-    if (event.isFromSave) return
+    if (isIgnoreUpdatesFromSave && event.isFromSave) return
     val modificationType = if (event.isFromRefresh) EXTERNAL else INTERNAL
     eventDispatcher.multicaster.onFileChange(file.path, file.modificationStamp, modificationType)
   }
