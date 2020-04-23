@@ -199,7 +199,8 @@ public class CodeStyleSchemesModel implements SchemesModel<CodeStyleScheme> {
 
   public CodeStyleScheme exportProjectScheme(@NotNull String name) {
     CodeStyleScheme newScheme = createNewScheme(name, myProjectScheme);
-    ((CodeStyleSchemeImpl)newScheme).setCodeStyleSettings(getCloneSettings(myProjectScheme).clone());
+    ((CodeStyleSchemeImpl)newScheme).setCodeStyleSettings(
+      CodeStyleSettingsManager.getInstance().cloneSettings(getCloneSettings(myProjectScheme)));
     addScheme(newScheme, false);
 
     return newScheme;
