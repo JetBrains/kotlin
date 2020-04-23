@@ -154,6 +154,8 @@ fun IrExpression.isTrueConst() = this is IrConst<*> && this.kind == IrConstKind.
 
 fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == false
 
+fun IrExpression.isIntegerConst(value: Int) = this is IrConst<*> && this.kind == IrConstKind.Int && this.value == value
+
 fun IrExpression.coerceToUnit(builtins: IrBuiltIns): IrExpression {
     val valueType = getKotlinType(this)
     return coerceToUnitIfNeeded(valueType, builtins)

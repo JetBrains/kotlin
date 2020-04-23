@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -64,6 +65,20 @@ object CompareTo : IntrinsicMethod() {
         return IrIntrinsicFunction.create(expression, signature, context, listOf(parameterType, parameterType)) {
             genInvoke(parameterType, it)
         }
+    }
+}
+
+class IntegerZeroComparison(val op: IElementType, val a: MaterialValue): BooleanValue(a.codegen) {
+    override fun jumpIfFalse(target: Label) {
+        mv.visitJumpInsn(Opcodes.IFNE, target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        mv.visitJumpInsn(Opcodes.IFEQ, target)
+    }
+
+    override fun discard() {
+        a.discard()
     }
 }
 
