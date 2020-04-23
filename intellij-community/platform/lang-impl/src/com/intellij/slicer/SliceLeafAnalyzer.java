@@ -18,6 +18,7 @@ package com.intellij.slicer;
 import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeStructure;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -127,9 +128,9 @@ public class SliceLeafAnalyzer {
 
     final Map<SliceNode, Collection<PsiElement>> map = createMap();
 
-    String encouragementPiece = " (may very well take the whole day)";
+    String encouragementPiece = " " + LangBundle.message("progress.title.may.very.well.take.whole.day");
     ProgressManager.getInstance().run(new Task.Backgroundable(
-      root.getProject(), "Expanding All Nodes..." + encouragementPiece, true) {
+      root.getProject(), LangBundle.message("progress.title.expanding.all.nodes", encouragementPiece), true) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
         Collection<PsiElement> l = calcLeafExpressions(root, treeStructure, map);
@@ -148,7 +149,8 @@ public class SliceLeafAnalyzer {
           if (leaves == null) return;  //cancelled
 
           if (leaves.isEmpty()) {
-            Messages.showErrorDialog("Unable to find leaf expressions to group by", "Cannot Group");
+            Messages.showErrorDialog(LangBundle.message("dialog.message.unable.to.find.leaf.expressions.to.group.by"),
+                                     LangBundle.message("dialog.title.cannot.group"));
             return;
           }
 

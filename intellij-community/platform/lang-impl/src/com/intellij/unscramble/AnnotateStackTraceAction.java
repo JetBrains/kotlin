@@ -5,6 +5,7 @@ import com.intellij.execution.filters.FileHyperlinkInfo;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.impl.EditorHyperlinkSupport;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -60,7 +61,7 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
   private boolean myIsLoading = false;
 
   public AnnotateStackTraceAction(@NotNull Editor editor, @NotNull EditorHyperlinkSupport hyperlinks) {
-    super("Show files modification info", null, AllIcons.Actions.Annotate);
+    super(LangBundle.messagePointer("action.AnnotateStackTraceAction.show.files.modification.info.text"), AllIcons.Actions.Annotate);
     myHyperlinks = hyperlinks;
     myEditor = editor;
   }
@@ -75,7 +76,8 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
   public void actionPerformed(@NotNull final AnActionEvent e) {
     myIsLoading = true;
 
-    ProgressManager.getInstance().run(new Task.Backgroundable(myEditor.getProject(), "Getting File History", true) {
+    ProgressManager.getInstance().run(new Task.Backgroundable(myEditor.getProject(),
+                                                              LangBundle.message("progress.title.getting.file.history"), true) {
       private final Object LOCK = new Object();
       private final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("AnnotateStackTraceAction", 200, true, null);
 

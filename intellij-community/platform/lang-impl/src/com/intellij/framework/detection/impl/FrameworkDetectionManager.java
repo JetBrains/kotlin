@@ -229,7 +229,8 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
     }
     catch (IndexNotReadyException e) {
       DumbService.getInstance(myProject)
-        .showDumbModeNotification("Information about detected frameworks is not available until indices are built");
+        .showDumbModeNotification(
+          LangBundle.message("popup.content.information.about.detected.frameworks"));
       return;
     }
 

@@ -3,6 +3,7 @@ package com.intellij.refactoring.rename;
 
 import com.intellij.find.FindBundle;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -342,7 +343,7 @@ public class RenameDialog extends RefactoringDialog {
   protected void canRun() throws ConfigurationException {
     if (Comparing.strEqual(getNewName(), myOldName)) throw new ConfigurationException(null);
     if (!areButtonsValid()) {
-      throw new ConfigurationException("\'" + getNewName() + "\' is not a valid identifier");
+      throw new ConfigurationException(LangBundle.message("dialog.message.valid.identifier", getNewName()));
     }
     final Function<String, String> inputValidator = RenameInputValidatorRegistry.getInputErrorValidator(myPsiElement);
     if (inputValidator != null) {

@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.task.impl;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.roots.ProjectModelBuildableElement;
 import com.intellij.task.ProjectModelBuildTask;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,6 @@ public class ProjectModelBuildTaskImpl<T extends ProjectModelBuildableElement> e
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Project model element '" + myBuildableElement + "' build task";
+    return LangBundle.message("project.task.name.project.model.element.0.build.task", myBuildableElement);
   }
 }

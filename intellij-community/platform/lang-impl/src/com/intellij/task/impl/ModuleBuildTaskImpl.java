@@ -15,6 +15,7 @@
  */
 package com.intellij.task.impl;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.task.ModuleBuildTask;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +66,6 @@ public class ModuleBuildTaskImpl extends AbstractBuildTask implements ModuleBuil
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Module '" + myModule.getName() + "' build task";
+    return LangBundle.message("project.task.name.module.0.build.task", myModule.getName());
   }
 }

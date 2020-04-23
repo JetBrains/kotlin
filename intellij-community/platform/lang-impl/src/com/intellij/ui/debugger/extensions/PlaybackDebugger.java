@@ -4,6 +4,7 @@ package com.intellij.ui.debugger.extensions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
@@ -17,6 +18,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.playback.PlaybackContext;
 import com.intellij.openapi.ui.playback.PlaybackRunner;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -175,7 +177,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
           myCurrentScript.setText(myState.currentScript);
         }
         else {
-          Messages.showErrorDialog("File to save is not selected.", "Cannot save script");
+          Messages.showErrorDialog(LangBundle.message("dialog.message.file.to.save.selected"),
+                                   LangBundle.message("dialog.title.cannot.save.script"));
           return;
         }
       }
@@ -250,7 +253,7 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
       myChanged = false;
     }
     catch (IOException e) {
-      Messages.showErrorDialog(e.getMessage(), "Cannot save script");
+      Messages.showErrorDialog(e.getMessage(), LangBundle.message("dialog.title.cannot.save.script"));
     }
   }
 
@@ -445,8 +448,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   @Override
-  public String getName() {
-    return "Playback";
+  public @NlsContexts.TabTitle String getName() {
+    return LangBundle.message("tab.title.playback");
   }
 
   public void dispose() {

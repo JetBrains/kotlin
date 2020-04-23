@@ -15,8 +15,10 @@
  */
 package com.intellij.slicer;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
 import com.intellij.usages.TextChunk;
@@ -76,9 +78,10 @@ public class SliceTooComplexDFAUsage extends SliceUsage {
         return presentation.getIcon();
       }
 
+      @NlsContexts.Tooltip
       @Override
       public String getTooltipText() {
-        return "Too complex to analyze, analysis stopped here";
+        return LangBundle.message("tooltip.too.complex.to.analyze.analysis.stopped.here");
       }
     };
   }

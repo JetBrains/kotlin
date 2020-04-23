@@ -15,6 +15,7 @@
  */
 package com.intellij.task.impl;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.task.ModuleFilesBuildTask;
@@ -46,6 +47,6 @@ public class ModuleFilesBuildTaskImpl extends ModuleBuildTaskImpl implements Mod
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Files build task '" + Arrays.toString(myFiles) + "'";
+    return LangBundle.message("project.task.name.files.build.task.0", Arrays.toString(myFiles));
   }
 }

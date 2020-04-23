@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
 import com.intellij.codeInsight.daemon.MergeableLineMarkerInfo;
 import com.intellij.codeInsight.daemon.NavigateAction;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ElementColorProvider;
@@ -76,7 +77,8 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
                 RelativePoint relativePoint = new RelativePoint(e.getComponent(), e.getPoint());
                 ColorPicker.showColorPickerPopup(element.getProject(), color, (c, l) -> WriteAction.run(() -> colorProvider.setColorTo(elt, c)), relativePoint, true);
               } else {
-                final Color c = ColorChooser.chooseColor(editor.getProject(), editor.getComponent(), "Choose Color", color, true);
+                final Color c = ColorChooser.chooseColor(editor.getProject(), editor.getComponent(),
+                                                         IdeBundle.message("dialog.title.choose.color"), color, true);
                 if (c != null) {
                   WriteAction.run(() -> colorProvider.setColorTo(elt, c));
                 }

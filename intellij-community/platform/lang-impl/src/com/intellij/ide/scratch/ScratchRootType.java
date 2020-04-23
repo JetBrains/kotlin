@@ -16,6 +16,7 @@
 package com.intellij.ide.scratch;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -42,7 +43,7 @@ public final class ScratchRootType extends RootType {
   }
 
   ScratchRootType() {
-    super("scratches", "Scratches");
+    super("scratches", LangBundle.message("root.type.scratches"));
   }
 
   @Override

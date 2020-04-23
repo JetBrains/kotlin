@@ -623,6 +623,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     void multilineStateChanged();
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   public static class Builder {
     private final Project myProject;
     private final JComponent myTargetComponent;

@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ui.tabs;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.ui.ColorChooser;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.FileColorManager;
@@ -130,7 +131,7 @@ public class ColorSelectionComponent extends JPanel {
 
     @Override
     protected void doPerformAction(ActionEvent e) {
-      final Color color = ColorChooser.chooseColor(this, "Choose Color", myColor);
+      final Color color = ColorChooser.chooseColor(this, IdeBundle.message("dialog.title.choose.color"), myColor);
       if (color != null) {
         myColor = color;
       }

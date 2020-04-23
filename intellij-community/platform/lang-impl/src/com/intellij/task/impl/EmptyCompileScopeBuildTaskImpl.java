@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.task.impl;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.task.EmptyCompileScopeBuildTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,6 @@ public class EmptyCompileScopeBuildTaskImpl extends AbstractBuildTask implements
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Empty compilation scope build task";
+    return LangBundle.message("project.task.name.empty.compilation.scope.build.task");
   }
 }

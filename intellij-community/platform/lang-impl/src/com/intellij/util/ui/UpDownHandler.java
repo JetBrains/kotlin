@@ -18,6 +18,7 @@ package com.intellij.util.ui;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
@@ -105,7 +106,7 @@ public class UpDownHandler {
     private final JComponent myInput;
 
     UpDownAction(SelectionMover mover, JComponent input, boolean isUp) {
-      super(isUp ? "Up" : "Down");
+      super(isUp ? LangBundle.message("action.UpDownAction.up.text") : LangBundle.message("action.UpDownAction.down.text"));
       myMover = mover;
       myInput = input;
       myDirection = isUp ? -1 : 1;

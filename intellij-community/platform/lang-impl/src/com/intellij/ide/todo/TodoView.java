@@ -2,6 +2,7 @@
 package com.intellij.ide.todo;
 
 import com.intellij.ide.IdeBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -196,7 +197,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
     myChangeListTodosContent.setComponent(wrapWithDumbModeSpoiler(myChangeListTodosPanel));
     myChangeListTodosContent.setPreferredFocusableComponent(myCurrentFileTodosPanel.getTree());
 
-    Content scopeBasedTodoContent = contentFactory.createContent(null, "Scope Based", false);
+    Content scopeBasedTodoContent = contentFactory.createContent(null, LangBundle.message("tab.title.scope.based"), false);
     myScopeBasedTodosPanel = new ScopeBasedTodosPanel(myProject, state.current, scopeBasedTodoContent);
     Disposer.register(this, myScopeBasedTodosPanel);
     scopeBasedTodoContent.setComponent(wrapWithDumbModeSpoiler(myScopeBasedTodosPanel));

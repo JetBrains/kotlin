@@ -6,6 +6,7 @@ import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.RefreshAction;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -348,7 +349,8 @@ public abstract class SlicePanel extends JPanel implements TypeSafeDataProvider,
     }
 
     if (isToShowPreviewButton()) {
-      actionGroup.add(new ToggleAction(UsageViewBundle.message("preview.usages.action.text", "usages"), "preview", AllIcons.Actions.PreviewDetails) {
+      actionGroup.add(new ToggleAction(UsageViewBundle.message("preview.usages.action.text", "usages"),
+                                       LangBundle.message("action.preview.description"), AllIcons.Actions.PreviewDetails) {
         @Override
         public boolean isSelected(@NotNull AnActionEvent e) {
           return isPreview();

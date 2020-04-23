@@ -2,9 +2,11 @@
 
 package com.intellij.util.ui.tree;
 
+import com.intellij.CommonBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -167,7 +169,8 @@ public class AbstractFileTreeTable<T> extends TreeTable {
     if (subdirectoryMappings.isEmpty()) {
       return true;
     }
-    int ret = Messages.showYesNoCancelDialog(myProject, message, title, "Override", "Do Not Override", "Cancel",
+    int ret = Messages.showYesNoCancelDialog(myProject, message, title, LangBundle.message("button.override"),
+                                             LangBundle.message("button.do.not.override"), CommonBundle.getCancelButtonText(),
                                              Messages.getWarningIcon());
     if (ret == Messages.YES) {
       for (VirtualFile file : subdirectoryMappings.keySet()) {

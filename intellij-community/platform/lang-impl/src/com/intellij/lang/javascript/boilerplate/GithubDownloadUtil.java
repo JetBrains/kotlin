@@ -94,9 +94,9 @@ public class GithubDownloadUtil {
     }
     Exception e = outcome.getException();
     if (e != null) {
-      throw new GeneratorException("Can not fetch content from " + url, e);
+      throw new GeneratorException(LangBundle.message("dialog.message.can.fetch.content.from", url), e);
     }
-    throw new GeneratorException("Download was cancelled");
+    throw new GeneratorException(LangBundle.message("dialog.message.download.was.cancelled"));
   }
 
   /**

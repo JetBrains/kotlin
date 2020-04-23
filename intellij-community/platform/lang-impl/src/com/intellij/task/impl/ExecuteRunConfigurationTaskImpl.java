@@ -6,6 +6,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunnerSettings;
+import com.intellij.lang.LangBundle;
 import com.intellij.task.ExecuteRunConfigurationTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,6 +70,6 @@ public final class ExecuteRunConfigurationTaskImpl extends AbstractProjectTask i
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Run task '" + myRunProfile.getName() + "'";
+    return LangBundle.message("project.task.name.run.task.0", myRunProfile.getName());
   }
 }

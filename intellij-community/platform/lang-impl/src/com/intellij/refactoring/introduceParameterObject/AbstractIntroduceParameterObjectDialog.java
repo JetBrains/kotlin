@@ -15,6 +15,7 @@
  */
 package com.intellij.refactoring.introduceParameterObject;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.RefactoringBundle;
@@ -68,7 +69,7 @@ public abstract class AbstractIntroduceParameterObjectDialog<M extends PsiNamedE
   @Override
   protected void canRun() throws ConfigurationException {
     if (!hasParametersToExtract()) {
-      throw new ConfigurationException("Nothing found to extract");
+      throw new ConfigurationException(LangBundle.message("dialog.message.nothing.found.to.extract"));
     }
   }
 

@@ -18,6 +18,7 @@ package com.intellij.usageView.impl;
 
 import com.intellij.ide.hierarchy.*;
 import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -67,7 +68,7 @@ public class UsageContextCallHierarchyPanel extends UsageContextPanelBase {
     @NotNull
     @Override
     public String getTabTitle() {
-      return "Call Hierarchy";
+      return LangBundle.message("tab.title.call.hierarchy");
     }
   }
 

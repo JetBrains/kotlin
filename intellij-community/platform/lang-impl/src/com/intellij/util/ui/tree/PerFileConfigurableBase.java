@@ -1,7 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.ui.tree;
 
+import com.intellij.CommonBundle;
 import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.LanguagePerFileMappings;
 import com.intellij.lang.PerFileMappings;
 import com.intellij.lang.PerFileMappingsBase;
@@ -652,7 +654,8 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
     String title = param(OVERRIDE_TITLE);
     if (question == null || title == null) return Messages.NO;
     return Messages.showYesNoCancelDialog(
-      myProject, question, title, "Override", "Do Not Override", "Cancel", Messages.getWarningIcon());
+      myProject, question, title, LangBundle.message("button.override"), LangBundle.message("button.do.not.override"),
+      CommonBundle.getCancelButtonText(), Messages.getWarningIcon());
   }
 
   private String renderValue(@Nullable Object value, @NotNull String nullValue) {

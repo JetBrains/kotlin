@@ -21,6 +21,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.platform.templates.github.GeneratorException;
@@ -124,7 +125,7 @@ public class GithubTagListProvider {
       content = Files.toString(file, StandardCharsets.UTF_8);
     }
     catch (IOException e) {
-      throw new GeneratorException("Can not read '" + file.getAbsolutePath() + "'!", e);
+      throw new GeneratorException(LangBundle.message("dialog.message.can.read", file.getAbsolutePath()), e);
     }
     try {
       return parseContent(content);
@@ -141,14 +142,14 @@ public class GithubTagListProvider {
   @NotNull
   private static ImmutableSet<GithubTagInfo> parseContent(@NotNull String tagFileContent) throws GeneratorException {
     if (tagFileContent.trim().isEmpty()) {
-      throw new GeneratorException("Can not parse fetched version list: got empty response");
+      throw new GeneratorException(LangBundle.message("dialog.message.can.parse.fetched.version.list.got.empty.response"));
     }
     final JsonElement jsonElement;
     try {
       JsonParser jsonParser = new JsonParser();
       jsonElement = jsonParser.parse(tagFileContent);
     } catch (Exception e) {
-      throw new GeneratorException("Can not parse fetched version list: malformed JSON was received");
+      throw new GeneratorException(LangBundle.message("dialog.message.can.parse.fetched.version.list.malformed.json.was.received"));
     }
     return toGithubTagList(jsonElement);
   }
@@ -176,13 +177,13 @@ public class GithubTagListProvider {
           }
         }
         else {
-          throw new GeneratorException("Unexpected child element " + element.getClass().getName());
+          throw new GeneratorException(LangBundle.message("dialog.message.unexpected.child.element", element.getClass().getName()));
         }
       }
       return tags.build();
     }
     else {
-      throw new GeneratorException("jsonElement is expected be instance of " + JsonArray.class.getName());
+      throw new GeneratorException(LangBundle.message("dialog.message.jsonelement.expected.be.instance", JsonArray.class.getName()));
     }
   }
 

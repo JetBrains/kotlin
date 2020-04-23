@@ -14,6 +14,7 @@ import com.intellij.ide.ui.customization.CustomizationUtil;
 import com.intellij.ide.util.FileStructurePopup;
 import com.intellij.ide.util.treeView.*;
 import com.intellij.ide.util.treeView.smartTree.*;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -161,7 +162,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
 
     myUpdateAlarm = new SingleAlarm(this::rebuild, 200, this);
     myTree.setRootVisible(showRootNode);
-    myTree.getEmptyText().setText("Structure is empty");
+    myTree.getEmptyText().setText(LangBundle.message("status.text.structure.empty"));
 
     final ModelListener modelListener = () -> queueUpdate();
     myTreeModelWrapper.addModelListener(modelListener);

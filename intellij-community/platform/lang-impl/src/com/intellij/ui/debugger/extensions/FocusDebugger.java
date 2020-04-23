@@ -18,11 +18,13 @@ package com.intellij.ui.debugger.extensions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.ui.Splitter;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.debugger.UiDebuggerExtension;
@@ -197,10 +199,9 @@ public class FocusDebugger implements UiDebuggerExtension, PropertyChangeListene
     }
   }
 
-
   @Override
-  public String getName() {
-    return "Focus";
+  public @NlsContexts.TabTitle String getName() {
+    return LangBundle.message("tab.title.focus");
   }
 
   @Override

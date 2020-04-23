@@ -104,7 +104,7 @@ public abstract class AbstractGithubTagDownloadedProjectGenerator extends WebPro
     }
     if (!downloaded) {
       if (ApplicationManager.getApplication().isUnitTestMode()) {
-        throw new GeneratorException("Download " + tag.getZipballUrl() + " is skipped in unit test mode");
+        throw new GeneratorException(LangBundle.message("dialog.message.download.skipped.in.unit.test.mode", tag.getZipballUrl()));
       }
       downloadAndUnzip(project, tag.getZipballUrl(), zipArchiveFile, extractToDir, true);
     }

@@ -17,7 +17,7 @@
 package com.intellij.ui.debugger;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import org.jetbrains.annotations.Nls;
+import com.intellij.openapi.util.NlsContexts;
 
 import javax.swing.*;
 
@@ -26,7 +26,7 @@ public interface UiDebuggerExtension {
 
   JComponent getComponent();
 
-  @Nls(capitalization = Nls.Capitalization.Title)
+  @NlsContexts.TabTitle
   String getName();
 
   void disposeUiResources();

@@ -6,6 +6,7 @@ import com.intellij.core.CoreBundle;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -413,7 +414,7 @@ public class RenameProcessor extends BaseRefactoringProcessor {
           IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(myProject);
           if (ideFrame != null) {
             StatusBarEx statusBar = (StatusBarEx)ideFrame.getStatusBar();
-            String message = "<html><body>Unable to rename certain usages. <a href=\"\">Browse</a></body></html>";
+            String message = LangBundle.message("popup.content.unable.to.rename.certain.usages");
             HyperlinkListener listener = e -> {
               if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) return;
               String skipped = StringUtil.join(mySkippedUsages, unresolvableCollisionUsageInfo -> unresolvableCollisionUsageInfo.getDescription(), "<br>");
