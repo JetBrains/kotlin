@@ -65,7 +65,10 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
         for (module in moduleDescriptors) {
             // Yes, just to all of them.
-            module.setDependencies(moduleDescriptors + additionalDependencyModules + forwardDeclarationsModule)
+            module.setDependencies(
+                moduleDescriptors + additionalDependencyModules + forwardDeclarationsModule,
+                additionalDependencyModules.toSet()
+            )
         }
 
         return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule)
