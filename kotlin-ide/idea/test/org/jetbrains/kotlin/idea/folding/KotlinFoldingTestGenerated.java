@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
-    @TestMetadata("testData/folding/noCollapse")
+    @TestMetadata("kotlin/idea/testData/folding/noCollapse")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NoCollapse extends AbstractKotlinFoldingTest {
@@ -27,51 +27,51 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         }
 
         public void testAllFilesPresentInNoCollapse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("class.kt")
         public void testClass() throws Exception {
-            runTest("testData/folding/noCollapse/class.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/class.kt");
         }
 
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
-            runTest("testData/folding/noCollapse/function.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/function.kt");
         }
 
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
-            runTest("testData/folding/noCollapse/imports.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/imports.kt");
         }
 
         @TestMetadata("kdocComments.kt")
         public void testKdocComments() throws Exception {
-            runTest("testData/folding/noCollapse/kdocComments.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/kdocComments.kt");
         }
 
         @TestMetadata("multilineComments.kt")
         public void testMultilineComments() throws Exception {
-            runTest("testData/folding/noCollapse/multilineComments.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/multilineComments.kt");
         }
 
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
-            runTest("testData/folding/noCollapse/object.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/object.kt");
         }
 
         @TestMetadata("oneImport.kt")
         public void testOneImport() throws Exception {
-            runTest("testData/folding/noCollapse/oneImport.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/oneImport.kt");
         }
 
         @TestMetadata("singleLineString.kt")
         public void testSingleLineString() throws Exception {
-            runTest("testData/folding/noCollapse/singleLineString.kt");
+            runTest("kotlin/idea/testData/folding/noCollapse/singleLineString.kt");
         }
     }
 
-    @TestMetadata("testData/folding/checkCollapse")
+    @TestMetadata("kotlin/idea/testData/folding/checkCollapse")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CheckCollapse extends AbstractKotlinFoldingTest {
@@ -80,82 +80,82 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         }
 
         public void testAllFilesPresentInCheckCollapse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("collectionFactoryFunctions.kt")
         public void testCollectionFactoryFunctions() throws Exception {
-            runTest("testData/folding/checkCollapse/collectionFactoryFunctions.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/collectionFactoryFunctions.kt");
         }
 
         @TestMetadata("collectionFactoryFunctionsEmptyOneLine.kt")
         public void testCollectionFactoryFunctionsEmptyOneLine() throws Exception {
-            runTest("testData/folding/checkCollapse/collectionFactoryFunctionsEmptyOneLine.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/collectionFactoryFunctionsEmptyOneLine.kt");
         }
 
         @TestMetadata("collectionFactoryFunctionsFewArguments.kt")
         public void testCollectionFactoryFunctionsFewArguments() throws Exception {
-            runTest("testData/folding/checkCollapse/collectionFactoryFunctionsFewArguments.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/collectionFactoryFunctionsFewArguments.kt");
         }
 
         @TestMetadata("customRegions.kt")
         public void testCustomRegions() throws Exception {
-            runTest("testData/folding/checkCollapse/customRegions.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/customRegions.kt");
         }
 
         @TestMetadata("customRegionsNotFullBlock.kt")
         public void testCustomRegionsNotFullBlock() throws Exception {
-            runTest("testData/folding/checkCollapse/customRegionsNotFullBlock.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/customRegionsNotFullBlock.kt");
         }
 
         @TestMetadata("doubleImportListsError.kt")
         public void testDoubleImportListsError() throws Exception {
-            runTest("testData/folding/checkCollapse/doubleImportListsError.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/doubleImportListsError.kt");
         }
 
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            runTest("testData/folding/checkCollapse/functionLiteral.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/functionLiteral.kt");
         }
 
         @TestMetadata("functionWithExpressionBody.kt")
         public void testFunctionWithExpressionBody() throws Exception {
-            runTest("testData/folding/checkCollapse/functionWithExpressionBody.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/functionWithExpressionBody.kt");
         }
 
         @TestMetadata("functionWithExpressionBody2.kt")
         public void testFunctionWithExpressionBody2() throws Exception {
-            runTest("testData/folding/checkCollapse/functionWithExpressionBody2.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/functionWithExpressionBody2.kt");
         }
 
         @TestMetadata("headerKDoc.kt")
         public void testHeaderKDoc() throws Exception {
-            runTest("testData/folding/checkCollapse/headerKDoc.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/headerKDoc.kt");
         }
 
         @TestMetadata("headerMultilineComment.kt")
         public void testHeaderMultilineComment() throws Exception {
-            runTest("testData/folding/checkCollapse/headerMultilineComment.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/headerMultilineComment.kt");
         }
 
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
-            runTest("testData/folding/checkCollapse/imports.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/imports.kt");
         }
 
         @TestMetadata("multilineStrings.kt")
         public void testMultilineStrings() throws Exception {
-            runTest("testData/folding/checkCollapse/multilineStrings.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/multilineStrings.kt");
         }
 
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
-            runTest("testData/folding/checkCollapse/primaryConstructor.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/primaryConstructor.kt");
         }
 
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
-            runTest("testData/folding/checkCollapse/when.kt");
+            runTest("kotlin/idea/testData/folding/checkCollapse/when.kt");
         }
     }
 }

@@ -30,41 +30,41 @@ public class FirLazyResolveTestGenerated extends AbstractFirLazyResolveTest {
 
     @TestMetadata("elvis/elvis.test")
     public void testElvis_Elvis() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/elvis/elvis.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/elvis/elvis.test");
     }
 
     @TestMetadata("import/import.test")
     public void testImport_Import() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/import/import.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/import/import.test");
     }
 
     @TestMetadata("inInit/inInit.test")
     public void testInInit_InInit() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/inInit/inInit.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/inInit/inInit.test");
     }
 
     @TestMetadata("inLocal/inLocal.test")
     public void testInLocal_InLocal() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/inLocal/inLocal.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/inLocal/inLocal.test");
     }
 
     @TestMetadata("inSecondary/inSecondary.test")
     public void testInSecondary_InSecondary() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/inSecondary/inSecondary.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/inSecondary/inSecondary.test");
     }
 
     @TestMetadata("secondary/secondary.test")
     public void testSecondary_Secondary() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/secondary/secondary.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/secondary/secondary.test");
     }
 
     @TestMetadata("simple/simple.test")
     public void testSimple_Simple() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/simple/simple.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/simple/simple.test");
     }
 
     @TestMetadata("simpleProperty/simpleProperty.test")
     public void testSimpleProperty_SimpleProperty() throws Exception {
-        runTest("../idea/testData/fir/lazyResolve/simpleProperty/simpleProperty.test");
+        runTest("kotlin/idea/testData/fir/lazyResolve/simpleProperty/simpleProperty.test");
     }
 }

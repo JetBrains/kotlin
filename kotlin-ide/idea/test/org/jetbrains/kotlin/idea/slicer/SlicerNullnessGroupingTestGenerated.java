@@ -26,7 +26,7 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
 
     @TestMetadata("abstractFun.kt")
     public void testAbstractFun() throws Exception {
-        runTest("testData/slicer/inflow/abstractFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/abstractFun.kt");
     }
 
     public void testAllFilesPresentInInflow() throws Exception {
@@ -35,316 +35,316 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
 
     @TestMetadata("anonymousFunBodyExpression.kt")
     public void testAnonymousFunBodyExpression() throws Exception {
-        runTest("testData/slicer/inflow/anonymousFunBodyExpression.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
     }
 
     @TestMetadata("anonymousFunReturnExpression.kt")
     public void testAnonymousFunReturnExpression() throws Exception {
-        runTest("testData/slicer/inflow/anonymousFunReturnExpression.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/anonymousFunReturnExpression.kt");
     }
 
     @TestMetadata("cast.kt")
     public void testCast() throws Exception {
-        runTest("testData/slicer/inflow/cast.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/cast.kt");
     }
 
     @TestMetadata("compositeAssignments.kt")
     public void testCompositeAssignments() throws Exception {
-        runTest("testData/slicer/inflow/compositeAssignments.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/compositeAssignments.kt");
     }
 
     @TestMetadata("defaultGetterFieldInSetter.kt")
     public void testDefaultGetterFieldInSetter() throws Exception {
-        runTest("testData/slicer/inflow/defaultGetterFieldInSetter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
     }
 
     @TestMetadata("delegateGetter.kt")
     public void testDelegateGetter() throws Exception {
-        runTest("testData/slicer/inflow/delegateGetter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/delegateGetter.kt");
     }
 
     @TestMetadata("delegateToJavaGetter.kt")
     public void testDelegateToJavaGetter() throws Exception {
-        runTest("testData/slicer/inflow/delegateToJavaGetter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/delegateToJavaGetter.kt");
     }
 
     @TestMetadata("diamondHierarchyJKMiddleClassFun.kt")
     public void testDiamondHierarchyJKMiddleClassFun() throws Exception {
-        runTest("testData/slicer/inflow/diamondHierarchyJKMiddleClassFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/diamondHierarchyJKMiddleClassFun.kt");
     }
 
     @TestMetadata("diamondHierarchyJKMiddleInterfaceFun.kt")
     public void testDiamondHierarchyJKMiddleInterfaceFun() throws Exception {
-        runTest("testData/slicer/inflow/diamondHierarchyJKMiddleInterfaceFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/diamondHierarchyJKMiddleInterfaceFun.kt");
     }
 
     @TestMetadata("diamondHierarchyJKRootInterfaceFun.kt")
     public void testDiamondHierarchyJKRootInterfaceFun() throws Exception {
-        runTest("testData/slicer/inflow/diamondHierarchyJKRootInterfaceFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/diamondHierarchyJKRootInterfaceFun.kt");
     }
 
     @TestMetadata("diamondHierarchyMiddleClassFun.kt")
     public void testDiamondHierarchyMiddleClassFun() throws Exception {
-        runTest("testData/slicer/inflow/diamondHierarchyMiddleClassFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/diamondHierarchyMiddleClassFun.kt");
     }
 
     @TestMetadata("diamondHierarchyMiddleInterfaceFun.kt")
     public void testDiamondHierarchyMiddleInterfaceFun() throws Exception {
-        runTest("testData/slicer/inflow/diamondHierarchyMiddleInterfaceFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/diamondHierarchyMiddleInterfaceFun.kt");
     }
 
     @TestMetadata("diamondHierarchyRootInterfaceFun.kt")
     public void testDiamondHierarchyRootInterfaceFun() throws Exception {
-        runTest("testData/slicer/inflow/diamondHierarchyRootInterfaceFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/diamondHierarchyRootInterfaceFun.kt");
     }
 
     @TestMetadata("doubleLambdaResult.kt")
     public void testDoubleLambdaResult() throws Exception {
-        runTest("testData/slicer/inflow/doubleLambdaResult.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/doubleLambdaResult.kt");
     }
 
     @TestMetadata("funParamerer.kt")
     public void testFunParamerer() throws Exception {
-        runTest("testData/slicer/inflow/funParamerer.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funParamerer.kt");
     }
 
     @TestMetadata("funParamererWithDefault.kt")
     public void testFunParamererWithDefault() throws Exception {
-        runTest("testData/slicer/inflow/funParamererWithDefault.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funParamererWithDefault.kt");
     }
 
     @TestMetadata("funResultViaCallableRef.kt")
     public void testFunResultViaCallableRef() throws Exception {
-        runTest("testData/slicer/inflow/funResultViaCallableRef.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funResultViaCallableRef.kt");
     }
 
     @TestMetadata("funResultViaCallableRefWithAssignment.kt")
     public void testFunResultViaCallableRefWithAssignment() throws Exception {
-        runTest("testData/slicer/inflow/funResultViaCallableRefWithAssignment.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funResultViaCallableRefWithAssignment.kt");
     }
 
     @TestMetadata("funResultViaCallableRefWithDirectCall.kt")
     public void testFunResultViaCallableRefWithDirectCall() throws Exception {
-        runTest("testData/slicer/inflow/funResultViaCallableRefWithDirectCall.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funResultViaCallableRefWithDirectCall.kt");
     }
 
     @TestMetadata("funWithExpressionBody.kt")
     public void testFunWithExpressionBody() throws Exception {
-        runTest("testData/slicer/inflow/funWithExpressionBody.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funWithExpressionBody.kt");
     }
 
     @TestMetadata("funWithReturnExpressions.kt")
     public void testFunWithReturnExpressions() throws Exception {
-        runTest("testData/slicer/inflow/funWithReturnExpressions.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/funWithReturnExpressions.kt");
     }
 
     @TestMetadata("getterAndSetterUsingField.kt")
     public void testGetterAndSetterUsingField() throws Exception {
-        runTest("testData/slicer/inflow/getterAndSetterUsingField.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/getterAndSetterUsingField.kt");
     }
 
     @TestMetadata("getterExpressionBody.kt")
     public void testGetterExpressionBody() throws Exception {
-        runTest("testData/slicer/inflow/getterExpressionBody.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/getterExpressionBody.kt");
     }
 
     @TestMetadata("getterReturnExpression.kt")
     public void testGetterReturnExpression() throws Exception {
-        runTest("testData/slicer/inflow/getterReturnExpression.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/getterReturnExpression.kt");
     }
 
     @TestMetadata("ifExpression.kt")
     public void testIfExpression() throws Exception {
-        runTest("testData/slicer/inflow/ifExpression.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/ifExpression.kt");
     }
 
     @TestMetadata("lambdaResult.kt")
     public void testLambdaResult() throws Exception {
-        runTest("testData/slicer/inflow/lambdaResult.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/lambdaResult.kt");
     }
 
     @TestMetadata("lambdaResultWithAssignments.kt")
     public void testLambdaResultWithAssignments() throws Exception {
-        runTest("testData/slicer/inflow/lambdaResultWithAssignments.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/lambdaResultWithAssignments.kt");
     }
 
     @TestMetadata("lambdaResultWithDirectCall.kt")
     public void testLambdaResultWithDirectCall() throws Exception {
-        runTest("testData/slicer/inflow/lambdaResultWithDirectCall.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/lambdaResultWithDirectCall.kt");
     }
 
     @TestMetadata("lambdaResultWithDirectCallViaAssignment.kt")
     public void testLambdaResultWithDirectCallViaAssignment() throws Exception {
-        runTest("testData/slicer/inflow/lambdaResultWithDirectCallViaAssignment.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/lambdaResultWithDirectCallViaAssignment.kt");
     }
 
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
-        runTest("testData/slicer/inflow/localVal.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/localVal.kt");
     }
 
     @TestMetadata("localVar.kt")
     public void testLocalVar() throws Exception {
-        runTest("testData/slicer/inflow/localVar.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/localVar.kt");
     }
 
     @TestMetadata("memberValWithInitializer.kt")
     public void testMemberValWithInitializer() throws Exception {
-        runTest("testData/slicer/inflow/memberValWithInitializer.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/memberValWithInitializer.kt");
     }
 
     @TestMetadata("memberValWithSplitInitializer.kt")
     public void testMemberValWithSplitInitializer() throws Exception {
-        runTest("testData/slicer/inflow/memberValWithSplitInitializer.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/memberValWithSplitInitializer.kt");
     }
 
     @TestMetadata("memberVarWithInitializer.kt")
     public void testMemberVarWithInitializer() throws Exception {
-        runTest("testData/slicer/inflow/memberVarWithInitializer.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/memberVarWithInitializer.kt");
     }
 
     @TestMetadata("memberVarWithSplitInitializer.kt")
     public void testMemberVarWithSplitInitializer() throws Exception {
-        runTest("testData/slicer/inflow/memberVarWithSplitInitializer.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/memberVarWithSplitInitializer.kt");
     }
 
     @TestMetadata("noFieldInGetter.kt")
     public void testNoFieldInGetter() throws Exception {
-        runTest("testData/slicer/inflow/noFieldInGetter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/noFieldInGetter.kt");
     }
 
     @TestMetadata("nonLocalReturn.kt")
     public void testNonLocalReturn() throws Exception {
-        runTest("testData/slicer/inflow/nonLocalReturn.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/nonLocalReturn.kt");
     }
 
     @TestMetadata("notNullAssertion.kt")
     public void testNotNullAssertion() throws Exception {
-        runTest("testData/slicer/inflow/notNullAssertion.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/notNullAssertion.kt");
     }
 
     @TestMetadata("nullsAndNotNulls.kt")
     public void testNullsAndNotNulls() throws Exception {
-        runTest("testData/slicer/inflow/nullsAndNotNulls.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/nullsAndNotNulls.kt");
     }
 
     @TestMetadata("openFun.kt")
     public void testOpenFun() throws Exception {
-        runTest("testData/slicer/inflow/openFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/openFun.kt");
     }
 
     @TestMetadata("openFunInvokeOnParameter.kt")
     public void testOpenFunInvokeOnParameter() throws Exception {
-        runTest("testData/slicer/inflow/openFunInvokeOnParameter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
     }
 
     @TestMetadata("overrideFun.kt")
     public void testOverrideFun() throws Exception {
-        runTest("testData/slicer/inflow/overrideFun.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/overrideFun.kt");
     }
 
     @TestMetadata("overrideProperty.kt")
     public void testOverrideProperty() throws Exception {
-        runTest("testData/slicer/inflow/overrideProperty.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/overrideProperty.kt");
     }
 
     @TestMetadata("overridingFunctionResult.kt")
     public void testOverridingFunctionResult() throws Exception {
-        runTest("testData/slicer/inflow/overridingFunctionResult.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/overridingFunctionResult.kt");
     }
 
     @TestMetadata("overridingParameter.kt")
     public void testOverridingParameter() throws Exception {
-        runTest("testData/slicer/inflow/overridingParameter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/overridingParameter.kt");
     }
 
     @TestMetadata("overridingPropertyGetterResult.kt")
     public void testOverridingPropertyGetterResult() throws Exception {
-        runTest("testData/slicer/inflow/overridingPropertyGetterResult.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/overridingPropertyGetterResult.kt");
     }
 
     @TestMetadata("overridingPropertyResult.kt")
     public void testOverridingPropertyResult() throws Exception {
-        runTest("testData/slicer/inflow/overridingPropertyResult.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/overridingPropertyResult.kt");
     }
 
     @TestMetadata("primaryConstructorParameter.kt")
     public void testPrimaryConstructorParameter() throws Exception {
-        runTest("testData/slicer/inflow/primaryConstructorParameter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/primaryConstructorParameter.kt");
     }
 
     @TestMetadata("primaryConstructorParameterWithDefault.kt")
     public void testPrimaryConstructorParameterWithDefault() throws Exception {
-        runTest("testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
     }
 
     @TestMetadata("propertyInInterface.kt")
     public void testPropertyInInterface() throws Exception {
-        runTest("testData/slicer/inflow/propertyInInterface.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/propertyInInterface.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForQualifiedRef.kt")
     public void testQualifiedAssignmentsForQualifiedRef() throws Exception {
-        runTest("testData/slicer/inflow/qualifiedAssignmentsForQualifiedRef.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/qualifiedAssignmentsForQualifiedRef.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForSimpleRef.kt")
     public void testQualifiedAssignmentsForSimpleRef() throws Exception {
-        runTest("testData/slicer/inflow/qualifiedAssignmentsForSimpleRef.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/qualifiedAssignmentsForSimpleRef.kt");
     }
 
     @TestMetadata("safeCast.kt")
     public void testSafeCast() throws Exception {
-        runTest("testData/slicer/inflow/safeCast.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/safeCast.kt");
     }
 
     @TestMetadata("secondaryConstructorParameter.kt")
     public void testSecondaryConstructorParameter() throws Exception {
-        runTest("testData/slicer/inflow/secondaryConstructorParameter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/secondaryConstructorParameter.kt");
     }
 
     @TestMetadata("secondaryConstructorParameterWithDefault.kt")
     public void testSecondaryConstructorParameterWithDefault() throws Exception {
-        runTest("testData/slicer/inflow/secondaryConstructorParameterWithDefault.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/secondaryConstructorParameterWithDefault.kt");
     }
 
     @TestMetadata("settersViaDelegateForQualifiedRef.kt")
     public void testSettersViaDelegateForQualifiedRef() throws Exception {
-        runTest("testData/slicer/inflow/settersViaDelegateForQualifiedRef.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/settersViaDelegateForQualifiedRef.kt");
     }
 
     @TestMetadata("settersViaDelegateForSimpleRef.kt")
     public void testSettersViaDelegateForSimpleRef() throws Exception {
-        runTest("testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
     }
 
     @TestMetadata("settersViaJavaDelegate.kt")
     public void testSettersViaJavaDelegate() throws Exception {
-        runTest("testData/slicer/inflow/settersViaJavaDelegate.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
     }
 
     @TestMetadata("topLevelVal.kt")
     public void testTopLevelVal() throws Exception {
-        runTest("testData/slicer/inflow/topLevelVal.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/topLevelVal.kt");
     }
 
     @TestMetadata("topLevelVar.kt")
     public void testTopLevelVar() throws Exception {
-        runTest("testData/slicer/inflow/topLevelVar.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/topLevelVar.kt");
     }
 
     @TestMetadata("valParameter.kt")
     public void testValParameter() throws Exception {
-        runTest("testData/slicer/inflow/valParameter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/valParameter.kt");
     }
 
     @TestMetadata("varParameter.kt")
     public void testVarParameter() throws Exception {
-        runTest("testData/slicer/inflow/varParameter.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/varParameter.kt");
     }
 
     @TestMetadata("whenExpression.kt")
     public void testWhenExpression() throws Exception {
-        runTest("testData/slicer/inflow/whenExpression.kt");
+        runTest("kotlin/idea/testData/slicer/inflow/whenExpression.kt");
     }
 }

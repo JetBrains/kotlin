@@ -30,46 +30,46 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
 
     @TestMetadata("fakeJvmFieldConstant/fakeJvmFieldConstant.test")
     public void testFakeJvmFieldConstant_FakeJvmFieldConstant() throws Exception {
-        runTest("testData/multiFileInspections/fakeJvmFieldConstant/fakeJvmFieldConstant.test");
+        runTest("kotlin/idea/testData/multiFileInspections/fakeJvmFieldConstant/fakeJvmFieldConstant.test");
     }
 
     @TestMetadata("invalidBundleOrProperty/invalidBundleOrProperty.test")
     public void testInvalidBundleOrProperty_InvalidBundleOrProperty() throws Exception {
-        runTest("testData/multiFileInspections/invalidBundleOrProperty/invalidBundleOrProperty.test");
+        runTest("kotlin/idea/testData/multiFileInspections/invalidBundleOrProperty/invalidBundleOrProperty.test");
     }
 
     @TestMetadata("kotlinInternalInJava/kotlinInternalInJava.test")
     public void testKotlinInternalInJava_KotlinInternalInJava() throws Exception {
-        runTest("testData/multiFileInspections/kotlinInternalInJava/kotlinInternalInJava.test");
+        runTest("kotlin/idea/testData/multiFileInspections/kotlinInternalInJava/kotlinInternalInJava.test");
     }
 
     @TestMetadata("kotlinInternalInJavaTest/kotlinInternalInJavaTest.test")
     public void testKotlinInternalInJavaTest_KotlinInternalInJavaTest() throws Exception {
-        runTest("testData/multiFileInspections/kotlinInternalInJavaTest/kotlinInternalInJavaTest.test");
+        runTest("kotlin/idea/testData/multiFileInspections/kotlinInternalInJavaTest/kotlinInternalInJavaTest.test");
     }
 
     @TestMetadata("mainInTwoModules/mainInTwoModules.test")
     public void testMainInTwoModules_MainInTwoModules() throws Exception {
-        runTest("testData/multiFileInspections/mainInTwoModules/mainInTwoModules.test");
+        runTest("kotlin/idea/testData/multiFileInspections/mainInTwoModules/mainInTwoModules.test");
     }
 
     @TestMetadata("mismatchedPackageDirectoryWithEmptyKts/mismatchedPackageDirectoryWithEmptyKts.test")
     public void testMismatchedPackageDirectoryWithEmptyKts_MismatchedPackageDirectoryWithEmptyKts() throws Exception {
-        runTest("testData/multiFileInspections/mismatchedPackageDirectoryWithEmptyKts/mismatchedPackageDirectoryWithEmptyKts.test");
+        runTest("kotlin/idea/testData/multiFileInspections/mismatchedPackageDirectoryWithEmptyKts/mismatchedPackageDirectoryWithEmptyKts.test");
     }
 
     @TestMetadata("mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test")
     public void testMismatchedProjectAndDirectory_MismatchedProjectAndDirectory() throws Exception {
-        runTest("testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");
+        runTest("kotlin/idea/testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");
     }
 
     @TestMetadata("mismatchedProjectAndDirectoryRoot/mismatchedProjectAndDirectoryRoot.test")
     public void testMismatchedProjectAndDirectoryRoot_MismatchedProjectAndDirectoryRoot() throws Exception {
-        runTest("testData/multiFileInspections/mismatchedProjectAndDirectoryRoot/mismatchedProjectAndDirectoryRoot.test");
+        runTest("kotlin/idea/testData/multiFileInspections/mismatchedProjectAndDirectoryRoot/mismatchedProjectAndDirectoryRoot.test");
     }
 
     @TestMetadata("platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test")
     public void testPlatformExtensionReceiverOfInline_PlatformExtensionReceiverOfInline() throws Exception {
-        runTest("testData/multiFileInspections/platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test");
+        runTest("kotlin/idea/testData/multiFileInspections/platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test");
     }
 }

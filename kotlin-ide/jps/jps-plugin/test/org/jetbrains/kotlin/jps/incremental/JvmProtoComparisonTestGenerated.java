@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonTest {
-    @TestMetadata("testData/comparison/classSignatureChange")
+    @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassSignatureChange extends AbstractJvmProtoComparisonTest {
@@ -27,65 +27,65 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
 
         public void testAllFilesPresentInClassSignatureChange() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classAnnotationListChanged")
         public void testClassAnnotationListChanged() throws Exception {
-            runTest("testData/comparison/classSignatureChange/classAnnotationListChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged/");
         }
 
         @TestMetadata("classFlagsAndMembersChanged")
         public void testClassFlagsAndMembersChanged() throws Exception {
-            runTest("testData/comparison/classSignatureChange/classFlagsAndMembersChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged/");
         }
 
         @TestMetadata("classFlagsChanged")
         public void testClassFlagsChanged() throws Exception {
-            runTest("testData/comparison/classSignatureChange/classFlagsChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged/");
         }
 
         @TestMetadata("classTypeParameterListChanged")
         public void testClassTypeParameterListChanged() throws Exception {
-            runTest("testData/comparison/classSignatureChange/classTypeParameterListChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged/");
         }
 
         @TestMetadata("classWithSuperTypeListChanged")
         public void testClassWithSuperTypeListChanged() throws Exception {
-            runTest("testData/comparison/classSignatureChange/classWithSuperTypeListChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged/");
         }
 
         @TestMetadata("nestedClassSignatureChanged")
         public void testNestedClassSignatureChanged() throws Exception {
-            runTest("testData/comparison/classSignatureChange/nestedClassSignatureChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged/");
         }
 
         @TestMetadata("sealedClassImplAdded")
         public void testSealedClassImplAdded() throws Exception {
-            runTest("testData/comparison/classSignatureChange/sealedClassImplAdded");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded/");
         }
 
         @TestMetadata("sealedClassImplRemoved")
         public void testSealedClassImplRemoved() throws Exception {
-            runTest("testData/comparison/classSignatureChange/sealedClassImplRemoved");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved/");
         }
 
         @TestMetadata("sealedClassNestedImplAdded")
         public void testSealedClassNestedImplAdded() throws Exception {
-            runTest("testData/comparison/classSignatureChange/sealedClassNestedImplAdded");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded/");
         }
 
         @TestMetadata("sealedClassNestedImplAddedDeep")
         public void testSealedClassNestedImplAddedDeep() throws Exception {
-            runTest("testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep/");
         }
 
         @TestMetadata("sealedClassNestedImplRemoved")
         public void testSealedClassNestedImplRemoved() throws Exception {
-            runTest("testData/comparison/classSignatureChange/sealedClassNestedImplRemoved");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved/");
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/classAnnotationListChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassAnnotationListChanged extends AbstractJvmProtoComparisonTest {
@@ -94,11 +94,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassAnnotationListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/classAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/classFlagsAndMembersChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassFlagsAndMembersChanged extends AbstractJvmProtoComparisonTest {
@@ -107,11 +107,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassFlagsAndMembersChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/classFlagsAndMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/classFlagsChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassFlagsChanged extends AbstractJvmProtoComparisonTest {
@@ -120,11 +120,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/classFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/classTypeParameterListChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassTypeParameterListChanged extends AbstractJvmProtoComparisonTest {
@@ -133,11 +133,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassTypeParameterListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/classTypeParameterListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/classWithSuperTypeListChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithSuperTypeListChanged extends AbstractJvmProtoComparisonTest {
@@ -146,11 +146,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithSuperTypeListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/classWithSuperTypeListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/nestedClassSignatureChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NestedClassSignatureChanged extends AbstractJvmProtoComparisonTest {
@@ -159,11 +159,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInNestedClassSignatureChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/nestedClassSignatureChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/sealedClassImplAdded")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SealedClassImplAdded extends AbstractJvmProtoComparisonTest {
@@ -172,11 +172,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInSealedClassImplAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/sealedClassImplRemoved")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SealedClassImplRemoved extends AbstractJvmProtoComparisonTest {
@@ -185,11 +185,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInSealedClassImplRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/sealedClassImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/sealedClassNestedImplAdded")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SealedClassNestedImplAdded extends AbstractJvmProtoComparisonTest {
@@ -198,11 +198,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInSealedClassNestedImplAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/sealedClassNestedImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SealedClassNestedImplAddedDeep extends AbstractJvmProtoComparisonTest {
@@ -211,11 +211,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInSealedClassNestedImplAddedDeep() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classSignatureChange/sealedClassNestedImplRemoved")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SealedClassNestedImplRemoved extends AbstractJvmProtoComparisonTest {
@@ -224,12 +224,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInSealedClassNestedImplRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classSignatureChange/sealedClassNestedImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("testData/comparison/classPrivateOnlyChange")
+    @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassPrivateOnlyChange extends AbstractJvmProtoComparisonTest {
@@ -238,35 +238,35 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
 
         public void testAllFilesPresentInClassPrivateOnlyChange() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classWithPrivateFunChanged")
         public void testClassWithPrivateFunChanged() throws Exception {
-            runTest("testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged/");
         }
 
         @TestMetadata("classWithPrivatePrimaryConstructorChanged")
         public void testClassWithPrivatePrimaryConstructorChanged() throws Exception {
-            runTest("testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged/");
         }
 
         @TestMetadata("classWithPrivateSecondaryConstructorChanged")
         public void testClassWithPrivateSecondaryConstructorChanged() throws Exception {
-            runTest("testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged/");
         }
 
         @TestMetadata("classWithPrivateValChanged")
         public void testClassWithPrivateValChanged() throws Exception {
-            runTest("testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged/");
         }
 
         @TestMetadata("classWithPrivateVarChanged")
         public void testClassWithPrivateVarChanged() throws Exception {
-            runTest("testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged/");
         }
 
-        @TestMetadata("testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithPrivateFunChanged extends AbstractJvmProtoComparisonTest {
@@ -275,11 +275,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithPrivateFunChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithPrivatePrimaryConstructorChanged extends AbstractJvmProtoComparisonTest {
@@ -288,11 +288,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithPrivatePrimaryConstructorChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithPrivateSecondaryConstructorChanged extends AbstractJvmProtoComparisonTest {
@@ -301,11 +301,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithPrivateSecondaryConstructorChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithPrivateValChanged extends AbstractJvmProtoComparisonTest {
@@ -314,11 +314,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithPrivateValChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithPrivateVarChanged extends AbstractJvmProtoComparisonTest {
@@ -327,12 +327,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithPrivateVarChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("testData/comparison/classMembersOnlyChanged")
+    @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassMembersOnlyChanged extends AbstractJvmProtoComparisonTest {
@@ -341,60 +341,60 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
 
         public void testAllFilesPresentInClassMembersOnlyChanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classWithCompanionObjectChanged")
         public void testClassWithCompanionObjectChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged/");
         }
 
         @TestMetadata("classWithConstructorChanged")
         public void testClassWithConstructorChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/classWithConstructorChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged/");
         }
 
         @TestMetadata("classWithFunAndValChanged")
         public void testClassWithFunAndValChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged/");
         }
 
         @TestMetadata("classWithNestedClassesChanged")
         public void testClassWithNestedClassesChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged/");
         }
 
         @TestMetadata("classWitnEnumChanged")
         public void testClassWitnEnumChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/classWitnEnumChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged/");
         }
 
         @TestMetadata("defaultValues")
         public void testDefaultValues() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/defaultValues");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues/");
         }
 
         @TestMetadata("membersAnnotationListChanged")
         public void testMembersAnnotationListChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged/");
         }
 
         @TestMetadata("membersFlagsChanged")
         public void testMembersFlagsChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/membersFlagsChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged/");
         }
 
         @TestMetadata("nestedClassMembersChanged")
         public void testNestedClassMembersChanged() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged/");
         }
 
         @TestMetadata("sealedClassImplAdded")
         public void testSealedClassImplAdded() throws Exception {
-            runTest("testData/comparison/classMembersOnlyChanged/sealedClassImplAdded");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded/");
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithCompanionObjectChanged extends AbstractJvmProtoComparisonTest {
@@ -403,11 +403,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithCompanionObjectChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/classWithConstructorChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithConstructorChanged extends AbstractJvmProtoComparisonTest {
@@ -416,11 +416,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithConstructorChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/classWithConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithFunAndValChanged extends AbstractJvmProtoComparisonTest {
@@ -429,11 +429,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithFunAndValChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWithNestedClassesChanged extends AbstractJvmProtoComparisonTest {
@@ -442,11 +442,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWithNestedClassesChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/classWitnEnumChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassWitnEnumChanged extends AbstractJvmProtoComparisonTest {
@@ -455,11 +455,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassWitnEnumChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/classWitnEnumChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/defaultValues")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultValues extends AbstractJvmProtoComparisonTest {
@@ -468,11 +468,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInDefaultValues() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MembersAnnotationListChanged extends AbstractJvmProtoComparisonTest {
@@ -481,11 +481,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInMembersAnnotationListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/membersFlagsChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MembersFlagsChanged extends AbstractJvmProtoComparisonTest {
@@ -494,11 +494,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInMembersFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NestedClassMembersChanged extends AbstractJvmProtoComparisonTest {
@@ -507,11 +507,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInNestedClassMembersChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/classMembersOnlyChanged/sealedClassImplAdded")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SealedClassImplAdded extends AbstractJvmProtoComparisonTest {
@@ -520,12 +520,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInSealedClassImplAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/classMembersOnlyChanged/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("testData/comparison/packageMembers")
+    @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/packageMembers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PackageMembers extends AbstractJvmProtoComparisonTest {
@@ -534,35 +534,35 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
 
         public void testAllFilesPresentInPackageMembers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("defaultValues")
         public void testDefaultValues() throws Exception {
-            runTest("testData/comparison/packageMembers/defaultValues");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/packageMembers/defaultValues/");
         }
 
         @TestMetadata("membersAnnotationListChanged")
         public void testMembersAnnotationListChanged() throws Exception {
-            runTest("testData/comparison/packageMembers/membersAnnotationListChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged/");
         }
 
         @TestMetadata("membersFlagsChanged")
         public void testMembersFlagsChanged() throws Exception {
-            runTest("testData/comparison/packageMembers/membersFlagsChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/packageMembers/membersFlagsChanged/");
         }
 
         @TestMetadata("packageFacadePrivateOnlyChanges")
         public void testPackageFacadePrivateOnlyChanges() throws Exception {
-            runTest("testData/comparison/packageMembers/packageFacadePrivateOnlyChanges");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges/");
         }
 
         @TestMetadata("packageFacadePublicChanges")
         public void testPackageFacadePublicChanges() throws Exception {
-            runTest("testData/comparison/packageMembers/packageFacadePublicChanges");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges/");
         }
 
-        @TestMetadata("testData/comparison/packageMembers/defaultValues")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/packageMembers/defaultValues")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultValues extends AbstractJvmProtoComparisonTest {
@@ -571,11 +571,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInDefaultValues() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/packageMembers/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/packageMembers/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/packageMembers/membersAnnotationListChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MembersAnnotationListChanged extends AbstractJvmProtoComparisonTest {
@@ -584,11 +584,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInMembersAnnotationListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/packageMembers/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/packageMembers/membersFlagsChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/packageMembers/membersFlagsChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MembersFlagsChanged extends AbstractJvmProtoComparisonTest {
@@ -597,11 +597,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInMembersFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/packageMembers/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/packageMembers/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/packageMembers/packageFacadePrivateOnlyChanges")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageFacadePrivateOnlyChanges extends AbstractJvmProtoComparisonTest {
@@ -610,11 +610,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInPackageFacadePrivateOnlyChanges() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/packageMembers/packageFacadePrivateOnlyChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/packageMembers/packageFacadePublicChanges")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageFacadePublicChanges extends AbstractJvmProtoComparisonTest {
@@ -623,12 +623,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInPackageFacadePublicChanges() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/packageMembers/packageFacadePublicChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("testData/comparison/unchanged")
+    @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/unchanged")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Unchanged extends AbstractJvmProtoComparisonTest {
@@ -637,20 +637,20 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
 
         public void testAllFilesPresentInUnchanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("unchangedClass")
         public void testUnchangedClass() throws Exception {
-            runTest("testData/comparison/unchanged/unchangedClass");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/unchanged/unchangedClass/");
         }
 
         @TestMetadata("unchangedPackageFacade")
         public void testUnchangedPackageFacade() throws Exception {
-            runTest("testData/comparison/unchanged/unchangedPackageFacade");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/unchanged/unchangedPackageFacade/");
         }
 
-        @TestMetadata("testData/comparison/unchanged/unchangedClass")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/unchanged/unchangedClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class UnchangedClass extends AbstractJvmProtoComparisonTest {
@@ -659,11 +659,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInUnchangedClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/unchanged/unchangedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/unchanged/unchangedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/unchanged/unchangedPackageFacade")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/unchanged/unchangedPackageFacade")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class UnchangedPackageFacade extends AbstractJvmProtoComparisonTest {
@@ -672,12 +672,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInUnchangedPackageFacade() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/unchanged/unchangedPackageFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/unchanged/unchangedPackageFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("testData/comparison/jvmOnly")
+    @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/jvmOnly")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JvmOnly extends AbstractJvmProtoComparisonTest {
@@ -686,30 +686,30 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
 
         public void testAllFilesPresentInJvmOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classToFileFacade")
         public void testClassToFileFacade() throws Exception {
-            runTest("testData/comparison/jvmOnly/classToFileFacade");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/classToFileFacade/");
         }
 
         @TestMetadata("membersFlagsChanged")
         public void testMembersFlagsChanged() throws Exception {
-            runTest("testData/comparison/jvmOnly/membersFlagsChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/membersFlagsChanged/");
         }
 
         @TestMetadata("packageFacadeMultifileClassChanged")
         public void testPackageFacadeMultifileClassChanged() throws Exception {
-            runTest("testData/comparison/jvmOnly/packageFacadeMultifileClassChanged");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeMultifileClassChanged/");
         }
 
         @TestMetadata("packageFacadeToClass")
         public void testPackageFacadeToClass() throws Exception {
-            runTest("testData/comparison/jvmOnly/packageFacadeToClass");
+            runTest("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeToClass/");
         }
 
-        @TestMetadata("testData/comparison/jvmOnly/classToFileFacade")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/classToFileFacade")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassToFileFacade extends AbstractJvmProtoComparisonTest {
@@ -718,11 +718,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInClassToFileFacade() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/jvmOnly/classToFileFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/classToFileFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/jvmOnly/membersFlagsChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/membersFlagsChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MembersFlagsChanged extends AbstractJvmProtoComparisonTest {
@@ -731,11 +731,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInMembersFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/jvmOnly/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/jvmOnly/packageFacadeMultifileClassChanged")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeMultifileClassChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageFacadeMultifileClassChanged extends AbstractJvmProtoComparisonTest {
@@ -744,11 +744,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInPackageFacadeMultifileClassChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/jvmOnly/packageFacadeMultifileClassChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeMultifileClassChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("testData/comparison/jvmOnly/packageFacadeToClass")
+        @TestMetadata("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeToClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageFacadeToClass extends AbstractJvmProtoComparisonTest {
@@ -757,7 +757,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
             }
 
             public void testAllFilesPresentInPackageFacadeToClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/comparison/jvmOnly/packageFacadeToClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeToClass"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }

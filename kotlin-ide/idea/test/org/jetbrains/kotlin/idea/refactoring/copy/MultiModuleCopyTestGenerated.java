@@ -30,16 +30,16 @@ public class MultiModuleCopyTestGenerated extends AbstractMultiModuleCopyTest {
 
     @TestMetadata("fileNotUnderSourceRoot/fileNotUnderSourceRoot.test")
     public void testFileNotUnderSourceRoot_FileNotUnderSourceRoot() throws Exception {
-        runTest("testData/refactoring/copyMultiModule/fileNotUnderSourceRoot/fileNotUnderSourceRoot.test");
+        runTest("kotlin/idea/testData/refactoring/copyMultiModule/fileNotUnderSourceRoot/fileNotUnderSourceRoot.test");
     }
 
     @TestMetadata("internalReferencesToAnotherModule2/internalReferencesToAnotherModule.test")
     public void testInternalReferencesToAnotherModule2_InternalReferencesToAnotherModule() throws Exception {
-        runTest("testData/refactoring/copyMultiModule/internalReferencesToAnotherModule2/internalReferencesToAnotherModule.test");
+        runTest("kotlin/idea/testData/refactoring/copyMultiModule/internalReferencesToAnotherModule2/internalReferencesToAnotherModule.test");
     }
 
     @TestMetadata("referencesToUnrelatedModule/referencesToUnrelatedModule.test")
     public void testReferencesToUnrelatedModule_ReferencesToUnrelatedModule() throws Exception {
-        runTest("testData/refactoring/copyMultiModule/referencesToUnrelatedModule/referencesToUnrelatedModule.test");
+        runTest("kotlin/idea/testData/refactoring/copyMultiModule/referencesToUnrelatedModule/referencesToUnrelatedModule.test");
     }
 }

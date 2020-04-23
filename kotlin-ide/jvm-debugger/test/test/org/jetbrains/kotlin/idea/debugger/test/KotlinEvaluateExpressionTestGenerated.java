@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
-    @TestMetadata("testData/evaluation/singleBreakpoint")
+    @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
@@ -28,489 +28,489 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
 
         @TestMetadata("abstractFunCall.kt")
         public void testAbstractFunCall() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/abstractFunCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/abstractFunCall.kt");
         }
 
         @TestMetadata("accessToOverridenPropertyWithBackingField.kt")
         public void testAccessToOverridenPropertyWithBackingField() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/accessToOverridenPropertyWithBackingField.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/accessToOverridenPropertyWithBackingField.kt");
         }
 
         public void testAllFilesPresentInSingleBreakpoint() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotationValue.kt")
         public void testAnnotationValue() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/annotationValue.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/annotationValue.kt");
         }
 
         @TestMetadata("anonymousObjects.kt")
         public void testAnonymousObjects() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/anonymousObjects.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/anonymousObjects.kt");
         }
 
         @TestMetadata("arrayMethods.kt")
         public void testArrayMethods() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/arrayMethods.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/arrayMethods.kt");
         }
 
         @TestMetadata("arrays.kt")
         public void testArrays() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/arrays.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/arrays.kt");
         }
 
         @TestMetadata("boxParam.kt")
         public void testBoxParam() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/boxParam.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/boxParam.kt");
         }
 
         @TestMetadata("boxReturnValue.kt")
         public void testBoxReturnValue() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/boxReturnValue.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/boxReturnValue.kt");
         }
 
         @TestMetadata("breakpointInInlineFun.kt")
         public void testBreakpointInInlineFun() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/breakpointInInlineFun.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/breakpointInInlineFun.kt");
         }
 
         @TestMetadata("callableBug.kt")
         public void testCallableBug() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/callableBug.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/callableBug.kt");
         }
 
         @TestMetadata("classFromAnotherPackage.kt")
         public void testClassFromAnotherPackage() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/classFromAnotherPackage.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/classFromAnotherPackage.kt");
         }
 
         @TestMetadata("classObjectVal.kt")
         public void testClassObjectVal() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/classObjectVal.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/classObjectVal.kt");
         }
 
         @TestMetadata("collections.kt")
         public void testCollections() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/collections.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/collections.kt");
         }
 
         @TestMetadata("dataClassCopy.kt")
         public void testDataClassCopy() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/dataClassCopy.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/dataClassCopy.kt");
         }
 
         @TestMetadata("defaultParameterValues.kt")
         public void testDefaultParameterValues() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/defaultParameterValues.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/defaultParameterValues.kt");
         }
 
         @TestMetadata("defaultParameterValues2.kt")
         public void testDefaultParameterValues2() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/defaultParameterValues2.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/defaultParameterValues2.kt");
         }
 
         @TestMetadata("delegatedPropertyInOtherFile.kt")
         public void testDelegatedPropertyInOtherFile() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/delegatedPropertyInOtherFile.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/delegatedPropertyInOtherFile.kt");
         }
 
         @TestMetadata("delegatedVariables.kt")
         public void testDelegatedVariables() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/delegatedVariables.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/delegatedVariables.kt");
         }
 
         @TestMetadata("dependentOnFile.kt")
         public void testDependentOnFile() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/dependentOnFile.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/dependentOnFile.kt");
         }
 
         @TestMetadata("doubles.kt")
         public void testDoubles() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/doubles.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/doubles.kt");
         }
 
         @TestMetadata("enums.kt")
         public void testEnums() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/enums.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/enums.kt");
         }
 
         @TestMetadata("errors.kt")
         public void testErrors() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/errors.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/errors.kt");
         }
 
         @TestMetadata("escapedNames.kt")
         public void testEscapedNames() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/escapedNames.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/escapedNames.kt");
         }
 
         @TestMetadata("experimentalApi.kt")
         public void testExperimentalApi() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/experimentalApi.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/experimentalApi.kt");
         }
 
         @TestMetadata("extractLocalVariables.kt")
         public void testExtractLocalVariables() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/extractLocalVariables.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extractLocalVariables.kt");
         }
 
         @TestMetadata("extractThis.kt")
         public void testExtractThis() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/extractThis.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extractThis.kt");
         }
 
         @TestMetadata("extractThisInTrait.kt")
         public void testExtractThisInTrait() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/extractThisInTrait.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extractThisInTrait.kt");
         }
 
         @TestMetadata("extractVariablesFromCall.kt")
         public void testExtractVariablesFromCall() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/extractVariablesFromCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extractVariablesFromCall.kt");
         }
 
         @TestMetadata("fieldGetters.kt")
         public void testFieldGetters() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/fieldGetters.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/fieldGetters.kt");
         }
 
         @TestMetadata("fileWithError.kt")
         public void testFileWithError() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/fileWithError.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/fileWithError.kt");
         }
 
         @TestMetadata("funFromSuperClass.kt")
         public void testFunFromSuperClass() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/funFromSuperClass.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/funFromSuperClass.kt");
         }
 
         @TestMetadata("functionDeclaration.kt")
         public void testFunctionDeclaration() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/functionDeclaration.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/functionDeclaration.kt");
         }
 
         @TestMetadata("functionWithBodyExpression.kt")
         public void testFunctionWithBodyExpression() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/functionWithBodyExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/functionWithBodyExpression.kt");
         }
 
         @TestMetadata("genericCrossinlineArgument.kt")
         public void testGenericCrossinlineArgument() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/genericCrossinlineArgument.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/genericCrossinlineArgument.kt");
         }
 
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/imports.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/imports.kt");
         }
 
         @TestMetadata("importsLambdaContext.kt")
         public void testImportsLambdaContext() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/importsLambdaContext.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/importsLambdaContext.kt");
         }
 
         @TestMetadata("inlineFunInMultiFilePackage.kt")
         public void testInlineFunInMultiFilePackage() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/inlineFunInMultiFilePackage.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/inlineFunInMultiFilePackage.kt");
         }
 
         @TestMetadata("inlineFunction.kt")
         public void testInlineFunction() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/inlineFunction.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/inlineFunction.kt");
         }
 
         @TestMetadata("inlineFunctionBreakpointAnotherFile.kt")
         public void testInlineFunctionBreakpointAnotherFile() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/inlineFunctionBreakpointAnotherFile.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/inlineFunctionBreakpointAnotherFile.kt");
         }
 
         @TestMetadata("inlineFunctionBreakpointVariants.kt")
         public void testInlineFunctionBreakpointVariants() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/inlineFunctionBreakpointVariants.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/inlineFunctionBreakpointVariants.kt");
         }
 
         @TestMetadata("inlineMethodsInSignature.kt")
         public void testInlineMethodsInSignature() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/inlineMethodsInSignature.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/inlineMethodsInSignature.kt");
         }
 
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/innerClass.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/innerClass.kt");
         }
 
         @TestMetadata("insertInBlock.kt")
         public void testInsertInBlock() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/insertInBlock.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/insertInBlock.kt");
         }
 
         @TestMetadata("internalFunctionEvaluate.kt")
         public void testInternalFunctionEvaluate() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/internalFunctionEvaluate.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/internalFunctionEvaluate.kt");
         }
 
         @TestMetadata("internalProperty.kt")
         public void testInternalProperty() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/internalProperty.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/internalProperty.kt");
         }
 
         @TestMetadata("javaStaticMethods.kt")
         public void testJavaStaticMethods() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/javaStaticMethods.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaStaticMethods.kt");
         }
 
         @TestMetadata("kClass.kt")
         public void testKClass() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kClass.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kClass.kt");
         }
 
         @TestMetadata("kt12206BasePropertyWithoutBackingField.kt")
         public void testKt12206BasePropertyWithoutBackingField() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
         }
 
         @TestMetadata("kt15259.kt")
         public void testKt15259() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt15259.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt15259.kt");
         }
 
         @TestMetadata("kt17514.kt")
         public void testKt17514() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt17514.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt17514.kt");
         }
 
         @TestMetadata("kt22366.kt")
         public void testKt22366() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt22366.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt22366.kt");
         }
 
         @TestMetadata("kt25220.kt")
         public void testKt25220() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt25220.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt25220.kt");
         }
 
         @TestMetadata("kt25222.kt")
         public void testKt25222() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt25222.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt25222.kt");
         }
 
         @TestMetadata("kt28087.kt")
         public void testKt28087() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt28087.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt28087.kt");
         }
 
         @TestMetadata("kt29179.kt")
         public void testKt29179() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt29179.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt29179.kt");
         }
 
         @TestMetadata("kt31709.kt")
         public void testKt31709() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt31709.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt31709.kt");
         }
 
         @TestMetadata("kt5554OnlyIntsShouldBeCoerced.kt")
         public void testKt5554OnlyIntsShouldBeCoerced() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt5554OnlyIntsShouldBeCoerced.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt5554OnlyIntsShouldBeCoerced.kt");
         }
 
         @TestMetadata("kt7046localVarInInline.kt")
         public void testKt7046localVarInInline() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/kt7046localVarInInline.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/kt7046localVarInInline.kt");
         }
 
         @TestMetadata("lambdaToString.kt")
         public void testLambdaToString() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/lambdaToString.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdaToString.kt");
         }
 
         @TestMetadata("localClass.kt")
         public void testLocalClass() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/localClass.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/localClass.kt");
         }
 
         @TestMetadata("localFunctionsWithReceivers.kt")
         public void testLocalFunctionsWithReceivers() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/localFunctionsWithReceivers.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/localFunctionsWithReceivers.kt");
         }
 
         @TestMetadata("localVariables.kt")
         public void testLocalVariables() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/localVariables.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/localVariables.kt");
         }
 
         @TestMetadata("methodWithBreakpoint.kt")
         public void testMethodWithBreakpoint() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/methodWithBreakpoint.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/methodWithBreakpoint.kt");
         }
 
         @TestMetadata("multilineExpressionAtBreakpoint.kt")
         public void testMultilineExpressionAtBreakpoint() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/multilineExpressionAtBreakpoint.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/multilineExpressionAtBreakpoint.kt");
         }
 
         @TestMetadata("nestedInlineArguments.kt")
         public void testNestedInlineArguments() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/nestedInlineArguments.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/nestedInlineArguments.kt");
         }
 
         @TestMetadata("nonAssignmentLValue.kt")
         public void testNonAssignmentLValue() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/nonAssignmentLValue.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/nonAssignmentLValue.kt");
         }
 
         @TestMetadata("nothing.kt")
         public void testNothing() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/nothing.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/nothing.kt");
         }
 
         @TestMetadata("onClassHeader.kt")
         public void testOnClassHeader() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/onClassHeader.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/onClassHeader.kt");
         }
 
         @TestMetadata("onGetter.kt")
         public void testOnGetter() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/onGetter.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/onGetter.kt");
         }
 
         @TestMetadata("onObjectHeader.kt")
         public void testOnObjectHeader() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/onObjectHeader.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/onObjectHeader.kt");
         }
 
         @TestMetadata("package.kt")
         public void testPackage() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/package.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/package.kt");
         }
 
         @TestMetadata("parametersOfInlineFun.kt")
         public void testParametersOfInlineFun() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/parametersOfInlineFun.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/parametersOfInlineFun.kt");
         }
 
         @TestMetadata("parametersOfInlineFunSeveralOnLine.kt")
         public void testParametersOfInlineFunSeveralOnLine() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/parametersOfInlineFunSeveralOnLine.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/parametersOfInlineFunSeveralOnLine.kt");
         }
 
         @TestMetadata("privateClass.kt")
         public void testPrivateClass() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/privateClass.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/privateClass.kt");
         }
 
         @TestMetadata("privateFieldInCompanion.kt")
         public void testPrivateFieldInCompanion() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/privateFieldInCompanion.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/privateFieldInCompanion.kt");
         }
 
         @TestMetadata("privateMember.kt")
         public void testPrivateMember() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/privateMember.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/privateMember.kt");
         }
 
         @TestMetadata("privatePropertyWithExplicitDefaultGetter.kt")
         public void testPrivatePropertyWithExplicitDefaultGetter() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/privatePropertyWithExplicitDefaultGetter.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/privatePropertyWithExplicitDefaultGetter.kt");
         }
 
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/protectedMember.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/protectedMember.kt");
         }
 
         @TestMetadata("rawTypeskt11831.kt")
         public void testRawTypeskt11831() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/rawTypeskt11831.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/rawTypeskt11831.kt");
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/simple.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/simple.kt");
         }
 
         @TestMetadata("statements.kt")
         public void testStatements() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/statements.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/statements.kt");
         }
 
         @TestMetadata("staticField.kt")
         public void testStaticField() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/staticField.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/staticField.kt");
         }
 
         @TestMetadata("stdlib.kt")
         public void testStdlib() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/stdlib.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/stdlib.kt");
         }
 
         @TestMetadata("superCallsCaptured.kt")
         public void testSuperCallsCaptured() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/superCallsCaptured.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/superCallsCaptured.kt");
         }
 
         @TestMetadata("superCallsSimple.kt")
         public void testSuperCallsSimple() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/superCallsSimple.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/superCallsSimple.kt");
         }
 
         @TestMetadata("suspendCalls.kt")
         public void testSuspendCalls() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/suspendCalls.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/suspendCalls.kt");
         }
 
         @TestMetadata("synchronizedBlock.kt")
         public void testSynchronizedBlock() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/synchronizedBlock.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/synchronizedBlock.kt");
         }
 
         @TestMetadata("typeParameterRef.kt")
         public void testTypeParameterRef() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/typeParameterRef.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/typeParameterRef.kt");
         }
 
         @TestMetadata("typedArray.kt")
         public void testTypedArray() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/typedArray.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/typedArray.kt");
         }
 
         @TestMetadata("unboxParam.kt")
         public void testUnboxParam() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/unboxParam.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/unboxParam.kt");
         }
 
         @TestMetadata("unsafeCall.kt")
         public void testUnsafeCall() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/unsafeCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/unsafeCall.kt");
         }
 
         @TestMetadata("valueParameterName.kt")
         public void testValueParameterName() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/valueParameterName.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/valueParameterName.kt");
         }
 
         @TestMetadata("variableAsFunction.kt")
         public void testVariableAsFunction() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/variableAsFunction.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/variableAsFunction.kt");
         }
 
         @TestMetadata("vars.kt")
         public void testVars() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/vars.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/vars.kt");
         }
 
         @TestMetadata("whenEvaluation.kt")
         public void testWhenEvaluation() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/whenEvaluation.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/whenEvaluation.kt");
         }
 
         @TestMetadata(".kt.kt")
         public void test_kt() throws Exception {
-            runTest("testData/evaluation/singleBreakpoint/.kt.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/.kt.kt");
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/compilingEvaluator")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CompilingEvaluator extends AbstractKotlinEvaluateExpressionTest {
@@ -519,66 +519,66 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInCompilingEvaluator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ceAnonymousObject.kt")
             public void testCeAnonymousObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceAnonymousObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceAnonymousObject.kt");
             }
 
             @TestMetadata("ceAnonymousObjectCapturedInClosure.kt")
             public void testCeAnonymousObjectCapturedInClosure() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceAnonymousObjectCapturedInClosure.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceAnonymousObjectCapturedInClosure.kt");
             }
 
             @TestMetadata("ceAnonymousObjectThisAsReceiver.kt")
             public void testCeAnonymousObjectThisAsReceiver() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceAnonymousObjectThisAsReceiver.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceAnonymousObjectThisAsReceiver.kt");
             }
 
             @TestMetadata("ceLambda.kt")
             public void testCeLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceLambda.kt");
             }
 
             @TestMetadata("ceLocalClass.kt")
             public void testCeLocalClass() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceLocalClass.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceLocalClass.kt");
             }
 
             @TestMetadata("ceLocalClassMembers.kt")
             public void testCeLocalClassMembers() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceLocalClassMembers.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceLocalClassMembers.kt");
             }
 
             @TestMetadata("ceLocalClassWithSuperClass.kt")
             public void testCeLocalClassWithSuperClass() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceLocalClassWithSuperClass.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceLocalClassWithSuperClass.kt");
             }
 
             @TestMetadata("ceMembers.kt")
             public void testCeMembers() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceMembers.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceMembers.kt");
             }
 
             @TestMetadata("ceObject.kt")
             public void testCeObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceObject.kt");
             }
 
             @TestMetadata("ceSeveralLambdas.kt")
             public void testCeSeveralLambdas() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceSeveralLambdas.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceSeveralLambdas.kt");
             }
 
             @TestMetadata("ceSuperAccess.kt")
             public void testCeSuperAccess() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/compilingEvaluator/ceSuperAccess.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/compilingEvaluator/ceSuperAccess.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/coroutines")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Coroutines extends AbstractKotlinEvaluateExpressionTest {
@@ -587,46 +587,46 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInCoroutines() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("anyUpdateInvokeStatic.kt")
             public void testAnyUpdateInvokeStatic() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/anyUpdateInvokeStatic.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/anyUpdateInvokeStatic.kt");
             }
 
             @TestMetadata("anyUpdateVariable.kt")
             public void testAnyUpdateVariable() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/anyUpdateVariable.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/anyUpdateVariable.kt");
             }
 
             @TestMetadata("primitivesCoertion.kt")
             public void testPrimitivesCoertion() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/primitivesCoertion.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/primitivesCoertion.kt");
             }
 
             @TestMetadata("stringUpdateInvokeStatic.kt")
             public void testStringUpdateInvokeStatic() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/stringUpdateInvokeStatic.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/stringUpdateInvokeStatic.kt");
             }
 
             @TestMetadata("stringUpdateInvokeVirtual.kt")
             public void testStringUpdateInvokeVirtual() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/stringUpdateInvokeVirtual.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/stringUpdateInvokeVirtual.kt");
             }
 
             @TestMetadata("stringUpdatePutField.kt")
             public void testStringUpdatePutField() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/stringUpdatePutField.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/stringUpdatePutField.kt");
             }
 
             @TestMetadata("stringUpdateVariable.kt")
             public void testStringUpdateVariable() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/coroutines/stringUpdateVariable.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/coroutines/stringUpdateVariable.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/createExpression")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/createExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateExpression extends AbstractKotlinEvaluateExpressionTest {
@@ -635,26 +635,26 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInCreateExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("createExpressionCastToBuiltIn.kt")
             public void testCreateExpressionCastToBuiltIn() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/createExpression/createExpressionCastToBuiltIn.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/createExpression/createExpressionCastToBuiltIn.kt");
             }
 
             @TestMetadata("createExpressionSimple.kt")
             public void testCreateExpressionSimple() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/createExpression/createExpressionSimple.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/createExpression/createExpressionSimple.kt");
             }
 
             @TestMetadata("createExpressionWithArray.kt")
             public void testCreateExpressionWithArray() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/createExpression/createExpressionWithArray.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/createExpression/createExpressionWithArray.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/extraVariables")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExtraVariables extends AbstractKotlinEvaluateExpressionTest {
@@ -663,66 +663,66 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInExtraVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("evBreakpointOnPropertyDeclaration.kt")
             public void testEvBreakpointOnPropertyDeclaration() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evBreakpointOnPropertyDeclaration.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evBreakpointOnPropertyDeclaration.kt");
             }
 
             @TestMetadata("evDelegatedProperty.kt")
             public void testEvDelegatedProperty() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evDelegatedProperty.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evDelegatedProperty.kt");
             }
 
             @TestMetadata("evDuplicateItems.kt")
             public void testEvDuplicateItems() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evDuplicateItems.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evDuplicateItems.kt");
             }
 
             @TestMetadata("evFinalProperty.kt")
             public void testEvFinalProperty() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evFinalProperty.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evFinalProperty.kt");
             }
 
             @TestMetadata("evFunctionDeclaration.kt")
             public void testEvFunctionDeclaration() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evFunctionDeclaration.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evFunctionDeclaration.kt");
             }
 
             @TestMetadata("evLineRange.kt")
             public void testEvLineRange() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evLineRange.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evLineRange.kt");
             }
 
             @TestMetadata("evProperty.kt")
             public void testEvProperty() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evProperty.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evProperty.kt");
             }
 
             @TestMetadata("evPropertyRefExpr.kt")
             public void testEvPropertyRefExpr() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evPropertyRefExpr.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evPropertyRefExpr.kt");
             }
 
             @TestMetadata("evSkipAnonymousObject.kt")
             public void testEvSkipAnonymousObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evSkipAnonymousObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evSkipAnonymousObject.kt");
             }
 
             @TestMetadata("evSkipLambda.kt")
             public void testEvSkipLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evSkipLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evSkipLambda.kt");
             }
 
             @TestMetadata("evSkipLocalClass.kt")
             public void testEvSkipLocalClass() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/extraVariables/evSkipLocalClass.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/extraVariables/evSkipLocalClass.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/frame")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Frame extends AbstractKotlinEvaluateExpressionTest {
@@ -731,251 +731,251 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInFrame() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("capturedValues1.kt")
             public void testCapturedValues1() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/capturedValues1.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/capturedValues1.kt");
             }
 
             @TestMetadata("capturedValues2.kt")
             public void testCapturedValues2() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/capturedValues2.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/capturedValues2.kt");
             }
 
             @TestMetadata("catchVariable.kt")
             public void testCatchVariable() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/catchVariable.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/catchVariable.kt");
             }
 
             @TestMetadata("coroutineContextFun.kt")
             public void testCoroutineContextFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/coroutineContextFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/coroutineContextFun.kt");
             }
 
             @TestMetadata("coroutineContextLambda.kt")
             public void testCoroutineContextLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/coroutineContextLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/coroutineContextLambda.kt");
             }
 
             @TestMetadata("coroutineContextWithoutSuspend.kt")
             public void testCoroutineContextWithoutSuspend() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/coroutineContextWithoutSuspend.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/coroutineContextWithoutSuspend.kt");
             }
 
             @TestMetadata("defaultImplsMangling.kt")
             public void testDefaultImplsMangling() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/defaultImplsMangling.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/defaultImplsMangling.kt");
             }
 
             @TestMetadata("delegatedPropertyInClass.kt")
             public void testDelegatedPropertyInClass() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClass.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClass.kt");
             }
 
             @TestMetadata("delegatedPropertyInClassKotlinVariables.kt")
             public void testDelegatedPropertyInClassKotlinVariables() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClassKotlinVariables.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClassKotlinVariables.kt");
             }
 
             @TestMetadata("delegatedPropertyInClassWithToString.kt")
             public void testDelegatedPropertyInClassWithToString() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClassWithToString.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClassWithToString.kt");
             }
 
             @TestMetadata("delegatedPropertyInClassWoRenderer.kt")
             public void testDelegatedPropertyInClassWoRenderer() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClassWoRenderer.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/delegatedPropertyInClassWoRenderer.kt");
             }
 
             @TestMetadata("frameAnonymousObject.kt")
             public void testFrameAnonymousObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameAnonymousObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameAnonymousObject.kt");
             }
 
             @TestMetadata("frameClassObject.kt")
             public void testFrameClassObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameClassObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameClassObject.kt");
             }
 
             @TestMetadata("frameClosingBracket.kt")
             public void testFrameClosingBracket() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameClosingBracket.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameClosingBracket.kt");
             }
 
             @TestMetadata("frameExtFunExtFun.kt")
             public void testFrameExtFunExtFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameExtFunExtFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameExtFunExtFun.kt");
             }
 
             @TestMetadata("frameExtensionFun.kt")
             public void testFrameExtensionFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameExtensionFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameExtensionFun.kt");
             }
 
             @TestMetadata("frameInlineArgument.kt")
             public void testFrameInlineArgument() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInlineArgument.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInlineArgument.kt");
             }
 
             @TestMetadata("frameInlineArgumentInsideInlineFun.kt")
             public void testFrameInlineArgumentInsideInlineFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInlineArgumentInsideInlineFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInlineArgumentInsideInlineFun.kt");
             }
 
             @TestMetadata("frameInlineFun.kt")
             public void testFrameInlineFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInlineFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInlineFun.kt");
             }
 
             @TestMetadata("frameInlineFunCallInsideInlineFun.kt")
             public void testFrameInlineFunCallInsideInlineFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInlineFunCallInsideInlineFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInlineFunCallInsideInlineFun.kt");
             }
 
             @TestMetadata("frameInlineFunCallInsideInlineFunKotlinVariables.kt")
             public void testFrameInlineFunCallInsideInlineFunKotlinVariables() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInlineFunCallInsideInlineFunKotlinVariables.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInlineFunCallInsideInlineFunKotlinVariables.kt");
             }
 
             @TestMetadata("frameInnerClass.kt")
             public void testFrameInnerClass() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInnerClass.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInnerClass.kt");
             }
 
             @TestMetadata("frameInnerLambda.kt")
             public void testFrameInnerLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameInnerLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameInnerLambda.kt");
             }
 
             @TestMetadata("frameLambda.kt")
             public void testFrameLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameLambda.kt");
             }
 
             @TestMetadata("frameLambdaNotUsed.kt")
             public void testFrameLambdaNotUsed() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameLambdaNotUsed.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameLambdaNotUsed.kt");
             }
 
             @TestMetadata("frameLocalVariable.kt")
             public void testFrameLocalVariable() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameLocalVariable.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameLocalVariable.kt");
             }
 
             @TestMetadata("frameObject.kt")
             public void testFrameObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameObject.kt");
             }
 
             @TestMetadata("frameSharedVar.kt")
             public void testFrameSharedVar() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameSharedVar.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameSharedVar.kt");
             }
 
             @TestMetadata("frameSharedVarLocalVar.kt")
             public void testFrameSharedVarLocalVar() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameSharedVarLocalVar.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameSharedVarLocalVar.kt");
             }
 
             @TestMetadata("frameSimple.kt")
             public void testFrameSimple() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameSimple.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameSimple.kt");
             }
 
             @TestMetadata("frameThis0.kt")
             public void testFrameThis0() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameThis0.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameThis0.kt");
             }
 
             @TestMetadata("frameThis0Ext.kt")
             public void testFrameThis0Ext() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameThis0Ext.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameThis0Ext.kt");
             }
 
             @TestMetadata("frameThis0This0.kt")
             public void testFrameThis0This0() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/frameThis0This0.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/frameThis0This0.kt");
             }
 
             @TestMetadata("hideContinuationThis.kt")
             public void testHideContinuationThis() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/hideContinuationThis.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/hideContinuationThis.kt");
             }
 
             @TestMetadata("hideSyntheticThis.kt")
             public void testHideSyntheticThis() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/hideSyntheticThis.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/hideSyntheticThis.kt");
             }
 
             @TestMetadata("inlineFunThisKotlinVariables.kt")
             public void testInlineFunThisKotlinVariables() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/inlineFunThisKotlinVariables.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/inlineFunThisKotlinVariables.kt");
             }
 
             @TestMetadata("lambdaAsValueArgument.kt")
             public void testLambdaAsValueArgument() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaAsValueArgument.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaAsValueArgument.kt");
             }
 
             @TestMetadata("lambdaFun1.kt")
             public void testLambdaFun1() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaFun1.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaFun1.kt");
             }
 
             @TestMetadata("lambdaFun2.kt")
             public void testLambdaFun2() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaFun2.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaFun2.kt");
             }
 
             @TestMetadata("lambdaFun3.kt")
             public void testLambdaFun3() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaFun3.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaFun3.kt");
             }
 
             @TestMetadata("lambdaFun4.kt")
             public void testLambdaFun4() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaFun4.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaFun4.kt");
             }
 
             @TestMetadata("lambdaParameterMangling.kt")
             public void testLambdaParameterMangling() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaParameterMangling.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaParameterMangling.kt");
             }
 
             @TestMetadata("lambdaThisMangling.kt")
             public void testLambdaThisMangling() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/lambdaThisMangling.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/lambdaThisMangling.kt");
             }
 
             @TestMetadata("localFunctionMangling.kt")
             public void testLocalFunctionMangling() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/localFunctionMangling.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/localFunctionMangling.kt");
             }
 
             @TestMetadata("nestedInlineFun.kt")
             public void testNestedInlineFun() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/nestedInlineFun.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/nestedInlineFun.kt");
             }
 
             @TestMetadata("nestedInlineFun2.kt")
             public void testNestedInlineFun2() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/nestedInlineFun2.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/nestedInlineFun2.kt");
             }
 
             @TestMetadata("remapThis.kt")
             public void testRemapThis() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/remapThis.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/remapThis.kt");
             }
 
             @TestMetadata("suspendContinuation.kt")
             public void testSuspendContinuation() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/frame/suspendContinuation.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/frame/suspendContinuation.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/javaContext")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaContext extends AbstractKotlinEvaluateExpressionTest {
@@ -984,41 +984,41 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInJavaContext() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("jcBlock.kt")
             public void testJcBlock() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/javaContext/jcBlock.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext/jcBlock.kt");
             }
 
             @TestMetadata("jcImports.kt")
             public void testJcImports() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/javaContext/jcImports.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext/jcImports.kt");
             }
 
             @TestMetadata("jcLocalVariable.kt")
             public void testJcLocalVariable() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/javaContext/jcLocalVariable.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext/jcLocalVariable.kt");
             }
 
             @TestMetadata("jcMarkedObject.kt")
             public void testJcMarkedObject() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/javaContext/jcMarkedObject.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext/jcMarkedObject.kt");
             }
 
             @TestMetadata("jcProperty.kt")
             public void testJcProperty() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/javaContext/jcProperty.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext/jcProperty.kt");
             }
 
             @TestMetadata("jcSimple.kt")
             public void testJcSimple() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/javaContext/jcSimple.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/javaContext/jcSimple.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/labels")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Labels extends AbstractKotlinEvaluateExpressionTest {
@@ -1027,36 +1027,36 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInLabels() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("lCallOnLabeledObj.kt")
             public void testLCallOnLabeledObj() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/labels/lCallOnLabeledObj.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels/lCallOnLabeledObj.kt");
             }
 
             @TestMetadata("lIdentifier.kt")
             public void testLIdentifier() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/labels/lIdentifier.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels/lIdentifier.kt");
             }
 
             @TestMetadata("lSeveralLabels.kt")
             public void testLSeveralLabels() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/labels/lSeveralLabels.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels/lSeveralLabels.kt");
             }
 
             @TestMetadata("lSimple.kt")
             public void testLSimple() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/labels/lSimple.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels/lSimple.kt");
             }
 
             @TestMetadata("ldifferentTypes.kt")
             public void testLdifferentTypes() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/labels/ldifferentTypes.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/labels/ldifferentTypes.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/lambdas")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Lambdas extends AbstractKotlinEvaluateExpressionTest {
@@ -1065,61 +1065,61 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInLambdas() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("destructuringParam.kt")
             public void testDestructuringParam() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/destructuringParam.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/destructuringParam.kt");
             }
 
             @TestMetadata("inlineFunctionalExpression.kt")
             public void testInlineFunctionalExpression() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/inlineFunctionalExpression.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/inlineFunctionalExpression.kt");
             }
 
             @TestMetadata("inlineLambda.kt")
             public void testInlineLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/inlineLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/inlineLambda.kt");
             }
 
             @TestMetadata("lambdaOnReturn.kt")
             public void testLambdaOnReturn() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/lambdaOnReturn.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/lambdaOnReturn.kt");
             }
 
             @TestMetadata("lambdaOnSecondLine.kt")
             public void testLambdaOnSecondLine() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/lambdaOnSecondLine.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/lambdaOnSecondLine.kt");
             }
 
             @TestMetadata("oneLineFunctionalExpression.kt")
             public void testOneLineFunctionalExpression() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/oneLineFunctionalExpression.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/oneLineFunctionalExpression.kt");
             }
 
             @TestMetadata("oneLineLambda.kt")
             public void testOneLineLambda() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/oneLineLambda.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/oneLineLambda.kt");
             }
 
             @TestMetadata("twoLambdasOnOneLineFirst.kt")
             public void testTwoLambdasOnOneLineFirst() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/twoLambdasOnOneLineFirst.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/twoLambdasOnOneLineFirst.kt");
             }
 
             @TestMetadata("twoLambdasOnOneLineSecond.kt")
             public void testTwoLambdasOnOneLineSecond() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/twoLambdasOnOneLineSecond.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/twoLambdasOnOneLineSecond.kt");
             }
 
             @TestMetadata("underscoreNames.kt")
             public void testUnderscoreNames() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/lambdas/underscoreNames.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/lambdas/underscoreNames.kt");
             }
         }
 
-        @TestMetadata("testData/evaluation/singleBreakpoint/renderer")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/renderer")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Renderer extends AbstractKotlinEvaluateExpressionTest {
@@ -1128,17 +1128,17 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInRenderer() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("toStringRenderer.kt")
             public void testToStringRenderer() throws Exception {
-                runTest("testData/evaluation/singleBreakpoint/renderer/toStringRenderer.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/renderer/toStringRenderer.kt");
             }
         }
     }
 
-    @TestMetadata("testData/evaluation/multipleBreakpoints")
+    @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultipleBreakpoints extends AbstractKotlinEvaluateExpressionTest {
@@ -1147,135 +1147,135 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         }
 
         public void testAllFilesPresentInMultipleBreakpoints() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("clearCache.kt")
         public void testClearCache() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/clearCache.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/clearCache.kt");
         }
 
         @TestMetadata("constructors.kt")
         public void testConstructors() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/constructors.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/constructors.kt");
         }
 
         @TestMetadata("exceptions.kt")
         public void testExceptions() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/exceptions.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/exceptions.kt");
         }
 
         @TestMetadata("extensionMemberFunction.kt")
         public void testExtensionMemberFunction() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/extensionMemberFunction.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/extensionMemberFunction.kt");
         }
 
         @TestMetadata("extensionMemberFunctionInObject.kt")
         public void testExtensionMemberFunctionInObject() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/extensionMemberFunctionInObject.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/extensionMemberFunctionInObject.kt");
         }
 
         @TestMetadata("extensionMemberProperty.kt")
         public void testExtensionMemberProperty() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/extensionMemberProperty.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/extensionMemberProperty.kt");
         }
 
         @TestMetadata("fieldVariable.kt")
         public void testFieldVariable() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/fieldVariable.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/fieldVariable.kt");
         }
 
         @TestMetadata("funFromOuterClassInLamdba.kt")
         public void testFunFromOuterClassInLamdba() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/funFromOuterClassInLamdba.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/funFromOuterClassInLamdba.kt");
         }
 
         @TestMetadata("initializer.kt")
         public void testInitializer() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/initializer.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/initializer.kt");
         }
 
         @TestMetadata("invisibleDeclarations.kt")
         public void testInvisibleDeclarations() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/invisibleDeclarations.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/invisibleDeclarations.kt");
         }
 
         @TestMetadata("isInsideInlineLambda.kt")
         public void testIsInsideInlineLambda() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/isInsideInlineLambda.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/isInsideInlineLambda.kt");
         }
 
         @TestMetadata("lambdaParameters.kt")
         public void testLambdaParameters() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/lambdaParameters.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/lambdaParameters.kt");
         }
 
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/localFun.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/localFun.kt");
         }
 
         @TestMetadata("multipleBreakpointsAtLine.kt")
         public void testMultipleBreakpointsAtLine() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/multipleBreakpointsAtLine.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/multipleBreakpointsAtLine.kt");
         }
 
         @TestMetadata("mutations.kt")
         public void testMutations() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/mutations.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/mutations.kt");
         }
 
         @TestMetadata("nonCapturedVariables.kt")
         public void testNonCapturedVariables() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/nonCapturedVariables.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/nonCapturedVariables.kt");
         }
 
         @TestMetadata("privateMembersPriority.kt")
         public void testPrivateMembersPriority() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/privateMembersPriority.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/privateMembersPriority.kt");
         }
 
         @TestMetadata("remappedParameterInInline.kt")
         public void testRemappedParameterInInline() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/remappedParameterInInline.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/remappedParameterInInline.kt");
         }
 
         @TestMetadata("smartcasts.kt")
         public void testSmartcasts() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/smartcasts.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/smartcasts.kt");
         }
 
         @TestMetadata("thisLabels.kt")
         public void testThisLabels() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/thisLabels.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/thisLabels.kt");
         }
 
         @TestMetadata("whenEntry.kt")
         public void testWhenEntry() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/whenEntry.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/whenEntry.kt");
         }
 
         @TestMetadata("withoutBodyFunctions.kt")
         public void testWithoutBodyFunctions() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/withoutBodyFunctions.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/withoutBodyFunctions.kt");
         }
 
         @TestMetadata("withoutBodyProperties.kt")
         public void testWithoutBodyProperties() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/withoutBodyProperties.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/withoutBodyProperties.kt");
         }
 
         @TestMetadata("withoutBodyProperties2.kt")
         public void testWithoutBodyProperties2() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/withoutBodyProperties2.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/withoutBodyProperties2.kt");
         }
 
         @TestMetadata("withoutBodyTypeParameters.kt")
         public void testWithoutBodyTypeParameters() throws Exception {
-            runTest("testData/evaluation/multipleBreakpoints/withoutBodyTypeParameters.kt");
+            runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/withoutBodyTypeParameters.kt");
         }
 
-        @TestMetadata("testData/evaluation/multipleBreakpoints/library")
+        @TestMetadata("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/library")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Library extends AbstractKotlinEvaluateExpressionTest {
@@ -1284,17 +1284,17 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/evaluation/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("customLibClassName.kt")
             public void testCustomLibClassName() throws Exception {
-                runTest("testData/evaluation/multipleBreakpoints/library/customLibClassName.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/library/customLibClassName.kt");
             }
 
             @TestMetadata("localFunInLibrary.kt")
             public void testLocalFunInLibrary() throws Exception {
-                runTest("testData/evaluation/multipleBreakpoints/library/localFunInLibrary.kt");
+                runTest("kotlin/jvm-debugger/test/testData/evaluation/multipleBreakpoints/library/localFunInLibrary.kt");
             }
         }
     }

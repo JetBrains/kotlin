@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpressionForDebuggerTest {
-    @TestMetadata("testData/selectExpression")
+    @TestMetadata("kotlin/jvm-debugger/test/testData/selectExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SelectExpression extends AbstractSelectExpressionForDebuggerTest {
@@ -27,201 +27,201 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         }
 
         public void testAllFilesPresentInSelectExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/selectExpression"), Pattern.compile("^(.+)\\.kt$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/selectExpression"), Pattern.compile("^(.+)\\.kt$"), null, false);
         }
 
         @TestMetadata("annotation.kt")
         public void testAnnotation() throws Exception {
-            runTest("testData/selectExpression/annotation.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/annotation.kt");
         }
 
         @TestMetadata("arrayExpression.kt")
         public void testArrayExpression() throws Exception {
-            runTest("testData/selectExpression/arrayExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/arrayExpression.kt");
         }
 
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
-            runTest("testData/selectExpression/binaryExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/binaryExpression.kt");
         }
 
         @TestMetadata("call.kt")
         public void testCall() throws Exception {
-            runTest("testData/selectExpression/call.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/call.kt");
         }
 
         @TestMetadata("companionObjectCall.kt")
         public void testCompanionObjectCall() throws Exception {
-            runTest("testData/selectExpression/companionObjectCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/companionObjectCall.kt");
         }
 
         @TestMetadata("companionObjectCall2.kt")
         public void testCompanionObjectCall2() throws Exception {
-            runTest("testData/selectExpression/companionObjectCall2.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/companionObjectCall2.kt");
         }
 
         @TestMetadata("expressionInPropertyInitializer.kt")
         public void testExpressionInPropertyInitializer() throws Exception {
-            runTest("testData/selectExpression/expressionInPropertyInitializer.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/expressionInPropertyInitializer.kt");
         }
 
         @TestMetadata("extensionFun.kt")
         public void testExtensionFun() throws Exception {
-            runTest("testData/selectExpression/extensionFun.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/extensionFun.kt");
         }
 
         @TestMetadata("firstCallInChain.kt")
         public void testFirstCallInChain() throws Exception {
-            runTest("testData/selectExpression/firstCallInChain.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/firstCallInChain.kt");
         }
 
         @TestMetadata("fullyQualified.kt")
         public void testFullyQualified() throws Exception {
-            runTest("testData/selectExpression/fullyQualified.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/fullyQualified.kt");
         }
 
         @TestMetadata("funArgument.kt")
         public void testFunArgument() throws Exception {
-            runTest("testData/selectExpression/funArgument.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/funArgument.kt");
         }
 
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            runTest("testData/selectExpression/functionLiteral.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/functionLiteral.kt");
         }
 
         @TestMetadata("getConvention.kt")
         public void testGetConvention() throws Exception {
-            runTest("testData/selectExpression/getConvention.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/getConvention.kt");
         }
 
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
-            runTest("testData/selectExpression/imports.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/imports.kt");
         }
 
         @TestMetadata("infixCall.kt")
         public void testInfixCall() throws Exception {
-            runTest("testData/selectExpression/infixCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/infixCall.kt");
         }
 
         @TestMetadata("infixCallArgument.kt")
         public void testInfixCallArgument() throws Exception {
-            runTest("testData/selectExpression/infixCallArgument.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/infixCallArgument.kt");
         }
 
         @TestMetadata("isExpression.kt")
         public void testIsExpression() throws Exception {
-            runTest("testData/selectExpression/isExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/isExpression.kt");
         }
 
         @TestMetadata("javaStaticMehtodCall.kt")
         public void testJavaStaticMehtodCall() throws Exception {
-            runTest("testData/selectExpression/javaStaticMehtodCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/javaStaticMehtodCall.kt");
         }
 
         @TestMetadata("keyword.kt")
         public void testKeyword() throws Exception {
-            runTest("testData/selectExpression/keyword.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/keyword.kt");
         }
 
         @TestMetadata("modifier.kt")
         public void testModifier() throws Exception {
-            runTest("testData/selectExpression/modifier.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/modifier.kt");
         }
 
         @TestMetadata("nameArgument.kt")
         public void testNameArgument() throws Exception {
-            runTest("testData/selectExpression/nameArgument.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/nameArgument.kt");
         }
 
         @TestMetadata("objectMethodCall.kt")
         public void testObjectMethodCall() throws Exception {
-            runTest("testData/selectExpression/objectMethodCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/objectMethodCall.kt");
         }
 
         @TestMetadata("package.kt")
         public void testPackage() throws Exception {
-            runTest("testData/selectExpression/package.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/package.kt");
         }
 
         @TestMetadata("param.kt")
         public void testParam() throws Exception {
-            runTest("testData/selectExpression/param.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/param.kt");
         }
 
         @TestMetadata("propertyCall.kt")
         public void testPropertyCall() throws Exception {
-            runTest("testData/selectExpression/propertyCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/propertyCall.kt");
         }
 
         @TestMetadata("propertyDeclaration.kt")
         public void testPropertyDeclaration() throws Exception {
-            runTest("testData/selectExpression/propertyDeclaration.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/propertyDeclaration.kt");
         }
 
         @TestMetadata("qualifiedExpressionProperty.kt")
         public void testQualifiedExpressionProperty() throws Exception {
-            runTest("testData/selectExpression/qualifiedExpressionProperty.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/qualifiedExpressionProperty.kt");
         }
 
         @TestMetadata("qualifiedExpressionReceiver.kt")
         public void testQualifiedExpressionReceiver() throws Exception {
-            runTest("testData/selectExpression/qualifiedExpressionReceiver.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/qualifiedExpressionReceiver.kt");
         }
 
         @TestMetadata("qualifiedExpressionSelector.kt")
         public void testQualifiedExpressionSelector() throws Exception {
-            runTest("testData/selectExpression/qualifiedExpressionSelector.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/qualifiedExpressionSelector.kt");
         }
 
         @TestMetadata("super.kt")
         public void testSuper() throws Exception {
-            runTest("testData/selectExpression/super.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/super.kt");
         }
 
         @TestMetadata("superSelector.kt")
         public void testSuperSelector() throws Exception {
-            runTest("testData/selectExpression/superSelector.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/superSelector.kt");
         }
 
         @TestMetadata("this.kt")
         public void testThis() throws Exception {
-            runTest("testData/selectExpression/this.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/this.kt");
         }
 
         @TestMetadata("thisSelector.kt")
         public void testThisSelector() throws Exception {
-            runTest("testData/selectExpression/thisSelector.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/thisSelector.kt");
         }
 
         @TestMetadata("thisWithLabel.kt")
         public void testThisWithLabel() throws Exception {
-            runTest("testData/selectExpression/thisWithLabel.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/thisWithLabel.kt");
         }
 
         @TestMetadata("unaryExpression.kt")
         public void testUnaryExpression() throws Exception {
-            runTest("testData/selectExpression/unaryExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/unaryExpression.kt");
         }
 
         @TestMetadata("userType.kt")
         public void testUserType() throws Exception {
-            runTest("testData/selectExpression/userType.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/userType.kt");
         }
 
         @TestMetadata("userTypeGeneric.kt")
         public void testUserTypeGeneric() throws Exception {
-            runTest("testData/selectExpression/userTypeGeneric.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/userTypeGeneric.kt");
         }
 
         @TestMetadata("userTypeQualified.kt")
         public void testUserTypeQualified() throws Exception {
-            runTest("testData/selectExpression/userTypeQualified.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/userTypeQualified.kt");
         }
     }
 
-    @TestMetadata("testData/selectExpression/disallowMethodCalls")
+    @TestMetadata("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DisallowMethodCalls extends AbstractSelectExpressionForDebuggerTest {
@@ -230,107 +230,107 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         }
 
         public void testAllFilesPresentInDisallowMethodCalls() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/selectExpression/disallowMethodCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/binaryExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/binaryExpression.kt");
         }
 
         @TestMetadata("call.kt")
         public void testCall() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/call.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/call.kt");
         }
 
         @TestMetadata("expressionInPropertyInitializer.kt")
         public void testExpressionInPropertyInitializer() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/expressionInPropertyInitializer.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/expressionInPropertyInitializer.kt");
         }
 
         @TestMetadata("extensionFun.kt")
         public void testExtensionFun() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/extensionFun.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/extensionFun.kt");
         }
 
         @TestMetadata("funArgument.kt")
         public void testFunArgument() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/funArgument.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/funArgument.kt");
         }
 
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/functionLiteral.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/functionLiteral.kt");
         }
 
         @TestMetadata("getConvention.kt")
         public void testGetConvention() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/getConvention.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/getConvention.kt");
         }
 
         @TestMetadata("infixCall.kt")
         public void testInfixCall() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/infixCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/infixCall.kt");
         }
 
         @TestMetadata("infixCallArgument.kt")
         public void testInfixCallArgument() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/infixCallArgument.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/infixCallArgument.kt");
         }
 
         @TestMetadata("isExpression.kt")
         public void testIsExpression() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/isExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/isExpression.kt");
         }
 
         @TestMetadata("propertyCall.kt")
         public void testPropertyCall() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/propertyCall.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/propertyCall.kt");
         }
 
         @TestMetadata("qualifiedExpressionProperty.kt")
         public void testQualifiedExpressionProperty() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/qualifiedExpressionProperty.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/qualifiedExpressionProperty.kt");
         }
 
         @TestMetadata("qualifiedExpressionReceiver.kt")
         public void testQualifiedExpressionReceiver() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/qualifiedExpressionReceiver.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/qualifiedExpressionReceiver.kt");
         }
 
         @TestMetadata("qualifiedExpressionSelector.kt")
         public void testQualifiedExpressionSelector() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/qualifiedExpressionSelector.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/qualifiedExpressionSelector.kt");
         }
 
         @TestMetadata("super.kt")
         public void testSuper() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/super.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/super.kt");
         }
 
         @TestMetadata("superSelector.kt")
         public void testSuperSelector() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/superSelector.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/superSelector.kt");
         }
 
         @TestMetadata("this.kt")
         public void testThis() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/this.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/this.kt");
         }
 
         @TestMetadata("thisSelector.kt")
         public void testThisSelector() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/thisSelector.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/thisSelector.kt");
         }
 
         @TestMetadata("thisWithLabel.kt")
         public void testThisWithLabel() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/thisWithLabel.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/thisWithLabel.kt");
         }
 
         @TestMetadata("unaryExpression.kt")
         public void testUnaryExpression() throws Exception {
-            runTest("testData/selectExpression/disallowMethodCalls/unaryExpression.kt");
+            runTest("kotlin/jvm-debugger/test/testData/selectExpression/disallowMethodCalls/unaryExpression.kt");
         }
     }
 }
