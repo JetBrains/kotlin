@@ -43,7 +43,7 @@ fun test() {
     xx = 40
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INAPPLICABLE_CANDIDATE!>A<!>() {}
 
 class Q {
     class W {

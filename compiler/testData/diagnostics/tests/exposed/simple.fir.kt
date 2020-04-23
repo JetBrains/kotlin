@@ -2,11 +2,11 @@ private interface My
 
 private open class Base
 
-public interface Your: My {
+public interface Your: <!EXPOSED_SUPER_INTERFACE!>My<!> {
     fun <T: Base> foo(): T
 }
 
-public class Derived<T: My>(<!EXPOSED_PARAMETER_TYPE!>val <!EXPOSED_PROPERTY_TYPE!>x<!>: My<!>): Base() {
+public class Derived<T: My>(<!EXPOSED_PARAMETER_TYPE!>val <!EXPOSED_PROPERTY_TYPE!>x<!>: My<!>): <!EXPOSED_SUPER_CLASS!>Base<!>() {
 
     constructor(<!EXPOSED_PARAMETER_TYPE!>xx: My?<!>, <!EXPOSED_PARAMETER_TYPE!>x: My<!>): this(xx ?: x)
 

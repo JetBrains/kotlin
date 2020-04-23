@@ -5,13 +5,13 @@ open class A {
     }
     public open class C {
         // protected relative to C, must be an error
-        protected open class D : B()
+        protected open class D : <!EXPOSED_SUPER_CLASS!>B<!>()
     }
 }
 
 class E : A.C() {
     // F has invisible grandparent class B (E does not inherit from A)
-    class F : A.C.D() {
+    class F : <!EXPOSED_SUPER_CLASS!>A.C.D<!>() {
         init {
             // Invoke function from invisible grandparent
             foo() 

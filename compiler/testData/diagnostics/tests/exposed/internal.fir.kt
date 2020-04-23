@@ -7,7 +7,7 @@ internal open class Your: My() {
 }
 
 // error, public from internal
-open class His: Your() {
+open class His: <!EXPOSED_SUPER_CLASS!>Your<!>() {
     protected open class Nested
     // error, public from internal
     val <!EXPOSED_PROPERTY_TYPE!>x<!> = My()
@@ -21,5 +21,5 @@ open class His: Your() {
 
 internal class Their: His() {
     // error, effectively internal from protected
-    class InnerDerived: His.Nested()
+    class InnerDerived: <!EXPOSED_SUPER_CLASS!>His.Nested<!>()
 }

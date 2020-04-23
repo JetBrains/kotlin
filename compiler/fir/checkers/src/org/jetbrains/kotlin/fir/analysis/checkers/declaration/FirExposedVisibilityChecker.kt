@@ -9,12 +9,15 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -23,13 +26,38 @@ import org.jetbrains.kotlin.lexer.KtTokens
 object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
-            is FirTypeAlias -> checkTypeAlias(declaration, context, reporter)
-            is FirProperty -> checkProperty(declaration, context, reporter)
-            is FirFunction<*> -> checkFunction(declaration, context, reporter)
+            is FirTypeAlias -> checkTypeAlias(declaration, reporter)
+            is FirProperty -> checkProperty(declaration, reporter)
+            is FirFunction<*> -> checkFunction(declaration, reporter)
+            is FirRegularClass -> checkSupertypes(declaration, reporter)
         }
     }
 
-    private fun checkTypeAlias(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkSupertypes(declaration: FirRegularClass, reporter: DiagnosticReporter) {
+        val classVisibility = declaration.firEffectiveVisibility(declaration.session)
+        val supertypes = declaration.superTypeRefs
+        val isInterface = declaration.classKind == ClassKind.INTERFACE
+        for (supertypeRef in supertypes) {
+            val supertype = supertypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
+            val clazz = supertype.toRegularClass(declaration.session) ?: continue
+            val superIsInterface = clazz.classKind == ClassKind.INTERFACE
+            if (superIsInterface != isInterface) {
+                continue
+            }
+            val restricting = supertype.leastPermissiveDescriptor(declaration.session, classVisibility)
+            if (restricting != null) {
+                reporter.reportExposure(
+                    if (isInterface) FirErrors.EXPOSED_SUPER_INTERFACE else FirErrors.EXPOSED_SUPER_CLASS,
+                    restricting,
+                    classVisibility,
+                    restricting.firEffectiveVisibility(declaration.session),
+                    supertypeRef.source ?: declaration.source
+                )
+            }
+        }
+    }
+
+    private fun checkTypeAlias(declaration: FirTypeAlias, reporter: DiagnosticReporter) {
         val expandedType = declaration.expandedConeType
         val typeAliasVisibility = declaration.firEffectiveVisibility(declaration.session)
         val restricting = expandedType?.leastPermissiveDescriptor(declaration.session, typeAliasVisibility)
@@ -44,7 +72,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         }
     }
 
-    private fun checkFunction(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkFunction(declaration: FirFunction<*>, reporter: DiagnosticReporter) {
         val functionVisibility = (declaration as FirMemberDeclaration).firEffectiveVisibility(declaration.session)
         if (declaration !is FirConstructor) {
             val restricting = declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
@@ -78,7 +106,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         checkMemberReceiver(declaration.receiverTypeRef, declaration as? FirCallableMemberDeclaration<*>, reporter)
     }
 
-    private fun checkProperty(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter) {
         val propertyVisibility = declaration.firEffectiveVisibility(declaration.session)
         val restricting =
             declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.leastPermissiveDescriptor(declaration.session, propertyVisibility)

@@ -36,7 +36,7 @@ fun test() {
     val po = <!INAPPLICABLE_CANDIDATE!>PO<!>
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INAPPLICABLE_CANDIDATE!>A<!>() {}
 
 class Q {
     class W {
