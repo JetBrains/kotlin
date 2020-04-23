@@ -4,8 +4,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
 
@@ -28,12 +30,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitBinaryExpression(expression: KtBinaryExpression) {
         val other = getTreeElement<KtBinaryExpression>() ?: return
-        // Same operation
-        if (myMatchingVisitor.setResult(expression.operationToken == other.operationToken)) {
-            // Same operands
-            myMatchingVisitor.result = myMatchingVisitor.match(expression.left, other.left)
-                    && myMatchingVisitor.match(expression.right, other.right)
-        }
+        myMatchingVisitor.result = expression.operationToken == other.operationToken
+                && myMatchingVisitor.match(expression.left, other.left)
+                && myMatchingVisitor.match(expression.right, other.right)
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression) {
@@ -128,16 +127,39 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.matchSons(argument, other)
     }
 
-    override fun visitValueArgumentList(list: KtValueArgumentList) {
-        val other = getTreeElement<KtValueArgumentList>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(list, other)
-    }
-
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElement<KtCallExpression>() ?: return
-        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.valueArgumentList, other.valueArgumentList)))
-            return
+        val sortedCodeArgs = other.resolveToCall(BodyResolveMode.PARTIAL)?.valueArgumentsByIndex ?: error(
+            "Could not resolve matching procedure declaration."
+        )
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
+        sortedCodeArgs.forEachIndexed { i, codeResArg ->
+            val queryValueArgs = expression.valueArguments
+            val queryValueArg = queryValueArgs[i]
+            val codeValueArg = codeResArg.arguments.first() as KtValueArgument
+            if (!myMatchingVisitor.setResult(
+                    myMatchingVisitor.match(
+                        queryValueArg.getArgumentExpression(), codeValueArg.getArgumentExpression()
+                    )
+                ) && queryValueArg.isNamed()
+            ) { // found out of order argument that could be correct
+                val queryValueArgMap = queryValueArgs.subList(i, expression.valueArguments.lastIndex + 1).sortedBy {
+                    it.getArgumentName()?.asName
+                }.map { it.getArgumentExpression() }
+                val codeValueArgMap = sortedCodeArgs.subList(i, sortedCodeArgs.lastIndex + 1).map {
+                    val arg = it.arguments.first()
+                    if (!myMatchingVisitor.setResult(arg.isNamed())) return // cannot match unnamed query
+                    arg
+                }.sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
+                queryValueArgMap.forEachIndexed { j, queryExpr ->
+                    val codeExpr = codeValueArgMap[j]
+                    if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryExpr, codeExpr))) return
+                }
+                return
+            } else { // match violation found
+                return
+            }
+        }
     }
 
     private fun matchNameIdentifiers(el1: PsiElement?, el2: PsiElement?): Boolean {
