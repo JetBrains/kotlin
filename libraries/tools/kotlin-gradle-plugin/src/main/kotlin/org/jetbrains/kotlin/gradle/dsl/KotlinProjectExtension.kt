@@ -11,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -128,13 +127,13 @@ open class KotlinJsProjectExtension :
 
         if (_target == null) {
             val target: KotlinJsTargetDsl = when (compiler ?: defaultJsCompilerType) {
-                LEGACY -> legacyPreset
+                KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also { it.irPreset = null }
                     .createTarget("js")
-                IR -> irPreset
+                KotlinJsCompilerType.IR -> irPreset
                     .also { it.mixedMode = false }
                     .createTarget("js")
-                BOTH -> legacyPreset
+                KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true
                         it.irPreset = irPreset
