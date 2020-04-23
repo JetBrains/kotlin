@@ -9,7 +9,6 @@ import com.intellij.find.FindModel
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
@@ -47,11 +46,10 @@ class OpenFileQuickFix(private val path: Path, private val search: String?) : Bu
         val editor = FileEditorManager.getInstance(project).openTextEditor(OpenFileDescriptor(project, file), false)
         if (search == null || editor == null) return@invokeLater
 
-        val attributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
         val findModel = FindModel().apply { FindModel.initStringToFind(this, search) }
         val findResult = FindManager.getInstance(project).findString(editor.document.charsSequence, 0, findModel, file)
         val highlightManager = HighlightManager.getInstance(project)
-        HighlightUsagesHandler.highlightRanges(highlightManager, editor, attributes, false, listOf(findResult))
+        HighlightUsagesHandler.highlightRanges(highlightManager, editor, EditorColors.SEARCH_RESULT_ATTRIBUTES, false, listOf(findResult))
       }
     }
   }

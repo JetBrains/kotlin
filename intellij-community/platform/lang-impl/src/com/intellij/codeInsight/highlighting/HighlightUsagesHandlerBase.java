@@ -22,7 +22,6 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
@@ -62,12 +61,10 @@ public abstract class HighlightUsagesHandlerBase<T extends PsiElement> {
   private void performHighlighting() {
     boolean clearHighlights = HighlightUsagesHandler.isClearHighlights(myEditor);
     EditorColorsManager manager = EditorColorsManager.getInstance();
-    TextAttributes attributes = manager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
-    TextAttributes writeAttributes = manager.getGlobalScheme().getAttributes(EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES);
     HighlightUsagesHandler.highlightRanges(HighlightManager.getInstance(myEditor.getProject()),
-                                           myEditor, attributes, clearHighlights, myReadUsages);
+                                           myEditor, EditorColors.SEARCH_RESULT_ATTRIBUTES, clearHighlights, myReadUsages);
     HighlightUsagesHandler.highlightRanges(HighlightManager.getInstance(myEditor.getProject()),
-                                           myEditor, writeAttributes, clearHighlights, myWriteUsages);
+                                           myEditor, EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES, clearHighlights, myWriteUsages);
     if (!clearHighlights) {
       WindowManager.getInstance().getStatusBar(myFile.getProject()).setInfo(myStatusText);
 
