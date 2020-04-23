@@ -946,7 +946,7 @@
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="DriverManagerGetConnection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="DuplicateBooleanBranch" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="DuplicateBooleanBranch" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DuplicateBranchesInSwitch" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="DuplicateCaseLabelJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DuplicateCondition" enabled="true" level="WARNING" enabled_by_default="true">
@@ -1247,7 +1247,7 @@
     <inspection_tool class="FunctionWithMultipleReturnPointsJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FunctionalExpressionCanBeFolded" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FuseStreamOperations" enabled="true" level="WARNING" enabled_by_default="true">
-      <scope name="android" level="WARNING" enabled="false"/>
+      <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="GWTRemoteServiceAsyncCheck" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GWTStyleCheck" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -1527,7 +1527,7 @@
       <option name="ignoredTypesString" value="java.io.ByteArrayOutputStream,java.io.ByteArrayInputStream,java.io.StringBufferInputStream,java.io.CharArrayWriter,java.io.CharArrayReader,java.io.StringWriter,java.io.StringReader,io.netty.buffer.ByteBufOutputStream" />
       <option name="insideTryAllowed" value="false" />
     </inspection_tool>
-    <inspection_tool class="IdempotentLoopBody" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="IdempotentLoopBody" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IfCanBeAssertion" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="IfCanBeSwitch" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="minimumBranches" value="3" />
@@ -2062,9 +2062,11 @@
     <inspection_tool class="LongLiteralsEndingWithLowercaseL" enabled="true" level="ERROR" enabled_by_default="true">
       <scope name="android" level="ERROR" enabled="false" />
     </inspection_tool>
-    <inspection_tool class="LoopConditionNotUpdatedInsideLoop" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="LoopConditionNotUpdatedInsideLoop" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="ignoreIterators" value="false" />
+    </inspection_tool>
     <inspection_tool class="LoopStatementThatDoesntLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="LoopStatementsThatDontLoop" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="LoopStatementsThatDontLoop" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LoopToCallChain" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="LoopWithImplicitTerminationCondition" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="LossyEncoding" enabled="false" level="WARNING" enabled_by_default="false" />

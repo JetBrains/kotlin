@@ -239,7 +239,7 @@
       <option name="ignoreOnVolatileVariables" value="true" />
     </inspection_tool>
     <inspection_tool class="DoubleNegation" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="DuplicateBooleanBranch" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DuplicateBooleanBranch" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DuplicateCaseLabelJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DuplicateCondition" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="ignoreSideEffectConditions" value="true" />
@@ -353,6 +353,7 @@
     <inspection_tool class="HardwiredNamespacePrefix" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HtmlRequiredAltAttribute" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HtmlRequiredLangAttribute" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="IdempotentLoopBody" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="IOResource" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredTypesString" value="java.io.ByteArrayOutputStream,java.io.ByteArrayInputStream,java.io.StringBufferInputStream,java.io.CharArrayWriter,java.io.CharArrayReader,java.io.StringWriter,java.io.StringReader,io.netty.buffer.ByteBufOutputStream,com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream" />
       <option name="insideTryAllowed" value="false" />
@@ -585,6 +586,7 @@
     </inspection_tool>
     <inspection_tool class="LongLiteralsEndingWithLowercaseL" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LoopStatementThatDoesntLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="LoopStatementsThatDontLoop" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MakoArgumentListInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MalformedFormatString" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="ManualArrayToCollectionCopy" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -676,6 +678,7 @@
     </inspection_tool>
     <inspection_tool class="OctalIntegerJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="OctalLiteral" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="OverflowingLoopIndex" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PackageInfoWithoutPackage" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PagesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ParameterCanBeLocal" enabled="true" level="Strong Warning" enabled_by_default="true" />

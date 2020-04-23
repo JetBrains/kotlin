@@ -898,6 +898,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel/andel.core/fleet.andel.core.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel/andel.core/fleet.andel.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/app/fleet.app.iml" filepath="$PROJECT_DIR$/intellij/fleet/app/fleet.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/fleet.backend.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/fleet.backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" filepath="$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/langs/fleet.frontend.langs.iml" filepath="$PROJECT_DIR$/intellij/fleet/langs/fleet.frontend.langs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" />
