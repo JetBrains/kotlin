@@ -18,6 +18,8 @@ package com.intellij.tools;
 
 import com.intellij.openapi.keymap.KeyMapBundle;
 
+import java.util.List;
+
 public class ToolKeymapExtension extends BaseToolKeymapExtension {
 
   private final ToolManager myToolManager;
@@ -27,12 +29,27 @@ public class ToolKeymapExtension extends BaseToolKeymapExtension {
   }
 
   @Override
+  protected String getGroupIdPrefix() {
+    return ExternalToolsGroup.GROUP_ID_PREFIX;
+  }
+
+  @Override
   protected String getActionIdPrefix() {
     return Tool.ACTION_ID_PREFIX;
   }
 
   @Override
-  protected String getGroupName() {
+  protected List<? extends Tool> getToolsIdsByGroupName(String groupName) {
+    return myToolManager.getTools(groupName);
+  }
+
+  @Override
+  protected String getRootGroupName() {
     return KeyMapBundle.message("actions.tree.external.tools.group");
+  }
+
+  @Override
+  protected String getRootGroupId() {
+    return "ExternalToolsGroup";
   }
 }

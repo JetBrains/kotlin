@@ -44,7 +44,7 @@ public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActio
         if (subgroup.getChildrenCount() > 0) {
           add(subgroup);
           if (registerActions) {
-            ActionManager.getInstance().registerAction(groupName, subgroup);
+            ActionManager.getInstance().registerAction(getGroupIdPrefix() + groupName, subgroup);
           }
         }
       }
@@ -53,6 +53,8 @@ public abstract class BaseExternalToolsGroup<T extends Tool> extends SimpleActio
       }
     }
   }
+  @NotNull
+  protected abstract String getGroupIdPrefix();
 
   protected abstract List<ToolsGroup<T>> getToolsGroups();
 

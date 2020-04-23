@@ -10,48 +10,30 @@ import com.intellij.openapi.keymap.impl.ui.Group;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 
 public abstract class BaseToolKeymapExtension implements KeymapExtension {
 
   @Override
   public KeymapGroup createGroup(final Condition<AnAction> filtered, final Project project) {
     final ActionManagerEx actionManager = ActionManagerEx.getInstanceEx();
-    String[] ids = actionManager.getActionIds(getActionIdPrefix());
-    Arrays.sort(ids);
-    Group group = new Group(getGroupName(), AllIcons.Nodes.KeymapTools);
+    Group rootGroup = new Group(getRootGroupName(), getRootGroupId(), AllIcons.Nodes.KeymapTools);
+    List<ToolsGroup<Tool>> groups = ToolManager.getInstance().getGroups();
 
-
-    HashMap<String, Group> toolGroupNameToGroup = new HashMap<>();
-
-    for (String id : ids) {
-      if (filtered != null && !filtered.value(actionManager.getActionOrStub(id))) continue;
-      String groupName = getGroupByActionId(id);
-
-      if (groupName != null && groupName.trim().length() == 0) {
-        groupName = null;
+    for (ToolsGroup<Tool> toolsGroup : groups) {
+      String groupName = toolsGroup.getName();
+      Group group = new Group(groupName, getGroupIdPrefix() + groupName, null);
+      List<? extends Tool> tools = getToolsIdsByGroupName(groupName);
+      for (Tool tool : tools) {
+        if (filtered != null && !filtered.value(actionManager.getActionOrStub(tool.getActionId()))) continue;
+        group.addGroup(new Group(tool.getName(), tool.getActionId(), null));
       }
-
-      Group subGroup = toolGroupNameToGroup.get(groupName);
-      if (subGroup == null) {
-        subGroup = new Group(groupName, null, null);
-        toolGroupNameToGroup.put(groupName, subGroup);
-        if (groupName != null) {
-          group.addGroup(subGroup);
-        }
-      }
-
-      subGroup.addActionId(id);
+      rootGroup.addGroup(group);
     }
-
-    Group subGroup = toolGroupNameToGroup.get(null);
-    if (subGroup != null) {
-      group.addAll(subGroup);
-    }
-
-    return group;
+    return rootGroup;
   }
+
+  protected abstract String getGroupIdPrefix();
 
   protected abstract String getActionIdPrefix();
 

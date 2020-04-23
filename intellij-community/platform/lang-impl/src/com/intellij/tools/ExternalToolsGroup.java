@@ -2,12 +2,21 @@
 
 package com.intellij.tools;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class ExternalToolsGroup extends BaseExternalToolsGroup<Tool> {
+  public static final String GROUP_ID_PREFIX = "ExternalTools_";
+
   @Override
   protected List<ToolsGroup<Tool>> getToolsGroups() {
     return ToolManager.getInstance().getGroups();
+  }
+
+  @Override
+  protected @NotNull String getGroupIdPrefix() {
+    return GROUP_ID_PREFIX;
   }
 
   @Override
