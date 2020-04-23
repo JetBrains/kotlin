@@ -95,6 +95,9 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
         }
     }
 
+    val isTrivial: Boolean
+        get() = maxUsedValue == 0 || maxUsedValue == sourceInfo?.linesInFile
+
     private fun getOrRegisterNewSource(name: String, path: String): FileMapping =
         fileMappings.getOrPut(name to path) { FileMapping(name, path) }
 

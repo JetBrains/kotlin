@@ -1,20 +1,16 @@
 // FILE: 1.kt
-// WITH_RUNTIME
-
 package test
-inline fun stub() {
 
-}
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.internal.InlineOnly
-inline val prop: String
-    get() = "OK"
+inline fun <T, R> T.myLet(block: (T) -> R) = block(this)
 
 // FILE: 2.kt
 import test.*
 
 fun box(): String {
-    return prop
+    val k = "".myLet { it + "K" }
+    return "O".myLet(fun (it: String): String { return it + k })
 }
 
 // FILE: 2.smap

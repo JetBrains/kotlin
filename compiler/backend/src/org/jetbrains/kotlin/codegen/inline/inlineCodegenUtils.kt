@@ -565,22 +565,6 @@ class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
     }
 }
 
-fun initDefaultSourceMappingIfNeeded(
-    context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
-) {
-    if (state.isInlineDisabled) return
-
-    var parentContext: CodegenContext<*>? = context.parentContext
-    while (parentContext != null) {
-        if (parentContext.isInlineMethodContext) {
-            //just init default one to one mapping
-            codegen.orCreateSourceMapper
-            break
-        }
-        parentContext = parentContext.parentContext
-    }
-}
-
 fun MethodNode.preprocessSuspendMarkers(forInline: Boolean, keepFakeContinuation: Boolean = true) {
     if (instructions.first == null) return
     if (!keepFakeContinuation) {
