@@ -4,7 +4,7 @@ package com.intellij.openapi.projectRoots.impl
 import com.intellij.analysis.AnalysisScope
 import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
@@ -18,7 +18,7 @@ class SdkConfigurator : CommandLineInspectionProjectConfigurator {
                                 scope: AnalysisScope,
                                 logger: CommandLineInspectionProgressReporter) {
     runBlocking {
-      resolveUnknownSdks(project, ProgressManager.getInstance().progressIndicator)
+      resolveUnknownSdks(project, ProgressIndicatorBase())
     }
   }
 }

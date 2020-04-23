@@ -11,6 +11,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.refreshProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.refreshProjects
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.io.exists
 import org.jetbrains.plugins.gradle.settings.GradleImportHintService
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -29,6 +30,7 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
 
   override fun configureEnvironment(projectPath: Path, logger: CommandLineInspectionProgressReporter) {
     wasAlreadyImported = projectPath.resolve(".idea").exists()
+    Registry.get("external.system.auto.import.disabled").setValue(true)
   }
 
   override fun configureProject(project: Project, scope: AnalysisScope, logger: CommandLineInspectionProgressReporter) {
