@@ -1,7 +1,17 @@
-// FILE: annotation.kt
+// FILE: throws.kt
+package kotlin
+
+import kotlin.reflect.KClass
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.SOURCE)
+public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
+
+// FILE: native.kt
 package kotlin.native
 
-annotation class Throws(vararg val exceptionClasses: kotlin.reflect.KClass<out Throwable>)
+@Deprecated("")
+public typealias Throws = kotlin.Throws
 
 // FILE: test.kt
 class Exception1 : Throwable()
