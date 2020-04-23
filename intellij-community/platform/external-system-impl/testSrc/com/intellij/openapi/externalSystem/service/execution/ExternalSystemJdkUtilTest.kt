@@ -158,7 +158,7 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
     val path = jdkDir.absolutePath
     assertThat(isValidJdk(path)).`as`("Mock JDK at $path is expected to pass validation by com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.isValidJdk() " +
                                       "Please, check validation code and update mock accordingly").isTrue()
-    return (JavaSdkImpl.getInstance() as JavaSdkImpl).createMockJdk(jdkVersionStr, path, false)
+    return IdeaTestUtil.createMockJdk(jdkVersionStr, path)
   }
 }
 
