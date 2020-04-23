@@ -54,7 +54,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.*;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowContentUiType;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi;
@@ -554,7 +557,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
     });
 
-    AbstractProjectViewPane.EP.addExtensionPointListener(project, this::reloadPanes, project);
+    AbstractProjectViewPane.EP.addChangeListener(project, this::reloadPanes, project);
   }
 
   private void constructUi() {

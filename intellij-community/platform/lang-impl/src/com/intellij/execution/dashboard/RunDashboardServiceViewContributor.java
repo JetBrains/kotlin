@@ -87,7 +87,7 @@ public class RunDashboardServiceViewContributor
     return ContainerUtil.map(runDashboardManager.getRunConfigurations(),
                              value -> new RunConfigurationContributor(
                                new RunConfigurationNode(project, value,
-                                                        runDashboardManager.getCustomizers(value.getSettings(), value.getDescriptor()))));
+                                                        RunDashboardManagerImpl.getCustomizers(value.getSettings(), value.getDescriptor()))));
   }
 
   @NotNull

@@ -9,17 +9,16 @@ import com.intellij.lang.Language;
 import com.intellij.lang.MetaLanguage;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.profile.codeInspection.ui.inspectionsTree.InspectionConfigTreeNode;
-import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author Dmitry Batkovich
  */
 public abstract class InspectionsFilter {
-
   private final Set<HighlightSeverity> mySuitableSeverities = new HashSet<>();
   private final Set<Language> mySuitableLanguages = new HashSet<>();
   private Boolean mySuitableInspectionsStates;
@@ -155,8 +154,8 @@ public abstract class InspectionsFilter {
 
   protected abstract void filterChanged();
 
-  private static boolean isAvailableOnlyForAnalyze(final Tools tools) {
-    final InspectionToolWrapper tool = tools.getTool();
+  private static boolean isAvailableOnlyForAnalyze(@NotNull Tools tools) {
+    InspectionToolWrapper<?, ?> tool = tools.getTool();
     return tool instanceof GlobalInspectionToolWrapper && ((GlobalInspectionToolWrapper)tool).worksInBatchModeOnly();
   }
 

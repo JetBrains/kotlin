@@ -198,7 +198,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
         DumbService.getInstance(myProject).cancelTask(task);
       }
     });
-    FilePropertyPusher.EP_NAME.addExtensionPointListener(() -> {
+    FilePropertyPusher.EP_NAME.addChangeListener(() -> {
       DumbService.getInstance(myProject).cancelTask(task);
       queueFullUpdate();
     }, task);

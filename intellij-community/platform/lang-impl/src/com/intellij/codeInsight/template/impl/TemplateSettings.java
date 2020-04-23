@@ -28,23 +28,16 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.OptionTag;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.ResourceBundle;
 import kotlin.Lazy;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 @State(
   name = "TemplateSettings",
@@ -281,7 +274,7 @@ public final class TemplateSettings implements PersistentStateComponent<Template
 
     doLoadTemplates(mySchemeManager.loadSchemes());
 
-    Macro.EP_NAME.addExtensionPointListener(() -> {
+    Macro.EP_NAME.addChangeListener(() -> {
       for (TemplateImpl template : myTemplates.values()) {
         template.dropParsedData();
       }
@@ -290,8 +283,8 @@ public final class TemplateSettings implements PersistentStateComponent<Template
       }
     }, ApplicationManager.getApplication());
 
-    DefaultLiveTemplateEP.EP_NAME.addExtensionPointListener(mySchemeManager::reload,
-                                                            ApplicationManager.getApplication());
+    DefaultLiveTemplateEP.EP_NAME.addChangeListener(mySchemeManager::reload,
+                                                    ApplicationManager.getApplication());
   }
 
   private void doLoadTemplates(@NotNull Collection<? extends TemplateGroup> groups) {

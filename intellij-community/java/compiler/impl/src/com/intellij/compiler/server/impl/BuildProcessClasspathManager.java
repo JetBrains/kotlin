@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.server.impl;
 
 import com.intellij.compiler.server.BuildProcessParametersProvider;
@@ -24,17 +24,16 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.JarFile;
 
-public class BuildProcessClasspathManager {
+public final class BuildProcessClasspathManager {
   private static final Logger LOG = Logger.getInstance(BuildProcessClasspathManager.class);
 
   private volatile List<String> myCompileServerPluginsClasspath;
 
   public BuildProcessClasspathManager(@NotNull Disposable parentDisposable) {
-    CompileServerPlugin.EP_NAME.addExtensionPointListener(() -> myCompileServerPluginsClasspath = null, parentDisposable);
+    CompileServerPlugin.EP_NAME.addChangeListener(() -> myCompileServerPluginsClasspath = null, parentDisposable);
   }
 
-  @NotNull
-  public List<String> getBuildProcessPluginsClasspath(Project project) {
+  public @NotNull List<String> getBuildProcessPluginsClasspath(Project project) {
     List<String> staticClasspath = getStaticClasspath();
     List<String> dynamicClasspath = getDynamicClasspath(project);
 
@@ -47,8 +46,7 @@ public class BuildProcessClasspathManager {
     }
   }
 
-  @NotNull
-  private List<String> getStaticClasspath() {
+  private @NotNull List<String> getStaticClasspath() {
     List<String> cp = myCompileServerPluginsClasspath;
     if (cp == null) {
       myCompileServerPluginsClasspath = cp = Collections.unmodifiableList(computeCompileServerPluginsClasspath());
@@ -56,8 +54,7 @@ public class BuildProcessClasspathManager {
     return cp;
   }
 
-  @NotNull
-  private static List<String> computeCompileServerPluginsClasspath() {
+  private static @NotNull List<String> computeCompileServerPluginsClasspath() {
     final List<String> classpath = new ArrayList<>();
 
     for (CompileServerPlugin serverPlugin : CompileServerPlugin.EP_NAME.getExtensions()) {
@@ -132,8 +129,7 @@ public class BuildProcessClasspathManager {
     return classpath;
   }
 
-  @Nullable
-  private static File getPluginDir(@NotNull IdeaPluginDescriptor plugin) {
+  private static @Nullable File getPluginDir(@NotNull IdeaPluginDescriptor plugin) {
     String pluginDirName = StringUtil.getShortName(plugin.getPluginId().getIdString());
     String extraDir = System.getProperty("idea.external.build.development.plugins.dir");
     if (extraDir != null) {
@@ -149,19 +145,17 @@ public class BuildProcessClasspathManager {
     return pluginHome.isDirectory() ? pluginHome : null;
   }
 
-  @NotNull
-  private static List<String> getDynamicClasspath(Project project) {
+  private static @NotNull List<String> getDynamicClasspath(Project project) {
     final List<String> classpath = new ArrayList<>();
-    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensionList(project)) {
+    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensions(project)) {
       classpath.addAll(provider.getClassPath());
     }
     return classpath;
   }
 
-  @NotNull
-  public static List<String> getLauncherClasspath(Project project) {
+  public static @NotNull List<String> getLauncherClasspath(Project project) {
     final List<String> classpath = new ArrayList<>();
-    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensionList(project)) {
+    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensions(project)) {
       classpath.addAll(provider.getLauncherClassPath());
     }
     return classpath;

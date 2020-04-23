@@ -158,9 +158,9 @@ public final class StructureViewWrapperImpl implements StructureViewWrapper, Dis
     });
     Disposer.register(myToolWindow.getContentManager(), this);
 
-    PsiStructureViewFactory.EP_NAME.addExtensionPointListener(this::clearCaches, this);
+    PsiStructureViewFactory.EP_NAME.addChangeListener(this::clearCaches, this);
 
-    StructureViewBuilder.EP_NAME.addExtensionPointListener(this::clearCaches, this);
+    StructureViewBuilder.EP_NAME.addChangeListener(this::clearCaches, this);
     getApplication().getMessageBus().connect(this).subscribe(STRUCTURE_CHANGED, this::clearCaches);
   }
 

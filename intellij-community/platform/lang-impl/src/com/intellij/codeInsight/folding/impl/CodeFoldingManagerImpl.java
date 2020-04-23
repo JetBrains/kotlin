@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.folding.impl;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -14,7 +14,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
-import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -71,16 +70,16 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
         }
       }, this);
 
-    ExtensionPointChangeListener listener = () -> {
+    Runnable listener = () -> {
       for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors()) {
         if (fileEditor instanceof TextEditor) {
           FoldingUpdate.clearFoldingCache(((TextEditor)fileEditor).getEditor());
         }
       }
     };
-    MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(listener, false, this);
-    LanguageInjector.EXTENSION_POINT_NAME.addExtensionPointListener(listener, this);
-    CustomFoldingProvider.EP_NAME.addExtensionPointListener(listener, this);
+    MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.addChangeListener(project, listener, this);
+    LanguageInjector.EXTENSION_POINT_NAME.addChangeListener(listener, this);
+    CustomFoldingProvider.EP_NAME.addChangeListener(listener, this);
   }
 
   @Override

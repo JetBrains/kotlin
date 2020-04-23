@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.tree.injected;
 
 import com.intellij.lang.injection.ConcatenationAwareInjector;
@@ -26,7 +26,7 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
   public static final ProjectExtensionPointName<ConcatenationAwareInjector> EP_NAME = new ProjectExtensionPointName<>("com.intellij.concatenationAwareInjector");
 
   public ConcatenationInjectorManager(@NotNull Project project) {
-    EP_NAME.getPoint(project).addExtensionPointListener(this::concatenationInjectorsChanged, false, project);
+    EP_NAME.addChangeListener(project, this::concatenationInjectorsChanged, null);
     // clear caches even on non-physical changes
     PsiManagerEx.getInstanceEx(project).registerRunnableToRunOnAnyChange(this::incModificationCount);
   }

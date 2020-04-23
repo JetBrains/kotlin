@@ -31,7 +31,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.module.Module;
@@ -885,7 +884,8 @@ public final class BuildManager implements Disposable {
     if (project.isDisposed()) {
       return true;
     }
-    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensionList(project)) {
+
+    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensions(project)) {
       if (!provider.isProcessPreloadingEnabled()) {
         return false;
       }
@@ -1201,7 +1201,7 @@ public final class BuildManager implements Disposable {
       cmdLine.addParameter("-Djava.io.tmpdir=" + FileUtil.toSystemIndependentName(projectSystemRoot.getPath()) + "/" + TEMP_DIR_NAME);
     }
 
-    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensionList(project)) {
+    for (BuildProcessParametersProvider provider : BuildProcessParametersProvider.EP_NAME.getExtensions(project)) {
       final List<String> args = provider.getVMArguments();
       cmdLine.addParameters(args);
     }
@@ -1250,7 +1250,7 @@ public final class BuildManager implements Disposable {
     cmdLine.addParameter(classpathToString(cp));
 
     cmdLine.addParameter(BuildMain.class.getName());
-    cmdLine.addParameter(Boolean.valueOf(System.getProperty("java.net.preferIPv6Addresses", "false"))? "::1" : "127.0.0.1");
+    cmdLine.addParameter(Boolean.parseBoolean(System.getProperty("java.net.preferIPv6Addresses", "false")) ? "::1" : "127.0.0.1");
     cmdLine.addParameter(Integer.toString(port));
     cmdLine.addParameter(sessionId.toString());
 
@@ -1675,16 +1675,12 @@ public final class BuildManager implements Disposable {
 
       String projectPath = getProjectPath(project);
       Disposer.register(project, () -> {
-        getInstance().cancelPreloadedBuilds(projectPath);
-        getInstance().myProjectDataMap.remove(projectPath);
+        BuildManager buildManager = getInstance();
+        buildManager.cancelPreloadedBuilds(projectPath);
+        buildManager.myProjectDataMap.remove(projectPath);
       });
 
-      BuildProcessParametersProvider.EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointChangeListener() {
-        @Override
-        public void extensionListChanged() {
-          getInstance().cancelAllPreloadedBuilds();
-        }
-      }, false, null);
+      BuildProcessParametersProvider.EP_NAME.addChangeListener(project, () -> getInstance().cancelAllPreloadedBuilds(), null);
 
       getInstance().runCommand(() -> {
         File projectSystemDir = getInstance().getProjectSystemDirectory(project);

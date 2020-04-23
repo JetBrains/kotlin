@@ -46,7 +46,7 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
 
   public StructureViewFactoryImpl(@NotNull Project project) {
     myProject = project;
-    EXTENSION_POINT_NAME.addExtensionPointListener(() -> {
+    EXTENSION_POINT_NAME.addChangeListener(() -> {
       myImplExtensions.clear();
       if (myStructureViewWrapperImpl != null) {
         myStructureViewWrapperImpl.rebuild();

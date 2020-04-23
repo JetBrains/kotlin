@@ -48,7 +48,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     super(Presentation.NULL_STRING, true);
     myCustomization = customization;
     updateActions();
-    DirectoryProjectGenerator.EP_NAME.addExtensionPointListener(() -> updateActions(), null);
+    DirectoryProjectGenerator.EP_NAME.addChangeListener(() -> updateActions(), null);
   }
 
   @Override
