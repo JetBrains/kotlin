@@ -60,8 +60,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
   private final SerializationManagerEx mySerializationManager;
 
   public StubUpdatingIndex() {
-    this(StubForwardIndexExternalizer.getIdeUsedExternalizer(SerializationManagerEx.getInstanceEx()),
-         SerializationManagerEx.getInstanceEx());
+    this(StubForwardIndexExternalizer.getIdeUsedExternalizer(), SerializationManagerEx.getInstanceEx());
   }
 
   public StubUpdatingIndex(@NotNull StubForwardIndexExternalizer<?> stubIndexesExternalizer,
