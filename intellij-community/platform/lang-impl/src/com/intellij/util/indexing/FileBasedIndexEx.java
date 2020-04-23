@@ -120,7 +120,8 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       if (idFilter == null) {
         idFilter = projectIndexableFiles(scope.getProject());
       }
-      return index.processAllKeys(processor, scope, idFilter);
+      @Nullable IdFilter finalIdFilter = idFilter;
+      return myAccessValidator.validate(indexId, () -> index.processAllKeys(processor, scope, finalIdFilter));
     }
     catch (StorageException e) {
       scheduleRebuild(indexId, e);
