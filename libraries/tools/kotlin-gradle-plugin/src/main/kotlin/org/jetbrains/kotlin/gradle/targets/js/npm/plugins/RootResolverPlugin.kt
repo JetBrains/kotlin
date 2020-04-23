@@ -10,6 +10,5 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmR
 
 internal interface RootResolverPlugin {
     fun createCompilationResolverPlugins(resolver: KotlinCompilationNpmResolver): List<CompilationResolverPlugin>
-    fun resolve(resolution: KotlinRootNpmResolution)
     fun close(resolution: KotlinRootNpmResolution)
 }

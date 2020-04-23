@@ -93,12 +93,25 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                 get() = resolver.compilations.map { it.npmProject }
         }
 
-        open class Prepared(val resolved: KotlinRootNpmResolution) : ResolutionState() {
+        open class Prepared(val preparedInstallation: KotlinRootNpmResolver.Installation) : ResolutionState() {
             override val npmProjects: List<NpmProject>
-                get() = resolved.projects.values.flatMap { it.npmProjects.map { it.npmProject } }
+                get() = npmProjectsByProjectResolutions(preparedInstallation.projectResolutions)
         }
 
-        class Installed(resolved: KotlinRootNpmResolution) : Prepared(resolved)
+        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = npmProjectsByProjectResolutions(resolved.projects)
+        }
+
+        companion object {
+            fun npmProjectsByProjectResolutions(
+                resolutions: Map<Project, KotlinProjectNpmResolution>
+            ): List<NpmProject> {
+                return resolutions
+                    .values
+                    .flatMap { it.npmProjects.map { it.npmProject } }
+            }
+        }
     }
 
     @Incubating
@@ -107,49 +120,29 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
 
-    internal fun prepare() = prepareIfNeeded(requireNotInstalled = true)
+    internal fun prepare() = prepareIfNeeded(requireNotPrepared = true)
 
     internal fun installIfNeeded(
-        reason: String = "",
+        reason: String? = "",
         args: List<String> = emptyList()
     ): KotlinRootNpmResolution {
-        if (state is ResolutionState.Installed) {
-            return (state as ResolutionState.Installed).resolved
+        synchronized(this) {
+            if (state is ResolutionState.Installed) {
+                return (state as ResolutionState.Installed).resolved
+            }
+
+            val installUpToDate = nodeJsSettings.npmInstallTask.state.upToDate
+            val forceUpToDate = installUpToDate && !forceFullResolve
+
+            val installation = prepareIfNeeded(requireUpToDateReason = reason)
+            val resolution = installation
+                .install(forceUpToDate, args)
+            state = ResolutionState.Installed(resolution)
+
+            installation.closePlugins(resolution)
+
+            return resolution
         }
-
-        val installUpToDate = nodeJsSettings.npmInstallTask.state.upToDate
-        val forceUpToDate = installUpToDate && !forceFullResolve
-
-        val npmResolution = prepareIfNeeded(requireUpToDateReason = reason)
-        val npmResolutions = npmResolution
-            .projects
-            .values
-            .flatMap { it.npmProjects }
-
-        // we need manual up-to-date checking to avoid call package manager during
-        // idea import if nothing was changed
-        // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
-        // because our upToDateChecks saves state for next execution
-        val upToDateChecks = npmResolutions.map {
-            PackageJsonUpToDateCheck(it.npmProject)
-        }
-        val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
-
-        nodeJsSettings.packageManager.resolveRootProject(
-            nodeJsSettings.rootProject,
-            npmResolutions,
-            upToDate,
-            args
-        )
-
-        upToDateChecks.forEach { it.commit() }
-
-        return ResolutionState.Installed((state as ResolutionState.Prepared).resolved)
-            .apply {
-                state = this
-                npmResolution.plugins
-                    .forEach { it.resolve(npmResolution) }
-            }.resolved
     }
 
     internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
@@ -161,39 +154,40 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     /**
      * @param requireUpToDateReason Check that project already resolved,
      * or it is up-to-date but just not closed. Show given message if it is not.
-     * @param requireNotInstalled Check that project is not resolved
+     * @param requireNotPrepared Check that project is not prepared
      */
     private fun prepareIfNeeded(
         requireUpToDateReason: String? = null,
-        requireNotInstalled: Boolean = false
-    ): KotlinRootNpmResolution {
-        fun alreadyResolved(resolution: KotlinRootNpmResolution): KotlinRootNpmResolution {
-            if (requireNotInstalled) error("Project already resolved")
-            return resolution
+        requireNotPrepared: Boolean = false
+    ): KotlinRootNpmResolver.Installation {
+        fun alreadyResolved(installation: KotlinRootNpmResolver.Installation): KotlinRootNpmResolver.Installation {
+            if (requireNotPrepared) error("Project already prepared")
+            return installation
         }
 
         val state0 = this.state
         return when (state0) {
-            is ResolutionState.Prepared -> alreadyResolved(state0.resolved)
+            is ResolutionState.Prepared -> alreadyResolved(state0.preparedInstallation)
             is ResolutionState.Configuring -> {
                 synchronized(this) {
                     val state1 = this.state
                     when (state1) {
-                        is ResolutionState.Prepared -> alreadyResolved(state1.resolved)
+                        is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)
                         is ResolutionState.Configuring -> {
                             val upToDate = nodeJsSettings.rootPackageJsonTask.state.upToDate
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }
 
-                            state1.resolver.close().also {
+                            state1.resolver.prepareInstallation().also {
                                 this.state = ResolutionState.Prepared(it)
-                                state1.resolver.closePlugins(it)
                             }
                         }
+                        is ResolutionState.Installed -> error("Project already installed")
                     }
                 }
             }
+            is ResolutionState.Installed -> error("Project already installed")
         }
     }
 
@@ -202,19 +196,19 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         val resolvedProject =
             if (forceFullResolve) {
-                prepareIfNeeded()
-                installIfNeeded()[project]
+                installIfNeeded(reason = null)[project]
             } else {
                 // may return null only during npm resolution
                 // (it can be called since NpmDependency added to configuration that
                 // requires resolve to build package.json, in this case we should just skip this call)
                 val state0 = state
                 when (state0) {
-                    is ResolutionState.Prepared -> state0.resolved[project]
+                    is ResolutionState.Prepared -> state0.preparedInstallation[project]
                     is ResolutionState.Configuring -> {
                         return null
                         //error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
                     }
+                    is ResolutionState.Installed -> state0.resolved[project]
                 }
             }
 
