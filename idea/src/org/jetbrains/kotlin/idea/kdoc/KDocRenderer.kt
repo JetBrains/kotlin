@@ -133,7 +133,7 @@ object KDocRenderer {
                 if (subjectName != null) {
                     DocumentationManagerUtil.createHyperlink(this, subjectName, subjectName, false)
                 } else {
-                    append(tag.getContent())
+                    append(markdownToHyperLink(tag.getContent()) ?: tag.getContent())
                 }
                 if (iterator.hasNext()) {
                     append(", ")
@@ -185,8 +185,7 @@ object KDocRenderer {
     }
 
     private fun markdownToHtml(markdown: String, allowSingleParagraph: Boolean = false): String {
-        val markdownTree = MarkdownParser(CommonMarkFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
-        val markdownNode = MarkdownNode(markdownTree, null, markdown)
+        val markdownNode = parseMarkdown(markdown)
 
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
         val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
@@ -197,6 +196,18 @@ object KDocRenderer {
         } else {
             markdownNode.toHtml()
         }
+    }
+
+    private fun markdownToHyperLink(markdown: String): String? =
+        parseMarkdown(markdown)
+            .children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
+            ?.children?.singleOrNull { it.type != MarkdownTokenTypes.EOL }
+            ?.takeIf { it.type == MarkdownElementTypes.INLINE_LINK }
+            ?.toHtml()
+
+    private fun parseMarkdown(markdown: String): MarkdownNode {
+        val markdownTree = MarkdownParser(CommonMarkFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
+        return MarkdownNode(markdownTree, null, markdown)
     }
 
     class MarkdownNode(val node: ASTNode, val parent: MarkdownNode?, val markdown: String) {
