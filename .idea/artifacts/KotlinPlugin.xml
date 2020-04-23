@@ -18,7 +18,7 @@
           <element id="archive" name="kotlin-jps-plugin.jar">
             <element id="module-output" name="kotlin.jps-plugin" />
             <element id="module-output" name="kotlin.jps-common" />
-            <element id="library" level="project" name="kotlinc.compiler-components-for-jps" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/compiler-components-for-jps/1.4-SNAPSHOT/compiler-components-for-jps-1.4-SNAPSHOT.jar" path-in-jar="/" />
           </element>
         </element>
         <element id="archive" name="kotlin-compiler-plugins-allopen.jar">
