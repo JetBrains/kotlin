@@ -1,0 +1,7 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.maven.MavenImportListener"/>
+
+    <moduleService serviceImplementation="org.jetbrains.kotlin.idea.maven.KotlinImporterComponent"/>
+  </extensions>
+</idea-plugin>
