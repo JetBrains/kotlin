@@ -15,7 +15,6 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.ProblemListener;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,13 +28,11 @@ public class PsiAwareFileEditorManagerImpl extends FileEditorManagerImpl {
   /**
    * Updates icons for open files when project roots change
    */
-  private final FileEditorPsiTreeChangeListener myPsiTreeChangeListener;
 
   public PsiAwareFileEditorManagerImpl(@NotNull Project project) {
     super(project);
 
     myProblemSolver = WolfTheProblemSolver.getInstance(project);
-    myPsiTreeChangeListener = new FileEditorPsiTreeChangeListener(this);
     registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
 
     // reinit syntax highlighter for Groovy. In power save mode keywords are highlighted by GroovySyntaxHighlighter insteadof
@@ -53,13 +50,6 @@ public class PsiAwareFileEditorManagerImpl extends FileEditorManagerImpl {
     });
 
     connection.subscribe(ProblemListener.TOPIC, new MyProblemListener());
-  }
-
-  @Override
-  protected void projectOpened(@NotNull MessageBusConnection connection) {
-    super.projectOpened(connection);
-
-    PsiManager.getInstance(getProject()).addPsiTreeChangeListener(myPsiTreeChangeListener);
   }
 
   @Override
