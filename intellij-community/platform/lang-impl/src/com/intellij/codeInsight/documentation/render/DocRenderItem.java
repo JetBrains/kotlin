@@ -158,8 +158,8 @@ public class DocRenderItem {
         editor.getScrollingModel().addVisibleAreaListener(iconVisibilityController, connection);
         Disposer.register(connection, iconVisibilityController);
 
-        VisibleAreaListener visibleAreaListener = new MyVisibleAreaListener(editor);
-        editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener, connection);
+        editor.getScrollingModel().addVisibleAreaListener(new MyVisibleAreaListener(editor), connection);
+        editor.getInlayModel().addListener(new MyInlayListener(), connection);
 
         editor.putUserData(LISTENERS_DISPOSABLE, connection);
       }
@@ -475,6 +475,16 @@ public class DocRenderItem {
         lastWidth = newWidth;
         lastFrcTransform = transform;
         updateInlays(editor);
+      }
+    }
+  }
+
+  private static class MyInlayListener implements InlayModel.Listener {
+    @Override
+    public void onRemoved(@NotNull Inlay inlay) {
+      EditorCustomElementRenderer renderer = inlay.getRenderer();
+      if (renderer instanceof DocRenderer) {
+        ((DocRenderer)renderer).dispose();
       }
     }
   }

@@ -222,7 +222,16 @@ class DocRenderer implements EditorCustomElementRenderer {
     if (newInstance) {
       trackImageUpdates(inlay, myPane);
     }
+    DocRendererMemoryManager.onRendererComponentUsage(this);
     return myPane;
+  }
+
+  void clearCachedComponent() {
+    myPane = null;
+  }
+
+  void dispose() {
+    DocRendererMemoryManager.stopTracking(this);
   }
 
   private static @NotNull Color getTextColor(@NotNull EditorColorsScheme scheme) {
