@@ -616,7 +616,8 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
             assertTasksExecuted(":app:browserProductionWebpack")
 
-            assertFileExists("build/js/packages/kotlin-js-browser-base")
+            assertFileExists("build/js/packages/kotlin-js-browser-base-jsIr")
+            assertFileExists("build/js/packages/kotlin-js-browser-base-jsLegacy")
             assertFileExists("build/js/packages/kotlin-js-browser-lib")
             assertFileExists("build/js/packages/kotlin-js-browser-app")
 
@@ -630,7 +631,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
                 assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin.js")
                 assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-app.js")
                 assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-lib.js")
-                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-base.js")
+                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-base-jsLegacy.js")
 
                 assertFileExists("app/build/distributions/app.js.map")
             }
