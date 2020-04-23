@@ -1,0 +1,7 @@
+<idea-plugin>
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.maven.MavenImportListener</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>
