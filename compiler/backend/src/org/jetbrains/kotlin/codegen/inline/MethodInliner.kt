@@ -266,6 +266,7 @@ class MethodInliner(
                         visitInsn(Opcodes.NOP)
                     }
 
+                    inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info)
                     addInlineMarker(this, true)
                     val lambdaParameters = info.addAllParameters(nodeRemapper)
 
@@ -302,7 +303,7 @@ class MethodInliner(
                         .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
+                    inlineOnlySmapSkipper?.onInlineLambdaEnd(remappingMethodAdapter)
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
                     assert(transformationInfo is AnonymousObjectTransformationInfo) {

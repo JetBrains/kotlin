@@ -78,7 +78,6 @@ import static org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.isAccessor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
-import static org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
@@ -592,7 +591,6 @@ public class FunctionCodegen {
         Label methodEnd;
 
         int functionFakeIndex = -1;
-        int lambdaFakeIndex = -1;
 
         if (context.getParentContext() instanceof MultifileClassFacadeContext) {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
@@ -623,20 +621,8 @@ public class FunctionCodegen {
                 ValueParameterDescriptor continuationValueDescriptor = view.getValueParameters().get(view.getValueParameters().size() - 1);
                 frameMap.enter(continuationValueDescriptor, typeMapper.mapType(continuationValueDescriptor));
             }
-            if (context.isInlineMethodContext()) {
-                functionFakeIndex = newFakeTempIndex(mv, frameMap, -1);
-            }
-
-            if (context instanceof InlineLambdaContext) {
-                int lineNumber = -1;
-                if (strategy instanceof ClosureGenerationStrategy) {
-                    KtDeclarationWithBody declaration = ((ClosureGenerationStrategy) strategy).getDeclaration();
-                    BindingContext bindingContext = typeMapper.getBindingContext();
-                    if (declaration instanceof KtFunctionLiteral && isLambdaPassedToInlineOnly((KtFunction) declaration, bindingContext)) {
-                        lineNumber = LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER;
-                    }
-                }
-                lambdaFakeIndex = newFakeTempIndex(mv, frameMap, lineNumber);
+            if (context.isInlineMethodContext() || context instanceof InlineLambdaContext) {
+                functionFakeIndex = newFakeTempIndex(mv, frameMap);
             }
 
             methodEntry = new Label();
@@ -665,7 +651,7 @@ public class FunctionCodegen {
 
         generateLocalVariableTable(
                 mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), parentCodegen.state,
-                (functionFakeIndex >= 0 ? 1 : 0) + (lambdaFakeIndex >= 0 ? 1 : 0)
+                (functionFakeIndex >= 0 ? 1 : 0)
         );
 
         //TODO: it's best to move all below logic to 'generateLocalVariableTable' method
@@ -676,9 +662,7 @@ public class FunctionCodegen {
                     Type.INT_TYPE.getDescriptor(), null,
                     methodEntry, methodEnd,
                     functionFakeIndex);
-        }
-
-        if (context instanceof InlineLambdaContext && thisType != null && lambdaFakeIndex != -1) {
+        } else if (context instanceof InlineLambdaContext && thisType != null && functionFakeIndex != -1) {
             String internalName = thisType.getInternalName();
             String lambdaLocalName = StringsKt.substringAfterLast(internalName, '/', internalName);
 
@@ -696,7 +680,7 @@ public class FunctionCodegen {
                     JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT + "-" + functionName + "-" + lambdaLocalName,
                     Type.INT_TYPE.getDescriptor(), null,
                     methodEntry, methodEnd,
-                    lambdaFakeIndex);
+                    functionFakeIndex);
         }
     }
 
@@ -714,13 +698,8 @@ public class FunctionCodegen {
         return false;
     }
 
-    private static int newFakeTempIndex(@NotNull MethodVisitor mv, @NotNull FrameMap frameMap, int lineNumber) {
+    private static int newFakeTempIndex(@NotNull MethodVisitor mv, @NotNull FrameMap frameMap) {
         int fakeIndex = frameMap.enterTemp(Type.INT_TYPE);
-        if (lineNumber >= 0) {
-            Label label = new Label();
-            mv.visitLabel(label);
-            mv.visitLineNumber(lineNumber, label);
-        }
         mv.visitLdcInsn(0);
         mv.visitVarInsn(ISTORE, fakeIndex);
         return fakeIndex;
