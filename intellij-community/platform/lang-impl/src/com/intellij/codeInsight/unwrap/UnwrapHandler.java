@@ -225,7 +225,7 @@ public class UnwrapHandler implements CodeInsightActionHandler {
             myEditor,
             textRange.getStartOffset(),
             textRange.getEndOffset(),
-            getTestAttributesForExtract(),
+            EditorColors.SEARCH_RESULT_ATTRIBUTES,
             false,
             true,
             null);
