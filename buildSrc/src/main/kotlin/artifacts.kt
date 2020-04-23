@@ -6,6 +6,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePluginConvention
@@ -58,11 +59,15 @@ fun Project.noDefaultJar() {
     }
 }
 
-fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) {
+fun <T : Task> Project.runtimeJarArtifactBy(
+    task: TaskProvider<T>,
+    artifactRef: Any,
+    body: ConfigurablePublishArtifact.() -> Unit = {}
+) {
     addArtifact("archives", task, artifactRef, body)
     addArtifact("runtimeJar", task, artifactRef, body)
     configurations.findByName("runtime")?.let {
-        addArtifact(it, task, artifactRef, body)
+        addArtifact(it.name, task, artifactRef, body)
     }
 }
 
@@ -82,8 +87,8 @@ fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {})
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         body()
-        project.runtimeJarArtifactBy(this, this)
     }
+    project.runtimeJarArtifactBy(task, task)
     return task
 }
 
@@ -259,6 +264,19 @@ fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any,
 fun <T : Task> Project.addArtifact(configurationName: String, task: TaskProvider<T>, body: ConfigurablePublishArtifact.() -> Unit = {}) {
     configurations.maybeCreate(configurationName)
     artifacts.add(configurationName, task, body)
+}
+
+fun <T : Task> Project.addArtifact(
+    configurationName: String,
+    task: TaskProvider<T>,
+    artifactRef: Any,
+    body: ConfigurablePublishArtifact.() -> Unit = {}
+): PublishArtifact {
+    configurations.maybeCreate(configurationName)
+    return artifacts.add(configurationName, artifactRef) {
+        builtBy(task)
+        body()
+    }
 }
 
 fun Project.cleanArtifacts() {
