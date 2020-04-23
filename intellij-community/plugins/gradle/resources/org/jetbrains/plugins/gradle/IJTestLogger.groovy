@@ -1,18 +1,43 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 import groovy.xml.MarkupBuilder
-import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
+import org.gradle.api.tasks.testing.*
 
 class IJTestEventLogger {
   static def configureTestEventLogging(def task) {
-    task.beforeSuite { descriptor -> logTestEvent("beforeSuite", descriptor, null, null) }
-    task.afterSuite { descriptor, result -> logTestEvent("afterSuite", descriptor, null, result) }
+    task.addTestListener(
+      new TestListener() {
+        @Override
+        void beforeSuite(TestDescriptor descriptor) {
+          logTestEvent("beforeSuite", descriptor, null, null)
+        }
 
-    task.beforeTest { descriptor -> logTestEvent("beforeTest", descriptor, null, null) }
-    task.onOutput { descriptor, event -> logTestEvent("onOutput", descriptor, event, null) }
-    task.afterTest { descriptor, result -> logTestEvent("afterTest", descriptor, null, result) }
+        @Override
+        void afterSuite(TestDescriptor descriptor, TestResult result) {
+          logTestEvent("afterSuite", descriptor, null, result)
+        }
+
+        @Override
+        void beforeTest(TestDescriptor descriptor) {
+          logTestEvent("beforeTest", descriptor, null, null)
+        }
+
+        @Override
+        void afterTest(TestDescriptor descriptor, TestResult result) {
+          logTestEvent("afterTest", descriptor, null, result)
+        }
+      }
+    )
+
+    task.addTestOutputListener(new TestOutputListener() {
+      @Override
+      void onOutput(TestDescriptor descriptor, TestOutputEvent event) {
+        logTestEvent("onOutput", descriptor, event, null)
+      }
+    })
   }
 
-  static def logTestEvent(testEventType, TestDescriptorInternal testDescriptor, testEvent, testResult) {
+  static def logTestEvent(testEventType, TestDescriptor testDescriptor, testEvent, testResult) {
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
     xml.event(type: testEventType) {

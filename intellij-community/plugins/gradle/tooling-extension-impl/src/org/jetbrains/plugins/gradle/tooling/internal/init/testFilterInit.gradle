@@ -36,20 +36,22 @@ try {
  // ignore, class not available
 }
 
-gradle.taskGraph.beforeTask { Task task ->
-  task.onlyIf { !skipExecution }
+gradle.taskGraph.whenReady { taskGraph ->
+  taskGraph.allTasks.each { Task task ->
+    task.onlyIf { !skipExecution }
 
-  if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
-    try {
-      task.outputs.upToDateWhen { false }
-      if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
-        def filter = task.getFilter()
-        filter.setIncludePatterns(new String[0])
-        ijTestIncludes.each(){ filter.includeTestsMatching "${it}" }
+    if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
+      try {
+        task.outputs.upToDateWhen { false }
+        if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
+          def filter = task.getFilter()
+          filter.setIncludePatterns(new String[0])
+          ijTestIncludes.each(){ filter.includeTestsMatching "${it}" }
+        }
       }
-    }
-    catch (all) {
-      logger.error("", all)
+      catch (all) {
+        logger.error("", all)
+      }
     }
   }
 }
