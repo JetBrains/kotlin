@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +28,6 @@ public class SimpleTestMethodModel extends TestMethodModel {
 
     @NotNull
     private final File rootDir;
-    @NotNull
-    private final File moduleDir;
     @NotNull
     protected final File file;
     @NotNull
@@ -38,7 +39,6 @@ public class SimpleTestMethodModel extends TestMethodModel {
 
     public SimpleTestMethodModel(
             @NotNull File rootDir,
-            @NotNull File moduleDir,
             @NotNull File file,
             @NotNull Pattern filenamePattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
@@ -48,7 +48,6 @@ public class SimpleTestMethodModel extends TestMethodModel {
         this.rootDir = rootDir;
         this.file = file;
         this.filenamePattern = filenamePattern;
-        this.moduleDir = moduleDir;
         this.targetBackend = targetBackend;
         this.skipIgnored = skipIgnored;
 
@@ -65,8 +64,7 @@ public class SimpleTestMethodModel extends TestMethodModel {
 
     @Override
     public void generateBody(@NotNull Printer p) {
-        File fileRelativeToModule = FilesKt.relativeTo(file, moduleDir);
-        String filePath = KotlinTestUtils.getFilePath(fileRelativeToModule) + (fileRelativeToModule.isDirectory() ? "/" : "");
+        String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
         p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");");
     }
 

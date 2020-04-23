@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.io.IOException
+import java.nio.file.Paths
 import java.util.*
 import kotlin.reflect.full.findAnnotation
 
@@ -71,7 +72,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
     override fun getTestDataPath(): String {
-        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
+        val relativeToKotlinIdeRoot = this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
+        return Paths.get(KotlinTestUtils.getHomeDirectory(), relativeToKotlinIdeRoot).toString()
     }
 
     override fun setUp() {

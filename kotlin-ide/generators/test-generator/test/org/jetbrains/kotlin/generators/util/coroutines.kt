@@ -16,17 +16,15 @@ import java.io.File
 import java.util.regex.Pattern
 
 class CoroutinesTestModel(
-    rootDir: File,
-    moduleDir: File,
-    file: File,
-    filenamePattern: Pattern,
-    checkFilenameStartsLowerCase: Boolean?,
-    targetBackend: TargetBackend,
-    skipIgnored: Boolean,
-    private val isLanguageVersion1_3: Boolean
+        rootDir: File,
+        file: File,
+        filenamePattern: Pattern,
+        checkFilenameStartsLowerCase: Boolean?,
+        targetBackend: TargetBackend,
+        skipIgnored: Boolean,
+        private val isLanguageVersion1_3: Boolean
 ) : SimpleTestMethodModel(
         rootDir,
-        moduleDir,
         file,
         filenamePattern,
         checkFilenameStartsLowerCase,
@@ -49,48 +47,44 @@ fun isCommonCoroutineTest(file: File): Boolean {
 }
 
 fun createCommonCoroutinesTestMethodModels(
-    rootDir: File,
-    moduleDir: File,
-    file: File,
-    filenamePattern: Pattern,
-    checkFilenameStartsLowerCase: Boolean?,
-    targetBackend: TargetBackend,
-    skipIgnored: Boolean
+        rootDir: File,
+        file: File,
+        filenamePattern: Pattern,
+        checkFilenameStartsLowerCase: Boolean?,
+        targetBackend: TargetBackend,
+        skipIgnored: Boolean
 ): Collection<MethodModel> {
     return if (targetBackend.isIR || targetBackend == TargetBackend.JS)
         listOf(
             CoroutinesTestModel(
-                rootDir,
-                moduleDir,
-                file,
-                filenamePattern,
-                checkFilenameStartsLowerCase,
-                targetBackend,
-                skipIgnored,
-                true
+                    rootDir,
+                    file,
+                    filenamePattern,
+                    checkFilenameStartsLowerCase,
+                    targetBackend,
+                    skipIgnored,
+                    true
             )
         )
     else
         listOf(
             CoroutinesTestModel(
-                rootDir,
-                moduleDir,
-                file,
-                filenamePattern,
-                checkFilenameStartsLowerCase,
-                targetBackend,
-                skipIgnored,
-                true
+                    rootDir,
+                    file,
+                    filenamePattern,
+                    checkFilenameStartsLowerCase,
+                    targetBackend,
+                    skipIgnored,
+                    true
             ),
             CoroutinesTestModel(
-                rootDir,
-                moduleDir,
-                file,
-                filenamePattern,
-                checkFilenameStartsLowerCase,
-                targetBackend,
-                skipIgnored,
-                false
+                    rootDir,
+                    file,
+                    filenamePattern,
+                    checkFilenameStartsLowerCase,
+                    targetBackend,
+                    skipIgnored,
+                    false
             )
         )
 }

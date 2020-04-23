@@ -763,10 +763,11 @@ public class KotlinTestUtils {
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+        String absolutetestDataFilePath = KotlinTestUtils.getHomeDirectory() + "/" + testDataFilePath;
         if (testCase != null) {
             Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
-                    test.invoke(testDataFilePath);
+                    test.invoke(absolutetestDataFilePath);
                 }
                 catch (Exception e) {
                     throw new IllegalStateException(e);
@@ -782,7 +783,7 @@ public class KotlinTestUtils {
         DoTest wrappedTest = testCase != null ?
                              MuteWithFileKt.testWithMuteInFile(test, testCase) :
                              MuteWithFileKt.testWithMuteInFile(test, "");
-        wrappedTest.invoke(testDataFilePath);
+        wrappedTest.invoke(absolutetestDataFilePath);
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {

@@ -63,7 +63,6 @@ class TestGroup(
             deep: Int? = null
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
-            val moduleFile = File(moduleRelativePath)
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
@@ -71,13 +70,12 @@ class TestGroup(
                 if (singleClass) {
                     if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
                     SingleClassTestModel(
-                            rootFile, moduleFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod,
+                            rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod,
                             className, targetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
                     )
                 } else {
                     SimpleTestClassModel(
-                            rootFile, moduleFile,
-                            recursive, excludeParentDirs, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase,
+                            rootFile, recursive, excludeParentDirs, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase,
                             testMethod, className, targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments,
                             deep,
                             annotations
