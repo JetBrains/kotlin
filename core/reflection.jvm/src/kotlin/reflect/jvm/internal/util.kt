@@ -46,6 +46,9 @@ import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaAnnotation
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.resolve.isInlineClassType
+import java.lang.reflect.Type
+import kotlin.reflect.KType
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -195,3 +198,22 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     )
     return MemberDeserializer(context).createDescriptor(proto)
 }
+
+internal val KType.isInlineClassType: Boolean
+    get() = (this as? KTypeImpl)?.type?.isInlineClassType() == true
+
+internal fun defaultPrimitiveValue(type: Type): Any? =
+    if (type is Class<*> && type.isPrimitive) {
+        when (type) {
+            Boolean::class.java -> false
+            Char::class.java -> 0.toChar()
+            Byte::class.java -> 0.toByte()
+            Short::class.java -> 0.toShort()
+            Int::class.java -> 0
+            Float::class.java -> 0f
+            Long::class.java -> 0L
+            Double::class.java -> 0.0
+            Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
+            else -> throw UnsupportedOperationException("Unknown primitive: $type")
+        }
+    } else null

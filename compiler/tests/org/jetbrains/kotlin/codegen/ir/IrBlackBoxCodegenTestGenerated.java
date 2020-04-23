@@ -23660,6 +23660,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/callBy/extensionFunction.kt");
             }
 
+            @TestMetadata("inlineClassDefaultArguments.kt")
+            public void testInlineClassDefaultArguments() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassDefaultArguments.kt");
+            }
+
             @TestMetadata("inlineClassFunctionsAndConstructors.kt")
             public void testInlineClassFunctionsAndConstructors() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructors.kt");
