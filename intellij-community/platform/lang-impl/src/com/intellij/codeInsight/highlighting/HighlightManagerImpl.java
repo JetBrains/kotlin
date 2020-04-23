@@ -14,6 +14,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
@@ -96,15 +97,6 @@ public final class HighlightManagerImpl extends HighlightManager {
     return set.toArray(RangeHighlighter.EMPTY_ARRAY);
   }
 
-  private RangeHighlighter addSegmentHighlighter(@NotNull Editor editor, int startOffset, int endOffset, TextAttributes attributes, @HideFlags int flags) {
-    RangeHighlighter highlighter = editor.getMarkupModel()
-      .addRangeHighlighter(startOffset, endOffset, HighlighterLayer.SELECTION - 1, attributes, HighlighterTargetArea.EXACT_RANGE);
-    HighlightFlags info = new HighlightFlags(editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor, flags);
-    Map<RangeHighlighter, HighlightFlags> map = getHighlightInfoMap(editor, true);
-    map.put(highlighter, info);
-    return highlighter;
-  }
-
   @Override
   public boolean removeSegmentHighlighter(@NotNull Editor editor, @NotNull RangeHighlighter highlighter) {
     Map<RangeHighlighter, HighlightFlags> map = getHighlightInfoMap(editor, false);
@@ -125,6 +117,25 @@ public final class HighlightManagerImpl extends HighlightManager {
                                       @NotNull TextAttributes attributes,
                                       boolean hideByTextChange,
                                       Collection<? super RangeHighlighter> outHighlighters) {
+    addOccurrenceHighlights(editor, occurrences, attributes, null, hideByTextChange, outHighlighters);
+  }
+
+  @Override
+  public void addOccurrenceHighlights(@NotNull Editor editor,
+                                      PsiReference @NotNull [] occurrences,
+                                      @NotNull TextAttributesKey attributesKey,
+                                      boolean hideByTextChange,
+                                      Collection<? super RangeHighlighter> outHighlighters) {
+    addOccurrenceHighlights(editor, occurrences, null, attributesKey, hideByTextChange, outHighlighters);
+  }
+
+  private void addOccurrenceHighlights(@NotNull Editor editor,
+                                      PsiReference @NotNull [] occurrences,
+                                      @Nullable TextAttributes attributes,
+                                      @Nullable TextAttributesKey attributesKey,
+                                      boolean hideByTextChange,
+                                      Collection<? super RangeHighlighter> outHighlighters) {
+    assert attributes != null || attributesKey != null : "Both attributes and attributesKey are null";
     if (occurrences.length == 0) return;
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {
@@ -145,7 +156,7 @@ public final class HighlightManagerImpl extends HighlightManager {
       // each reference can reside in its own injected editor
       Editor textEditor = InjectedLanguageUtil.openEditorFor(containingFile, project);
       if (textEditor != null) {
-        addOccurrenceHighlight(textEditor, start, end, attributes, flags, outHighlighters, scrollMarkColor);
+        addOccurrenceHighlight(textEditor, start, end, attributes, attributesKey, flags, outHighlighters, scrollMarkColor);
       }
     }
     editor.getCaretModel().moveToOffset(oldOffset);
@@ -162,11 +173,40 @@ public final class HighlightManagerImpl extends HighlightManager {
                                      int flags,
                                      Collection<? super RangeHighlighter> outHighlighters,
                                      Color scrollMarkColor) {
-    RangeHighlighter highlighter = addSegmentHighlighter(editor, start, end, attributes, flags);
+    addOccurrenceHighlight(editor, start, end, attributes, null, flags, outHighlighters, scrollMarkColor);
+  }
+
+  @Override
+  public void addOccurrenceHighlight(@NotNull Editor editor,
+                                     int start,
+                                     int end,
+                                     TextAttributesKey attributesKey,
+                                     int flags,
+                                     Collection<? super RangeHighlighter> outHighlighters) {
+    addOccurrenceHighlight(editor, start, end, null, attributesKey, flags, outHighlighters, null);
+  }
+
+  private void addOccurrenceHighlight(@NotNull Editor editor,
+                                     int start,
+                                     int end,
+                                     @Nullable TextAttributes forcedAttributes,
+                                     @Nullable TextAttributesKey attributesKey,
+                                     int flags,
+                                     @Nullable Collection<? super RangeHighlighter> outHighlighters,
+                                     @Nullable Color scrollMarkColor) {
+    RangeHighlighter highlighter = editor.getMarkupModel()
+      .addRangeHighlighter(start, end, HighlighterLayer.SELECTION - 1,
+                           forcedAttributes, attributesKey,
+                           HighlighterTargetArea.EXACT_RANGE);
+    HighlightFlags info = new HighlightFlags(editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor, flags);
+    Map<RangeHighlighter, HighlightFlags> map = getHighlightInfoMap(editor, true);
+    map.put(highlighter, info);
+
     if (highlighter instanceof RangeHighlighterEx) ((RangeHighlighterEx)highlighter).setVisibleIfFolded(true);
     if (outHighlighters != null) {
       outHighlighters.add(highlighter);
     }
+
     if (scrollMarkColor != null) {
       highlighter.setErrorStripeMarkColor(scrollMarkColor);
     }
@@ -176,10 +216,10 @@ public final class HighlightManagerImpl extends HighlightManager {
   public void addRangeHighlight(@NotNull Editor editor,
                                 int startOffset,
                                 int endOffset,
-                                @NotNull TextAttributes attributes,
+                                @NotNull TextAttributesKey attributesKey,
                                 boolean hideByTextChange,
                                 @Nullable Collection<? super RangeHighlighter> highlighters) {
-    addRangeHighlight(editor, startOffset, endOffset, attributes, hideByTextChange, false, highlighters);
+    addRangeHighlight(editor, startOffset, endOffset, null, attributesKey, hideByTextChange, false, highlighters);
   }
 
   @Override
@@ -187,6 +227,38 @@ public final class HighlightManagerImpl extends HighlightManager {
                                 int startOffset,
                                 int endOffset,
                                 @NotNull TextAttributes attributes,
+                                boolean hideByTextChange,
+                                @Nullable Collection<? super RangeHighlighter> highlighters) {
+    addRangeHighlight(editor, startOffset, endOffset, attributes, null, hideByTextChange, false, highlighters);
+  }
+
+  @Override
+  public void addRangeHighlight(@NotNull Editor editor,
+                                int startOffset,
+                                int endOffset,
+                                @NotNull TextAttributes attributes,
+                                boolean hideByTextChange,
+                                boolean hideByAnyKey,
+                                @Nullable Collection<? super RangeHighlighter> highlighters) {
+    addRangeHighlight(editor, startOffset, endOffset, attributes, null, hideByTextChange, hideByAnyKey, highlighters);
+  }
+
+  @Override
+  public void addRangeHighlight(@NotNull Editor editor,
+                                int startOffset,
+                                int endOffset,
+                                @NotNull TextAttributesKey attributesKey,
+                                boolean hideByTextChange,
+                                boolean hideByAnyKey,
+                                @Nullable Collection<? super RangeHighlighter> highlighters) {
+    addRangeHighlight(editor, startOffset, endOffset, null, attributesKey, hideByTextChange, hideByAnyKey, highlighters);
+  }
+
+  private void addRangeHighlight(@NotNull Editor editor,
+                                int startOffset,
+                                int endOffset,
+                                @Nullable TextAttributes attributes,
+                                @Nullable TextAttributesKey attributesKey,
                                 boolean hideByTextChange,
                                 boolean hideByAnyKey,
                                 @Nullable Collection<? super RangeHighlighter> highlighters) {
@@ -202,13 +274,31 @@ public final class HighlightManagerImpl extends HighlightManager {
 
     Color scrollMarkColor = getScrollMarkColor(attributes, editor.getColorsScheme());
 
-    addOccurrenceHighlight(editor, startOffset, endOffset, attributes, flags, highlighters, scrollMarkColor);
+    addOccurrenceHighlight(editor, startOffset, endOffset, attributes, attributesKey, flags, highlighters, scrollMarkColor);
   }
 
   @Override
   public void addOccurrenceHighlights(@NotNull Editor editor,
                                       PsiElement @NotNull [] elements,
                                       @NotNull TextAttributes attributes,
+                                      boolean hideByTextChange,
+                                      Collection<? super RangeHighlighter> outHighlighters) {
+    addOccurrenceHighlights(editor, elements, attributes, null, hideByTextChange, outHighlighters);
+  }
+
+  @Override
+  public void addOccurrenceHighlights(@NotNull Editor editor,
+                                      PsiElement @NotNull [] elements,
+                                      @NotNull TextAttributesKey attributesKey,
+                                      boolean hideByTextChange,
+                                      Collection<? super RangeHighlighter> outHighlighters) {
+    addOccurrenceHighlights(editor, elements, null, attributesKey, hideByTextChange, outHighlighters);
+  }
+
+  private void addOccurrenceHighlights(@NotNull Editor editor,
+                                      PsiElement @NotNull [] elements,
+                                      @Nullable TextAttributes attributes,
+                                      @Nullable TextAttributesKey attributesKey,
                                       boolean hideByTextChange,
                                       Collection<? super RangeHighlighter> outHighlighters) {
     if (elements.length == 0 || editor instanceof ImaginaryEditor) return;
@@ -228,7 +318,7 @@ public final class HighlightManagerImpl extends HighlightManager {
       addOccurrenceHighlight(editor,
                              trimOffsetToDocumentSize(editor, range.getStartOffset()),
                              trimOffsetToDocumentSize(editor, range.getEndOffset()),
-                             attributes, flags, outHighlighters, scrollMarkColor);
+                             attributes, attributesKey, flags, outHighlighters, scrollMarkColor);
     }
   }
 
@@ -239,7 +329,8 @@ public final class HighlightManagerImpl extends HighlightManager {
   }
 
   @Nullable
-  private static Color getScrollMarkColor(@NotNull TextAttributes attributes, @NotNull EditorColorsScheme colorScheme) {
+  private static Color getScrollMarkColor(@Nullable TextAttributes attributes, @NotNull EditorColorsScheme colorScheme) {
+    if (attributes == null) return null;
     if (attributes.getErrorStripeColor() != null) return attributes.getErrorStripeColor();
     if (attributes.getBackgroundColor() != null) {
       boolean isDark = ColorUtil.isDark(colorScheme.getDefaultBackground());
