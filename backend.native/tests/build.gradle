@@ -5,9 +5,12 @@
 
 import shadow.org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 import java.nio.file.Paths
+
+import static org.jetbrains.kotlin.konan.target.Architecture.*
 
 buildscript {
     repositories {
@@ -4442,8 +4445,8 @@ dependencies {
     nopPluginCompile kotlinCompilerModule
 }
 
-// Configure ios build
-if (PlatformInfo.getTarget(project) == KonanTarget.IOS_ARM64.INSTANCE) {
+// Configure build for iOS device targets.
+if (target.family == Family.IOS && (target.architecture == ARM32 || target.architecture == ARM64)) {
     project.tasks
             .matching { it instanceof KonanTestExecutable }
             .forEach {
