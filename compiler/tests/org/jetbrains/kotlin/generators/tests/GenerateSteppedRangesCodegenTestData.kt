@@ -17,6 +17,15 @@ object GenerateSteppedRangesCodegenTestData {
         |// KT-34166: Translation of loop over literal completely removes the validation of step
         |// DONT_TARGET_EXACT_BACKEND: JS""".trimMargin()
     private val KT_34166_AFFECTED_FILENAMES = setOf("illegalStepZero.kt", "illegalStepNegative.kt", "illegalStepNonConst.kt")
+    private val FIR_FAILING_FOR_UNSIGNED_FILENAMES = setOf(
+        "emptyProgressionToMinValue.kt",
+        "maxValueToMinValueStepMaxValue.kt",
+        "maxValueToOneStepMaxValue.kt",
+        "maxValueToZeroStepMaxValue.kt",
+        "minValueToMaxValueStepMaxValue.kt",
+        "oneToMaxValueStepMaxValue.kt",
+        "zeroToMaxValueStepMaxValue.kt"
+    )
 
     private enum class Type(val type: String, val isLong: Boolean = false, val isUnsigned: Boolean = false) {
         INT("Int"),
@@ -160,12 +169,16 @@ object GenerateSteppedRangesCodegenTestData {
         function: Function,
         extraCode: String?,
         fullSubdir: File,
-        asLiteral: Boolean
+        asLiteral: Boolean,
+        shouldIgnoreForFIR: Boolean = false
     ) {
         fullSubdir.mkdirs()
         PrintWriter(File(fullSubdir, fileName)).use {
             with(it) {
                 println("// $PREAMBLE_MESSAGE")
+                if (shouldIgnoreForFIR) {
+                    println("// IGNORE_BACKEND_FIR: JVM_IR")
+                }
                 println("// KJS_WITH_FULL_RUNTIME")
                 println("// WITH_RUNTIME")
                 if (asLiteral && KT_34166_AFFECTED_FILENAMES.contains(fileName)) {
@@ -210,7 +223,8 @@ object GenerateSteppedRangesCodegenTestData {
                 function,
                 extraCode,
                 File(UNSIGNED_TEST_DATA_DIR, fullSubdirPath.toString()),
-                asLiteral
+                asLiteral,
+                fileName in FIR_FAILING_FOR_UNSIGNED_FILENAMES
             )
         }
         if (signedTests.isNotEmpty()) {
