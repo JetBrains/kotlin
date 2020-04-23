@@ -60,7 +60,11 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
         variables: List<XNamedValue>
     ): CoroutineStackFrames {
         val index = frames.indexOfFirst { it.isCreationSeparatorFrame() }
-        val restoredStackFrames = frames.take(index).map {
+        val restoredStackTraceElements = if (index >= 0)
+            frames.take(index)
+        else
+            frames
+        val restoredStackFrames = restoredStackTraceElements.map {
             SuspendCoroutineStackFrameItem(it, locationCache.createLocation(it), variables)
         }
         val creationStackFrames = frames.subList(index + 1, frames.size).mapIndexed { ix, it ->
