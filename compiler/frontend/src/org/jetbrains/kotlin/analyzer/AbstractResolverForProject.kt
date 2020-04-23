@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.AnchorProvider
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
@@ -21,7 +22,8 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     modules: Collection<M>,
     protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
+    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
+    protected val anchorProvider: AnchorProvider = AnchorProvider.Default,
 ) : ResolverForProject<M>() {
 
     protected class ModuleData(
@@ -54,6 +56,13 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     abstract fun modulesContent(module: M): ModuleContent<M>
     abstract fun builtInsForModule(module: M): KotlinBuiltIns
     abstract fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: M): ResolverForModule
+    
+    protected open fun registerModuleDescriptorUpdate(
+        newDescriptor: ModuleDescriptor,
+        oldDescriptor: ModuleDescriptor?,
+    ) {
+        // Nothing by default 
+    }
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -61,6 +70,9 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         }
         return resolverForModuleDescriptor(doGetDescriptorForModule(moduleInfo))
     }
+
+    override fun tryGetResolverForModuleWithAnchorCheck(targetModuleInfo: M, referencingModuleInfo: M): ResolverForModule? =
+        tryGetResolverForModule(targetModuleInfo)
 
     private fun setupModuleDescriptor(module: M, moduleDescriptor: ModuleDescriptorImpl) {
         moduleDescriptor.setDependencies(
@@ -122,6 +134,10 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         return doGetDescriptorForModule(moduleInfo)
     }
 
+    override fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M {
+        return moduleInfoByDescriptor[moduleDescriptor] ?: delegateResolver.moduleInfoForModuleDescriptor(moduleDescriptor)
+    }
+
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing {
         DiagnoseUnknownModuleInfoReporter.report(name, infos, allModules)
     }
@@ -142,6 +158,8 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             }
             if (moduleData.isOutOfDate()) {
                 moduleData = recreateModuleDescriptor(moduleFromThisResolver)
+            } else {
+                registerModuleDescriptorUpdate(moduleData.moduleDescriptor, null)
             }
             moduleData.moduleDescriptor
         }
@@ -158,6 +176,9 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
 
         val moduleData = createModuleDescriptor(module)
         descriptorByModule[module] = moduleData
+        
+        registerModuleDescriptorUpdate(moduleData.moduleDescriptor, oldDescriptor)
+        
         return moduleData
     }
 
@@ -168,7 +189,8 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             builtInsForModule(module),
             module.platform,
             module.capabilities,
-            module.stableName
+            module.stableName,
+            anchorProvider
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)

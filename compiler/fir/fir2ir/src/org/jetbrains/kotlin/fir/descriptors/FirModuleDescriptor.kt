@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.AnchorProvider
 
 class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     override val builtIns: KotlinBuiltIns
@@ -56,6 +57,9 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     override fun assertValid() {
 
     }
+
+    override val anchorProvider: AnchorProvider
+        get() = AnchorProvider.Default
 
     override fun getOriginal(): DeclarationDescriptor {
         return this

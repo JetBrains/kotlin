@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -70,7 +69,9 @@ class JvmResolverForModuleFactory(
             // Providing a fallback strategy in this case can hide future problems, so we should at least log to be able to diagnose those
 
             @Suppress("UNCHECKED_CAST")
-            val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
+            val resolverForReferencedModule = referencedClassModule?.let { 
+                resolverForProject.tryGetResolverForModuleWithAnchorCheck(it as M, moduleInfo)
+            }
 
             val resolverForModule = resolverForReferencedModule?.takeIf {
                 referencedClassModule.platform.isJvm() || referencedClassModule.platform == null
