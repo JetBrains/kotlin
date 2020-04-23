@@ -8,12 +8,12 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.util.PsiUtilCore
+import com.intellij.psi.PsiManager
 
 class NGramFileListener(private val project: Project) : FileEditorManagerListener.Before {
 
   override fun beforeFileOpened(source: FileEditorManager, file: VirtualFile) {
-    val psiFile = PsiUtilCore.getPsiFile(project, file)
+    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return
     val language = psiFile.language
     if (NGram.isSupported(language)) {
       ApplicationManager.getApplication().executeOnPooledThread {
