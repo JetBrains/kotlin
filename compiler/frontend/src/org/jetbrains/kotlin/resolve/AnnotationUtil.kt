@@ -49,3 +49,5 @@ val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
 val JVM_THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Throws")
 
 val KOTLIN_THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.Throws")
+
+val KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.native.Throws")
