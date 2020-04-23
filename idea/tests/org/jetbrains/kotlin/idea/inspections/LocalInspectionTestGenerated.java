@@ -11826,6 +11826,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/functionCallWithSetterParam.kt");
         }
 
+        @TestMetadata("functionCallWithSetterParam2.kt")
+        public void testFunctionCallWithSetterParam2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/functionCallWithSetterParam2.kt");
+        }
+
         @TestMetadata("increment.kt")
         public void testIncrement() throws Exception {
             runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/increment.kt");
@@ -11859,6 +11864,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("noAssignment3.kt")
         public void testNoAssignment3() throws Exception {
             runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/noAssignment3.kt");
+        }
+
+        @TestMetadata("noAssignment4.kt")
+        public void testNoAssignment4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/noAssignment4.kt");
         }
 
         @TestMetadata("noBackingField.kt")
