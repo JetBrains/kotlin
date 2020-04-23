@@ -64,14 +64,14 @@ class Case2() {
 * NOTE: check abstract member cannot be accessed directly
 */
 class Case3(override val boo: String) : BaseCase3() {
-    override val zoo: String = super.foo()
-    override val boo: String = super.boo
-    override val value: String = super.zoo
-    val hoo: String = super.zoo
+    override val zoo: String = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
+    override val boo: String = super.<!ABSTRACT_SUPER_CALL!>boo<!>
+    override val value: String = super.<!ABSTRACT_SUPER_CALL!>zoo<!>
+    val hoo: String = super.<!ABSTRACT_SUPER_CALL!>zoo<!>
 
     override fun foo(): String {
-        super.foo()
-        super.boo
+        super.<!ABSTRACT_SUPER_CALL!>foo<!>()
+        super.<!ABSTRACT_SUPER_CALL!>boo<!>
         super.value
         return ""
     }
