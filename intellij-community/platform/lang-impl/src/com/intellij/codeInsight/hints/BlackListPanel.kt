@@ -145,7 +145,6 @@ private fun createBlacklistEditorField(text: String): EditorTextField {
 }
 
 private fun highlightErrorLines(lines: List<Int>, editor: Editor) {
-  val attributes = editor.colorsScheme.getAttributes(ERRORS_ATTRIBUTES)
   val document = editor.document
   val totalLines = document.lineCount
 
@@ -153,7 +152,7 @@ private fun highlightErrorLines(lines: List<Int>, editor: Editor) {
   model.removeAllHighlighters()
   lines.stream()
     .filter { current -> current < totalLines }
-    .forEach { line -> model.addLineHighlighter(line!!, HighlighterLayer.ERROR, attributes) }
+    .forEach { line -> model.addLineHighlighter(ERRORS_ATTRIBUTES, line!!, HighlighterLayer.ERROR) }
 }
 
 private fun getBlacklistExplanationHTML(language: Language): String {
