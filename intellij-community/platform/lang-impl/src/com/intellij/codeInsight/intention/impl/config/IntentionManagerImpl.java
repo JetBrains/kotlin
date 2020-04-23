@@ -17,6 +17,7 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -29,29 +30,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class IntentionManagerImpl extends IntentionManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(IntentionManagerImpl.class);
+  public static final ExtensionPointName<IntentionActionBean> EP_INTENTION_ACTIONS = new ExtensionPointName<>("com.intellij.intentionAction");
 
   private final List<IntentionAction> myActions;
   private final AtomicReference<ScheduledFuture<?>> myScheduledFuture = new AtomicReference<>();
   private boolean myIntentionsDisabled;
 
   public IntentionManagerImpl() {
-    List<IntentionAction> actions = new ArrayList<>();
+    List<IntentionAction> actions = new ArrayList<>(EP_INTENTION_ACTIONS.getPoint(null).size() + 1);
     actions.add(new EditInspectionToolsSettingsInSuppressedPlaceIntention());
-    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension ->
-      actions.add(new IntentionActionWrapper(extension))
-    );
+    EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> actions.add(new IntentionActionWrapper(extension)));
     myActions = ContainerUtil.createLockFreeCopyOnWriteList(actions);
 
-    IntentionManager.EP_INTENTION_ACTIONS.addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
+    EP_INTENTION_ACTIONS.addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
       @Override
       public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
         myActions.add(new IntentionActionWrapper(extension));
@@ -59,9 +56,10 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
 
       @Override
       public void extensionRemoved(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
-        myActions.removeIf((wrapper) ->
-                             wrapper instanceof IntentionActionWrapper &&
-                             ((IntentionActionWrapper) wrapper).getImplementationClassName().equals(extension.className));
+        myActions.removeIf((wrapper) -> {
+          return wrapper instanceof IntentionActionWrapper &&
+                 ((IntentionActionWrapper)wrapper).getImplementationClassName().equals(extension.className);
+        });
       }
     }, this);
   }
@@ -98,7 +96,7 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
 
   @Nullable
   @Override
-  public IntentionAction createFixAllIntention(@NotNull InspectionToolWrapper toolWrapper, @NotNull IntentionAction action) {
+  public IntentionAction createFixAllIntention(@NotNull InspectionToolWrapper<?, ?> toolWrapper, @NotNull IntentionAction action) {
     checkForDuplicates();
     if (toolWrapper instanceof GlobalInspectionToolWrapper) {
       LocalInspectionToolWrapper localWrapper = ((GlobalInspectionToolWrapper)toolWrapper).getSharedLocalInspectionToolWrapper();
@@ -191,13 +189,18 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
 
   @Override
   public IntentionAction @NotNull [] getIntentionActions() {
-    if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
+    if (myIntentionsDisabled) {
+      return IntentionAction.EMPTY_ARRAY;
+    }
     return myActions.toArray(IntentionAction.EMPTY_ARRAY);
   }
 
   @Override
-  public IntentionAction @NotNull [] getAvailableIntentionActions() {
-    if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
+  public @NotNull List<IntentionAction> getAvailableIntentions() {
+    if (myIntentionsDisabled) {
+      return Collections.emptyList();
+    }
+
     checkForDuplicates();
     List<IntentionAction> list = new ArrayList<>(myActions.size());
     IntentionManagerSettings settings = IntentionManagerSettings.getInstance();
@@ -206,7 +209,7 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
         list.add(action);
       }
     }
-    return list.toArray(IntentionAction.EMPTY_ARRAY);
+    return list;
   }
 
   private boolean checkedForDuplicates; // benign data race

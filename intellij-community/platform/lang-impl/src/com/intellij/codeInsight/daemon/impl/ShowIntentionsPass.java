@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ShowIntentionsPass extends TextEditorHighlightingPass {
+public final class ShowIntentionsPass extends TextEditorHighlightingPass {
   private final Editor myEditor;
 
   private final PsiFile myFile;
@@ -71,11 +70,10 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     assert myFile != null : FileDocumentManager.getInstance().getFile(myEditor.getDocument());
   }
 
-  @NotNull
-  public static List<HighlightInfo.IntentionActionDescriptor> getAvailableFixes(@NotNull final Editor editor,
-                                                                                @NotNull final PsiFile file,
-                                                                                final int passId,
-                                                                                int offset) {
+  public static @NotNull List<HighlightInfo.IntentionActionDescriptor> getAvailableFixes(final @NotNull Editor editor,
+                                                                                         final @NotNull PsiFile file,
+                                                                                         final int passId,
+                                                                                         int offset) {
     final Project project = file.getProject();
 
     List<HighlightInfo.IntentionActionDescriptor> result = new ArrayList<>();
@@ -88,7 +86,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
   }
 
   public static boolean markActionInvoked(@NotNull Project project,
-                                          @NotNull final Editor editor,
+                                          final @NotNull Editor editor,
                                           @NotNull IntentionAction action) {
     final int offset = ((EditorEx)editor).getExpectedCaretOffset();
 
@@ -252,8 +250,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
    *
    * @param includeSyncActions whether EDT-only providers should be queried, if {@code true}, this method should be invoked in EDT
    */
-  @NotNull
-  public static IntentionsInfo getActionsToShow(@NotNull Editor hostEditor, @NotNull PsiFile hostFile, boolean includeSyncActions) {
+  public static @NotNull IntentionsInfo getActionsToShow(@NotNull Editor hostEditor, @NotNull PsiFile hostFile, boolean includeSyncActions) {
     IntentionsInfo result = new IntentionsInfo();
     getActionsToShow(hostEditor, hostFile, result, -1);
     if (includeSyncActions) {
@@ -277,15 +274,15 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
   /**
    * Collects intention actions from providers intended to be invoked in a background thread.
    */
-  public static void getActionsToShow(@NotNull final Editor hostEditor,
-                                      @NotNull final PsiFile hostFile,
-                                      @NotNull final IntentionsInfo intentions,
+  public static void getActionsToShow(final @NotNull Editor hostEditor,
+                                      final @NotNull PsiFile hostFile,
+                                      final @NotNull IntentionsInfo intentions,
                                       int passIdToShowIntentionsFor) {
     getActionsToShow(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, true);
   }
-  private static void getActionsToShow(@NotNull final Editor hostEditor,
-                                       @NotNull final PsiFile hostFile,
-                                       @NotNull final IntentionsInfo intentions,
+  private static void getActionsToShow(final @NotNull Editor hostEditor,
+                                       final @NotNull PsiFile hostFile,
+                                       final @NotNull IntentionsInfo intentions,
                                        int passIdToShowIntentionsFor,
                                        boolean queryIntentionActions) {
     int offset = hostEditor.getCaretModel().getOffset();
@@ -316,7 +313,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
 
     if (queryIntentionActions) {
       PsiFile injectedFile = InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, offset);
-      for (final IntentionAction action : IntentionManager.getInstance().getAvailableIntentionActions()) {
+      for (IntentionAction action : IntentionManager.getInstance().getAvailableIntentions()) {
         if (indicator != null) {
           indicator.setText(action.getFamilyName());
         }
