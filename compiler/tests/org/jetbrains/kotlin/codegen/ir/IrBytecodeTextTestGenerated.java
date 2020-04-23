@@ -3431,6 +3431,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/singleThen.kt");
         }
 
+        @TestMetadata("stdlibInlineOnly.kt")
+        public void testStdlibInlineOnly() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/stdlibInlineOnly.kt");
+        }
+
+        @TestMetadata("stdlibInlineOnlyOneLine.kt")
+        public void testStdlibInlineOnlyOneLine() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/stdlibInlineOnlyOneLine.kt");
+        }
+
         @TestMetadata("tryCatch.kt")
         public void testTryCatch() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/tryCatch.kt");
