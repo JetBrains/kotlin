@@ -135,6 +135,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val sortedCodeArgs = other.resolveToCall(BodyResolveMode.PARTIAL)?.valueArgumentsByIndex ?: error(
             "Could not resolve matching procedure declaration."
         )
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
         sortedCodeArgs.forEachIndexed { i, codeResArg ->
             val queryValueArgs = expression.valueArguments
             val queryValueArg = queryValueArgs[i]
@@ -160,7 +161,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 return
             }
         }
-        myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
     private fun matchNameIdentifiers(el1: PsiElement?, el2: PsiElement?, context: MatchContext): Boolean {
