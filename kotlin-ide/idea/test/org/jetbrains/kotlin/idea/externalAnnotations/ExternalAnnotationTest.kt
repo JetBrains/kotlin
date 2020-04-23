@@ -14,7 +14,6 @@ import com.intellij.psi.codeStyle.JavaCodeStyleSettings
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -25,7 +24,7 @@ import java.io.File
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class ExternalAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
-    override fun getTestDataPath() = kotlinIdeRoot
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     fun testNotNullMethod() {
         KotlinTestUtils.runTest(::doTest, TargetBackend.ANY, "idea/testData/externalAnnotations/notNullMethod.kt")

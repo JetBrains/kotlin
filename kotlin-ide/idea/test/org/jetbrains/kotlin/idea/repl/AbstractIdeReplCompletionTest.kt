@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -28,11 +27,11 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
     override fun setUp() {
         super.setUp()
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
-        VfsRootAccess.allowRootAccess(kotlinIdeRoot)
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(kotlinIdeRoot)
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         consoleRunner?.dispose()
         consoleRunner = null
         super.tearDown()

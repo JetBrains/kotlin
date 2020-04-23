@@ -16,7 +16,6 @@ import com.intellij.slicer.SliceRootNode
 import com.intellij.usages.TextChunk
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -107,7 +106,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
             name.startsWith("$namePrefix.") && PathUtil.getFileExtension(name).let { it == "kt" || it == "java" }
         }
 
-        myFixture.testDataPath = "${kotlinIdeRoot}/${rootDir.path}"
+        myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${rootDir.path}"
 
         val fileText = FileUtil.loadFile(mainFile, true)
         val flowKind = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FLOW: ")

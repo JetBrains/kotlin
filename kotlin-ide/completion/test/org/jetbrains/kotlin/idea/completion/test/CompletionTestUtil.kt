@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 
 const val RELATIVE_COMPLETION_TEST_DATA_BASE_PATH = "kotlin/completion/testData"
 
-val COMPLETION_TEST_DATA_BASE_PATH = kotlinIdeRoot + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
+val COMPLETION_TEST_DATA_BASE_PATH = KotlinTestUtils.getHomeDirectory() + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 
 fun testCompletion(
     fileText: String,

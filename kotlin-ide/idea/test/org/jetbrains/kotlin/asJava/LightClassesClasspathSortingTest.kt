@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.runner.RunWith
@@ -59,6 +58,6 @@ class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase()
     }
 
     override fun getTestDataPath(): String {
-        return "$kotlinIdeRoot/kotlin/idea/testData/decompiler/lightClassesOrder/"
+        return "${KotlinTestUtils.getHomeDirectory()}/kotlin/idea/testData/decompiler/lightClassesOrder/"
     }
 }

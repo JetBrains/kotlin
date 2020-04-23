@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 abstract public class KotlinDaemonAnalyzerTestCase extends DaemonAnalyzerTestCase {
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(TestUtilsKt.getKotlinIdeRoot());
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        VfsRootAccess.disallowRootAccess(TestUtilsKt.getKotlinIdeRoot());
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
     }
 }

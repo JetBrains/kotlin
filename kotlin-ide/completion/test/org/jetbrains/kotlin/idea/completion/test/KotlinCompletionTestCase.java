@@ -16,14 +16,14 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(TestUtilsKt.getKotlinIdeRoot());
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
     }
 
     @Override
     protected void tearDown() throws Exception {
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
-        VfsRootAccess.disallowRootAccess(TestUtilsKt.getKotlinIdeRoot());
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.tearDown();
     }
 

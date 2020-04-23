@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.forTestCompile;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;

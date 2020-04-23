@@ -95,7 +95,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
     }
 
     private fun compareToExpected(directory: String) {
-        val projectDirectory = File("${kotlinIdeRoot}/$directory")
+        val projectDirectory = File("${KotlinTestUtils.getHomeDirectory()}/$directory")
         val afterFiles = projectDirectory.walkTopDown().filter { it.path.endsWith(".after") }.toList()
 
         for (editedFile in project.allKotlinFiles()) {

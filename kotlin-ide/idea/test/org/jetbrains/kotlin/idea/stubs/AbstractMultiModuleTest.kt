@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -42,7 +41,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(kotlinIdeRoot)
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
@@ -62,7 +61,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(kotlinIdeRoot)
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         super.tearDown()
     }
 

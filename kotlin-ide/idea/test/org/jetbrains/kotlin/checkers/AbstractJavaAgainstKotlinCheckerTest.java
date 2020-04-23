@@ -132,6 +132,6 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
 
     @Override
     protected String getTestDataPath() {
-        return TestUtilsKt.getKotlinIdeRoot() + "/";
+        return KotlinTestUtils.getHomeDirectory() + "/";
     }
 }

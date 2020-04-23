@@ -43,7 +43,7 @@ public class PluginTestCaseBase {
 
     @NotNull
     public static String getTestDataPathBase() {
-        return TestUtilsKt.getKotlinIdeRoot() + TEST_DATA_PROJECT_RELATIVE;
+        return KotlinTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     @NotNull

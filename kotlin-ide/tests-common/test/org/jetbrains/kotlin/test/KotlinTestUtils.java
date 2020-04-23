@@ -71,6 +71,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,9 +150,14 @@ public class KotlinTestUtils {
 
     @NotNull
     private static String computeHomeDirectory() {
-        String userDir = System.getProperty("user.dir");
-        File dir = new File(userDir == null ? "." : userDir);
-        return FileUtil.toCanonicalPath(dir.getAbsolutePath());
+        Path current = Paths.get(".").toAbsolutePath().normalize();
+        while (current != null && !Files.isRegularFile(current.resolve("kotlin.kotlin-ide.iml"))) {
+            current = current.getParent();
+        }
+        if (current == null) {
+            throw new IllegalStateException("Cannot find kotiln-ide root");
+        }
+        return current.toString();
     }
 
     public static File findMockJdkRtJar() {
