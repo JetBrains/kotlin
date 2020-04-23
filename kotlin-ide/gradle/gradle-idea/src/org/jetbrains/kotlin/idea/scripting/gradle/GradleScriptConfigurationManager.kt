@@ -9,13 +9,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
-import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupportHelper
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 data class ConfigurationData(
     val templateClasspath: List<String>,
@@ -51,33 +49,11 @@ class GradleScriptingSupport(
     val configuration: Configuration
 ) : ScriptingSupport() {
 
-    init {
-        rootsIndexer.transaction {
-            if (classpathRoots.hasNotCachedRoots(GradleClassRootsCache.extractRoots(context, configuration, project))) {
-                rootsIndexer.markNewRoot()
-            }
-
-            clearClassRootsCaches(project)
-
-            ScriptingSupportHelper.updateHighlighting(project) {
-                configuration.scriptModel(it) != null
-            }
-        }
-
-        hideNotificationForProjectImport(project)
-    }
-
     override fun recreateRootsCache() = GradleClassRootsCache(project, context, configuration)
 
-    private fun updateNotification(file: KtFile) {
-        val vFile = file.originalFile.virtualFile
-        val scriptModel = configuration?.scriptModel(vFile) ?: return
-
-        if (scriptModel.inputs.isUpToDate(project, vFile)) {
-            hideNotificationForProjectImport(project)
-        } else {
-            showNotificationForProjectImport(project)
-        }
+    fun shouldShowNotificationInEditor(file: VirtualFile): Boolean {
+        val scriptModel = configuration.scriptModel(file) ?: return false
+        return !scriptModel.inputs.isUpToDate(project, file)
     }
 
     override fun clearCaches() {
@@ -104,7 +80,13 @@ class GradleScriptingSupport(
             override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean = true
 
             override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
-                updateNotification(file)
+                val vFile = file.originalFile.virtualFile
+
+                if (shouldShowNotificationInEditor(vFile)) {
+                    showNotificationForProjectImport(project)
+                } else {
+                    hideNotificationForProjectImport(project)
+                }
             }
         }
 }

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
+import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupportHelper
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
@@ -124,13 +125,33 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
         val data = dataProvider(buildRoot) ?: return null
 
-        return GradleScriptingSupport(
+        val newSupport = GradleScriptingSupport(
             rootsIndexer,
             project,
             buildRoot,
             GradleKtsContext(gradleExeSettings.javaHome?.let { File(it) }),
             Configuration(data)
         )
+
+        val oldSupport = roots.findRoot(externalProjectPath)
+        if (oldSupport != null) {
+            rootsIndexer.transaction {
+                val newRoots = GradleClassRootsCache.extractRoots(newSupport.context, newSupport.configuration, project)
+                if (oldSupport.classpathRoots.hasNotCachedRoots(newRoots)) {
+                    rootsIndexer.markNewRoot()
+                }
+
+                newSupport.clearClassRootsCaches(project)
+
+                ScriptingSupportHelper.updateHighlighting(project) {
+                    newSupport.configuration.scriptModel(it) != null
+                }
+            }
+
+            hideNotificationForProjectImport(project)
+        }
+
+        return newSupport
     }
 
     private fun findTemplateClasspath(build: KotlinDslGradleBuildSync): List<String>? {
@@ -175,6 +196,13 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             return kotlinDslScriptsModelImportSupported(getGradleVersion(project, externalProjectSettings))
         }
         return false
+    }
+
+    // used in 201
+    @Suppress("UNUSED")
+    fun shouldShowNotificationInEditor(file: VirtualFile): Boolean {
+        val support = findRoot(file) ?: return false
+        return support.shouldShowNotificationInEditor(file)
     }
 
     companion object {

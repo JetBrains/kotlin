@@ -13,7 +13,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -23,10 +22,8 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
 import org.jetbrains.kotlin.psi.UserDataProperty
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.function.Predicate
 
@@ -45,18 +42,9 @@ fun runPartialGradleImport(project: Project) {
 fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.load.changes")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
 
-private var Project.shouldShowLoadConfiguraionsAction: Boolean?
-        by UserDataProperty<Project, Boolean>(Key.create("load.script.configuration.action"))
+fun showNotificationForProjectImport(project: Project) {}
 
-
-fun showNotificationForProjectImport(project: Project) {
-    project.shouldShowLoadConfiguraionsAction = true
-}
-
-fun hideNotificationForProjectImport(project: Project): Boolean {
-    project.shouldShowLoadConfiguraionsAction = false
-    return true
-}
+fun hideNotificationForProjectImport(project: Project): Boolean = true
 
 class LoadConfigurationAction : AnAction(
     KotlinIdeaGradleBundle.message("action.text.load.script.configurations"),
@@ -75,19 +63,17 @@ class LoadConfigurationAction : AnAction(
     }
 
     private fun ensureValidActionVisibility(e: AnActionEvent) {
-        if (e.project?.shouldShowLoadConfiguraionsAction != true) {
-            e.presentation.isVisible = false
-            return
-        }
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
+
         if (DiffUtil.isDiffEditor(editor)) {
             e.presentation.isVisible = false
             return
         }
-        e.presentation.isVisible = editor.isScriptEditor()
+
+        e.presentation.isVisible = editor.getNotificationVisibility()
     }
 
-    private fun Editor.isScriptEditor(): Boolean {
+    private fun Editor.getNotificationVisibility(): Boolean {
         val project = project ?: return false
 
         val documentManager = FileDocumentManager.getInstance()
@@ -95,8 +81,6 @@ class LoadConfigurationAction : AnAction(
         if (virtualFile is LightVirtualFileBase) return false
         if (virtualFile == null || !virtualFile.isValid) return false
 
-
-        // todo only for gradle script
-        return virtualFile.findScriptDefinition(project) != null
+        return GradleScriptingSupportProvider.getInstance(project).shouldShowNotificationInEditor(virtualFile)
     }
 }
