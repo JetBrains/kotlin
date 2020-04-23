@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.TargetPlatform;
+import org.jetbrains.kotlin.resolve.AnchorProvider;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
@@ -53,6 +54,12 @@ public class ErrorUtils {
 
     static {
         ERROR_MODULE = new ModuleDescriptor() {
+            @NotNull
+            @Override
+            public AnchorProvider getAnchorProvider() {
+                return AnchorProvider.Default;
+            }
+
             @Nullable
             @Override
             public <T> T getCapability(@NotNull Capability<T> capability) {

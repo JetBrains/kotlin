@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.AnchorProvider
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.checker.Ref
@@ -38,7 +39,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     // May be null in compiler context, should be not-null in IDE context
     override val platform: TargetPlatform? = null,
     capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
-    override val stableName: Name? = null
+    override val stableName: Name? = null,
+    override val anchorProvider: AnchorProvider = AnchorProvider.Default,
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
 
