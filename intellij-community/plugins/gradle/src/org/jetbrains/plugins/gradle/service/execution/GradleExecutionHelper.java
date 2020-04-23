@@ -42,6 +42,7 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.GradleConnectorService;
 import org.jetbrains.plugins.gradle.service.project.DistributionFactoryExt;
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
@@ -263,7 +264,8 @@ public class GradleExecutionHelper {
       catch (Exception ignore) {
       }
     }
-    ProjectConnection connection = getConnection(projectDir, settings);
+    GradleConnector connector = GradleConnectorService.getConnector(projectPath, taskId);
+    ProjectConnection connection = getConnection(connector, projectDir, settings);
     try {
       workaroundJavaVersionIssueIfNeeded(connection, taskId, listener, cancellationTokenSource);
       return f.fun(connection);
@@ -306,7 +308,8 @@ public class GradleExecutionHelper {
     }
 
     final long ttlInMs = settings.getRemoteProcessIdleTtlInMs();
-    ProjectConnection connection = getConnection(projectPath, settings);
+    GradleConnector connector = GradleConnectorService.getConnector(projectPath, id);
+    ProjectConnection connection = getConnection(connector, projectPath, settings);
     try {
       settings.setRemoteProcessIdleTtlInMs(100);
       try {
@@ -442,17 +445,18 @@ public class GradleExecutionHelper {
   /**
    * Allows to retrieve gradle api connection to use for the given project.
    *
+   * @param connector   Gradle TAPI connector
    * @param projectPath target project path
    * @param settings    execution settings to use
    * @return connection to use
    * @throws IllegalStateException if it's not possible to create the connection
    */
   @NotNull
-  private static ProjectConnection getConnection(@NotNull String projectPath,
+  private static ProjectConnection getConnection(@NotNull GradleConnector connector,
+                                                 @NotNull String projectPath,
                                                  @Nullable GradleExecutionSettings settings)
     throws IllegalStateException {
     File projectDir = new File(projectPath);
-    GradleConnector connector = GradleConnector.newConnector();
     int ttl = -1;
 
     if (settings != null) {

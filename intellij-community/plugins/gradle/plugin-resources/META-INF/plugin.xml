@@ -21,12 +21,6 @@
 
   <resource-bundle>messages.GradleBundle</resource-bundle>
 
-  <application-components>
-    <component>
-      <implementation-class>org.jetbrains.plugins.gradle.GradleCleanupService</implementation-class>
-    </component>
-  </application-components>
-
   <extensionPoints>
     <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectResolve" interface="org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension"/>
     <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectModelContributor" interface="org.jetbrains.plugins.gradle.service.project.ProjectModelContributor"/>
