@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.JpsDummyElement
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.JpsProject
@@ -28,9 +27,6 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
-import org.jetbrains.kotlin.utils.PathUtil
-
 import java.io.File
 import java.io.IOException
 
