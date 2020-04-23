@@ -796,8 +796,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
   @Override
   public boolean showAndGet() {
     final BooleanValueHolder result = new BooleanValueHolder(false);
-    DumbService.getInstance(myProject).suspendIndexingAndRun(
-      "Select External Data",
+    DumbService.getInstance(myProject).suspendIndexingAndRun(ExternalSystemBundle.message("activity.name.select.external.data"),
       () -> result.setValue(super.showAndGet())
     );
     return result.getValue();

@@ -462,7 +462,8 @@ public final class ExternalSystemUtil {
                   if (consoleView == null) return null;
                   boolean activateToolWindow = isNewProject(project);
                   BuildContentDescriptor contentDescriptor =
-                    new BuildContentDescriptor(consoleView, processHandler, consoleView.getComponent(), "Sync");
+                    new BuildContentDescriptor(consoleView, processHandler, consoleView.getComponent(),
+                                               ExternalSystemBundle.message("build.event.title.sync"));
                   contentDescriptor.setActivateToolWindowWhenAdded(activateToolWindow);
                   contentDescriptor.setActivateToolWindowWhenFailed(reportRefreshError);
                   contentDescriptor.setAutoFocusContent(reportRefreshError);
