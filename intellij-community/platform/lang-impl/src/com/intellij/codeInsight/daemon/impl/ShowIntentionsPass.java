@@ -296,11 +296,13 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
 
     List<HighlightInfo.IntentionActionDescriptor> fixes = new ArrayList<>();
     DaemonCodeAnalyzerImpl.HighlightByOffsetProcessor highestPriorityInfoFinder = new DaemonCodeAnalyzerImpl.HighlightByOffsetProcessor(true);
+    CommonProcessors.CollectProcessor<HighlightInfo> infos = new CommonProcessors.CollectProcessor<>();
     DaemonCodeAnalyzerImpl.processHighlightsNearOffset(
-      hostEditor.getDocument(), hostFile.getProject(), HighlightSeverity.INFORMATION, offset, true, info -> {
-        addAvailableFixesForGroups(info, hostEditor, hostFile, fixes, passIdToShowIntentionsFor, offset);
-        return highestPriorityInfoFinder.process(info);
-      });
+      hostEditor.getDocument(), hostFile.getProject(), HighlightSeverity.INFORMATION, offset, true, infos);
+    for (HighlightInfo info : infos.getResults()) {
+      addAvailableFixesForGroups(info, hostEditor, hostFile, fixes, passIdToShowIntentionsFor, offset);
+      highestPriorityInfoFinder.process(info);
+    }
 
     @Nullable HighlightInfo infoAtCursor = highestPriorityInfoFinder.getResult();
     if (infoAtCursor == null) {
