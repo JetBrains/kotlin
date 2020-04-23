@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36841 Generate integer comparison with 0 instructions (IFNE, etc) when comparing integers with 0 in JVM_IR
-
 fun test(a: Int, b: Int, c: Int) {
     when (0) {
         a -> throw IllegalArgumentException("a is 0")

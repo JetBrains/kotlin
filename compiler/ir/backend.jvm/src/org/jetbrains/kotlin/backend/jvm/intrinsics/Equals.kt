@@ -14,17 +14,15 @@ import org.jetbrains.kotlin.codegen.AsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
-import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
+import org.jetbrains.kotlin.ir.util.isIntegerConst
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -97,9 +95,14 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
         } else {
             val operandType = if (!isPrimitive(leftType)) AsmTypes.OBJECT_TYPE else leftType
-            val aValue = a.accept(codegen, data).materializedAt(operandType, a.type)
-            val bValue = b.accept(codegen, data).materializedAt(operandType, b.type)
-            BooleanComparison(operator, aValue, bValue)
+            if (operandType == Type.INT_TYPE && (a.isIntegerConst(0) || b.isIntegerConst(0))) {
+                val nonZero = if (a.isIntegerConst(0)) b else a
+                IntegerZeroComparison(operator, nonZero.accept(codegen, data).materializedAt(operandType, nonZero.type))
+            } else {
+                val aValue = a.accept(codegen, data).materializedAt(operandType, a.type)
+                val bValue = b.accept(codegen, data).materializedAt(operandType, b.type)
+                BooleanComparison(operator, aValue, bValue)
+            }
         }
     }
 }
