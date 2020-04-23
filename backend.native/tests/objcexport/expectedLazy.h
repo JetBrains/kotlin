@@ -205,6 +205,33 @@ __attribute__((swift_name("GH4002Argument")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestIncompatiblePropertyTypeWarning")))
+@interface KtTestIncompatiblePropertyTypeWarning : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestIncompatiblePropertyTypeWarningGeneric")))
+@interface KtTestIncompatiblePropertyTypeWarningGeneric<T> : KtBase
+- (instancetype)initWithValue:(T _Nullable)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) T _Nullable value __attribute__((swift_name("value")));
+@end;
+
+__attribute__((swift_name("TestIncompatiblePropertyTypeWarningInterfaceWithGenericProperty")))
+@protocol KtTestIncompatiblePropertyTypeWarningInterfaceWithGenericProperty
+@required
+@property (readonly) KtTestIncompatiblePropertyTypeWarningGeneric<id> *p __attribute__((swift_name("p")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestIncompatiblePropertyTypeWarning.ClassOverridingInterfaceWithGenericProperty")))
+@interface KtTestIncompatiblePropertyTypeWarningClassOverridingInterfaceWithGenericProperty : KtBase <KtTestIncompatiblePropertyTypeWarningInterfaceWithGenericProperty>
+- (instancetype)initWithP:(KtTestIncompatiblePropertyTypeWarningGeneric<NSString *> *)p __attribute__((swift_name("init(p:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) KtTestIncompatiblePropertyTypeWarningGeneric<NSString *> *p __attribute__((swift_name("p")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kt35940Kt")))
 @interface KtKt35940Kt : KtBase
 + (NSString *)testKt35940 __attribute__((swift_name("testKt35940()")));
