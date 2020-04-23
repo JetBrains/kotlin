@@ -224,8 +224,7 @@ public class DocRenderItem {
     this.editor = editor;
     this.textToRender = textToRender;
     highlighter = editor.getMarkupModel()
-      .addRangeHighlighter(textRange.getStartOffset(), textRange.getEndOffset(), 0,
-                           null, null, HighlighterTargetArea.EXACT_RANGE);
+      .addRangeHighlighter(null, textRange.getStartOffset(), textRange.getEndOffset(), 0, HighlighterTargetArea.EXACT_RANGE);
     updateIcon();
   }
 

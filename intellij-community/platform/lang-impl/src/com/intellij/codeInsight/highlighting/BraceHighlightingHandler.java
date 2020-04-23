@@ -332,8 +332,8 @@ public class BraceHighlightingHandler {
   private void highlightBrace(@NotNull TextRange braceRange, boolean matched) {
     TextAttributesKey attributesKey = matched ? CodeInsightColors.MATCHED_BRACE_ATTRIBUTES : CodeInsightColors.UNMATCHED_BRACE_ATTRIBUTES;
     RangeHighlighter rbraceHighlighter =
-        myEditor.getMarkupModel().addRangeHighlighter(braceRange.getStartOffset(), braceRange.getEndOffset(),
-                                                      LAYER, null, attributesKey, HighlighterTargetArea.EXACT_RANGE);
+        myEditor.getMarkupModel().addRangeHighlighter(attributesKey, braceRange.getStartOffset(), braceRange.getEndOffset(),
+                                                      LAYER, HighlighterTargetArea.EXACT_RANGE);
     rbraceHighlighter.setGreedyToLeft(false);
     rbraceHighlighter.setGreedyToRight(false);
     registerHighlighter(rbraceHighlighter);
@@ -436,7 +436,7 @@ public class BraceHighlightingHandler {
     LineMarkerRenderer renderer = createLineMarkerRenderer(matched);
 
     RangeHighlighter highlighter = editor.getMarkupModel()
-      .addRangeHighlighterAndChangeAttributes(startOffset, endOffset, 0, null, null, HighlighterTargetArea.LINES_IN_RANGE, false,
+      .addRangeHighlighterAndChangeAttributes(null, startOffset, endOffset, 0, HighlighterTargetArea.LINES_IN_RANGE, false,
                                               h -> h.setLineMarkerRenderer(renderer));
     editor.putUserData(LINE_MARKER_IN_EDITOR_KEY, highlighter);
   }

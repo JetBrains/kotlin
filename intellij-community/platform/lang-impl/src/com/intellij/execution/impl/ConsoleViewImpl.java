@@ -815,13 +815,19 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
                                            int startOffset,
                                            int endOffset) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    TextAttributes attributes = contentType.getForcedAttributes();
     TextAttributesKey attributesKey = contentType.getAttributesKey();
-    MarkupModel model = DocumentMarkupModel.forDocument(myEditor.getDocument(), getProject(), true);
+    MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(myEditor.getDocument(), getProject(), true);
     int layer = HighlighterLayer.SYNTAX + 1; // make custom filters able to draw their text attributes over the default ones
-    RangeHighlighter tokenMarker = model.addRangeHighlighter(startOffset, endOffset, layer,
-                                                             attributes, attributesKey, HighlighterTargetArea.EXACT_RANGE);
-    tokenMarker.putUserData(CONTENT_TYPE, contentType);
+    model.addRangeHighlighterAndChangeAttributes(
+      attributesKey, startOffset, endOffset, layer, HighlighterTargetArea.EXACT_RANGE, false,
+      ex -> {
+        // fallback for contentTypes which provide only attributes
+        TextAttributes attributes = contentType.getForcedAttributes();
+        if (attributes != null) {
+          ex.setTextAttributes(attributes);
+        }
+        ex.putUserData(CONTENT_TYPE, contentType);
+      });
   }
 
   private boolean isDisposed() {

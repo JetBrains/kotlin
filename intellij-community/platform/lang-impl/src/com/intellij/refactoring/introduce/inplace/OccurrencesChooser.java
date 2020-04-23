@@ -129,8 +129,7 @@ public abstract class OccurrencesChooser<T> {
         for (T occurrence : occurrenceList) {
           final TextRange textRange = getOccurrenceRange(occurrence);
           final RangeHighlighter rangeHighlighter = markupModel.addRangeHighlighter(
-            textRange.getStartOffset(), textRange.getEndOffset(), HighlighterLayer.SELECTION - 1,
-            null, EditorColors.SEARCH_RESULT_ATTRIBUTES,
+            EditorColors.SEARCH_RESULT_ATTRIBUTES, textRange.getStartOffset(), textRange.getEndOffset(), HighlighterLayer.SELECTION - 1,
             HighlighterTargetArea.EXACT_RANGE);
           myRangeHighlighters.add(rangeHighlighter);
         }

@@ -86,8 +86,8 @@ public class ScopeHighlighter {
 
   private void addHighlighter(TextRange r, int level, TextAttributesKey key) {
     MarkupModel markupModel = myEditor.getMarkupModel();
-    RangeHighlighter highlighter = markupModel.addRangeHighlighter(r.getStartOffset(), r.getEndOffset(), level,
-                                                                   null, key, HighlighterTargetArea.EXACT_RANGE);
+    RangeHighlighter highlighter = markupModel.addRangeHighlighter(key, r.getStartOffset(), r.getEndOffset(), level,
+                                                                   HighlighterTargetArea.EXACT_RANGE);
     myActiveHighliters.add(highlighter);
   }
 

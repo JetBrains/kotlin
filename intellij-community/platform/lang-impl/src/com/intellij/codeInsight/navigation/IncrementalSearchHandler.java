@@ -288,8 +288,8 @@ public final class IncrementalSearchHandler {
       data.label.setForeground(JBColor.foreground());
       if (matchLength > 0) {
         data.segmentHighlighter = editor.getMarkupModel()
-          .addRangeHighlighter(index, index + matchLength, HighlighterLayer.LAST + 1,
-                               null, EditorColors.SEARCH_RESULT_ATTRIBUTES, HighlighterTargetArea.EXACT_RANGE);
+          .addRangeHighlighter(EditorColors.SEARCH_RESULT_ATTRIBUTES, index, index + matchLength, HighlighterLayer.LAST + 1,
+                               HighlighterTargetArea.EXACT_RANGE);
       }
       data.ignoreCaretMove = true;
       editor.getCaretModel().moveToOffset(index);

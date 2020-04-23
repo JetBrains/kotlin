@@ -722,10 +722,11 @@ public class FindUtil {
 
       if (!model.isGlobal()) {
         final RangeHighlighterEx segmentHighlighter = (RangeHighlighterEx)editor.getMarkupModel().addRangeHighlighter(
+          EditorColors.SEARCH_RESULT_ATTRIBUTES,
           result.getStartOffset(),
           result.getEndOffset(),
           HighlighterLayer.SELECTION + 1,
-          null, EditorColors.SEARCH_RESULT_ATTRIBUTES, HighlighterTargetArea.EXACT_RANGE);
+          HighlighterTargetArea.EXACT_RANGE);
         MyListener listener = new MyListener(editor, segmentHighlighter);
         caretModel.addCaretListener(listener);
       }

@@ -552,7 +552,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
         TextAttributes attributesToUse = range.getLength() > 0 ? backgroundAttributes : borderAttributes;
         markupModel.addRangeHighlighter(
-          range.getStartOffset(), range.getEndOffset(), HighlighterLayer.SELECTION, attributesToUse, null, HighlighterTargetArea.EXACT_RANGE
+          range.getStartOffset(), range.getEndOffset(), HighlighterLayer.SELECTION, attributesToUse, HighlighterTargetArea.EXACT_RANGE
         );
       }
 

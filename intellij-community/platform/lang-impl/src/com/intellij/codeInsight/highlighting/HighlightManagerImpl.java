@@ -18,7 +18,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
-import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.ImaginaryEditor;
 import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.project.Project;
@@ -187,29 +186,34 @@ public final class HighlightManagerImpl extends HighlightManager {
   }
 
   private void addOccurrenceHighlight(@NotNull Editor editor,
-                                     int start,
-                                     int end,
-                                     @Nullable TextAttributes forcedAttributes,
-                                     @Nullable TextAttributesKey attributesKey,
-                                     int flags,
-                                     @Nullable Collection<? super RangeHighlighter> outHighlighters,
-                                     @Nullable Color scrollMarkColor) {
-    RangeHighlighter highlighter = editor.getMarkupModel()
-      .addRangeHighlighter(start, end, HighlighterLayer.SELECTION - 1,
-                           forcedAttributes, attributesKey,
-                           HighlighterTargetArea.EXACT_RANGE);
-    HighlightFlags info = new HighlightFlags(editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor, flags);
-    Map<RangeHighlighter, HighlightFlags> map = getHighlightInfoMap(editor, true);
-    map.put(highlighter, info);
+                                      int start,
+                                      int end,
+                                      @Nullable TextAttributes forcedAttributes,
+                                      @Nullable TextAttributesKey attributesKey,
+                                      int flags,
+                                      @Nullable Collection<? super RangeHighlighter> outHighlighters,
+                                      @Nullable Color scrollMarkColor) {
+    MarkupModelEx markupModel = (MarkupModelEx)editor.getMarkupModel();
+    markupModel.addRangeHighlighterAndChangeAttributes(attributesKey, start, end, HighlighterLayer.SELECTION - 1,
+                                                       HighlighterTargetArea.EXACT_RANGE, false, highlighter -> {
 
-    if (highlighter instanceof RangeHighlighterEx) ((RangeHighlighterEx)highlighter).setVisibleIfFolded(true);
-    if (outHighlighters != null) {
-      outHighlighters.add(highlighter);
-    }
+        HighlightFlags info = new HighlightFlags(editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor, flags);
+        Map<RangeHighlighter, HighlightFlags> map = getHighlightInfoMap(editor, true);
+        map.put(highlighter, info);
 
-    if (scrollMarkColor != null) {
-      highlighter.setErrorStripeMarkColor(scrollMarkColor);
-    }
+        highlighter.setVisibleIfFolded(true);
+        if (outHighlighters != null) {
+          outHighlighters.add(highlighter);
+        }
+
+        if (forcedAttributes != null) {
+          highlighter.setTextAttributes(forcedAttributes);
+        }
+
+        if (scrollMarkColor != null) {
+          highlighter.setErrorStripeMarkColor(scrollMarkColor);
+        }
+      });
   }
 
   @Override

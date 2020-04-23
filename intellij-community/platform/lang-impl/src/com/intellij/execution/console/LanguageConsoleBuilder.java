@@ -364,8 +364,8 @@ public final class LanguageConsoleBuilder {
         }
 
         RangeHighlighter highlighter = getHistoryViewer().getMarkupModel()
-          .addRangeHighlighter(0, getDocument().getTextLength(), HighlighterLayer.ADDITIONAL_SYNTAX,
-                               null, null, HighlighterTargetArea.EXACT_RANGE);
+          .addRangeHighlighter(null, 0, getDocument().getTextLength(), HighlighterLayer.ADDITIONAL_SYNTAX,
+                               HighlighterTargetArea.EXACT_RANGE);
         highlighter.setGreedyToRight(true);
         highlighter.setCustomRenderer(renderer);
         lineSeparatorPainter = highlighter;

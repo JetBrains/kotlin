@@ -14,7 +14,10 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.editor.colors.*;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -148,7 +151,7 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
     final RangeHighlighterEx highlighter;
     int line = getLine();
     if (line >= 0) {
-      highlighter = markup.addPersistentLineHighlighter(line, HighlighterLayer.ERROR + 1, null, CodeInsightColors.BOOKMARKS_ATTRIBUTES);
+      highlighter = markup.addPersistentLineHighlighter(CodeInsightColors.BOOKMARKS_ATTRIBUTES, line, HighlighterLayer.ERROR + 1);
       if (highlighter != null) {
         highlighter.setGutterIconRenderer(new MyGutterIconRenderer(this));
         highlighter.setErrorStripeTooltip(getBookmarkTooltip());

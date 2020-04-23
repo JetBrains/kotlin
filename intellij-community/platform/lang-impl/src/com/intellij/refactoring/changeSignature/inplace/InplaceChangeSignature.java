@@ -186,12 +186,12 @@ public class InplaceChangeSignature implements DocumentListener {
     myPreview.getMarkupModel().removeAllHighlighters();
     WriteCommandAction.writeCommandAction(null).run(() -> myPreview.getDocument().replaceString(0, myPreview.getDocument().getTextLength(), methodSignature));
     for (TextRange range : deleteRanges) {
-      myPreview.getMarkupModel().addRangeHighlighter(range.getStartOffset(), range.getEndOffset(), HighlighterLayer.ADDITIONAL_SYNTAX,
-                                                     null, CodeInsightColors.DEPRECATED_ATTRIBUTES, HighlighterTargetArea.EXACT_RANGE);
+      myPreview.getMarkupModel().addRangeHighlighter(CodeInsightColors.DEPRECATED_ATTRIBUTES, range.getStartOffset(), range.getEndOffset(), HighlighterLayer.ADDITIONAL_SYNTAX,
+                                                     HighlighterTargetArea.EXACT_RANGE);
     }
     for (TextRange range : newRanges) {
-      myPreview.getMarkupModel().addRangeHighlighter(range.getStartOffset(), range.getEndOffset(), HighlighterLayer.ADDITIONAL_SYNTAX,
-                                                     null, CodeInsightColors.TODO_DEFAULT_ATTRIBUTES, HighlighterTargetArea.EXACT_RANGE);
+      myPreview.getMarkupModel().addRangeHighlighter(CodeInsightColors.TODO_DEFAULT_ATTRIBUTES, range.getStartOffset(), range.getEndOffset(), HighlighterLayer.ADDITIONAL_SYNTAX,
+                                                     HighlighterTargetArea.EXACT_RANGE);
     }
   }
 

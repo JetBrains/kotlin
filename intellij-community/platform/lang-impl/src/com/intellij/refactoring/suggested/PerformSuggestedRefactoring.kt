@@ -247,7 +247,7 @@ private fun <TData> createAndShowBalloon(
     rangeToHighlight.startOffset,
     rangeToHighlight.endOffset,
     HighlighterLayer.FIRST,
-    attributes, null,
+    attributes,
     HighlighterTargetArea.LINES_IN_RANGE
   )
 

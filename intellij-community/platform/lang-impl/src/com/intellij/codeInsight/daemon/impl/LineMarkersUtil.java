@@ -94,8 +94,8 @@ class LineMarkersUtil {
     if (highlighter == null) {
       newHighlighter = true;
       highlighter = markupModel.addRangeHighlighterAndChangeAttributes(
-        info.startOffset, info.endOffset,
-        HighlighterLayer.ADDITIONAL_SYNTAX, null, null, HighlighterTargetArea.LINES_IN_RANGE, false,
+        null, info.startOffset, info.endOffset,
+        HighlighterLayer.ADDITIONAL_SYNTAX, HighlighterTargetArea.LINES_IN_RANGE, false,
         markerEx -> {
           markerEx.setGutterIconRenderer(newRenderer);
           markerEx.setLineSeparatorColor(info.separatorColor);
