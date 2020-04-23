@@ -54,7 +54,7 @@ if (deployVersion != null) {
 
 noDefaultJar()
 
-tasks.register<ShadowJar>("shadowJar") {
+val shadowJar = tasks.register<ShadowJar>("shadowJar") {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = version
 
@@ -62,11 +62,9 @@ tasks.register<ShadowJar>("shadowJar") {
     exclude("**/*.proto")
     configurations = listOf(shadows)
     relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
-
-    val artifactRef = outputs.files.singleFile
-    runtimeJarArtifactBy(this, artifactRef)
-    addArtifact("runtime", this, artifactRef)
 }
+
+runtimeJarArtifactBy(shadowJar, shadowJar)
 
 val test by tasks
 test.dependsOn("shadowJar")
