@@ -12,6 +12,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
+import com.intellij.util.indexing.impl.forward.AbstractMapForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetriever;
 import com.intellij.util.io.*;
@@ -49,7 +50,8 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   private final boolean myIsPsiBackedIndex;
   private PersistentSubIndexerRetriever<?, ?> mySubIndexerRetriever;
 
-  public SnapshotInputMappings(@NotNull IndexExtension<Key, Value, FileContent> indexExtension) throws IOException {
+  public SnapshotInputMappings(@NotNull IndexExtension<Key, Value, FileContent> indexExtension,
+                               @NotNull AbstractMapForwardIndexAccessor<Key, Value, ?> accessor) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
     myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
 
@@ -59,7 +61,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();
-    myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this, storeOnlySingleValue);
+    myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this, accessor);
     myIndexingTrace = DebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
 
     if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {

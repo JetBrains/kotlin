@@ -64,7 +64,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
                                 @NotNull IndexStorage<Key, Value> storage) throws IOException {
     this(extension,
          storage,
-         hasSnapshotMapping(extension) ? new SnapshotInputMappings<>(extension) : null);
+         hasSnapshotMapping(extension) ? new SnapshotInputMappings<>(extension, getForwardIndexAccessor(extension)) : null);
     if (!(myIndexId instanceof ID<?, ?>)) {
       throw new IllegalArgumentException("myIndexId should be instance of com.intellij.util.indexing.ID");
     }
@@ -121,7 +121,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     return indexer instanceof CompositeDataIndexer && !FileBasedIndex.USE_IN_MEMORY_INDEX;
   }
 
-  static <Key, Value> boolean hasSnapshotMapping(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
+  public static <Key, Value> boolean hasSnapshotMapping(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
     return indexExtension instanceof FileBasedIndexExtension &&
            ((FileBasedIndexExtension<Key, Value>)indexExtension).hasSnapshotMapping() &&
            FileBasedIndex.ourSnapshotMappingsEnabled &&
@@ -168,7 +168,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
       synchronized (myInMemoryKeysAndValues) {
         Map<Key, Value> keysAndValues = myInMemoryKeysAndValues.get(inputId);
         if (keysAndValues != null) {
-          return getKeysDiffBuilderInMemoryMode(inputId, keysAndValues);
+          return getKeysDiffBuilder(inputId, keysAndValues);
         }
       }
     }
@@ -176,9 +176,8 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
   }
 
   @NotNull
-  protected InputDataDiffBuilder<Key, Value> getKeysDiffBuilderInMemoryMode(int inputId, @NotNull Map<Key, Value> keysAndValues) {
-    return mySingleEntryIndex ? new SingleEntryIndexForwardIndexAccessor.SingleValueDiffBuilder(inputId, keysAndValues)
-                              : new MapInputDataDiffBuilder<>(inputId, keysAndValues);
+  public InputDataDiffBuilder<Key, Value> getKeysDiffBuilder(int inputId, @NotNull Map<Key, Value> keysAndValues) throws IOException {
+    return ((AbstractMapForwardIndexAccessor<Key, Value, ?>)getForwardIndexAccessor()).createDiffBuilderByMap(inputId, keysAndValues);
   }
 
   @Override
@@ -332,11 +331,6 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
       Map<Key, Value> map = myInMemoryKeysAndValues.get(fileId);
       if (map != null) return map;
     }
-    if (getForwardIndexAccessor() instanceof AbstractMapForwardIndexAccessor) {
-      ByteArraySequence serializedInputData = getForwardIndex().get(fileId);
-      AbstractMapForwardIndexAccessor<Key, Value, ?> forwardIndexAccessor = (AbstractMapForwardIndexAccessor<Key, Value, ?>)getForwardIndexAccessor();
-      return forwardIndexAccessor.convertToInputDataMap(serializedInputData);
-    }
     // in future we will get rid of forward index for SingleEntryFileBasedIndexExtension
     if (mySingleEntryIndex) {
       Key key = (Key)(Object)fileId;
@@ -347,6 +341,11 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
         return false;
       });
       return result[0];
+    }
+    if (getForwardIndexAccessor() instanceof AbstractMapForwardIndexAccessor) {
+      ByteArraySequence serializedInputData = getForwardIndex().get(fileId);
+      AbstractMapForwardIndexAccessor<Key, Value, ?> forwardIndexAccessor = (AbstractMapForwardIndexAccessor<Key, Value, ?>)getForwardIndexAccessor();
+      return forwardIndexAccessor.convertToInputDataMap(fileId, serializedInputData);
     }
     LOG.error("Can't fetch indexed data for index " + myIndexId.getName());
     return null;
@@ -410,9 +409,9 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     }
   }
 
-  @Nullable
-  private static <Key, Value> ForwardIndexAccessor<Key, Value> getForwardIndexAccessor(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
-    if (!shouldCreateForwardIndex(indexExtension)) return null;
+  @ApiStatus.Internal
+  @NotNull
+  public static <Key, Value> AbstractMapForwardIndexAccessor<Key, Value, ?> getForwardIndexAccessor(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
     if (!(indexExtension instanceof SingleEntryFileBasedIndexExtension) || FileBasedIndex.USE_IN_MEMORY_INDEX) {
       return new MapForwardIndexAccessor<>(new InputMapExternalizer<>(indexExtension));
     }

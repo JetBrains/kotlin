@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.*;
+import com.intellij.util.io.VoidDataExternalizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,12 +18,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAccessor<Integer, V> {
+public class SingleEntryIndexForwardIndexAccessor<V> extends AbstractMapForwardIndexAccessor<Integer, V, Void> {
   private static final Logger LOG = Logger.getInstance(SingleEntryIndexForwardIndexAccessor.class);
   private final VolatileNotNullLazyValue<UpdatableIndex<Integer, V, ?>> myIndex;
 
   @SuppressWarnings("unchecked")
   public SingleEntryIndexForwardIndexAccessor(IndexExtension<Integer, V, ?> extension) {
+    super(VoidDataExternalizer.INSTANCE);
     LOG.assertTrue(extension instanceof SingleEntryFileBasedIndexExtension);
     IndexId<?, ?> name = extension.getName();
     FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
@@ -39,18 +41,35 @@ public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAcce
     catch (StorageException e) {
       throw new IOException(e);
     }
-    return getDiffBuilder(inputId, data);
+    return createDiffBuilderByMap(inputId, data);
   }
 
-  @NotNull
-  protected DirectInputDataDiffBuilder<Integer, V> getDiffBuilder(int inputId, @NotNull Map<Integer, V> data) throws IOException {
-    return new SingleValueDiffBuilder<>(inputId, data);
+  @Nullable
+  @Override
+  public Void convertToDataType(@NotNull InputData<Integer, V> data) {
+    return null;
+  }
+
+
+  @Override
+  public @NotNull InputDataDiffBuilder<Integer, V> createDiffBuilderByMap(int inputId, @Nullable Map<Integer, V> map) throws IOException {
+    return new SingleValueDiffBuilder<>(inputId, ContainerUtil.notNullize(map));
   }
 
   @Nullable
   @Override
   public final ByteArraySequence serializeIndexedData(@NotNull InputData<Integer, V> data) {
     return null;
+  }
+
+  @Override
+  protected @Nullable Map<Integer, V> convertToMap(int inputId, @Nullable Void inputData) throws IOException {
+    try {
+      return ProgressManager.getInstance().computeInNonCancelableSection(() -> myIndex.getValue().getIndexedFileData(inputId));
+    }
+    catch (StorageException e) {
+      throw new IOException(e);
+    }
   }
 
   public static class SingleValueDiffBuilder<V> extends DirectInputDataDiffBuilder<Integer, V> {

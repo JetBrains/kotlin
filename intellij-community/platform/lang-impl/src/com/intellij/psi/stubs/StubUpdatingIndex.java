@@ -26,8 +26,10 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.InputData;
-import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.forward.EmptyForwardIndex;
+import com.intellij.util.indexing.impl.forward.ForwardIndex;
+import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
+import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.io.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -291,7 +293,26 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       });
     }
     checkNameStorage();
-    return new MyIndex(extension, storage);
+
+    boolean hasSnapshotMapping = VfsAwareMapReduceIndex.hasSnapshotMapping(this);
+    StubUpdatingForwardIndexAccessor stubForwardIndexAccessor = new StubUpdatingForwardIndexAccessor(extension);
+
+    SnapshotInputMappings<Integer, SerializedStubTree> snapshotInputMappings =
+      hasSnapshotMapping
+      ? new SnapshotInputMappings<>(this, stubForwardIndexAccessor)
+      : null;
+
+    ForwardIndex forwardIndex =
+      hasSnapshotMapping
+      ? new IntMapForwardIndex(snapshotInputMappings.getInputIndexStorageFile(), true)
+      : new EmptyForwardIndex();
+
+    ForwardIndexAccessor<Integer, SerializedStubTree> accessor =
+      hasSnapshotMapping
+      ? snapshotInputMappings.getForwardIndexAccessor()
+      : stubForwardIndexAccessor;
+
+    return new MyIndex(extension, storage, forwardIndex, accessor, snapshotInputMappings);
   }
 
   private void checkNameStorage() throws StorageException {
@@ -306,9 +327,12 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
     @Nullable
     private final CompositeBinaryBuilderMap myCompositeBinaryBuilderMap = FileBasedIndex.USE_IN_MEMORY_INDEX ? null : new CompositeBinaryBuilderMap();
 
-    MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
-      throws IOException {
-      super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(extension), null, null);
+    MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension,
+            @NotNull IndexStorage<Integer, SerializedStubTree> storage,
+            @Nullable ForwardIndex forwardIndex,
+            @Nullable ForwardIndexAccessor<Integer, SerializedStubTree> forwardIndexAccessor,
+            @Nullable SnapshotInputMappings<Integer, SerializedStubTree> snapshotInputMappings) throws IOException {
+      super(extension, storage, forwardIndex, forwardIndexAccessor, snapshotInputMappings, null);
     }
 
     @Override
@@ -393,13 +417,6 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       finally {
         getStubIndex().dispose();
       }
-    }
-
-    @NotNull
-    @Override
-    protected InputDataDiffBuilder<Integer, SerializedStubTree> getKeysDiffBuilderInMemoryMode(int inputId,
-                                                                                               @NotNull Map<Integer, SerializedStubTree> keysAndValues) {
-      return new StubCumulativeInputDiffBuilder(inputId, keysAndValues.isEmpty() ? null : keysAndValues.values().iterator().next());
     }
 
     @Override
