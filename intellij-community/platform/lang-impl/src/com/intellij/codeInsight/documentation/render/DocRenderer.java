@@ -71,9 +71,8 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static String ourCachedStyleSheetMonoFont = "non-existing";
 
   private final DocRenderItem myItem;
-  private boolean myRepaintRequested;
   private boolean myContentUpdateNeeded;
-  JEditorPane myPane;
+  private EditorPane myPane;
 
   DocRenderer(@NotNull DocRenderItem item) {
     myItem = item;
@@ -96,7 +95,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   public int calcHeightInPixels(@NotNull Inlay inlay) {
     Editor editor = inlay.getEditor();
     int width = Math.max(0, calcInlayWidth(editor) - calcInlayStartX() + editor.getInsets().left - scale(LEFT_INSET) - scale(RIGHT_INSET));
-    JComponent component = getRendererComponent(inlay, width, -1);
+    JComponent component = getRendererComponent(inlay, width);
     return Math.max(editor.getLineHeight(),
                     component.getPreferredSize().height + scale(TOP_BOTTOM_INSETS) * 2 + scale(TOP_BOTTOM_MARGINS) * 2);
   }
@@ -137,7 +136,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     int componentWidth = endX - startX - scale(LEFT_INSET) - scale(RIGHT_INSET);
     int componentHeight = filledHeight - topBottomInset * 2;
     if (componentWidth > 0 && componentHeight > 0) {
-      JComponent component = getRendererComponent(inlay, componentWidth, componentHeight);
+      JComponent component = getRendererComponent(inlay, componentWidth);
       component.setBackground(bgColor);
       Graphics dg = g.create(startX + scale(LEFT_INSET), filledStartY + topBottomInset, componentWidth, componentHeight);
       UISettings.setupAntialiasing(dg);
@@ -182,21 +181,19 @@ class DocRenderer implements EditorCustomElementRenderer {
     return myItem.editor.offsetToXY(contentStartOffset, false, true).x;
   }
 
-  Point getEditorPaneLocationWithinInlay() {
-    return new Point(calcInlayStartX() + scale(LEFT_INSET), scale(TOP_BOTTOM_MARGINS) + scale(TOP_BOTTOM_INSETS));
+  Rectangle getEditorPaneBoundsWithinInlay(Inlay inlay) {
+    int relativeX = calcInlayStartX() - myItem.editor.getInsets().left + scale(LEFT_INSET);
+    int relativeY = scale(TOP_BOTTOM_MARGINS) + scale(TOP_BOTTOM_INSETS);
+    return new Rectangle(relativeX, relativeY,
+                         inlay.getWidthInPixels() - relativeX - scale(RIGHT_INSET), inlay.getHeightInPixels() - relativeY * 2);
   }
 
-  private JComponent getRendererComponent(Inlay inlay, int width, int height) {
+  EditorPane getRendererComponent(Inlay inlay, int width) {
     boolean newInstance = false;
     EditorEx editor = (EditorEx)inlay.getEditor();
     if (myPane == null || myContentUpdateNeeded) {
       newInstance = true;
-      myPane = new JEditorPane() {
-        @Override
-        public void repaint(long tm, int x, int y, int width, int height) {
-          myRepaintRequested = true;
-        }
-      };
+      myPane = new EditorPane();
       myPane.setEditable(false);
       myPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
       myPane.setEditorKit(createEditorKit(editor));
@@ -221,9 +218,9 @@ class DocRenderer implements EditorCustomElementRenderer {
       myContentUpdateNeeded = false;
     }
     AppUIUtil.targetToDevice(myPane, editor.getContentComponent());
-    myPane.setSize(width, height < 0 ? (newInstance ? Integer.MAX_VALUE : myPane.getHeight()) : height);
+    myPane.setSize(width, 10_000_000 /* Arbitrary large value, that doesn't lead to overflows and precision loss */);
     if (newInstance) {
-      trackImageUpdates(inlay);
+      trackImageUpdates(inlay, myPane);
     }
     return myPane;
   }
@@ -240,7 +237,7 @@ class DocRenderer implements EditorCustomElementRenderer {
 
     Rectangle location = null;
     try {
-      location = myPane.modelToView(element.getStartOffset());
+      location = ((JEditorPane)event.getSource()).modelToView(element.getStartOffset());
     }
     catch (BadLocationException ignored) {}
     if (location == null) return;
@@ -281,11 +278,12 @@ class DocRenderer implements EditorCustomElementRenderer {
     Project project = context.getProject();
     DocumentationManager documentationManager = DocumentationManager.getInstance(project);
     if (QuickDocUtil.getActiveDocComponent(project) == null) {
-      Point inlayPosition = Objects.requireNonNull(myItem.inlay.getBounds()).getLocation();
-      Point relativePosition = getEditorPaneLocationWithinInlay();
+      Inlay<DocRenderer> inlay = myItem.inlay;
+      Point inlayPosition = Objects.requireNonNull(inlay.getBounds()).getLocation();
+      Rectangle relativeBounds = getEditorPaneBoundsWithinInlay(inlay);
       editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT,
-                         new Point(inlayPosition.x + relativePosition.x + linkLocationWithinInlay.x,
-                                   inlayPosition.y + relativePosition.y + linkLocationWithinInlay.y + linkLocationWithinInlay.height));
+                         new Point(inlayPosition.x + relativeBounds.x + linkLocationWithinInlay.x,
+                                   inlayPosition.y + relativeBounds.y + linkLocationWithinInlay.y + linkLocationWithinInlay.height));
       documentationManager.showJavaDocInfo(editor, context, context, () -> {
         editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
       }, "", false, true);
@@ -313,15 +311,15 @@ class DocRenderer implements EditorCustomElementRenderer {
     }
   }
 
-  private void trackImageUpdates(Inlay inlay) {
-    myPane.getPreferredSize(); // trigger internal layout
+  private static void trackImageUpdates(Inlay inlay, JEditorPane editorPane) {
+    editorPane.getPreferredSize(); // trigger internal layout
     ImageObserver observer = (img, infoflags, x, y, width, height) -> {
       SwingUtilities.invokeLater(() -> {
         if (inlay.isValid()) inlay.update();
       });
       return true;
     };
-    if (trackImageUpdates(myPane.getUI().getRootView(myPane), observer)) {
+    if (trackImageUpdates(editorPane.getUI().getRootView(editorPane), observer)) {
       observer.imageUpdate(null, 0, 0, 0, 0, 0);
     }
   }
@@ -339,15 +337,6 @@ class DocRenderer implements EditorCustomElementRenderer {
       result |= trackImageUpdates(view.getView(i), observer);
     }
     return result;
-  }
-
-  void doWithRepaintTracking(Runnable task) {
-    myRepaintRequested = false;
-    task.run();
-    Inlay<DocRenderer> inlay = myItem.inlay;
-    if (myRepaintRequested && inlay != null) {
-      inlay.repaint();
-    }
   }
 
   private static JBHtmlEditorKit createEditorKit(@NotNull Editor editor) {
@@ -387,5 +376,27 @@ class DocRenderer implements EditorCustomElementRenderer {
       ourCachedStyleSheetMonoFont = editorFontName;
     }
     return ourCachedStyleSheet;
+  }
+
+  class EditorPane extends JEditorPane {
+    private boolean myRepaintRequested;
+
+    @Override
+    public void repaint(long tm, int x, int y, int width, int height) {
+      myRepaintRequested = true;
+    }
+
+    void doWithRepaintTracking(Runnable task) {
+      myRepaintRequested = false;
+      task.run();
+      Inlay<DocRenderer> inlay = myItem.inlay;
+      if (myRepaintRequested && inlay != null) {
+        inlay.repaint();
+      }
+    }
+
+    Editor getEditor() {
+      return myItem.editor;
+    }
   }
 }
