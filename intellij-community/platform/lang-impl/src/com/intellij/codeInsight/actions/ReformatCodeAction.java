@@ -34,7 +34,7 @@ import java.util.regex.PatternSyntaxException;
 public class ReformatCodeAction extends AnAction implements DumbAware {
   private static final Logger LOG = Logger.getInstance(ReformatCodeAction.class);
 
-  protected static ReformatFilesOptions myTestOptions;
+  private static ReformatFilesOptions myTestOptions;
 
   public ReformatCodeAction() {
     setEnabledInModalContext(true);
@@ -61,7 +61,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
       dir = file.getContainingDirectory();
       hasSelection = editor.getSelectionModel().hasSelection();
     }
-    else if (containsOnlyFiles(files)) {
+    else if (files != null && containsOnlyFiles(files)) {
       final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Arrays.asList(files));
       if (!operationStatus.hasReadonlyFiles()) {
         ReformatFilesOptions selectedFlags = getReformatFilesOptions(project, files);
@@ -162,8 +162,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
 
   public static void reformatDirectory(@NotNull Project project,
                                        @NotNull PsiDirectory dir,
-                                       @NotNull DirectoryFormattingOptions options)
-  {
+                                       @NotNull DirectoryFormattingOptions options) {
     AbstractLayoutCodeProcessor processor = new ReformatCodeProcessor(
       project, dir, options.isIncludeSubdirectories(), options.getTextRangeType() == TextRangeType.VCS_CHANGED_TEXT
     );
@@ -186,8 +185,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
 
   private static void reformatModule(@NotNull Project project,
                                      @Nullable Module moduleContext,
-                                     @NotNull ReformatFilesOptions selectedFlags)
-  {
+                                     @NotNull ReformatFilesOptions selectedFlags) {
     boolean shouldOptimizeImports = selectedFlags.isOptimizeImports() && !DumbService.getInstance(project).isDumb();
     boolean processOnlyChangedText = selectedFlags.getTextRangeType() == TextRangeType.VCS_CHANGED_TEXT;
 
@@ -227,16 +225,18 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
     processor.addFileFilter(file -> patternCondition.value(file.getNameSequence()));
   }
 
+  @NotNull
   private static Condition<CharSequence> getFileTypeMaskPattern(@Nullable String mask) {
     try {
       return FindInProjectUtil.createFileMaskCondition(mask);
-    } catch (PatternSyntaxException e) {
+    }
+    catch (PatternSyntaxException e) {
       LOG.info("Error while processing file mask: ", e);
       return Conditions.alwaysTrue();
     }
   }
 
-  public static PsiFile[] convertToPsiFiles(final VirtualFile[] files,Project project) {
+  public static PsiFile @NotNull [] convertToPsiFiles(VirtualFile @NotNull [] files, @NotNull Project project) {
     PsiManager psiManager = PsiManager.getInstance(project);
     List<PsiFile> list = PsiUtilCore.toPsiFiles(psiManager, Arrays.asList(files));
     return PsiUtilCore.toPsiFileArray(list);
@@ -256,7 +256,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
     }
   }
 
-  private static boolean isActionAvailable(AnActionEvent event) {
+  private static boolean isActionAvailable(@NotNull AnActionEvent event) {
     DataContext dataContext = event.getDataContext();
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null){
@@ -346,12 +346,11 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
   }
 
   @TestOnly
-  public static void setTestOptions(ReformatFilesOptions options) {
+  public static void setTestOptions(@NotNull ReformatFilesOptions options) {
     myTestOptions = options;
   }
 
-  public static boolean containsOnlyFiles(final VirtualFile[] files) {
-    if (files == null) return false;
+  static boolean containsOnlyFiles(VirtualFile @NotNull [] files) {
     if (files.length < 1) return false;
     for (VirtualFile virtualFile : files) {
       if (virtualFile.isDirectory()) return false;

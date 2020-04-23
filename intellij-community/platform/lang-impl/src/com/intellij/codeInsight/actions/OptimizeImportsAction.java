@@ -41,7 +41,7 @@ public class OptimizeImportsAction extends AnAction {
     actionPerformedImpl(event.getDataContext());
   }
 
-  public static void actionPerformedImpl(final DataContext dataContext) {
+  public static void actionPerformedImpl(@NotNull DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) {
       return;
@@ -129,7 +129,7 @@ public class OptimizeImportsAction extends AnAction {
       new OptimizeImportsProcessor(project, dir, true, processOnlyVcsChangedFiles).run();
     }
     else{
-      final OptimizeImportsProcessor optimizer = new OptimizeImportsProcessor(project, file);
+      OptimizeImportsProcessor optimizer = new OptimizeImportsProcessor(project, file);
       if (editor != null && EditorSettingsExternalizable.getInstance().isShowNotificationAfterOptimizeImports()) {
         optimizer.setCollectInfo(true);
         optimizer.setPostRunnable(() -> {
@@ -217,7 +217,7 @@ public class OptimizeImportsAction extends AnAction {
     return true;
   }
 
-  private static boolean isOptimizeImportsAvailable(final PsiFile file) {
+  private static boolean isOptimizeImportsAvailable(@NotNull PsiFile file) {
     return !LanguageImportStatements.INSTANCE.forFile(file).isEmpty();
   }
 
@@ -256,7 +256,7 @@ public class OptimizeImportsAction extends AnAction {
       init();
     }
 
-    public boolean isProcessOnlyVcsChangedFiles() {
+    boolean isProcessOnlyVcsChangedFiles() {
       return myOnlyVcsCheckBox.isSelected();
     }
 

@@ -57,7 +57,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
     this(project, files, getCommandName(), postRunnable);
   }
 
-  public OptimizeImportsProcessor(@NotNull Project project, PsiFile @NotNull [] files, String commandName, Runnable postRunnable) {
+  public OptimizeImportsProcessor(@NotNull Project project, PsiFile @NotNull [] files, @NotNull String commandName, Runnable postRunnable) {
     super(project, files, getProgressText(), commandName, postRunnable, false);
   }
 
@@ -156,11 +156,11 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
     }
   }
 
-  private static String getProgressText() {
+  private static @NotNull String getProgressText() {
     return CodeInsightBundle.message("progress.text.optimizing.imports");
   }
 
-  public static String getCommandName() {
+  public static @NotNull String getCommandName() {
     return CodeInsightBundle.message("process.optimize.imports");
   }
 }
