@@ -1444,6 +1444,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/kt37131.kt");
             }
 
+            @TestMetadata("suspendConversion.kt")
+            public void testSuspendConversion() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/suspendConversion.kt");
+            }
+
             @TestMetadata("typeArguments.kt")
             public void testTypeArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/typeArguments.kt");

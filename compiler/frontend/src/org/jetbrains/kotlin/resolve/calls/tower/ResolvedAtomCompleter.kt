@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
+import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -35,8 +36,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -439,21 +440,28 @@ class ResolvedAtomCompleter(
             }
             mappedArguments.add(valueParameter to resolvedValueArgument)
         }
-        if (hasNonTrivialMapping || isCallableReferenceWithCoercion(resolvedCall, callableReferenceAdaptation.coercionStrategy)) {
+        if (hasNonTrivialMapping || isCallableReferenceWithImplicitConversion(resolvedCall, callableReferenceAdaptation)) {
             for ((valueParameter, resolvedValueArgument) in mappedArguments) {
                 resolvedCall.recordValueArgument(valueParameter, resolvedValueArgument)
             }
         }
     }
 
-    private fun isCallableReferenceWithCoercion(
+    private fun isCallableReferenceWithImplicitConversion(
         resolvedCall: ResolvedCall<CallableDescriptor>,
-        coercionStrategy: CoercionStrategy
-    ): Boolean =
-        when (coercionStrategy) {
-            CoercionStrategy.NO_COERCION -> false
-            CoercionStrategy.COERCION_TO_UNIT -> !resolvedCall.resultingDescriptor.returnType!!.isUnit()
-        }
+        callableReferenceAdaptation: CallableReferenceAdaptation
+    ): Boolean {
+        val resultingDescriptor = resolvedCall.resultingDescriptor
+
+        // TODO drop return type check - see noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt
+        if (callableReferenceAdaptation.coercionStrategy == CoercionStrategy.COERCION_TO_UNIT && !resultingDescriptor.returnType!!.isUnit())
+            return true
+
+        if (callableReferenceAdaptation.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION)
+            return true
+
+        return false
+    }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {
         val psiCallArgument = collectionLiteralArgument.atom.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl

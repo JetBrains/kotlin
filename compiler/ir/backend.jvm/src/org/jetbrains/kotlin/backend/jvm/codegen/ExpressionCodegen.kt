@@ -689,7 +689,8 @@ class ExpressionCodegen(
     override fun visitElement(element: IrElement, data: BlockInfo) =
         throw AssertionError(
             "Unexpected IR element found during code generation. Either code generation for it " +
-                    "is not implemented, or it should have been lowered: ${element.render()}"
+                    "is not implemented, or it should have been lowered:\n" +
+                    element.render()
         )
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
