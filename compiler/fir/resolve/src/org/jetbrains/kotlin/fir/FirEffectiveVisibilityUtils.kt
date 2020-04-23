@@ -65,7 +65,6 @@ private fun FirMemberDeclaration.containingClass(session: FirSession): FirRegula
         else -> null
     } ?: return null
     if (classId.isLocal) return null
-    val buffer = session.declaredMemberScopeProvider.getClassByClassId(classId)
     return (session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass)
         ?: (session.declaredMemberScopeProvider.getClassByClassId(classId) as? FirRegularClass)
 }

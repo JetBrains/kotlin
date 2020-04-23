@@ -6,7 +6,7 @@ abstract class Your {
 }
 
 // invalid, List<My> is effectively internal
-interface His: List<My>
+interface His: <!EXPOSED_SUPER_INTERFACE!>List<My><!>
 
 // invalid, My is internal
 interface Generic<E: My>

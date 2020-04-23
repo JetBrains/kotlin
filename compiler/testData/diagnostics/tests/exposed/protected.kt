@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class A {
     // protected relative to A
     protected open class B { 

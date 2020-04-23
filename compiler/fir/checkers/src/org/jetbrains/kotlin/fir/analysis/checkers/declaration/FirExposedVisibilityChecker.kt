@@ -5,20 +5,29 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SUPER_TYPE_ENTRY
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SUPER_TYPE_LIST
 
 object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -26,6 +35,32 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             is FirTypeAlias -> checkTypeAlias(declaration, context, reporter)
             is FirProperty -> checkProperty(declaration, context, reporter)
             is FirFunction<*> -> checkFunction(declaration, context, reporter)
+            is FirRegularClass -> checkSupertypes(declaration, context, reporter)
+        }
+    }
+
+    private fun checkSupertypes(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        val classVisibility = declaration.firEffectiveVisibility(declaration.session)
+        val supertypes = declaration.superConeTypes
+        val supertypesSources = declaration.getSupertypeSources()
+        val isInterface = declaration.classKind == ClassKind.INTERFACE
+        for (i in supertypes.indices) {
+            val supertype = supertypes[i]
+            val clazz = supertype.toRegularClass(declaration.session) ?: continue
+            val superIsInterface = clazz.classKind == ClassKind.INTERFACE
+            if (superIsInterface != isInterface) {
+                continue
+            }
+            val restricting = supertype.leastPermissiveDescriptor(declaration.session, classVisibility)
+            if (restricting != null) {
+                reporter.reportExposure(
+                    if (isInterface) FirErrors.EXPOSED_SUPER_INTERFACE else FirErrors.EXPOSED_SUPER_CLASS,
+                    restricting,
+                    classVisibility,
+                    restricting.firEffectiveVisibility(declaration.session),
+                    supertypesSources?.get(i) ?: declaration.source
+                )
+            }
         }
     }
 
@@ -140,5 +175,23 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             val identifier = kidsRef.get().find { it?.tokenType == KtTokens.IDENTIFIER }
             identifier?.toFirLightSourceElement(this.tree.getStartOffset(identifier), this.tree.getEndOffset(identifier), this.tree)
         }
+    }
+
+    private fun FirRegularClass.getSupertypeSources(): List<FirSourceElement>? {
+        when (val source = this.source) {
+            is FirPsiSourceElement<*> -> {
+                return (this.psi as? StubBasedPsiElementBase<*>)?.getStubOrPsiChild(SUPER_TYPE_LIST)?.entries.orEmpty()
+                    .map { it.toFirPsiSourceElement() }
+            }
+            is FirLightSourceElement -> {
+                val kidsRef = Ref<Array<LighterASTNode?>>()
+                source.tree.getChildren(source.element, kidsRef)
+                val supertypes = kidsRef.get().find { it?.tokenType == SUPER_TYPE_LIST } ?: return null
+                source.tree.getChildren(supertypes, kidsRef)
+                return kidsRef.get().filter { it?.tokenType == SUPER_TYPE_ENTRY }
+                    .map { it!!.toFirLightSourceElement(source.tree.getStartOffset(it), source.tree.getEndOffset(it), source.tree) }
+            }
+        }
+        return null
     }
 }
