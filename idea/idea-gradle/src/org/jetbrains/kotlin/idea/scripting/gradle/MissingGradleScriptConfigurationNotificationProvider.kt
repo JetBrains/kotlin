@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class GradleScriptOutOfSourceNotificationProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
+class MissingGradleScriptConfigurationNotificationProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
     override fun getKey(): Key<EditorNotificationPanel> = KEY
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
