@@ -3,8 +3,8 @@ package com.jetbrains.kotlin.structuralsearch.impl.matcher
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
-import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.psi.*
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -135,13 +135,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElement<KtCallExpression>() ?: return
-        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.valueArgumentList, other.valueArgumentList)))
+        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.valueArgumentList, other.valueArgumentList)))
             return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
     }
 
-    private fun matchNameIdentifiers(el1: PsiElement?, el2: PsiElement?, context: MatchContext): Boolean {
+    private fun matchNameIdentifiers(el1: PsiElement?, el2: PsiElement?): Boolean {
         if (el1 == null || el2 == null) return el1 == el2
+        val context = myMatchingVisitor.matchContext
         val pattern = context.pattern
         return when (val handler = pattern.getHandler(el1)) {
             is SubstitutionHandler -> handler.validate(el2, context)
@@ -151,7 +152,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
-        myMatchingVisitor.result = matchNameIdentifiers(klass.nameIdentifier, other.nameIdentifier, myMatchingVisitor.matchContext)
+        myMatchingVisitor.result = matchNameIdentifiers(klass.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.matchSons(klass.body, other.body)
@@ -172,8 +173,30 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitIfExpression(expression: KtIfExpression) {
         val other = getTreeElement<KtIfExpression>() ?: return
         val elseBranch = expression.`else`
-        myMatchingVisitor.result =  myMatchingVisitor.match(expression.condition, other.condition)
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
                 && myMatchingVisitor.match(expression.then, other.then)
                 && (elseBranch == null || myMatchingVisitor.match(elseBranch, other.`else`))
+    }
+
+    override fun visitProperty(property: KtProperty) {
+        val other = getTreeElement<KtProperty>() ?: return
+
+        // Matching type
+        val propertyTR = property.typeReference
+        val otherTR = other.typeReference
+        val typeMatched = when {
+            propertyTR != null && otherTR != null -> myMatchingVisitor.match(propertyTR, otherTR)
+            propertyTR == null && otherTR == null -> true
+            otherTR == null -> propertyTR?.text == other.delegateExpressionOrInitializer?.resolveType().toString()
+            else -> true
+        }
+
+        myMatchingVisitor.result = typeMatched
+                && property.isVar == other.isVar
+                && matchNameIdentifiers(property.nameIdentifier, other.nameIdentifier)
+                && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
+            property.delegateExpressionOrInitializer,
+            other.delegateExpressionOrInitializer
+        ))
     }
 }
