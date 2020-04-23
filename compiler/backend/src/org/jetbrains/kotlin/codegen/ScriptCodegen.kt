@@ -51,6 +51,7 @@ class ScriptCodegen private constructor(
                     typeMapper.mapSupertype(it.defaultType, null).internalName
                 }.toTypedArray()
         )
+        v.visitSource(scriptDeclaration.containingKtFile.name, null)
         AnnotationCodegen.forClass(v.visitor, this, state).genAnnotations(scriptDescriptor, null, null)
     }
 
