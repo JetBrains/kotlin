@@ -50,17 +50,6 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt
-*L
-1#1,39:1
-*E
-
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
 test/_1Kt$lParams$1
 *L
 1#1,39:1

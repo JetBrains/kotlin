@@ -3522,6 +3522,16 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             public void testReifiedProperty() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/reifiedProperty.kt");
             }
+
+            @TestMetadata("stdlibInlineOnly.kt")
+            public void testStdlibInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/stdlibInlineOnly.kt");
+            }
+
+            @TestMetadata("stdlibInlineOnlyOneLine.kt")
+            public void testStdlibInlineOnlyOneLine() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/stdlibInlineOnlyOneLine.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
