@@ -156,6 +156,9 @@ public abstract interface annotation class kotlin/OptIn : java/lang/annotation/A
 public abstract interface annotation class kotlin/OptionalExpectation : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/OverloadResolutionByLambdaReturnType : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/Pair : java/io/Serializable {
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Object;)V
 	public final fun component1 ()Ljava/lang/Object;

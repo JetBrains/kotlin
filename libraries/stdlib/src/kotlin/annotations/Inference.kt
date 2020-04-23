@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,3 +35,35 @@ import kotlin.experimental.ExperimentalTypeInference
 @SinceKotlin("1.3")
 @ExperimentalTypeInference
 public annotation class BuilderInference
+
+
+/**
+ * Enables overload selection based on the type of the value returned from lambda argument.
+ *
+ * When two or more function overloads have otherwise the same parameter lists that differ only in the return type
+ * of a functional parameter, this annotation enables overload selection by the type of the value returned from
+ * the lambda function passed to this functional parameter.
+ *
+ * Example:
+ * ```
+ * @OverloadResolutionByLambdaReturnType
+ * fun create(intProducer: () -> Int): Int
+ *
+ * fun create(doubleProducer: () -> Double): Double
+ *
+ * val newValue = create { 3.14 }
+ * ```
+ *
+ * The annotation being applied to one of overloads allows to resolve this ambiguity by analyzing what value is returned
+ * from the lambda function.
+ *
+ * This annotation is also used to discriminate the annotated overloads in case if overload selection still cannot
+ * choose one of them even taking in account the result of lambda parameter analysis. In that case a warning is reported.
+ *
+ * Note: this annotation is experimental, see [ExperimentalTypeInference] on how to opt-in for it.
+ */
+@Target(FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.4")
+@ExperimentalTypeInference
+public annotation class OverloadResolutionByLambdaReturnType
