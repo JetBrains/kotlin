@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
+import org.jetbrains.kotlin.idea.project.useAnchorServices
 import org.jetbrains.kotlin.idea.project.useCompositeAnalysis
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.storage.ExceptionTracker
@@ -32,7 +34,7 @@ private fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(deb
 }
 
 internal fun GlobalContextImpl.contextWithCompositeExceptionTracker(project: Project, debugName: String): GlobalContextImpl =
-    if (project.useCompositeAnalysis) {
+    if (project.useCompositeAnalysis || project.useAnchorServices) {
         this.contextWithCompositeExceptionTracker(debugName)
     } else {
         this.contextWithNewLockAndCompositeExceptionTracker(debugName)

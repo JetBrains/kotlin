@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.externalDescriptors
+import org.jetbrains.kotlin.resolve.AnchorProvider
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -195,6 +196,8 @@ private object DebugLabelModuleDescriptor : DeclarationDescriptorImpl(Annotation
         get() = true
 
     override fun assertValid() {}
+    override val anchorProvider: AnchorProvider
+        get() = AnchorProvider.Default
 }
 
 internal class DebugLabelPropertyDescriptor(

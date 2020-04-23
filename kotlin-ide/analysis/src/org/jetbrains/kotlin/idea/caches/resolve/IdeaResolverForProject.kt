@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.toTargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.AnchorProvider
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IdeaResolverForProject(
     debugName: String,
@@ -51,7 +52,8 @@ class IdeaResolverForProject(
     modules,
     fallbackModificationTracker,
     delegateResolver,
-    ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java)
+    ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java),
+    ServiceManager.getService(projectContext.project, AnchorProvider::class.java)
 ) {
     private val builtInsCache: BuiltInsCache =
         (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
@@ -145,6 +147,34 @@ class IdeaResolverForProject(
 
             return@compute newBuiltIns
         }
+    }
+
+    override fun registerModuleDescriptorUpdate(
+        newDescriptor: ModuleDescriptor,
+        oldDescriptor: ModuleDescriptor?
+    ) {
+        ModuleResolverTracker
+            .getInstance(projectContext.project)
+            .safeAs<IdeaModuleResolverTrackerImpl>()
+            ?.registerModuleUpdate(newDescriptor, oldDescriptor, this)
+    }
+
+    override fun tryGetResolverForModuleWithAnchorCheck(
+        targetModuleInfo: IdeaModuleInfo,
+        referencingModuleInfo: IdeaModuleInfo,
+    ): ResolverForModule? {
+        tryGetResolverForModule(targetModuleInfo)?.let { return it }
+
+        val moduleDescriptorOfReferencingModule = descriptorByModule[referencingModuleInfo]?.moduleDescriptor
+            ?: error("$referencingModuleInfo is not contained in this resolver, which means incorrect use of anchor-aware search")
+        
+        val anchorModuleDescriptor = anchorProvider.getAnchor(moduleDescriptorOfReferencingModule) ?: return null
+        
+        val moduleResolverTracker = 
+            ModuleResolverTracker.getInstance(projectContext.project).safeAs<IdeaModuleResolverTrackerImpl>() ?: return null
+        
+        return moduleResolverTracker.findResolverForProjectByModuleDescriptor(anchorModuleDescriptor)
+            ?.tryGetResolverForModule(targetModuleInfo)
     }
 }
 
