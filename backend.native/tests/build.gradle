@@ -885,11 +885,6 @@ task worker_bound_reference0(type: KonanLocalTest) {
     source = "runtime/concurrent/worker_bound_reference0.kt"
 }
 
-task worker_bound_reference1(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    source = "runtime/concurrent/worker_bound_reference1.kt"
-}
-
 task worker0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "Got Input processed\nOK\n"

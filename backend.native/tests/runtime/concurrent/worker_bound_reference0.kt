@@ -10,6 +10,7 @@ import kotlin.test.*
 import kotlin.native.concurrent.*
 import kotlin.native.internal.GC
 import kotlin.native.ref.WeakReference
+import kotlin.text.Regex
 
 class A(var a: Int)
 
@@ -18,6 +19,7 @@ val global1: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 @Test
 fun testGlobal() {
     assertEquals(3, global1.value.a)
+    assertEquals(3, global1.valueOrNull?.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, {}) {
@@ -26,6 +28,7 @@ fun testGlobal() {
 
     val value = future.result
     assertEquals(3, value.value.a)
+    assertEquals(3, value.valueOrNull?.a)
     worker.requestTermination().result
 }
 
@@ -41,6 +44,7 @@ fun testGlobalDenyAccessOnWorker() {
         assertFailsWith<IncorrectDereferenceException> {
             local.value
         }
+        assertEquals(null, local.valueOrNull)
         Unit
     }
 
@@ -53,6 +57,7 @@ val global3: WorkerBoundReference<A> = WorkerBoundReference(A(3).freeze())
 @Test
 fun testGlobalAccessOnWorkerFrozenInitially() {
     assertEquals(3, global3.value.a)
+    assertEquals(3, global3.valueOrNull?.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, {}) {
@@ -131,6 +136,7 @@ fun testGlobalModification() {
 
     val value = future.result
     assertEquals(4, value.value.a)
+    assertEquals(4, value.valueOrNull?.a)
     worker.requestTermination().result
 }
 
@@ -138,6 +144,7 @@ fun testGlobalModification() {
 fun testLocal() {
     val local = WorkerBoundReference(A(3))
     assertEquals(3, local.value.a)
+    assertEquals(3, local.valueOrNull?.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { local }) { local ->
@@ -146,6 +153,7 @@ fun testLocal() {
 
     val value = future.result
     assertEquals(3, value.value.a)
+    assertEquals(3, value.valueOrNull?.a)
     worker.requestTermination().result
 }
 
@@ -159,6 +167,7 @@ fun testLocalDenyAccessOnWorker() {
         assertFailsWith<IncorrectDereferenceException> {
             local.value
         }
+        assertEquals(null, local.valueOrNull)
         Unit
     }
 
@@ -170,6 +179,7 @@ fun testLocalDenyAccessOnWorker() {
 fun testLocalAccessOnWorkerFrozenInitially() {
     val local = WorkerBoundReference(A(3).freeze())
     assertEquals(3, local.value.a)
+    assertEquals(3, local.valueOrNull?.a)
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { local }) { local ->
@@ -235,6 +245,7 @@ fun testLocalDenyAccessOnMainThread() {
     assertFailsWith<IncorrectDereferenceException> {
         value.value
     }
+    assertEquals(null, value.valueOrNull)
 
     worker.requestTermination().result
 }
@@ -261,6 +272,7 @@ fun testLocalModification() {
 
     val value = future.result
     assertEquals(4, value.value.a)
+    assertEquals(4, value.valueOrNull?.a)
     worker.requestTermination().result
 }
 
@@ -421,6 +433,110 @@ fun doesNotCollectCrossThreadCyclicGarbage() {
     worker.requestTermination().result
 }
 
+class C1 {
+    lateinit var c2: AtomicReference<WorkerBoundReference<C2>?>
+
+    fun dispose() {
+        c2.value = null
+    }
+}
+
+data class C2(val c1: AtomicReference<WorkerBoundReference<C1>>)
+
+fun createCyclicGarbageWithAtomics(): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {
+    val ref1 = WorkerBoundReference(C1())
+    val ref1Weak = WeakReference(ref1.value)
+
+    val ref2 = WorkerBoundReference(C2(AtomicReference(ref1)))
+    val ref2Weak = WeakReference(ref2.value)
+
+    ref1.value.c2 = AtomicReference(ref2)
+
+    return Triple(AtomicReference(ref1), ref1Weak, ref2Weak)
+}
+
+fun dispose(refOwner: AtomicReference<WorkerBoundReference<C1>?>) {
+    refOwner.value!!.value.dispose()
+    refOwner.value = null
+}
+
+@Test
+fun doesNotCollectCyclicGarbageWithAtomics() {
+    val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageWithAtomics()
+
+    ref1Owner.value = null
+    GC.collect()
+
+    // If these asserts fail, that means AtomicReference<WorkerBoundReference> managed to clean up cyclic garbage all by itself.
+    assertNotNull(ref1Weak.value)
+    assertNotNull(ref2Weak.value)
+}
+
+@Test
+fun collectCyclicGarbageWithAtomics() {
+    val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageWithAtomics()
+
+    dispose(ref1Owner)
+    GC.collect()
+
+    assertNull(ref1Weak.value)
+    assertNull(ref2Weak.value)
+}
+
+fun createCrossThreadCyclicGarbageWithAtomics(
+        worker: Worker
+): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {
+    val ref1 = WorkerBoundReference(C1())
+    val ref1Weak = WeakReference(ref1.value)
+
+    val future = worker.execute(TransferMode.SAFE, { ref1 }) { ref1 ->
+        val ref2 = WorkerBoundReference(C2(AtomicReference(ref1)))
+        Pair(ref2, WeakReference(ref2.value))
+    }
+    val (ref2, ref2Weak) = future.result
+
+    ref1.value.c2 = AtomicReference(ref2)
+
+    return Triple(AtomicReference(ref1), ref1Weak, ref2Weak)
+}
+
+@Test
+fun doesNotCollectCrossThreadCyclicGarbageWithAtomics() {
+    val worker = Worker.start()
+
+    val (ref1Owner, ref1Weak, ref2Weak) = createCrossThreadCyclicGarbageWithAtomics(worker)
+
+    ref1Owner.value = null
+    GC.collect()
+    worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
+
+    // If these asserts fail, that means AtomicReference<WorkerBoundReference> managed to clean up cyclic garbage all by itself.
+    assertNotNull(ref1Weak.value)
+    assertNotNull(ref2Weak.value)
+
+    worker.requestTermination().result
+}
+
+@Test
+fun collectCrossThreadCyclicGarbageWithAtomics() {
+    val worker = Worker.start()
+
+    val (ref1Owner, ref1Weak, ref2Weak) = createCrossThreadCyclicGarbageWithAtomics(worker)
+
+    dispose(ref1Owner)
+    // This marks C2 as gone on the main thread
+    GC.collect()
+    // This cleans up all the references from the worker thread and destroys C2, but C1 is still alive.
+    worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
+    // And this finally destroys C1
+    GC.collect()
+
+    assertNull(ref1Weak.value)
+    assertNull(ref2Weak.value)
+
+    worker.requestTermination().result
+}
+
 @Test
 fun concurrentAccess() {
     val workerCount = 10
@@ -452,4 +568,23 @@ fun concurrentAccess() {
     for (worker in workers) {
         worker.requestTermination().result
     }
+}
+
+@Test
+fun testExceptionMessage() {
+    val worker = Worker.start()
+    val future = worker.execute(TransferMode.SAFE, {}) {
+        WorkerBoundReference(A(3))
+    }
+    val value = future.result
+
+    val ownerName = worker.name
+    val messagePattern = Regex("illegal attempt to access non-shared runtime\\.concurrent\\.worker_bound_reference0\\.A@[a-f0-9]+ bound to `$ownerName` from `${Worker.current.name}`")
+
+    val exception = assertFailsWith<IncorrectDereferenceException> {
+        value.value
+    }
+    assertTrue(messagePattern matches exception.message!!)
+
+    worker.requestTermination().result
 }
