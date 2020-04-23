@@ -213,36 +213,29 @@ private val simpleDeclarationCollector: (FirDeclaration, MutableMap<Name, FirDec
     }
 }
 
-internal fun FirClass<*>.collectCallableNamesFromSupertypes(
-    session: FirSession,
-    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
-    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = simpleDeclarationCollector
-): Set<Name> {
+internal fun FirClass<*>.collectCallableNamesFromSupertypes(session: FirSession): Set<Name> {
+    val result = mutableMapOf<Name, FirDeclaration>()
     for (superTypeRef in superTypeRefs) {
-        superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
+        superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, simpleDeclarationCollector)
     }
     return result.keys
 }
 
 internal fun FirClass<*>.collectContributedFunctionsFromSupertypes(
     session: FirSession,
-    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
-    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = { declaration, map ->
-        if (declaration is FirSimpleFunction && declaration.body != null) {
-            map.putIfAbsent(declaration.name, declaration)
-        }
-    }
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit
 ): Map<Name, FirDeclaration> {
+    val result = mutableMapOf<Name, FirDeclaration>()
     for (superTypeRef in superTypeRefs) {
         superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
     }
     return result
 }
 
-fun FirClass<*>.collectDeclarationsFromSupertypes(
+private fun FirClass<*>.collectDeclarationsFromSupertypes(
     session: FirSession,
-    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
-    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = simpleDeclarationCollector
+    result: MutableMap<Name, FirDeclaration>,
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit
 ): Map<Name, FirDeclaration> {
     for (superTypeRef in superTypeRefs) {
         superTypeRef.collectDeclarationsFromThisAndSupertypes(session, result, record)
@@ -252,8 +245,8 @@ fun FirClass<*>.collectDeclarationsFromSupertypes(
 
 private fun FirTypeRef.collectDeclarationsFromThisAndSupertypes(
     session: FirSession,
-    result: MutableMap<Name, FirDeclaration> = mutableMapOf(),
-    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = simpleDeclarationCollector
+    result: MutableMap<Name, FirDeclaration>,
+    record: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit
 ): Map<Name, FirDeclaration> {
     if (this is FirResolvedTypeRef) {
         val superType = type
