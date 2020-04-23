@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
@@ -106,7 +106,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 
         val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
             testFile!!.canonicalPath, libName(),
-            extraClasspath = listOf(KotlinIdeForTestCompileRuntime.jetbrainsAnnotationsForTests().path)
+            extraClasspath = listOf(ForTestCompileRuntime.jetbrainsAnnotationsForTests().path)
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)

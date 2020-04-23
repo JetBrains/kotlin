@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
@@ -29,7 +29,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         )
         return object : KotlinJdkAndLibraryProjectDescriptor(
             listOf(
-                KotlinIdeForTestCompileRuntime.runtimeJarForTests(),
+                ForTestCompileRuntime.runtimeJarForTests(),
                 foreignAnnotationsJar,
                 libraryJar
             )

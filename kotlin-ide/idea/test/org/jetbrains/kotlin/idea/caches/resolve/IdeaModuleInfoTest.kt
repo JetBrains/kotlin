@@ -19,7 +19,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -474,16 +473,16 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     private fun stdlibCommon(): LibraryEx = projectLibrary(
-        "kotlin-stdlib-common",
-        KotlinIdeForTestCompileRuntime.stdlibCommonForTests().jarRoot,
-        kind = CommonLibraryKind
+            "kotlin-stdlib-common",
+            ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
+            kind = CommonLibraryKind
     )
 
-    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", KotlinIdeForTestCompileRuntime.runtimeJarForTests().jarRoot)
+    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
 
     private fun stdlibJs(): LibraryEx = projectLibrary(
         "kotlin-stdlib-js",
-        KotlinIdeForTestCompileRuntime.runtimeJarForTests().jarRoot,
+        ForTestCompileRuntime.runtimeJarForTests().jarRoot,
         kind = JSLibraryKind
     )
 

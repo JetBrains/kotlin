@@ -19,7 +19,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
@@ -250,7 +250,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val libClasses = libSrcDir?.let { compileLibToDir(it) }
 
         return mapOf(
-            "runtime-classes" to KotlinIdeForTestCompileRuntime.runtimeJarForTests(),
+            "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
             "runtime-source" to File("libraries/stdlib/src"),
             "lib-classes" to libClasses,
             "lib-source" to libSrcDir,

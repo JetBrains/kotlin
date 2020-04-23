@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.codegen.forTestCompile;
 
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -22,7 +24,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib.jar"));
+        return assertExists(new File("dependencies/repo/org/jetbrains/kotlin/kotlin-stdlib/1.4-SNAPSHOT/kotlin-stdlib-1.4-SNAPSHOT.jar"));
     }
 
     @NotNull
@@ -52,7 +54,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File reflectJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-reflect.jar"));
+        return assertExists(new File("dependencies/repo/org/jetbrains/kotlin/kotlin-reflect/1.4-SNAPSHOT/kotlin-reflect-1.4-SNAPSHOT.jar"));
     }
 
     @NotNull
@@ -107,10 +109,11 @@ public class ForTestCompileRuntime {
 
     @NotNull
     private static File assertExists(@NotNull File file) {
-        if (!file.exists()) {
-            throw new IllegalStateException(file + " does not exist. Run 'gradlew dist'");
+        File absolute = new File(KotlinTestUtils.getHomeDirectory(), file.getPath());
+        if (!absolute.exists()) {
+            throw new IllegalStateException(absolute + " does not exist. Run 'gradlew dist'");
         }
-        return file;
+        return absolute;
     }
 
     @NotNull

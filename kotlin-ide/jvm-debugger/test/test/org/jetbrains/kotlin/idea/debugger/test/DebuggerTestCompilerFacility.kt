@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
 class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget: JvmTarget) {
-    private val kotlinStdlibPath = KotlinIdeForTestCompileRuntime.runtimeJarForTests().absolutePath
+    private val kotlinStdlibPath = ForTestCompileRuntime.runtimeJarForTests().absolutePath
 
     private val mainFiles: TestFilesByLanguage
     private val libraryFiles: TestFilesByLanguage

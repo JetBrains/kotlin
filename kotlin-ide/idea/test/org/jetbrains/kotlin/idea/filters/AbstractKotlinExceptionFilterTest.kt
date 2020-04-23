@@ -14,7 +14,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.KotlinIdeForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.core.util.toVirtualFile
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
@@ -68,13 +68,13 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
             MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = *arrayOf(mockLibraryPath))
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
-                KotlinIdeForTestCompileRuntime.runtimeJarClassLoader()
+                ForTestCompileRuntime.runtimeJarClassLoader()
             )
         } else {
             MockLibraryUtil.compileKotlin(path, File(outDir.path))
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/")),
-                KotlinIdeForTestCompileRuntime.runtimeJarClassLoader()
+                ForTestCompileRuntime.runtimeJarClassLoader()
             )
         }
 
