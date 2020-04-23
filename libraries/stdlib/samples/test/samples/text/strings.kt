@@ -390,4 +390,19 @@ class Strings {
         assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
         assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
+
+    @Sample
+    fun compareTo() {
+        val stringA = "abcd"
+        val stringB = "abcd"
+        assertTrue(stringA.compareTo(stringB) == 0)
+
+        val stringC = "wxyz"
+        assertTrue(stringA.compareTo(stringC) != 0)
+
+        // ignoreCase
+        val stringD = "abcD"
+        assertTrue(stringA.compareTo(stringD, true) == 0)
+    }
+
 }
