@@ -7,7 +7,6 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.elementType
@@ -20,12 +19,9 @@ import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class KotlinStructuralSearchProfile : StructuralSearchProfile() {
@@ -62,39 +58,20 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
-        fun retryWith(ctx: PatternTreeContext) =
-            createPatternTree(text, ctx, fileType, language, contextId, project, physical)
-        when (context) {
-            PatternTreeContext.Block -> {
-                val fragment = KtPsiFactory(project).createBlockCodeFragment(text, null)
-                val result = getNonWhitespaceChildren(fragment)
-                if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
-                if (shouldTryExpressionPattern(result)) return retryWith(PatternTreeContext.Expression)
+        val fragment = KtPsiFactory(project).createBlockCodeFragment(text, null)
+        val result = getNonWhitespaceChildren(fragment)
+        if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
 
-                if (result.first().firstChild.elementType != KtTokens.LBRACE) {
-                    // Remove the first block element
-                    val blockContent = result.first().children
-                    for (e in blockContent) print(DebugUtil.psiToString(e, false))
-                    return blockContent
-                }
-
-                // Keep the block element
-                println(DebugUtil.psiToString(result.first().parent, false))
-                return arrayOf(result.first())
-            }
-            PatternTreeContext.Expression -> {
-                val fragment = KtPsiFactory(project).createExpressionCodeFragment(text, null)
-                val content = fragment.getContentElement() ?: return PsiElement.EMPTY_ARRAY
-                if (content != PsiElement.EMPTY_ARRAY) println(DebugUtil.psiToString(content.parent, false))
-                return arrayOf(content)
-            }
-            else -> {
-                val psiFile =
-                    PsiFileFactory.getInstance(project).createFileFromText("__dummy.kt", KotlinFileType.INSTANCE, text)
-                if (psiFile != PsiElement.EMPTY_ARRAY) println(DebugUtil.psiToString(psiFile, false))
-                return arrayOf(psiFile)
-            }
+        if (result.first().firstChild.elementType != KtTokens.LBRACE) {
+            // Remove the first block element
+            val blockContent = result.first().children
+            for (e in blockContent) print(DebugUtil.psiToString(e, false))
+            return blockContent
         }
+
+        // Keep the block element
+        println(DebugUtil.psiToString(result.first().parent, false))
+        return arrayOf(result.first())
     }
 
     companion object {
@@ -110,11 +87,6 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 element = element.nextSibling
             }
             return result
-        }
-
-        private fun shouldTryExpressionPattern(elements: List<PsiElement>): Boolean {
-            val element = elements.first().firstChild
-            return elements.first().children.size == 1 && element is KtExpression && element !is KtClass
         }
 
     }
