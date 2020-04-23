@@ -41,6 +41,7 @@ import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -389,6 +390,7 @@ class CompletionQualityDialog(project: Project, editor: Editor?) : DialogWrapper
     fileTypeCombo = createFileTypesCombo()
 
     scopeChooserCombo = ScopeChooserCombo(project, false, true, "")
+    Disposer.register(disposable, scopeChooserCombo)
 
     if (editor != null) {
       PsiDocumentManager.getInstance(project).getPsiFile(editor.document)?.let {
