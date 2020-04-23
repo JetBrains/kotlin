@@ -6,40 +6,12 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
-import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-
-data class ConfigurationData(
-    val templateClasspath: List<String>,
-    val models: List<KotlinDslScriptModel>
-)
-
-class Configuration(val data: ConfigurationData) {
-    private val scripts: Map<String, KotlinDslScriptModel>
-
-    val sourcePath: MutableSet<String>
-    val classFilePath: MutableSet<String> = mutableSetOf()
-
-    init {
-        val allModels = data.models
-
-        scripts = allModels.associateBy { it.file }
-        sourcePath = allModels.flatMapTo(mutableSetOf()) { it.sourcePath }
-
-        classFilePath.addAll(data.templateClasspath)
-        allModels.flatMapTo(classFilePath) { it.classPath }
-    }
-
-    fun scriptModel(file: VirtualFile): KotlinDslScriptModel? {
-        return scripts[FileUtil.toSystemDependentName(file.path)]
-    }
-}
 
 class GradleScriptingSupport(
     private val rootsIndexer: ScriptClassRootsIndexer,
