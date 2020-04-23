@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.fir.extensions.FirExtensionPointService
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.impl.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
@@ -16,6 +17,7 @@ abstract class FirModuleBasedSession(override val moduleInfo: ModuleInfo, sessio
         registerComponent(FirQualifierResolver::class, FirQualifierResolverImpl(this))
         registerComponent(FirTypeResolver::class, FirTypeResolverImpl(this))
         registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
+        registerComponent(FirExtensionPointService::class, FirExtensionPointService(this))
     }
 }
 
