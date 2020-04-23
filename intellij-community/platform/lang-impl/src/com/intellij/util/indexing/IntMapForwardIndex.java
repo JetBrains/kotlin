@@ -7,31 +7,28 @@ import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentHashMap;
 import com.intellij.util.io.PersistentHashMapValueStorage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 
 public class IntMapForwardIndex implements IntForwardIndex {
-  private final File myDedicatedIndexStorageFile;
-  private final boolean myDedicatedIndexHasChunks;
+  private final File myStorageFile;
+  private final boolean myHasChunks;
 
   private volatile PersistentHashMap<Integer, Integer> myPersistentMap;
 
-  public IntMapForwardIndex(@Nullable File verificationIndexStorageFile,
-                            boolean dedicatedIndexHasChunks) throws IOException {
-    myDedicatedIndexStorageFile = verificationIndexStorageFile;
-    myDedicatedIndexHasChunks = dedicatedIndexHasChunks;
-    if (verificationIndexStorageFile != null) {
-      createMap();
-    }
+  public IntMapForwardIndex(@NotNull File storageFile,
+                            boolean hasChunks) throws IOException {
+    myStorageFile = storageFile;
+    myHasChunks = hasChunks;
+    createMap();
   }
 
   private void createMap() throws IOException {
     Boolean old = PersistentHashMapValueStorage.CreationTimeOptions.HAS_NO_CHUNKS.get();
     try {
-      PersistentHashMapValueStorage.CreationTimeOptions.HAS_NO_CHUNKS.set(!myDedicatedIndexHasChunks);
-      myPersistentMap = new PersistentHashMap<Integer, Integer>(myDedicatedIndexStorageFile.toPath(), EnumeratorIntegerDescriptor.INSTANCE, EnumeratorIntegerDescriptor.INSTANCE) {
+      PersistentHashMapValueStorage.CreationTimeOptions.HAS_NO_CHUNKS.set(!myHasChunks);
+      myPersistentMap = new PersistentHashMap<Integer, Integer>(myStorageFile.toPath(), EnumeratorIntegerDescriptor.INSTANCE, EnumeratorIntegerDescriptor.INSTANCE) {
         @Override
         protected boolean wantNonNegativeIntegralValues() {
           return true;
@@ -39,7 +36,7 @@ public class IntMapForwardIndex implements IntForwardIndex {
       };
     }
     catch (IOException e) {
-      IOUtil.deleteAllFilesStartingWith(myDedicatedIndexStorageFile);
+      IOUtil.deleteAllFilesStartingWith(myStorageFile);
       throw e;
     }
     finally {
