@@ -137,6 +137,11 @@ public class UnwrapHandler implements CodeInsightActionHandler {
     }
   }
 
+  /**
+   * @deprecated operate with
+   * @see EditorColors#SEARCH_RESULT_ATTRIBUTES directly
+   */
+  @Deprecated
   public static TextAttributes getTestAttributesForExtract() {
     EditorColorsManager manager = EditorColorsManager.getInstance();
     return manager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);

@@ -344,8 +344,8 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
   @NotNull
   private static RangeHighlighter createHighlighter(MarkupModel mm, TextRange range) {
-    final RangeHighlighter highlighter =
-      mm.addRangeHighlighter(range.getStartOffset(), range.getEndOffset(), 0, null, HighlighterTargetArea.EXACT_RANGE);
+    final RangeHighlighter highlighter = mm.addRangeHighlighter(range.getStartOffset(), range.getEndOffset(), 0,
+                                                                null, null, HighlighterTargetArea.EXACT_RANGE);
     highlighter.setCustomRenderer(RENDERER);
     return highlighter;
   }

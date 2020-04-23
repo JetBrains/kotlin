@@ -4,8 +4,10 @@ package com.intellij.refactoring.rename.inplace;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.markup.*;
+import com.intellij.openapi.editor.markup.HighlighterLayer;
+import com.intellij.openapi.editor.markup.HighlighterTargetArea;
+import com.intellij.openapi.editor.markup.MarkupModel;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
@@ -29,11 +31,9 @@ abstract class RenameChooser {
   @NonNls private static final String ALL_OCCURRENCES = "Rename all occurrences";
   private final Set<RangeHighlighter> myRangeHighlighters = new HashSet<>();
   private final Editor myEditor;
-  private final TextAttributes myAttributes;
 
   RenameChooser(Editor editor) {
     myEditor = editor;
-    myAttributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
   }
 
   protected abstract void runRenameTemplate(Collection<Pair<PsiElement, TextRange>> stringUsages);
@@ -58,7 +58,8 @@ abstract class RenameChooser {
           for (Pair<PsiElement, TextRange> pair : stringUsages) {
             final TextRange textRange = pair.second.shiftRight(pair.first.getTextOffset());
             final RangeHighlighter rangeHighlighter = markupModel.addRangeHighlighter(
-              textRange.getStartOffset(), textRange.getEndOffset(), HighlighterLayer.SELECTION - 1, myAttributes,
+              textRange.getStartOffset(), textRange.getEndOffset(), HighlighterLayer.SELECTION - 1,
+              null, EditorColors.SEARCH_RESULT_ATTRIBUTES,
               HighlighterTargetArea.EXACT_RANGE);
             myRangeHighlighters.add(rangeHighlighter);
           }
@@ -68,7 +69,8 @@ abstract class RenameChooser {
           final PsiElement element = reference.getElement();
           final TextRange textRange = element.getTextRange();
           final RangeHighlighter rangeHighlighter = markupModel.addRangeHighlighter(
-            textRange.getStartOffset(), textRange.getEndOffset(), HighlighterLayer.SELECTION - 1, myAttributes,
+            textRange.getStartOffset(), textRange.getEndOffset(), HighlighterLayer.SELECTION - 1,
+            null, EditorColors.SEARCH_RESULT_ATTRIBUTES,
             HighlighterTargetArea.EXACT_RANGE);
           myRangeHighlighters.add(rangeHighlighter);
         }

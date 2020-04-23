@@ -18,11 +18,10 @@ package com.intellij.codeInsight.unwrap;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -63,10 +62,10 @@ public class ScopeHighlighter {
     List<TextRange> rangesToRemove = RangeSplitter.split(wholeRange, rangesToExtract);
 
     for (TextRange r : rangesToRemove) {
-      addHighlighter(r, UnwrapHandler.HIGHLIGHTER_LEVEL, getTestAttributesForRemoval());
+      addHighlighter(r, UnwrapHandler.HIGHLIGHTER_LEVEL, EditorColors.DELETED_TEXT_ATTRIBUTES);
     }
     for (TextRange r : rangesToExtract) {
-      addHighlighter(r, UnwrapHandler.HIGHLIGHTER_LEVEL, UnwrapHandler.getTestAttributesForExtract());
+      addHighlighter(r, UnwrapHandler.HIGHLIGHTER_LEVEL, EditorColors.SEARCH_RESULT_ATTRIBUTES);
     }
   }
 
@@ -85,9 +84,10 @@ public class ScopeHighlighter {
     return myRanger.fun(e);
   }
 
-  private void addHighlighter(TextRange r, int level, TextAttributes attr) {
+  private void addHighlighter(TextRange r, int level, TextAttributesKey key) {
     MarkupModel markupModel = myEditor.getMarkupModel();
-    RangeHighlighter highlighter = markupModel.addRangeHighlighter(r.getStartOffset(), r.getEndOffset(), level, attr, HighlighterTargetArea.EXACT_RANGE);
+    RangeHighlighter highlighter = markupModel.addRangeHighlighter(r.getStartOffset(), r.getEndOffset(), level,
+                                                                   null, key, HighlighterTargetArea.EXACT_RANGE);
     myActiveHighliters.add(highlighter);
   }
 
@@ -96,10 +96,5 @@ public class ScopeHighlighter {
       h.dispose();
     }
     myActiveHighliters.clear();
-  }
-
-  private static TextAttributes getTestAttributesForRemoval() {
-    EditorColorsManager manager = EditorColorsManager.getInstance();
-    return manager.getGlobalScheme().getAttributes(EditorColors.DELETED_TEXT_ATTRIBUTES);
   }
 }

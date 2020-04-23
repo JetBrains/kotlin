@@ -440,7 +440,7 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
     DocumentEx document = getHistoryViewer().getDocument();
     RangeHighlighter highlighter =
       this.getHistoryViewer().getMarkupModel().addRangeHighlighter(document.getTextLength(), document.getTextLength(), 0,
-                                                                   null, HighlighterTargetArea.EXACT_RANGE);
+                                                                   null, null, HighlighterTargetArea.EXACT_RANGE);
     print(prompt, myConsoleExecutionEditor.getPromptAttributes());
     highlighter.putUserData(ConsoleHistoryCopyHandler.PROMPT_LENGTH_MARKER, prompt.length());
   }
