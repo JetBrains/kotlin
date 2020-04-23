@@ -121,7 +121,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrFunctionReference -> interpretFunctionReference(this)
                 is IrComposite -> interpretComposite(this)
 
-                is IrClass -> if (this.isLocal) Next else TODO("Only local classes are supported")
                 else -> TODO("${this.javaClass} not supported")
             }
 
@@ -429,7 +428,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
         var executionResult: ExecutionResult = Next
         for (statement in statements) {
-            executionResult = statement.interpret().check { return it }
+            when (statement) {
+                is IrClass -> if (statement.isLocal) Next else TODO("Only local classes are supported")
+                is IrFunction -> if (statement.isLocal) Next else TODO("Only local functions are supported")
+                else -> executionResult = statement.interpret().check { return it }
+            }
         }
         return executionResult
     }
