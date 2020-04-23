@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -131,6 +132,6 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
 
     @Override
     protected String getTestDataPath() {
-        return KotlinTestUtils.getHomeDirectory() + "/";
+        return TestUtilsKt.getKotlinIdeRoot() + "/";
     }
 }

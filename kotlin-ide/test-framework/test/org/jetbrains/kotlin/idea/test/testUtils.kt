@@ -66,10 +66,10 @@ fun Document.extractMultipleMarkerOffsets(project: Project, caretMarker: String 
     return offsets
 }
 
-val projectRoot: File by lazy {
+val kotlinIdeRoot: String by lazy {
     var current: File? = File("").absoluteFile
     while (current != null && !current.resolve("kotlin.kotlin-ide.iml").exists()) {
         current = current.parentFile
     }
-    current ?: throw IllegalStateException("Cannot find kotiln-ide root")
+    current?.path ?: throw IllegalStateException("Cannot find kotiln-ide root")
 }

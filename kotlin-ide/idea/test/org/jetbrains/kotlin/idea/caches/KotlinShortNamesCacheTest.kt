@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
@@ -262,6 +263,6 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     override fun getTestDataPath(): String {
-        return KotlinTestUtils.getHomeDirectory() + "/idea/testData/cache/"
+        return "$kotlinIdeRoot/kotlin/idea/testData/cache/"
     }
 }

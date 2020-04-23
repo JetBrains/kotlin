@@ -15,10 +15,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.allKotlinFiles
-import org.jetbrains.kotlin.idea.test.findFileWithCaret
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -98,7 +95,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
     }
 
     private fun compareToExpected(directory: String) {
-        val projectDirectory = File("${KotlinTestUtils.getHomeDirectory()}/$directory")
+        val projectDirectory = File("${kotlinIdeRoot}/$directory")
         val afterFiles = projectDirectory.walkTopDown().filter { it.path.endsWith(".after") }.toList()
 
         for (editedFile in project.allKotlinFiles()) {

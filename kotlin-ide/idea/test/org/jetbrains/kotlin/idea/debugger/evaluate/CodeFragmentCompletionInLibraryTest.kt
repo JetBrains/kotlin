@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.debugger.getContextElement
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
@@ -26,7 +27,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 private val LIBRARY_SRC_PATH =
-    KotlinTestUtils.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
+        "$kotlinIdeRoot/kotlin/completion/testData/codeFragmentInLibrarySource/customLibrary/"
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {

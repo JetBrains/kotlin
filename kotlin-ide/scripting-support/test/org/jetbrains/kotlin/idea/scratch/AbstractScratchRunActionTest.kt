@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorWithPreview
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -295,7 +296,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return File(testDataPath, "idea/scripting-support/testData/scratch/custom/test_scratch.kts").readText()
     }
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath() = kotlinIdeRoot
 
 
     override fun getProjectDescriptor(): com.intellij.testFramework.LightProjectDescriptor {
@@ -312,7 +313,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(kotlinIdeRoot)
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
@@ -320,7 +321,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun tearDown() {
         super.tearDown()
 
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(kotlinIdeRoot)
 
         ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
             runWriteAction { file.delete(this) }

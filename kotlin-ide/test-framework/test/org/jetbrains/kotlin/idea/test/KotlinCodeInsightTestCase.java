@@ -29,14 +29,14 @@ import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWi
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(TestUtilsKt.getKotlinIdeRoot());
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(TestUtilsKt.getKotlinIdeRoot());
     }
 
     @Override

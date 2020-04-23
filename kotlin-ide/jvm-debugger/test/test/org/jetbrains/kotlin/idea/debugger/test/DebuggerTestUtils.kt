@@ -7,9 +7,10 @@
 
 package org.jetbrains.kotlin.idea.debugger.test
 
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-const val DEBUGGER_TESTDATA_PATH_RELATIVE = "idea/jvm-debugger/jvm-debugger-test/testData"
+const val DEBUGGER_TESTDATA_PATH_RELATIVE = "kotlin/jvm-debugger/test/testData"
 
 @JvmField
-val DEBUGGER_TESTDATA_PATH_BASE = KotlinTestUtils.getHomeDirectory() + "/" + DEBUGGER_TESTDATA_PATH_RELATIVE
+val DEBUGGER_TESTDATA_PATH_BASE = "$kotlinIdeRoot/$DEBUGGER_TESTDATA_PATH_RELATIVE"

@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.idea.kdoc
 
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class AbstractKDocTypingTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath(): String = kotlinIdeRoot
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     protected fun doTest(fileName: String) {

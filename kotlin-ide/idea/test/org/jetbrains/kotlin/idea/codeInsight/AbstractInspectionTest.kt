@@ -16,10 +16,7 @@ import org.jdom.Document
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.inspections.runInspection
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.TestFixtureExtension
-import org.jetbrains.kotlin.idea.test.configureRegistryAndRun
-import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -74,7 +71,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             }
 
             with(myFixture) {
-                testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
+                testDataPath = "${kotlinIdeRoot}/$srcDir"
 
                 val afterFiles =
                     srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" }

@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.codegen.forTestCompile
 
-import org.jetbrains.kotlin.idea.test.projectRoot
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.lang.ref.SoftReference
@@ -102,7 +102,7 @@ object KotlinIdeForTestCompileRuntime {
     }
 
     private fun assertExists(file: File): File {
-        val absolute = projectRoot.resolve(file)
+        val absolute = File(kotlinIdeRoot).resolve(file)
         check(absolute.exists()) { "$file does not exist. Run 'gradlew dist'" }
         return absolute
     }

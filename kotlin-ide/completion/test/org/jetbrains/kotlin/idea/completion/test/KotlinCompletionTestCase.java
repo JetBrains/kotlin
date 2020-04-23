@@ -9,20 +9,21 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(TestUtilsKt.getKotlinIdeRoot());
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
     }
 
     @Override
     protected void tearDown() throws Exception {
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(TestUtilsKt.getKotlinIdeRoot());
         super.tearDown();
     }
 

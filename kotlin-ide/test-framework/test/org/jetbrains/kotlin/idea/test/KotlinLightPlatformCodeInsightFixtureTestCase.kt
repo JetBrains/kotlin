@@ -18,12 +18,12 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
     override fun setUp() {
         super.setUp()
         (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(kotlinIdeRoot)
         invalidateLibraryCache(project)
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(kotlinIdeRoot)
 
         super.tearDown()
     }

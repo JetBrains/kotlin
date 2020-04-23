@@ -9,6 +9,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -20,7 +21,7 @@ abstract class AbstractKotlinGotoImplementationTest : KotlinLightCodeInsightTest
         invalidateLibraryCache(project_)
     }
 
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + File.separator
+    override fun getTestDataPath(): String = kotlinIdeRoot + File.separator
 
     override fun getProjectJDK(): Sdk = PluginTestCaseBase.mockJdk()
 

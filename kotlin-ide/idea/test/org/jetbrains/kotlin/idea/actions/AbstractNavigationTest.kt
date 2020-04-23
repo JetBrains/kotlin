@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -33,7 +34,7 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
-            myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
+            myFixture.testDataPath = "${kotlinIdeRoot}/${mainFile.parent}"
 
             val mainFileName = mainFile.name
             val mainFileBaseName = mainFileName.substring(0, mainFileName.indexOf('.'))

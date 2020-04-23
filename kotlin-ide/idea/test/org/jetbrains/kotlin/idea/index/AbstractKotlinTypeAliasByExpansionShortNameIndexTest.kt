@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.index
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIndex
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
@@ -17,7 +18,7 @@ abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLigh
 
 
     override fun getTestDataPath(): String {
-        return KotlinTestUtils.getHomeDirectory() + "/"
+        return "$kotlinIdeRoot/"
     }
 
     private lateinit var scope: GlobalSearchScope

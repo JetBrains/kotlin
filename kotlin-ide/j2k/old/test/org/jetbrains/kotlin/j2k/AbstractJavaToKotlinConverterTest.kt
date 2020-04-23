@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
+import org.jetbrains.kotlin.idea.test.kotlinIdeRoot
 import java.io.File
 
 abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -40,7 +41,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
             LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
         }
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(kotlinIdeRoot)
 
         invalidateLibraryCache(project)
 
@@ -49,7 +50,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(kotlinIdeRoot)
 
         project.DEBUG_LOG_ENABLE_PerModulePackageCache = false
         super.tearDown()

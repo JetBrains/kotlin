@@ -7,18 +7,19 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 abstract public class KotlinDaemonAnalyzerTestCase extends DaemonAnalyzerTestCase {
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(TestUtilsKt.getKotlinIdeRoot());
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(TestUtilsKt.getKotlinIdeRoot());
     }
 }
