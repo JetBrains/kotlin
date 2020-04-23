@@ -32,23 +32,17 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
     // TODO: generateInlineClassMembers
 
     fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<Name> =
-        MyDataClassMethodsGenerator(klass, irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate()
+        MyDataClassMethodsGenerator(irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
 
     fun generateDataClassComponentBody(irFunction: IrFunction) =
-        MyDataClassMethodsGenerator(null, irFunction.parentAsClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
+        MyDataClassMethodsGenerator(irFunction.parentAsClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
             .generateComponentBody(irFunction)
 
     fun generateDataClassCopyBody(irFunction: IrFunction) =
-        MyDataClassMethodsGenerator(null, irFunction.parentAsClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
+        MyDataClassMethodsGenerator(irFunction.parentAsClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
             .generateCopyBody(irFunction)
 
-    private inner class MyDataClassMethodsGenerator(
-        val klass: FirClass<*>?,
-        val irClass: IrClass,
-        val origin: IrDeclarationOrigin
-    ) {
-        val properties = irClass.declarations.filterIsInstance<IrProperty>().map { it.descriptor }
-
+    private inner class MyDataClassMethodsGenerator(val irClass: IrClass, val origin: IrDeclarationOrigin) {
         private val irDataClassMembersGenerator = object : DataClassMembersGenerator(
             IrGeneratorContextBase(components.irBuiltIns),
             components.symbolTable,
@@ -110,8 +104,9 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     (this.name == hashCodeName && matchesHashCodeSignature) ||
                     (this.name == toStringName && matchesToStringSignature)
 
-        fun generate(): List<Name> {
-            if (properties.isEmpty() || klass == null) {
+        fun generate(klass: FirClass<*>): List<Name> {
+            val properties = irClass.declarations.filterIsInstance<IrProperty>().map { it.descriptor }
+            if (properties.isEmpty()) {
                 return emptyList()
             }
 
