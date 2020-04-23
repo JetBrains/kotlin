@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.runner.RunWith
 
-@TestMetadata("idea/testData/checker/custom")
+@TestMetadata("testData/checker/custom")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
 
