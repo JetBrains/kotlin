@@ -126,7 +126,6 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         val data = dataProvider(buildRoot) ?: return null
 
         val newSupport = GradleScriptingSupport(
-            rootsIndexer,
             project,
             buildRoot,
             GradleKtsContext(gradleExeSettings.javaHome?.let { File(it) }),
@@ -188,21 +187,18 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         override fun recreateRootsCache(): ScriptClassRootsCache = ScriptClassRootsCache.empty(project)
     }
 
-    fun shouldShowNotificationToRunGradleImport(file: VirtualFile): Boolean {
-        if (isGradleKotlinScript(file)) {
-            findRoot(file)?.let { return false }
+    fun isMissingConfigurationCanBeLoadedDuringImport(file: VirtualFile): Boolean {
+        findRoot(file)?.let { return false }
 
-            val externalProjectSettings = findExternalProjectSettings(file) ?: return false
-            return kotlinDslScriptsModelImportSupported(getGradleVersion(project, externalProjectSettings))
-        }
-        return false
+        val externalProjectSettings = findExternalProjectSettings(file) ?: return false
+        return kotlinDslScriptsModelImportSupported(getGradleVersion(project, externalProjectSettings))
     }
 
     // used in 201
     @Suppress("UNUSED")
-    fun shouldShowNotificationInEditor(file: VirtualFile): Boolean {
+    fun isConfigurationOutOfDate(file: VirtualFile): Boolean {
         val support = findRoot(file) ?: return false
-        return support.shouldShowNotificationInEditor(file)
+        return support.isConfigurationOutOfDate(file)
     }
 
     companion object {

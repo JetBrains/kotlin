@@ -55,7 +55,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
             }
         }
 
-        if (GradleScriptingSupportProvider.getInstance(project).shouldShowNotificationToRunGradleImport(file)) {
+        if (GradleScriptingSupportProvider.getInstance(project).isMissingConfigurationCanBeLoadedDuringImport(file)) {
             return EditorNotificationPanel().apply {
                 text(getMissingConfigurationNotificationText())
                 createActionLabel(getMissingConfigurationActionText()) {
