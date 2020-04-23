@@ -82,7 +82,7 @@ class KotlinUsagesInSwiftAndObjCRenameProcessor : ForeignUsagesRenameProcessor()
         }
         is KtNamedFunction -> {
             val descriptor = element.renamedDescriptor(newName)
-            if (language == SwiftLanguage.INSTANCE) getSwiftName(descriptor).split(':').first() else getSelector(descriptor)
+            if (language == SwiftLanguage.INSTANCE) getSwiftName(descriptor).split('(').first() else getSelector(descriptor)
         }
         else -> null
     }
