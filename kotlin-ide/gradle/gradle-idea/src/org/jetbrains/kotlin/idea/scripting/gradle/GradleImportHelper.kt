@@ -81,6 +81,6 @@ class LoadConfigurationAction : AnAction(
         if (virtualFile is LightVirtualFileBase) return false
         if (virtualFile == null || !virtualFile.isValid) return false
 
-        return GradleScriptingSupportProvider.getInstance(project).shouldShowNotificationInEditor(virtualFile)
+        return GradleScriptingSupportProvider.getInstance(project).isConfigurationOutOfDate(virtualFile)
     }
 }

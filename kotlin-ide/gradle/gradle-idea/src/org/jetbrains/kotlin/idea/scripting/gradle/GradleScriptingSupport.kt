@@ -9,12 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 class GradleScriptingSupport(
-    private val rootsIndexer: ScriptClassRootsIndexer,
     val project: Project,
     val buildRoot: VirtualFile,
     val context: GradleKtsContext,
@@ -23,7 +21,7 @@ class GradleScriptingSupport(
 
     override fun recreateRootsCache() = GradleClassRootsCache(project, context, configuration)
 
-    fun shouldShowNotificationInEditor(file: VirtualFile): Boolean {
+    fun isConfigurationOutOfDate(file: VirtualFile): Boolean {
         val scriptModel = configuration.scriptModel(file) ?: return false
         return !scriptModel.inputs.isUpToDate(project, file)
     }
@@ -54,7 +52,7 @@ class GradleScriptingSupport(
             override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
                 val vFile = file.originalFile.virtualFile
 
-                if (shouldShowNotificationInEditor(vFile)) {
+                if (isConfigurationOutOfDate(vFile)) {
                     showNotificationForProjectImport(project)
                 } else {
                     hideNotificationForProjectImport(project)
