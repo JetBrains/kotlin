@@ -71,10 +71,12 @@ public class GenerateRangesCodegenTestData {
     private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
 
     private static final List<String> FIR_PASSING_UNSIGNED_LITERAL_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
+            Arrays.asList("emptyDownto", "emptyRange", "oneElementDownTo", "oneElementRange", "reversedEmptyBackSequence",
+                          "reversedEmptyRange");
 
     private static final List<String> FIR_PASSING_UNSIGNED_EXPRESSION_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
+            Arrays.asList("emptyDownto", "emptyRange", "oneElementDownTo", "oneElementRange", "reversedEmptyBackSequence",
+                          "reversedEmptyRange");
 
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
@@ -234,8 +236,10 @@ public class GenerateRangesCodegenTestData {
                     String fileName = testFunName + ".kt";
                     writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, false);
                     writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, false);
-                    writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true, !FIR_PASSING_UNSIGNED_LITERAL_TESTS.contains(testFunName));
-                    writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true, !FIR_PASSING_UNSIGNED_EXPRESSION_TESTS.contains(testFunName));
+                    writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true,
+                                !FIR_PASSING_UNSIGNED_LITERAL_TESTS.contains(testFunName));
+                    writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true,
+                                !FIR_PASSING_UNSIGNED_EXPRESSION_TESTS.contains(testFunName));
                 }
             }
         }
