@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -54,6 +53,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsOnDeclarationBodyChecker;
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
@@ -360,8 +360,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     private boolean isAdaptedCallableReference(
             @NotNull KtCallableReferenceExpression expression,
-            @NotNull ResolvedCall<?> resolvedCall
+            @NotNull ResolvedCall<?> resolvedCall,
+            boolean isSuspendConversion
     ) {
+        if (isSuspendConversion) return true;
+
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         if (!(resultingDescriptor instanceof FunctionDescriptor)) return false;
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resultingDescriptor;
@@ -401,12 +404,20 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         Collection<KotlinType> supertypes;
 
         if (target instanceof FunctionDescriptor) {
+            FunctionDescriptor targetFunction = (FunctionDescriptor) target;
             callableDescriptor = bindingContext.get(FUNCTION, expression);
             if (callableDescriptor == null) return;
 
+            KotlinType functionReferenceType = bindingContext.getType(expression);
+            boolean isSuspendConversion =
+                    !targetFunction.isSuspend() &&
+                    functionReferenceType != null &&
+                    FunctionTypesKt.isKSuspendFunctionType(functionReferenceType);
+
             supertypes = runtimeTypes.getSupertypesForFunctionReference(
-                    (FunctionDescriptor) target, (AnonymousFunctionDescriptor) callableDescriptor, receiverType != null,
-                    isAdaptedCallableReference(expression, referencedFunction)
+                    targetFunction, (AnonymousFunctionDescriptor) callableDescriptor, receiverType != null,
+                    isAdaptedCallableReference(expression, referencedFunction, isSuspendConversion),
+                    isSuspendConversion
             );
         }
         else if (target instanceof PropertyDescriptor) {

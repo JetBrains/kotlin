@@ -136,7 +136,8 @@ class JvmRuntimeTypes(
         referencedFunction: FunctionDescriptor,
         anonymousFunctionDescriptor: AnonymousFunctionDescriptor,
         isBound: Boolean,
-        isAdaptedCallableReference: Boolean
+        isAdaptedCallableReference: Boolean,
+        isSuspendConversion: Boolean
     ): Collection<KotlinType> {
         val receivers = computeExpectedNumberOfReceivers(referencedFunction, isBound)
 
@@ -148,7 +149,7 @@ class JvmRuntimeTypes(
             anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
             null,
             anonymousFunctionDescriptor.returnType!!,
-            referencedFunction.isSuspend
+            referencedFunction.isSuspend || isSuspendConversion
         )
 
         val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null

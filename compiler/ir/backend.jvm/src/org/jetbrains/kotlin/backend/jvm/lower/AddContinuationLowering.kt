@@ -95,10 +95,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
-                if (expression.isSuspend && expression.origin == IrStatementOrigin.LAMBDA && expression !in inlineReferences) {
+                if (expression.isSuspend && expression.isLambdaOrAdaptedCallableReference() && expression !in inlineReferences) {
                     suspendLambdas[expression] = SuspendLambdaInfo(expression)
                 }
             }
+
+            private fun IrFunctionReference.isLambdaOrAdaptedCallableReference() =
+                origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
         })
 
         for (lambda in suspendLambdas.values) {
@@ -207,7 +210,11 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
-    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, fields: List<IrField>, receiverField: IrField?): IrSimpleFunction {
+    private fun IrClass.addInvokeSuspendForLambda(
+        irFunction: IrFunction,
+        fields: List<IrField>,
+        receiverField: IrField?
+    ): IrSimpleFunction {
         val superMethod = context.ir.symbols.suspendLambdaClass.functions.single {
             it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type.isKotlinResult()
@@ -425,24 +432,25 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
     }
 
-    private fun IrClass.addConstructorForNamedFunction(capturedThisField: IrField?, capturesCrossinline: Boolean): IrConstructor = addConstructor {
-        isPrimary = true
-        returnType = defaultType
-        visibility = if (capturesCrossinline) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
-    }.also { constructor ->
-        val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
-        val completionParameterSymbol = constructor.addCompletionValueParameter()
+    private fun IrClass.addConstructorForNamedFunction(capturedThisField: IrField?, capturesCrossinline: Boolean): IrConstructor =
+        addConstructor {
+            isPrimary = true
+            returnType = defaultType
+            visibility = if (capturesCrossinline) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+        }.also { constructor ->
+            val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
+            val completionParameterSymbol = constructor.addCompletionValueParameter()
 
-        val superClassConstructor = context.ir.symbols.continuationImplClass.owner.constructors.single { it.valueParameters.size == 1 }
-        constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
-            if (capturedThisField != null) {
-                +irSetField(irGet(thisReceiver!!), capturedThisField, irGet(capturedThisParameter!!))
-            }
-            +irDelegatingConstructorCall(superClassConstructor).also {
-                it.putValueArgument(0, irGet(completionParameterSymbol))
+            val superClassConstructor = context.ir.symbols.continuationImplClass.owner.constructors.single { it.valueParameters.size == 1 }
+            constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
+                if (capturedThisField != null) {
+                    +irSetField(irGet(thisReceiver!!), capturedThisField, irGet(capturedThisParameter!!))
+                }
+                +irDelegatingConstructorCall(superClassConstructor).also {
+                    it.putValueArgument(0, irGet(completionParameterSymbol))
+                }
             }
         }
-    }
 
     private fun IrClass.addInvokeSuspendForNamedFunction(
         irFunction: IrFunction,
@@ -708,8 +716,10 @@ private fun <T : IrFunctionAccessExpression> T.retargetToSuspendView(
             val continuation = if (caller.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
                 context.fakeContinuation
             else
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.continuationParameter()?.symbol
-                    ?: throw AssertionError("${caller.render()} has no continuation; can't call ${symbol.owner.render()}"))
+                IrGetValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.continuationParameter()?.symbol
+                        ?: throw AssertionError("${caller.render()} has no continuation; can't call ${symbol.owner.render()}")
+                )
             it.putValueArgument(continuationIndex, continuation)
         }
     }
