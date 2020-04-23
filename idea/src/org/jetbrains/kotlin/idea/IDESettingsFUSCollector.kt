@@ -12,15 +12,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
-import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent
 
 class IDESettingsFUSCollector : ProjectUsagesCollector() {
     override fun getMetrics(project: Project): Set<MetricEvent> {
         val metrics = mutableSetOf<MetricEvent>()
-
-        @Suppress("DEPRECATION")
-        val inferenceState = NewInferenceForIDEAnalysisComponent.isEnabledForV1(project)
-        metrics.add(MetricEvent("newInference", flagUsage(inferenceState)))
 
         val scriptingAutoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
         metrics.add(MetricEvent("scriptingAutoReloadEnabled", flagUsage(scriptingAutoReloadEnabled)))
