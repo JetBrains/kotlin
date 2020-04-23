@@ -223,8 +223,8 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
           settings -> {
             settings.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin());
             myEditor.getSettings().setTabSize(settings.getTabSize(getFileType()));
-          },
-          () -> formatted.set(doReformat(project, psiFile)));
+            formatted.set(doReformat(project, psiFile));
+          });
         Document document = myEditor.getDocument();
         document.replaceString(0, document.getTextLength(), formatted.get().getText());
         if (beforeReformat != null) {
@@ -265,8 +265,10 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
     CodeStyle.doWithTemporarySettings(
       project,
       mySettings,
-      settings -> settings.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin()),
-      () -> CodeStyleManager.getInstance(project).reformat(psiFile));
+      settings -> {
+        settings.setRightMargin(getDefaultLanguage(), getAdjustedRightMargin());
+        CodeStyleManager.getInstance(project).reformat(psiFile);
+      });
     return getDocumentBeforeChanges(project, psiFile);
   }
 
