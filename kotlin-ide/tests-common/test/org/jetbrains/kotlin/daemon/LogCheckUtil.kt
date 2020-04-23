@@ -48,27 +48,6 @@ fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LinePattern>,
     }
 }
 
-
-/**
- * calls [body] if receiver does not contain complete sequence of lines matched by [patterns], separated by any number of other lines
- * [body] receives first unmatched pattern and index of last matched line in the sequence
- */
-fun Sequence<String>.ifNotContainsSequence(patterns: List<LinePattern>,
-                                                    body: (LinePattern, Int) -> Unit): Unit {
-    ifNotContainsSequence(patterns.iterator(), body)
-}
-
-
-/**
- * calls [body] if receiver does not contain complete sequence of lines matched by [patterns], separated by any number of other lines
- * [body] receives first unmatched pattern and index of last matched line in the sequence
- */
-fun Sequence<String>.ifNotContainsSequence(vararg patterns: LinePattern,
-                                                    body: (LinePattern, Int) -> Unit): Unit {
-    ifNotContainsSequence(patterns.iterator(), body)
-}
-
-
 // emulates Stepanov's / STL iterator, but with "embedded" end check via isValid:
 // iterator points to a current value and upon init points to the first element or is invalid
 // allows to express some algorithms more concisely
