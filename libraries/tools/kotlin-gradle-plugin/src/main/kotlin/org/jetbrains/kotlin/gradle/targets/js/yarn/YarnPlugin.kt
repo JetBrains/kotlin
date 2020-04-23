@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 
@@ -34,8 +33,6 @@ open class YarnPlugin : Plugin<Project> {
             task.description = "Create root package.json"
 
             task.mustRunAfter(rootClean)
-
-            task.mustRunAfter(tasks.withType(KotlinPackageJsonTask::class.java))
         }
 
         tasks.named(KotlinNpmInstallTask.NAME).configure {

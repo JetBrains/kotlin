@@ -47,20 +47,21 @@ import java.io.File
  * by compilation that depends on this compilation. Note that package.json will be executed only for
  * required compilations, while other may be missed.
  *
- * **installed**. Global final state. Initiated by executing global `rootPackageJson` task.
+ * **Prepared**.
+ * Global final state. Initiated by executing global `rootPackageJson` task.
  *
- * **resolved**.
+ * **Installed**.
  * All created package.json files will be gathered and package manager will be executed.
  * Package manager will create lock file, that will be parsed for transitive npm dependencies
  * that will be added to the root [NpmDependency] objects. `kotlinNpmInstall` task may be up-to-date.
- * In this case, installed state will be reached by first call of [prepareIfNeeded] without executing
+ * In this case, installed state will be reached by first call of [installIfNeeded] without executing
  * package manager.
  *
  * Resolution will be used from [NpmDependency] by calling [getNpmDependencyResolvedCompilation].
  * Also resolution will be checked before calling [NpmProject.require] and executing any task
  * that requires npm dependencies or node_modules.
  *
- * User can call [requirePrepared] to get resolution info.
+ * User can call [requireInstalled] to get resolution info.
  *
  * ## Resolving process during Idea import
  *
@@ -115,7 +116,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     }
 
     @Incubating
-    internal fun requirePrepared() = prepareIfNeeded(requireUpToDateReason = "")
+    internal fun requireInstalled() = installIfNeeded(reason = "")
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
