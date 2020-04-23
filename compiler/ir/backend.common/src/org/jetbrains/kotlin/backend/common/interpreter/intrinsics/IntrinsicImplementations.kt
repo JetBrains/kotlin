@@ -193,7 +193,9 @@ object ArrayConstructor : IntrinsicBase() {
             for (i in 0 until size) {
                 val indexVar = listOf(Variable(index.descriptor, i.toState(index.type)))
                 // TODO throw exception if label != RETURN
-                stack.newFrame(initPool = indexVar) { initLambda.irFunction.body!!.interpret() }.check(ReturnLabel.RETURN) { return it }
+                stack.newFrame(asSubFrame = initLambda.irFunction.isLocal || initLambda.irFunction.isInline, initPool = indexVar) {
+                    initLambda.irFunction.body!!.interpret()
+                }.check(ReturnLabel.RETURN) { return it }
                 arrayValue[i] = stack.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
             }
         }

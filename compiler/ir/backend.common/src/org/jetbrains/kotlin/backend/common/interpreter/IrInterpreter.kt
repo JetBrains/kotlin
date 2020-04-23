@@ -648,7 +648,22 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 else -> listOf(result)
             }
         }
-        stack.pushReturnValue(args.toPrimitiveStateArray(expression.type))
+
+        val array = when (expression.type.classifierOrFail.descriptor.name.asString()) {
+            "UByteArray", "UShortArray", "UIntArray", "ULongArray" -> {
+                val owner = expression.type.classOrNull!!.owner
+                val constructor = owner.primaryConstructor!!
+                val storageParameter = constructor.valueParameters.single()
+                val primitiveArray = args.map { ((it as Common).fields.single().state as Primitive<*>).value }
+                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageParameter.type)
+                Common(owner).apply {
+                    setSuperClassRecursive()
+                    fields.add(Variable(storageParameter.descriptor, unsignedArray))
+                }
+            }
+            else -> args.toPrimitiveStateArray(expression.type)
+        }
+        stack.pushReturnValue(array)
         return Next
     }
 
