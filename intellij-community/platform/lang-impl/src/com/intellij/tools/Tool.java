@@ -6,9 +6,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.PtyCommandLine;
 import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessListener;
+import com.intellij.execution.process.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ProgramRunner;
@@ -41,6 +39,7 @@ public class Tool implements SchemeElement {
   @NonNls public static final String ACTION_ID_PREFIX = "Tool_";
 
   public static final String DEFAULT_GROUP_NAME = "External Tools";
+  protected static final ProcessEvent NOT_STARTED_EVENT = new ProcessEvent(new NopProcessHandler(), -1);
   private String myName;
   private String myDescription;
   @NotNull private String myGroup = DEFAULT_GROUP_NAME;
@@ -259,8 +258,14 @@ public class Tool implements SchemeElement {
     return name.toString();
   }
 
+  protected static void notifyCouldNotStart(@Nullable ProcessListener listener) {
+    if (listener != null) listener.processTerminated(NOT_STARTED_EVENT);
+  }
+
   public void execute(AnActionEvent event, DataContext dataContext, long executionId, @Nullable final ProcessListener processListener) {
-    executeIfPossible(event, dataContext, executionId, processListener);
+    if (!executeIfPossible(event, dataContext, executionId, processListener)) {
+      notifyCouldNotStart(processListener);
+    }
   }
 
   public boolean executeIfPossible(AnActionEvent event,

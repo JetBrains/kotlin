@@ -32,11 +32,6 @@ public class ToolKeymapExtension extends BaseToolKeymapExtension {
   }
 
   @Override
-  protected String getGroupByActionId(String id) {
-    return myToolManager.getGroupByActionId(id);
-  }
-
-  @Override
   protected String getGroupName() {
     return KeyMapBundle.message("actions.tree.external.tools.group");
   }

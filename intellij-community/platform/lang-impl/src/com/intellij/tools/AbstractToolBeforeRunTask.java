@@ -65,22 +65,21 @@ public abstract class AbstractToolBeforeRunTask<ToolBeforeRunTask extends Abstra
     if (tool != null && !tool.isEnabled()) {
       return true;
     }
+    if (tool == null) {
+      return false;
+    }
 
     final Semaphore targetDone = new Semaphore();
     final Ref<Boolean> result = new Ref<>(false);
 
+    targetDone.down();
     try {
       ApplicationManager.getApplication().invokeAndWait(() -> ToolAction.runTool(myToolActionId, context, null, executionId, new ProcessAdapter() {
-        @Override
-        public void startNotified(@NotNull final ProcessEvent event) {
-          targetDone.down();
-        }
-
-        @Override
-        public void processTerminated(@NotNull ProcessEvent event) {
-          result.set(event.getExitCode() == 0);
-          targetDone.up();
-        }
+          @Override
+          public void processTerminated(@NotNull ProcessEvent event) {
+            result.set(event.getExitCode() == 0);
+            targetDone.up();
+          }
       }), ModalityState.NON_MODAL);
     }
     catch (Exception e) {

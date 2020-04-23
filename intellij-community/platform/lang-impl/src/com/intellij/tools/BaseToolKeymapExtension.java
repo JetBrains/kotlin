@@ -55,7 +55,9 @@ public abstract class BaseToolKeymapExtension implements KeymapExtension {
 
   protected abstract String getActionIdPrefix();
 
-  protected abstract String getGroupByActionId(String id);
+  protected abstract List<? extends Tool> getToolsIdsByGroupName(String groupName);
 
-  protected abstract String getGroupName();
+  protected abstract String getRootGroupName();
+
+  protected abstract String getRootGroupId();
 }

@@ -56,15 +56,6 @@ public abstract class BaseToolManager<T extends Tool> {
     }
   }
 
-  public String getGroupByActionId(String actionId) {
-    for (T tool : getTools()) {
-      if (Objects.equals(actionId, tool.getActionId())) {
-        return tool.getGroup();
-      }
-    }
-    return null;
-  }
-
   public List<ToolsGroup<T>> getGroups() {
     return mySchemeManager.getAllSchemes();
   }
