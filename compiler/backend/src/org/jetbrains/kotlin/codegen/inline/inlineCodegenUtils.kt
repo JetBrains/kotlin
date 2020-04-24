@@ -92,12 +92,8 @@ internal fun getMethodNode(
     val cr = ClassReader(classData)
     var node: MethodNode? = null
     val debugInfo = arrayOfNulls<String>(2)
-    val lines = IntArray(2)
-    lines[0] = Integer.MAX_VALUE
-    lines[1] = Integer.MIN_VALUE
 
     cr.accept(object : ClassVisitor(Opcodes.API_VERSION) {
-
         override fun visitSource(source: String?, debug: String?) {
             super.visitSource(source, debug)
             debugInfo[0] = source
@@ -123,16 +119,8 @@ internal fun getMethodNode(
             node?.let { existing ->
                 throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
             }
-
-            return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
-                override fun visitLineNumber(line: Int, start: Label) {
-                    super.visitLineNumber(line, start)
-                    lines[0] = min(lines[0], line)
-                    lines[1] = max(lines[1], line)
-                }
-            }.also {
-                node = it
-            }
+            node = MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions)
+            return node!!
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
@@ -140,8 +128,23 @@ internal fun getMethodNode(
         return null
     }
 
-    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, lines[0], lines[1])
+    val (first, last) = listOfNotNull(node).lineNumberRange()
+    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, first, last)
     return SMAPAndMethodNode(node!!, smap)
+}
+
+internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
+    var minLine = Int.MAX_VALUE
+    var maxLine = Int.MIN_VALUE
+    for (node in this) {
+        for (insn in node.instructions.asSequence()) {
+            if (insn is LineNumberNode) {
+                minLine = min(minLine, insn.line)
+                maxLine = max(maxLine, insn.line)
+            }
+        }
+    }
+    return minLine to maxLine
 }
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
