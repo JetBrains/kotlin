@@ -212,6 +212,9 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val canContainSubModules: Boolean get() = false
     val requiresRootBuildFile: Boolean get() = false
 
+    val kotlinDirectoryName: String get() = Defaults.KOTLIN_DIR.toString()
+    val resourcesDirectoryName: String get() = Defaults.RESOURCES_DIR.toString()
+
     fun createBuildFileIRs(
         reader: Reader,
         configurationData: ModulesToIrConversionData,

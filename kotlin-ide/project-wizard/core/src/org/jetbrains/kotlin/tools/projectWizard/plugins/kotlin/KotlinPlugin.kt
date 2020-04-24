@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -106,14 +107,14 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         withAction {
-            fun Path.createKotlinAndResourceDirectories() = with(service<FileSystemWizardService>()) {
-                createDirectory(this@createKotlinAndResourceDirectories / Defaults.KOTLIN_DIR) andThen
-                        createDirectory(this@createKotlinAndResourceDirectories / Defaults.RESOURCES_DIR)
+            fun Path.createKotlinAndResourceDirectories(moduleConfigurator: ModuleConfigurator) = with(service<FileSystemWizardService>()) {
+                createDirectory(this@createKotlinAndResourceDirectories / moduleConfigurator.kotlinDirectoryName) andThen
+                        createDirectory(this@createKotlinAndResourceDirectories / moduleConfigurator.resourcesDirectoryName)
             }
 
             forEachModule { moduleIR ->
                 moduleIR.sourcesets.mapSequenceIgnore { sourcesetIR ->
-                    sourcesetIR.path.createKotlinAndResourceDirectories()
+                    sourcesetIR.path.createKotlinAndResourceDirectories(moduleIR.originalModule.configurator)
                 }
             }
         }
