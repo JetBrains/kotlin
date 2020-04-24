@@ -10,12 +10,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class AddJvmNameAnnotationFix(element: KtElement, private val jvmName: String) : KotlinQuickFixAction<KtElement>(element) {
     override fun getText(): String = if (element is KtAnnotationEntry) {
@@ -47,9 +48,12 @@ class AddJvmNameAnnotationFix(element: KtElement, private val jvmName: String) :
         private val JVM_NAME_FQ_NAME = FqName("kotlin.jvm.JvmName")
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val function = diagnostic.psiElement as? KtFunction ?: return null
+            val function = diagnostic.psiElement as? KtNamedFunction ?: return null
             val functionName = function.name ?: return null
-            val jvmName = KotlinNameSuggester.suggestNameByName(functionName, CollectingNameValidator().apply { addName(functionName) })
+            val classOrObjectBody = function.containingClassOrObject?.body ?: return null
+            val nameValidator =
+                NewDeclarationNameValidator(classOrObjectBody, function, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)
+            val jvmName = KotlinNameSuggester.suggestNameByName(functionName, nameValidator)
             return AddJvmNameAnnotationFix(function.findAnnotation(JVM_NAME_FQ_NAME) ?: function, jvmName)
         }
     }
