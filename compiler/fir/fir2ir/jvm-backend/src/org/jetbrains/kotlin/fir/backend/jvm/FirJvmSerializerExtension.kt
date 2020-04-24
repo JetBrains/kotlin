@@ -44,6 +44,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     override val session: FirSession,
     private val bindings: JvmSerializationBindings,
     state: GenerationState,
+    private val irClass: IrClass,
     private val typeMapper: KotlinTypeMapperBase = state.typeMapper
 ) : FirSerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
@@ -75,21 +76,21 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     }
 
     override fun serializeClass(
-        klass: IrClass,
+        klass: FirClass<*>,
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
+        assert((irClass.metadata as FirMetadataSource.Class).klass == klass)
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) typeMapper.mapDefaultImpls(klass.descriptor)
-            else typeMapper.mapClass(klass.descriptor)
+            if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) typeMapper.mapDefaultImpls(irClass.descriptor)
+            else typeMapper.mapClass(irClass.descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
-        val firClass = (klass.metadata as FirMetadataSource.Class).klass
-        writeVersionRequirementForJvmDefaultIfNeeded(firClass, proto, versionRequirementTable)
+        writeVersionRequirementForJvmDefaultIfNeeded(klass, proto, versionRequirementTable)
 
         if (jvmDefaultMode.forAllMethodsWithBody && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
             proto.setExtension(JvmProtoBuf.jvmClassFlags, JvmFlags.getClassFlags(true))

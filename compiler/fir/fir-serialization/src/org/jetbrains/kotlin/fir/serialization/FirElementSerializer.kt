@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -84,8 +82,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(irClass: IrClass): ProtoBuf.Class.Builder {
-        val klass = (irClass.metadata as FirMetadataSource.Class).klass
+    fun classProto(klass: FirClass<*>): ProtoBuf.Class.Builder {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -178,7 +175,7 @@ class FirElementSerializer private constructor(
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(klass))
 
-        extension.serializeClass(irClass, builder, versionRequirementTable, this)
+        extension.serializeClass(klass, builder, versionRequirementTable, this)
 
         writeVersionRequirementForInlineClasses(klass, builder, versionRequirementTable)
 

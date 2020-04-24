@@ -36,7 +36,7 @@ class FirBasedClassCodegen internal constructor(
 
     private val session = (irClass.metadata as FirMetadataSource).session
 
-    private val serializerExtension = FirJvmSerializerExtension(session, visitor.serializationBindings, state, typeMapper)
+    private val serializerExtension = FirJvmSerializerExtension(session, visitor.serializationBindings, state, irClass, typeMapper)
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
@@ -77,7 +77,7 @@ class FirBasedClassCodegen internal constructor(
 
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> {
-                val classProto = serializer!!.classProto(irClass).build()
+                val classProto = serializer!!.classProto(metadata.klass).build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, extraFlags) {
                     AsmUtil.writeAnnotationData(it, classProto, serializer.stringTable as JvmStringTable)
                 }
