@@ -143,14 +143,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     )
                 ) && queryValueArg.isNamed()
             ) { // found out of order argument that could be correct
-                val queryValueArgMap = queryValueArgs.subList(i, expression.valueArguments.lastIndex + 1).sortedBy {
-                    it.getArgumentName()?.asName
-                }.map { it.getArgumentExpression() }
-                val codeValueArgMap = sortedCodeArgs.subList(i, sortedCodeArgs.lastIndex + 1).map {
-                    val arg = it.arguments.first()
-                    if (!myMatchingVisitor.setResult(arg.isNamed())) return // cannot match unnamed query
-                    arg
-                }.sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
+                val queryValueArgMap = queryValueArgs.subList(i, expression.valueArguments.lastIndex + 1)
+                    .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
+                val codeValueArgMap = sortedCodeArgs.subList(i, sortedCodeArgs.lastIndex + 1)
+                    .map { it.arguments.first() }.sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
                 queryValueArgMap.forEachIndexed { j, queryExpr ->
                     val codeExpr = codeValueArgMap[j]
                     if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryExpr, codeExpr))) return
