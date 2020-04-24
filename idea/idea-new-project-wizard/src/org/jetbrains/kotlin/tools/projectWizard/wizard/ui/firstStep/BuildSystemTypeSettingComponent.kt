@@ -109,8 +109,8 @@ class BuildSystemTypeSettingComponent(
     }
 
     companion object {
-        private const val LEFT_RIGHT_PADDING = 10
-        private const val TOP_BOTTOM_PADDING = 4
+        private const val LEFT_RIGHT_PADDING = 6
+        private const val TOP_BOTTOM_PADDING = 2
     }
 }
 
