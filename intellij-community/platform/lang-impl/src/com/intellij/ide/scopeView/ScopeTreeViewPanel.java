@@ -64,6 +64,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.UiNotifyConnector;
 import com.intellij.util.ui.update.Update;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +81,11 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
 
+/**
+ * @deprecated This class is no longer used in IntelliJ IDEA and will be removed. The Scope view is implemented via the ScopeViewPane class.
+ */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2021.2")
 public class ScopeTreeViewPanel extends JPanel implements Disposable {
   private static final Logger LOG = Logger.getInstance(ScopeTreeViewPanel.class);
 
@@ -231,13 +237,7 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
     new TreeSpeedSearch(myTree);
     myCopyPasteDelegator = new CopyPasteDelegator(myProject, this);
     myTreeExpansionMonitor = PackageTreeExpansionMonitor.install(myTree, myProject);
-    final ScopeTreeStructureExpander[] extensions = ScopeTreeStructureExpander.EP_NAME.getExtensions(myProject);
-    for (ScopeTreeStructureExpander expander : extensions) {
-      myTree.addTreeWillExpandListener(expander);
-    }
-    if (extensions.length == 0) {
-      myTree.addTreeWillExpandListener(new SortingExpandListener());
-    }
+    myTree.addTreeWillExpandListener(new SortingExpandListener());
     myTree.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
