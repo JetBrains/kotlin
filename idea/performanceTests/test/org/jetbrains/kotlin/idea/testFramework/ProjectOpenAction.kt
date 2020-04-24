@@ -79,6 +79,10 @@ enum class ProjectOpenAction {
     GRADLE_PROJECT {
         override fun openProject(projectPath: String, projectName: String, jdk: Sdk): Project {
             val project = ProjectManagerEx.getInstanceEx().loadAndOpenProject(projectPath)!!
+            assertTrue(
+                !project.isDisposed,
+                "Gradle project $projectName at $projectPath is accidentally disposed immediately after import"
+            )
 
             runWriteAction {
                 ProjectRootManager.getInstance(project).projectSdk = jdk
