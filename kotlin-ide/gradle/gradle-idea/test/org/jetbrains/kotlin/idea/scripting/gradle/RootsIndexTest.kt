@@ -18,16 +18,16 @@ class RootsIndexTest {
         roots["a/c"] = 3
         roots["d"] = 4
 
-        assertEquals(1, roots.findRoot("a/b/c/x"))
-        assertEquals(1, roots.findRoot("a/b/c"))
-        assertEquals(3, roots.findRoot("a/c/x"))
-        assertEquals(3, roots.findRoot("a/c"))
-        assertEquals(4, roots.findRoot("d"))
-        assertEquals(4, roots.findRoot("d/x"))
-        assertEquals(null, roots.findRoot("e"))
-        assertEquals(null, roots.findRoot("e/f"))
+        assertEquals(1, roots.findNearestRoot("a/b/c/x"))
+        assertEquals(1, roots.findNearestRoot("a/b/c"))
+        assertEquals(3, roots.findNearestRoot("a/c/x"))
+        assertEquals(3, roots.findNearestRoot("a/c"))
+        assertEquals(4, roots.findNearestRoot("d"))
+        assertEquals(4, roots.findNearestRoot("d/x"))
+        assertEquals(null, roots.findNearestRoot("e"))
+        assertEquals(null, roots.findNearestRoot("e/f"))
 
         roots["d"] = 5
-        assertEquals(5, roots.findRoot("d"))
+        assertEquals(5, roots.findNearestRoot("d"))
     }
 }

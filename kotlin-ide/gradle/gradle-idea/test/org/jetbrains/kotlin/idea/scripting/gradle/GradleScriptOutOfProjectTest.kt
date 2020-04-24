@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -34,7 +35,9 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
     }
 
     private val loaderForOutOfProjectScripts by lazy {
-        GradleScriptConfigurationLoaderForOutOfProjectScripts(project)
+        GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(
+            project
+        )
     }
 
     fun testManualLoadingForUpToDate() {
