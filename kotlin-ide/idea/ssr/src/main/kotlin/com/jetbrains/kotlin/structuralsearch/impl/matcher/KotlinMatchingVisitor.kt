@@ -5,7 +5,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
+import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
+import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -203,17 +204,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
 
-        // Matching type
-        val propertyTR = property.typeReference
-        val otherTR = other.typeReference
-        val typeMatched = when {
-            propertyTR != null && otherTR != null -> myMatchingVisitor.match(propertyTR, otherTR)
-            propertyTR == null && otherTR == null -> true
-            otherTR == null -> propertyTR?.text == other.delegateExpressionOrInitializer?.resolveType().toString()
-            else -> true
+        val typeMatched = when (val propertyTR = property.typeReference) {
+            null -> true // Type will be matched with delegateExpressionOrInitializer
+            else -> propertyTR.text == other.type().toString()
+                    || propertyTR.text == other.type()?.fqName.toString()
         }
 
         myMatchingVisitor.result = typeMatched
+                && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
                 && matchNameIdentifiers(property.nameIdentifier, other.nameIdentifier)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(

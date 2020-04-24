@@ -9,6 +9,10 @@ class KotlinSSPropertyTest : KotlinSSTest() {
 
     fun testTypedVal() { doTest("val '_ : Int") }
 
+    fun testAmbiguousTypedVal() { doTest("val '_ : Int") }
+
+    fun testFqTypedVal() { doTest("val '_ : Foo.Int") }
+
     fun testValWithInitializer() { doTest("val '_ = 1") }
 
     fun testTypedValWithInitializer() { doTest("val '_ : Int = 1") }
