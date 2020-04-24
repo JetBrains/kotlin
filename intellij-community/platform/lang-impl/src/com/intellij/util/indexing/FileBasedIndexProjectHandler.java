@@ -8,10 +8,12 @@ package com.intellij.util.indexing;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -50,11 +52,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
       ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC,  new ProjectManagerListener() {
         @Override
         public void projectClosing(@NotNull Project project) {
-          FileBasedIndexProjectHandler handler = project.getServiceIfCreated(FileBasedIndexProjectHandler.class);
-          if (handler != null && !handler.isRemoved) {
-            handler.isRemoved = true;
-            FileBasedIndex.getInstance().removeIndexableSet(handler);
-          }
+          removeProjectIndexableSet(project);
         }
       });
     }
@@ -81,10 +79,20 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
       FileBasedIndexProjectHandler handler = project.getService(FileBasedIndexProjectHandler.class);
       fileBasedIndex.registerIndexableSet(handler, project);
       // done mostly for tests. In real life this is no-op, because the set was removed on project closing
-      Disposer.register(project, () -> {
+      Disposer.register(project, () -> removeProjectIndexableSet(project));
+    }
+
+    private static void removeProjectIndexableSet(@NotNull Project project) {
+      FileBasedIndexProjectHandler handler = project.getServiceIfCreated(FileBasedIndexProjectHandler.class);
+      if (handler != null && !handler.isRemoved) {
         handler.isRemoved = true;
-        fileBasedIndex.removeIndexableSet(handler);
-      });
+
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+          ReadAction.run(() -> {
+            FileBasedIndex.getInstance().removeIndexableSet(handler);
+          });
+        }, IndexingBundle.message("removing.indexable.set.project.handler"), false, project);
+      }
     }
   }
 
