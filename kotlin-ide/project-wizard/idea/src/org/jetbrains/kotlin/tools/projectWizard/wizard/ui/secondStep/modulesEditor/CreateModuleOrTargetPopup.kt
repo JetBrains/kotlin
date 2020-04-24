@@ -72,6 +72,11 @@ class CreateModuleOrTargetPopup private constructor(
             else -> null
         }
 
+        override fun hasSubstep(selectedValue: DisplayableSettingItem?): Boolean =
+            selectedValue is TargetConfiguratorGroupWithSubItems
+
+        override fun isAutoSelectionEnabled(): Boolean = true
+
         override fun getTextFor(value: DisplayableSettingItem): String = value.fullTextHtml
 
         override fun onChosen(selectedValue: DisplayableSettingItem?, finalChoice: Boolean): PopupStep<*>? {
