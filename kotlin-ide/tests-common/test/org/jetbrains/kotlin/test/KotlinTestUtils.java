@@ -860,7 +860,7 @@ public class KotlinTestUtils {
     public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
         TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
         Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        return testClassMetadata.value();
+        return Paths.get(getHomeDirectory(), testClassMetadata.value()).toString();
     }
 
     /**
