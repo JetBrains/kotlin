@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 class DescriptorBasedClassCodegen internal constructor(
     irClass: IrClass,
     context: JvmBackendContext,
-    parentFunction: IrFunction? = null
+    parentFunction: IrFunction?,
 ) : ClassCodegen(irClass, context, parentFunction) {
 
     private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)

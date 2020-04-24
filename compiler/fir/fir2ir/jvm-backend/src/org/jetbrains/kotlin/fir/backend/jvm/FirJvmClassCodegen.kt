@@ -3,14 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.codegen
+package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
+import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.MultifileClassCodegenImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
+import org.jetbrains.kotlin.codegen.writeSyntheticClassMetadata
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -28,19 +34,17 @@ import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class FirBasedClassCodegen internal constructor(
+class FirJvmClassCodegen(
     irClass: IrClass,
     context: JvmBackendContext,
-    parentFunction: IrFunction? = null
+    parentFunction: IrFunction?,
+    session: FirSession,
 ) : ClassCodegen(irClass, context, parentFunction) {
-
-    private val session = (irClass.metadata as FirMetadataSource).session
-
     private val serializerExtension = FirJvmSerializerExtension(session, visitor.serializationBindings, state, irClass, typeMapper)
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
-                metadata.klass, serializerExtension, (parentClassCodegen as? FirBasedClassCodegen)?.serializer
+                metadata.klass, serializerExtension, (parentClassCodegen as? FirJvmClassCodegen)?.serializer
             )
             is FirMetadataSource.File -> FirElementSerializer.createTopLevel(session, serializerExtension)
             is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension)

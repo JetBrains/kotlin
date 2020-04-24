@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
@@ -76,7 +77,6 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
-import java.net.URLClassLoader
 
 object KotlinToJVMBytecodeCompiler {
     private fun writeOutput(
@@ -369,7 +369,11 @@ object KotlinToJVMBytecodeCompiler {
             val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
             performanceManager?.notifyGenerationStarted()
             generationState.beforeCompile()
-            codegenFactory.generateModuleInFrontendIRMode(generationState, moduleFragment, symbolTable, sourceManager)
+            codegenFactory.generateModuleInFrontendIRMode(
+                generationState, moduleFragment, symbolTable, sourceManager
+            ) { irClass, context, parentFunction ->
+                FirJvmClassCodegen(irClass, context, parentFunction, session)
+            }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
             performanceManager?.notifyGenerationFinished(

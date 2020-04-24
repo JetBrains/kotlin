@@ -76,7 +76,7 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
     }
 )
 
-internal class MultifileFacadeFileEntry(
+class MultifileFacadeFileEntry(
     private val className: JvmClassName,
     val partFiles: List<IrFile>
 ) : SourceManager.FileEntry {

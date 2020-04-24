@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -44,9 +41,9 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
 
 abstract class ClassCodegen protected constructor(
-    internal val irClass: IrClass,
+    val irClass: IrClass,
     val context: JvmBackendContext,
-    private val parentFunction: IrFunction? = null
+    private val parentFunction: IrFunction?,
 ) : InnerClassConsumer {
     protected val parentClassCodegen = (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
     private val withinInline: Boolean = parentClassCodegen?.withinInline == true || parentFunction?.isInline == true
@@ -203,13 +200,13 @@ abstract class ClassCodegen protected constructor(
     }
 
     companion object {
-        fun getOrCreate(irClass: IrClass, context: JvmBackendContext, parentFunction: IrFunction? = null): ClassCodegen =
+        fun getOrCreate(
+            irClass: IrClass,
+            context: JvmBackendContext,
+            parentFunction: IrFunction? = null,
+        ): ClassCodegen =
             context.classCodegens.getOrPut(irClass) {
-                if (irClass.metadata is FirMetadataSource) {
-                    FirBasedClassCodegen(irClass, context, parentFunction)
-                } else {
-                    DescriptorBasedClassCodegen(irClass, context, parentFunction)
-                }
+                context.createCodegen(irClass, context, parentFunction) ?: DescriptorBasedClassCodegen(irClass, context, parentFunction)
             }.also {
                 assert(parentFunction == null || it.parentFunction == parentFunction) {
                     "inconsistent parent function for ${irClass.render()}:\n" +

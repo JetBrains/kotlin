@@ -12,6 +12,7 @@ dependencies {
     compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:backend.jvm"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 }

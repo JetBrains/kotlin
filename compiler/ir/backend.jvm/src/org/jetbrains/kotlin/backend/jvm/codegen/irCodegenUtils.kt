@@ -68,7 +68,7 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 
 val IrClass.isJvmInterface get() = isAnnotationClass || isInterface
 
-internal val IrDeclaration.fileParent: IrFile
+val IrDeclaration.fileParent: IrFile
     get() {
         val myParent = parent
         return when (myParent) {
