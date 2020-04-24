@@ -541,7 +541,7 @@ internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == nam
 class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
     private val callLineNumber = codegen.lastLineNumber
 
-    fun onInlineLambdaStart(mv: MethodVisitor, info: LambdaInfo) {
+    fun onInlineLambdaStart(mv: MethodVisitor, info: LambdaInfo, smap: SourceMapper) {
         val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
         if (callLineNumber >= 0 && firstLine == callLineNumber) {
             // We want the debugger to be able to break both on the inline call itself, plus on each
@@ -552,7 +552,7 @@ class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
             // number that is remapped by the SMAP to a line that does not exist.
             val label = Label()
             mv.visitLabel(label)
-            mv.visitLineNumber(JvmAbi.LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER, label)
+            mv.visitLineNumber(smap.mapSyntheticLineNumber(JvmAbi.LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER), label)
         }
     }
 
