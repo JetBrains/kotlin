@@ -14,6 +14,7 @@ import com.intellij.codeInspection.actions.CleanupInspectionUtil;
 import com.intellij.codeInspection.lang.GlobalInspectionContextExtension;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
+import com.intellij.codeInspection.reference.RefGraphAnnotator;
 import com.intellij.codeInspection.reference.RefManagerImpl;
 import com.intellij.codeInspection.ui.DefaultInspectionToolPresentation;
 import com.intellij.codeInspection.ui.InspectionResultsView;
@@ -35,6 +36,8 @@ import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.progress.impl.CoreProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
@@ -112,6 +115,12 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
       }
       myContent = null;
     });
+    RefManagerImpl.EP_NAME.addExtensionPointListener(new ExtensionPointListener<RefGraphAnnotator>() {
+      @Override
+      public void extensionRemoved(@NotNull RefGraphAnnotator graphAnnotator, @NotNull PluginDescriptor pluginDescriptor) {
+        ((RefManagerImpl)getRefManager()).unregisterAnnotator(graphAnnotator);
+      }
+    }, myContent);
 
     ContentManager contentManager = getContentManager();
     contentManager.addContent(myContent);
