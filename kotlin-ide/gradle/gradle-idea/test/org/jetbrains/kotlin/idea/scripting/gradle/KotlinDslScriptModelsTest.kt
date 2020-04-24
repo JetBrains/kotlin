@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 class KotlinDslScriptModelsTest {
     @Test
     fun write() {
-        val data = ConfigurationData(
+        val data = GradleImportedBuildRootData(
             listOf("a", "b", "c"),
             listOf(
                 KotlinDslScriptModel(

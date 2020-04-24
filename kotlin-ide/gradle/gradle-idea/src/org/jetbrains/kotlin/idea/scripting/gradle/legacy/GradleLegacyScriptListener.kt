@@ -5,28 +5,30 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.legacy
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.scripting.gradle.*
 
-// called from GradleScriptListener
-// todo(gradle6): remove
 class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(project) {
-    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+    override fun isApplicable(vFile: VirtualFile): Boolean {
+        return isGradleKotlinScript(vFile)
+    }
 
-    override fun isApplicable(vFile: VirtualFile) =
-        isGradleKotlinScript(vFile)
+    override fun editorActivated(vFile: VirtualFile) {
+        if (!isInAffectedGradleProjectFiles(project, vFile.path)) return
 
-    override fun editorActivated(vFile: VirtualFile) =
-        checkUpToDate(vFile)
+        if (useScriptConfigurationFromImportOnly()) {
+            // do nothing
+        } else {
+            val file = getAnalyzableKtFileForScript(vFile) ?: return
+            default.suggestToUpdateConfigurationIfOutOfDate(file)
+        }
+    }
 
-    override fun documentChanged(vFile: VirtualFile) =
-        checkUpToDate(vFile)
-
-    private fun checkUpToDate(vFile: VirtualFile) {
-        if (!buildRootsManager.isAffectedGradleProjectFile(vFile.path)) return
+    override fun documentChanged(vFile: VirtualFile) {
+        if (!isInAffectedGradleProjectFiles(project, vFile.path)) return
 
         val file = getAnalyzableKtFileForScript(vFile)
         if (file != null) {

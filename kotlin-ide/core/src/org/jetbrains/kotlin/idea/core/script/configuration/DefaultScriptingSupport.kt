@@ -20,7 +20,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
@@ -37,21 +36,21 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
 
-class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(project) {
+class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : DefaultScriptingSupportBase(manager) {
     // TODO public for tests
     val backgroundExecutor: BackgroundExecutor =
-        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(rootsIndexer)
-        else DefaultBackgroundExecutor(project, rootsIndexer)
+        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager.updater)
+        else DefaultBackgroundExecutor(project, manager.updater)
 
     private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
     private val defaultLoader = DefaultScriptConfigurationLoader(project)
-    private val loaders: Sequence<ScriptConfigurationLoader>
-        get() = sequence {
-            yield(outsiderLoader)
-            yield(fileAttributeCache)
-            yieldAll(LOADER.getPoint(project).extensionList)
-            yield(defaultLoader)
+    private val loaders: List<ScriptConfigurationLoader>
+        get() = mutableListOf<ScriptConfigurationLoader>().apply {
+            add(outsiderLoader)
+            add(fileAttributeCache)
+            addAll(LOADER.getPoint(project).extensionList)
+            add(defaultLoader)
         }
 
     private val saveLock = ReentrantLock()
@@ -166,7 +165,7 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return null
         val scriptDefinition = file.findScriptDefinition() ?: return null
 
-        rootsIndexer.transaction {
+        manager.updater.update {
             if (!loader.shouldRunInBackground(scriptDefinition)) {
                 loader.loadDependencies(false, file, scriptDefinition, loadingContext)
             } else {
@@ -240,7 +239,7 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
                             onClick = {
                                 saveReports(file, newResult.reports)
                                 file.removeScriptDependenciesNotificationPanel(project)
-                                rootsIndexer.transaction {
+                                manager.updater.update {
                                     setAppliedConfiguration(file, newResult)
                                 }
                             }
@@ -272,10 +271,16 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
             }
         }
     }
+
+    companion object {
+        fun getInstance(project: Project) =
+            (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager).default
+    }
 }
 
-abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupport() {
-    protected val rootsIndexer = ScriptClassRootsIndexer(project)
+abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigurationManager) : ScriptingSupport() {
+    val project: Project
+        get() = manager.project
 
     @Suppress("LeakingThis")
     protected val cache: ScriptConfigurationCache = createCache()
@@ -311,14 +316,14 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
     fun getAppliedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? =
         getCachedConfigurationState(file)?.applied
 
-    override fun hasCachedConfiguration(file: KtFile): Boolean =
+    fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
-    override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
+    fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
         return !hasCachedConfiguration(file) && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
     }
 
-    override fun getOrLoadConfiguration(
+    fun getOrLoadConfiguration(
         virtualFile: VirtualFile,
         preloadedKtFile: KtFile?
     ): ScriptCompilationConfigurationWrapper? {
@@ -326,32 +331,30 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         if (cached != null) return cached.configuration
 
         val ktFile = project.getKtFile(virtualFile, preloadedKtFile) ?: return null
-        rootsIndexer.transaction {
+        manager.updater.update {
             reloadOutOfDateConfiguration(ktFile, isFirstLoad = true)
         }
 
         return getAppliedConfiguration(virtualFile)?.configuration
     }
 
-    override val updater: ScriptConfigurationUpdater = object : ScriptConfigurationUpdater {
-        override fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
-            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = false)
-        }
+    fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
+        reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = false)
+    }
 
-        override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
-            return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
-        }
+    fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
+        return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
+    }
 
-        override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
-            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = true)
-        }
+    fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
+        reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = true)
     }
 
     private fun reloadIfOutOfDate(files: List<KtFile>, loadEvenWillNotBeApplied: Boolean, isPostponedLoad: Boolean): Boolean {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
         var upToDate = true
-        rootsIndexer.transaction {
+        manager.updater.update {
             files.forEach { file ->
                 val virtualFile = file.originalFile.virtualFile
                 if (virtualFile != null) {
@@ -376,23 +379,13 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         file: VirtualFile,
         newConfigurationSnapshot: ScriptConfigurationSnapshot?
     ) {
-        rootsIndexer.checkInTransaction()
+        manager.updater.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
         debug(file) { "configuration changed = $newConfiguration" }
 
         if (newConfiguration != null) {
-            if (hasNotCachedRoots(newConfiguration)) {
-                debug(file) { "new class roots found: $newConfiguration" }
-                rootsIndexer.markNewRoot()
-            }
-
+            manager.updater.invalidate(file)
             cache.setApplied(file, newConfigurationSnapshot)
-
-            clearClassRootsCaches(project)
-        }
-
-        ScriptingSupportHelper.updateHighlighting(project) {
-            it == file
         }
     }
 
@@ -401,10 +394,6 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         configurationSnapshot: ScriptConfigurationSnapshot
     ) {
         cache.setLoaded(file, configurationSnapshot)
-    }
-
-    private fun hasNotCachedRoots(configuration: ScriptCompilationConfigurationWrapper): Boolean {
-        return classpathRoots.hasNotCachedRoots(DefaultClassRootsCache.extractRoots(project, configuration))
     }
 
     @TestOnly
@@ -416,20 +405,29 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         val virtualFile = file.virtualFile
         if (cache[virtualFile]?.isUpToDate(project, virtualFile, file) == true) return
 
-        rootsIndexer.transaction {
+        manager.updater.update {
             reloadOutOfDateConfiguration(file, forceSync = true, loadEvenWillNotBeApplied = true)
         }
     }
 
-    override fun clearCaches() {
+    fun updateScriptDefinitions() {
         cache.clear()
     }
 
-    override fun recreateRootsCache(): ScriptClassRootsCache {
-        return DefaultClassRootsCache(
-            project,
-            cache.allApplied()
-        )
+    fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+        // todo: drop the hell below
+        // keep this one only:
+        // cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
+
+        // own builder for saving to storage
+        val ownBuilder = ScriptClassRootsCache.Builder(project)
+        val rootsStorage = ScriptClassRootsStorage.getInstance(project)
+
+        rootsStorage.load(ownBuilder)
+        cache.allApplied().forEach { (vFile, configuration) -> ownBuilder.add(vFile, configuration) }
+        rootsStorage.save(ownBuilder)
+
+        builder.add(ownBuilder)
     }
 }
 
