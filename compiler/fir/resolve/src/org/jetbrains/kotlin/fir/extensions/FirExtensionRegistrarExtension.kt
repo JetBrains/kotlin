@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.fir.FirSession
 
 abstract class FirExtensionRegistrarExtension {
     companion object : ProjectExtensionDescriptor<FirExtensionRegistrarExtension>(
@@ -13,16 +14,28 @@ abstract class FirExtensionRegistrarExtension {
         FirExtensionRegistrarExtension::class.java
     )
 
-    protected inner class ExtensionRegistrarContext
+    protected inner class ExtensionRegistrarContext {
+        operator fun ((FirSession) -> FirStatusTransformerExtension).unaryPlus() {
+            statusTransformerExtensions += FirStatusTransformerExtension.Factory { this.invoke(it) }
+        }
+    }
 
     protected abstract fun ExtensionRegistrarContext.configurePlugin()
 
     fun configure(): RegisteredExtensions {
         ExtensionRegistrarContext().configurePlugin()
-        return RegisteredExtensions()
+        return RegisteredExtensions(
+            statusTransformerExtensions
+        )
     }
 
-    class RegisteredExtensions
+    private val statusTransformerExtensions: MutableList<FirStatusTransformerExtension.Factory> = mutableListOf()
+
+    class RegisteredExtensions(
+        val statusTransformerExtensions: List<FirStatusTransformerExtension.Factory>
+    )
 }
 
-fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrarExtension.RegisteredExtensions) {}
+fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrarExtension.RegisteredExtensions) {
+    registerExtensions(FirStatusTransformerExtension::class, extensions.statusTransformerExtensions)
+}
