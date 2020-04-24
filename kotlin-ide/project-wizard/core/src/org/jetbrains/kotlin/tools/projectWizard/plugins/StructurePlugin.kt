@@ -4,12 +4,14 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import java.nio.file.Files
 import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
@@ -18,6 +20,15 @@ class StructurePlugin(context: Context) : Plugin(context) {
         GenerationPhase.FIRST_STEP
     ) {
         defaultValue = value(Paths.get("."))
+
+        validateOnProjectCreation = false
+
+        validate { path ->
+            if (!Files.exists(path)) return@validate ValidationResult.OK
+            ValidationResult.create(Files.list(path).noneMatch { true }) {
+                KotlinNewProjectWizardBundle.message("plugin.structure.setting.location.error.is.not.empty")
+            }
+        }
     }
     val name by stringSetting(
         KotlinNewProjectWizardBundle.message("plugin.structure.setting.name"),
