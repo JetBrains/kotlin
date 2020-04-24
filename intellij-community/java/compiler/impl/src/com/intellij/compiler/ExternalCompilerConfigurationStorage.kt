@@ -2,6 +2,7 @@
 package com.intellij.compiler
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.module.ModuleManager
@@ -20,6 +21,12 @@ internal class ExternalCompilerConfigurationStorage(private val project: Project
   var loadedState: Map<String, String>? = null
     private set
 
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): ExternalCompilerConfigurationStorage = 
+      ServiceManager.getService(project, ExternalCompilerConfigurationStorage::class.java)
+  } 
+  
   override fun getState(): Element {
     val result = Element("state")
     if (!project.isExternalStorageEnabled) {

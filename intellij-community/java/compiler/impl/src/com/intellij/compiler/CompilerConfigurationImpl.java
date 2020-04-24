@@ -825,7 +825,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
       readByteTargetLevel(parentNode, myModuleBytecodeTarget);
     }
 
-    Map<String, String> externalState = myProject.getComponent(ExternalCompilerConfigurationStorage.class).getLoadedState();
+    Map<String, String> externalState = ExternalCompilerConfigurationStorage.getInstance(myProject).getLoadedState();
     if (externalState != null) {
       myModuleBytecodeTarget.putAll(externalState);
     }
