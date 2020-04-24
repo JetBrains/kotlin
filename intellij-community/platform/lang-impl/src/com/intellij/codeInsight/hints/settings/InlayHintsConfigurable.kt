@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.hints.settings
 
 import com.intellij.codeInsight.CodeInsightBundle
+import com.intellij.codeInsight.hints.InlayHintsProviderExtension
 import com.intellij.codeInsight.hints.InlayHintsSettings
 import com.intellij.codeInsight.hints.settings.language.SingleLanguageInlayHintsConfigurable
 import com.intellij.ide.DataManager
@@ -67,7 +68,8 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   }
 
   override fun getDependencies(): Collection<BaseExtensionPointName<*>> =
-    listOf(InlaySettingsProvider.EP.EXTENSION_POINT_NAME) + InlaySettingsProvider.EP.getExtensions().flatMap { it.getDependencies() }
+    listOf(InlaySettingsProvider.EP.EXTENSION_POINT_NAME, InlayHintsProviderExtension.inlayProviderName) +
+    InlaySettingsProvider.EP.getExtensions().flatMap { it.getDependencies() }
 
   companion object {
     /**
