@@ -81,7 +81,7 @@ public class ExtractCodeStyleAction extends AnAction implements DumbAware {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {
-          CodeStyleSettings cloneSettings = settings.clone();
+          CodeStyleSettings cloneSettings = CodeStyleSettingsManager.getInstance().cloneSettings(settings);
           Map<Value, Object> backup = genProcessor.backupValues(cloneSettings, language);
           ValuesExtractionResult res = genProcessor.runWithProgress(project, cloneSettings, finalFile, indicator);
           reportResult(genProcessor.getHTMLReport(), res, project, cloneSettings, finalFile, backup);

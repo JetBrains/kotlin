@@ -24,7 +24,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.DocCommentSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import com.intellij.util.text.CharArrayUtil;
@@ -234,14 +233,18 @@ public class FixDocCommentAction extends EditorAction {
   }
 
   private static void reformatCommentKeepingEmptyTags(@NotNull PsiFile file, @NotNull Project project, int start, int end) {
-    CodeStyleSettings tempSettings = CodeStyle.getSettings(file).clone();
-    LanguageCodeStyleSettingsProvider langProvider = LanguageCodeStyleSettingsProvider.forLanguage(file.getLanguage());
-    if (langProvider != null) {
-      DocCommentSettings docCommentSettings = langProvider.getDocCommentSettings(tempSettings);
-      docCommentSettings.setRemoveEmptyTags(false);
-    }
-    CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
-    CodeStyle.doWithTemporarySettings(project, tempSettings, () -> codeStyleManager.reformatText(file, start, end));
+    CodeStyle.doWithTemporarySettings(
+      project,
+      CodeStyle.getSettings(file),
+      tempSettings -> {
+        LanguageCodeStyleSettingsProvider langProvider =
+          LanguageCodeStyleSettingsProvider.forLanguage(file.getLanguage());
+        if (langProvider != null) {
+          DocCommentSettings docCommentSettings = langProvider.getDocCommentSettings(tempSettings);
+          docCommentSettings.setRemoveEmptyTags(false);
+        }
+        CodeStyleManager.getInstance(project).reformatText(file, start, end);
+      });
   }
 
   private static int calcStartReformatOffset(@NotNull PsiElement element) {

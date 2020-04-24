@@ -375,6 +375,10 @@ public class CodeStyleSchemesModel implements SchemesModel<CodeStyleScheme> {
   public static class ModelSettings extends CodeStyleSettings {
     private volatile boolean myLocked;
 
+    public ModelSettings() {
+      super(true, true);
+    }
+
     public static ModelSettings createFrom(@NotNull CodeStyleSettings settings) {
       ModelSettings modelSettings = new ModelSettings();
       modelSettings.copyFrom(settings);
