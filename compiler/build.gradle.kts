@@ -46,6 +46,7 @@ dependencies {
     testCompile(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:analysis-tests"))
+    testCompile(projectTests(":compiler:fir:plugins:allopen-plugin"))
     testCompile(projectTests(":compiler:visualizer"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
