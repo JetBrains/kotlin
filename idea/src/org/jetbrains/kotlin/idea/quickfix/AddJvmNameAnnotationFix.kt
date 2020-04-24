@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class AddJvmNameAnnotationFix(element: KtElement, private val jvmName: String) : KotlinQuickFixAction<KtElement>(element) {
     override fun getText(): String = if (element is KtAnnotationEntry) {
@@ -50,9 +49,13 @@ class AddJvmNameAnnotationFix(element: KtElement, private val jvmName: String) :
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = diagnostic.psiElement as? KtNamedFunction ?: return null
             val functionName = function.name ?: return null
-            val classOrObjectBody = function.containingClassOrObject?.body ?: return null
-            val nameValidator =
-                NewDeclarationNameValidator(classOrObjectBody, function, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)
+            val containingDeclaration = function.parent ?: return null
+            val nameValidator = NewDeclarationNameValidator(
+                containingDeclaration,
+                function,
+                NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES
+            )
+
             val jvmName = KotlinNameSuggester.suggestNameByName(functionName, nameValidator)
             return AddJvmNameAnnotationFix(function.findAnnotation(JVM_NAME_FQ_NAME) ?: function, jvmName)
         }
