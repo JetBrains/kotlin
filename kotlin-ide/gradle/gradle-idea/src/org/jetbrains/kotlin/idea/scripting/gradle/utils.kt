@@ -23,7 +23,8 @@ import org.jetbrains.plugins.gradle.settings.GradleLocalSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import java.util.*
+import org.slf4j.LoggerFactory
+import kotlin.collections.HashMap
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
 
@@ -107,38 +108,45 @@ fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings
     return gradleSettings.getLinkedProjectsSettings()
 }
 
-class RootsIndex<T : Any> {
-    internal val tree = TreeMap<String, T>()
-    var values: Collection<T> = listOf()
-        internal set
+class RootsIndex {
+    private val log = LoggerFactory.getLogger(RootsIndex::class.java)
 
-    fun findRoot(path: String): T? {
-        // race condition can be ignored
-        val values = values
-        val size = values.size
-        if (size == 0) return null
-        if (size == 1) return values.single() // we can omit prefix check
-        return tree.floorEntry(path).takeIf { path.startsWith(it.key) }?.value
-    }
+    private val buildRoots = HashMap<String, GradleBuildRoot>()
+    private val scripts = HashMap<String, GradleBuildRoot>()
+    val values: Collection<GradleBuildRoot>
+        get() = buildRoots.values
 
-    internal inline fun update(updater: (insert: (prefix: String, value: T) -> Unit) -> Unit) {
-        synchronized(this) {
-            updater { prefix, value -> tree[prefix] = value }
-            values = tree.values
-        }
+    @Synchronized
+    fun rebuildProjectRoots() {
+//        values.forEach {
+//            it.
+//        }
     }
 
     @Synchronized
-    operator fun set(prefix: String, value: T) {
-        val moreCommon = tree.lowerKey(prefix)
-        check(moreCommon == null || !prefix.startsWith(moreCommon)) {
-            "Cannot add root `${prefix}`. More common root already added: `$moreCommon`"
-        }
+    fun getBuildRoot(dir: String) = buildRoots[dir]
 
-        tree[prefix] = value
-        values = tree.values
+    @Synchronized
+    fun findNearestRoot(path: String): GradleBuildRoot? {
+        var max: Pair<String, GradleBuildRoot>? = null
+        buildRoots.entries.forEach {
+            if (path.startsWith(it.key) && (max == null || it.key.length > max!!.first.length)) {
+                max = it.key to it.value
+            }
+        }
+        return max?.second
     }
 
     @Synchronized
-    fun remove(prefix: String) = tree.remove(prefix)
+    operator fun set(prefix: String, value: GradleBuildRoot) {
+        val old = buildRoots.put(prefix, value)
+        rebuildProjectRoots()
+        log.info("{}: {} -> {}", prefix, old, value)
+    }
+
+    @Synchronized
+    fun remove(prefix: String) = buildRoots.remove(prefix)?.also {
+        rebuildProjectRoots()
+        log.info("{}: removed", prefix)
+    }
 }

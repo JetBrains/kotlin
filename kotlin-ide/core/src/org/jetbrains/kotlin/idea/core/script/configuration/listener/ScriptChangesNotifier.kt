@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChange
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 
 internal class ScriptChangesNotifier(
-    private val project: Project,
-    private val updater: ScriptConfigurationUpdater,
+    private val project: Project
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.POOLED_THREAD, project)
     private val scriptChangesListenerDelay = 1400
@@ -46,10 +45,10 @@ internal class ScriptChangesNotifier(
 
                 private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
                     if (ApplicationManager.getApplication().isUnitTestMode) {
-                        getListener(project, file)?.editorActivated(file, updater)
+                        getListener(project, file)?.editorActivated(file)
                     } else {
                         AppExecutorUtil.getAppExecutorService().submit {
-                            getListener(project, file)?.editorActivated(file, updater)
+                            getListener(project, file)?.editorActivated(file)
                         }
                     }
                 }
@@ -68,11 +67,11 @@ internal class ScriptChangesNotifier(
                     }
 
                     if (ApplicationManager.getApplication().isUnitTestMode) {
-                        getListener(project, file)?.documentChanged(file, updater)
+                        getListener(project, file)?.documentChanged(file)
                     } else {
                         scriptsQueue.cancelAllRequests()
                         scriptsQueue.addRequest(
-                            { getListener(project, file)?.documentChanged(file, updater) },
+                            { getListener(project, file)?.documentChanged(file) },
                             scriptChangesListenerDelay,
                             true,
                         )
@@ -84,11 +83,10 @@ internal class ScriptChangesNotifier(
     }
 
     private val defaultListener = DefaultScriptChangeListener(project)
-    private val listeners: Sequence<ScriptChangeListener>
-        get() = sequence {
-            yieldAll(LISTENER.getPoint(project).extensionList)
-            yield(defaultListener)
-        }
+    private val listeners: Collection<ScriptChangeListener> = mutableListOf<ScriptChangeListener>().apply {
+        addAll(LISTENER.getPoint(project).extensionList)
+        add(defaultListener)
+    }
 
     private fun getListener(project: Project, file: VirtualFile): ScriptChangeListener? {
         if (project.isDisposed || areListenersDisabled()) return null
