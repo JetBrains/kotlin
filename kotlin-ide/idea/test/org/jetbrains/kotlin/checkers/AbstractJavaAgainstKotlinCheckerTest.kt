@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.idea.perf.forceUsingOldLightClassesForTest
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractJavaAgainstKotlinSourceCheckerTest : AbstractJavaAgainstKotlinCheckerTest() {
     fun doTest(path: String) {
-        doTest(true, true, path.replace(".kt", ".java"), path)
+        val relative = File(path).relativeTo(File(KotlinTestUtils.getHomeDirectory())).path
+        doTest(true, true, relative.replace(".kt", ".java"), relative)
     }
 }
 
