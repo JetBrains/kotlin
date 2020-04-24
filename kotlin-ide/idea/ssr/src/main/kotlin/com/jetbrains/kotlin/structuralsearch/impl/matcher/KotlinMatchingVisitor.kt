@@ -215,4 +215,24 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             other.delegateExpressionOrInitializer
         ))
     }
+
+    override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
+        val other = getTreeElement<KtStringTemplateExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.entries, other.entries)
+    }
+
+    override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
+        myMatchingVisitor.result = myMatchingVisitor.matchText(entry, myMatchingVisitor.element)
+    }
+
+    override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
+        val other = getTreeElement<KtSimpleNameStringTemplateEntry>() ?: return
+        myMatchingVisitor.result = matchNameIdentifiers(entry.expression, other.expression)
+    }
+
+    override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {
+        val other = getTreeElement<KtBlockStringTemplateEntry>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(entry.expression, other.expression)
+    }
+
 }
