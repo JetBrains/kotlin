@@ -276,6 +276,8 @@ FILE fqName:<root> fileName:/enum.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum3'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:private superTypes:[<root>.TestEnum3]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum3.TEST) returnType:kotlin.Unit
+          overridden:
+            public abstract fun foo (): kotlin.Unit declared in <root>.TestEnum3
           $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum3.TEST
           BLOCK_BODY
             CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
@@ -385,6 +387,8 @@ FILE fqName:<root> fileName:/enum.kt
               x: CONST Int type=kotlin.Int value=1
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum4]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum4.TEST1) returnType:kotlin.Unit
+          overridden:
+            public abstract fun foo (): kotlin.Unit declared in <root>.TestEnum4
           $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST1
           BLOCK_BODY
             CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
@@ -455,6 +459,8 @@ FILE fqName:<root> fileName:/enum.kt
               value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=null
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum4.TEST2) returnType:kotlin.Unit
+          overridden:
+            public abstract fun foo (): kotlin.Unit declared in <root>.TestEnum4
           $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST2
           BLOCK_BODY
             CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null

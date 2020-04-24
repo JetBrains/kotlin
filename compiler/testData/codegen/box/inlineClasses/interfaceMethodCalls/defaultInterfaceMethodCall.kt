@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 
 interface IFoo {
     fun foo() = bar()

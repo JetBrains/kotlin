@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class C {
     open fun f(): Any = "C f"
 }

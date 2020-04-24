@@ -46,6 +46,8 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JFoo'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K2 modality:FINAL visibility:public superTypes:[<root>.JFoo]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.K2) returnType:kotlin.String
+      overridden:
+        public abstract fun foo (): kotlin.String declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.K2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>.K2'

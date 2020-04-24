@@ -453,6 +453,13 @@ class Fir2IrDeclarationStorage(
                 created.overriddenSymbols += getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
         }
+        if (!created.isFakeOverride && simpleFunction?.isOverride == true && thisReceiverOwner != null) {
+            thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, created).forEach {
+                if (it is IrSimpleFunctionSymbol) {
+                    created.overriddenSymbols += it
+                }
+            }
+        }
         functionCache[function] = created
         return created
     }

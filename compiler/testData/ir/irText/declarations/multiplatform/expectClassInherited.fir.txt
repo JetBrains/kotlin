@@ -74,6 +74,8 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.A'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:OPEN visibility:public superTypes:[<root>.A]'
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (): kotlin.Unit declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.B, s:kotlin.String) returnType:kotlin.Unit

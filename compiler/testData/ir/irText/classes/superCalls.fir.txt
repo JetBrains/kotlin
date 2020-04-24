@@ -41,6 +41,8 @@ FILE fqName:<root> fileName:/superCalls.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' type=kotlin.Unit origin=null

@@ -225,6 +225,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum1'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum1]'
         FUN name:toString visibility:public modality:FINAL <> ($this:<root>.TestOpenEnum1.X1) returnType:kotlin.String
+          overridden:
+            public open fun toString (): kotlin.String declared in kotlin.Enum
           $this: VALUE_PARAMETER name:<this> type:<root>.TestOpenEnum1.X1
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun toString (): kotlin.String declared in <root>.TestOpenEnum1.X1'
@@ -315,6 +317,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestOpenEnum2.X1) returnType:kotlin.Unit
+          overridden:
+            public open fun foo (): kotlin.Unit declared in <root>.TestOpenEnum2
           $this: VALUE_PARAMETER name:<this> type:<root>.TestOpenEnum2.X1
           BLOCK_BODY
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -410,6 +414,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum1'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum1]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestAbstractEnum1.X1) returnType:kotlin.Unit
+          overridden:
+            public abstract fun foo (): kotlin.Unit declared in <root>.TestAbstractEnum1
           $this: VALUE_PARAMETER name:<this> type:<root>.TestAbstractEnum1.X1
           BLOCK_BODY
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -521,6 +527,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestAbstractEnum2.X1) returnType:kotlin.Unit
+          overridden:
+            public abstract fun foo (): kotlin.Unit declared in <root>.IFoo
           $this: VALUE_PARAMETER name:<this> type:<root>.TestAbstractEnum2.X1
           BLOCK_BODY
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
