@@ -10,6 +10,8 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
           x: GET_VAR 'x: T of <root>.Derived1 declared in <root>.Derived1.<init>' type=T of <root>.Derived1 origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]'
     FUN name:foo visibility:public modality:FINAL <Y> ($this:<root>.Derived1<T of <root>.Derived1>, y:Y of <root>.Derived1.foo) returnType:T of <root>.Derived1
+      overridden:
+        public abstract fun foo <Y> (y: Y of <root>.Base.foo): T of <root>.Base declared in <root>.Base
       TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
       VALUE_PARAMETER name:y index:0 type:Y of <root>.Derived1.foo

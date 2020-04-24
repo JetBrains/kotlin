@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -26,19 +28,23 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -277,6 +283,73 @@ internal tailrec fun FirCallableSymbol<*>.deepestOverriddenSymbol(): FirCallable
 internal tailrec fun FirCallableSymbol<*>.deepestMatchingOverriddenSymbol(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
     val overriddenSymbol = overriddenSymbol?.takeIf { it.callableId == root.callableId } ?: return this
     return overriddenSymbol.deepestMatchingOverriddenSymbol(this)
+}
+
+internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(
+    irBuiltIns: IrBuiltIns,
+    target: IrDeclaration,
+    result: MutableList<IrSymbol> = mutableListOf()
+): List<IrSymbol> {
+    for (superType in superTypes) {
+        val superTypeClass = superType.classOrNull
+        if (superTypeClass is IrClassSymbolImpl) {
+            superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result)
+        }
+    }
+    return result
+}
+
+private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
+    irBuiltIns: IrBuiltIns,
+    target: IrDeclaration,
+    result: MutableList<IrSymbol>
+): List<IrSymbol> {
+    for (declaration in declarations) {
+        when {
+            declaration is IrFunction && target is IrFunction ->
+                if (declaration !is IrConstructor &&
+                    !declaration.isFakeOverride &&
+                    declaration.descriptor.modality != Modality.FINAL &&
+                    !Visibilities.isPrivate(declaration.visibility) &&
+                    isOverriding(irBuiltIns, target, declaration)
+                ) {
+                    result.add(declaration.symbol)
+                }
+            // TODO: property lookup to set overriddenSymbols for IrProperty (and accessors)?
+        }
+    }
+    // Stop traversing upwards if we find matching overridden symbols at this level.
+    if (result.isNotEmpty()) {
+        return result
+    }
+    return findMatchingOverriddenSymbolsFromSupertypes(irBuiltIns, target, result)
+}
+
+fun isOverriding(
+    irBuiltIns: IrBuiltIns,
+    target: IrFunction,
+    superCandidate: IrFunction
+): Boolean {
+    val typeCheckerContext = IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext
+    fun equalTypes(first: IrType, second: IrType): Boolean {
+        return AbstractTypeChecker.equalTypes(
+            typeCheckerContext, first, second
+        ) ||
+                // TODO: should pass type parameter cache, and make sure target type is indeed a matched type argument.
+                second.classifierOrNull is IrTypeParameterSymbol
+
+    }
+
+    return target.name == superCandidate.name &&
+            // Not checking the return type (they should match each other if everything other match, otherwise it's a compilation error)
+            target.extensionReceiverParameter?.type?.let {
+                val superCandidateReceiverType = superCandidate.extensionReceiverParameter?.type
+                superCandidateReceiverType != null && equalTypes(it, superCandidateReceiverType)
+            } != false &&
+            target.valueParameters.size == superCandidate.valueParameters.size &&
+            target.valueParameters.zip(superCandidate.valueParameters).all { (targetParameter, superCandidateParameter) ->
+                equalTypes(targetParameter.type, superCandidateParameter.type)
+            }
 }
 
 private val nameToOperationConventionOrigin = mutableMapOf(

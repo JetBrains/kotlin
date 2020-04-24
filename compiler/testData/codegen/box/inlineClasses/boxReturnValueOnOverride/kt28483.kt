@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 inline class ResultOrClosed(val x: Any?)
 
 interface A<T> {

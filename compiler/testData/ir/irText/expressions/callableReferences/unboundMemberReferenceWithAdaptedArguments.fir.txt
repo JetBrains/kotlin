@@ -37,6 +37,8 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[<root>.A]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Obj, xs:kotlin.IntArray) returnType:kotlin.Int
+      overridden:
+        public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.Obj
       VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
       BLOCK_BODY

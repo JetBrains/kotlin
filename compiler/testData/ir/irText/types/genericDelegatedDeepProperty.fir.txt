@@ -132,6 +132,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r type:R of <root>.CR visibility:private [final]' type=R of <root>.CR origin=null
               receiver: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.<get-r>' type=<root>.CR<R of <root>.CR> origin=null
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.CR<R of <root>.CR>) returnType:R of <root>.CR
+      overridden:
+        public abstract fun foo (): R of <root>.IR declared in <root>.IR
       $this: VALUE_PARAMETER name:<this> type:<root>.CR<R of <root>.CR>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): R of <root>.CR declared in <root>.CR'
@@ -231,6 +233,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
                           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, T of <root>.<get-additionalText>>]'
                       FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><T of <root>.<get-additionalText>>, t:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, p:kotlin.reflect.KProperty<*>) returnType:T of <root>.<get-additionalText>
+                        overridden:
+                          public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 [operator] declared in <root>.IDelegate1
                         $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepO$delegate.<no name provided><T of <root>.<get-additionalText>>
                         VALUE_PARAMETER name:t index:0 type:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>
                         VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
@@ -289,6 +293,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
                           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IDelegate1<<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, T of <root>.<get-additionalText>>]'
                       FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><T of <root>.<get-additionalText>>, t:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, p:kotlin.reflect.KProperty<*>) returnType:T of <root>.<get-additionalText>
+                        overridden:
+                          public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 [operator] declared in <root>.IDelegate1
                         $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided>.deepK$delegate.<no name provided><T of <root>.<get-additionalText>>
                         VALUE_PARAMETER name:t index:0 type:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>
                         VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>
@@ -323,6 +329,8 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
                       t: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><T of <root>.<get-additionalText>> declared in <root>.additionalText$delegate.<no name provided>.<get-deepK>' type=<root>.additionalText$delegate.<no name provided><T of <root>.<get-additionalText>> origin=null
                       p: PROPERTY_REFERENCE 'private final deepK: T of <root>.<get-additionalText> [delegated,val]' field=null getter='public final fun <get-deepK> (): T of <root>.<get-additionalText> declared in <root>.additionalText$delegate.<no name provided>' setter=null type=kotlin.reflect.KProperty2<<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, *, T of <root>.<get-additionalText>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.additionalText$delegate.<no name provided><T of <root>.<get-additionalText>>, t:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>, p:kotlin.reflect.KProperty<*>) returnType:<root>.P<T of <root>.<get-additionalText>, T of <root>.<get-additionalText>>
+              overridden:
+                public abstract fun getValue (t: T1 of <root>.IDelegate1, p: kotlin.reflect.KProperty<*>): R1 of <root>.IDelegate1 [operator] declared in <root>.IDelegate1
               $this: VALUE_PARAMETER name:<this> type:<root>.additionalText$delegate.<no name provided><T of <root>.<get-additionalText>>
               VALUE_PARAMETER name:t index:0 type:<root>.Value<T of <root>.<get-additionalText>, <root>.CR<T of <root>.<get-additionalText>>>
               VALUE_PARAMETER name:p index:1 type:kotlin.reflect.KProperty<*>

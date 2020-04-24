@@ -25,9 +25,13 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:FooBarImpl modality:FINAL visibility:public superTypes:[<root>.IFooBar]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.FooBarImpl) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (): kotlin.Unit declared in <root>.IFooBar
       $this: VALUE_PARAMETER name:<this> type:<root>.FooBarImpl
       BLOCK_BODY
     FUN name:bar visibility:public modality:FINAL <> ($this:<root>.FooBarImpl) returnType:kotlin.Unit
+      overridden:
+        public abstract fun bar (): kotlin.Unit declared in <root>.IFooBar
       $this: VALUE_PARAMETER name:<this> type:<root>.FooBarImpl
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -50,6 +54,8 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.IFooBar]'
     FUN name:bar visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Unit
+      overridden:
+        public abstract fun bar (): kotlin.Unit declared in <root>.IFooBar
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFooBar) returnType:kotlin.Unit [fake_override]

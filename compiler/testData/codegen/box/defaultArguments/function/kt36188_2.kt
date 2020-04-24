@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS
 
 // Test for KT-36188 bug compatibility between non-IR and IR backends

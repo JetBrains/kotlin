@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 inline class X(val x: Any?)
 
 interface IFoo<out T : X?> {

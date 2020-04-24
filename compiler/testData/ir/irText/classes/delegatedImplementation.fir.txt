@@ -30,16 +30,22 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.BaseImpl, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
     FUN name:bar visibility:public modality:FINAL <> ($this:<root>.BaseImpl) returnType:kotlin.Int
+      overridden:
+        public abstract fun bar (): kotlin.Int declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>.BaseImpl'
           CONST Int type=kotlin.Int value=42
     FUN name:qux visibility:public modality:FINAL <> ($this:<root>.BaseImpl, $receiver:kotlin.String) returnType:kotlin.Unit
+      overridden:
+        public abstract fun qux (): kotlin.Unit declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY

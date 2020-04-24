@@ -16,6 +16,8 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
           RETURN type=kotlin.Nothing from='public final fun <get-size> (): kotlin.Int declared in <root>.MySet'
             CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:contains visibility:public modality:FINAL <> ($this:<root>.MySet, element:kotlin.String) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun contains (element: E of kotlin.collections.Set): kotlin.Boolean [operator] declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       VALUE_PARAMETER name:element index:0 type:kotlin.String
       BLOCK_BODY
@@ -28,11 +30,15 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         RETURN type=kotlin.Nothing from='public final fun containsAll (elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:isEmpty visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun isEmpty (): kotlin.Boolean declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:iterator visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.collections.Iterator<kotlin.String>
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.Set> [operator] declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in <root>.MySet'

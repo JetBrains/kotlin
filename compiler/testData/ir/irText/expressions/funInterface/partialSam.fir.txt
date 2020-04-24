@@ -66,6 +66,8 @@ FILE fqName:<root> fileName:/partialSam.kt
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]'
             FUN name:run visibility:public modality:FINAL <> ($this:<root>.fsi.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.String) returnType:kotlin.Int
+              overridden:
+                public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn
               $this: VALUE_PARAMETER name:<this> type:<root>.fsi.<no name provided>
               VALUE_PARAMETER name:s index:0 type:kotlin.String
               VALUE_PARAMETER name:i index:1 type:kotlin.Int
@@ -103,6 +105,8 @@ FILE fqName:<root> fileName:/partialSam.kt
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]'
             FUN name:run visibility:public modality:FINAL <> ($this:<root>.fis.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.Int) returnType:kotlin.String
+              overridden:
+                public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn
               $this: VALUE_PARAMETER name:<this> type:<root>.fis.<no name provided>
               VALUE_PARAMETER name:s index:0 type:kotlin.String
               VALUE_PARAMETER name:i index:1 type:kotlin.Int

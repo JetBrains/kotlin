@@ -56,6 +56,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CBoth modality:FINAL visibility:public superTypes:[<root>.ILeft; <root>.IRight]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.CBoth) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.ILeft
+        public open fun foo (): kotlin.Unit declared in <root>.IRight
       $this: VALUE_PARAMETER name:<this> type:<root>.CBoth
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.ILeft' type=kotlin.Unit origin=null
