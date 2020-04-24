@@ -94,8 +94,6 @@ public class TemplateDataLanguagePusher implements FileIntPropertyPusher<Languag
 
   @Override
   public void propertyChanged(@NotNull Project project, @NotNull VirtualFile fileOrDir, @NotNull Language actualProperty) {
-    if (getDefaultValue() != Language.ANY) {
-      PushedFilePropertiesUpdater.getInstance(project).filePropertiesChanged(fileOrDir, file -> acceptsFile(file, project));
-    }
+    PushedFilePropertiesUpdater.getInstance(project).filePropertiesChanged(fileOrDir, file -> acceptsFile(file, project));
   }
 }
