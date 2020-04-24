@@ -61,7 +61,7 @@ class IdeaJpsWizardService(
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
-    ): TaskResult<Unit> = runWriteAction {
+    ): TaskResult<Unit> {
         KotlinSdkType.setUpIfNeeded()
         val projectImporter = ProjectImporter(project, modulesModel, path, modulesIrs)
         modulesBuilder.addModuleConfigurationUpdater(
@@ -69,6 +69,7 @@ class IdeaJpsWizardService(
         )
 
         projectImporter.import()
+        return UNIT_SUCCESS
     }
 }
 
@@ -138,7 +139,7 @@ private class ProjectImporter(
         irsToIdeaModule.forEach { (moduleIr, ideaModule) ->
             addModuleDependencies(moduleIr, ideaModule, irsToIdeaModuleMap)
         }
-    } andThen safe { modulesModel.commit() }
+    } andThen safe { runWriteAction { modulesModel.commit() } }
 
     private fun convertModule(moduleIr: ModuleIR): TaskResult<IdeaModule> {
         val module = modulesModel.newModule(
@@ -161,7 +162,7 @@ private class ProjectImporter(
         }
 
         rootModel.inheritSdk()
-        rootModel.commit()
+        runWriteAction { rootModel.commit() }
         addLibrariesToTheModule(moduleIr, module)
         return Success(module)
     }
