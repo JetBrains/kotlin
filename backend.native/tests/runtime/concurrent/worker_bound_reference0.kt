@@ -140,6 +140,23 @@ fun testGlobalModification() {
     worker.requestTermination().result
 }
 
+val global7: WorkerBoundReference<A> = WorkerBoundReference(A(3))
+
+@Test
+fun testGlobalGetWorker() {
+    val ownerId = Worker.current.id
+    assertEquals(ownerId, global7.worker.id)
+
+    val worker = Worker.start()
+    val future = worker.execute(TransferMode.SAFE, { ownerId }) { ownerId ->
+        assertEquals(ownerId, global7.worker.id)
+        Unit
+    }
+
+    future.result
+    worker.requestTermination().result
+}
+
 @Test
 fun testLocal() {
     val local = WorkerBoundReference(A(3))
@@ -273,6 +290,39 @@ fun testLocalModification() {
     val value = future.result
     assertEquals(4, value.value.a)
     assertEquals(4, value.valueOrNull?.a)
+    worker.requestTermination().result
+}
+
+@Test
+fun testLocalGetWorker() {
+    val local = WorkerBoundReference(A(3))
+
+    val ownerId = Worker.current.id
+    assertEquals(ownerId, local.worker.id)
+
+    val worker = Worker.start()
+    val future = worker.execute(TransferMode.SAFE, { Pair(local, ownerId) }) { (local, ownerId) ->
+        assertEquals(ownerId, local.worker.id)
+        Unit
+    }
+
+    future.result
+    worker.requestTermination().result
+}
+
+@Test
+fun testLocalForeignGetWorker() {
+    val worker = Worker.start()
+    val ownerId = worker.id
+    val future = worker.execute(TransferMode.SAFE, { ownerId }) { ownerId ->
+        val local = WorkerBoundReference(A(3))
+        assertEquals(ownerId, local.worker.id)
+        local
+    }
+
+    val value = future.result
+    assertEquals(ownerId, value.worker.id)
+
     worker.requestTermination().result
 }
 

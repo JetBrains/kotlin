@@ -49,4 +49,9 @@ public class WorkerBoundReference<out T : Any>(value: T) {
      */
     val valueOrNull: T?
         get() = @Suppress("UNCHECKED_CAST") (derefWorkerBoundReference(ptr) as T?)
+
+    /**
+     * Worker that [value] is bound to.
+     */
+    val worker: Worker = Worker.current
 }
