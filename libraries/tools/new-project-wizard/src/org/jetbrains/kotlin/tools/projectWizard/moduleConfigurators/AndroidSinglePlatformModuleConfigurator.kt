@@ -21,13 +21,18 @@ object AndroidSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator {
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformAndroid
+
     @NonNls
     override val id = "android"
+
     @NonNls
     override val suggestedModuleName = "android"
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
 
     override val requiresRootBuildFile: Boolean = true
+
+    override val resourcesDirectoryName: String = "res"
+    override val kotlinDirectoryName: String = "java"
 
     override fun createBuildFileIRs(
         reader: Reader,
