@@ -17,10 +17,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocCommentBase;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,11 +87,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
   static @NotNull String calcText(@Nullable PsiDocCommentBase comment) {
     try {
-      String text = null;
-      if (comment != null) {
-        PsiElement target = ObjectUtils.notNull(comment.getOwner(), comment);
-        text = DocumentationManager.getProviderFromElement(target).generateRenderedDoc(target);
-      }
+      String text = comment == null ? null : DocumentationManager.getProviderFromElement(comment).generateRenderedDoc(comment);
       return text == null ? CodeInsightBundle.message("doc.render.not.available.text") : preProcess(text);
     }
     catch (IndexNotReadyException e) {
