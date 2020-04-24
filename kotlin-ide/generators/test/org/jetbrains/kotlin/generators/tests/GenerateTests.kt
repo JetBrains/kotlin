@@ -952,37 +952,37 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea", "compiler/testData") {
+    testGroup("idea", "idea/testData") {
         testClass<AbstractResolveByStubTest> {
-            model("loadJava/compiledKotlin")
+            model("compiler/loadJava/compiledKotlin")
         }
 
         testClass<AbstractLoadJavaClsStubTest> {
-            model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
+            model("compiler/loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
         }
 
         testClass<AbstractIdeLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("compiler/asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractIdeLightClassForScriptTest> {
-            model("asJava/script/ide", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+            model("compiler/asJava/script/ide", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractUltraLightClassSanityTest> {
-            model("asJava/lightClasses", pattern = KT_OR_KTS)
+            model("compiler/asJava/lightClasses", pattern = KT_OR_KTS)
         }
         testClass<AbstractUltraLightClassLoadingTest> {
-            model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
+            model("compiler/asJava/ultraLightClasses", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractUltraLightFacadeClassTest> {
-            model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
+            model("compiler/asJava/ultraLightFacades", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
             model(
-                "asJava/lightClasses",
+                "compiler/asJava/lightClasses",
                 excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
                 pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
             )
