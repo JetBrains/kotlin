@@ -1,30 +1,28 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.templateLanguages;
 
+import com.intellij.FileIntPropertyPusher;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.impl.FilePropertyPusher;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.openapi.vfs.newvfs.persistent.VfsDependentEnum;
-import com.intellij.util.io.DataInputOutputUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
  * @author Konstantin.Ulitin
  */
-public class TemplateDataLanguagePusher implements FilePropertyPusher<Language> {
+public class TemplateDataLanguagePusher implements FileIntPropertyPusher<Language> {
 
   public static final Key<Language> KEY = Key.create("TEMPLATE_DATA_LANGUAGE");
 
@@ -77,21 +75,26 @@ public class TemplateDataLanguagePusher implements FilePropertyPusher<Language> 
   private static final FileAttribute PERSISTENCE = new FileAttribute("template_language", 2, true);
 
   @Override
-  public void persistAttribute(@NotNull Project project, @NotNull VirtualFile fileOrDir, @NotNull Language value) throws IOException {
-    boolean read = false;
-    try (DataInputStream iStream = PERSISTENCE.readAttribute(fileOrDir)) {
-      if (iStream != null) {
-        read = true;
-        final int oldLanguage = DataInputOutputUtil.readINT(iStream);
-        String oldLanguageId = ourLanguagesEnumerator.getById(oldLanguage);
-        if (value.getID().equals(oldLanguageId)) return;
-      }
-    }
+  public @NotNull FileAttribute getAttribute() {
+    return PERSISTENCE;
+  }
 
-    if (value != Language.ANY || read) {
-      try (DataOutputStream oStream = PERSISTENCE.writeAttribute(fileOrDir)) {
-        DataInputOutputUtil.writeINT(oStream, ourLanguagesEnumerator.getId(value.getID()));
-      }
+  @Override
+  public int toInt(@NotNull Language property) throws IOException {
+    return ourLanguagesEnumerator.getId(property.getID());
+  }
+
+  @NotNull
+  @Override
+  public Language fromInt(int val) throws IOException {
+    String id = ourLanguagesEnumerator.getById(val);
+    Language lang = Language.findLanguageByID(id);
+    return ObjectUtils.notNull(lang, Language.ANY);
+  }
+
+  @Override
+  public void propertyChanged(@NotNull Project project, @NotNull VirtualFile fileOrDir, @NotNull Language actualProperty) {
+    if (getDefaultValue() != Language.ANY) {
       PushedFilePropertiesUpdater.getInstance(project).filePropertiesChanged(fileOrDir, file -> acceptsFile(file, project));
     }
   }
