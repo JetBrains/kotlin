@@ -62,15 +62,15 @@
                       <text resource-bundle="messages/KotlinBundle" key="label.text.to.file"/>
                     </properties>
                   </component>
-				  <component id="4934c" class="javax.swing.JLabel">
-					<constraints>
-					  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="5" use-parent-layout="false"/>
-					</constraints>
-					<properties>
-					  <labelFor value="67853"/>
-					  <text resource-bundle="messages/KotlinBundle" key="label.text.file.name"/>
-					</properties>
-				  </component>
+                  <component id="4934c" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="5" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="67853"/>
+                      <text resource-bundle="messages/KotlinBundle" key="label.text.file.name"/>
+                    </properties>
+                  </component>
                   <component id="67853" class="javax.swing.JTextField" binding="tfFileNameInPackage" default-binding="true">
                     <constraints>
                       <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -120,7 +120,7 @@
                         </constraints>
                         <properties>
                           <selected value="true"/>
-                          <text resource-bundle="messages/RefactoringBundle" key="search.in.comments.and.strings"/>
+                          <text resource-bundle="messages/KotlinBundle" key="search.in.comments.and.strings"/>
                         </properties>
                       </component>
                       <component id="a7936" class="com.intellij.ui.NonFocusableCheckBox" binding="cbSearchTextOccurrences">
@@ -129,7 +129,7 @@
                         </constraints>
                         <properties>
                           <selected value="true"/>
-                          <text resource-bundle="messages/RefactoringBundle" key="search.for.text.occurrences"/>
+                          <text resource-bundle="messages/KotlinBundle" key="search.for.text.occurrences"/>
                         </properties>
                       </component>
                       <component id="cc60c" class="javax.swing.JCheckBox" binding="cbSearchReferences">
@@ -156,7 +156,7 @@
                         </constraints>
                         <properties>
                           <selected value="true"/>
-						  <text resource-bundle="messages/KotlinBundle" key="label.text.move.expect.actual.counterparts"/>
+                          <text resource-bundle="messages/KotlinBundle" key="label.text.move.expect.actual.counterparts"/>
                         </properties>
                       </component>
                     </children>
