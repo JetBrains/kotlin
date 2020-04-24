@@ -3519,6 +3519,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/inlineCondition2.kt");
         }
 
+        @TestMetadata("inlineLambdaObjectInit.kt")
+        public void testInlineLambdaObjectInit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/inlineLambdaObjectInit.kt");
+        }
+
         @TestMetadata("singleThen.kt")
         public void testSingleThen() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/singleThen.kt");
