@@ -41,7 +41,7 @@ class IdeWizard(
         JavaRuntimeLibraryDescription(null),
         LibrariesContainerFactory.createContainer(null as Project?),
     )
-
+    var jdk: Sdk? = null
 
     var projectPath by setting(StructurePlugin::projectPath.reference)
     var projectName by setting(StructurePlugin::name.reference)
@@ -69,7 +69,6 @@ class IdeWizard(
     data class JpsData(
         val libraryDescription: JavaRuntimeLibraryDescription,
         val librariesContainer: LibrariesContainer,
-        var jdk: Sdk? = null,
         val libraryOptionsPanel: LibraryOptionsPanel = LibraryOptionsPanel(
             libraryDescription,
             "",

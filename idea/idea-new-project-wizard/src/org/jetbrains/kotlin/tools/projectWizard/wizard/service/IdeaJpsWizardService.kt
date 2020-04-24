@@ -62,7 +62,6 @@ class IdeaJpsWizardService(
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
     ): TaskResult<Unit> = runWriteAction {
-        ideWizard.jpsData.jdk?.let { jdk -> NewProjectUtil.applyJdkToProject(project, jdk) }
         KotlinSdkType.setUpIfNeeded()
         val projectImporter = ProjectImporter(project, modulesModel, path, modulesIrs)
         modulesBuilder.addModuleConfigurationUpdater(
