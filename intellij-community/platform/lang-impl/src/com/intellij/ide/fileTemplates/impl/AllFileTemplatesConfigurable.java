@@ -17,6 +17,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.BaseExtensionPointName;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.options.*;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -47,9 +48,9 @@ import java.util.List;
 import java.util.*;
 
 public final class AllFileTemplatesConfigurable implements SearchableConfigurable, Configurable.NoMargin, Configurable.NoScroll,
-                                                     Configurable.VariableProjectAppLevel {
+                                                           Configurable.VariableProjectAppLevel, Configurable.WithEpDependencies {
   private static final Logger LOG = Logger.getInstance(AllFileTemplatesConfigurable.class);
-
+  
   final static class Provider extends ConfigurableProvider {
     private final Project myProject;
 
@@ -799,5 +800,10 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
 
   private static String getOtherTitle() {
     return IdeBundle.message("tab.filetemplates.j2ee");
+  }
+
+  @Override
+  public @NotNull Collection<BaseExtensionPointName<?>> getDependencies() {
+    return Collections.singleton(InternalTemplateBean.EP_NAME);
   }
 }
