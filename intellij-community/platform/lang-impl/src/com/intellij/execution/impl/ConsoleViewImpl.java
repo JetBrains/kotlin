@@ -647,7 +647,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       myEditor.getScrollingModel().accumulateViewportChanges();
     }
     final Collection<ConsoleViewContentType> contentTypes = new HashSet<>();
-    final Collection<Pair<String, ConsoleViewContentType>> contents = new ArrayList<>();
+    final List<Pair<String, ConsoleViewContentType>> contents = new ArrayList<>();
     try {
       // the text can contain one "\r" at the start meaning we should delete the last line
       boolean startsWithCR = deferredTokens.get(0) == TokenBuffer.CR_TOKEN;
@@ -709,8 +709,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     }
     if (!contents.isEmpty()) {
       for (ChangeListener each : myListeners) {
-        for (Pair<String, ConsoleViewContentType> pair: contents) {
-          each.textAdded(pair.first, pair.second);
+        for (int i = contents.size() - 1; i >= 0; i--) {
+          each.textAdded(contents.get(i).first, contents.get(i).second);
         }
       }
     }
