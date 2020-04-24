@@ -346,7 +346,7 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
   @Override
   public FileEditor @NotNull [] getEditors(@NotNull VirtualFile file) {
     FileEditor e = getSelectedEditor(file);
-    if (e == null) return new FileEditor[0];
+    if (e == null) return FileEditor.EMPTY_ARRAY;
     return new FileEditor[] {e};
   }
 
@@ -395,7 +395,7 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
 
   @Override
   public FileEditor @NotNull [] getSelectedEditors() {
-    return myActiveFile == null ? new FileEditor[0] : getEditors(myActiveFile);
+    return myActiveFile == null ? FileEditor.EMPTY_ARRAY : getEditors(myActiveFile);
   }
 
   @Override
@@ -504,7 +504,7 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
   public Pair<FileEditor[], FileEditorProvider[]> getEditorsWithProviders(@NotNull VirtualFile file) {
     Pair<FileEditor, FileEditorProvider> editorAndProvider = myTestEditorSplitter.getEditorAndProvider(file);
 
-    FileEditor[] fileEditor = new FileEditor[0];
+    FileEditor[] fileEditor = FileEditor.EMPTY_ARRAY;
     FileEditorProvider[] fileEditorProvider= new FileEditorProvider[0];
     if (editorAndProvider != null) {
       fileEditor = new FileEditor[] {editorAndProvider.first};

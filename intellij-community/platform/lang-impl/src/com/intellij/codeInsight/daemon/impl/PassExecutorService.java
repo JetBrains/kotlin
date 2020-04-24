@@ -262,7 +262,7 @@ final class PassExecutorService implements Disposable {
         pass.applyInformationToEditor();
         if (document != null) {
           VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-          FileEditor[] editors = file == null ? new FileEditor[0] : FileEditorManager.getInstance(myProject).getEditors(file);
+          FileEditor[] editors = file == null ? FileEditor.EMPTY_ARRAY : FileEditorManager.getInstance(myProject).getEditors(file);
           for (FileEditor editor : editors) {
             repaintErrorStripeAndIcon(editor);
           }
