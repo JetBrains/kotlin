@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 package test
 
 fun box() = E.E1.f() + E.E2.f()
