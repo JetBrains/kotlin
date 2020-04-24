@@ -37,24 +37,22 @@ import java.util.Set;
  */
 public class GradleProjectStructureCustomizer extends ExternalProjectStructureCustomizer {
 
-  private final Set<Key<? extends Identifiable>> myKeys = ContainerUtil.newHashSet(GradleSourceSetData.KEY, ProjectKeys.MODULE);
-
   @NotNull
   @Override
   public Set<? extends Key<?>> getIgnorableDataKeys() {
-    return myKeys;
+    return getDataKeys();
   }
 
   @NotNull
   @Override
   public Set<? extends Key<?>> getPublicDataKeys() {
-    return myKeys;
+    return getDataKeys();
   }
 
   @NotNull
   @Override
   public Set<? extends Key<? extends Identifiable>> getDependencyAwareDataKeys() {
-    return myKeys;
+    return getDataKeys();
   }
 
   @Nullable
@@ -75,5 +73,10 @@ public class GradleProjectStructureCustomizer extends ExternalProjectStructureCu
       return Couple.of(moduleData.getExternalName(), null);
     }
     return super.getRepresentationName(node);
+  }
+
+  @NotNull
+  private static Set<? extends Key<? extends Identifiable>> getDataKeys() {
+    return ContainerUtil.set(GradleSourceSetData.KEY, ProjectKeys.MODULE);
   }
 }

@@ -137,7 +137,7 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
                                    mySettings.getTaskNames(), mySettings.getExecutionName(), ": ", "");
 
     final ExternalSystemProcessHandler processHandler = new ExternalSystemProcessHandler(task, executionName);
-    final ExternalSystemExecutionConsoleManager<ExternalSystemRunConfiguration, ExecutionConsole, ProcessHandler>
+    final ExternalSystemExecutionConsoleManager<ExecutionConsole, ProcessHandler>
       consoleManager = getConsoleManagerFor(task);
 
     final ExecutionConsole consoleView =

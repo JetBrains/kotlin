@@ -34,18 +34,17 @@ import java.util.Set;
  * @author Vladislav.Soroka
  */
 public class ExternalProjectStructureCustomizerImpl extends ExternalProjectStructureCustomizer {
-  private final Set<? extends Key<? extends AbstractNamedData>> myKeys = ContainerUtil.set(ProjectKeys.PROJECT, ProjectKeys.MODULE);
 
   @NotNull
   @Override
   public Set<? extends Key<?>> getIgnorableDataKeys() {
-    return myKeys;
+    return getDataKeys();
   }
 
   @NotNull
   @Override
   public Set<? extends Key<?>> getPublicDataKeys() {
-    return myKeys;
+    return getDataKeys();
   }
 
   @Nullable
@@ -70,5 +69,10 @@ public class ExternalProjectStructureCustomizerImpl extends ExternalProjectStruc
       return Couple.of(moduleData.getId(), moduleData.getDescription());
     }
     return super.getRepresentationName(node);
+  }
+
+  @NotNull
+  private static Set<? extends Key<? extends AbstractNamedData>> getDataKeys() {
+    return ContainerUtil.set(ProjectKeys.PROJECT, ProjectKeys.MODULE);
   }
 }

@@ -15,8 +15,6 @@
  */
 package com.intellij.openapi.externalSystem.service.execution;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -35,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Vladislav.Soroka
  */
 public class DefaultExternalSystemExecutionConsoleManager
-  implements ExternalSystemExecutionConsoleManager<ExternalSystemRunConfiguration, ExecutionConsole, ProcessHandler> {
+  implements ExternalSystemExecutionConsoleManager<ExecutionConsole, ProcessHandler> {
 
   @NotNull
   @Override
@@ -52,17 +50,6 @@ public class DefaultExternalSystemExecutionConsoleManager
     ConsoleView executionConsole = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
     executionConsole.attachToProcess(processHandler);
     return executionConsole;
-  }
-
-  @Nullable
-  @Override
-  public ExecutionConsole attachExecutionConsole(@NotNull ExternalSystemTask task,
-                                                 @NotNull Project project,
-                                                 @NotNull ExternalSystemRunConfiguration configuration,
-                                                 @NotNull Executor executor,
-                                                 @NotNull ExecutionEnvironment env,
-                                                 @NotNull ProcessHandler processHandler) throws ExecutionException {
-    return attachExecutionConsole(project, task, env, processHandler);
   }
 
   @Override

@@ -415,7 +415,7 @@ public final class ExternalSystemUtil {
           }
         };
 
-        final ExternalSystemExecutionConsoleManager<ExternalSystemRunConfiguration, ExecutionConsole, ProcessHandler>
+        final ExternalSystemExecutionConsoleManager<ExecutionConsole, ProcessHandler>
           consoleManager = getConsoleManagerFor(resolveProjectTask);
 
         final ExecutionConsole consoleView =
@@ -1072,7 +1072,7 @@ public final class ExternalSystemUtil {
   }
 
   @NotNull
-  public static ExternalSystemExecutionConsoleManager<ExternalSystemRunConfiguration, ExecutionConsole, ProcessHandler>
+  public static ExternalSystemExecutionConsoleManager<ExecutionConsole, ProcessHandler>
   getConsoleManagerFor(@NotNull ExternalSystemTask task) {
     for (ExternalSystemExecutionConsoleManager executionConsoleManager : ExternalSystemExecutionConsoleManager.EP_NAME.getExtensions()) {
       if (executionConsoleManager.isApplicableFor(task)) {
