@@ -145,12 +145,12 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val project = declaration.project
             val psiSearchHelper = PsiSearchHelper.getInstance(project)
 
-            val usedScripts = findScriptsWithUsages(declaration)
-            if (usedScripts.isNotEmpty()) {
-                if (!ScriptConfigurationManager.getInstance(declaration.project).updater.ensureConfigurationUpToDate(usedScripts)) {
-                    return TOO_MANY_OCCURRENCES
-                }
-            }
+//            val usedScripts = findScriptsWithUsages(declaration)
+//            if (usedScripts.isNotEmpty()) {
+//                if (!ScriptConfigurationManager.getInstance(declaration.project).updater.ensureConfigurationUpToDate(usedScripts)) {
+//                    return TOO_MANY_OCCURRENCES
+//                }
+//            }
 
             val useScope = psiSearchHelper.getUseScope(declaration)
             if (useScope is GlobalSearchScope) {
