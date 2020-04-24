@@ -28,8 +28,9 @@ import java.io.File
 import java.nio.file.Paths
 
 /**
- * Creates [GradleScriptingSupport] per each linked Gradle build.
- * Gradle project sync should call [update].
+ * Manages [imported] gradle build roots:
+ * - populated after Gradle project sync, by calling [update]
+ * - stored in FS and loaded in [init]
  */
 class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Provider() {
     val manager: CompositeScriptConfigurationManager
@@ -37,33 +38,13 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
 
     private val updater = manager.rootsUpdater
 
-    val roots = RootsIndex<GradleBuildRoot>()
+    val imported = RootsIndex<GradleBuildRoot.Imported>()
 
-    private val VirtualFile.localPath
-        get() = path
-
-    fun findRoot(file: VirtualFile): GradleBuildRoot? {
-        val found = roots.findRoot(file.localPath)
-        if (found != null) return found
-
-        val settings = findExternalProjectSettings(file) ?: return detectUnlinkedGradleBuildRoot(file)
-        val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().toString())
-        if (supported) {
-            return GradleBuildRoot.New()
-        } else {
-            return GradleBuildRoot.Legacy()
-        }
-    }
-
-    private fun findExternalProjectSettings(file: VirtualFile): GradleProjectSettings? =
-        getGradleProjectSettings(project)
-            .filter { file.localPath.startsWith(it.externalProjectPath) }
-            .maxBy { it.externalProjectPath.length }
-
-    private fun detectUnlinkedGradleBuildRoot(file: VirtualFile): GradleBuildRoot.Unlinked? = null
+    ////////////
+    /// ScriptingSupport.Provider implementation:
 
     override fun clearCaches() {
-        // todo: clear up to date
+        // nothing related to script definition and project roots are cached
     }
 
     override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
@@ -74,15 +55,38 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     }
 
     override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
-        roots.values.forEach { root ->
-            if (root is GradleBuildRoot.Imported) {
-                root.collectConfigurations(builder)
-            }
+        imported.values.forEach { root ->
+            root.collectConfigurations(builder)
         }
     }
 
+    //////////////////
+
+    private val VirtualFile.localPath
+        get() = path
+
     fun getScriptInfo(file: VirtualFile): GradleBuildRoot.Imported.ScriptInfo? =
         manager.classpathRoots.getLightScriptInfo(file.localPath) as? GradleBuildRoot.Imported.ScriptInfo
+
+    fun findRoot(file: VirtualFile): GradleBuildRoot? {
+        val found = imported.findRoot(file.localPath)
+        if (found != null) return found
+
+        val settings = findExternalProjectSettings(file) ?: return detectUnlinkedGradleBuildRoot(file)
+        val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().toString())
+        return when {
+            supported -> GradleBuildRoot.New()
+            else -> GradleBuildRoot.Legacy()
+        }
+    }
+
+    private fun findExternalProjectSettings(file: VirtualFile): GradleProjectSettings? =
+        getGradleProjectSettings(project)
+            .filter { file.localPath.startsWith(it.externalProjectPath) }
+            .maxBy { it.externalProjectPath.length }
+
+    private fun detectUnlinkedGradleBuildRoot(file: VirtualFile): GradleBuildRoot.Unlinked? =
+        null // todo:
 
     init {
         ApplicationManager.getApplication().executeOnPooledThread {
@@ -108,7 +112,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
                 linkedProjectPaths.forEach {
                     val buildRoot = VfsUtil.findFile(Paths.get(it), false)
                     if (buildRoot != null) {
-                        if (roots.remove(buildRoot.localPath) != null) {
+                        if (imported.remove(buildRoot.localPath) != null) {
                             KotlinDslScriptModels.remove(buildRoot)
                         }
                     }
@@ -122,8 +126,8 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     fun update(build: KotlinDslGradleBuildSync) {
         // fast path for linked gradle builds without .gradle.kts support
         if (build.models.isEmpty()) {
-            val root = roots.findRoot(build.workingDir) ?: return
-            if (root is GradleBuildRoot.Imported && root.data.models.isEmpty()) return
+            val root = imported.findRoot(build.workingDir) ?: return
+            if (root.data.models.isEmpty()) return
         }
 
         updater.update {
@@ -131,7 +135,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             val data = GradleImportedBuildRootData(templateClasspath, build.models)
             val newSupport = createRoot(build.workingDir) { data } ?: return
             KotlinDslScriptModels.write(newSupport.dir, data)
-            roots[newSupport.dir.localPath] = newSupport
+            imported[newSupport.dir.localPath] = newSupport
         }
     }
 
@@ -154,12 +158,11 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         val newSupport = GradleBuildRoot.Imported(
             project,
             buildRoot,
-            externalProjectPath,
             GradleKtsContext(gradleExeSettings.javaHome?.let { File(it) }),
             data
         )
 
-        val oldSupport = roots.findRoot(externalProjectPath)
+        val oldSupport = imported.findRoot(externalProjectPath)
         if (oldSupport != null) {
             val files = newSupport.data.models.mapTo(mutableSetOf()) { it.file }
             ScriptingSupportHelper.updateHighlighting(project) {

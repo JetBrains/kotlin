@@ -274,7 +274,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     }
 }
 
-abstract class DefaultScriptingSupportBase(manager: CompositeScriptConfigurationManager) : ScriptingSupport(manager) {
+abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigurationManager) : ScriptingSupport() {
     val project: Project
         get() = manager.project
 
@@ -312,10 +312,10 @@ abstract class DefaultScriptingSupportBase(manager: CompositeScriptConfiguration
     fun getAppliedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? =
         getCachedConfigurationState(file)?.applied
 
-    override fun hasCachedConfiguration(file: KtFile): Boolean =
+    fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
-    override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
+    fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
         return !hasCachedConfiguration(file) && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
     }
 
@@ -334,18 +334,16 @@ abstract class DefaultScriptingSupportBase(manager: CompositeScriptConfiguration
         return getAppliedConfiguration(virtualFile)?.configuration
     }
 
-    override val updater: ScriptConfigurationUpdater = object : ScriptConfigurationUpdater {
-        override fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
-            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = false)
-        }
+    fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
+        reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = false)
+    }
 
-        override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
-            return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
-        }
+    fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
+        return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
+    }
 
-        override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
-            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = true)
-        }
+    fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
+        reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = true)
     }
 
     private fun reloadIfOutOfDate(files: List<KtFile>, loadEvenWillNotBeApplied: Boolean, isPostponedLoad: Boolean): Boolean {
@@ -412,11 +410,11 @@ abstract class DefaultScriptingSupportBase(manager: CompositeScriptConfiguration
         }
     }
 
-    override fun clearCaches() {
+    fun clearCaches() {
         cache.clear()
     }
 
-    override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+    fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
         cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
     }
 }

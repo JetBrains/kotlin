@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.scripting.gradle
+package org.jetbrains.kotlin.idea.scripting.gradle.legacy
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigura
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
+import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
+import org.jetbrains.kotlin.idea.scripting.gradle.isInAffectedGradleProjectFiles
+import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -24,7 +28,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
  *
  * TODO(gradle6): remove
  */
-class GradleScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : DefaultScriptConfigurationLoader(project) {
+class GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : DefaultScriptConfigurationLoader(project) {
     override fun loadDependencies(
         isFirstLoad: Boolean,
         ktFile: KtFile,
@@ -53,7 +57,7 @@ class GradleScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : 
  *
  * TODO(gradle6): remove
  */
-class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
+class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean {
         return if (useScriptConfigurationFromImportOnly()) false else super.shouldRunInBackground(scriptDefinition)
     }

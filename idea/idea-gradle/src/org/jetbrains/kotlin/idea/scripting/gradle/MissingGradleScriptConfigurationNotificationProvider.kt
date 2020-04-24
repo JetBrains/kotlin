@@ -16,6 +16,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -68,7 +69,9 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
     }
 
     private val loaderForOutOfProjectScripts by lazy {
-        GradleScriptConfigurationLoaderForOutOfProjectScripts(project)
+        GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(
+            project
+        )
     }
 
     companion object {

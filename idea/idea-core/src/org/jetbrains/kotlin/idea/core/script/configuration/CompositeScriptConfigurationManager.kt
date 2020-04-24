@@ -31,7 +31,7 @@ import kotlin.concurrent.withLock
 
 class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
     @Suppress("unused")
-    private val notifier = ScriptChangesNotifier(project, updater)
+    private val notifier = ScriptChangesNotifier(project)
 
     private val plugins = ScriptingSupport.Provider.EPN.getPoint(project).extensionList
 
@@ -76,6 +76,7 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
 
     private fun recreateRootsCache(): ScriptClassRootsCache {
         val builder = ScriptClassRootsCache.Builder(project)
+        default.collectConfigurations(builder)
         plugins.forEach { it.collectConfigurations(builder) }
         return builder.build()
     }

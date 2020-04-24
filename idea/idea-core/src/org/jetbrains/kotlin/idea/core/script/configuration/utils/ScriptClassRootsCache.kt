@@ -30,7 +30,7 @@ class ScriptClassRootsCache(
     val sdks: Map<String, Sdk?>
 ) {
     abstract class LightScriptInfo {
-        abstract fun buildConfiguration(): ScriptCompilationConfigurationWrapper
+        abstract fun buildConfiguration(): ScriptCompilationConfigurationWrapper?
     }
 
     private class HeavyScriptInfo(

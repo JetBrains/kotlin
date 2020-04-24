@@ -16,62 +16,45 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
-sealed class GradleBuildRoot(
-    val dir: VirtualFile
-) {
-    abstract class Unlinked(root: VirtualFile) : GradleBuildRoot(root)
+sealed class GradleBuildRoot {
+    class Unlinked : GradleBuildRoot()
 
-    abstract class Linked(
-        root: VirtualFile,
-        val settings: GradleProjectSettings
-    ) : GradleBuildRoot(root) {
+    abstract class Linked : GradleBuildRoot() {
         val importing = false
     }
 
-    class Legacy(
-        root: VirtualFile,
-        settings: GradleProjectSettings
-    ) : Linked(root, settings)
+    class Legacy : Linked()
 
-    class New(
-        root: VirtualFile,
-        settings: GradleProjectSettings
-    ) : Linked(root, settings)
+    class New : Linked()
 
     class Imported(
         val project: Project,
-        root: VirtualFile,
-        settings: GradleProjectSettings,
+        val dir: VirtualFile,
         val context: GradleKtsContext,
         val data: GradleImportedBuildRootData
-    ) : Linked(root, settings) {
-        val scriptDefinition: ScriptDefinition? by lazy {
+    ) : Linked() {
+        fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+            val javaHome = context.javaHome
+            javaHome?.let { builder.addSdk(it) }
+
             val anyScript = data.models.firstOrNull()?.let {
                 LocalFileSystem.getInstance().findFileByPath(it.file)
             }
 
-            anyScript?.findScriptDefinition(project)
-        }
-
-        fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
-            val javaHome = context.javaHome
-            javaHome?.let { builder.addSdk(it) }
+            val scriptDefinition: ScriptDefinition? = anyScript?.findScriptDefinition(project)
 
             if (scriptDefinition != null) {
                 builder.classes.addAll(data.templateClasspath)
             }
 
             data.models.forEach {
-                if (scriptDefinition != null) {
-                    builder.scripts[it.file] = ScriptInfo(this, it)
-                }
+                builder.scripts[it.file] = ScriptInfo(this, scriptDefinition, it)
 
                 builder.classes.addAll(it.classPath)
                 builder.sources.addAll(it.sourcePath)
@@ -80,14 +63,17 @@ sealed class GradleBuildRoot(
 
         class ScriptInfo(
             val buildRoot: Imported,
+            val scriptDefinition: ScriptDefinition?,
             val model: KotlinDslScriptModel
         ) : ScriptClassRootsCache.LightScriptInfo() {
-            override fun buildConfiguration(): ScriptCompilationConfigurationWrapper {
+            override fun buildConfiguration(): ScriptCompilationConfigurationWrapper? {
                 val javaHome = buildRoot.context.javaHome
-                val scriptDefinition = buildRoot.scriptDefinition!!
+                val scriptDefinition = scriptDefinition
 
                 val scriptFile = File(model.file)
                 val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
+
+                if (scriptDefinition == null) return null
 
                 return ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
                     VirtualFileScriptSource(virtualFile),
