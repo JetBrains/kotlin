@@ -19,6 +19,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
+/**
+ * Loader that performs loading for .gralde.kts scripts configuration through the [DefaultScriptingSupport]
+ *
+ * TODO(gradle6): remove
+ */
 class GradleScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : DefaultScriptConfigurationLoader(project) {
     override fun loadDependencies(
         isFirstLoad: Boolean,
@@ -43,6 +48,11 @@ class GradleScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : 
     }
 }
 
+/**
+ * Loader that performs loading for .gralde.kts scripts configuration through the [DefaultScriptingSupport]
+ *
+ * TODO(gradle6): remove
+ */
 class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean {
         return if (useScriptConfigurationFromImportOnly()) false else super.shouldRunInBackground(scriptDefinition)
