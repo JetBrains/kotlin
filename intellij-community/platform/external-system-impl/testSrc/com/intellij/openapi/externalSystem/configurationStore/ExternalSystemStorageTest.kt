@@ -121,7 +121,7 @@ class ExternalSystemStorageTest {
 
   private fun saveProjectAndCheckResult(testDataDirName: String, setupProject: (Project, Path) -> Unit) {
     runBlocking {
-      createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true) { project ->
+      createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true, useDefaultProjectSettings = false) { project ->
         ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(true)
         val projectDir = Paths.get(project.stateStore.directoryStorePath).parent
         val cacheDir = ExternalProjectsDataStorage.getProjectConfigurationDir(project)
