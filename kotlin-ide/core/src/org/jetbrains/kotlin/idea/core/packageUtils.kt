@@ -38,17 +38,17 @@ import java.nio.file.Paths
 
 fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
 
-fun PsiFile.getFqNameByDirectory(): FqName {
-    val qualifiedNameByDirectory = parent?.getPackage()?.qualifiedName
-    return qualifiedNameByDirectory?.let(::FqName) ?: FqName.ROOT
-}
+private fun PsiDirectory.getNonRootFqNameOrNull(): FqName? = getPackage()?.qualifiedName?.let(::FqName)
+
+fun PsiFile.getFqNameByDirectory(): FqName = parent?.getNonRootFqNameOrNull() ?: FqName.ROOT
 
 fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName? {
-    val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: return null
+    val packageFqName = getNonRootFqNameOrNull() ?: return null
     sourceRoot?.takeIf { !it.hasExplicitPackagePrefix(project) }?.let { sourceRoot ->
         val implicitPrefix = PerModulePackageCacheService.getInstance(project).getImplicitPackagePrefix(sourceRoot)
         return FqName.fromSegments((implicitPrefix.pathSegments() + packageFqName.pathSegments()).map { it.asString() })
     }
+
     return packageFqName
 }
 
