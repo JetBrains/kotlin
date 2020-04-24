@@ -13,6 +13,7 @@ import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.SkipCoroutineStackFrameProxyImpl
 import java.lang.Integer.min
 
 
@@ -82,7 +83,7 @@ class CoroutineFrameBuilder {
         ): RunningCoroutineStackFrameItem? {
             val location = frame.location()
             return if (!location.safeCoroutineExitPointLineNumber())
-                RunningCoroutineStackFrameItem(frame, location)
+                RunningCoroutineStackFrameItem(SkipCoroutineStackFrameProxyImpl(frame), location)
             else
                 null
         }

@@ -27,8 +27,6 @@ class CoroutineStackFrameInterceptor(val project: Project) : StackFrameIntercept
                 isInUnitTest() -> debugProcess.suspendManager.pausedContext
                 else -> debugProcess.debuggerContext.suspendContext
             }
-            if (!isInUnitTest())
-                assert(debugProcess.suspendManager.pausedContext === debugProcess.debuggerContext.suspendContext)
             suspendContextImpl?.let {
                 CoroutineFrameBuilder.coroutineExitFrame(frame, it)
             }

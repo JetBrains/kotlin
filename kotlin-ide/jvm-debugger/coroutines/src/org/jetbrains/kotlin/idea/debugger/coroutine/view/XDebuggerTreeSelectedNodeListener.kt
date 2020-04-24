@@ -58,11 +58,7 @@ class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XD
                     is RunningCoroutineStackFrameItem -> {
                         val threadProxy = stackFrameItem.frame.threadProxy()
                         val isCurrentContext = suspendContext.thread == threadProxy
-                        val executionStack = suspendContext.invokeInManagerThread { JavaExecutionStack(
-                            threadProxy,
-                            debugProcess,
-                            isCurrentContext) } ?: return false
-                        createStackAndSetFrame(threadProxy, { executionStack.createStackFrame(stackFrameItem.frame) }, isCurrentContext)
+                        createStackAndSetFrame(threadProxy, { it.createStackFrame(stackFrameItem.frame) }, isCurrentContext)
                     }
                     is CreationCoroutineStackFrameItem -> {
                         val position = stackFrameItem.stackTraceElement.findPosition(session.project) ?: return false
@@ -114,12 +110,13 @@ class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XD
 
     fun createStackAndSetFrame(
         threadReferenceProxy: ThreadReferenceProxyImpl,
-        stackFrameProvider: () -> XStackFrame?,
+        stackFrameProvider: (executionStack: JavaExecutionStack) -> XStackFrame?,
         isCurrentContext: Boolean = false
     ) {
         val stackFrameStack = debugProcess.invokeInManagerThread {
-            val stackFrame = stackFrameProvider.invoke() ?: return@invokeInManagerThread null
-            XStackFrameStack(stackFrame, createExecutionStack(threadReferenceProxy, isCurrentContext))
+            val executionStack = createExecutionStack(threadReferenceProxy, isCurrentContext);
+            val stackFrame = stackFrameProvider.invoke(executionStack) ?: return@invokeInManagerThread null
+            XStackFrameStack(stackFrame, executionStack)
         } ?: return
         setCurrentStackFrame(stackFrameStack)
     }
@@ -134,7 +131,7 @@ class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XD
 
     data class XStackFrameStack(val stackFrame: XStackFrame, val executionStack: XExecutionStack)
 
-    private fun createExecutionStack(proxy: ThreadReferenceProxyImpl, isCurrentContext: Boolean = false): XExecutionStack {
+    private fun createExecutionStack(proxy: ThreadReferenceProxyImpl, isCurrentContext: Boolean = false): JavaExecutionStack {
         val executionStack = JavaExecutionStack(proxy, debugProcess, isCurrentContext)
         executionStack.initTopFrame()
         return executionStack
