@@ -17,13 +17,12 @@ const val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
 
 object SMAPBuilder {
     fun build(fileMappings: List<FileMapping>, backwardsCompatibleSyntax: Boolean): String? {
-        val realMappings = fileMappings.filter { it.lineMappings.isNotEmpty() && it != FileMapping.SKIP }
-        if (realMappings.isEmpty()) {
+        if (fileMappings.isEmpty()) {
             return null
         }
 
         val debugMappings = linkedMapOf<Pair<String, String>, FileMapping>()
-        for (fileMapping in realMappings) {
+        for (fileMapping in fileMappings) {
             for ((_, dest, range, callSite) in fileMapping.lineMappings) {
                 callSite?.let { (line, file, path) ->
                     debugMappings.getOrPut(file to path) { FileMapping(file, path) }.mapNewInterval(line, dest, range)
@@ -35,7 +34,7 @@ object SMAPBuilder {
         //   1. they require *E between strata, which is not correct syntax according to JSR-045;
         //   2. in KotlinDebug, they use `1#2,3:4` to mean "map lines 4..6 to line 1 of #2", when in reality (and in
         //      the non-debug stratum) this maps lines 4..6 to lines 1..3. The correct syntax is `1#2:4,3`.
-        val defaultStrata = realMappings.toSMAP(KOTLIN_STRATA_NAME, mapToFirstLine = false)
+        val defaultStrata = fileMappings.toSMAP(KOTLIN_STRATA_NAME, mapToFirstLine = false)
         val debugStrata = debugMappings.values.toSMAP(KOTLIN_DEBUG_STRATA_NAME, mapToFirstLine = !backwardsCompatibleSyntax)
         if (backwardsCompatibleSyntax && defaultStrata.isNotEmpty() && debugStrata.isNotEmpty()) {
             return "SMAP\n${fileMappings[0].name}\n$KOTLIN_STRATA_NAME\n$defaultStrata${SMAP.END}\n$debugStrata${SMAP.END}\n"
@@ -72,14 +71,8 @@ class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val call
             return mappedLineNumber
         }
 
-        val range = lastVisitedRange?.takeIf { lineNumber in it }
-            ?: smap.findRange(lineNumber)
-            ?: error("Can't find range to map line $lineNumber in ${smap.sourceInfo.source}: ${smap.sourceInfo.pathOrCleanFQN}")
-        val inlineSource = range.mapDestToSource(lineNumber)
-        if (inlineSource.line < 0) {
-            return -1
-        }
-        val newLineNumber = parent.mapLineNumber(inlineSource, callSite ?: range.callSite)
+        val range = lastVisitedRange?.takeIf { lineNumber in it } ?: smap.findRange(lineNumber) ?: return -1
+        val newLineNumber = parent.mapLineNumber(range.mapDestToSource(lineNumber), callSite ?: range.callSite)
         visitedLines.put(lineNumber, newLineNumber)
         lastVisitedRange = range
         return newLineNumber
@@ -113,13 +106,7 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
     }
 }
 
-private fun FileMapping.toSourceInfo(): SourceInfo =
-    SourceInfo(name, path, lineMappings.fold(0) { result, mapping -> max(result, mapping.source + mapping.range - 1) })
-
 class SMAP(val fileMappings: List<FileMapping>) {
-    val sourceInfo: SourceInfo
-        get() = fileMappings.firstOrNull()?.toSourceInfo() ?: throw AssertionError("no files mapped")
-
     // assuming disjoint line mappings (otherwise binary search can't be used anyway)
     private val intervals = fileMappings.flatMap { it.lineMappings }.sortedBy { it.dest }
 
@@ -141,6 +128,9 @@ data class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP)
 class FileMapping(val name: String, val path: String) {
     val lineMappings = arrayListOf<RangeMapping>()
 
+    fun toSourceInfo(): SourceInfo =
+        SourceInfo(name, path, lineMappings.fold(0) { result, mapping -> max(result, mapping.source + mapping.range - 1) })
+
     fun mapNewLineNumber(source: Int, currentIndex: Int, callSite: SourcePosition?): Int {
         // Save some space in the SMAP by reusing (or extending if it's the last one) the existing range.
         // TODO some *other* range may already cover `source`; probably too slow to check them all though.
@@ -157,28 +147,20 @@ class FileMapping(val name: String, val path: String) {
 
     fun mapNewInterval(source: Int, dest: Int, range: Int, callSite: SourcePosition? = null): RangeMapping =
         RangeMapping(source, dest, range, callSite, parent = this).also { lineMappings.add(it) }
-
-    companion object {
-        val SKIP = FileMapping("no-source-info", "no-source-info").apply {
-            mapNewInterval(-1, -1, 1)
-        }
-    }
 }
 
 data class RangeMapping(val source: Int, val dest: Int, var range: Int, val callSite: SourcePosition?, val parent: FileMapping) {
-    private val skip = source == -1 && dest == -1
-
     operator fun contains(destLine: Int): Boolean =
-        skip || (dest <= destLine && destLine < dest + range)
+        dest <= destLine && destLine < dest + range
 
     fun hasMappingForSource(sourceLine: Int): Boolean =
-        skip || (source <= sourceLine && sourceLine < source + range)
+        source <= sourceLine && sourceLine < source + range
 
     fun mapDestToSource(destLine: Int): SourcePosition =
-        SourcePosition(if (skip) -1 else source + (destLine - dest), parent.name, parent.path)
+        SourcePosition(source + (destLine - dest), parent.name, parent.path)
 
     fun mapSourceToDest(sourceLine: Int): Int =
-        if (skip) -1 else dest + (sourceLine - source)
+        dest + (sourceLine - source)
 }
 
 val RangeMapping.toRange: IntRange

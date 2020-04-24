@@ -24,7 +24,7 @@ object SMAPParser {
             parseOrNull(mappingInfo)?.let { return it }
         }
         if (source == null || source.isEmpty() || methodStartLine > methodEndLine) {
-            return SMAP(listOf(FileMapping.SKIP))
+            return SMAP(listOf())
         }
         val mapping = FileMapping(source, path).apply {
             mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
