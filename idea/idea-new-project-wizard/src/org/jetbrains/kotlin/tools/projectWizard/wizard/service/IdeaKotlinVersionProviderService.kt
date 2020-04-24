@@ -33,13 +33,10 @@ class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizar
         KotlinCompilerVersion.getVersion()
             ?.takeUnless { it.contains(SNAPSHOT_TAG, ignoreCase = true) }
             ?.let { Version.fromString(it) }
-
-    companion object {
-        @NonNls
-        private const val SNAPSHOT_TAG = "snapshot"
-    }
 }
 
+@NonNls
+private const val SNAPSHOT_TAG = "snapshot"
 
 private object VersionsDownloader {
     fun downloadLatestEapOrStableKotlinVersion(): Version? =
@@ -56,7 +53,7 @@ private object VersionsDownloader {
 
     private fun getLatestStableVersion() = safe {
         ConfigureDialogWithModulesAndVersion.loadVersions("1.0.0")
-    }.asNullable?.firstOrNull()?.let { Version.fromString(it) }
+    }.asNullable?.firstOrNull { !it.contains(SNAPSHOT_TAG, ignoreCase = true) }?.let { Version.fromString(it) }
 }
 
 private object EapVersionDownloader {
