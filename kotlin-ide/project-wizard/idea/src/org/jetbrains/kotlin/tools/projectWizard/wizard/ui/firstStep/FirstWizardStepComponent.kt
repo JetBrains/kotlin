@@ -49,13 +49,15 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
         component.addBorder(JBUI.Borders.empty(0, /*left&right*/4))
     }
     private val buildSystemAdditionalSettingsComponent = BuildSystemAdditionalSettingsComponent(ideWizard).asSubComponent()
+    private val jdkComponent = JdkComponent(ideWizard).asSubComponent()
 
     private val nameAndLocationComponent = TitledComponentsList(
         listOf(
             StructurePlugin::name.reference.createSettingComponent(context),
             StructurePlugin::projectPath.reference.createSettingComponent(context),
             projectTemplateComponent,
-            buildSystemSetting
+            buildSystemSetting,
+            jdkComponent
         ),
         context,
         stretchY = true,
@@ -171,7 +173,6 @@ private class PomSettingsComponent(context: Context) : TitledComponentsList(
 class KotlinJpsRuntimeComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizard.context) {
     private val componentList = TitledComponentsList(
         listOf(
-            JdkComponent(ideWizard),
             KotlinRuntimeComponentComponent(ideWizard)
         ),
         ideWizard.context,
@@ -187,9 +188,9 @@ private class JdkComponent(ideWizard: IdeWizard) : TitledComponent(ideWizard.con
         ProjectSdksModel().apply { reset(null) },
         Condition(javaModuleBuilder::isSuitableSdkType)
     ).apply {
-        ideWizard.jpsData.jdk = selectedJdk
+        ideWizard.jdk = selectedJdk
         addActionListener {
-            ideWizard.jpsData.jdk = selectedJdk
+            ideWizard.jdk = selectedJdk
         }
     }
 
