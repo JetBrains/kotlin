@@ -204,7 +204,7 @@ internal val psiToIrPhase = konanUnitPhase(
                     }.reversed()
                 }
 
-                for (dependency in sortDependencies(dependencies)) {
+                for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
                     val kotlinLibrary = dependency.getCapability(KlibModuleOrigin.CAPABILITY)?.let {
                         (it as? DeserializedKlibModuleOrigin)?.library
                     }
