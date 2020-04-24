@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ReceiverKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
 import org.jetbrains.kotlin.resolve.calls.model.unwrap
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.SubKotlinCallArgumentImpl
 import org.jetbrains.kotlin.resolve.calls.tower.receiverValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
@@ -78,7 +80,13 @@ fun ResolvedCall<*>.hasLastFunctionalParameterWithResult(context: BindingContext
         // TODO: looks like hack
         resolvedCallAtom.subResolvedAtoms?.firstOrNull { it is ResolvedLambdaAtom }.safeAs<ResolvedLambdaAtom>()?.let { lambdaAtom ->
             return lambdaAtom.unwrap().resultArgumentsInfo!!.nonErrorArguments.filterIsInstance<ReceiverKotlinCallArgument>().all {
-                val type = it.receiverValue?.type ?: return@all false
+                val type = it.receiverValue?.type?.let { type ->
+                    if (type.constructor is TypeVariableTypeConstructor) {
+                        it.safeAs<SubKotlinCallArgumentImpl>()?.valueArgument?.getArgumentExpression()?.getType(context) ?: type
+                    } else {
+                        type
+                    }
+                } ?: return@all false
                 predicate(type)
             }
         }
