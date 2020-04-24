@@ -42,7 +42,7 @@ class TestingBackgroundExecutor internal constructor(
 
         actions()
 
-        rootsManager.transaction {
+        rootsManager.update {
             copy.forEach {
                 it.actions()
             }

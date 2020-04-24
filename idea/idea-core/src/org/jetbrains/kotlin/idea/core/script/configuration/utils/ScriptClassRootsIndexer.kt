@@ -10,31 +10,29 @@ import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Utility for postponing indexing of new roots to the end of some bulk operation.
  */
 class ScriptClassRootsIndexer(val project: Project) {
-    private var newRootsPresent: Boolean = false
-    private val concurrentTransactions = AtomicInteger()
+    private var invalidated: Boolean = false
+    private val concurrentUpdates = AtomicInteger()
 
     @Synchronized
-    fun markNewRoot() {
+    fun invalidate() {
         checkInTransaction()
-        newRootsPresent = true
+        invalidated = true
     }
 
     fun checkInTransaction() {
-        check(concurrentTransactions.get() > 0)
+        check(concurrentUpdates.get() > 0)
     }
 
-    inline fun <T> transaction(body: () -> T): T {
+    inline fun <T> update(body: () -> T): T {
         startTransaction()
         return try {
             body()
@@ -44,11 +42,11 @@ class ScriptClassRootsIndexer(val project: Project) {
     }
 
     fun startTransaction() {
-        concurrentTransactions.incrementAndGet()
+        concurrentUpdates.incrementAndGet()
     }
 
     fun commit() {
-        concurrentTransactions.decrementAndGet()
+        concurrentUpdates.decrementAndGet()
 
         // run indexing even in inner transaction
         // (outer transaction may be async, so it would be better to not wait it)
@@ -57,8 +55,8 @@ class ScriptClassRootsIndexer(val project: Project) {
 
     @Synchronized
     private fun startIndexingIfNeeded() {
-        if (!newRootsPresent) return
-        newRootsPresent = false
+        if (!invalidated) return
+        invalidated = false
 
         val doNotifyRootsChanged = Runnable {
             runWriteAction {

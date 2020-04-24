@@ -31,7 +31,7 @@ interface ScriptConfigurationCache {
     fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
     fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
 
-    fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper>
+    fun allApplied(): List<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
     fun clear()
 
     fun getAnyLoadedScript(): ScriptCompilationConfigurationWrapper?

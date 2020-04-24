@@ -37,21 +37,21 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
 
-class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(project) {
+class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : DefaultScriptingSupportBase(manager) {
     // TODO public for tests
     val backgroundExecutor: BackgroundExecutor =
-        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(rootsIndexer)
-        else DefaultBackgroundExecutor(project, rootsIndexer)
+        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager.rootsUpdater)
+        else DefaultBackgroundExecutor(project, manager.rootsUpdater)
 
     private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
     private val defaultLoader = DefaultScriptConfigurationLoader(project)
-    private val loaders: Sequence<ScriptConfigurationLoader>
-        get() = sequence {
-            yield(outsiderLoader)
-            yield(fileAttributeCache)
-            yieldAll(LOADER.getPoint(project).extensionList)
-            yield(defaultLoader)
+    private val loaders: List<ScriptConfigurationLoader>
+        get() = mutableListOf<ScriptConfigurationLoader>().apply {
+            add(outsiderLoader)
+            add(fileAttributeCache)
+            addAll(LOADER.getPoint(project).extensionList)
+            add(defaultLoader)
         }
 
     private val saveLock = ReentrantLock()
@@ -166,7 +166,7 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return null
         val scriptDefinition = file.findScriptDefinition() ?: return null
 
-        rootsIndexer.transaction {
+        manager.rootsUpdater.update {
             if (!loader.shouldRunInBackground(scriptDefinition)) {
                 loader.loadDependencies(false, file, scriptDefinition, loadingContext)
             } else {
@@ -240,7 +240,7 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
                             onClick = {
                                 saveReports(file, newResult.reports)
                                 file.removeScriptDependenciesNotificationPanel(project)
-                                rootsIndexer.transaction {
+                                manager.rootsUpdater.update {
                                     setAppliedConfiguration(file, newResult)
                                 }
                             }
@@ -274,8 +274,9 @@ class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(pr
     }
 }
 
-abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupport() {
-    protected val rootsIndexer = ScriptClassRootsIndexer(project)
+abstract class DefaultScriptingSupportBase(manager: CompositeScriptConfigurationManager) : ScriptingSupport(manager) {
+    val project: Project
+        get() = manager.project
 
     @Suppress("LeakingThis")
     protected val cache: ScriptConfigurationCache = createCache()
@@ -318,7 +319,7 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         return !hasCachedConfiguration(file) && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
     }
 
-    override fun getOrLoadConfiguration(
+    fun getOrLoadConfiguration(
         virtualFile: VirtualFile,
         preloadedKtFile: KtFile?
     ): ScriptCompilationConfigurationWrapper? {
@@ -326,7 +327,7 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         if (cached != null) return cached.configuration
 
         val ktFile = project.getKtFile(virtualFile, preloadedKtFile) ?: return null
-        rootsIndexer.transaction {
+        manager.rootsUpdater.update {
             reloadOutOfDateConfiguration(ktFile, isFirstLoad = true)
         }
 
@@ -351,7 +352,7 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
         var upToDate = true
-        rootsIndexer.transaction {
+        manager.rootsUpdater.update {
             files.forEach { file ->
                 val virtualFile = file.originalFile.virtualFile
                 if (virtualFile != null) {
@@ -376,19 +377,13 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         file: VirtualFile,
         newConfigurationSnapshot: ScriptConfigurationSnapshot?
     ) {
-        rootsIndexer.checkInTransaction()
+        manager.rootsUpdater.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
         debug(file) { "configuration changed = $newConfiguration" }
 
         if (newConfiguration != null) {
-            if (hasNotCachedRoots(newConfiguration)) {
-                debug(file) { "new class roots found: $newConfiguration" }
-                rootsIndexer.markNewRoot()
-            }
-
+            manager.rootsUpdater.invalidate()
             cache.setApplied(file, newConfigurationSnapshot)
-
-            clearClassRootsCaches(project)
         }
 
         ScriptingSupportHelper.updateHighlighting(project) {
@@ -403,10 +398,6 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         cache.setLoaded(file, configurationSnapshot)
     }
 
-    private fun hasNotCachedRoots(configuration: ScriptCompilationConfigurationWrapper): Boolean {
-        return classpathRoots.hasNotCachedRoots(DefaultClassRootsCache.extractRoots(project, configuration))
-    }
-
     @TestOnly
     internal fun updateScriptDependenciesSynchronously(file: PsiFile) {
         file.findScriptDefinition() ?: return
@@ -416,7 +407,7 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         val virtualFile = file.virtualFile
         if (cache[virtualFile]?.isUpToDate(project, virtualFile, file) == true) return
 
-        rootsIndexer.transaction {
+        manager.rootsUpdater.update {
             reloadOutOfDateConfiguration(file, forceSync = true, loadEvenWillNotBeApplied = true)
         }
     }
@@ -425,11 +416,8 @@ abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupp
         cache.clear()
     }
 
-    override fun recreateRootsCache(): ScriptClassRootsCache {
-        return DefaultClassRootsCache(
-            project,
-            cache.allApplied()
-        )
+    override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+        cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
     }
 }
 
