@@ -1,7 +1,6 @@
 description = "Kotlin compiler client embeddable"
 
 plugins {
-    maven
     kotlin("jvm")
 }
 
