@@ -94,7 +94,7 @@ public class BaseAnalysisActionDialog extends DialogWrapper {
     myAnalysisNoon = analysisNoon;
     myProject = project;
 
-    myViewItems = ModelScopeItemPresenter.createOrderedViews(items);
+    myViewItems = ModelScopeItemPresenter.createOrderedViews(items, getDisposable());
     myOptions = options;
     myRememberScope = rememberScope;
     myShowInspectTestSource = showInspectTestSource;

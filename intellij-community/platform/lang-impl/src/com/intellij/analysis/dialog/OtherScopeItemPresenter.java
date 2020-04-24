@@ -4,6 +4,7 @@
 package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,7 @@ public class OtherScopeItemPresenter implements ModelScopeItemPresenter {
 
   @NotNull
   @Override
-  public List<JComponent> getAdditionalComponents(JRadioButton b, ModelScopeItem m) {
+  public List<JComponent> getAdditionalComponents(JRadioButton b, ModelScopeItem m, Disposable dialogDisposable) {
     return Collections.emptyList();
   }
 

@@ -5,6 +5,7 @@ package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.ModelScopeItemView;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,18 +24,18 @@ public interface ModelScopeItemPresenter {
   JRadioButton getButton(ModelScopeItem model);
 
   @NotNull
-  List<JComponent> getAdditionalComponents(JRadioButton button, ModelScopeItem model);
+  List<JComponent> getAdditionalComponents(JRadioButton button, ModelScopeItem model, Disposable dialogDisposable);
 
   boolean isApplicable(ModelScopeItem model);
 
   @NotNull
-  static List<ModelScopeItemView> createOrderedViews(List<? extends ModelScopeItem> models) {
+  static List<ModelScopeItemView> createOrderedViews(List<? extends ModelScopeItem> models, Disposable dialogDisposable) {
     List<ModelScopeItemView> result = new ArrayList<>();
     for (ModelScopeItemPresenter presenter : EP_NAME.getExtensions()) {
       for (ModelScopeItem model : models) {
         if (presenter.isApplicable(model)) {
           JRadioButton button = presenter.getButton(model);
-          List<JComponent> components = presenter.getAdditionalComponents(button, model);
+          List<JComponent> components = presenter.getAdditionalComponents(button, model, dialogDisposable);
           int id = presenter.getScopeId();
           result.add(new ModelScopeItemView(button, components, model, id));
           break;

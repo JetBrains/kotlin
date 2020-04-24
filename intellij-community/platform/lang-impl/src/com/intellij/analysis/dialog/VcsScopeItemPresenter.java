@@ -3,6 +3,7 @@ package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.SimpleListCellRenderer;
@@ -30,7 +31,7 @@ public class VcsScopeItemPresenter implements ModelScopeItemPresenter {
 
   @NotNull
   @Override
-  public List<JComponent> getAdditionalComponents(JRadioButton button, ModelScopeItem m) {
+  public List<JComponent> getAdditionalComponents(JRadioButton button, ModelScopeItem m, Disposable dialogDisposable) {
     VcsScopeItem model = (VcsScopeItem)m;
     ComboBox<String> myChangeLists = new ComboBox<>();
     myChangeLists.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {

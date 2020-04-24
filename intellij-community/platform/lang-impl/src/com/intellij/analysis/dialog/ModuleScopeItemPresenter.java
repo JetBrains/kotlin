@@ -5,6 +5,7 @@ package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -29,7 +30,7 @@ public class ModuleScopeItemPresenter implements ModelScopeItemPresenter {
 
   @NotNull
   @Override
-  public List<JComponent> getAdditionalComponents(JRadioButton b, ModelScopeItem m) {
+  public List<JComponent> getAdditionalComponents(JRadioButton b, ModelScopeItem m, Disposable dialogDisposable) {
     return Collections.emptyList();
   }
 
