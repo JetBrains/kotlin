@@ -12,6 +12,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
@@ -527,7 +528,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     PropertyReferenceCodegen.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
                     int flags =
                             (isTopLevelCallableReference(functionReferenceTarget) ? 1 : 0) +
-                            (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor) << 1);
+                            (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor, classDescriptor) << 1);
                     iv.aconst(flags);
                     superCtorArgTypes.add(JAVA_CLASS_TYPE);
                     superCtorArgTypes.add(JAVA_STRING_TYPE);
@@ -551,10 +552,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     private static int calculateFunctionReferenceFlags(
-            @NotNull ResolvedCall<?> call, @NotNull FunctionDescriptor anonymousAdaptedFunction
+            @NotNull ResolvedCall<?> call,
+            @NotNull FunctionDescriptor anonymousAdaptedFunction,
+            @NotNull ClassDescriptor classDescriptor
     ) {
         boolean hasVarargMappedToElement = false;
-        CallableDescriptor target = call.getResultingDescriptor();
+        FunctionDescriptor target = (FunctionDescriptor) call.getResultingDescriptor();
         int shift =
                 (call.getDispatchReceiver() instanceof TransientReceiver ? 1 : 0) +
                 (call.getExtensionReceiver() instanceof TransientReceiver ? 1 : 0);
@@ -577,8 +580,13 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         boolean hasCoercionToUnit = KotlinBuiltIns.isUnit(anonymousAdaptedFunction.getReturnType()) &&
                                     !KotlinBuiltIns.isUnit(target.getReturnType());
 
+        boolean hasSuspendConversion =
+                !target.isSuspend() &&
+                classDescriptor.getTypeConstructor().getSupertypes().stream().anyMatch(FunctionTypesKt::isSuspendFunctionType);
+
         return (hasVarargMappedToElement ? 1 : 0) +
-               ((hasCoercionToUnit ? 1 : 0) << 1);
+               (hasSuspendConversion ? 2 : 0) +
+               ((hasCoercionToUnit ? 1 : 0) << 2);
     }
 
     protected int calculateArity() {
