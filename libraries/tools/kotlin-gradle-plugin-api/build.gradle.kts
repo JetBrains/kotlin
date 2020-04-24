@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     kotlin("jvm")
-    maven
     id("jps-compatible")
 }
 
