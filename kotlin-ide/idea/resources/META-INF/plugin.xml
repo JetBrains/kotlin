@@ -120,5 +120,33 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                                   implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveKotlinInnerHandler"/>
 
     <defaultLiveTemplates file="liveTemplates/Kotlin.xml"/>
+
+    <fileType name="Kotlin"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"
+              fieldName="INSTANCE"
+              language="kotlin"
+              extensions="kt;kts"/>
+    <fileType name="KLib"
+              implementationClass="org.jetbrains.kotlin.idea.KLibFileType"
+              fieldName="INSTANCE"
+              extensions="klib"/>
+    <fileType name="KNM"
+              implementationClass="org.jetbrains.kotlin.idea.klib.KlibMetaFileType"
+              fieldName="INSTANCE"
+              extensions="knm"/>
+    <fileType name="KJSM"
+              implementationClass="org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType"
+              fieldName="INSTANCE"
+              extensions="kjsm"/>
+
+    <fileType name="kotlin_builtins"
+              implementationClass="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType"
+              fieldName="INSTANCE"
+              extensions="kotlin_builtins;kotlin_metadata"/>
+
+    <fileType name="kotlin_module"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinModuleFileType"
+              fieldName="INSTANCE"
+              extensions="kotlin_module"/>
   </extensions>
 </idea-plugin>

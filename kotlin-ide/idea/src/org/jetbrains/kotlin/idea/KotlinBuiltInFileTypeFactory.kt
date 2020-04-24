@@ -21,6 +21,7 @@ import com.intellij.openapi.fileTypes.FileTypeFactory
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 
+// BUNCH: 192
 class KotlinBuiltInFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {
         consumer.consume(KotlinBuiltInFileType, KotlinBuiltInFileType.defaultExtension)
