@@ -23,8 +23,6 @@ import java.util.Set;
  */
 public interface LanguageCompilerRefAdapter {
   ExtensionPointName<LanguageCompilerRefAdapter> EP_NAME = ExtensionPointName.create("com.intellij.languageCompilerRefAdapter");
-  
-  LanguageCompilerRefAdapter[] INSTANCES = EP_NAME.getExtensions();
 
   @Nullable
   static LanguageCompilerRefAdapter findAdapter(@NotNull VirtualFile file) {
@@ -34,7 +32,7 @@ public interface LanguageCompilerRefAdapter {
 
   @Nullable
   static LanguageCompilerRefAdapter findAdapter(@NotNull FileType fileType) {
-    for (LanguageCompilerRefAdapter adapter : INSTANCES) {
+    for (LanguageCompilerRefAdapter adapter : EP_NAME.getExtensionList()) {
       if (adapter.getFileTypes().contains(fileType)) {
         return adapter;
       }
