@@ -63,6 +63,10 @@ public class ForTestCompileRuntime {
         return assertExists(new File("dist/kotlinc/lib/kotlin-script-runtime.jar"));
     }
 
+    public static @NotNull File kotlinCompilerJarForTests() {
+        return assertExists(new File("dependencies/repo/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4-SNAPSHOT/kotlin-compiler-for-ide-1.4-SNAPSHOT.jar"));
+    }
+
     @NotNull
     public static File runtimeSourcesJarForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
