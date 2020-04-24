@@ -70,7 +70,8 @@ class PostponedArgumentsAnalyzer(
         c: Context,
         resolutionCallbacks: KotlinResolutionCallbacks,
         lambda: ResolvedLambdaAtom,
-        diagnosticHolder: KotlinDiagnosticsHolder
+        diagnosticHolder: KotlinDiagnosticsHolder,
+        shouldRunInIndependentContext: Boolean = false
     ): ReturnArgumentsAnalysisResult {
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
@@ -128,7 +129,8 @@ class PostponedArgumentsAnalyzer(
             parameters,
             expectedTypeForReturnArguments,
             convertedAnnotations ?: Annotations.EMPTY,
-            stubsForPostponedVariables.cast()
+            stubsForPostponedVariables.cast(),
+            shouldRunInIndependentContext
         )
         val (returnArgumentsInfo, inferenceSession, inferedReturnType, hasInapplicableCallForBuilderInference) =
             returnArgumentsAnalysisResult

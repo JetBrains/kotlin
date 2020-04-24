@@ -115,7 +115,8 @@ class KotlinCallCompleter(
             firstCandidate.getSystem().asPostponedArgumentsAnalyzerContext(),
             resolutionCallbacks,
             firstAtom,
-            diagnosticHolderForLambda
+            diagnosticHolderForLambda,
+            shouldRunInIndependentContext = true
         )
         lambdas.getValue(firstCandidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(firstAtom))
 

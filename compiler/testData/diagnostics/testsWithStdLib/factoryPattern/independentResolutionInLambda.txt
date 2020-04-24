@@ -1,0 +1,36 @@
+package
+
+public fun </*0*/ K : kotlin.Any> elvis(/*0*/ x: K?, /*1*/ y: K): K
+public fun test(/*0*/ a: A): kotlin.Unit
+@kotlin.jvm.JvmName(name = "myFlatMapIterable") @annotations.FactoryPattern public fun </*0*/ T, /*1*/ R> kotlin.sequences.Sequence<T>.myFlatMap(/*0*/ transform: (T) -> kotlin.collections.Iterable<R>): kotlin.sequences.Sequence<R>
+public fun </*0*/ T, /*1*/ R> kotlin.sequences.Sequence<T>.myFlatMap(/*0*/ transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.sequences.Sequence<R>
+
+public interface A {
+    public abstract val supertypes: kotlin.collections.Collection<B>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B {
+    public abstract val descriptors: kotlin.sequences.Sequence<C>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package annotations {
+
+    public final annotation class FactoryPattern : kotlin.Annotation {
+        public constructor FactoryPattern()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

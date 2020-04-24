@@ -95,7 +95,8 @@ class KotlinResolutionCallbacksImpl(
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
+        shouldRunInIndependentContext: Boolean
     ): ReturnArgumentsAnalysisResult {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
@@ -137,7 +138,7 @@ class KotlinResolutionCallbacksImpl(
 
         val lambdaInfo = LambdaInfo(
             expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
-            if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT
+            if (expectedReturnType != null || shouldRunInIndependentContext) ContextDependency.INDEPENDENT else ContextDependency.DEPENDENT
         )
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns

@@ -1800,6 +1800,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/factoryPattern"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
+        @TestMetadata("independentResolutionInLambda.kt")
+        public void testIndependentResolutionInLambda() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/independentResolutionInLambda.kt");
+        }
+
         @TestMetadata("overloadByLambdaReturnType_disabled.kt")
         public void testOverloadByLambdaReturnType_disabled() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_disabled.kt");

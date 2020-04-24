@@ -72,7 +72,8 @@ interface KotlinResolutionCallbacks {
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
+        shouldRunInIndependentContext: Boolean = false
     ): ReturnArgumentsAnalysisResult
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
