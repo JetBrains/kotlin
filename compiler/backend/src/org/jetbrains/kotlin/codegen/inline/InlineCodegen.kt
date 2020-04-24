@@ -614,7 +614,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     callableDescriptor.name.asString() == "arrayOf" -> IntrinsicArrayConstructors.generateArrayOfBody(asmMethod)
                     else -> throw UnsupportedOperationException("Not an array intrinsic: $callableDescriptor")
                 }
-                return SMAPAndMethodNode(body, SMAP(listOf(FileMapping.SKIP)))
+                return SMAPAndMethodNode(body, SMAP(listOf()))
             }
 
             assert(callableDescriptor is DescriptorWithContainerSource) { "Not a deserialized function or proper: $callableDescriptor" }

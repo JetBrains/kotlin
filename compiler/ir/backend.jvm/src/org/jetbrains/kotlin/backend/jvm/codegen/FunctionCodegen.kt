@@ -91,7 +91,7 @@ class FunctionCodegen(
         val notForInline = irFunction.suspendForInlineToOriginal()
         val smap = if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
-            SMAP(listOf(FileMapping.SKIP))
+            SMAP(listOf())
         } else if (notForInline != null) {
             val (originalNode, smap) = classCodegen.generateMethodNode(notForInline)
             originalNode.accept(MethodBodyVisitor(methodVisitor))
