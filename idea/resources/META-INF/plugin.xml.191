@@ -131,5 +131,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
 
       <defaultLiveTemplatesProvider implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinLiveTemplatesProvider"/>
+
+      <fileTypeFactory implementation="org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory"/>
+      <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinJavaScriptMetaFileTypeFactory"/>
+      <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinBuiltInFileTypeFactory"/>
+      <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinModuleFileFactory"/>
     </extensions>
 </idea-plugin>

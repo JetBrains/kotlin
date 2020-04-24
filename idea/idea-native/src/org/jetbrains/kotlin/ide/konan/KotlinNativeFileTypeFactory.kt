@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ide.konan
 import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
 
+// BUNCH: 192
 class KotlinNativeFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {
         consumer.consume(NativeDefinitionsFileType, KOTLIN_NATIVE_DEFINITIONS_FILE_EXTENSION)

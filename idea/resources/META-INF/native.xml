@@ -4,5 +4,10 @@
 
         <applicationService serviceImplementation="org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache" />
         <projectService serviceImplementation="org.jetbrains.kotlin.ide.konan.KotlinNativeABICompatibilityCheckerService" />
+
+        <fileType name="Kotlin/Native Def"
+                  implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsFileType"
+                  fieldName="INSTANCE"
+                  extensions="def"/>
     </extensions>
 </idea-plugin>

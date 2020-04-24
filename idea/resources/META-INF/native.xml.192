@@ -10,4 +10,9 @@
             <implementation-class>org.jetbrains.kotlin.ide.konan.KotlinNativeABICompatibilityChecker</implementation-class>
         </component>
     </project-components>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeFileTypeFactory"/>
+    </extensions>
+
 </idea-plugin>
