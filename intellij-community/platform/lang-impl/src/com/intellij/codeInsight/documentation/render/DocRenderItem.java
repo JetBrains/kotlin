@@ -407,18 +407,8 @@ public class DocRenderItem {
       Document document = highlighter.getDocument();
       int startLine = document.getLineNumber(highlighter.getStartOffset());
       int endLine = document.getLineNumber(highlighter.getEndOffset());
-      int endOffset = document.getLineEndOffset(endLine);
-      int nextLineOffset = endLine < document.getLineCount() - 1 ? document.getLineStartOffset(endLine + 1) : endOffset;
-      if (startLine == 0) {
-        inlayOffset = 0;
-        foldStartOffset = 0;
-        foldEndOffset = nextLineOffset;
-      }
-      else {
-        inlayOffset = nextLineOffset;
-        foldStartOffset = document.getLineEndOffset(startLine - 1);
-        foldEndOffset = endOffset;
-      }
+      inlayOffset = foldStartOffset = document.getLineStartOffset(startLine);
+      foldEndOffset = endLine < document.getLineCount() - 1 ? document.getLineStartOffset(endLine + 1) : document.getLineEndOffset(endLine);
     }
 
     private boolean match(FoldRegion foldRegion, Inlay inlay) {
