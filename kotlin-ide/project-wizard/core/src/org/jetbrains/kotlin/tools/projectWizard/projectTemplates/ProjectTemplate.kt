@@ -229,6 +229,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
             MultiplatformModule(
                 "application",
                 listOf(
+                    ModuleType.common.createDefaultTarget(),
                     ModuleType.jvm.createDefaultTarget().apply {
                         withTemplate(KtorServerTemplate()) {
                             template.serverEngine withValue KtorServerEngine.Netty
