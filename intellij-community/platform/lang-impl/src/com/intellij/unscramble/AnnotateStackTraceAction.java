@@ -3,11 +3,12 @@ package com.intellij.unscramble;
 
 import com.intellij.execution.filters.FileHyperlinkInfo;
 import com.intellij.execution.filters.HyperlinkInfo;
+import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.impl.EditorHyperlinkSupport;
-import com.intellij.icons.AllIcons;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -55,28 +56,24 @@ import java.util.*;
 public class AnnotateStackTraceAction extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(AnnotateStackTraceAction.class);
 
-  private final EditorHyperlinkSupport myHyperlinks;
-  private final Editor myEditor;
-
   private boolean myIsLoading = false;
-
-  public AnnotateStackTraceAction(@NotNull Editor editor, @NotNull EditorHyperlinkSupport hyperlinks) {
-    super(LangBundle.messagePointer("action.AnnotateStackTraceAction.show.files.modification.info.text"), AllIcons.Actions.Annotate);
-    myHyperlinks = hyperlinks;
-    myEditor = editor;
-  }
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    boolean isShown = myEditor.getGutter().isAnnotationsShown();
-    e.getPresentation().setEnabled(!isShown && !myIsLoading);
+    ConsoleViewImpl consoleView = (ConsoleViewImpl)e.getData(LangDataKeys.CONSOLE_VIEW);
+    boolean isShown = consoleView != null && consoleView.getEditor().getGutter().isAnnotationsShown();
+    e.getPresentation().setEnabled(consoleView != null && !isShown && !myIsLoading);
   }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     myIsLoading = true;
+    ConsoleViewImpl consoleView = (ConsoleViewImpl)e.getData(LangDataKeys.CONSOLE_VIEW);
+    if (consoleView == null) return;
+    Editor editor = consoleView.getEditor();
+    EditorHyperlinkSupport hyperlinks = consoleView.getHyperlinks();
 
-    ProgressManager.getInstance().run(new Task.Backgroundable(myEditor.getProject(),
+    ProgressManager.getInstance().run(new Task.Backgroundable(editor.getProject(),
                                                               LangBundle.message("progress.title.getting.file.history"), true) {
       private final Object LOCK = new Object();
       private final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("AnnotateStackTraceAction", 200, true, null);
@@ -85,7 +82,7 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
 
       @Override
       public void onCancel() {
-        myEditor.getGutter().closeAllAnnotations();
+        editor.getGutter().closeAllAnnotations();
       }
 
       @Override
@@ -100,9 +97,9 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
         Map<Integer, LastRevision> revisions = new HashMap<>();
 
         ApplicationManager.getApplication().runReadAction(() -> {
-          for (int line = 0; line < myEditor.getDocument().getLineCount(); line++) {
+          for (int line = 0; line < editor.getDocument().getLineCount(); line++) {
             indicator.checkCanceled();
-            VirtualFile file = getHyperlinkVirtualFile(myHyperlinks.findAllHyperlinksOnLine(line));
+            VirtualFile file = getHyperlinkVirtualFile(hyperlinks.findAllHyperlinksOnLine(line));
             if (file == null) continue;
 
             files2lines.putValue(file, line);
@@ -140,8 +137,8 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
         if (indicator.isCanceled()) return;
 
         if (myGutter == null) {
-          myGutter = new MyActiveAnnotationGutter(getProject(), myHyperlinks, indicator);
-          myEditor.getGutter().registerTextAnnotation(myGutter, myGutter);
+          myGutter = new MyActiveAnnotationGutter(getProject(), hyperlinks, indicator);
+          editor.getGutter().registerTextAnnotation(myGutter, myGutter);
         }
 
         Map<Integer, LastRevision> revisionsCopy;
@@ -150,13 +147,13 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
         }
 
         myGutter.updateData(revisionsCopy);
-        ((EditorGutterComponentEx)myEditor.getGutter()).revalidateMarkup();
+        ((EditorGutterComponentEx)editor.getGutter()).revalidateMarkup();
       }
 
       @Nullable
       private LastRevision getLastRevision(@NotNull VirtualFile file) {
         try {
-          AbstractVcs vcs = VcsUtil.getVcsFor(myEditor.getProject(), file);
+          AbstractVcs vcs = VcsUtil.getVcsFor(editor.getProject(), file);
           if (vcs == null) return null;
 
           VcsHistoryProvider historyProvider = vcs.getVcsHistoryProvider();

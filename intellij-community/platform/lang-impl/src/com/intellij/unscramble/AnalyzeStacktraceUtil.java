@@ -87,7 +87,7 @@ public final class AnalyzeStacktraceUtil {
     final ConsoleViewImpl console = (ConsoleViewImpl)consoleView;
     ConsoleViewUtil.enableReplaceActionForConsoleViewEditor(console.getEditor());
     console.getEditor().getSettings().setCaretRowShown(true);
-    toolbarActions.add(new AnnotateStackTraceAction(console.getEditor(), console.getHyperlinks()));
+    toolbarActions.add(ActionManager.getInstance().getAction("AnalyzeStacktraceToolbar"));
     RunContentManager.getInstance(project).showRunContent(executor, descriptor);
     consoleView.allowHeavyFilters();
     if (consoleFactory == null) {
@@ -100,9 +100,9 @@ public final class AnalyzeStacktraceUtil {
     MyConsolePanel(ExecutionConsole consoleView, ActionGroup toolbarActions) {
       super(new BorderLayout());
       JPanel toolbarPanel = new JPanel(new BorderLayout());
-      toolbarPanel.add(ActionManager.getInstance()
-                         .createActionToolbar(ActionPlaces.ANALYZE_STACKTRACE_PANEL_TOOLBAR, toolbarActions, false)
-                         .getComponent());
+      ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.ANALYZE_STACKTRACE_PANEL_TOOLBAR, toolbarActions, false);
+      toolbar.setTargetComponent(consoleView.getComponent());
+      toolbarPanel.add(toolbar.getComponent());
       add(toolbarPanel, BorderLayout.WEST);
       add(consoleView.getComponent(), BorderLayout.CENTER);
     }
