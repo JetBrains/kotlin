@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun f (): kotlin.String declared in <root>.A.Y'
               CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
-                $this: CALL 'public open fun f (): kotlin.String declared in <root>.A' type=kotlin.String origin=null
+                $this: CALL 'public open fun f (): kotlin.String declared in <root>.A' superQualifier='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.String origin=null
                   $this: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=null
                 other: CONST String type=kotlin.String value="#Y"
         PROPERTY FAKE_OVERRIDE name:prop1 visibility:public modality:FINAL [fake_override,val]

@@ -61,9 +61,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
         public open fun foo (): kotlin.Unit declared in <root>.IRight
       $this: VALUE_PARAMETER name:<this> type:<root>.CBoth
       BLOCK_BODY
-        CALL 'public open fun foo (): kotlin.Unit declared in <root>.ILeft' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (): kotlin.Unit declared in <root>.ILeft' superQualifier='CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=null
-        CALL 'public open fun foo (): kotlin.Unit declared in <root>.IRight' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (): kotlin.Unit declared in <root>.IRight' superQualifier='CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=null
     PROPERTY name:bar visibility:public modality:FINAL [val]
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.CBoth) returnType:kotlin.Int

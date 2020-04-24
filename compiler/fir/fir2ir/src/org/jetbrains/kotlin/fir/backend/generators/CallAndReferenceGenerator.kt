@@ -175,9 +175,22 @@ internal class CallAndReferenceGenerator(
             }
             when (symbol) {
                 is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-                is IrSimpleFunctionSymbol -> IrCallImpl(
-                    startOffset, endOffset, type, symbol, origin = qualifiedAccess.calleeReference.statementOrigin()
-                )
+                is IrSimpleFunctionSymbol -> {
+                    var superQualifierSymbol: IrClassSymbol? = null
+                    if (qualifiedAccess.dispatchReceiver is FirQualifiedAccess) {
+                        val dispatchReceiverReference = (qualifiedAccess.dispatchReceiver as FirQualifiedAccess).calleeReference
+                        if (dispatchReceiverReference is FirSuperReference) {
+                            dispatchReceiverReference.superTypeRef.toFirClassSymbolOrNull(session)?.let {
+                                superQualifierSymbol = classifierStorage.getIrClassSymbol(it)
+                            }
+                        }
+                    }
+                    IrCallImpl(
+                        startOffset, endOffset, type, symbol,
+                        origin = qualifiedAccess.calleeReference.statementOrigin(),
+                        superQualifierSymbol = superQualifierSymbol
+                    )
+                }
                 is IrPropertySymbol -> {
                     val getter = symbol.owner.getter
                     val backingField = symbol.owner.backingField

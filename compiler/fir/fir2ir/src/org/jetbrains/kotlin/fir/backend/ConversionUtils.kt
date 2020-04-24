@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -209,6 +210,15 @@ private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
     FirConstKind.Float -> IrConstKind.Float
     FirConstKind.Double -> IrConstKind.Double
     FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
+}
+
+internal fun FirTypeRef.toFirClassSymbolOrNull(session: FirSession): FirClassSymbol<*>? {
+    if (this is FirResolvedTypeRef) {
+        if (type is ConeClassLikeType) {
+            return (type as ConeClassLikeType).lookupTag.toSymbol(session).safeAs()
+        }
+    }
+    return null
 }
 
 private val simpleDeclarationCollector: (FirDeclaration, MutableMap<Name, FirDeclaration>) -> Unit = { declaration, map ->
