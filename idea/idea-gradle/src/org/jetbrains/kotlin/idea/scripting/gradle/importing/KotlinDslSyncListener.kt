@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
     override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
@@ -18,6 +19,7 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
         if (workingDir == null) return
         val project = id.findProject() ?: return
 
+        GradleScriptingSupportProvider.getInstance(project).markImportingInProgress(workingDir)
         project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
     }
 

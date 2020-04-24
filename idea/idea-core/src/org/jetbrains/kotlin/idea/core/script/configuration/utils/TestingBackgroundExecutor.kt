@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.HashSetQueue
 
 class TestingBackgroundExecutor internal constructor(
-    private val rootsManager: ScriptClassRootsIndexer
+    private val rootsManager: ScriptClassRootsUpdater
 ) : BackgroundExecutor {
     val backgroundQueue = HashSetQueue<BackgroundTask>()
 
@@ -42,7 +42,7 @@ class TestingBackgroundExecutor internal constructor(
 
         actions()
 
-        rootsManager.transaction {
+        rootsManager.update {
             copy.forEach {
                 it.actions()
             }
