@@ -42,7 +42,7 @@ abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesMa
     fun validate(phases: Set<GenerationPhase>): ValidationResult = context.read {
         pluginSettings.map { setting ->
             val value = setting.reference.notRequiredSettingValue ?: return@map ValidationResult.OK
-            if (setting.neededAtPhase in phases && setting.isActive(this))
+            if (setting.validateOnProjectCreation && setting.neededAtPhase in phases && setting.isActive(this))
                 (setting.validator as SettingValidator<Any>).validate(this, value)
             else ValidationResult.OK
         }.fold()
