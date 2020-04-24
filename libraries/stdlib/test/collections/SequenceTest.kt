@@ -572,18 +572,24 @@ public class SequenceTest {
     }
 
     @Test fun flatMap() {
-        val result = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
-        assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
+        val result1 = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
+        val result2 = sequenceOf(1, 2).flatMap { 0..it }
+        val expected = listOf(0, 1, 0, 1, 2)
+        assertEquals(expected, result1.toList())
+        assertEquals(expected, result2.toList())
     }
 
     @Test fun flatMapOnEmpty() {
-        val result = sequenceOf<Int>().flatMap { (0..it).asSequence() }
-        assertTrue(result.none())
+        assertTrue(sequenceOf<Int>().flatMap { sequenceOf(1) }.none())
+        assertTrue(sequenceOf<Int>().flatMap { listOf(1) }.none())
     }
 
     @Test fun flatMapWithEmptyItems() {
-        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else (it - 1..it).asSequence() }
-        assertEquals(listOf(0, 1, 3, 4), result.toList())
+        val result1 = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else (it - 1..it).asSequence() }
+        val result2 = sequenceOf(1, 2, 4).flatMap { if (it == 2) emptyList<Int>() else it - 1..it }
+        val expected = listOf(0, 1, 3, 4)
+        assertEquals(expected, result1.toList())
+        assertEquals(expected, result2.toList())
     }
 
     @Test fun flatten() {

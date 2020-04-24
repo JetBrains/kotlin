@@ -47,9 +47,37 @@ public inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -
 }
 
 /**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each entry of original map.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapSequence")
+public inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -> Sequence<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
  * Appends all elements yielded from results of [transform] function being invoked on each entry of original map, to the given [destination].
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each entry of original map, to the given [destination].
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapSequenceTo")
+public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
         destination.addAll(list)

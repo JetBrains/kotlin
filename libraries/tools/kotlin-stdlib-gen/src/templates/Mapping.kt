@@ -304,7 +304,37 @@ object Mapping : TemplateGroupBase() {
         }
         specialFor(Sequences) {
             inline(Inline.No)
-            signature("flatMap(transform: (T) -> Sequence<R>)")
+            since("1.4")
+            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+            annotation("@OverloadResolutionByLambdaReturnType")
+            annotation("""@kotlin.jvm.JvmName("flatMapIterable")""")
+            doc { "Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence." }
+            returns("Sequence<R>")
+            body {
+                "return FlatteningSequence(this, transform, { it.iterator() })"
+            }
+        }
+    }
+
+    val f_flatMapSequence = fn("flatMap(transform: (T) -> Sequence<R>)") {
+        include(Sequences, Iterables, ArraysOfObjects, Maps)
+    } builder {
+        inline()
+        doc { "Returns a single list of all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}." }
+        sample("samples.collections.Collections.Transformations.flatMap")
+        typeParam("R")
+        returns("List<R>")
+        body {
+            "return flatMapTo(ArrayList<R>(), transform)"
+        }
+        if (f != Sequences) {
+            since("1.4")
+            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+            annotation("@OverloadResolutionByLambdaReturnType")
+            annotation("""@kotlin.jvm.JvmName("flatMapSequence")""")
+        }
+        specialFor(Sequences) {
+            inline(Inline.No)
             doc { "Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence." }
             returns("Sequence<R>")
             body {
@@ -322,7 +352,35 @@ object Mapping : TemplateGroupBase() {
 
         doc { "Appends all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}, to the given [destination]." }
         specialFor(Sequences) {
-            signature("flatMapTo(destination: C, transform: (T) -> Sequence<R>)")
+            since("1.4")
+            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+            annotation("@OverloadResolutionByLambdaReturnType")
+            annotation("""@kotlin.jvm.JvmName("flatMapIterableTo")""")
+        }
+        typeParam("R")
+        typeParam("C : MutableCollection<in R>")
+        returns("C")
+        body {
+            """
+            for (element in this) {
+                val list = transform(element)
+                destination.addAll(list)
+            }
+            return destination
+            """
+        }
+    }
+
+    val f_flatMapToSequence = fn("flatMapTo(destination: C, transform: (T) -> Sequence<R>)") {
+        include(Sequences, Iterables, ArraysOfObjects, Maps)
+    } builder {
+        inline()
+        doc { "Appends all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}, to the given [destination]." }
+        if (f != Sequences) {
+            since("1.4")
+            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+            annotation("@OverloadResolutionByLambdaReturnType")
+            annotation("""@kotlin.jvm.JvmName("flatMapSequenceTo")""")
         }
         typeParam("R")
         typeParam("C : MutableCollection<in R>")

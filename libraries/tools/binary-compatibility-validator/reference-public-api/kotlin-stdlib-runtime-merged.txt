@@ -1087,6 +1087,8 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun flatMap ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun flatMap ([SLkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun flatMap ([ZLkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun flatMapSequence ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun flatMapSequenceTo ([Ljava/lang/Object;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo ([BLjava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo ([CLjava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo ([DLjava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
@@ -2136,6 +2138,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun firstOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun firstOrNull (Ljava/util/List;)Ljava/lang/Object;
 	public static final fun flatMap (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun flatMapSequence (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun flatMapSequenceTo (Ljava/lang/Iterable;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo (Ljava/lang/Iterable;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatten (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun fold (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
@@ -2401,6 +2405,8 @@ public final class kotlin/collections/MapsKt {
 	public static final fun filterTo (Ljava/util/Map;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun filterValues (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun flatMap (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun flatMapSequence (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun flatMapSequenceTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun forEach (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)V
 	public static final fun getOrImplicitDefaultNullable (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
@@ -4780,6 +4786,8 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun firstOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun firstOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun flatMap (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
+	public static final fun flatMapIterable (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
+	public static final fun flatMapIterableTo (Lkotlin/sequences/Sequence;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo (Lkotlin/sequences/Sequence;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatten (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun flattenSequenceOfIterable (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;

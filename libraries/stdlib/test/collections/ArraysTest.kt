@@ -12,6 +12,7 @@ import test.assertTypeEquals
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import test.text.isAsciiLetter
+import kotlin.math.exp
 import kotlin.test.*
 import kotlin.random.Random
 
@@ -1754,6 +1755,15 @@ class ArraysTest {
 
     @Test fun mapIndexedNotNull() {
         assertEquals(listOf(2), arrayOf("a", null, "test").mapIndexedNotNull { index, it -> it?.run { if (index != 0) length / index else null  } })
+    }
+
+    @Test fun flatMap() {
+        val data = arrayOf(arrayOf(1, 2, 3), arrayOf(4, 5, 6))
+        val result1 = data.flatMap { it.asList() }
+        val result2 = data.flatMap { it.asSequence() }
+        val expected = (data[0] + data[1]).toList()
+        assertEquals(expected, result1)
+        assertEquals(expected, result2)
     }
 
     @Test fun flattenArray() {

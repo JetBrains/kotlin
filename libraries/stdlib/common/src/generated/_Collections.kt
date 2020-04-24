@@ -1287,9 +1287,37 @@ public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): Lis
 }
 
 /**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapSequence")
+public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Sequence<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapSequenceTo")
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
         destination.addAll(list)

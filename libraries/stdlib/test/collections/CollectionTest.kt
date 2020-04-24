@@ -46,6 +46,17 @@ class CollectionTest {
         assertStaticAndRuntimeTypeIs<List<String>>(foo)
     }
 
+
+    @Test fun flatMap() {
+        val source = listOf(null, "foo", "bar")
+        val result1 = source.flatMap { it.orEmpty().asSequence() }
+        val result2 = source.flatMap { it.orEmpty().asIterable() }
+
+        val expected = "foobar".toList()
+        assertEquals(expected, result1)
+        assertEquals(expected, result2)
+    }
+
     /*
     @Test fun mapNotNull() {
         val data = listOf(null, "foo", null, "bar")

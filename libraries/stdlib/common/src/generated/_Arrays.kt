@@ -10033,6 +10033,19 @@ public inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<
 }
 
 /**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapSequence")
+public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Sequence<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
@@ -10124,6 +10137,21 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destin
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapSequenceTo")
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
         destination.addAll(list)
