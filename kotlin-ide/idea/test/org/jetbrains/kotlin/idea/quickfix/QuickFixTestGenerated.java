@@ -888,6 +888,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testHasAnnotation2() throws Exception {
             runTest("idea/testData/quickfix/addJvmNameAnnotation/hasAnnotation2.kt");
         }
+
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/topLevel.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/addNewLineAfterAnnotations")
