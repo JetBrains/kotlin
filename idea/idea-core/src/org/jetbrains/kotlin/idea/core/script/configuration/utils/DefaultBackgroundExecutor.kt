@@ -32,7 +32,7 @@ import java.util.*
  */
 internal class DefaultBackgroundExecutor(
     val project: Project,
-    val rootsManager: ScriptClassRootsIndexer
+    val rootsManager: ScriptClassRootsUpdater
 ) : BackgroundExecutor {
     companion object {
         const val PROGRESS_INDICATOR_DELAY = 1000
@@ -137,7 +137,7 @@ internal class DefaultBackgroundExecutor(
     private fun ensureInTransaction() {
         if (inTransaction) return
         inTransaction = true
-        rootsManager.startTransaction()
+        rootsManager.beginUpdating()
     }
 
     @Synchronized

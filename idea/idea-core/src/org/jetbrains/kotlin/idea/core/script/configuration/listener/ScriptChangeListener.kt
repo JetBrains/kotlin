@@ -9,6 +9,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -21,8 +22,11 @@ import org.jetbrains.kotlin.psi.KtFile
  * @see DefaultScriptConfigurationManager for more details.
  */
 abstract class ScriptChangeListener(protected val project: Project) {
-    abstract fun editorActivated(vFile: VirtualFile, updater: ScriptConfigurationUpdater)
-    abstract fun documentChanged(vFile: VirtualFile, updater: ScriptConfigurationUpdater)
+    val default: DefaultScriptingSupport
+        get() = DefaultScriptingSupport.getInstance(project)
+
+    abstract fun editorActivated(vFile: VirtualFile)
+    abstract fun documentChanged(vFile: VirtualFile)
 
     abstract fun isApplicable(vFile: VirtualFile): Boolean
 
