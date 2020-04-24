@@ -2,8 +2,6 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.KOTLIN_DIR
-import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.RESOURCES_DIR
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.SRC_DIR
 import org.jetbrains.kotlin.tools.projectWizard.core.service.TemplateEngineService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
@@ -144,18 +142,19 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
             && filePath.sourcesetType == SourcesetType.test
             && settingValue(module.originalModule, ModuleConfiguratorWithTests.testFramework)?.isPresent != true
         ) return null
+        val moduleConfigurator =  module.originalModule.configurator
         return when (module) {
             is SingleplatformModuleIR -> {
                 when (filePath) {
-                    is SrcFilePath -> SRC_DIR / filePath.sourcesetType.toString() / KOTLIN_DIR
-                    is ResourcesFilePath -> SRC_DIR / filePath.sourcesetType.toString() / RESOURCES_DIR
+                    is SrcFilePath -> SRC_DIR / filePath.sourcesetType.toString() / moduleConfigurator.kotlinDirectoryName
+                    is ResourcesFilePath -> SRC_DIR / filePath.sourcesetType.toString() / moduleConfigurator.resourcesDirectoryName
                 }
             }
 
             is MultiplatformModuleIR -> {
                 val directory = when (filePath) {
-                    is SrcFilePath -> KOTLIN_DIR
-                    is ResourcesFilePath -> RESOURCES_DIR
+                    is SrcFilePath -> moduleConfigurator.kotlinDirectoryName
+                    is ResourcesFilePath -> moduleConfigurator.resourcesDirectoryName
                 }
                 SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize()}" / directory
             }
