@@ -67,7 +67,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             targets,
             ExtraFeaturesImpl(coroutinesState, isHMPPEnabled(project), isNativeDependencyPropagationEnabled(project)),
             kotlinNativeHome,
-            dependencyMapper.toDependencyMap()
+            dependencyMapper.toDependencyMap(),
+            computeDependsOnAdjustment(project)
         )
     }
 
@@ -139,8 +140,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun calculateDependsOnClosure(
         sourceSet: KotlinSourceSetImpl?,
         sourceSetsMap: Map<String, KotlinSourceSetImpl>,
-        cache: MutableMap<String, Set<String>>,
-        additionalDependsOnEdges: Map<String, String>
+        cache: MutableMap<String, Set<String>>
     ): Set<String> {
         return when {
             sourceSet == null -> emptySet()
@@ -148,7 +148,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             sourceSet.name in cache -> cache[sourceSet.name]!!
 
             else -> {
-                val immediateDependsOn = sourceSet.dependsOnSourceSets + listOfNotNull(additionalDependsOnEdges[sourceSet.name])
+                val immediateDependsOn = sourceSet.dependsOnSourceSets
 
                 val dependsOnClosure = immediateDependsOn.flatMap { name ->
                     calculateDependsOnClosure(
@@ -193,7 +193,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
         val map = allSourceSets.map { it.name to it }.toMap()
         val dependsOnCache = HashMap<String, Set<String>>()
-        val additionalDependsOnEdges = computeDependsOnAdjustment(project)
         return allSourceSets.map { sourceSet ->
             KotlinSourceSetImpl(
                 sourceSet.name,
@@ -201,7 +200,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 sourceSet.sourceDirs,
                 sourceSet.resourceDirs,
                 sourceSet.dependencies,
-                calculateDependsOnClosure(sourceSet, map, dependsOnCache, additionalDependsOnEdges),
+                calculateDependsOnClosure(sourceSet, map, dependsOnCache),
                 sourceSet.actualPlatforms as KotlinPlatformContainerImpl,
                 sourceSet.isTestModule
             )

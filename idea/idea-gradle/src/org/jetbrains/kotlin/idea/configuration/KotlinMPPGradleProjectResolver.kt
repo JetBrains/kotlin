@@ -1003,7 +1003,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     resolverCtx
                 )
             }
+
             return KotlinSourceSetInfo(compilation).also { sourceSetInfo ->
+                compilation.sourceSets
                 sourceSetInfo.moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))

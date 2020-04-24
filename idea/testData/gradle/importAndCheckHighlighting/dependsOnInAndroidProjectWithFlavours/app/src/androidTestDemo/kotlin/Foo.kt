@@ -1,0 +1,1 @@
+actual fun androidTest(): Int = 42

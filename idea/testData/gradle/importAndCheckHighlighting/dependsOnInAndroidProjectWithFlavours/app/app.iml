@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="FacetManager">
+    <facet type="android-gradle" name="Android-Gradle">
+      <configuration>
+        <option name="GRADLE_PROJECT_PATH" value=":app" />
+        <option name="LAST_SUCCESSFUL_SYNC_AGP_VERSION" value="4.0.0-beta01" />
+        <option name="LAST_KNOWN_AGP_VERSION" value="4.0.0-beta01" />
+      </configuration>
+    </facet>
+    <facet type="android" name="Android">
+      <configuration>
+        <option name="SELECTED_BUILD_VARIANT" value="demoDebug" />
+        <option name="ASSEMBLE_TASK_NAME" value="assembleDemoDebug" />
+        <option name="COMPILE_JAVA_TASK_NAME" value="compileDemoDebugSources" />
+        <afterSyncTasks>
+          <task>generateDemoDebugSources</task>
+        </afterSyncTasks>
+        <option name="ALLOW_USER_CONFIGURATION" value="false" />
+        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
+        <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/src/demo/res;file://$MODULE_DIR$/src/debug/res;file://$MODULE_DIR$/src/demoDebug/res;file://$MODULE_DIR$/build/generated/res/rs/demo/debug" />
+        <option name="TEST_RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/androidTest/res;file://$MODULE_DIR$/src/test/res;file://$MODULE_DIR$/src/androidTestDemo/res;file://$MODULE_DIR$/src/testDemo/res;file://$MODULE_DIR$/src/androidTestDebug/res;file://$MODULE_DIR$/src/testDebug/res;file://$MODULE_DIR$/build/generated/res/rs/androidTest/demo/debug" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
+      </configuration>
+    </facet>
+    <facet type="kotlin-language" name="Kotlin">
+      <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false" isTestModule="false" externalProjectId=":app" isHmppProject="true" pureKotlinSourceFolders="$MODULE_DIR$/src/commonMain/kotlin">
+        <dependsOnModuleNames>:app:commonMain</dependsOnModuleNames>
+        <sourceSets>
+          <sourceSet>app_commonMain</sourceSet>
+        </sourceSets>
+        <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
+        <compilerSettings>
+          <option name="additionalArguments" value="-Xallow-no-source-files" />
+        </compilerSettings>
+        <compilerArguments>
+          <option name="destination" value="$MODULE_DIR$/build/tmp/kotlin-classes/demoDebug" />
+          <option name="classpath" value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-android-extensions-runtime/1.4.0-DEPENDS-ON-FIX/kotlin-android-extensions-runtime-1.4.0-DEPENDS-ON-FIX.jar:/Users/dmitry.savvinov/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.4.0-DEPENDS-ON-FIX/kotlin-stdlib-1.4.0-DEPENDS-ON-FIX.jar:/Users/dmitry.savvinov/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.0-DEPENDS-ON-FIX/kotlin-stdlib-common-1.4.0-DEPENDS-ON-FIX.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/86dd9a70bdb111fbe04a4afc9e69c5a5/appcompat-v7-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/77d151531c713f743e1b8485d5864411/support-fragment-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/fe9357c538adde99d11e6fe2fd3543b3/animated-vector-drawable-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/87b205d41f577e170e7e6dba3001b199/support-core-ui-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/d6b8d245936d3ba7ed7b1bc612fa72a3/support-core-utils-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/1631b0392f1c3385851270f29b595f44/support-vector-drawable-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/dc6fc397fecfbeeb0c32eb41eca34497/loader-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/9f60c98728584a0c2618cc4b41fba8af/viewpager-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/a6dd167862c4f84ea1a939ae07d9eafd/coordinatorlayout-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/9c768bb3b528e6a4a49109c3397e6af5/drawerlayout-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/c8c63b66323ef351c371ea34b48c0032/slidingpanelayout-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/1d07e9830f256f041c1180a940fac7fc/customview-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/adf9e0dd0df529c4fcfe42969151db4e/swiperefreshlayout-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/0790d855ee63993c1698218cfcb64447/asynclayoutinflater-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/a97efbb118e334e907a5f8f11450a2cd/support-compat-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/170066e41f62750c87c479e4142f2ff5/versionedparcelable-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/com.android.support/collections/28.0.0/c1bcdade4d3cc2836130424a3f3e4182c666a745/collections-28.0.0.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/5c809f15fb03d1c12374755cbaf45edc/cursoradapter-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/c38f7d829d2a1a4e0c25d3739dbc4fb9/runtime-1.1.1-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/3bb61bf0599d14fbe0d1fd5fb7e22d16/documentfile-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/e293da7a0e161b04fd431f06ac780448/localbroadcastmanager-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/ed449f62628ab7d874d61525b88483c6/print-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/1f029d09e0d3812d6179e96a174430c2/viewmodel-1.1.1-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/0dbbf08234e59a57e66c6461476a9f66/livedata-1.1.1-api.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/01469e3e60782774f6955eb49b48b62a/livedata-core-1.1.1-api.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.1.1/207a6efae6a3555e326de41f76bdadd9a239cbce/common-1.1.1.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/955762e1526d7a970bd78c7df80d425c/runtime-1.1.1-api.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/android.arch.core/common/1.1.1/e55b70d1f5620db124b3e85a7f4bdc7bd48d9f95/common-1.1.1.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/8beba86e5c2d64a519a944a5ede5adf0/interpolator-28.0.0-api.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/28.0.0/ed73f5337a002d1fd24339d5fb08c2c9d9ca60d8/support-annotations-28.0.0.jar:/Users/dmitry.savvinov/.gradle/caches/transforms-2/files-2.1/d2b9d9c4a89334fcea884a5fa37ed440/constraint-layout-1.1.3-api.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/com.android.support.constraint/constraint-layout-solver/1.1.3/bde0667d7414c16ed62d3cfe993cff7f9d732373/constraint-layout-solver-1.1.3.jar:/Users/dmitry.savvinov/Library/Android/sdk/platforms/android-28/android.jar" />
+          <option name="noStdlib" value="true" />
+          <option name="noReflect" value="true" />
+          <option name="moduleName" value="app_demoDebug" />
+          <option name="languageVersion" value="1.4" />
+          <option name="apiVersion" value="1.4" />
+          <option name="pluginOptions">
+            <array>
+              <option value="plugin:org.jetbrains.kotlin.android:experimental=false" />
+              <option value="plugin:org.jetbrains.kotlin.android:enabled=true" />
+              <option value="plugin:org.jetbrains.kotlin.android:defaultCacheImplementation=hashMap" />
+            </array>
+          </option>
+          <option name="pluginClasspaths">
+            <array>
+              <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.intellij.deps/trove4j/1.0.20181211/216c2e14b070f334479d800987affe4054cd563f/trove4j-1.0.20181211.jar" />
+              <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.2.1/3839faf625f4197acaeceeb6da000f011a2acb49/kotlinx-coroutines-core-1.2.1.jar" />
+              <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-android-extensions/1.4.0-DEPENDS-ON-FIX/kotlin-android-extensions-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-embeddable/1.4.0-DEPENDS-ON-FIX/kotlin-compiler-embeddable-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-daemon-embeddable/1.4.0-DEPENDS-ON-FIX/kotlin-daemon-embeddable-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.0-DEPENDS-ON-FIX/kotlin-reflect-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-runtime/1.4.0-DEPENDS-ON-FIX/kotlin-script-runtime-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-common/1.4.0-DEPENDS-ON-FIX/kotlin-scripting-common-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-jvm/1.4.0-DEPENDS-ON-FIX/kotlin-scripting-jvm-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.0-DEPENDS-ON-FIX/kotlin-stdlib-common-1.4.0-DEPENDS-ON-FIX.jar" />
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.0-DEPENDS-ON-FIX/kotlin-stdlib-1.4.0-DEPENDS-ON-FIX.jar" />
+            </array>
+          </option>
+          <option name="multiPlatform" value="true" />
+          <option name="errors">
+            <ArgumentParseErrors />
+          </option>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
+</module>

@@ -1,0 +1,164 @@
+plugins {
+//    id 'org.jetbrains.kotlin.multiplatform' version '1.3.70-eap-42'
+    id 'org.jetbrains.kotlin.multiplatform' version '1.4.0-DEPENDS-ON-FIX'
+//    id 'org.jetbrains.kotlin.multiplatform' version '1.4.0-dev-1347'
+}
+
+repositories {
+    google()
+    jcenter()
+    maven { url "https://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinDev_AggregateBranch),number:1.4.0-dev-1347,branch:(default:any)/artifacts/content/maven/" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url  "https://dl.bintray.com/kotlin/kotlin-dev" }
+    mavenCentral()
+    mavenLocal()
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId 'org.jetbrains.kotlin.mpp_app_android'
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        demo {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension "version"
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+        }
+        full {
+            dimension "version"
+            applicationIdSuffix ".full"
+            versionNameSuffix "-full"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+}
+
+kotlin {
+    android("android")
+    // This is for iPhone emulator
+    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+    iosX64("iosX64") {
+        binaries {
+            framework()
+        }
+    }
+//    macosX64("macos") {
+//        binaries {
+//            framework()
+//        }
+//    }
+    iosArm64("iosArm64") {
+        binaries {
+            framework()
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+            }
+        }
+        commonTest {
+            dependencies {
+        		implementation kotlin('test-common')
+        		implementation kotlin('test-annotations-common')
+            }
+        }
+
+        iosMain {
+            dependsOn commonMain
+        }
+
+        iosTest {
+            dependsOn commonTest
+        }
+
+        iosX64Main {
+            dependsOn iosMain
+        }
+
+        iosX64Test {
+            dependsOn iosTest
+        }
+
+        iosArm64Main {
+            dependsOn iosMain
+        }
+
+        iosArm64Test {
+            dependsOn iosTest
+        }
+
+        macosMain.dependsOn(iosMain)
+        macosTest.dependsOn(iosTest)
+
+        androidMain {
+//            dependsOn commonMain // KT-33809 :(
+
+            dependencies {
+                implementation kotlin('stdlib')
+            }
+        }
+        androidTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+            }
+        }
+    }
+}
+
+
+// This task attaches native framework built from ios module to Xcode project
+// (see iosApp directory). Don't run this task directly,
+// Xcode runs this task itself during its build process.
+// Before opening the project from iosApp directory in Xcode,
+// make sure all Gradle infrastructure exists (gradle.wrapper, gradlew).
+task copyFramework {
+    def buildType = project.findProperty('kotlin.build.type') ?: 'DEBUG'
+    def target = 'iosX64'
+    dependsOn kotlin.targets."$target".binaries.getFramework(buildType).linkTask
+
+    doLast {
+        def srcFile = kotlin.targets."$target".binaries.getFramework(buildType).outputFile
+        def targetDir = getProperty('configuration.build.dir')
+        copy {
+            from srcFile.parent
+            into targetDir
+            include 'app.framework/**'
+            include 'app.framework.dSYM'
+        }
+    }
+}
+
+afterEvaluate {
+    println("Android:")
+    kotlin.targets["android"].compilations.all { println(it.name + " " + it.allKotlinSourceSets.collect {it.name}) }
+}

@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+        mavenCentral()
+        mavenLocal()
+        maven { url "https://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinDev_AggregateBranch),number:1.4.0-dev-1347,branch:(default:any)/artifacts/content/maven/" }
+        maven { url  "https://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+}
+rootProject.name = 'BootstrapMobileMppApp'
+
+include ':app'
