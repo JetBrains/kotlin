@@ -162,6 +162,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
 
     companion object {
         private val LOG = Logger.getInstance(KotlinDocumentationProvider::class.java)
+        private val javaDocumentProvider = JavaDocumentationProvider()
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
             classifierNamePolicy = HtmlClassifierNamePolicy(ClassifierNamePolicy.SHORT)
@@ -282,8 +283,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                 if (calledElement is KtNamedFunction || calledElement is KtConstructor<*>) { // In case of Kotlin function or constructor
                     return renderKotlinDeclaration(calledElement as KtExpression, quickNavigation)
                 } else if (calledElement is ClsMethodImpl || calledElement is PsiMethod) { // In case of java function or constructor
-                    val documentationManager = DocumentationManager.getInstance(calledElement.project)
-                    return documentationManager.generateDocumentation(calledElement, referenceExpression, false)
+                    return javaDocumentProvider.generateDoc(calledElement, referenceExpression)
                 }
             } else if (element is KtCallExpression) {
                 val calledElement = element.referenceExpression()?.mainReference?.resolve()
