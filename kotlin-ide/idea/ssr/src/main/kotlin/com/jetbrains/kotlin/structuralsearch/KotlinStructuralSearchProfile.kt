@@ -61,17 +61,9 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val fragment = KtPsiFactory(project).createBlockCodeFragment(text, null)
         val result = getNonWhitespaceChildren(fragment)
         if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
-
-        if (result.first().firstChild.elementType != KtTokens.LBRACE) {
-            // Remove the first block element
-            val blockContent = result.first().children
-            for (e in blockContent) print(DebugUtil.psiToString(e, false))
-            return blockContent
-        }
-
-        // Keep the block element
-        println(DebugUtil.psiToString(result.first().parent, false))
-        return arrayOf(result.first())
+        val blockContent = result.first().children // Remove the first block element
+        for (element in blockContent) print(DebugUtil.psiToString(element, false))
+        return blockContent
     }
 
     companion object {
