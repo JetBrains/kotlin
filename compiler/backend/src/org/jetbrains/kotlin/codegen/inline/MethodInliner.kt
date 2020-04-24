@@ -278,7 +278,7 @@ class MethodInliner(
                         visitInsn(Opcodes.NOP)
                     }
 
-                    inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info)
+                    inlineOnlySmapSkipper?.onInlineLambdaStart(remappingMethodAdapter, info, sourceMapper.parent)
                     addInlineMarker(this, true)
                     val lambdaParameters = info.addAllParameters(nodeRemapper)
 
