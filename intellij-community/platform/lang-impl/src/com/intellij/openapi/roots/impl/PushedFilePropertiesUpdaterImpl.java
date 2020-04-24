@@ -149,7 +149,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   @Override
   public void initializeProperties() {
     FilePropertyPusher.EP_NAME.forEachExtensionSafe(pusher -> {
-      pusher.initExtra(myProject, myProject.getMessageBus());
+      pusher.initExtra(myProject);
     });
   }
 
