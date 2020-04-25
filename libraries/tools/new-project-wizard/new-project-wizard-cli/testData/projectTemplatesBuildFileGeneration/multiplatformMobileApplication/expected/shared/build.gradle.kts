@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    kotlin("multiplatform") version "KOTLIN_VERSION"
+    kotlin("multiplatform")
     id("com.android.library")
     id("kotlin-android-extensions")
 }

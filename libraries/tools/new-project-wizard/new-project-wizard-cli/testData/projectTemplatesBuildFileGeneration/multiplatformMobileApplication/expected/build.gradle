@@ -1,4 +1,17 @@
-
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+        google()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        }
+    }
+    dependencies {
+        classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:KOTLIN_VERSION')
+        classpath('com.android.tools.build:gradle:3.5.2')
+    }
+}
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
