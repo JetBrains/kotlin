@@ -53,7 +53,7 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
     override fun isConfigurationLoadingInProgress(file: KtFile): Boolean =
         plugins.any { it.isConfigurationLoadingInProgress(file) }
 
-    val rootsUpdater = ScriptClassRootsIndexer(project)
+    val rootsUpdater = ScriptClassRootsIndexer(project, this)
 
     private val classpathRootsLock = ReentrantLock()
 
@@ -81,22 +81,32 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         return builder.build()
     }
 
+    fun collectRootsAndCheckNew(): Boolean {
+        classpathRootsLock.withLock {
+            val old = _classpathRoots
+            val new = recreateRootsCache()
+            _classpathRoots = new
+
+            val kotlinScriptDependenciesClassFinder =
+                Extensions.getArea(project)
+                    .getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+                    .filterIsInstance<KotlinScriptDependenciesClassFinder>()
+                    .single()
+
+            kotlinScriptDependenciesClassFinder.clearCache()
+
+            ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+
+            return old == null || new.hasNewRoots(old)
+        }
+    }
+
     fun clearClassRootsCaches() {
         debug { "class roots caches cleared" }
 
         classpathRootsLock.withLock {
             _classpathRoots = null
         }
-
-        val kotlinScriptDependenciesClassFinder =
-            Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
-                .single()
-
-        kotlinScriptDependenciesClassFinder.clearCache()
-
-        ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
     }
 
     init {

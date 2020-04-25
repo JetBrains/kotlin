@@ -161,5 +161,11 @@ class ScriptClassRootsCache(
 
     fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
         scriptsDependenciesCache[file]?.classFilesScope ?: GlobalSearchScope.EMPTY_SCOPE
+
+    fun hasNewRoots(old: ScriptClassRootsCache): Boolean {
+        return classes.any { it !in old.classes }
+                || sources.any { it !in old.sources }
+                || sdks.any { it.key !in old.sdks }
+    }
 }
 

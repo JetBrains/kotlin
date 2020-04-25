@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.util.concurrent.atomic.AtomicInteger
@@ -18,7 +19,10 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Utility for postponing indexing of new roots to the end of some bulk operation.
  */
-class ScriptClassRootsIndexer(val project: Project) {
+class ScriptClassRootsIndexer(
+    val project: Project,
+    val manager: CompositeScriptConfigurationManager
+) {
     private var invalidated: Boolean = false
     private val concurrentUpdates = AtomicInteger()
 
@@ -58,21 +62,23 @@ class ScriptClassRootsIndexer(val project: Project) {
         if (!invalidated) return
         invalidated = false
 
-        val doNotifyRootsChanged = Runnable {
-            runWriteAction {
-                if (project.isDisposed) return@runWriteAction
+        if (manager.collectRootsAndCheckNew()) {
+            val doNotifyRootsChanged = Runnable {
+                runWriteAction {
+                    if (project.isDisposed) return@runWriteAction
 
-                debug { "roots change event" }
+                    debug { "roots change event" }
 
-                ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
-                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+                    ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
+                    ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+                }
             }
-        }
 
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            TransactionGuard.submitTransaction(project, doNotifyRootsChanged)
-        } else {
-            TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
+            if (ApplicationManager.getApplication().isUnitTestMode) {
+                TransactionGuard.submitTransaction(project, doNotifyRootsChanged)
+            } else {
+                TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
+            }
         }
     }
 }
