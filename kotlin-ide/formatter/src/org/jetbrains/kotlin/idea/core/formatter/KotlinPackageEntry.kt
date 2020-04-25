@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.idea.core.formatter
 
 import org.jetbrains.kotlin.resolve.ImportPath
 
-data class KotlinPackageEntry(
-    val packageName: String,
+class KotlinPackageEntry(
+    packageName: String,
     val withSubpackages: Boolean
 ) {
+    val packageName = packageName.removeSuffix(".*")
+
     companion object {
         @JvmField
         val ALL_OTHER_IMPORTS_ENTRY = KotlinPackageEntry("<all other imports>", withSubpackages = true)
@@ -45,9 +47,10 @@ data class KotlinPackageEntry(
         return entry.packageName.count { it == '.' } < packageName.count { it == '.' }
     }
 
-    val isSpecial: Boolean get() {
-        return (this == ALL_OTHER_IMPORTS_ENTRY || this == ALL_OTHER_ALIAS_IMPORTS_ENTRY)
-    }
+    val isSpecial: Boolean
+        get() {
+            return (this == ALL_OTHER_IMPORTS_ENTRY || this == ALL_OTHER_ALIAS_IMPORTS_ENTRY)
+        }
 
     override fun toString(): String {
         return packageName
