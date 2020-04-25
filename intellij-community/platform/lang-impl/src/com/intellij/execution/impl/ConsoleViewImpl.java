@@ -58,10 +58,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SideBorder;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.DocumentUtil;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.*;
@@ -134,7 +131,11 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
   private String myHelpId;
 
-  protected final CompositeFilter myFilters;
+  private final boolean myUsePredefinedMessageFilter;
+
+  private final GlobalSearchScope mySearchScope;
+
+  private final List<Filter> myCustomFilters = new SmartList<>();
 
   @NotNull
   private final InputFilter myInputMessageFilter;
@@ -169,10 +170,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     myState = initialState;
     myPsiDisposedCheck = new DisposedPsiManagerCheck(project);
     myProject = project;
-
-    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? ConsoleViewUtil.computeConsoleFilters(project, this, searchScope)
-                                                                        : Collections.emptyList());
-    myFilters.setForceUseAllFilters(true);
+    myUsePredefinedMessageFilter = usePredefinedMessageFilter;
+    mySearchScope = searchScope;
 
     List<ConsoleInputFilterProvider> inputFilters = ConsoleInputFilterProvider.INPUT_FILTER_PROVIDERS.getExtensionList();
     if (!inputFilters.isEmpty()) {
@@ -378,7 +377,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
   public JComponent getComponent() {
     if (myMainPanel == null) {
       myMainPanel = new JPanel(new BorderLayout());
-      myJLayeredPane = new MyDiffContainer(myMainPanel, myFilters.getUpdateMessage());
+      myJLayeredPane = new MyDiffContainer(myMainPanel, createCompositeFilter().getUpdateMessage());
       Disposer.register(this, myJLayeredPane);
       add(myJLayeredPane, BorderLayout.CENTER);
     }
@@ -389,6 +388,16 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       myMainPanel.add(createCenterComponent(), BorderLayout.CENTER);
     }
     return this;
+  }
+
+  protected CompositeFilter createCompositeFilter() {
+    List<Filter> predefinedFilters = myUsePredefinedMessageFilter ?
+                                       ConsoleViewUtil.computeConsoleFilters(myProject, this, mySearchScope) :
+                                       Collections.emptyList();
+    CompositeFilter compositeFilter = new CompositeFilter(myProject, predefinedFilters);
+    compositeFilter.setForceUseAllFilters(true);
+    myCustomFilters.forEach(compositeFilter::addFilter);
+    return compositeFilter;
   }
 
   /**
@@ -898,7 +907,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
   @Override
   public void addMessageFilter(@NotNull Filter filter) {
-    myFilters.addFilter(filter);
+    myCustomFilters.add(filter);
   }
 
   @Override
@@ -983,7 +992,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
   private void highlightHyperlinksAndFoldings(int startLine) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    boolean canHighlightHyperlinks = !myFilters.isEmpty();
+    CompositeFilter compositeFilter = createCompositeFilter();
+    boolean canHighlightHyperlinks = !compositeFilter.isEmpty();
 
     if (!canHighlightHyperlinks && !myUpdateFoldingsEnabled) {
       return;
@@ -994,11 +1004,11 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     int endLine = Math.max(0, document.getLineCount() - 1);
 
     if (canHighlightHyperlinks) {
-      myHyperlinks.highlightHyperlinks(myFilters, startLine, endLine);
+      myHyperlinks.highlightHyperlinks(compositeFilter, startLine, endLine);
     }
 
-    if (myAllowHeavyFilters && myFilters.isAnyHeavy() && myFilters.shouldRunHeavy()) {
-      runHeavyFilters(startLine, endLine);
+    if (myAllowHeavyFilters && compositeFilter.isAnyHeavy() && compositeFilter.shouldRunHeavy()) {
+      runHeavyFilters(compositeFilter, startLine, endLine);
     }
     if (myUpdateFoldingsEnabled) {
       updateFoldings(startLine, endLine);
@@ -1013,7 +1023,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     highlightHyperlinksAndFoldings(0);
   }
 
-  private void runHeavyFilters(int line1, int endLine) {
+  private void runHeavyFilters(@NotNull CompositeFilter compositeFilter, int line1, int endLine) {
     final int startLine = Math.max(0, line1);
 
     final Document document = myEditor.getDocument();
@@ -1025,9 +1035,9 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     myJLayeredPane.startUpdating();
     final int currentValue = myHeavyUpdateTicket;
     myHeavyAlarm.addRequest(() -> {
-      if (!myFilters.shouldRunHeavy()) return;
+      if (!compositeFilter.shouldRunHeavy()) return;
       try {
-        myFilters.applyHeavyFilter(documentCopy, startOffset, startLine, additionalHighlight ->
+        compositeFilter.applyHeavyFilter(documentCopy, startOffset, startLine, additionalHighlight ->
           addFlushRequest(0, new FlushRunnable(true) {
             @Override
             public void doRun() {

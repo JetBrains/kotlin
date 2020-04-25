@@ -2,6 +2,7 @@
 package com.intellij.build;
 
 import com.intellij.build.events.*;
+import com.intellij.execution.filters.CompositeFilter;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.LazyFileHyperlinkInfo;
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -28,9 +29,18 @@ public class BuildTextConsoleView extends ConsoleViewImpl implements BuildConsol
 
   public BuildTextConsoleView(@NotNull Project project, boolean viewer, @NotNull List<Filter> executionFilters) {
     super(project, GlobalSearchScope.allScope(project), viewer, false);
-    // add build execution filters with higher priority than all other predefined message filters
     executionFilters.forEach(this::addMessageFilter);
-    addPredefinedMessageFilters();
+  }
+
+  @Override
+  protected CompositeFilter createCompositeFilter() {
+    CompositeFilter compositeFilter = super.createCompositeFilter();
+    // add build execution filters with higher priority than all other predefined message filters
+    Project project = getProject();
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    List<Filter> predefinedMessageFilters = ConsoleViewUtil.computeConsoleFilters(project, this, scope);
+    predefinedMessageFilters.forEach(compositeFilter::addFilter);
+    return compositeFilter;
   }
 
   @Override
@@ -126,12 +136,6 @@ public class BuildTextConsoleView extends ConsoleViewImpl implements BuildConsol
   @Override
   public void coloredTextAvailable(@NotNull String text, @NotNull Key attributes) {
     print(text, ConsoleViewContentType.getConsoleViewType(attributes));
-  }
-
-  private void addPredefinedMessageFilters() {
-    List<Filter> predefinedMessageFilters =
-      ConsoleViewUtil.computeConsoleFilters(getProject(), this, GlobalSearchScope.allScope(getProject()));
-    predefinedMessageFilters.forEach(this::addMessageFilter);
   }
 }
 
