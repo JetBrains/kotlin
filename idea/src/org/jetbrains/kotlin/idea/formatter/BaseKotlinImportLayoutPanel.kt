@@ -12,7 +12,6 @@ import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.*
 import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.layout.selected
 import com.intellij.ui.table.JBTable
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
@@ -292,7 +291,7 @@ fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable
         override fun getColumnClass(columnIndex: Int): Class<*> {
             return when (columnIndex) {
                 0 -> String::class.java
-                1 -> Boolean::class.java
+                1 -> Boolean::class.javaObjectType
                 else -> throw IllegalArgumentException(columnIndex.toString())
             }
         }
@@ -302,7 +301,7 @@ fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable
 
             val newEntry = when (columnIndex) {
                 0 -> KotlinPackageEntry((value as String).trim(), entry.withSubpackages)
-                1 -> KotlinPackageEntry(entry.packageName, (value as Boolean))
+                1 -> KotlinPackageEntry(entry.packageName, value.toString().toBoolean())
                 else -> throw IllegalArgumentException(columnIndex.toString())
             }
 
