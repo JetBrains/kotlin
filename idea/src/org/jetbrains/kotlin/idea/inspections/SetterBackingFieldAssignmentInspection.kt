@@ -31,8 +31,9 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
             val propertyDescriptor = propertyContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor ?: return
             if (propertyContext[BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor] == false) return
 
+            val parameter = accessor.valueParameters.singleOrNull() ?: return
+            val parameterName = parameter.name ?: return
             val accessorContext = accessor.analyze()
-            val parameter = accessor.valueParameters.singleOrNull()
             val parameterDescriptor = accessorContext[BindingContext.VALUE_PARAMETER, parameter] as? ValueParameterDescriptor
             if (bodyExpression.anyDescendantOfType<KtExpression> {
                     when (it) {
@@ -42,7 +43,7 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
                             it.baseExpression.isBackingFieldReference(property) && it.operationToken in incrementAndDecrementOperators
                         is KtCallExpression ->
                             it.valueArguments.any { arg ->
-                                arg.text == parameter?.text && run {
+                                arg.text == parameterName && run {
                                     val argumentResultingDescriptor =
                                         arg.getArgumentExpression().getResolvedCall(accessorContext)?.resultingDescriptor
                                     argumentResultingDescriptor == parameterDescriptor
@@ -78,13 +79,13 @@ private class AssignBackingFieldFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val setter = descriptor.psiElement as? KtPropertyAccessor ?: return
-        val parameter = setter.valueParameters.firstOrNull() ?: return
+        val parameterName = setter.valueParameters.firstOrNull()?.name ?: return
         val bodyExpression = setter.bodyBlockExpression ?: return
         bodyExpression.lBrace
             ?.siblings(withItself = false)
             ?.takeWhile { it != bodyExpression.rBrace }
             ?.singleOrNull { it is PsiWhiteSpace }
             ?.also { it.delete() }
-        bodyExpression.addBefore(KtPsiFactory(setter).createExpression("field = ${parameter.text}"), bodyExpression.rBrace)
+        bodyExpression.addBefore(KtPsiFactory(setter).createExpression("field = $parameterName"), bodyExpression.rBrace)
     }
 }
