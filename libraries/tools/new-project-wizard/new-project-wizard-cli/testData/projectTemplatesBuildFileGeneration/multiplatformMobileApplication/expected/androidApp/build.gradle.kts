@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    kotlin("android") version "KOTLIN_VERSION"
+    kotlin("android")
     id("kotlin-android-extensions")
 }
 group = "me.user"
