@@ -11,16 +11,27 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
+import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.ARRAY_OF_FUNCTION
+import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.PRIMITIVE_TYPE_TO_ARRAY
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
+
+private val ARRAY_OF_METHODS = setOf(ARRAY_OF_FUNCTION) + PRIMITIVE_TYPE_TO_ARRAY.values.toSet() + Name.identifier("emptyArray")
+
+// basic text comparison of function name, todo: better handling?
+private val KtCallExpression.isArrayCall: Boolean get() = Name.identifier(calleeExpression!!.text) in ARRAY_OF_METHODS
 
 internal val KtAnnotationEntry.typeName: String get() = (typeReference?.typeElement as? KtUserType)?.referencedName.orAnonymous()
 
@@ -39,7 +50,23 @@ internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out
     val trace = BindingTraceContext()
 
     val valueArguments = psi.valueArguments.map { arg ->
-        val result = evaluator.evaluateToConstantValue(arg.getArgumentExpression()!!, trace, TypeUtils.NO_EXPECTED_TYPE)
+        val expression = arg.getArgumentExpression()!!
+
+        val result = when {
+            expression is KtCollectionLiteralExpression ->
+                evaluator.evaluateToConstantArrayValue(expression.getInnerExpressions(), trace, TypeUtils.NO_EXPECTED_TYPE)
+
+            expression is KtCallExpression && expression.isArrayCall -> {
+                evaluator.evaluateToConstantArrayValue(
+                    expression.valueArguments.mapNotNull { it.getArgumentExpression() },
+                    trace,
+                    TypeUtils.NO_EXPECTED_TYPE
+                )
+            }
+
+            else -> evaluator.evaluateToConstantValue(arg.getArgumentExpression()!!, trace, TypeUtils.NO_EXPECTED_TYPE)
+        }
+
         // TODO: consider inspecting `trace` to find diagnostics reported during the computation (such as division by zero, integer overflow, invalid annotation parameters etc.)
         val argName = arg.getArgumentName()?.asName?.toString()
         argName to result?.value
@@ -54,6 +81,15 @@ internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out
     catch (ex: Exception) {
         return InvalidScriptResolverAnnotation(psi.typeName, valueArguments, ex)
     }
+}
+
+internal fun ConstantExpressionEvaluator.evaluateToConstantArrayValue(
+    elementExpressions: List<KtExpression>,
+    trace: BindingTrace,
+    expectedElementType: KotlinType
+): ArrayValue {
+    val constants = elementExpressions.mapNotNull { evaluateExpression(it, trace, expectedElementType)?.toConstantValue(expectedElementType) }
+    return ConstantValueFactory.createArrayValue(constants, TypeUtils.NO_EXPECTED_TYPE)
 }
 
 // NOTE: this class is used for error reporting. But in order to pass plugin verification, it should derive directly from java's Annotation
