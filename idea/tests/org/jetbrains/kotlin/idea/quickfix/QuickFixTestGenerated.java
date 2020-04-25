@@ -879,6 +879,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addJvmNameAnnotation/basic.kt");
         }
 
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/extension.kt");
+        }
+
+        @TestMetadata("extension2.kt")
+        public void testExtension2() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/extension2.kt");
+        }
+
+        @TestMetadata("extension3.kt")
+        public void testExtension3() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/extension3.kt");
+        }
+
         @TestMetadata("hasAnnotation.kt")
         public void testHasAnnotation() throws Exception {
             runTest("idea/testData/quickfix/addJvmNameAnnotation/hasAnnotation.kt");
