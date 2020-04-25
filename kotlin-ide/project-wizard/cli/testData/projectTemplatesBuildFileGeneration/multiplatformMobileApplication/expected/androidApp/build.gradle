@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android' version 'KOTLIN_VERSION'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-android-extensions'
 }
 group = 'me.user'

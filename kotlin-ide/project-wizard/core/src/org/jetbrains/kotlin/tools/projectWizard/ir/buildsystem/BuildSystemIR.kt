@@ -8,6 +8,10 @@ interface BuildSystemIR : IR {
     fun BuildFilePrinter.render()
 }
 
+interface BuildSystemIRWithPriority : BuildSystemIR {
+    val priority: Int? get() = null
+}
+
 // IR element, which is not hardcoded into the parent IR structure and can be printed
 // In any place of the parent IR
 interface FreeIR : BuildSystemIR

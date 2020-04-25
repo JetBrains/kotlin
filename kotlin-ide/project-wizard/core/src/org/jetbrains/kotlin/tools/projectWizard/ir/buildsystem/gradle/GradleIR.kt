@@ -153,5 +153,5 @@ data class GradleBinaryExpressionIR(val left: BuildSystemIR, val op: String, val
 
 interface BuildScriptIR : BuildSystemIR
 
-data class BuildScriptDependencyIR(val dependencyIR: GradleIR) : BuildScriptIR, BuildSystemIR by dependencyIR
+data class BuildScriptDependencyIR(val dependencyIR: BuildSystemIR) : BuildScriptIR, BuildSystemIR by dependencyIR
 data class BuildScriptRepositoryIR(val repositoryIR: RepositoryIR) : BuildScriptIR, BuildSystemIR by repositoryIR

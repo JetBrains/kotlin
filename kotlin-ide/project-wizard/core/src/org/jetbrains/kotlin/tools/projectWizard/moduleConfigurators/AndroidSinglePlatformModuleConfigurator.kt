@@ -5,13 +5,18 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptDependencyIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
@@ -34,25 +39,31 @@ object AndroidSinglePlatformModuleConfigurator :
     override val resourcesDirectoryName: String = "res"
     override val kotlinDirectoryName: String = "java"
 
-    override fun createBuildFileIRs(
-        reader: Reader,
-        configurationData: ModulesToIrConversionData,
-        module: Module
-    ) = buildList<BuildSystemIR> {
-        +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
 
-        // it is explicitly here instead of by `createKotlinPluginIR` as it should be after `com.android.application`
-        +KotlinBuildSystemPluginIR(
-            KotlinBuildSystemPluginIR.Type.android,
-            version = configurationData.kotlinVersion
-        )
-    }.sortedBy { ir: BuildSystemIR ->
-        if (ir is GradleOnlyPluginByNameIR) {
-            // TODO implement proper sort on irs
-            // But for now kotlin-android-extensions should be after Android kotlin plugin
-            if (ir.pluginId == "kotlin-android-extensions") 1 else 0
-        } else 0
+    override fun createRootBuildFileIrs(configurationData: ModulesToIrConversionData): List<BuildSystemIR> = irsList {
+        listOf(
+            DefaultRepository.GRADLE_PLUGIN_PORTAL,
+            DefaultRepository.JCENTER,
+            DefaultRepository.GOOGLE,
+            configurationData.kotlinVersion.kotlinVersionKind.repository
+        ).forEach { repository ->
+            +BuildScriptRepositoryIR(RepositoryIR((repository)))
+        }
+
+        irsList {
+            "classpath"(const("org.jetbrains.kotlin:kotlin-gradle-plugin:${configurationData.kotlinVersion}"))
+            "classpath"(const("com.android.tools.build:gradle:${Versions.GRADLE_PLUGINS.ANDROID}"))
+        }.forEach {
+            +BuildScriptDependencyIR(it)
+        }
     }
+
+    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
+        KotlinBuildSystemPluginIR(
+            KotlinBuildSystemPluginIR.Type.android,
+            version = configurationData.kotlinVersion,
+            priority = 2
+        )
 
     override fun createModuleIRs(
         reader: Reader,

@@ -52,9 +52,9 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName)
+        +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName, priority = 1)
 
-        +GradleOnlyPluginByNameIR("kotlin-android-extensions")
+        +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
         +AndroidConfigIR(
             when (reader.createAndroidPlugin(module)) {
                 AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)

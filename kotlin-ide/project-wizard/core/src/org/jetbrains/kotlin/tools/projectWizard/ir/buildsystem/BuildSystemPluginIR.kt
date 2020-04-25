@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
-interface BuildSystemPluginIR : BuildSystemIR
+interface BuildSystemPluginIR : BuildSystemIR, BuildSystemIRWithPriority
 
 interface DefaultBuildSystemPluginIR : BuildSystemPluginIR
 
@@ -31,7 +31,7 @@ data class ApplicationPluginIR(val mainClass: String) : DefaultBuildSystemPlugin
     }
 }
 
-data class GradleOnlyPluginByNameIR(@NonNls val pluginId: String) : BuildSystemPluginIR, GradleIR {
+data class GradleOnlyPluginByNameIR(@NonNls val pluginId: String, override val priority: Int? = null) : BuildSystemPluginIR, GradleIR {
     override fun GradlePrinter.renderGradle() {
         call("id") { +pluginId.quotified }
     }
@@ -39,7 +39,8 @@ data class GradleOnlyPluginByNameIR(@NonNls val pluginId: String) : BuildSystemP
 
 data class KotlinBuildSystemPluginIR(
     val type: Type,
-    val version: Version?
+    val version: Version?,
+    override val priority: Int? = null
 ) : BuildSystemPluginIR {
 
     override fun BuildFilePrinter.render() = when (this) {
