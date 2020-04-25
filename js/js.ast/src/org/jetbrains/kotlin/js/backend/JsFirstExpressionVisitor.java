@@ -35,7 +35,7 @@ public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
     public static boolean exec(JsExpressionStatement statement) {
         JsExpression expression = statement.getExpression();
         // Pure function declarations do not need parentheses
-        if (expression instanceof JsFunction) {
+        if (expression instanceof JsFunction || expression instanceof JsClass) {
             return false;
         }
 

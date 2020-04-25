@@ -51,6 +51,9 @@ abstract class JsVisitor {
     open fun visitCatch(x: JsCatch): Unit =
             visitElement(x)
 
+    open fun visitClass(x: JsClass): Unit =
+            visitElement(x)
+
     open fun visitConditional(x: JsConditional): Unit =
             visitElement(x)
 
