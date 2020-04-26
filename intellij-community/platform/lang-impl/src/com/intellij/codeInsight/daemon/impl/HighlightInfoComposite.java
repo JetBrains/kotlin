@@ -17,13 +17,6 @@ import java.util.List;
 class HighlightInfoComposite extends HighlightInfo {
   @NonNls private static final String LINE_BREAK = "<hr size=1 noshade>";
 
-  static HighlightInfoComposite create(@NotNull List<? extends HighlightInfo> infos) {
-    // derive composite's offsets from an info with tooltip, if present
-    HighlightInfo anchorInfo = ContainerUtil.find(infos, info -> info.getToolTip() != null);
-    if (anchorInfo == null) anchorInfo = infos.get(0);
-    return new HighlightInfoComposite(infos, anchorInfo);
-  }
-
   private HighlightInfoComposite(@NotNull List<? extends HighlightInfo> infos, @NotNull HighlightInfo anchorInfo) {
     super(null, null, anchorInfo.type, anchorInfo.startOffset, anchorInfo.endOffset,
           createCompositeDescription(infos), createCompositeTooltip(infos), anchorInfo.type.getSeverity(null), false, null, false, 0,
@@ -45,8 +38,15 @@ class HighlightInfoComposite extends HighlightInfo {
     quickFixActionRanges = ContainerUtil.createLockFreeCopyOnWriteList(ranges);
   }
 
+  static @NotNull HighlightInfoComposite create(@NotNull List<? extends HighlightInfo> infos) {
+    // derive composite's offsets from an info with tooltip, if present
+    HighlightInfo anchorInfo = ContainerUtil.find(infos, info -> info.getToolTip() != null);
+    if (anchorInfo == null) anchorInfo = infos.get(0);
+    return new HighlightInfoComposite(infos, anchorInfo);
+  }
+
   @Nullable
-  private static String createCompositeDescription(List<? extends HighlightInfo> infos) {
+  private static String createCompositeDescription(@NotNull List<? extends HighlightInfo> infos) {
     StringBuilder description = new StringBuilder();
     boolean isNull = true;
     for (HighlightInfo info : infos) {

@@ -50,7 +50,6 @@ public class CleanupOnScopeIntention extends CleanupIntention {
     if (!dlg.showAndGet()) {
       return null;
     }
-    final AnalysisUIOptions uiOptions = AnalysisUIOptions.getInstance(project);
-    return dlg.getScope(uiOptions, analysisScope, project, module);
+    return dlg.getScope(analysisScope);
   }
 }

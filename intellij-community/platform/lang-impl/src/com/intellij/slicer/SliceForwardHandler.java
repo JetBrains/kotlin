@@ -62,7 +62,7 @@ public class SliceForwardHandler extends SliceHandler {
     storedSettingsBean.analysisUIOptions.loadState(analysisUIOptions);
     storedSettingsBean.showDereferences = form.isToShowDerefs();
 
-    AnalysisScope scope = dialog.getScope(analysisUIOptions, analysisScope, myProject, module);
+    AnalysisScope scope = dialog.getScope(analysisScope);
 
     SliceAnalysisParams params = new SliceAnalysisParams();
     params.scope = scope;

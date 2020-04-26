@@ -86,8 +86,7 @@ public final class RunInspectionIntention implements IntentionAction, HighPriori
     if (!dlg.showAndGet()) {
       return;
     }
-    final AnalysisUIOptions uiOptions = AnalysisUIOptions.getInstance(project);
-    customScope = dlg.getScope(uiOptions, customScope, project, module);
+    customScope = dlg.getScope(customScope);
     InspectionToolWrapper<?, ?> wrapper = LocalInspectionToolWrapper.findTool2RunInBatch(project, context, toolShortName);
     LOG.assertTrue(wrapper != null, "Can't find tool with name = \"" + toolShortName + "\"");
     rerunInspection(wrapper, (InspectionManagerEx)InspectionManager.getInstance(project), customScope, context);

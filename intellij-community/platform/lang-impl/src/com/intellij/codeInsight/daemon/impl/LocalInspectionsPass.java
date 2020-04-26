@@ -627,7 +627,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                                               @NotNull Set<? super Pair<TextRange, String>> emptyActionRegistered) {
     List<IntentionAction> result = new SmartList<>();
     boolean needEmptyAction = true;
-    final QuickFix[] fixes = descriptor.getFixes();
+    QuickFix[] fixes = descriptor.getFixes();
     if (fixes != null && fixes.length != 0) {
       for (int k = 0; k < fixes.length; k++) {
         QuickFix fix = fixes[k];
@@ -700,7 +700,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     List<InspectionToolWrapper<?, ?>> toolWrappers = profile.getInspectionProfile().getInspectionTools(getFile());
     InspectionProfileWrapper.checkInspectionsDuplicates(toolWrappers);
     List<LocalInspectionToolWrapper> enabled = new ArrayList<>();
-    for (InspectionToolWrapper toolWrapper : toolWrappers) {
+    for (InspectionToolWrapper<?, ?> toolWrapper : toolWrappers) {
       ProgressManager.checkCanceled();
       if (toolWrapper instanceof LocalInspectionToolWrapper && !isAcceptableLocalTool((LocalInspectionToolWrapper)toolWrapper)) {
         continue;

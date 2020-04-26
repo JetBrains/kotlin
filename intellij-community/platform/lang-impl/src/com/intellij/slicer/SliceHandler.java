@@ -88,7 +88,7 @@ public class SliceHandler implements CodeInsightActionHandler {
       return null;
     }
 
-    AnalysisScope scope = dialog.getScope(analysisUIOptions, analysisScope, myProject, module);
+    AnalysisScope scope = dialog.getScope(analysisScope);
     storedSettingsBean.analysisUIOptions.loadState(analysisUIOptions);
 
     SliceAnalysisParams params = new SliceAnalysisParams();

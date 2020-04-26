@@ -155,7 +155,7 @@ public final class DaemonListeners implements Disposable {
 
           if (!ApplicationManager.getApplication().isUnitTestMode()) {
             ApplicationManager.getApplication().invokeLater(() -> {
-              if ((EditorActivityManager.getInstance().isVisible(editor)) && !myProject.isDisposed()) {
+              if (EditorActivityManager.getInstance().isVisible(editor) && !myProject.isDisposed()) {
                 IntentionsUI.getInstance(myProject).invalidate();
               }
             }, ModalityState.current());
@@ -359,18 +359,17 @@ public final class DaemonListeners implements Disposable {
         removeAllNonPersistentHighlighters();
       }
     });
-    connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) -> {
+    connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) ->
       WriteAction.run(() -> {
         PsiFile file = root.getContainingFile();
         if (file != null) {
           // force clearing all PSI caches, including those in WholeFileInspectionFactory
           ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         }
-      });
-    });
+      }));
   }
 
-  private <T, U extends KeyedLazyInstance<T>> void restartOnExtensionChange(ExtensionPointName<U> name, final String message) {
+  private <T, U extends KeyedLazyInstance<T>> void restartOnExtensionChange(@NotNull ExtensionPointName<U> name, @NotNull String message) {
     name.addChangeListener(() -> stopDaemonAndRestartAllFiles(message), this);
   }
 
@@ -531,9 +530,7 @@ public final class DaemonListeners implements Disposable {
 
     @Override
     public void profilesInitialized() {
-      AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
-        stopDaemonAndRestartAllFiles("Inspection profiles activated");
-      });
+      AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> stopDaemonAndRestartAllFiles("Inspection profiles activated"));
     }
   }
 
@@ -589,7 +586,7 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
-  private static void removeNonPersistentHighlighters(MarkupModel model) {
+  private static void removeNonPersistentHighlighters(@NotNull MarkupModel model) {
     for (RangeHighlighter highlighter: model.getAllHighlighters()) {
       if (!(highlighter instanceof RangeHighlighterEx && ((RangeHighlighterEx)highlighter).isPersistent())) {
         model.removeHighlighter(highlighter);
