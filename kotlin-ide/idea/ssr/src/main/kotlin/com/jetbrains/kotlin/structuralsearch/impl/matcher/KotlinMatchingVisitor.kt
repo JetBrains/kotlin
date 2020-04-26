@@ -125,37 +125,76 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitArgument(argument: KtValueArgument) {
         val other = getTreeElement<KtValueArgument>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(argument, other)
+        myMatchingVisitor.result = myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
+                && myMatchingVisitor.match(argument.getArgumentName(), other.getArgumentName())
     }
 
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElement<KtCallExpression>() ?: return
-        val sortedCodeArgs = other.resolveToCall(BodyResolveMode.PARTIAL)?.valueArgumentsByIndex ?: error(
-            "Could not resolve matching procedure declaration."
-        )
-        myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
-        sortedCodeArgs.forEachIndexed { i, codeResArg ->
-            val queryValueArgs = expression.valueArguments
-            val queryValueArg = queryValueArgs[i]
-            val codeValueArg = codeResArg.arguments.first() as KtValueArgument
-            if (!myMatchingVisitor.setResult(
-                    myMatchingVisitor.match(
-                        queryValueArg.getArgumentExpression(), codeValueArg.getArgumentExpression()
-                    )
-                ) && queryValueArg.isNamed()
-            ) { // found out of order argument that could be correct
-                val queryValueArgMap = queryValueArgs.subList(i, expression.valueArguments.lastIndex + 1)
-                    .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
-                val codeValueArgMap = sortedCodeArgs.subList(i, sortedCodeArgs.lastIndex + 1)
-                    .map { it.arguments.first() }.sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
-                queryValueArgMap.forEachIndexed { j, queryExpr ->
-                    val codeExpr = codeValueArgMap[j]
-                    if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryExpr, codeExpr))) return
+
+        // check callee matching
+        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)))  return
+
+        // check arguments value matching
+        val queryArgs = expression.valueArguments
+        val sortedCodeArgs = other.resolveToCall(BodyResolveMode.PARTIAL)?.valueArgumentsByIndex?.flatMap { it.arguments }
+            ?.map { it as KtValueArgument } ?: error("Could not resolve matching procedure declaration.")
+        var queryIndex = 0
+        var codeIndex = 0
+        while(queryIndex < queryArgs.size && codeIndex < sortedCodeArgs.size) {
+            val queryArg = queryArgs[queryIndex]
+            val codeArg = sortedCodeArgs[codeIndex]
+
+            // varargs declared in call matching with one-to-one argument passing
+            if(queryArg.isSpread && !codeArg.isSpread) {
+                val spreadArgExpr = queryArg.getArgumentExpression()
+                if(spreadArgExpr is KtCallExpression) {
+                    myMatchingVisitor.result = true
+                    spreadArgExpr.valueArguments.forEach { spreadedArg ->
+                        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(spreadedArg, sortedCodeArgs[codeIndex++]))) return
+                    }
+                    queryIndex++
+                    continue
+                } else { // can't match array that is not created in the call itself
+                    myMatchingVisitor.result = false
+                    return
                 }
-                return
-            } else { // match violation found
-                return
             }
+            if(!queryArg.isSpread && codeArg.isSpread) {
+                val spreadArgExpr = codeArg.getArgumentExpression()
+                if(spreadArgExpr is KtCallExpression) {
+                    myMatchingVisitor.result = true
+                    (spreadArgExpr).valueArguments.forEach { spreadedArg ->
+                        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg))) return
+                    }
+                    codeIndex++
+                    continue
+                } else { // can't match array that is not created in the call itself
+                    myMatchingVisitor.result = false
+                    return
+                }
+            }
+
+            // normal argument matching
+            if (!myMatchingVisitor.setResult(
+                    myMatchingVisitor.match(queryArg.getArgumentExpression(), codeArg.getArgumentExpression()))
+            ) {
+                if(myMatchingVisitor.setResult(queryArg.isNamed())) { // start comparing for out of order arguments
+                    val queryValueArgMap = queryArgs.subList(queryIndex, expression.valueArguments.lastIndex + 1)
+                        .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
+                    val codeValueArgMap = sortedCodeArgs.subList(codeIndex, sortedCodeArgs.lastIndex + 1)
+                        .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
+                    queryValueArgMap.forEachIndexed { j, queryExpr ->
+                        val codeExpr = codeValueArgMap[j]
+                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryExpr, codeExpr))) return
+                    }
+                    return
+                } else {
+                    return
+                }
+            }
+            queryIndex++
+            codeIndex++
         }
     }
 
