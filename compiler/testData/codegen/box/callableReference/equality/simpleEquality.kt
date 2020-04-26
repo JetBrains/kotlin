@@ -44,3 +44,6 @@ fun box(): String {
 
 fun referenceTopLevelFunFromOtherFile() = ::topLevelFun
 fun referenceTopLevelVarFromOtherFile() = ::topLevelVar
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: FAILS_IN_JS_IR

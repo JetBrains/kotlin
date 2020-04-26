@@ -1,5 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 fun box(): String {
     val plusZero: Any = 0.0

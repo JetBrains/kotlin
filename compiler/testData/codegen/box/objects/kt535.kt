@@ -23,3 +23,6 @@ fun box() : String {
     System.out?.println(i3?.getName())
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

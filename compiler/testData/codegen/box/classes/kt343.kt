@@ -21,3 +21,8 @@ fun box(): String {
 
     return if (list.size == 2 && list.get(0) == 2 && list.get(1) == 3) "OK" else "fail"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

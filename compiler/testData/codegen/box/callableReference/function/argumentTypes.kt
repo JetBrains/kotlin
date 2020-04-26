@@ -9,3 +9,5 @@ private fun <T> ff(value: T?): String {
 
 fun box() = ff("arg")
 
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: CALLABLE_REFERENCES_FAIL

@@ -18,3 +18,6 @@ fun box(): String  {
     if (FooImpl().foo(2.0) != 2.0) return "fail"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: BRIDGE_ISSUES

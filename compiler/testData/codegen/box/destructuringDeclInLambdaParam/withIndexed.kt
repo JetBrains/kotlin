@@ -12,3 +12,6 @@ fun box(): String {
     if (result != "OK56") return "fail: $result"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_GENERATED

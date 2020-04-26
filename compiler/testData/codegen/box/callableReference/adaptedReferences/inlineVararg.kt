@@ -11,3 +11,5 @@ fun bar (vararg xs: Char) =
 
 fun box(): String = foo(::bar)
 // -> { a, b -> bar(a, b) }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

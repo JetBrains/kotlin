@@ -25,3 +25,6 @@ fun box(): String {
     val p = Value("O", "K")
     return p.additionalValue + p.additionalText
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

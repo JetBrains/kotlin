@@ -11,3 +11,7 @@ fun box(): String {
 
     return if (s != "0:[x0]1:[x1]2:[x2]3:[x3]") "Fail: '$s'" else "OK"
 }
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_COLLECTIONS

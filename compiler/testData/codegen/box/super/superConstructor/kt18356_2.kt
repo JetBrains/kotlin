@@ -6,3 +6,8 @@ fun box(): String {
     return foo("OK", intArrayOf(1, 2)).s
 }
 
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: SPREAD

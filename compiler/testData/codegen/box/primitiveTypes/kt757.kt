@@ -11,3 +11,6 @@ fun box() : String {
     System.out?.println(x.inv())
     return if(x.inv() == -11.toLong()) "OK" else "fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

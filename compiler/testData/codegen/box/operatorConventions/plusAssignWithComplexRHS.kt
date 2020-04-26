@@ -8,3 +8,6 @@ fun box(): String {
     map += "OK" to emptySet()
     return map.keys.first().toString()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Wasm stdlib: Maps

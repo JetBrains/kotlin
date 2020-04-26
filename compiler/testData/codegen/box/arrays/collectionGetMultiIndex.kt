@@ -10,3 +10,8 @@ fun box(): String {
     s[1, -1] = "OK"
     return s[2, -2]
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

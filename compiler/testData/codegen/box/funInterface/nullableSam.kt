@@ -23,3 +23,6 @@ fun box(): String {
     if (isNull {}) return "Fail 4"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: SAM_CONVERSIONS

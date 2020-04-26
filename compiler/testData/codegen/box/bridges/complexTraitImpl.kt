@@ -32,3 +32,6 @@ fun box(): String {
     r += a.foo()[0]
     return if (r == "BBBBB") "OK" else "Fail: $r"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_GENERATED

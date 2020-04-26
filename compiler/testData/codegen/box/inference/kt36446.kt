@@ -38,3 +38,6 @@ interface ArgumentDefinition<Value> {
 interface ArgumentReference<out Value> {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): Value
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

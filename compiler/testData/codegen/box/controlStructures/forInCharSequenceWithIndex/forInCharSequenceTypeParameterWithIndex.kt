@@ -17,3 +17,7 @@ fun box(): String {
     val ss = test(cs)
     return if (ss == "0:a;1:b;2:c;3:d;") "OK" else "fail: '$ss'"
 }
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_STRING_BUILDER

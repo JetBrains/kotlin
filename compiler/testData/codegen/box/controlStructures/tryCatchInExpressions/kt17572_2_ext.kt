@@ -7,3 +7,5 @@ inline fun tryZap(s1: String, s2: String, fn: String.(String) -> String) =
         )
 
 fun box(): String = tryZap("O", "K") { this + it }
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: IR_TRY

@@ -16,3 +16,6 @@ fun box(): String {
     if (storage != 239) return "Fail 3: $storage"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

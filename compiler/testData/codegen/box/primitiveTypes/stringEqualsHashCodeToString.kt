@@ -13,3 +13,6 @@ fun box(): String {
     test("foobar")
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Proper String.hashCode

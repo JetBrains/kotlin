@@ -17,3 +17,5 @@ tailrec fun test(x : Int) : Int {
 }
 
 fun box() : String = if (test(100000) == 1) "OK" else "FAIL"
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

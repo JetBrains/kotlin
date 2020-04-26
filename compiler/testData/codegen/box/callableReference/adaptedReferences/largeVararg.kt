@@ -18,3 +18,9 @@ fun foo(
 fun bar(first: Int, vararg args: Int) = if (args.size == 39) "OK" else "Fail: ${args.size}"
 
 fun box(): String = foo(::bar)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: BIG_ARITY

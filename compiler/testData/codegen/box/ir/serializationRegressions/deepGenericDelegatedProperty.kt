@@ -58,3 +58,6 @@ fun box(): String {
     val rr = p.additionalText
     return rr.p1 + rr.p2
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

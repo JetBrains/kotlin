@@ -16,3 +16,5 @@ fun log(message: String) {
     val value = (System.getProperty("boxtest.log") ?: "") + message
     System.setProperty("boxtest.log", value)
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

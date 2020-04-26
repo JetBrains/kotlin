@@ -32,3 +32,6 @@ fun box(): String {
     test2(42, false)
     return result
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: UNIT

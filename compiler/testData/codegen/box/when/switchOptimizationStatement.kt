@@ -38,3 +38,10 @@ fun box(): String {
     if (result != "4, 1, 2, 3") return "non-exhaustive:" + result
     return "OK"
 }
+
+
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

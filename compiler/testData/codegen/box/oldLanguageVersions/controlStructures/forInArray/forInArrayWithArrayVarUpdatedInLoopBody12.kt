@@ -4,6 +4,7 @@
 // IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 fun box(): String {
     var xs = intArrayOf(1, 2, 3)

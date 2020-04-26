@@ -8,3 +8,8 @@ class Foo(bar: String) : Base(bar) {
 }
 
 fun box() = Foo("ok").something()
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_TEXT

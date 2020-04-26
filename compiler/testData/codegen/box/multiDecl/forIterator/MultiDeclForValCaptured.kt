@@ -20,3 +20,7 @@ fun box(): String {
   val s = doTest(l)
   return if (s == "1:2;2:3;3:4;") "OK" else "fail: $s"
 }
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

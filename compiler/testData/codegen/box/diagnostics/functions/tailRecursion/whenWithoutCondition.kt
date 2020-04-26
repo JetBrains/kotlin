@@ -12,3 +12,5 @@ tailrec fun withWhen2(counter : Int) : Int =
         }
 
 fun box() : String = if (withWhen2(100000) == 1) "OK" else "FAIL"
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

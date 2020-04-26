@@ -23,3 +23,6 @@ fun box(): String {
     val c = CalculatorConstants()
     return c.status
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: SpiderMonkey Shell Crash (https://github.com/lars-t-hansen/moz-gc-experiments/issues/13)

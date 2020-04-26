@@ -5,6 +5,8 @@
 // DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JS
 
+// DONT_TARGET_EXACT_BACKEND: WASM
+
 tailrec fun withWhen(counter : Int, d : Any) : Int =
         when (counter) {
             0 -> counter
@@ -16,3 +18,5 @@ tailrec fun withWhen(counter : Int, d : Any) : Int =
         }
 
 fun box() : String = if (withWhen(100000, "test") == 1) "OK" else "FAIL"
+
+

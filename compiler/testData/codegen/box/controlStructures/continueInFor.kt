@@ -123,3 +123,10 @@ fun box(): String {
     if (for_double_list() != 5) return "fail 9"
     return "OK"
 }
+
+
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

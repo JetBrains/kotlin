@@ -19,3 +19,6 @@ fun box(): String {
     listOf(Foo(), Foo(), Foo()).forEach(b::addFoo)
     return if (b.size == 3) "OK" else "Fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: BINDING_RECEIVERS

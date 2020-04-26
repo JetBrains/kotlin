@@ -12,3 +12,6 @@ fun callTwice(f: () -> String): String {
 fun box(): String {
     return callTwice(({ x++; A() }())::f)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: BINDING_RECEIVERS

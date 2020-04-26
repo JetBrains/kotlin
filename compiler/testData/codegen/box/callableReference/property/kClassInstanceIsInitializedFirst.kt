@@ -11,3 +11,6 @@ class A {
 fun box(): String {
     return A.ref.get(A())
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

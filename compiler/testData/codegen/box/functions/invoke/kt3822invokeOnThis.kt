@@ -10,3 +10,6 @@ class B() : Function0<Boolean> {
 }
 
 fun box() = if (B().foo()) "OK" else "fail"
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: IMPLEMENTING_FUNCTION_INTERFACE

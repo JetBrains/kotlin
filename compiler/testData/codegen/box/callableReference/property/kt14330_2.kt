@@ -12,3 +12,5 @@ fun box(): String {
     if (value2 != null) "fail 2: ${value2}"
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

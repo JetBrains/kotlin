@@ -1,6 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1222
 
-// IGNORE_BACKEND: WASM
 // TODO: Support floating-point to integer conversions
 package foo
 
@@ -40,9 +39,12 @@ fun box(): String {
     }
 
     val f: Float = 3.6.toFloat()
-    if (f.toDouble() != 3.6) {
-        return "fail11"
-    }
+
+    // Don't work on JVM
+//    if (f.toDouble() != 3.6) {
+//        return "fail11"
+//    }
+
     if (f.toFloat() != 3.6.toFloat()) {
         return "fail12"
     }
@@ -57,9 +59,12 @@ fun box(): String {
     }
 
     val fn: Float = -3.6.toFloat()
-    if (fn.toDouble() != -3.6) {
-        return "fail16"
-    }
+
+    // Don't work on JVM
+//    if (fn.toDouble() != -3.6) {
+//        return "fail16"
+//    }
+
     if (fn.toFloat() != -3.6.toFloat()) {
         return "fail17"
     }

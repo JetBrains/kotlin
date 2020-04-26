@@ -18,3 +18,5 @@
 }
 
 fun box() : String = if (test(3) == 0) "OK" else "FAIL"
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

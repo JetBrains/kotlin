@@ -29,3 +29,6 @@ fun box(): String {
     (A::ext)(A())
     return if (state == "123") "OK" else "Fail $state"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

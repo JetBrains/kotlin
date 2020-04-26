@@ -22,3 +22,6 @@ fun box(): String {
     r += a.foo().iterator().next()
     return if (r == "CCC") "OK" else "Fail: $r"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_GENERATED

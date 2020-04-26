@@ -22,3 +22,6 @@ fun box(): String {
     if (squares != arrayListOf(1, 4, 9)) return "FAIL: $squares"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

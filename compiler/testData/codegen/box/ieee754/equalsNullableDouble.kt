@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProperIeee754Comparisons
+// DONT_TARGET_EXACT_BACKEND: WASM
 // DONT_TARGET_EXACT_BACKEND: JS_IR
 
 fun equals1(a: Double, b: Double?) = a == b

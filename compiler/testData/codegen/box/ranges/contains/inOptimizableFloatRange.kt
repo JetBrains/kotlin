@@ -38,3 +38,6 @@ fun box(): String {
     assert(++value !in 1.0f..1.0f)
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

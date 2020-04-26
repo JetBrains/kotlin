@@ -22,3 +22,8 @@ fun box() : String{
     if(t6) return "fail6"
     return "OK"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_HASH_SET

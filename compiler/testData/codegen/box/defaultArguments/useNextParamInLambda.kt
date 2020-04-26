@@ -14,3 +14,7 @@ fun box(): String {
     }
     return f(f2 = { "O" }) + f(f1 = { "K" })
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: IR_TRY
+

@@ -63,3 +63,10 @@ fun box(): String {
     if (result != "5, 6, 7, 8") return "int:" + result
     return "OK"
 }
+
+
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

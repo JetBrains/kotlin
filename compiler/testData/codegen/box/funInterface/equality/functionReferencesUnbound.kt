@@ -45,3 +45,7 @@ private fun id(f: FunInterface): Any = f
 fun target1FromOtherFile(): Any = id(::target1)
 fun adapted1FromOtherFile(): Any = id(::adapted1)
 fun adapted2FromOtherFile(): Any = id(::adapted2)
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: SAM_CONVERSIONS

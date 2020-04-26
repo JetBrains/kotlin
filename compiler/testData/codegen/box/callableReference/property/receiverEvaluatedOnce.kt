@@ -16,3 +16,6 @@ fun callTwice(p: KProperty0<String>): String {
 fun box(): String {
     return callTwice(({ x++; A() }())::p)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

@@ -7,3 +7,7 @@ class Outer(val x: Any) {
 }
 
 fun box() = Outer("OK").Inner().fn()
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: FAILS_IN_JS_IR

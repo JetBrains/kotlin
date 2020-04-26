@@ -13,3 +13,7 @@ fun box(): String {
     // 0 + 1 + 4 + 9 = 14
     return if (s != 14) "Fail: $s" else "OK"
 }
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_COLLECTIONS

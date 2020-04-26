@@ -31,3 +31,8 @@ fun box() : String {
 
 fun thirdElementIsThree(a : IntArray) =
     a.size >= 3 && a[2] == 3
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IR_TRY

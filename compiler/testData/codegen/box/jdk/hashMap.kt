@@ -13,3 +13,8 @@ fun box(): String {
     if (map.keys.contains("ffffff")) return "fail 5"
     return "OK"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_HASH_MAP

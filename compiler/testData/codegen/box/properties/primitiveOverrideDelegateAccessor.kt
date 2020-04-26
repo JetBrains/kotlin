@@ -18,3 +18,6 @@ fun box(): String {
     a.value = 42
     return if (a.value == 42) "OK" else "Fail 1"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

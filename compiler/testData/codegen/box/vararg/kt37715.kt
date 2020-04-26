@@ -10,3 +10,6 @@ fun box(): String {
     val a = foo(1, 4.5)
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Wasm stdlib: ArrayList

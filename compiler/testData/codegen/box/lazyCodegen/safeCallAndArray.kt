@@ -9,3 +9,9 @@ fun box(): String? {
     val arrayList = arrayOf(c?.calc(), "")
     return arrayList[0]
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: MINOR: NULLABLE_BOX_FUNCTION
+
+
+

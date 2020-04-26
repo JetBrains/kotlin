@@ -10,3 +10,6 @@ fun box(): String {
                      Pair<String, String>::second)
     return y.get(Pair("OK", "Fail"))
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

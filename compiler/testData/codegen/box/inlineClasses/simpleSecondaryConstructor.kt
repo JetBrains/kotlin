@@ -16,3 +16,6 @@ inline class Foo(val x: String) {
 fun box(): String {
     return Foo(42.0).x
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

@@ -20,3 +20,8 @@ fun box() : String {
     val s = bar(HashSet<Int>())
     return if (s.contains(42)) "OK" else "fail 2"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IR_TRY

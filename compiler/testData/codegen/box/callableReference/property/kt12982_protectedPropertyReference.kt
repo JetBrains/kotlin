@@ -10,3 +10,6 @@ fun box(): String {
     x.set(foo, 42)
     return if (x.get(foo) == 42) "OK" else "Fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

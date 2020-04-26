@@ -2,6 +2,7 @@
 // IGNORE_BACKEND: JS_IR
 // Enable for JS when it supports Java class library.
 // IGNORE_BACKEND: JS, NATIVE
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 class TestJava(r : Runnable) : Runnable by r {}
 class TestRunnable() : Runnable {

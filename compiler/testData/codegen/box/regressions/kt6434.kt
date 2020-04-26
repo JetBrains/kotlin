@@ -32,3 +32,8 @@ fun box(): String {
     val res = C(hashMapOf(E.VALUE to 11, E.VALUE2 to 12)).normalizedNums.values.sorted().joinToString()
     return  if ("0.0, 1.0" == res) "OK" else "fail $res"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

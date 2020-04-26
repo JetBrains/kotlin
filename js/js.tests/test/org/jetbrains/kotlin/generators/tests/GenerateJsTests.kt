@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
+import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrWasmBoxWasmTest
 import org.jetbrains.kotlin.test.TargetBackend
 
@@ -65,6 +66,37 @@ fun main(args: Array<String>) {
         testClass<AbstractIrJsCodegenBoxTest> {
             model("codegen/box", targetBackend = TargetBackend.JS_IR)
         }
+
+        testClass<AbstractIrCodegenBoxWasmTest> {
+            model(
+                "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = listOf(
+
+                    // JVM-specific
+                    "assert", "builtinStubMethods",
+
+                    // TODO: Support reflection
+                    "toArray", "classLiteral", "reflection",
+
+                    // TODO: Add stdlib
+                    "contracts", "platformTypes",
+
+                    // TODO: ArrayList
+                    "ranges/stepped/unsigned",
+
+                    // TODO: Support coroutines
+                    "coroutines", "parametersMetadata",
+
+                    // TODO: Support exceptions
+                    "finally", "deadCodeElimination", "controlStructures/tryCatchInExpressions",
+
+                    // TODO: Support delegated properties
+                    "delegatedProperty",
+
+                    "oldLanguageVersions"
+                )
+            )
+        }
+
 
         testClass<AbstractJsCodegenInlineTest> {
             model("codegen/boxInline/", targetBackend = TargetBackend.JS)

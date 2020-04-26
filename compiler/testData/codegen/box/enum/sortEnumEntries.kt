@@ -17,3 +17,6 @@ fun box(): String {
     val str = a.joinToString(" ")
     return if (str == "ROCK PAPER SCISSORS LIZARD SPOCK") "OK" else "Fail: $str"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_GENERATED

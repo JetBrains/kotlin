@@ -29,3 +29,8 @@ fun box() : String {
     val minAge = ages.testMin()
     return if (minAge == 27) "OK" else "fail"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

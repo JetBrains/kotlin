@@ -30,3 +30,8 @@ fun box(): String {
 
     return if (s.size == 5) "OK" else "Fail $s"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

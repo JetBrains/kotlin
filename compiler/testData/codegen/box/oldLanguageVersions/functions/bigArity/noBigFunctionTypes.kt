@@ -20,3 +20,6 @@ fun bar(x: Function30<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A
 fun box(): String {
     return bar(::foo)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: BIG_ARITY

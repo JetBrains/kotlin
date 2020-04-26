@@ -16,3 +16,8 @@ var <T> ArrayList<T>.length : Int
 var <T> ArrayList<T>.last : T
     get() = get(size-1)!!
     set(el : T) { set(size-1, el) }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

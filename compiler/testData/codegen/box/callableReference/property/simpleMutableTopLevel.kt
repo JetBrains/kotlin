@@ -10,3 +10,6 @@ fun box(): String {
     if (property.get().value != "second") return "Fail value 2: ${property.get()}"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCES

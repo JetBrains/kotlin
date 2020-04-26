@@ -18,3 +18,7 @@ class Derived : Base {
 }
 
 fun box(): String = if (Derived().x == 1) "OK" else "Fail"
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: IGNORED_IN_JS

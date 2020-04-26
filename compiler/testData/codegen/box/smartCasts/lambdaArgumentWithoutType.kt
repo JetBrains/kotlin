@@ -14,3 +14,6 @@ val foo: Foo = run {
 }
 
 fun box() = foo.s
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: MINOR: JS_NAME_CLASH

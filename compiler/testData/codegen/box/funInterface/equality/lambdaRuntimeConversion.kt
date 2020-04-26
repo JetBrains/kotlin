@@ -30,3 +30,7 @@ fun box(): String {
 private fun id(f: FunInterface): Any = f
 
 fun lambdaFromOtherFile(): Any = id(lambda)
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: SAM_CONVERSIONS

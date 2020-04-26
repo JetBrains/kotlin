@@ -34,3 +34,6 @@ fun box(): String {
 // FILE: fromOtherFile.kt
 
 fun captureVararg1FromOtherFile(): Any = captureVararg1(::target)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: FAILS_IN_JS_IR

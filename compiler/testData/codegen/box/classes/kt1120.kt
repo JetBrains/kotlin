@@ -2,6 +2,7 @@
 // Won't ever work with JS backend.
 // TODO: Consider rewriting this test without using threads, since the issue is not about threads at all.
 // IGNORE_BACKEND: JS, NATIVE
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 object RefreshQueue {
     val any = Any()

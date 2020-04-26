@@ -14,3 +14,8 @@ fun box(): String {
     if (l != listOf("a", "b", "c", "d", "e")) return "Fail: $l"
     return "OK"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

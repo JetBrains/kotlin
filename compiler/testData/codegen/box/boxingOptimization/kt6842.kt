@@ -8,3 +8,9 @@ fun box(): String {
     assertEquals(400L, x.first())
     return "OK"
 }
+
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

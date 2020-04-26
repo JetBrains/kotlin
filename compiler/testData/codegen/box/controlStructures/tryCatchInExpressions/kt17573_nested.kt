@@ -15,3 +15,5 @@ inline fun tryZap2(string: String, fn: (String) -> String) =
         )
 
 fun box(): String = tryZap1("O") { it } + tryZap2("K") { it }
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: IR_TRY

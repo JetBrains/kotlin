@@ -18,3 +18,10 @@ fun box(): String {
     if (result != "8, 5, 6, 7") return "unordered:" + result
     return "OK"
 }
+
+
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

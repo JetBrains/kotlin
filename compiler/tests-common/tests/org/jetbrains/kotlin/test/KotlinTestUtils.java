@@ -83,7 +83,7 @@ public class KotlinTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
-    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
+    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR = false ||
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
     private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
@@ -92,7 +92,7 @@ public class KotlinTestUtils {
     private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
             Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
 
-    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
+    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = true;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final List<File> filesToDelete = new ArrayList<>();

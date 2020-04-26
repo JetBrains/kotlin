@@ -30,3 +30,6 @@ fun box(): String {
     testSafeRange(0.0, 1.0, "0.0..1.0", ::dougleRange)
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

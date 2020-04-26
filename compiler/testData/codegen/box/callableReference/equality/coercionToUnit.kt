@@ -58,3 +58,6 @@ fun captureStringFromOtherFile(): Any = captureString(V::target)
 fun captureUnitFromOtherFile(): Any = captureUnit(V::target)
 fun captureStringBoundFromOtherFile(v0: V): Any = captureStringBound(v0::target)
 fun captureUnitBoundFromOtherFile(v0: V): Any = captureUnitBound(v0::target)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: FAILS_IN_JS_IR

@@ -19,3 +19,6 @@ fun box(): String {
 // FILE: fromOtherFile.kt
 
 fun useFromOtherFile(): Any = use(::target)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: FAILS_IN_JS_IR

@@ -68,3 +68,6 @@ fun captureVararg0FromOtherFile(): Any = captureVararg0(V::target)
 fun captureVararg0BoundFromOtherFile(v0: V): Any = captureVararg0Bound(v0::target)
 fun captureVarargAsArrayFromOtherFile(): Any = captureVarargAsArray(V::target)
 fun captureVarargAsArrayBoundFromOtherFile(v0: V): Any = captureVarargAsArrayBound(v0::target)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: FAILS_IN_JS_IR

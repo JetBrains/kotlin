@@ -18,3 +18,6 @@ fun box(): String {
     test(Inv<Int>())
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: TODO

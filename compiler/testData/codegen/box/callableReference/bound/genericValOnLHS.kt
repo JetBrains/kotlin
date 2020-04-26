@@ -10,3 +10,6 @@ fun box(): String {
     (Generic(Host()).p::t)()
     return (Generic(Host()).p::v)()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: BINDING_RECEIVERS

@@ -7,3 +7,6 @@ fun foo(i: Int?): String {
 }
 
 fun box() = foo(null)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Narrowing null reference to different types inline classes

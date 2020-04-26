@@ -203,7 +203,7 @@ val currentOsType = run {
     OsType(osName, osArch)
 }
 
-val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2019/08/2019-08-11-09-56-40-mozilla-central"
+val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2020/05/2020-05-11-21-47-06-mozilla-central"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -219,6 +219,7 @@ val downloadedTools = File(buildDir, "tools")
 val downloadJsShell by task<Download> {
     src(jsShellLocation)
     dest(File(downloadedTools, "jsshell-$jsShellSuffix.zip"))
+    overwrite(false)
 }
 
 val unzipJsShell by task<Copy> {
@@ -231,10 +232,11 @@ val unzipJsShell by task<Copy> {
 projectTest("wasmTest", true) {
     dependsOn(unzipJsShell)
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
+    val jsShellExecutablePath = /*"/home/skuzmich/bin/jsshell/js"*/File(unzipJsShell.get().destinationDir, "js").absolutePath
+//    println(jsShellExecutablePath)
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
 
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
     systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
 
     setUpBoxTests()

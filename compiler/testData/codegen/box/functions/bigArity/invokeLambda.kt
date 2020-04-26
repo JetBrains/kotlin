@@ -52,3 +52,7 @@ fun box(): String {
         A(20), A(21), A(22), A(23), A(24), A(25), A(26), A(27), A(28), A(29)
     )
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: BIG_ARITY
+

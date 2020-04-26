@@ -34,9 +34,44 @@ public class IrWasmBoxWasmTestGenerated extends AbstractIrWasmBoxWasmTest {
         runTest("js/js.translator/testData/wasmBox/basicTypes.kt");
     }
 
+    @TestMetadata("inlineClass.kt")
+    public void testInlineClass() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/inlineClass.kt");
+    }
+
+    @TestMetadata("interfaceMethodCalls.kt")
+    public void testInterfaceMethodCalls() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/interfaceMethodCalls.kt");
+    }
+
     @TestMetadata("primitivesOperatos.kt")
     public void testPrimitivesOperatos() throws Exception {
         runTest("js/js.translator/testData/wasmBox/primitivesOperatos.kt");
+    }
+
+    @TestMetadata("propertyInitializers.kt")
+    public void testPropertyInitializers() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/propertyInitializers.kt");
+    }
+
+    @TestMetadata("sideEffectOnDispatchReceiver.kt")
+    public void testSideEffectOnDispatchReceiver() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/sideEffectOnDispatchReceiver.kt");
+    }
+
+    @TestMetadata("simpleClass.kt")
+    public void testSimpleClass() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/simpleClass.kt");
+    }
+
+    @TestMetadata("typeCheck.kt")
+    public void testTypeCheck() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/typeCheck.kt");
+    }
+
+    @TestMetadata("virtualCalls.kt")
+    public void testVirtualCalls() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/virtualCalls.kt");
     }
 
     @TestMetadata("js/js.translator/testData/wasmBox/number")
@@ -189,260 +224,6 @@ public class IrWasmBoxWasmTestGenerated extends AbstractIrWasmBoxWasmTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/boxingOptimization")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class BoxingOptimization extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInBoxingOptimization() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/boxingOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("explicitEqualsOnDouble.kt")
-            public void testExplicitEqualsOnDouble() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/boxingOptimization/explicitEqualsOnDouble.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/classes")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Classes extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInClasses() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("kt2482.kt")
-            public void testKt2482() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/classes/kt2482.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/constants")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Constants extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInConstants() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/constants"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("float.kt")
-            public void testFloat() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/constants/float.kt");
-            }
-
-            @TestMetadata("long.kt")
-            public void testLong() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/constants/long.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ControlStructures extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInControlStructures() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("ifConst1.kt")
-            public void testIfConst1() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures/ifConst1.kt");
-            }
-
-            @TestMetadata("ifConst2.kt")
-            public void testIfConst2() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures/ifConst2.kt");
-            }
-
-            @TestMetadata("kt1899.kt")
-            public void testKt1899() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/controlStructures/kt1899.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/extensionProperties")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ExtensionProperties extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInExtensionProperties() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/extensionProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("topLevel.kt")
-            public void testTopLevel() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/extensionProperties/topLevel.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/functions")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Functions extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInFunctions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("kt2280.kt")
-            public void testKt2280() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/functions/kt2280.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/ieee754")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Ieee754 extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInIeee754() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ieee754"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("lessDouble_properIeeeAndNewInference.kt")
-            public void testLessDouble_properIeeeAndNewInference() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/ieee754/lessDouble_properIeeeAndNewInference.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/ir")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Ir extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInIr() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class ClosureConversion extends AbstractIrWasmBoxWasmTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInClosureConversion() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-                }
-
-                @TestMetadata("closureConversion1.kt")
-                public void testClosureConversion1() throws Exception {
-                    runTest("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion/closureConversion1.kt");
-                }
-
-                @TestMetadata("closureConversion3.kt")
-                public void testClosureConversion3() throws Exception {
-                    runTest("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion/closureConversion3.kt");
-                }
-
-                @TestMetadata("closureConversion4.kt")
-                public void testClosureConversion4() throws Exception {
-                    runTest("js/js.translator/testData/wasmBox/passedCommonTests/ir/closureConversion/closureConversion4.kt");
-                }
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/labels")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Labels extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInLabels() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("propertyAccessor.kt")
-            public void testPropertyAccessor() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/labels/propertyAccessor.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class LazyCodegen extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInLazyCodegen() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen/optimizations")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Optimizations extends AbstractIrWasmBoxWasmTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInOptimizations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-                }
-
-                @TestMetadata("negateConstantCompare.kt")
-                public void testNegateConstantCompare() throws Exception {
-                    runTest("js/js.translator/testData/wasmBox/passedCommonTests/lazyCodegen/optimizations/negateConstantCompare.kt");
-                }
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/operatorConventions")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class OperatorConventions extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInOperatorConventions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/operatorConventions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("annotatedAssignment.kt")
-            public void testAnnotatedAssignment() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/operatorConventions/annotatedAssignment.kt");
-            }
-
-            @TestMetadata("infixFunctionOverBuiltinMember.kt")
-            public void testInfixFunctionOverBuiltinMember() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/operatorConventions/infixFunctionOverBuiltinMember.kt");
-            }
-        }
-
         @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -458,95 +239,6 @@ public class IrWasmBoxWasmTestGenerated extends AbstractIrWasmBoxWasmTest {
             @TestMetadata("ea35963.kt")
             public void testEa35963() throws Exception {
                 runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/ea35963.kt");
-            }
-
-            @TestMetadata("incrementByteCharShort.kt")
-            public void testIncrementByteCharShort() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/incrementByteCharShort.kt");
-            }
-
-            @TestMetadata("kt1634.kt")
-            public void testKt1634() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/kt1634.kt");
-            }
-
-            @TestMetadata("kt3078.kt")
-            public void testKt3078() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/kt3078.kt");
-            }
-
-            @TestMetadata("kt6590_identityEquals.kt")
-            public void testKt6590_identityEquals() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/kt6590_identityEquals.kt");
-            }
-
-            @TestMetadata("kt737.kt")
-            public void testKt737() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/kt737.kt");
-            }
-
-            @TestMetadata("kt828.kt")
-            public void testKt828() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/kt828.kt");
-            }
-
-            @TestMetadata("kt877.kt")
-            public void testKt877() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/primitiveTypes/kt877.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/publishedApi")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class PublishedApi extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInPublishedApi() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/publishedApi"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("topLevel.kt")
-            public void testTopLevel() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/publishedApi/topLevel.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/unaryOp")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class UnaryOp extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInUnaryOp() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/unaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("intrinsic.kt")
-            public void testIntrinsic() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/unaryOp/intrinsic.kt");
-            }
-        }
-
-        @TestMetadata("js/js.translator/testData/wasmBox/passedCommonTests/when")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class When extends AbstractIrWasmBoxWasmTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInWhen() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/wasmBox/passedCommonTests/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("noElseNoMatch.kt")
-            public void testNoElseNoMatch() throws Exception {
-                runTest("js/js.translator/testData/wasmBox/passedCommonTests/when/noElseNoMatch.kt");
             }
         }
     }

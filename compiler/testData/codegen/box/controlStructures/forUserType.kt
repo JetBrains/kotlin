@@ -2,6 +2,7 @@
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 fun box() : String {
     var sum : Int = 0

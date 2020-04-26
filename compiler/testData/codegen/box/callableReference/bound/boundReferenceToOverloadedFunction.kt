@@ -23,3 +23,5 @@ fun box(): String {
     Test().fooTest()
     return result
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: BINDING_RECEIVERS

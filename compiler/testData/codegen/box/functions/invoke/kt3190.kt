@@ -25,3 +25,8 @@ fun <K,V> MutableMap<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
         return answer
     }
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

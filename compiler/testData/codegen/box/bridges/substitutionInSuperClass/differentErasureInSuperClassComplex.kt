@@ -33,3 +33,6 @@ fun box(): String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: BRIDGE_ISSUES

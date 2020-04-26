@@ -20,3 +20,6 @@ fun box(): String {
     runSuspend(::foo)
     return test
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: COROUTINES

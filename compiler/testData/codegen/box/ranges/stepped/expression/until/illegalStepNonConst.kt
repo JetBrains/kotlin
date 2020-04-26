@@ -26,3 +26,5 @@ fun box(): String {
 
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: KOTLIN_TEST_LIB

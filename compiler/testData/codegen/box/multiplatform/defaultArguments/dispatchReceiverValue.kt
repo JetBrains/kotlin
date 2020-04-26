@@ -16,3 +16,6 @@ actual class C(actual val value: String) {
 }
 
 fun box() = C("Fail").test("OK")
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: EXPECT_DEFAULT_PARAMETERS

@@ -11,3 +11,6 @@ fun box(): String {
     val dmap = DMap(mutableMapOf(Wrapper(42) to "OK"))
     return dmap[Wrapper(42)] ?: "Fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Wasm stdlib: Maps

@@ -18,3 +18,8 @@ fun box() : String {
   val l = i.len()
   return if (l != 5) "fail" else "OK"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_STRING_BUILDER

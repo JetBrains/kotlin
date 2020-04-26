@@ -19,3 +19,6 @@ fun box(): String {
   if (global == 1) return "OK" else return "fail2: global = $global"
 }
 
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

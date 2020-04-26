@@ -17,3 +17,7 @@ fun box(): String {
     val a = testUnbox()
     return if (a.direction == 0) "OK" else "Fail"
 }
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

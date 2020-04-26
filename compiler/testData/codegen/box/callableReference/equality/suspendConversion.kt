@@ -52,3 +52,6 @@ fun captureOther2() = captureSuspend(::foo)
 
 fun captureBoundOther1(c: C) = capturePlain(c::memberFun)
 fun captureBoundOther2(c: C) = captureSuspend(c::memberFun)
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: COROUTINES

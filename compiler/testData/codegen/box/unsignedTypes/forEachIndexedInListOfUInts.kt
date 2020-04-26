@@ -10,3 +10,6 @@ fun box(): String {
     if (sum != 149) throw AssertionError()
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_GENERATED

@@ -18,3 +18,6 @@ actual class C(actual val value: String) {
 // MODULE: main(lib)
 // FILE: main.kt
 fun box() = C("Fail").test("OK")
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

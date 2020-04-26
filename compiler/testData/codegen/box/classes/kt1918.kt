@@ -19,3 +19,6 @@ fun box(): String {
     val foo = buildFoo({})
     return foo.xyzzy(Bar())
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: UNIT

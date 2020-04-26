@@ -13,3 +13,7 @@ fun box(): String {
 
     return (b::get)(0)
 }
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: BINDING_RECEIVERS

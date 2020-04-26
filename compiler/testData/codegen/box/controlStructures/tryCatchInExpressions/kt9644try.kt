@@ -19,3 +19,5 @@ fun box(): String {
     test1()
     return test2()
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: IR_TRY

@@ -9,3 +9,6 @@ fun box(): String {
     if (s2 != "0") return "fail 2: $s2"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: BINDING_RECEIVERS

@@ -8,3 +8,5 @@ fun box(): String = when {
     1 !in progression -> "fail 2"
     else -> "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_COLLECTIONS

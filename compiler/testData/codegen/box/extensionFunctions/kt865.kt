@@ -16,3 +16,8 @@ fun box() : String {
     u.test()
     return if(u.collected.size == 1 && u.collected.get(0) == "239") "OK" else "fail"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

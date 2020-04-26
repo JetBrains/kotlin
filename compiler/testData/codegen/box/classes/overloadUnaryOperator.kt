@@ -26,3 +26,8 @@ fun box(): String {
     val v2 = -v1
     return if (v2[0] == "bar" && v2[1] == "foo") "OK" else "fail"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNIT

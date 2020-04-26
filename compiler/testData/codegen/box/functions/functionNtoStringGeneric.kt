@@ -26,3 +26,8 @@ fun box(): String {
     assertEquals("(T) -> kotlin.collections.List<T>", Bar<Int>().lambda.toString())
     return "OK"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

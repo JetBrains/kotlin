@@ -18,3 +18,6 @@ fun box(): String {
     if (test.value != 2019.0) throw AssertionError("test: $test")
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: STDLIB_TEXT

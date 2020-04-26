@@ -20,3 +20,8 @@ fun box(): String {
   val m: ArrayList<String> = list.findAll<String>({ name: String -> name.startsWith("M")})
   return if (m.size == 2) "OK" else "fail"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: STDLIB_ARRAY_LIST

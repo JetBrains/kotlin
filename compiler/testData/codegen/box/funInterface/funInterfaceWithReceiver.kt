@@ -22,3 +22,6 @@ fun box(): String {
 
     return bar("O") { this + "K" }
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: SAM_CONVERSIONS

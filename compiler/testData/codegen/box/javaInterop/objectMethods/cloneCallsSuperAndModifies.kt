@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 data class A(var x: Int) : Cloneable {
     public override fun clone(): A {
@@ -18,3 +19,8 @@ fun box(): String {
     if (b.x != 239) return "Fail: b.x = ${b.x}"
     return "OK"
 }
+
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS
