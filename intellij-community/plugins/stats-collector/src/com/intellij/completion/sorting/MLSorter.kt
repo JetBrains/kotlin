@@ -221,8 +221,8 @@ class MLSorter : CompletionFinalSorter() {
   }
 
   private fun LookupElement.updateDiffValue(newValue: Int) {
-    val diff = getUserData(ItemsDiffCustomizingContributor.DIFF_KEY) ?: AtomicInteger()
-      .apply { putUserData(ItemsDiffCustomizingContributor.DIFF_KEY, this) }
+    val diff = getUserData(PositionDiffArrowInitializer.POSITION_DIFF_KEY) ?: AtomicInteger()
+      .apply { putUserData(PositionDiffArrowInitializer.POSITION_DIFF_KEY, this) }
 
     diff.set(newValue)
   }

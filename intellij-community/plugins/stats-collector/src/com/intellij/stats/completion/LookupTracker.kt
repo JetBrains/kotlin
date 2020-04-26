@@ -23,5 +23,5 @@ abstract class LookupTracker : PropertyChangeListener {
 
   protected abstract fun lookupCreated(lookup: LookupImpl, storage: MutableLookupStorage)
 
-  protected abstract fun lookupClosed()
+  protected open fun lookupClosed() {}
 }

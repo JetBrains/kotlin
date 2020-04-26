@@ -1183,6 +1183,15 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     ContainerUtil.add(listener, myPrefixChangeListeners, parentDisposable);
   }
 
+
+  /**
+   * see {@link LookupCellRenderer.ItemPresentationCustomizer}
+   */
+  @ApiStatus.Internal
+  public void addPresentationCustomizer(@NotNull LookupCellRenderer.ItemPresentationCustomizer customizer) {
+    myCellRenderer.addPresentationCustomizer(customizer);
+  }
+
   FontPreferences getFontPreferences() {
     return myFontPreferences;
   }

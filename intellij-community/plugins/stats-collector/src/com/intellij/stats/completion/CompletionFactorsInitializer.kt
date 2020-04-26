@@ -18,9 +18,6 @@ class CompletionFactorsInitializer : LookupTracker() {
     processSessionFactors(lookup, storage)
   }
 
-  override fun lookupClosed() {
-  }
-
   private fun shouldUseUserFactors() = UserFactorsManager.ENABLE_USER_FACTORS
 
   private fun shouldUseSessionFactors(): Boolean = SessionFactorsUtils.shouldUseSessionFactors()
