@@ -21,7 +21,6 @@ import com.intellij.codeInsight.generation.actions.PresentableActionHandlerBased
 import com.intellij.lang.CodeInsightActions;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtension;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
@@ -55,17 +54,6 @@ public class GotoSuperAction extends PresentableActionHandlerBasedAction impleme
   @Override
   public boolean startInWriteAction() {
     return false;
-  }
-
-  @Override
-  public void update(@NotNull final AnActionEvent event) {
-    if (CodeInsightActions.GOTO_SUPER.hasAnyExtensions()) {
-      event.getPresentation().setVisible(true);
-      super.update(event);
-    }
-    else {
-      event.getPresentation().setVisible(false);
-    }
   }
 
   @NotNull

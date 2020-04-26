@@ -30,7 +30,11 @@ public abstract class PresentableActionHandlerBasedAction extends BaseCodeInsigh
 
   @Override
   public void update(@NotNull AnActionEvent event) {
-    // since previous handled may have changed the presentation, we need to restore it; otherwise it will stick. 
+    if (!getLanguageExtension().hasAnyExtensions()) {
+      event.getPresentation().setEnabledAndVisible(false);
+      return;
+    }
+    // since previous handled may have changed the presentation, we need to restore it; otherwise it will stick.
     event.getPresentation().copyFrom(getTemplatePresentation());
     applyTextOverride(event);
     super.update(event);
