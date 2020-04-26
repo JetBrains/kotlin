@@ -1,6 +1,5 @@
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
 configurePublishing(project)
 
 dependencies {
@@ -19,9 +18,5 @@ jar.configure {
 }
 
 ArtifactsKt.runtimeJar(project, jar, {})
-
-artifacts {
-    archives sourcesJar
-}
-
+configureSourcesJar()
 configureJavadocJar()
