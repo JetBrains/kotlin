@@ -85,7 +85,7 @@ public class GithubDownloadUtil {
           return false;
         }
         return IOExceptionDialog.showErrorDialog(LangBundle.message("dialog.title.download.error"),
-                                                 LangBundle.message("text.can.download", url));
+                                                 LangBundle.message("text.can.not.download", url));
       }
     );
     File out = outcome.get();
