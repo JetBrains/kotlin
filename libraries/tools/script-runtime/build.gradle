@@ -31,7 +31,7 @@ artifacts {
     mainJar jar
 }
 
-javadocJar()
+configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [

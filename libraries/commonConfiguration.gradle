@@ -207,7 +207,7 @@ ext.configurePublishing = { Project project ->
 }
 
 allprojects { project ->
-    project.ext.javadocJar = { lambda = {} ->
+    project.ext.configureJavadocJar = { lambda = {} ->
         ArtifactsKt.javadocJar(project, lambda)
     }
 

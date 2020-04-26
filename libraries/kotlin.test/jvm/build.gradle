@@ -43,7 +43,7 @@ artifacts {
     archives modularJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",

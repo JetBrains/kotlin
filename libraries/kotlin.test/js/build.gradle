@@ -85,4 +85,4 @@ artifacts {
     }
 }
 
-javadocJar()
+configureJavadocJar()
