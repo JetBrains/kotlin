@@ -59,7 +59,7 @@ artifacts {
     archives modularJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_18

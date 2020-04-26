@@ -46,7 +46,7 @@ artifacts {
     archives sourcesJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 pluginBundle {
     plugins {

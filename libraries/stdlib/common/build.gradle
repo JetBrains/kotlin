@@ -76,6 +76,6 @@ artifacts {
     sources sourcesJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

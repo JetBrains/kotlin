@@ -24,4 +24,4 @@ artifacts {
     archives sourcesJar
 }
 
-javadocJar()
+configureJavadocJar()

@@ -305,7 +305,7 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-def javadocJar = javadocJar()
+def javadocJar = configureJavadocJar()
 
 artifacts {
     runtime libraryJarWithIr

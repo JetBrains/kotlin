@@ -35,7 +35,7 @@ artifacts {
     sources sourcesJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]

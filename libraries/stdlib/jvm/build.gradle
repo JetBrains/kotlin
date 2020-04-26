@@ -99,7 +99,7 @@ artifacts {
     archives modularJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 DexMethodCountKt.dexMethodCount(project) { task ->
     task.from(jar)

@@ -46,6 +46,6 @@ artifacts {
     archives sourcesJar
 }
 
-javadocJar()
+configureJavadocJar()
 
 test.executable = "${JDK_18}/bin/java"
