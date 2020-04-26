@@ -780,12 +780,12 @@ public class GeneratedParserUtilBase {
 
     String actual = trim(builder.getTokenText());
     if (isEmpty(actual)) {
-      sb.append(empty ? "unmatched input" : " expected");
+      sb.append(empty ? LangBundle.message("parsing.error.unmatched.input") : " " + LangBundle.message("parsing.error.expected"));
     }
     else {
-      if (!empty) sb.append(" expected, got ");
+      if (!empty) sb.append(" ").append(LangBundle.message("parsing.error.expected.got")).append(" ");
       sb.append("'").append(first(actual, MAX_ERROR_TOKEN_TEXT, true)).append("'");
-      if (empty) sb.append(" unexpected");
+      if (empty) sb.append(" ").append(LangBundle.message("parsing.error.unexpected"));
     }
     String message = sb.toString();
     if (advance) {
@@ -982,7 +982,7 @@ public class GeneratedParserUtilBase {
         if (s.length() == 0) continue;
         if (count++ > 0) {
           if (count > MAX_VARIANTS_TO_DISPLAY) {
-            sb.append(" and ...");
+            sb.append(" ").append(LangBundle.message("parsing.error.and.ellipsis"));
             break;
           }
           else {
@@ -995,7 +995,7 @@ public class GeneratedParserUtilBase {
       }
       if (count > 1 && count < MAX_VARIANTS_TO_DISPLAY) {
         int idx = sb.lastIndexOf(", ");
-        sb.replace(idx, idx + 1, " or");
+        sb.replace(idx, idx + 1, " " + LangBundle.message("parsing.error.or"));
       }
     }
 
