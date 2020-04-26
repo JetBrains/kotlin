@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRegistrar, TextEditorHighlightingPassFactory, DumbAware {
   private static final Logger LOG = Logger.getInstance(DocRenderPassFactory.class);
@@ -62,7 +61,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
     @Override
     public void doCollectInformation(@NotNull ProgressIndicator progress) {
-      items = calculateItemsToRender(Objects.requireNonNull(myDocument), myFile);
+      items = calculateItemsToRender(myDocument, myFile);
     }
 
     @Override

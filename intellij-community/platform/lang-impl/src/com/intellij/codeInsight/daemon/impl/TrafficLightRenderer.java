@@ -65,6 +65,7 @@ import java.util.stream.Collectors;
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @NotNull
   private final Project myProject;
+  @NotNull
   private final Document myDocument;
   private final DaemonCodeAnalyzerImpl myDaemonCodeAnalyzer;
   private final SeverityRegistrar mySeverityRegistrar;
@@ -94,7 +95,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     DeprecatedMethodException.report("Please use TrafficLightRenderer(Project, Document) instead");
   }
 
-  public TrafficLightRenderer(@NotNull Project project, @Nullable Document document) {
+  public TrafficLightRenderer(@NotNull Project project, @NotNull Document document) {
     myProject = project;
     myDaemonCodeAnalyzer = (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
@@ -102,25 +103,23 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     refresh(null);
 
-    if (document != null) {
-      final MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
-      model.addMarkupModelListener(this, new MarkupModelListener() {
-        @Override
-        public void afterAdded(@NotNull RangeHighlighterEx highlighter) {
-          incErrorCount(highlighter, 1);
-        }
+    final MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
+    model.addMarkupModelListener(this, new MarkupModelListener() {
+      @Override
+      public void afterAdded(@NotNull RangeHighlighterEx highlighter) {
+        incErrorCount(highlighter, 1);
+      }
 
-        @Override
-        public void beforeRemoved(@NotNull RangeHighlighterEx highlighter) {
-          incErrorCount(highlighter, -1);
-        }
-      });
-      UIUtil.invokeLaterIfNeeded(() -> {
-        for (RangeHighlighter rangeHighlighter : model.getAllHighlighters()) {
-          incErrorCount(rangeHighlighter, 1);
-        }
-      });
-    }
+      @Override
+      public void beforeRemoved(@NotNull RangeHighlighterEx highlighter) {
+        incErrorCount(highlighter, -1);
+      }
+    });
+    UIUtil.invokeLaterIfNeeded(() -> {
+      for (RangeHighlighter rangeHighlighter : model.getAllHighlighters()) {
+        incErrorCount(rangeHighlighter, 1);
+      }
+    });
   }
 
   private PsiFile getPsiFile() {
@@ -154,7 +153,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   public boolean isValid() {
-    return myDocument == null || getPsiFile() != null;
+    return getPsiFile() != null;
   }
 
   protected static final class DaemonCodeAnalyzerStatus {
@@ -250,12 +249,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     status.errorCount = errorCount.clone();
 
-    status.passes = ContainerUtil.mapNotNull(myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument), pass-> {
-      if (!(pass instanceof ProgressableTextEditorHighlightingPass)) return null;
-      ProgressableTextEditorHighlightingPass p = (ProgressableTextEditorHighlightingPass)pass;
-      if (StringUtil.isEmpty(p.getPresentableName()) || p.getProgress() < 0) return null;
-      return p;
-    });
+    status.passes = ContainerUtil.filter(myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument),
+                                         p -> !StringUtil.isEmpty(p.getPresentableName()) && p.getProgress() >= 0);
 
     status.errorAnalyzingFinished = myDaemonCodeAnalyzer.isAllAnalysisFinished(psiFile);
     status.reasonWhySuspended = myDaemonCodeAnalyzer.isUpdateByTimerEnabled() ? null : "Highlighting is paused temporarily";
@@ -429,7 +424,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         }
       }
 
-      if (statusItems.size() > 0) {
+      if (!statusItems.isEmpty()) {
         if (mainIcon == null) {
           mainIcon = AllIcons.General.InspectionsOK;
         }
@@ -484,7 +479,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     private final List<LanguageHighlightLevel> myLevelsList;
     private final List<HectorComponentPanel> myAdditionalPanels;
 
-    protected AbstractUIController() {
+    AbstractUIController() {
       PsiFile psiFile = getPsiFile();
       if (psiFile != null) {
         ProjectFileIndex fileIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();

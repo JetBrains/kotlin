@@ -72,7 +72,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
   private final boolean myInspectInjectedPsi;
 
   public LocalInspectionsPass(@NotNull PsiFile file,
-                              @Nullable Document document,
+                              @NotNull Document document,
                               int startOffset,
                               int endOffset,
                               @NotNull TextRange priorityRange,

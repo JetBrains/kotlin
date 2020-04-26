@@ -56,7 +56,6 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
 
   @Override
   public void doCollectInformation(@NotNull ProgressIndicator progress) {
-    assert myDocument != null;
     myHints.clear();
 
     Language language = myFile.getLanguage();
@@ -135,8 +134,6 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
 
   @NotNull
   private List<Inlay> hintsInRootElementArea(ParameterHintsPresentationManager manager) {
-    assert myDocument != null;
-
     TextRange range = myRootElement.getTextRange();
     int elementStart = range.getStartOffset();
     int elementEnd = range.getEndOffset();
@@ -163,7 +160,7 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
     if (!rootRange.containsOffset(offset)) return false;
     if (offset > rootRange.getStartOffset() && offset < rootRange.getEndOffset()) return true;
 
-    return myDocument != null && myDocument.getTextLength() == rootRange.getLength();
+    return myDocument.getTextLength() == rootRange.getLength();
   }
 
   static class HintData {

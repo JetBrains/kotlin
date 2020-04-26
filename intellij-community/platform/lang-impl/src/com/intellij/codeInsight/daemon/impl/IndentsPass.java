@@ -183,7 +183,6 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
   @Override
   public void doCollectInformation(@NotNull ProgressIndicator progress) {
-    assert myDocument != null;
     final Long stamp = myEditor.getUserData(LAST_TIME_INDENTS_BUILT);
     if (stamp != null && stamp.longValue() == nowStamp()) return;
 
@@ -203,7 +202,6 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
   private long nowStamp() {
     if (!myEditor.getSettings().isIndentGuidesShown()) return -1;
-    assert myDocument != null;
     // include tab size into stamp to make sure indent guides are recalculated on tab size change
     return myDocument.getModificationStamp() ^ (((long)getTabSize()) << 24);
   }
@@ -257,7 +255,6 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     }
 
     final int startRangeIndex = curRange;
-    assert myDocument != null;
     DocumentUtil.executeInBulk(myDocument, myRanges.size() > 10000, () -> {
       for (int i = startRangeIndex; i < myRanges.size(); i++) {
         newHighlighters.add(createHighlighter(mm, myRanges.get(i)));
@@ -282,7 +279,6 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
     lines.push(0);
     indents.push(0);
-    assert myDocument != null;
     List<IndentGuideDescriptor> descriptors = new ArrayList<>();
     for (int line = 1; line < lineIndents.length; line++) {
       ProgressManager.checkCanceled();
@@ -371,7 +367,6 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     @NotNull final CharSequence myChars;
 
     IndentsCalculator() {
-      assert myDocument != null;
       lineIndents = new int[myDocument.getLineCount()];
       myChars = myDocument.getCharsSequence();
     }
@@ -380,7 +375,6 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
      * Calculates line indents for the {@link #myDocument target document}.
      */
     void calculate() {
-      assert myDocument != null;
       final FileType fileType = myFile.getFileType();
       int tabSize = getTabSize();
 

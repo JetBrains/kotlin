@@ -47,7 +47,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.RefreshQueueImpl;
 import com.intellij.packageDependencies.DependencyValidationManager;
-import com.intellij.psi.*;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiCompiledElement;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.*;
@@ -546,15 +549,13 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   }
 
   @NotNull
-  public List<TextEditorHighlightingPass> getPassesToShowProgressFor(Document document) {
-    List<TextEditorHighlightingPass> allPasses = myPassExecutorService.getAllSubmittedPasses();
-    List<TextEditorHighlightingPass> result = new ArrayList<>(allPasses.size());
-    for (TextEditorHighlightingPass pass : allPasses) {
-      if (pass.getDocument() == document || pass.getDocument() == null) {
-        result.add(pass);
-      }
-    }
-    return result;
+  public List<ProgressableTextEditorHighlightingPass> getPassesToShowProgressFor(@NotNull Document document) {
+    List<HighlightingPass> allPasses = myPassExecutorService.getAllSubmittedPasses();
+    return allPasses.stream()
+      .map(p->p instanceof ProgressableTextEditorHighlightingPass ? (ProgressableTextEditorHighlightingPass)p : null)
+      .filter(p-> p != null && p.getDocument() == document)
+      .sorted(Comparator.comparingInt(p->p.getId()))
+      .collect(Collectors.toList());
   }
 
   boolean isAllAnalysisFinished(@NotNull PsiFile file) {

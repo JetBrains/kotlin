@@ -64,7 +64,7 @@ class TrafficProgressPanel extends JPanel {
     fakeStatusLargeEnough.passes = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       fakeStatusLargeEnough.passes
-        .add(new ProgressableTextEditorHighlightingPass(project, null, DaemonBundle.message("pass.wolf"), psiFile, editor, TextRange.EMPTY_RANGE, false,
+        .add(new ProgressableTextEditorHighlightingPass(project, editor.getDocument(), DaemonBundle.message("pass.wolf"), psiFile, editor, TextRange.EMPTY_RANGE, false,
                                                         HighlightInfoProcessor.getEmpty()) {
           @Override
           protected void collectInformationWithProgress(@NotNull ProgressIndicator progress) {

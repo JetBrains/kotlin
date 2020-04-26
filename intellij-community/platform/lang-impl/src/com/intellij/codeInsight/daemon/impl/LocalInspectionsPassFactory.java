@@ -47,7 +47,7 @@ public final class LocalInspectionsPassFactory implements MainHighlightingPassFa
 
   private static class MyLocalInspectionsPass extends LocalInspectionsPass {
     private MyLocalInspectionsPass(@NotNull PsiFile file,
-                                   Document document,
+                                   @NotNull Document document,
                                    @NotNull TextRange textRange,
                                    @NotNull TextRange visibleRange,
                                    @NotNull HighlightInfoProcessor highlightInfoProcessor) {

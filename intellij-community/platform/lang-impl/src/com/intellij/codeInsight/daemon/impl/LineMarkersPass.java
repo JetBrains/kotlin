@@ -63,13 +63,6 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
     myRestrictRange = restrictRange;
   }
 
-  @NotNull
-  @Override
-  public Document getDocument() {
-    //noinspection ConstantConditions
-    return super.getDocument();
-  }
-
   @Override
   public void doApplyInformationToEditor() {
     try {
