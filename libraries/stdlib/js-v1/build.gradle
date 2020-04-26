@@ -7,7 +7,8 @@ description = 'Kotlin Standard Library for JS'
 apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
-configurePublishing(project)
+// TODO: Migrate to maven-publish publishing
+configureLegacyPublishing(project)
 
 configurations {
     sources

@@ -62,20 +62,7 @@ jar {
     manifestAttributes(manifest, project, 'Main')
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.kotlin
-}
-
-configurations {
-    sources
-}
-
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-}
-
+configureSourcesJar()
 configureJavadocJar()
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

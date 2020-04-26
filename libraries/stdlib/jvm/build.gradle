@@ -5,7 +5,8 @@ apply plugin: 'kotlin-platform-jvm'
 archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
-configurePublishing(project)
+// TODO: Migrate to maven-publish publishing
+configureLegacyPublishing(project)
 
 configurations {
     distSources

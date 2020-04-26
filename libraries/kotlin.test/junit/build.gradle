@@ -27,11 +27,7 @@ jar {
     }
 }
 
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-}
-
+configureSourcesJar()
 configureJavadocJar()
 
 compileKotlin {

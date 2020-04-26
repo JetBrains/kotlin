@@ -3,7 +3,8 @@ description = 'Kotlin Test'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
-configurePublishing(project)
+// TODO: Migrate to maven-publish publishing
+configureLegacyPublishing(project)
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 

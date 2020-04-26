@@ -20,7 +20,8 @@ ext.pluginMarkerProject = { String pluginProjectId ->
     // Remove the default JAR artifact added by the Java plugin
     configurations.archives.artifacts.clear()
 
-    configurePublishing(project)
+    // TODO: Migrate to maven-publish publishing
+    configureLegacyPublishing(project)
 
     task emptyJar(type: Jar)
 
