@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralSearchProfile
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
@@ -21,7 +20,6 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class KotlinStructuralSearchProfile : StructuralSearchProfile() {
@@ -70,8 +68,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
             var element = fragment.firstChild
-            val result: MutableList<PsiElement> =
-                SmartList()
+            val result: MutableList<PsiElement> = SmartList()
             while (element != null) {
                 if (element !is PsiWhiteSpace) {
                     result.add(element)

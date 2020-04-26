@@ -89,8 +89,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         patternElement: T,
         treeElement: KtExpressionWithLabel
     ) {
-        myMatchingVisitor.result =
-            treeElement is T && myMatchingVisitor.match(patternElement.getTargetLabel(), treeElement.getTargetLabel())
+        myMatchingVisitor.result = treeElement is T
+                && myMatchingVisitor.match(patternElement.getTargetLabel(), treeElement.getTargetLabel())
     }
 
     override fun visitExpressionWithLabel(expression: KtExpressionWithLabel) {
@@ -241,8 +241,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         val typeMatched = when (val propertyTR = property.typeReference) {
             null -> true // Type will be matched with delegateExpressionOrInitializer
-            else -> propertyTR.text == other.type().toString()
-                    || propertyTR.text == other.type()?.fqName.toString()
+            else -> propertyTR.text == other.type().toString() || propertyTR.text == other.type()?.fqName.toString()
         }
 
         myMatchingVisitor.result = typeMatched
@@ -250,9 +249,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && property.isVar == other.isVar
                 && matchNameIdentifiers(property.nameIdentifier, other.nameIdentifier)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
-            property.delegateExpressionOrInitializer,
-            other.delegateExpressionOrInitializer
-        ))
+                        property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
+                ))
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {

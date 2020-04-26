@@ -18,7 +18,7 @@ abstract class KotlinRecursiveElementWalkingVisitor : KtVisitorVoid(), PsiRecurs
         myWalkingState.elementStarted(element)
     }
 
-    protected fun elementFinished(element: PsiElement) {}
+    protected fun elementFinished(element: PsiElement) { }
 
     override fun visitReferenceExpression(expression: KtReferenceExpression) {
         visitExpression(expression)
