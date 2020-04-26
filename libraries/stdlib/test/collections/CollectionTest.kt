@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -901,6 +901,22 @@ class CollectionTest {
         expect(3000000000000) { arrayListOf<Long>(1000000000000, 2000000000000).sum() }
         expect(3.0.toFloat()) { arrayListOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
         expect(3.0.toFloat()) { sequenceOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
+    }
+
+    @Test fun sumOf() {
+        assertEquals(0, emptyList<Nothing>().sumOf { 1.toInt() })
+        assertEquals(0L, emptyList<Nothing>().sumOf { 1L })
+        assertEquals(0U, emptyList<Nothing>().sumOf { 1U.toUInt() })
+        assertEquals(0UL, emptyList<Nothing>().sumOf { 1UL })
+        assertEquals(0.0, emptyList<Nothing>().sumOf { 1.0 })
+
+        val items = listOf("", "a", "bc", "de", "fgh", "klmnop")
+        assertEquals(items.size + 14, items.sumOf { it.length + 1 })
+        assertEquals(14L, items.sumOf { it.length.toLong() })
+        assertEquals(items.size.toUInt(), items.sumOf { 1U.toUInt() })
+        assertEquals(14UL, items.sumOf { it.length.toULong() })
+        assertEquals(14.0, items.sumOf { it.length.toDouble() })
+        assertEquals(Double.NaN, items.sumOf { 0.0 / it.length })
     }
 
     @Test fun average() {

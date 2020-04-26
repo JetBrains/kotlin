@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -241,6 +241,38 @@ object Aggregates : TemplateGroupBase() {
             body {
                 """
                 var sum: UInt = 0u
+                for (element in this) {
+                    sum += selector(element)
+                }
+                return sum
+                """
+            }
+        }
+    }
+
+    fun f_sumOf() = listOf("Int", "Long", "UInt", "ULong", "Double", "java.math.BigInteger", "java.math.BigDecimal").map { selectorType ->
+        fn("sumOf(selector: (T) -> $selectorType)") {
+            includeDefault()
+            include(CharSequences, ArraysOfUnsigned)
+            if (selectorType.startsWith("java")) platforms(Platform.JVM)
+        } builder {
+            inlineOnly()
+            since("1.4")
+            val typeShortName = when {
+                selectorType.startsWith("java") -> selectorType.substringAfterLast('.')
+                else -> selectorType
+            }
+            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+            annotation("@OverloadResolutionByLambdaReturnType")
+            annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
+            if (selectorType.startsWith("U"))
+                annotation("@ExperimentalUnsignedTypes")
+
+            doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
+            returns(selectorType)
+            body {
+                """
+                var sum: $selectorType = 0.to$typeShortName()
                 for (element in this) {
                     sum += selector(element)
                 }
