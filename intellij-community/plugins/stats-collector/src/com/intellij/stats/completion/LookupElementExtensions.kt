@@ -18,9 +18,15 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.openapi.util.Key
+
+private val CACHED_ITEM_ID: Key<String> = Key.create("CACHED_ITEM_ID")
 
 fun LookupElement.idString(): String {
-    val p = LookupElementPresentation()
-    renderElement(p)
-    return "${p.itemText} ${p.tailText} ${p.typeText}"
+    var itemId = getUserData(CACHED_ITEM_ID)
+    if (itemId == null) {
+        itemId = LookupElementPresentation.renderElement(this).let { "${it.itemText} ${it.tailText} ${it.typeText}" }
+        putUserData(CACHED_ITEM_ID, itemId)
+    }
+    return itemId
 }
