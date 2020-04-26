@@ -1,29 +1,3 @@
-ext.configureJvmProject = { Project project ->
-    project.configure(project) {
-        configurations {
-            sources
-        }
-
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'sources'
-            from sourceSets.main.kotlin
-        }
-
-        tasks.withType(JavaCompile) {
-            options.fork = true
-            options.forkOptions.javaHome = file(JDK_18)
-        }
-
-        tasks.withType(project.compileKotlin.class) {
-            kotlinOptions.jdkHome = JDK_18
-        }
-
-        test {
-            executable = "$JDK_16/bin/java"
-        }
-    }
-}
-
 ext.configureJavaOnlyJvm6Project = { Project project ->
     project.tasks.withType(JavaCompile) {
         sourceCompatibility = 1.6
@@ -207,6 +181,10 @@ ext.configurePublishing = { Project project ->
 }
 
 allprojects { project ->
+    project.ext.configureSourcesJar = { lambda = {} ->
+        ArtifactsKt.sourcesJar(project, lambda)
+    }
+
     project.ext.configureJavadocJar = { lambda = {} ->
         ArtifactsKt.javadocJar(project, lambda)
     }
