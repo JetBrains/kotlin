@@ -2,7 +2,8 @@ description = 'Kotlin Test for JS'
 
 apply plugin: 'kotlin-platform-js'
 
-configurePublishing(project)
+// TODO: Migrate to maven-publish publishing
+configureLegacyPublishing(project)
 
 configurations {
     sources

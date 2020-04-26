@@ -3,7 +3,8 @@ description = 'Kotlin Standard Library JDK 8 extension'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
-configurePublishing(project)
+// TODO: Migrate to maven-publish publishing
+configureLegacyPublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
 

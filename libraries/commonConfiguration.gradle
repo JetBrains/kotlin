@@ -116,6 +116,10 @@ ext.signPom = { Project project, MavenDeployer deployer ->
 }
 
 ext.configurePublishing = { Project project ->
+    ArtifactsKt.publish(project, false)
+}
+
+ext.configureLegacyPublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'
 
