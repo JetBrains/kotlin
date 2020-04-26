@@ -22,6 +22,15 @@ val Project.intellijRepo get() =
         else -> "https://www.jetbrains.com/intellij-repository/releases"
     }
 
+val Project.internalBootstrapRepo: String? get() =
+    when {
+        bootstrapKotlinRepo?.startsWith("https://buildserver.labs.intellij.net") == true ->
+            bootstrapKotlinRepo!!.replace("artifacts/content/maven", "artifacts/content/internal/repo")
+        else -> "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:$bootstrapKotlinVersion," +
+                "branch:default:any/artifacts/content/internal/repo/"
+    }
+
+
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
     return when (parts.size) {

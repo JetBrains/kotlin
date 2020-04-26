@@ -17,6 +17,7 @@ var Project.bootstrapKotlinRepo: String?
         extensions.extraProperties.set("bootstrapKotlinRepo", value)
     }
 
+@Deprecated("Obsolete, use internalBootstrapRepo instead.")
 val Project.internalKotlinRepo: String?
     get() = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:$bootstrapKotlinVersion," +
             "branch:default:any/artifacts/content/internal/repo"

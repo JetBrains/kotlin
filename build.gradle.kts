@@ -359,7 +359,7 @@ allprojects {
         maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
         bootstrapKotlinRepo?.let(::maven)
-        internalKotlinRepo?.let(::maven)
+        internalBootstrapRepo?.let(::maven)
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
