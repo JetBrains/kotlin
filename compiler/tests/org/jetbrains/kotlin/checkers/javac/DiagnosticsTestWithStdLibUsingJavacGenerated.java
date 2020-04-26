@@ -2037,6 +2037,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt36220.kt");
             }
 
+            @TestMetadata("kt38420.kt")
+            public void testKt38420() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38420.kt");
+            }
+
             @TestMetadata("nestedLambdaInferenceWithListMap.kt")
             public void testNestedLambdaInferenceWithListMap() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedLambdaInferenceWithListMap.kt");
