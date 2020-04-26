@@ -210,6 +210,13 @@ object ComparableOps : TemplateGroupBase() {
                     }
                 }
             }
+            on(Platform.WASM) {
+                body {
+                    """
+                    return TODO("Wasm stdlib: minOf")
+                    """
+                }
+            }
         }
         specialFor(Generic) {
             on(Platform.JS) { /* just to make expect, KT-22520 */ }
@@ -396,6 +403,13 @@ object ComparableOps : TemplateGroupBase() {
                         return if (a.compareTo(b) >= 0) a else b
                         """
                     }
+                }
+            }
+            on(Platform.WASM) {
+                body {
+                    """
+                    return TODO("Wasm stdlib: maxOf")
+                    """
                 }
             }
         }

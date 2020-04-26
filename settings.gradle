@@ -359,6 +359,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-stdlib:jvm-minimal-for-test",
             ":tools:binary-compatibility-validator",
             ":tools:kotlin-stdlib-gen",
+            ":tools:kotlin-wasm-runtime-gen",
 
             ":include:kotlin-stdlib-common-sources",
 
@@ -379,6 +380,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
 
     project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
     project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+    project(':tools:kotlin-wasm-runtime-gen').projectDir = "$rootDir/libraries/tools/kotlin-wasm-runtime-gen" as File
 
     project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
     project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File

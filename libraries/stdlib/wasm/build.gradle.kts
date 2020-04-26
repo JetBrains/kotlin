@@ -7,13 +7,56 @@ plugins {
     kotlin("multiplatform")
 }
 
+val builtInsSources by task<Sync> {
+    val sources = listOf(
+        "core/builtins/src/kotlin/"
+    )
+
+    val excluded = listOf(
+        // JS-specific optimized version of emptyArray() already defined
+        "core/builtins/src/kotlin/ArrayIntrinsics.kt"
+    )
+
+    sources.forEach { path ->
+        from("$rootDir/$path") {
+            into(path.dropLastWhile { it != '/' })
+            excluded.filter { it.startsWith(path) }.forEach {
+                exclude(it.substring(path.length))
+            }
+        }
+    }
+
+    into("$buildDir/builtInsSources")
+}
+
+val commonMainSources by task<Sync> {
+    val sources = listOf(
+        "libraries/stdlib/common/src/",
+        "libraries/stdlib/src/kotlin/",
+        "libraries/stdlib/unsigned/"
+    )
+
+    sources.forEach { path ->
+        from("$rootDir/$path") {
+            into(path.dropLastWhile { it != '/' })
+        }
+    }
+
+    into("$buildDir/commonMainSources")
+}
+
 kotlin {
     js(IR) {
         nodejs()
     }
     sourceSets {
         val jsMain by getting {
-            kotlin.srcDirs("builtins", "internal", "runtime")
+            kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
+            kotlin.srcDirs(builtInsSources.get().destinationDir)
+        }
+
+        val commonMain by getting {
+            kotlin.srcDirs(commonMainSources.get().destinationDir)
         }
     }
 }
@@ -34,4 +77,6 @@ tasks.withType<KotlinCompile<*>>().configureEach {
 
 tasks.named("compileKotlinJs") {
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+    dependsOn(commonMainSources)
+    dependsOn(builtInsSources)
 }

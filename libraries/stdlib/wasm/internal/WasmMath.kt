@@ -8,13 +8,17 @@ package kotlin.wasm.internal
 // `compareTo(x, y)` implemented as `(x >= y) - (x <= y)`
 
 fun wasm_i32_compareTo(x: Int, y: Int): Int =
-    wasm_i32_ge_s(x, y) - wasm_i32_le_s(x, y)
+    wasm_i32_ge_s(x, y).asInt() - wasm_i32_le_s(x, y).asInt()
 
 fun wasm_i64_compareTo(x: Long, y: Long): Int =
-    wasm_i64_ge_s(x, y) - wasm_i64_le_s(x, y)
+    wasm_i64_ge_s(x, y).asInt() - wasm_i64_le_s(x, y).asInt()
 
 fun wasm_f32_compareTo(x: Float, y: Float): Int =
-    wasm_f32_ge(x, y) - wasm_f32_le(x, y)
+    wasm_f32_ge(x, y).asInt() - wasm_f32_le(x, y).asInt()
 
 fun wasm_f64_compareTo(x: Double, y: Double): Int =
-    wasm_f64_ge(x, y) - wasm_f64_le(x, y)
+    wasm_f64_ge(x, y).asInt() - wasm_f64_le(x, y).asInt()
+
+@WasmImport("runtime", "String_equals")
+fun wasm_string_eq(x: String, y: String): Boolean =
+    implementedAsIntrinsic

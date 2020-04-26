@@ -167,6 +167,23 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.WASM) {
+            fun notEq(operand1: String, operand2: String) = when {
+                primitive?.isFloatingPoint() == true -> "!$operand1.equals($operand2)"
+                else -> "$operand1 != $operand2"
+            }
+            body {
+                """
+                if (this === other) return true
+                if (this === null || other === null) return false
+                if (size != other.size) return false
+                for (i in indices) {
+                    if (${notEq("this[i]", "other[i]")}) return false
+                }
+                return true
+                """
+            }
+        }
     }
 
     val f_contentDeepEquals = fn("contentDeepEquals(other: SELF)") {
@@ -241,6 +258,9 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Native) {
             body { "return contentDeepEqualsImpl(other)" }
         }
+        on(Platform.WASM) {
+            body { "return contentDeepEqualsImpl(other)" }
+        }
     }
 
     val f_contentToString = fn("contentToString()") {
@@ -296,6 +316,9 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
+        }
+        on(Platform.WASM) {
             body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
         }
     }
@@ -363,6 +386,9 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Native) {
             body { "return contentDeepToStringImpl()" }
         }
+        on(Platform.WASM) {
+            body { "return contentDeepToStringImpl()" }
+        }
     }
 
     val f_contentHashCode = fn("contentHashCode()") {
@@ -412,6 +438,17 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            body {
+                """
+                if (this === null) return 0
+                var result = 1
+                for (element in this)
+                    result = 31 * result + element.hashCode()
+                return result
+                """
+            }
+        }
+        on(Platform.WASM) {
             body {
                 """
                 if (this === null) return 0
@@ -481,6 +518,9 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            body { "return contentDeepHashCodeImpl()" }
+        }
+        on(Platform.WASM) {
             body { "return contentDeepHashCodeImpl()" }
         }
     }
@@ -894,6 +934,15 @@ object ArrayOps : TemplateGroupBase() {
                     """
                     arrayCopy(this$cast, destination$cast, destinationOffset, startIndex, endIndex)
                     return destination
+                    """
+                }
+            }
+            on(Platform.WASM) {
+                signature("copyInto(destination: SELF, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+                inlineOnly()
+                body {
+                    """
+                    return TODO("Wasm stdlib: copyInto")
                     """
                 }
             }
@@ -1359,6 +1408,15 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.WASM) {
+            since("1.4")
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                TODO()
+                """
+            }
+        }
         on(Platform.JS) {
             since("1.4")
             suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -1415,6 +1473,15 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.WASM) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                TODO()
+                """
+            }
+        }
+
         on(Platform.JS) {
             since("1.4")
             suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -1514,6 +1581,9 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Native) {
             body { objectLiteralImpl }
         }
+        on(Platform.WASM) {
+            body { objectLiteralImpl }
+        }
     }
 
     val f_toTypedArray = fn("toTypedArray()") {
@@ -1606,6 +1676,15 @@ object ArrayOps : TemplateGroupBase() {
                 since("1.3")
                 body {
                     "arrayFill(this, fromIndex, toIndex, element)"
+                }
+            }
+            on(Platform.WASM) {
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                since("1.3")
+                body {
+                    """
+                    TODO("Wasm stdlib: fill")
+                    """
                 }
             }
             on(Platform.Common) {

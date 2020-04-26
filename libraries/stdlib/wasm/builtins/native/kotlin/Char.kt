@@ -7,25 +7,29 @@
 
 package kotlin
 
-import kotlin.wasm.internal.ExcludedFromCodegen
-import kotlin.wasm.internal.WasmInstruction
-import kotlin.wasm.internal.implementedAsIntrinsic
-import kotlin.wasm.internal.wasm_i32_compareTo
+import kotlin.wasm.internal.*
 
 /**
  * Represents a 16-bit Unicode character.
  *
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-public class Char private constructor() : Comparable<Char> {
+@WasmPrimitive
+public class Char private constructor(val value: Char) : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
      *
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override inline fun compareTo(other: Char): Int =
+    public override fun compareTo(other: Char): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
+
+    public override fun equals(other: Any?): Boolean {
+        if (other is Char)
+            return this === (other as Char)
+        return false
+    }
 
     /** Adds the other Int value to this value resulting a Char. */
     public inline operator fun plus(other: Int): Char =
@@ -47,8 +51,9 @@ public class Char private constructor() : Comparable<Char> {
     public inline operator fun dec(): Char =
         (this.toInt() - 1).toChar()
 
-//    /** Creates a range from this value to the specified [other] value. */
-//    public operator fun rangeTo(other: Char): CharRange
+    /** Creates a range from this value to the specified [other] value. */
+    public operator fun rangeTo(other: Char): CharRange =
+        CharRange(this, other)
 
     /** Returns the value of this character as a `Byte`. */
     public inline fun toByte(): Byte =
@@ -60,7 +65,7 @@ public class Char private constructor() : Comparable<Char> {
     public inline fun toShort(): Short =
         this.toInt().toShort()
     /** Returns the value of this character as a `Int`. */
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     public fun toInt(): Int =
         implementedAsIntrinsic
     /** Returns the value of this character as a `Long`. */
@@ -73,7 +78,9 @@ public class Char private constructor() : Comparable<Char> {
     public inline fun toDouble(): Double =
         this.toInt().toDouble()
 
-    @ExcludedFromCodegen
+    override fun toString(): String =
+        charToString(this)
+
     companion object {
         /**
          * The minimum value of a character code unit.
@@ -129,6 +136,8 @@ public class Char private constructor() : Comparable<Char> {
         @SinceKotlin("1.3")
         public const val SIZE_BITS: Int = 16
     }
-
 }
+
+@WasmImport("runtime", "Char_toString")
+private fun charToString(c: Char): String = implementedAsIntrinsic
 

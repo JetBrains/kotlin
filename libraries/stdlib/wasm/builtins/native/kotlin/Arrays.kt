@@ -15,299 +15,267 @@
 
 package kotlin
 
-/**
- * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
- */
+import kotlin.wasm.internal.*
+
 public class ByteArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Byte)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Byte
+    init {
+        JsArray_fill_Byte(jsArray, size) { 0 }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Byte): Unit
+    public inline constructor(size: Int, init: (Int) -> Byte) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Byte(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Byte =
+        JsArray_get_Byte(jsArray, index)
+
+    public operator fun set(index: Int, value: Byte): Unit {
+        JsArray_set_Byte(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): ByteIterator
+
+    public operator fun iterator(): ByteIterator = _ByteArrayIterator(this)
 }
 
-/**
- * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
- */
+internal fun _ByteArrayIterator(array: ByteArray) = object : ByteIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextByte() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class CharArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Char)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Char
+    init {
+        JsArray_fill_Char(jsArray, size) { 0.toChar() }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Char): Unit
+    public inline constructor(size: Int, init: (Int) -> Char) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Char(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Char =
+        JsArray_get_Char(jsArray, index)
+
+    public operator fun set(index: Int, value: Char): Unit {
+        JsArray_set_Char(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): CharIterator
+
+    public operator fun iterator(): CharIterator = _CharArrayIterator(this)
 }
 
-/**
- * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
- */
+internal fun _CharArrayIterator(array: CharArray) = object : CharIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextChar() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class ShortArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Short)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Short
+    init {
+        JsArray_fill_Short(jsArray, size) { 0 }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Short): Unit
+    public inline constructor(size: Int, init: (Int) -> Short) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Short(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Short =
+        JsArray_get_Short(jsArray, index)
+
+    public operator fun set(index: Int, value: Short): Unit {
+        JsArray_set_Short(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): ShortIterator
+
+    public operator fun iterator(): ShortIterator = _ShortArrayIterator(this)
 }
 
-/**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
- */
+internal fun _ShortArrayIterator(array: ShortArray) = object : ShortIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextShort() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class IntArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Int)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Int
+    init {
+        JsArray_fill_Int(jsArray, size) { 0 }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Int): Unit
+    public inline constructor(size: Int, init: (Int) -> Int) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Int(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Int =
+        JsArray_get_Int(jsArray, index)
+
+    public operator fun set(index: Int, value: Int): Unit {
+        JsArray_set_Int(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): IntIterator
+
+    public operator fun iterator(): IntIterator = _IntArrayIterator(this)
 }
 
-/**
- * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
- */
+internal fun _IntArrayIterator(array: IntArray) = object : IntIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextInt() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class LongArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Long)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Long
+    init {
+        JsArray_fill_Long(jsArray, size) { 0L }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Long): Unit
+    public inline constructor(size: Int, init: (Int) -> Long) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Long(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Long =
+        JsArray_get_Long(jsArray, index)
+
+    public operator fun set(index: Int, value: Long): Unit {
+        JsArray_set_Long(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): LongIterator
+
+    public operator fun iterator(): LongIterator = _LongArrayIterator(this)
 }
 
-/**
- * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
- */
+internal fun _LongArrayIterator(array: LongArray) = object : LongIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextLong() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class FloatArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Float)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Float
+    init {
+        JsArray_fill_Float(jsArray, size) { 0.0f }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Float): Unit
+    public inline constructor(size: Int, init: (Int) -> Float) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Float(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Float =
+        JsArray_get_Float(jsArray, index)
+
+    public operator fun set(index: Int, value: Float): Unit {
+        JsArray_set_Float(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): FloatIterator
+
+    public operator fun iterator(): FloatIterator = _FloatArrayIterator(this)
 }
 
-/**
- * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
- */
+internal fun _FloatArrayIterator(array: FloatArray) = object : FloatIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextFloat() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class DoubleArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Double)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Double
+    init {
+        JsArray_fill_Double(jsArray, size) { 0.0 }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Double): Unit
+    public inline constructor(size: Int, init: (Int) -> Double) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Double(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Double =
+        JsArray_get_Double(jsArray, index)
+
+    public operator fun set(index: Int, value: Double): Unit {
+        JsArray_set_Double(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): DoubleIterator
+
+    public operator fun iterator(): DoubleIterator = _DoubleArrayIterator(this)
 }
 
-/**
- * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to `false`.
- */
+internal fun _DoubleArrayIterator(array: DoubleArray) = object : DoubleIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextDouble() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+
 public class BooleanArray(size: Int) {
-    /**
-     * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function.
-     *
-     * The function [init] is called for each array element sequentially starting from the first one.
-     * It should return the value for an array element given its index.
-     */
-    public inline constructor(size: Int, init: (Int) -> Boolean)
+    private var jsArray: WasmAnyRef = JsArray_new(size)
 
-    /**
-     * Returns the array element at the given [index].  This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun get(index: Int): Boolean
+    init {
+        JsArray_fill_Boolean(jsArray, size) { false }
+    }
 
-    /**
-     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
-     *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
-     */
-    public operator fun set(index: Int, value: Boolean): Unit
+    public inline constructor(size: Int, init: (Int) -> Boolean) {
+        jsArray = JsArray_new(size)
+        JsArray_fill_Boolean(jsArray, size, init)
+    }
 
-    /** Returns the number of elements in the array. */
+    public operator fun get(index: Int): Boolean =
+        JsArray_get_Boolean(jsArray, index)
+
+    public operator fun set(index: Int, value: Boolean): Unit {
+        JsArray_set_Boolean(jsArray, index, value)
+    }
+
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
-    /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): BooleanIterator
+
+    public operator fun iterator(): BooleanIterator = _BooleanArrayIterator(this)
 }
 
+internal fun _BooleanArrayIterator(array: BooleanArray) = object : BooleanIterator() {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun nextBoolean() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}

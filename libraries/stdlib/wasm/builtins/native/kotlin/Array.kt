@@ -13,6 +13,8 @@
 
 package kotlin
 
+import kotlin.wasm.internal.*
+
 /**
  * Represents an array (specifically, a Java array when targeting the JVM platform).
  * Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]
@@ -20,7 +22,9 @@ package kotlin
  * See [Kotlin language documentation](https://kotlinlang.org/docs/reference/basic-types.html#arrays)
  * for more information on arrays.
  */
-public class Array<T> {
+public class Array<T> constructor(size: Int) {
+    private var jsArray: WasmAnyRef = JsArray_new(size)
+
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -28,7 +32,10 @@ public class Array<T> {
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> T)
+    public inline constructor(size: Int, init: (Int) -> T) {
+        jsArray = JsArray_new(size);
+        JsArray_fill_T(jsArray, size, init)
+    }
 
     /**
      * Returns the array element at the specified [index]. This method can be called using the
@@ -40,7 +47,8 @@ public class Array<T> {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
      * where the behavior is unspecified.
      */
-    public operator fun get(index: Int): T
+    public operator fun get(index: Int): T =
+        wasm_struct_narrow<WasmAnyRef, T>(JsArray_get_WasmAnyRef(jsArray, index))
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
@@ -52,15 +60,25 @@ public class Array<T> {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
      * where the behavior is unspecified.
      */
-    public operator fun set(index: Int, value: T): Unit
+    public operator fun set(index: Int, value: T): Unit {
+        JsArray_set_WasmAnyRef(jsArray, index, value.toWasmAnyRef())
+    }
 
     /**
      * Returns the number of elements in the array.
      */
     public val size: Int
+        get() = JsArray_getSize(jsArray)
 
     /**
      * Creates an iterator for iterating over the elements of the array.
      */
-    public operator fun iterator(): Iterator<T>
+    public operator fun iterator(): Iterator<T> = arrayIterator(this)
 }
+
+internal fun <T> arrayIterator(array: Array<T>) = object : Iterator<T> {
+    var index = 0
+    override fun hasNext() = index != array.size
+    override fun next() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+

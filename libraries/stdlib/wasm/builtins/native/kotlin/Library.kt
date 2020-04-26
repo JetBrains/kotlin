@@ -6,82 +6,87 @@
     "NON_MEMBER_FUNCTION_NO_BODY",
     "REIFIED_TYPE_PARAMETER_NO_INLINE"
 )
-@file:kotlin.wasm.internal.ExcludedFromCodegen
 
 package kotlin
 
 import kotlin.internal.PureReifiable
+import kotlin.wasm.internal.ExcludedFromCodegen
+import kotlin.wasm.internal.implementedAsIntrinsic
+
+public inline fun <T> emptyArray(): Array<T> = arrayOf<T>()
 
 /**
  * Returns a string representation of the object. Can be called with a null receiver, in which case
  * it returns the string "null".
  */
-public fun Any?.toString(): String
+public fun Any?.toString(): String = this?.toString() ?: "null"
 
 /**
  * Concatenates this string with the string representation of the given [other] object. If either the receiver
  * or the [other] object are null, they are represented as the string "null".
  */
-public operator fun String?.plus(other: Any?): String
+public operator fun String?.plus(other: Any?): String = (this ?: "null") + other.toString()
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
  */
-public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>
+public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> = Array<T?>(size) { null }
 
 /**
  * Returns an array containing the specified elements.
  */
-public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
+public inline fun <T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
  */
-public fun doubleArrayOf(vararg elements: Double): DoubleArray
+public inline fun doubleArrayOf(vararg elements: Double): DoubleArray = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
-public fun floatArrayOf(vararg elements: Float): FloatArray
+public inline fun floatArrayOf(vararg elements: Float): FloatArray = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
-public fun longArrayOf(vararg elements: Long): LongArray
+public inline fun longArrayOf(vararg elements: Long): LongArray = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
-public fun intArrayOf(vararg elements: Int): IntArray
+public inline fun intArrayOf(vararg elements: Int): IntArray = elements
 
 /**
  * Returns an array containing the specified characters.
  */
-public fun charArrayOf(vararg elements: Char): CharArray
+public inline fun charArrayOf(vararg elements: Char): CharArray = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
-public fun shortArrayOf(vararg elements: Short): ShortArray
+public inline fun shortArrayOf(vararg elements: Short): ShortArray = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
-public fun byteArrayOf(vararg elements: Byte): ByteArray
+public inline fun byteArrayOf(vararg elements: Byte): ByteArray = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
-public fun booleanArrayOf(vararg elements: Boolean): BooleanArray
+public inline fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements
 
 /**
  * Returns an array containing enum T entries.
  */
 @SinceKotlin("1.1")
+@ExcludedFromCodegen
 public inline fun <reified T : Enum<T>> enumValues(): Array<T>
 
 /**
  * Returns an enum entry with specified name.
  */
 @SinceKotlin("1.1")
+@ExcludedFromCodegen
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T

@@ -339,7 +339,8 @@ public interface Map<K, out V> {
     @PlatformDependent
     public fun getOrDefault(key: K, defaultValue: @UnsafeVariance V): V {
         // See default implementation in JDK sources
-        return null as V
+        TODO("WASM")
+        // return null as V
     }
 
     // Views
