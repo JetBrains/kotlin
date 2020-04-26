@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
+import kotlin.system.exitProcess
 
 fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): CompilerConfiguration {
     val runtimeConfiguration = environment.configuration.copy()
@@ -30,7 +32,10 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
     runtimeConfiguration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
     runtimeConfiguration.put(
         CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
-        PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
+        GroupingMessageCollector(
+            PrintingMessageCollector(System.err, MessageRenderer.GRADLE_STYLE, false),
+            false
+        )
     )
 
     runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
@@ -74,22 +79,32 @@ fun buildKLib(
     commonSources: List<String>
 ) {
     val configuration = buildConfiguration(environment, moduleName)
-    generateKLib(
-        project = environment.project,
-        files = sources.map { source ->
-            val file = createPsiFile(source)
-            if (source in commonSources) {
-                file.isCommonSource = true
-            }
-            file
-        },
-        analyzer = AnalyzerWithCompilerReport(configuration),
-        configuration = configuration,
-        allDependencies = allDependencies,
-        friendDependencies = emptyList(),
-        outputKlibPath = outputPath,
-        nopack = true
-    )
+    val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
+    try {
+        generateKLib(
+            project = environment.project,
+            files = sources.map { source ->
+                val file = createPsiFile(source)
+                if (source in commonSources) {
+                    file.isCommonSource = true
+                }
+                file
+            },
+            analyzer = AnalyzerWithCompilerReport(configuration),
+            configuration = configuration,
+            allDependencies = allDependencies,
+            friendDependencies = emptyList(),
+            outputKlibPath = outputPath,
+            nopack = true
+        )
+    } catch (e: JsIrCompilationError) {
+        if (messageCollector.hasErrors()) {
+            (messageCollector as GroupingMessageCollector).flush()
+            exitProcess(ExitCode.COMPILATION_ERROR.code)
+        }
+    } finally {
+        (messageCollector as GroupingMessageCollector).flush()
+    }
 }
 
 private fun listOfKtFilesFrom(paths: List<String>): List<String> {
