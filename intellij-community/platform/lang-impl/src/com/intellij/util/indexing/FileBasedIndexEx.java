@@ -211,7 +211,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
         return null;
       }
 
-      return myAccessValidator.validate(indexId, ()-> ConcurrencyUtil.withLock(index.getReadLock(), ()->computable.convert(index)));
+      return myAccessValidator.validate(indexId, () -> ConcurrencyUtil.withLock(index.getLock().readLock(), ()->computable.convert(index)));
     }
     catch (StorageException e) {
       scheduleRebuild(indexId, e);

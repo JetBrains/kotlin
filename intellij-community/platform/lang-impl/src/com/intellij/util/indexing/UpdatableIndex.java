@@ -25,7 +25,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
@@ -34,16 +33,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 public interface UpdatableIndex<Key, Value, Input> extends InvertedIndex<Key,Value, Input> {
 
   boolean processAllKeys(@NotNull Processor<? super Key> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter idFilter) throws StorageException;
-
-  @NotNull
-  default Lock getReadLock() {
-    return getLock().readLock();
-  }
-
-  @NotNull
-  default Lock getWriteLock() {
-    return getLock().writeLock();
-  }
 
   @NotNull
   ReadWriteLock getLock();
