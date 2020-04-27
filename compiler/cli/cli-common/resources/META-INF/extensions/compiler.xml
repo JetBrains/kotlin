@@ -62,7 +62,7 @@
                         interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
                         interface="com.intellij.refactoring.rename.RenameHandler"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarExtension"
-                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarExtension"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar"
+                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar"/>
     </extensionPoints>
 </idea-plugin>

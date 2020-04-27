@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.allopen
 
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
-class FirAllOpenComponentRegistrar : FirExtensionRegistrarExtension() {
+class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
     }

@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 
-abstract class FirExtensionRegistrarExtension {
-    companion object : ProjectExtensionDescriptor<FirExtensionRegistrarExtension>(
-        "org.jetbrains.kotlin.fir.frontendIrExtensionRegistrarExtension",
-        FirExtensionRegistrarExtension::class.java
+abstract class FirExtensionRegistrar {
+    companion object : ProjectExtensionDescriptor<FirExtensionRegistrar>(
+        "org.jetbrains.kotlin.fir.frontendIrExtension",
+        FirExtensionRegistrar::class.java
     )
 
     protected inner class ExtensionRegistrarContext {
@@ -36,6 +36,6 @@ abstract class FirExtensionRegistrarExtension {
     )
 }
 
-fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrarExtension.RegisteredExtensions) {
+fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
     registerExtensions(FirStatusTransformerExtension::class, extensions.statusTransformerExtensions)
 }
