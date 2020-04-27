@@ -135,6 +135,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         // check callee matching
         if(!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)))  return
+
         val resolvedOther = other.resolveToCall(BodyResolveMode.PARTIAL) ?: run {
             myMatchingVisitor.result = false
             return
@@ -143,6 +144,13 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             myMatchingVisitor.result = false
             return
         }
+
+        // check type arguments matching (generics)
+        val queryTypeNames = expression.typeArguments.map { it.typeReference?.typeElement?.firstChild?.firstChild?.text }
+        val codeTypes = resolvedOther.typeArguments.values
+        val codeTypeNames = codeTypes.map { it.toString() }
+        val codeTypeFqNames = codeTypes.map { it.fqName.toString() }
+        if(!myMatchingVisitor.setResult(queryTypeNames == codeTypeNames || queryTypeNames == codeTypeFqNames)) return
 
         // check arguments value matching
         val queryArgs = expression.valueArguments
