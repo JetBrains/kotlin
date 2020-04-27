@@ -71,6 +71,15 @@ public class RenameElementAction extends BaseRefactoringAction {
 
   @Override
   protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element, @NotNull Editor editor, @NotNull PsiFile file, @NotNull DataContext context) {
-    return RenameHandlerRegistry.getInstance().hasAvailableHandler(context);
+    return isEnabledOnDataContext(context);
+  }
+
+  @Override
+  protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element,
+                                                        @NotNull Editor editor,
+                                                        @NotNull PsiFile file,
+                                                        @NotNull DataContext context,
+                                                        @NotNull String place) {
+    return isEnabledOnDataContext(context);
   }
 }
