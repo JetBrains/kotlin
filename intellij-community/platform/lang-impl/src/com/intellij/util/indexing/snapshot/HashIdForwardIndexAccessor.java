@@ -36,6 +36,11 @@ public class HashIdForwardIndexAccessor<Key, Value, Input>
   @Override
   public InputDataDiffBuilder<Key, Value> getDiffBuilderFromInt(int inputId, int hashId) throws IOException {
     Map<Key, Value> map = ContainerUtil.notNullize(convertToMap(inputId, hashId));
+    return createDiffBuilderByMap(inputId, map);
+  }
+
+  @Override
+  public @NotNull InputDataDiffBuilder<Key, Value> createDiffBuilderByMap(int inputId, @Nullable Map<Key, Value> map) throws IOException {
     return myForwardIndexAccessor.createDiffBuilderByMap(inputId, map);
   }
 
