@@ -211,6 +211,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt34656.kt");
         }
 
+        @TestMetadata("kt38197.kt")
+        public void testKt38197() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt38197.kt");
+        }
+
         @TestMetadata("kt6552.kt")
         public void testKt6552() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6552.kt");
