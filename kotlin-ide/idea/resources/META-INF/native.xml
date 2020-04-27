@@ -8,6 +8,7 @@
         <fileType name="Kotlin/Native Def"
                   implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsFileType"
                   fieldName="INSTANCE"
+                  language="KND"
                   extensions="def"/>
     </extensions>
 </idea-plugin>
