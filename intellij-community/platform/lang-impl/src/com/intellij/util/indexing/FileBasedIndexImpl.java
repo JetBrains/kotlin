@@ -974,7 +974,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
           markFileIndexed(vFile);
           try {
-            getIndex(requestedIndexId).update(inputId, newFc).compute();
+            getIndex(requestedIndexId).update(inputId, newFc);
           }
           finally {
             unmarkBeingIndexed();
@@ -982,7 +982,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
         }
         else { // effectively wipe the data from the indices
-          getIndex(requestedIndexId).update(inputId, null).compute();
+          getIndex(requestedIndexId).update(inputId, null);
         }
       }
 
@@ -1288,7 +1288,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     try {
       // important: no hard referencing currentFC to avoid OOME, the methods introduced for this purpose!
       // important: update is called out of try since possible indexer extension is HANDLED as single file fail / restart indexing policy
-      final Computable<Boolean> update = index.update(inputId, currentFC);
+      final Computable<Boolean> update = () -> index.update(inputId, currentFC);
       updateCalculated = true;
 
       runIndexUpdate(indexId, update, currentFC, inputId);
