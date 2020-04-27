@@ -287,32 +287,30 @@ class Fir2IrVisitor(
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
         val boundSymbol = calleeReference.boundSymbol
-        if (calleeReference.labelName == null) {
-            if (boundSymbol is FirClassSymbol) {
-                // Object case
-                val firClass = boundSymbol.fir as FirClass
-                val irClass = classifierStorage.getCachedIrClass(firClass)!!
-                if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
-                    if (irClass != conversionScope.lastClass()) {
-                        return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                            IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
-                        }
+        if (boundSymbol is FirClassSymbol) {
+            // Object case
+            val firClass = boundSymbol.fir as FirClass
+            val irClass = classifierStorage.getCachedIrClass(firClass)!!
+            if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
+                if (irClass != conversionScope.lastClass()) {
+                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                        IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                     }
                 }
+            }
 
-                val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
-                if (dispatchReceiver != null) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
-                    }
+            val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
+            if (dispatchReceiver != null) {
+                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                    IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                 }
-            } else if (boundSymbol is FirCallableSymbol) {
-                val receiverSymbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
-                val receiver = (receiverSymbol?.owner as? IrSimpleFunction)?.extensionReceiverParameter
-                if (receiver != null) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
-                    }
+            }
+        } else if (boundSymbol is FirCallableSymbol) {
+            val receiverSymbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
+            val receiver = (receiverSymbol?.owner as? IrSimpleFunction)?.extensionReceiverParameter
+            if (receiver != null) {
+                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                    IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
                 }
             }
         }
