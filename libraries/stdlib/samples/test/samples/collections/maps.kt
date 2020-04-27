@@ -319,6 +319,20 @@ class Maps {
         }
 
         @Sample
+        fun mapNotNull() {
+            val map1 = mapOf("foo" to 1, "bar" to 2, "baz" to 3)
+            val map2 = map1.mapNotNull {
+                if (it.component1().equals("bar")) {
+                    null
+                } else {
+                    it
+                }
+            }
+
+            assertPrints(map2, "[foo=1, baz=3]")
+        }
+
+        @Sample
         fun mapToSortedMap() {
             val map = mapOf(Pair("c", 3), Pair("b", 2), Pair("d", 1))
             val sorted = map.toSortedMap()
