@@ -9,22 +9,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
 import org.jetbrains.kotlin.fir.utils.ComponentTypeRegistry
-import org.jetbrains.kotlin.name.Name
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-
-abstract class FirExtensionPoint(val session: FirSession) {
-    abstract val name: FirExtensionPointName
-
-    fun interface Factory<P : FirExtensionPoint> {
-        fun create(session: FirSession): P
-    }
-}
-
-data class FirExtensionPointName(val name: Name) {
-    constructor(name: String) : this(Name.identifier(name))
-}
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 inline class FirRegisteredExtension<P : FirExtensionPoint>(val extensions: List<P>)
