@@ -96,4 +96,4 @@ artifacts {
     }
 }
 
-publish()
+publishWithLegacyMavenPlugin()

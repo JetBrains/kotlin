@@ -6,7 +6,7 @@ plugins {
 dependencies {
     compile(project(":compiler:cli"))
     compile(project(":compiler:ir.serialization.js"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-reflect"))
     if (Platform[193].orLower()) {
         compile(intellijDep()) { includeJars("picocontainer", rootProject = rootProject) }
     }

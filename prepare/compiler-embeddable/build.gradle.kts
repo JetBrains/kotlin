@@ -8,11 +8,11 @@ plugins {
 val testCompilationClasspath by configurations.creating
 
 dependencies {
-    runtime(kotlinStdlib())
-    runtime(project(":kotlin-script-runtime"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(kotlinStdlib())
+    runtimeOnly(project(":kotlin-script-runtime"))
+    runtimeOnly(project(":kotlin-reflect"))
     runtime(project(":kotlin-daemon-embeddable"))
-    runtime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    runtimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompilationClasspath(kotlinStdlib())

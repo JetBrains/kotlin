@@ -19,10 +19,10 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("trove4j") }
 
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-reflect"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }

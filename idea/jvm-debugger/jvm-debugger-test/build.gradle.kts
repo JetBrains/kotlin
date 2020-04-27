@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     testCompileOnly(intellijDep())
+    testCompileOnly(project(":kotlin-reflect-api"))
 
     testCompile(project(":idea:jvm-debugger:jvm-debugger-core"))
     testCompile(project(":idea:jvm-debugger:jvm-debugger-evaluation"))
