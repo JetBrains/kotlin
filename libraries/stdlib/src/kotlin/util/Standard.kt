@@ -114,6 +114,8 @@ public inline fun <T, R> T.let(block: (T) -> R): R {
 
 /**
  * Returns `this` value if it satisfies the given [predicate] or `null`, if it doesn't.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#takeif-and-takeunless).
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("1.1")
@@ -126,6 +128,8 @@ public inline fun <T> T.takeIf(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns `this` value if it _does not_ satisfy the given [predicate] or `null`, if it does.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#takeif-and-takeunless).
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("1.1")
