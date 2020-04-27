@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.types.classId
 
 fun firEffectiveVisibility(
     session: FirSession,
@@ -59,7 +60,7 @@ private fun lowerBound(vararg elements: FirEffectiveVisibility): FirEffectiveVis
     return result
 }
 
-private fun FirMemberDeclaration.containingClass(session: FirSession): FirRegularClass? {
+private fun FirMemberDeclaration.containingClass(session: FirSession = this.session): FirRegularClass? {
     val classId = when (this) {
         is FirRegularClass -> symbol.classId.outerClassId
         is FirCallableMemberDeclaration<*> -> symbol.callableId.classId
@@ -158,7 +159,8 @@ private fun Set<DeclarationWithRelation>.leastPermissive(
                 return declarationWithRelation
             }
             Permissiveness.PROTECTED_CHECK_REQUIRED -> {
-                if (!baseParent.isContainerSubclassOf(declarationWithRelation.declaration)) {
+                val otherContainer = declarationWithRelation.declaration.containingClass() ?: return declarationWithRelation
+                if (!baseParent.isContainerSubclassOf(otherContainer)) {
                     return declarationWithRelation
                 }
             }
@@ -169,21 +171,26 @@ private fun Set<DeclarationWithRelation>.leastPermissive(
     return null
 }
 
-private fun FirMemberDeclaration.getContainerSupertypes() = lookupSuperTypes(
-    this.containingClass(this.session) as FirClass<*>,
+private fun FirMemberDeclaration.isContainerSubclassOf(other: FirRegularClass): Boolean {
+    if (this.containingClass()?.classId == other.classId) return true
+    val containers = this.collectContainers()
+    val supertypes = mutableListOf<ConeClassLikeType>()
+    containers.forEach { supertypes.addAll(it.collectSupertypes()) }
+    return supertypes.map { it.classId }.contains(other.classId)
+}
+
+private fun FirMemberDeclaration.collectContainers(): MutableList<FirRegularClass> {
+    val containers = mutableListOf<FirRegularClass>()
+    val container = this.containingClass() ?: return containers
+    containers.add(container)
+    containers.addAll(container.collectContainers())
+    return containers
+}
+
+private fun FirRegularClass.collectSupertypes() = lookupSuperTypes(
+    this as FirClass<*>,
     lookupInterfaces = true,
     deep = true,
     useSiteSession = this.session
 )
-
-private fun FirMemberDeclaration.isContainerSubclassOf(other: FirMemberDeclaration): Boolean {
-    var clazz: FirRegularClass
-    if (other !is FirRegularClass) {
-        clazz = other.containingClass(this.session) ?: return false
-    } else {
-        clazz = other
-    }
-    val supertypes = this.getContainerSupertypes().map { it.lookupTag.classId }
-    return supertypes.contains(clazz.classId)
-}
 
