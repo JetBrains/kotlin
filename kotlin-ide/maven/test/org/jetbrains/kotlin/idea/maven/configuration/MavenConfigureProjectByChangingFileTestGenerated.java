@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMavenConfigureProjectByChangingFileTest {
-    @TestMetadata("kotlin/maven/testData/configurator/jvm")
+    @TestMetadata("maven/testData/configurator/jvm")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Jvm extends AbstractMavenConfigureProjectByChangingFileTest {
@@ -27,56 +27,56 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
         }
 
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/maven/testData/configurator/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("maven/testData/configurator/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("fixExisting")
         public void testFixExisting() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/fixExisting/");
+            runTest("maven/testData/configurator/jvm/fixExisting/");
         }
 
         @TestMetadata("jreLib")
         public void testJreLib() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/jreLib/");
+            runTest("maven/testData/configurator/jvm/jreLib/");
         }
 
         @TestMetadata("libraryMissed")
         public void testLibraryMissed() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/libraryMissed/");
+            runTest("maven/testData/configurator/jvm/libraryMissed/");
         }
 
         @TestMetadata("pluginMissed")
         public void testPluginMissed() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/pluginMissed/");
+            runTest("maven/testData/configurator/jvm/pluginMissed/");
         }
 
         @TestMetadata("simpleProject")
         public void testSimpleProject() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/simpleProject/");
+            runTest("maven/testData/configurator/jvm/simpleProject/");
         }
 
         @TestMetadata("simpleProjectEAP")
         public void testSimpleProjectEAP() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/simpleProjectEAP/");
+            runTest("maven/testData/configurator/jvm/simpleProjectEAP/");
         }
 
         @TestMetadata("simpleProjectRc")
         public void testSimpleProjectRc() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/simpleProjectRc/");
+            runTest("maven/testData/configurator/jvm/simpleProjectRc/");
         }
 
         @TestMetadata("simpleProjectSnapshot")
         public void testSimpleProjectSnapshot() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/simpleProjectSnapshot/");
+            runTest("maven/testData/configurator/jvm/simpleProjectSnapshot/");
         }
 
         @TestMetadata("withJava9ModuleInfo")
         public void testWithJava9ModuleInfo() throws Exception {
-            runTest("kotlin/maven/testData/configurator/jvm/withJava9ModuleInfo/");
+            runTest("maven/testData/configurator/jvm/withJava9ModuleInfo/");
         }
     }
 
-    @TestMetadata("kotlin/maven/testData/configurator/js")
+    @TestMetadata("maven/testData/configurator/js")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Js extends AbstractMavenConfigureProjectByChangingFileTest {
@@ -85,27 +85,27 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
         }
 
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/maven/testData/configurator/js"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("maven/testData/configurator/js"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("libraryMissed")
         public void testLibraryMissed() throws Exception {
-            runTest("kotlin/maven/testData/configurator/js/libraryMissed/");
+            runTest("maven/testData/configurator/js/libraryMissed/");
         }
 
         @TestMetadata("pluginMissed")
         public void testPluginMissed() throws Exception {
-            runTest("kotlin/maven/testData/configurator/js/pluginMissed/");
+            runTest("maven/testData/configurator/js/pluginMissed/");
         }
 
         @TestMetadata("simpleProject")
         public void testSimpleProject() throws Exception {
-            runTest("kotlin/maven/testData/configurator/js/simpleProject/");
+            runTest("maven/testData/configurator/js/simpleProject/");
         }
 
         @TestMetadata("simpleProjectSnapshot")
         public void testSimpleProjectSnapshot() throws Exception {
-            runTest("kotlin/maven/testData/configurator/js/simpleProjectSnapshot/");
+            runTest("maven/testData/configurator/js/simpleProjectSnapshot/");
         }
     }
 }

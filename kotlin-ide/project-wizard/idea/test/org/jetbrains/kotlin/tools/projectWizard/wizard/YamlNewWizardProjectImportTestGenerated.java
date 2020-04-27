@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWizardProjectImportTest {
-    @TestMetadata("kotlin/project-wizard/cli/testData/buildFileGeneration")
+    @TestMetadata("project-wizard/cli/testData/buildFileGeneration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GradleKts extends AbstractYamlNewWizardProjectImportTest {
@@ -27,66 +27,66 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
         }
 
         public void testAllFilesPresentInGradleKts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/project-wizard/cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("project-wizard/cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("android")
         public void testAndroid() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/android/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/android/");
         }
 
         @TestMetadata("jsNodeAndBrowserTargets")
         public void testJsNodeAndBrowserTargets() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jsNodeAndBrowserTargets/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jsNodeAndBrowserTargets/");
         }
 
         @TestMetadata("jvmTarget")
         public void testJvmTarget() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmTarget/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmTarget/");
         }
 
         @TestMetadata("jvmTargetWithJava")
         public void testJvmTargetWithJava() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmTargetWithJava/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmTargetWithJava/");
         }
 
         @TestMetadata("jvmToJvmDependency")
         public void testJvmToJvmDependency() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependency/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependency/");
         }
 
         @TestMetadata("jvmToJvmDependencyWithSingleRoot")
         public void testJvmToJvmDependencyWithSingleRoot() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
         }
 
         @TestMetadata("kotlinJvm")
         public void testKotlinJvm() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/kotlinJvm/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/kotlinJvm/");
         }
 
         @TestMetadata("nativeForCurrentSystem")
         public void testNativeForCurrentSystem() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/nativeForCurrentSystem/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/nativeForCurrentSystem/");
         }
 
         @TestMetadata("simpleMultiplatform")
         public void testSimpleMultiplatform() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/simpleMultiplatform/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/simpleMultiplatform/");
         }
 
         @TestMetadata("simpleNativeTarget")
         public void testSimpleNativeTarget() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/simpleNativeTarget/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/simpleNativeTarget/");
         }
 
         @TestMetadata("singleplatformJs")
         public void testSingleplatformJs() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/singleplatformJs/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/singleplatformJs/");
         }
     }
 
-    @TestMetadata("kotlin/project-wizard/cli/testData/buildFileGeneration")
+    @TestMetadata("project-wizard/cli/testData/buildFileGeneration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GradleGroovy extends AbstractYamlNewWizardProjectImportTest {
@@ -95,66 +95,66 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
         }
 
         public void testAllFilesPresentInGradleGroovy() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/project-wizard/cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("project-wizard/cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("android")
         public void testAndroid() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/android/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/android/");
         }
 
         @TestMetadata("jsNodeAndBrowserTargets")
         public void testJsNodeAndBrowserTargets() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jsNodeAndBrowserTargets/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jsNodeAndBrowserTargets/");
         }
 
         @TestMetadata("jvmTarget")
         public void testJvmTarget() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmTarget/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmTarget/");
         }
 
         @TestMetadata("jvmTargetWithJava")
         public void testJvmTargetWithJava() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmTargetWithJava/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmTargetWithJava/");
         }
 
         @TestMetadata("jvmToJvmDependency")
         public void testJvmToJvmDependency() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependency/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependency/");
         }
 
         @TestMetadata("jvmToJvmDependencyWithSingleRoot")
         public void testJvmToJvmDependencyWithSingleRoot() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
         }
 
         @TestMetadata("kotlinJvm")
         public void testKotlinJvm() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/kotlinJvm/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/kotlinJvm/");
         }
 
         @TestMetadata("nativeForCurrentSystem")
         public void testNativeForCurrentSystem() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/nativeForCurrentSystem/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/nativeForCurrentSystem/");
         }
 
         @TestMetadata("simpleMultiplatform")
         public void testSimpleMultiplatform() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/simpleMultiplatform/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/simpleMultiplatform/");
         }
 
         @TestMetadata("simpleNativeTarget")
         public void testSimpleNativeTarget() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/simpleNativeTarget/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/simpleNativeTarget/");
         }
 
         @TestMetadata("singleplatformJs")
         public void testSingleplatformJs() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/singleplatformJs/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/singleplatformJs/");
         }
     }
 
-    @TestMetadata("kotlin/project-wizard/cli/testData/buildFileGeneration")
+    @TestMetadata("project-wizard/cli/testData/buildFileGeneration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Maven extends AbstractYamlNewWizardProjectImportTest {
@@ -163,62 +163,62 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
         }
 
         public void testAllFilesPresentInMaven() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/project-wizard/cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("project-wizard/cli/testData/buildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("android")
         public void testAndroid() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/android/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/android/");
         }
 
         @TestMetadata("jsNodeAndBrowserTargets")
         public void testJsNodeAndBrowserTargets() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jsNodeAndBrowserTargets/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jsNodeAndBrowserTargets/");
         }
 
         @TestMetadata("jvmTarget")
         public void testJvmTarget() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmTarget/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmTarget/");
         }
 
         @TestMetadata("jvmTargetWithJava")
         public void testJvmTargetWithJava() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmTargetWithJava/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmTargetWithJava/");
         }
 
         @TestMetadata("jvmToJvmDependency")
         public void testJvmToJvmDependency() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependency/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependency/");
         }
 
         @TestMetadata("jvmToJvmDependencyWithSingleRoot")
         public void testJvmToJvmDependencyWithSingleRoot() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
         }
 
         @TestMetadata("kotlinJvm")
         public void testKotlinJvm() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/kotlinJvm/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/kotlinJvm/");
         }
 
         @TestMetadata("nativeForCurrentSystem")
         public void testNativeForCurrentSystem() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/nativeForCurrentSystem/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/nativeForCurrentSystem/");
         }
 
         @TestMetadata("simpleMultiplatform")
         public void testSimpleMultiplatform() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/simpleMultiplatform/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/simpleMultiplatform/");
         }
 
         @TestMetadata("simpleNativeTarget")
         public void testSimpleNativeTarget() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/simpleNativeTarget/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/simpleNativeTarget/");
         }
 
         @TestMetadata("singleplatformJs")
         public void testSingleplatformJs() throws Exception {
-            runTest("kotlin/project-wizard/cli/testData/buildFileGeneration/singleplatformJs/");
+            runTest("project-wizard/cli/testData/buildFileGeneration/singleplatformJs/");
         }
     }
 }

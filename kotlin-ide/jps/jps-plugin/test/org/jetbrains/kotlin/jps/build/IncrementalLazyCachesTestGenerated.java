@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyCachesTest {
-    @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches")
+    @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LazyKotlinCaches extends AbstractIncrementalLazyCachesTest {
@@ -27,50 +27,50 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
         }
 
         public void testAllFilesPresentInLazyKotlinCaches() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("class")
         public void testClass() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/class/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/class/");
         }
 
         @TestMetadata("classInheritance")
         public void testClassInheritance() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance/");
         }
 
         @TestMetadata("constant")
         public void testConstant() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant/");
         }
 
         @TestMetadata("function")
         public void testFunction() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/function/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/function/");
         }
 
         @TestMetadata("inlineFunctionWithUsage")
         public void testInlineFunctionWithUsage() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage/");
         }
 
         @TestMetadata("inlineFunctionWithoutUsage")
         public void testInlineFunctionWithoutUsage() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage/");
         }
 
         @TestMetadata("noKotlin")
         public void testNoKotlin() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin/");
         }
 
         @TestMetadata("topLevelPropertyAccess")
         public void testTopLevelPropertyAccess() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess/");
+            runTest("jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess/");
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/class")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/class")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Class extends AbstractIncrementalLazyCachesTest {
@@ -79,11 +79,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/class"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/class"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassInheritance extends AbstractIncrementalLazyCachesTest {
@@ -92,11 +92,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInClassInheritance() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Constant extends AbstractIncrementalLazyCachesTest {
@@ -105,11 +105,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInConstant() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/function")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/function")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Function extends AbstractIncrementalLazyCachesTest {
@@ -118,11 +118,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInFunction() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/function"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/function"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InlineFunctionWithUsage extends AbstractIncrementalLazyCachesTest {
@@ -131,11 +131,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInInlineFunctionWithUsage() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InlineFunctionWithoutUsage extends AbstractIncrementalLazyCachesTest {
@@ -144,11 +144,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInInlineFunctionWithoutUsage() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NoKotlin extends AbstractIncrementalLazyCachesTest {
@@ -157,11 +157,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInNoKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess")
+        @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TopLevelPropertyAccess extends AbstractIncrementalLazyCachesTest {
@@ -170,12 +170,12 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInTopLevelPropertyAccess() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption")
+    @TestMetadata("jps/jps-plugin/testData/incremental/changeIncrementalOption")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeIncrementalOption extends AbstractIncrementalLazyCachesTest {
@@ -184,30 +184,30 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
         }
 
         public void testAllFilesPresentInChangeIncrementalOption() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("incrementalOff")
         public void testIncrementalOff() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff/");
+            runTest("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff/");
         }
 
         @TestMetadata("incrementalOffOn")
         public void testIncrementalOffOn() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn/");
+            runTest("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn/");
         }
 
         @TestMetadata("incrementalOffOnJavaChanged")
         public void testIncrementalOffOnJavaChanged() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged/");
+            runTest("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged/");
         }
 
         @TestMetadata("incrementalOffOnJavaOnly")
         public void testIncrementalOffOnJavaOnly() throws Exception {
-            runTest("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly/");
+            runTest("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly/");
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff")
+        @TestMetadata("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IncrementalOff extends AbstractIncrementalLazyCachesTest {
@@ -216,11 +216,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInIncrementalOff() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn")
+        @TestMetadata("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IncrementalOffOn extends AbstractIncrementalLazyCachesTest {
@@ -229,11 +229,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInIncrementalOffOn() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged")
+        @TestMetadata("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IncrementalOffOnJavaChanged extends AbstractIncrementalLazyCachesTest {
@@ -242,11 +242,11 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInIncrementalOffOnJavaChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly")
+        @TestMetadata("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IncrementalOffOnJavaOnly extends AbstractIncrementalLazyCachesTest {
@@ -255,7 +255,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             }
 
             public void testAllFilesPresentInIncrementalOffOnJavaOnly() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }

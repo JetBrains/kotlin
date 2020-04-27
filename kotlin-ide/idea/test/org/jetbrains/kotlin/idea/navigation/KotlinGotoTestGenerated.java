@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
-    @TestMetadata("kotlin/idea/testData/navigation/gotoClass")
+    @TestMetadata("idea/testData/navigation/gotoClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GotoClass extends AbstractKotlinGotoTest {
@@ -27,66 +27,66 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         }
 
         public void testAllFilesPresentInGotoClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("builtInAny.kt")
         public void testBuiltInAny() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/builtInAny.kt");
+            runTest("idea/testData/navigation/gotoClass/builtInAny.kt");
         }
 
         @TestMetadata("builtInInt.kt")
         public void testBuiltInInt() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/builtInInt.kt");
+            runTest("idea/testData/navigation/gotoClass/builtInInt.kt");
         }
 
         @TestMetadata("enumEntries.kt")
         public void testEnumEntries() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/enumEntries.kt");
+            runTest("idea/testData/navigation/gotoClass/enumEntries.kt");
         }
 
         @TestMetadata("inClassObject.kt")
         public void testInClassObject() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/inClassObject.kt");
+            runTest("idea/testData/navigation/gotoClass/inClassObject.kt");
         }
 
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/innerClass.kt");
+            runTest("idea/testData/navigation/gotoClass/innerClass.kt");
         }
 
         @TestMetadata("localDeclarations.kt")
         public void testLocalDeclarations() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/localDeclarations.kt");
+            runTest("idea/testData/navigation/gotoClass/localDeclarations.kt");
         }
 
         @TestMetadata("noImplementationTrait.kt")
         public void testNoImplementationTrait() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/noImplementationTrait.kt");
+            runTest("idea/testData/navigation/gotoClass/noImplementationTrait.kt");
         }
 
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/simpleClass.kt");
+            runTest("idea/testData/navigation/gotoClass/simpleClass.kt");
         }
 
         @TestMetadata("simpleObject.kt")
         public void testSimpleObject() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/simpleObject.kt");
+            runTest("idea/testData/navigation/gotoClass/simpleObject.kt");
         }
 
         @TestMetadata("traitWithFunImplement.kt")
         public void testTraitWithFunImplement() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/traitWithFunImplement.kt");
+            runTest("idea/testData/navigation/gotoClass/traitWithFunImplement.kt");
         }
 
         @TestMetadata("typealias.kt")
         public void testTypealias() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoClass/typealias.kt");
+            runTest("idea/testData/navigation/gotoClass/typealias.kt");
         }
     }
 
-    @TestMetadata("kotlin/idea/testData/navigation/gotoSymbol")
+    @TestMetadata("idea/testData/navigation/gotoSymbol")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GotoSymbol extends AbstractKotlinGotoTest {
@@ -95,67 +95,67 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         }
 
         public void testAllFilesPresentInGotoSymbol() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("builtInArrayOfNulls.kt")
         public void testBuiltInArrayOfNulls() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/builtInArrayOfNulls.kt");
+            runTest("idea/testData/navigation/gotoSymbol/builtInArrayOfNulls.kt");
         }
 
         @TestMetadata("builtInInt.kt")
         public void testBuiltInInt() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/builtInInt.kt");
+            runTest("idea/testData/navigation/gotoSymbol/builtInInt.kt");
         }
 
         @TestMetadata("enumConstants.kt")
         public void testEnumConstants() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/enumConstants.kt");
+            runTest("idea/testData/navigation/gotoSymbol/enumConstants.kt");
         }
 
         @TestMetadata("functions.kt")
         public void testFunctions() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/functions.kt");
+            runTest("idea/testData/navigation/gotoSymbol/functions.kt");
         }
 
         @TestMetadata("javaMethods.kt")
         public void testJavaMethods() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/javaMethods.kt");
+            runTest("idea/testData/navigation/gotoSymbol/javaMethods.kt");
         }
 
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/localFunction.kt");
+            runTest("idea/testData/navigation/gotoSymbol/localFunction.kt");
         }
 
         @TestMetadata("privateTopLevelDeclarations.kt")
         public void testPrivateTopLevelDeclarations() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/privateTopLevelDeclarations.kt");
+            runTest("idea/testData/navigation/gotoSymbol/privateTopLevelDeclarations.kt");
         }
 
         @TestMetadata("properties.kt")
         public void testProperties() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/properties.kt");
+            runTest("idea/testData/navigation/gotoSymbol/properties.kt");
         }
 
         @TestMetadata("stdLibArrayListOf.kt")
         public void testStdLibArrayListOf() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/stdLibArrayListOf.kt");
+            runTest("idea/testData/navigation/gotoSymbol/stdLibArrayListOf.kt");
         }
 
         @TestMetadata("stdLibArrayListOfNoSources.kt")
         public void testStdLibArrayListOfNoSources() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/stdLibArrayListOfNoSources.kt");
+            runTest("idea/testData/navigation/gotoSymbol/stdLibArrayListOfNoSources.kt");
         }
 
         @TestMetadata("stdLibJoinToString.kt")
         public void testStdLibJoinToString() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/stdLibJoinToString.kt");
+            runTest("idea/testData/navigation/gotoSymbol/stdLibJoinToString.kt");
         }
 
         @TestMetadata("typealias.kt")
         public void testTypealias() throws Exception {
-            runTest("kotlin/idea/testData/navigation/gotoSymbol/typealias.kt");
+            runTest("idea/testData/navigation/gotoSymbol/typealias.kt");
         }
     }
 }

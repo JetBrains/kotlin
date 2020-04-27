@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
-    @TestMetadata("kotlin/jvm-debugger/test/testData/positionManager")
+    @TestMetadata("jvm-debugger/test/testData/positionManager")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleFile extends AbstractPositionManagerTest {
@@ -27,111 +27,111 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
 
         public void testAllFilesPresentInSingleFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jvm-debugger/test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), null, false);
         }
 
         @TestMetadata("anonymousFunction.kt")
         public void testAnonymousFunction() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/anonymousFunction.kt");
+            runTest("jvm-debugger/test/testData/positionManager/anonymousFunction.kt");
         }
 
         @TestMetadata("anonymousNamedFunction.kt")
         public void testAnonymousNamedFunction() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/anonymousNamedFunction.kt");
+            runTest("jvm-debugger/test/testData/positionManager/anonymousNamedFunction.kt");
         }
 
         @TestMetadata("class.kt")
         public void testClass() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/class.kt");
+            runTest("jvm-debugger/test/testData/positionManager/class.kt");
         }
 
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/classObject.kt");
+            runTest("jvm-debugger/test/testData/positionManager/classObject.kt");
         }
 
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/enum.kt");
+            runTest("jvm-debugger/test/testData/positionManager/enum.kt");
         }
 
         @TestMetadata("extensionFunction.kt")
         public void testExtensionFunction() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/extensionFunction.kt");
+            runTest("jvm-debugger/test/testData/positionManager/extensionFunction.kt");
         }
 
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/functionLiteral.kt");
+            runTest("jvm-debugger/test/testData/positionManager/functionLiteral.kt");
         }
 
         @TestMetadata("functionLiteralInVal.kt")
         public void testFunctionLiteralInVal() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/functionLiteralInVal.kt");
+            runTest("jvm-debugger/test/testData/positionManager/functionLiteralInVal.kt");
         }
 
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/innerClass.kt");
+            runTest("jvm-debugger/test/testData/positionManager/innerClass.kt");
         }
 
         @TestMetadata("JvmNameAnnotation.kt")
         public void testJvmNameAnnotation() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/JvmNameAnnotation.kt");
+            runTest("jvm-debugger/test/testData/positionManager/JvmNameAnnotation.kt");
         }
 
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/localFunction.kt");
+            runTest("jvm-debugger/test/testData/positionManager/localFunction.kt");
         }
 
         @TestMetadata("objectDeclaration.kt")
         public void testObjectDeclaration() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/objectDeclaration.kt");
+            runTest("jvm-debugger/test/testData/positionManager/objectDeclaration.kt");
         }
 
         @TestMetadata("objectExpression.kt")
         public void testObjectExpression() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/objectExpression.kt");
+            runTest("jvm-debugger/test/testData/positionManager/objectExpression.kt");
         }
 
         @TestMetadata("package.kt")
         public void testPackage() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/package.kt");
+            runTest("jvm-debugger/test/testData/positionManager/package.kt");
         }
 
         @TestMetadata("propertyAccessor.kt")
         public void testPropertyAccessor() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/propertyAccessor.kt");
+            runTest("jvm-debugger/test/testData/positionManager/propertyAccessor.kt");
         }
 
         @TestMetadata("propertyInitializer.kt")
         public void testPropertyInitializer() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/propertyInitializer.kt");
+            runTest("jvm-debugger/test/testData/positionManager/propertyInitializer.kt");
         }
 
         @TestMetadata("topLevelPropertyInitializer.kt")
         public void testTopLevelPropertyInitializer() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/topLevelPropertyInitializer.kt");
+            runTest("jvm-debugger/test/testData/positionManager/topLevelPropertyInitializer.kt");
         }
 
         @TestMetadata("trait.kt")
         public void testTrait() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/trait.kt");
+            runTest("jvm-debugger/test/testData/positionManager/trait.kt");
         }
 
         @TestMetadata("twoClasses.kt")
         public void testTwoClasses() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/twoClasses.kt");
+            runTest("jvm-debugger/test/testData/positionManager/twoClasses.kt");
         }
 
         @TestMetadata("_DefaultPackage.kt")
         public void test_DefaultPackage() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/_DefaultPackage.kt");
+            runTest("jvm-debugger/test/testData/positionManager/_DefaultPackage.kt");
         }
     }
 
-    @TestMetadata("kotlin/jvm-debugger/test/testData/positionManager")
+    @TestMetadata("jvm-debugger/test/testData/positionManager")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiFile extends AbstractPositionManagerTest {
@@ -140,17 +140,17 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
 
         public void testAllFilesPresentInMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("kotlin/jvm-debugger/test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jvm-debugger/test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), null, false);
         }
 
         @TestMetadata("multiFilePackage")
         public void testMultiFilePackage() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/multiFilePackage/");
+            runTest("jvm-debugger/test/testData/positionManager/multiFilePackage/");
         }
 
         @TestMetadata("multiFileSameName")
         public void testMultiFileSameName() throws Exception {
-            runTest("kotlin/jvm-debugger/test/testData/positionManager/multiFileSameName/");
+            runTest("jvm-debugger/test/testData/positionManager/multiFileSameName/");
         }
     }
 }
