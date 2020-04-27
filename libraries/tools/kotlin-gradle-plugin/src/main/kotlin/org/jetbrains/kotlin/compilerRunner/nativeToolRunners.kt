@@ -55,8 +55,7 @@ internal abstract class KotlinNativeToolRunner(
     final override val systemProperties by lazy {
         mapOf(
             "konan.home" to project.konanHome,
-            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name,
-            "java.library.path" to "${project.konanHome}/konan/nativelib"
+            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
         )
     }
 
