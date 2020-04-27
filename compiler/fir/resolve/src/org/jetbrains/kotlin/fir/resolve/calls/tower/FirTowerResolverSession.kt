@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStaticScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -58,7 +57,7 @@ class FirTowerResolverSession internal constructor(
         this.implicitReceiversUsableAsValues = implicitReceiversUsableAsValues
     }
 
-    private val localScopes: List<FirLocalScope> = components.localScopes.asReversed()
+    private val localScopes: List<FirScope> = components.localScopes.asReversed()
 
     private val topLevelScopes: List<FirScope> =
         if (components.typeParametersScopes.isEmpty())
@@ -229,7 +228,7 @@ class FirTowerResolverSession internal constructor(
         info: CallInfo
     ) {
         processExtensionsThatHideMembers(info, explicitReceiverValue = null)
-        val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
+        val nonEmptyLocalScopes = mutableListOf<FirScope>()
         processLocalScopesWithNoReceiver(info, nonEmptyLocalScopes)
 
         val emptyTopLevelScopes = mutableSetOf<FirScope>()
@@ -282,7 +281,7 @@ class FirTowerResolverSession internal constructor(
 
     private suspend fun processLocalScopesWithNoReceiver(
         info: CallInfo,
-        nonEmptyLocalScopes: MutableList<FirLocalScope>
+        nonEmptyLocalScopes: MutableList<FirScope>
     ) {
         for ((index, localScope) in localScopes.withIndex()) {
             val result = processLevel(
@@ -296,7 +295,7 @@ class FirTowerResolverSession internal constructor(
 
     private suspend fun processImplicitReceiversWithNoExplicit(
         info: CallInfo,
-        nonEmptyLocalScopes: MutableList<FirLocalScope>,
+        nonEmptyLocalScopes: MutableList<FirScope>,
         emptyTopLevelScopes: MutableSet<FirScope>
     ) {
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
@@ -332,7 +331,7 @@ class FirTowerResolverSession internal constructor(
         info: CallInfo,
         parentGroup: TowerGroup,
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
-        nonEmptyLocalScopes: List<FirLocalScope>,
+        nonEmptyLocalScopes: List<FirScope>,
         emptyTopLevelScopes: MutableSet<FirScope>
     ) {
         val implicitResult = processLevel(
@@ -400,7 +399,7 @@ class FirTowerResolverSession internal constructor(
             return
         }
 
-        val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
+        val nonEmptyLocalScopes = mutableListOf<FirScope>()
         for ((index, localScope) in localScopes.withIndex()) {
             if (processScopeForExplicitReceiver(
                     localScope,
@@ -459,7 +458,7 @@ class FirTowerResolverSession internal constructor(
         explicitReceiverValue: ExpressionReceiverValue,
         info: CallInfo,
         depth: Int,
-        nonEmptyLocalScopes: MutableList<FirLocalScope>
+        nonEmptyLocalScopes: MutableList<FirScope>
     ) {
         // NB: companions are processed via implicitReceiverValues!
         val parentGroup = TowerGroup.Implicit(depth)
