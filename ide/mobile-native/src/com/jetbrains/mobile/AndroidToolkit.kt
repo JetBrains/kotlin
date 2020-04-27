@@ -23,14 +23,28 @@ class AndroidToolkit(project: Project) {
     val home: File? = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
         ?: readHomeFromLocalProperties(project)
 
-    val adb: File? = home?.let { File(File(it, "platform-tools"), "adb".exe) }
-    val emulator: File? = home?.let { File(File(it, "emulator"), "emulator".exe) }
-    val buildTools: File? = home?.let { home ->
-        File(home, "build-tools").listFiles()?.maxBy {
-            Version.parseVersion(it.name) ?: Version(0, 0, 0)
+    val adb: File? = home
+        ?.resolve("platform-tools")
+        ?.resolve("adb".exe)
+        ?.takeIf { it.isFile }
+
+    val emulator: File? = home
+        ?.resolve("emulator")
+        ?.resolve("emulator".exe)
+        ?.takeIf { it.isFile }
+
+    val buildTools: File? = home
+        ?.resolve("build-tools")
+        ?.let { tools ->
+            tools.listFiles()?.maxBy {
+                Version.parseVersion(it.name) ?: Version(0, 0, 0)
+            }
         }
-    }
-    val aapt: File? = buildTools?.let { File(it, "aapt".exe) }
+        ?.takeIf { it.isDirectory }
+
+    val aapt: File? = buildTools
+        ?.resolve("aapt".exe)
+        ?.takeIf { it.isFile }
 
     val avdData: File = File(File(SystemProperties.getUserHome(), ".android"), "avd")
 
