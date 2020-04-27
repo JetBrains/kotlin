@@ -24,6 +24,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("actualizedSupertype")
+    public void testActualizedSupertype() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/actualizedSupertype/");
+    }
+
     @TestMetadata("additionalMembersInPlatformInterface")
     public void testAdditionalMembersInPlatformInterface() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/additionalMembersInPlatformInterface/");
