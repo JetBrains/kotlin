@@ -47,8 +47,9 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
 
     override fun getSupertypes(): Collection<KotlinType> = intersectedTypes
 
+    // Type should not be rendered in scope's debug name. This may cause performance issues in case of complicated intersection types. 
     fun createScopeForKotlinType(): MemberScope =
-        TypeIntersectionScope.create("member scope for intersection type $this", intersectedTypes)
+        TypeIntersectionScope.create("member scope for intersection type", intersectedTypes)
 
     override fun isFinal(): Boolean = false
 
