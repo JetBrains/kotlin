@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * {@link VfsAwareIndexStorage} implementation for {@link SingleEntryFileBasedIndexExtension} indexes.
@@ -27,6 +29,7 @@ public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareInde
   // input -> hash (client instance dependent)
   private volatile IntForwardIndex myForwardIndex;
 
+  private final Lock myCacheLock = new ReentrantLock();
   private final SLRUCache<Key, ValueContainer<Value>> myCache;
 
   public SnapshotSingleValueIndexStorage(int cacheSize) {
@@ -57,7 +60,12 @@ public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareInde
   @Override
   public ValueContainer<Value> read(Key key) throws StorageException {
     assert myInitialized;
-    return myCache.get(key);
+    myCacheLock.lock();
+    try {
+      return myCache.get(key);
+    } finally {
+      myCacheLock.unlock();
+    }
   }
 
   @NotNull
@@ -105,7 +113,12 @@ public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareInde
 
   @Override
   public void clearCaches() {
-    myCache.clear();
+    myCacheLock.lock();
+    try {
+      myCache.clear();
+    } finally {
+      myCacheLock.unlock();
+    }
   }
 
   @Override
