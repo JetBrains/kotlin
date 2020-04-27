@@ -271,9 +271,13 @@ class InlineClassLowering(val context: CommonBackendContext) {
         }
     }
 
-    private fun Name.toInlineClassImplementationName() = when {
-        isSpecial -> Name.special(asString() + INLINE_CLASS_IMPL_SUFFIX)
-        else -> Name.identifier(asString() + INLINE_CLASS_IMPL_SUFFIX)
+    private fun IrFunction.toInlineClassImplementationName(): Name {
+        val klass = this.parentAsClass!!
+        val newName = klass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
+        return when {
+            name.isSpecial -> Name.special("<" + newName)
+            else -> Name.identifier(newName)
+        }
     }
 
     private fun collectTypeParameters(declaration: IrTypeParametersContainer): List<IrTypeParameter> {
@@ -292,7 +296,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
         context.irFactory.createStaticFunctionWithReceivers(
             function.parent,
-            function.name.toInlineClassImplementationName(),
+            function.toInlineClassImplementationName(),
             function,
             typeParametersFromContext = collectTypeParameters(function.parentAsClass)
         )

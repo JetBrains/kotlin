@@ -172,6 +172,23 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.Wasm) {
+            fun notEq(operand1: String, operand2: String) = when {
+                primitive?.isFloatingPoint() == true -> "!$operand1.equals($operand2)"
+                else -> "$operand1 != $operand2"
+            }
+            body {
+                """
+                if (this === other) return true
+                if (this === null || other === null) return false
+                if (size != other.size) return false
+                for (i in indices) {
+                    if (${notEq("this[i]", "other[i]")}) return false
+                }
+                return true
+                """
+            }
+        }
     }
 
     val f_contentDeepEquals = fn("contentDeepEquals(other: SELF)") {
@@ -246,6 +263,9 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Native) {
             body { "return contentDeepEqualsImpl(other)" }
         }
+        on(Platform.Wasm) {
+            body { "return contentDeepEqualsImpl(other)" }
+        }
     }
 
     val f_contentToString = fn("contentToString()") {
@@ -301,6 +321,9 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
+        }
+        on(Platform.Wasm) {
             body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
         }
     }
@@ -368,6 +391,9 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Native) {
             body { "return contentDeepToStringImpl()" }
         }
+        on(Platform.Wasm) {
+            body { "return contentDeepToStringImpl()" }
+        }
     }
 
     val f_contentHashCode = fn("contentHashCode()") {
@@ -417,6 +443,17 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            body {
+                """
+                if (this === null) return 0
+                var result = 1
+                for (element in this)
+                    result = 31 * result + element.hashCode()
+                return result
+                """
+            }
+        }
+        on(Platform.Wasm) {
             body {
                 """
                 if (this === null) return 0
@@ -486,6 +523,9 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            body { "return contentDeepHashCodeImpl()" }
+        }
+        on(Platform.Wasm) {
             body { "return contentDeepHashCodeImpl()" }
         }
     }
@@ -632,6 +672,9 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.Wasm) {
+            body { """TODO("Wasm stdlib: $signature")""" }
+        }
         on(Platform.Common) {
             specialFor(InvariantArraysOfObjects) {
                 suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
@@ -697,6 +740,9 @@ object ArrayOps : TemplateGroupBase() {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
                 }
+            }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
             }
         }
     }
@@ -775,6 +821,9 @@ object ArrayOps : TemplateGroupBase() {
                     """
                 }
             }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
@@ -833,6 +882,9 @@ object ArrayOps : TemplateGroupBase() {
                     return result
                     """
                 }
+            }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
             }
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
@@ -901,6 +953,11 @@ object ArrayOps : TemplateGroupBase() {
                     return destination
                     """
                 }
+            }
+            on(Platform.Wasm) {
+                signature("copyInto(destination: SELF, destinationOffset: Int, startIndex: Int, endIndex: Int)")
+                inlineOnly()
+                body { """TODO("Wasm stdlib: $signature")""" }
             }
             on(Platform.Native) {
                 suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -1000,6 +1057,9 @@ object ArrayOps : TemplateGroupBase() {
                     """
                 }
             }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
         }
     }
 
@@ -1093,6 +1153,9 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Native) {
                 body { "return this.copyOfUninitializedElements(size)" }
             }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
         }
     }
 
@@ -1135,6 +1198,9 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Native) {
                 body { "return this.copyOfUninitializedElements(newSize)" }
             }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
         }
         specialFor(InvariantArraysOfObjects) {
             sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
@@ -1154,6 +1220,9 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Native) {
                 body { "return this.copyOfNulls(newSize)" }
+            }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
             }
         }
         specialFor(ArraysOfPrimitives, InvariantArraysOfObjects) {
@@ -1234,6 +1303,9 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Native) {
                 body { """if (size > 1) sortArray(this, 0, size)""" }
             }
+            on(Platform.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
         }
     }
 
@@ -1255,6 +1327,9 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.Native) {
             body { """if (size > 1) sortArrayWith(this, 0, size, comparator)""" }
+        }
+        on(Platform.Wasm) {
+            body { """TODO("Wasm stdlib: $signature")""" }
         }
     }
 
@@ -1364,6 +1439,11 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.Wasm) {
+            since("1.4")
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body { """TODO("Wasm stdlib: $signature")""" }
+        }
         on(Platform.JS) {
             since("1.4")
             suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -1420,6 +1500,11 @@ object ArrayOps : TemplateGroupBase() {
                 """
             }
         }
+        on(Platform.Wasm) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body { """TODO("Wasm stdlib: $signature")""" }
+        }
+
         on(Platform.JS) {
             since("1.4")
             suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -1531,6 +1616,9 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Native) {
             body { objectLiteralImpl }
         }
+        on(Platform.Wasm) {
+            body { objectLiteralImpl }
+        }
     }
 
     val f_toTypedArray = fn("toTypedArray()") {
@@ -1624,6 +1712,11 @@ object ArrayOps : TemplateGroupBase() {
                 body {
                     "arrayFill(this, fromIndex, toIndex, element)"
                 }
+            }
+            on(Platform.Wasm) {
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                since("1.3")
+                body { """TODO("Wasm stdlib: $signature")""" }
             }
             on(Platform.Common) {
                 since("1.3")

@@ -401,14 +401,16 @@ fun irCall(
     newFunction: IrSimpleFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
-    newSuperQualifierSymbol: IrClassSymbol? = null
+    newSuperQualifierSymbol: IrClassSymbol? = null,
+    newReturnType: IrType? = null
 ): IrCall =
     irCall(
         call,
         newFunction.symbol,
         receiversAsArguments,
         argumentsAsReceivers,
-        newSuperQualifierSymbol
+        newSuperQualifierSymbol,
+        newReturnType
     )
 
 fun irCall(
@@ -416,13 +418,14 @@ fun irCall(
     newSymbol: IrSimpleFunctionSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
-    newSuperQualifierSymbol: IrClassSymbol? = null
+    newSuperQualifierSymbol: IrClassSymbol? = null,
+    newReturnType: IrType? = null
 ): IrCall =
     call.run {
         IrCallImpl(
             startOffset,
             endOffset,
-            type,
+            newReturnType ?: type,
             newSymbol,
             typeArgumentsCount,
             valueArgumentsCount = newSymbol.owner.valueParameters.size,

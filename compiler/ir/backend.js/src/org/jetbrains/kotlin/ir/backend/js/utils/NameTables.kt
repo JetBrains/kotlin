@@ -100,7 +100,7 @@ fun fieldSignature(field: IrField): Signature {
     return BackingFieldSignature(field)
 }
 
-fun functionSignature(declaration: IrFunction): Signature {
+fun jsFunctionSignature(declaration: IrFunction): Signature {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
@@ -139,7 +139,7 @@ fun functionSignature(declaration: IrFunction): Signature {
     declaration.returnType.let {
         // Return type is only used in signature for inline class and Unit types because
         // they are binary incompatible with supertypes.
-        if (it.isInlined() || it.isUnit()) {
+        if (it.getInlinedClass() != null || it.isUnit()) {
             nameBuilder.append("_ret$${it.asString()}")
         }
     }
@@ -280,7 +280,7 @@ class NameTables(
     }
 
     private fun generateNameForMemberFunction(declaration: IrSimpleFunction) {
-        when (val signature = functionSignature(declaration)) {
+        when (val signature = jsFunctionSignature(declaration)) {
             is StableNameSignature -> memberNames.declareStableName(signature, signature.name)
             is ParameterTypeBasedSignature -> memberNames.declareFreshName(signature, signature.suggestedName)
         }
@@ -329,7 +329,7 @@ class NameTables(
     }
 
     fun getNameForMemberFunction(function: IrSimpleFunction): String {
-        val signature = functionSignature(function)
+        val signature = jsFunctionSignature(function)
         val name = memberNames.names[signature] ?: mappedNames[mapToKey(signature)]
 
         // TODO Add a compiler flag, which enables this behaviour

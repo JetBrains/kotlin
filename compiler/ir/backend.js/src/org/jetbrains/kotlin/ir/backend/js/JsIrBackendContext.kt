@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
-import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.getInlinedClass
 import org.jetbrains.kotlin.ir.declarations.*
@@ -123,6 +123,9 @@ class JsIrBackendContext(
         get() = testContainerFuns
 
     override val mapping = JsMapping()
+
+    override val inlineClassesUtils = JsInlineClassesUtils(this)
+
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     companion object {
@@ -195,6 +198,9 @@ class JsIrBackendContext(
 
             override val defaultConstructorMarker =
                 symbolTable.referenceClass(context.getJsInternalClass("DefaultConstructorMarker"))
+
+            override val throwISE: IrSimpleFunctionSymbol =
+                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
 
             override val stringBuilder
                 get() = TODO("not implemented")

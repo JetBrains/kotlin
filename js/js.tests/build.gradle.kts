@@ -232,7 +232,7 @@ val currentOsType = run {
     OsType(osName, osArch)
 }
 
-val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2019/08/2019-08-11-09-56-40-mozilla-central"
+val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2020/06/2020-06-29-15-46-04-mozilla-central"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -248,6 +248,7 @@ val downloadedTools = File(buildDir, "tools")
 val downloadJsShell by task<Download> {
     src(jsShellLocation)
     dest(File(downloadedTools, "jsshell-$jsShellSuffix.zip"))
+    overwrite(false)
 }
 
 val unzipJsShell by task<Copy> {
@@ -257,13 +258,45 @@ val unzipJsShell by task<Copy> {
     into(unpackedDir)
 }
 
+val v8osString = when (currentOsType) {
+    OsType(OsName.LINUX, OsArch.X86_32) -> "linux32"
+    OsType(OsName.LINUX, OsArch.X86_64) -> "linux64"
+    OsType(OsName.MAC, OsArch.X86_64) -> "mac64"
+    OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
+    OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
+    else -> error("unsupported os type $currentOsType")
+}
+
+val v8edition = "rel" // rel or dbg
+val v8version = "8.8.104"
+val v8fileName = "v8-${v8osString}-${v8edition}-${v8version}"
+val v8url = "https://storage.googleapis.com/chromium-v8/official/canary/$v8fileName.zip"
+
+val downloadV8 by task<Download> {
+    src(v8url)
+    dest(File(downloadedTools, "$v8fileName.zip"))
+    overwrite(false)
+}
+
+val unzipV8 by task<Copy> {
+    dependsOn(downloadV8)
+    from(zipTree(downloadV8.get().dest))
+    val unpackedDir = File(downloadedTools, v8fileName)
+    into(unpackedDir)
+}
+
 projectTest("wasmTest", true) {
     dependsOn(unzipJsShell)
+    dependsOn(unzipV8)
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
-    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+    val v8ExecutablePath = File(unzipV8.get().destinationDir, "d8").absolutePath
+    println(v8ExecutablePath)
 
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+    systemProperty("javascript.engine.path.V8", v8ExecutablePath)
+
+    dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
     systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
 
     setUpBoxTests()

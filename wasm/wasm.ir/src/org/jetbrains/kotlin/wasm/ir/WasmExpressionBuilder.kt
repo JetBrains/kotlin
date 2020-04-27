@@ -118,7 +118,7 @@ interface WasmExpressionBuilder {
     }
 
 
-    fun buildStructNarrow(fromType: WasmType, toType: WasmType) {
+    fun buildRefCast(fromType: WasmType, toType: WasmType) {
         buildInstr(
             WasmOp.REF_CAST,
             WasmImmediate.HeapType(fromType.getHeapType()),
