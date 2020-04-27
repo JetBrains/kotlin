@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.BitUtil;
 import com.intellij.util.KeyedLazyInstance;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
@@ -69,6 +70,11 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
                            @NotNull SerializationManagerEx serializationManager) {
     myStubIndexesExternalizer = stubIndexesExternalizer;
     mySerializationManager = serializationManager;
+  }
+
+  @Override
+  public boolean hasSnapshotMapping() {
+    return SystemProperties.is("stubs.use.snapshot.mappings");
   }
 
   public static boolean canHaveStub(@NotNull VirtualFile file) {
