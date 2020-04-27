@@ -256,11 +256,13 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         assertOrderedElementsAreEqual(actual, Arrays.asList(expected));
     }
 
+    /* Unused but available in ESITC@IDEA
     protected void assertModuleOutputs(String moduleName, String... outputs) {
         String[] outputPaths = ContainerUtil.map2Array(CompilerPaths.getOutputPaths(new Module[]{getModule(moduleName)}), String.class,
                                                        s -> getAbsolutePath(s));
         assertUnorderedElementsAreEqual(outputPaths, outputs);
     }
+    */
 
     protected void assertModuleOutput(String moduleName, String output, String testOutput) {
         CompilerModuleExtension e = getCompilerExtension(moduleName);
@@ -378,11 +380,13 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         assertOrderedElementsAreEqual(predicate, collectModuleDepsNames(moduleName, clazz), expectedDeps);
     }
 
+    /* Unused but available in ESITC@IDEA
     protected void assertProductionOnTestDependencies(String moduleName, String... expectedDeps) {
         assertOrderedElementsAreEqual(collectModuleDepsNames(
                 moduleName, entry -> entry instanceof ModuleOrderEntry && ((ModuleOrderEntry)entry).isProductionOnTestDependency()
         ), expectedDeps);
     }
+    */
 
     protected void assertModuleModuleDepScope(String moduleName, String depName, DependencyScope... scopes) {
         List<ModuleOrderEntry> deps = getModuleModuleDeps(moduleName, depName);
@@ -591,7 +595,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         final Ref<Couple<String>> error = Ref.create();
         ImportSpec importSpec = createImportSpec();
         ExternalProjectRefreshCallback callback = importSpec.getCallback();
-        if (callback == null || callback instanceof ImportSpecBuilder.DefaultProjectRefreshCallback) {
+        if (callback == null || ExternalSystemTestCaseBunch.isDefaultRefreshCallback(callback)) {
             importSpec = new TestImportSpecBuilder(importSpec)
                     .setCreateEmptyContentRoots(projectSettings.isCreateEmptyContentRootDirectories())
                     .callback(new ExternalProjectRefreshCallback() {
@@ -744,6 +748,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         return ModuleRootManager.getInstance(getModule(module));
     }
 
+    /* Unused but available in ESITC@IDEA
     protected void ignoreData(BooleanFunction<DataNode<?>> booleanFunction, final boolean ignored) {
         final ExternalProjectInfo externalProjectInfo = ProjectDataManagerImpl.getInstance().getExternalProjectData(
                 myProject, getExternalSystemId(), getCurrentExternalProjectSettings().getExternalProjectPath());
@@ -758,6 +763,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         }
         ServiceManager.getService(ProjectDataManager.class).importData(projectDataNode, myProject, true);
     }
+    */
 
     @NotNull
     private <T> List<T> getModuleDep(@NotNull String moduleName, @NotNull String depName, @NotNull Class<T> clazz) {

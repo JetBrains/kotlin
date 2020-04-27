@@ -77,9 +77,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-/**
- * @author Vladislav.Soroka
- */
 public abstract class ExternalSystemTestCase extends UsefulTestCase {
 
     private static final BiPredicate<Object, Object> EQUALS_PREDICATE = (t, u) -> Objects.equals(t, u);
@@ -425,17 +422,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     }
 
     private void build(Object[] buildableElements) {
-        Promise<ProjectTaskManager.Result> promise;
-        if (buildableElements instanceof Module[]) {
-            promise = ProjectTaskManager.getInstance(myProject).build((Module[])buildableElements);
-        }
-        else if (buildableElements instanceof Artifact[]) {
-            promise = ProjectTaskManager.getInstance(myProject).build((Artifact[])buildableElements);
-        }
-        else {
-            throw new AssertionError("Unsupported buildableElements: " + Arrays.toString(buildableElements));
-        }
-        edt(() -> PlatformTestUtil.waitForPromise(promise));
+        ExternalSystemTestCaseBunch.build(buildableElements, myProject);
     }
 
     private void compile(@NotNull CompileScope scope) {
