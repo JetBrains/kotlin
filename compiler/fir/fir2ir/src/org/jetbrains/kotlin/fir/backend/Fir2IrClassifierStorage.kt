@@ -339,7 +339,7 @@ class Fir2IrClassifierStorage(
                         val klass = getIrAnonymousObjectForEnumEntry(initializer, enumEntry.name, irParent)
 
                         this.correspondingClass = klass
-                    } else if (irParent != null) {
+                    } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
                         this.initializerExpression = IrExpressionBodyImpl(
                             IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol)
                         )
