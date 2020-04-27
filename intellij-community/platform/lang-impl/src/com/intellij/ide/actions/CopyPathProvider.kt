@@ -5,6 +5,7 @@ import com.intellij.ide.DataManager
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.CopyReferenceUtil.getElementsToCopy
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.ide.CopyPasteManager
@@ -29,24 +30,12 @@ abstract class CopyPathProvider : DumbAwareAction() {
       return
     }
 
-    val component = PlatformDataKeys.CONTEXT_COMPONENT.getData(e.dataContext)
-    if (component is TabLabel) {
-      DataManager.registerDataProvider(component) {
-        if (LangDataKeys.VIRTUAL_FILE.`is`(it)) component.info.`object` as? VirtualFile
-        else null
-      }
-    }
-
     val dataContext = e.dataContext
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
     val project = e.project
     if (project != null && getQualifiedName(project, getElementsToCopy(editor, dataContext), editor, dataContext) != null) {
       e.presentation.isEnabledAndVisible = true
       return
-    }
-
-    if (component is TabLabel) {
-      DataManager.removeDataProvider(component)
     }
 
     e.presentation.isEnabledAndVisible = false
@@ -57,14 +46,26 @@ abstract class CopyPathProvider : DumbAwareAction() {
     val dataContext = e.dataContext
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
 
-    val elements = getElementsToCopy(editor, dataContext)
+    val customDataContext = createCustomDataContext(dataContext)
+    val elements = getElementsToCopy(editor, customDataContext)
     project?.let {
-      val copy = getQualifiedName(project, elements, editor, dataContext)
+      val copy = getQualifiedName(project, elements, editor, customDataContext)
       CopyPasteManager.getInstance().setContents(StringSelection(copy))
       CopyReferenceUtil.setStatusBarText(project, IdeBundle.message("message.path.to.fqn.has.been.copied", copy))
 
       CopyReferenceUtil.highlight(editor, project, elements)
     }
+  }
+
+  private fun createCustomDataContext(dataContext: DataContext): DataContext {
+    val component = PlatformDataKeys.CONTEXT_COMPONENT.getData(dataContext)
+    if (component !is TabLabel) return dataContext
+
+    val file = component.info.`object`
+    return SimpleDataContext.getSimpleContext(
+      mapOf(LangDataKeys.VIRTUAL_FILE.name to file as? VirtualFile,
+            CommonDataKeys.VIRTUAL_FILE_ARRAY.name to if (file is VirtualFile) arrayOf(file) else null),
+      dataContext)
   }
 
   open fun getQualifiedName(project: Project, elements: List<PsiElement>, editor: Editor?, dataContext: DataContext): String? {
