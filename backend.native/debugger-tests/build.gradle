@@ -13,8 +13,7 @@ test {
 
     def dist = project.rootProject.file("dist").canonicalPath
     systemProperties = [
-            'org.jetbrains.kotlin.native.home': dist,
-            'java.library.path': "$dist/konan/nativelib"
+            'org.jetbrains.kotlin.native.home': dist
     ]
 }
 test.dependsOn ':dist'

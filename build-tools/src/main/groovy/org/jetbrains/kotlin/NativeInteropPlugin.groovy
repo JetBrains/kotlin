@@ -307,15 +307,5 @@ class NativeInteropPlugin implements Plugin<Project> {
             interopStubGenerator project(path: ":Interop:StubGenerator")
             interopStubGenerator project(path: ":endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
         }
-
-        // FIXME: choose tasks more wisely
-        prj.tasks.withType(JavaExec) {
-            if (!name.endsWith("InteropStubs")) {
-                systemProperties "java.library.path": prj.files(
-                        nativeLibsDir,
-                        runtimeNativeLibsDir
-                ).asPath
-            }
-        }
     }
 }

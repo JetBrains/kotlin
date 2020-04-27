@@ -71,8 +71,7 @@ internal abstract class KonanCliRunner(
     }
 
     override val additionalSystemProperties = mutableMapOf(
-            "konan.home" to konanHome,
-            "java.library.path" to "$konanHome/konan/nativelib"
+            "konan.home" to konanHome
     )
 
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")

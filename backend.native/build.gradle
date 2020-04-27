@@ -192,13 +192,11 @@ final List<File> stdLibSrc = [
 ]
 
 // These files are built before the 'dist' is complete,
-// so we provide custom values for
-// konan.home, --runtime, -Djava.library.path etc
+// so we provide custom values for konan.home, --runtime etc
 
 targetList.each { target ->
     def konanJvmArgs =  [*HostManager.regularJvmArgs,
-            "-Dkonan.home=${rootProject.projectDir}/dist",
-            "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
+            "-Dkonan.home=${rootProject.projectDir}/dist"
     ]
 
     def defaultArgs = ['-nopack', '-nostdlib', '-no-default-libs', '-no-endorsed-libs']
@@ -295,8 +293,7 @@ task debugCompiler(type: JavaExec) {
     classpath = project.fileTree("${distDir.canonicalPath}/konan/lib/") {
         include '*.jar'
     }
-    jvmArgs "-Dorg.jetbrains.kotlin.native.home=${distDir.canonicalPath}",
-            "-Djava.library.path=${distDir.canonicalPath}/konan/nativelib"
+    jvmArgs "-Dorg.jetbrains.kotlin.native.home=${distDir.canonicalPath}"
     enableAssertions = true
     args = findProperty("konan.debug.args").toString().tokenize() ?: []
 }

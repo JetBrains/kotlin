@@ -74,7 +74,6 @@ def nativeSrc = new File("$projectDir/src/main/kotlin-native")
 targetList.each { target ->
     def konanJvmArgs =  [*HostManager.regularJvmArgs,
                          "-Dkonan.home=${rootProject.projectDir}/dist",
-                         "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     ]
 
     def defaultArgs = ['-nopack', '-no-default-libs', '-no-endorsed-libs']
