@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.fir.extensions
 
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.Multimap
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByTypeRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.ComponentTypeRegistry
+import org.jetbrains.kotlin.fir.utils.*
 import org.jetbrains.kotlin.name.FqName
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
@@ -58,6 +59,9 @@ class FirExtensionPointService(
         val extensionsWithAllInAnnotatedMode = createMultimap<AnnotationFqn, P>()
         for (extension in extensions) {
             _metaAnnotations += extension.metaAnnotations
+            for (metaAnnotation in extension.metaAnnotations) {
+                extensionsWithMetaAnnotations.put(metaAnnotation, extension)
+            }
             _annotations += extension.annotations
             when (extension.mode) {
                 FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> {
@@ -83,6 +87,25 @@ class FirExtensionPointService(
         )
     }
 
+    fun registerUserDefinedAnnotation(annotation: FirRegularClass) {
+        require(annotation.classKind == ClassKind.ANNOTATION_CLASS)
+        val fqName = annotation.symbol.classId.asSingleFqName()
+        _annotations += fqName
+        val extensions = extensionsWithMetaAnnotations[fqName]
+        if (extensions.isEmpty()) return
+        for (extension in extensions) {
+            val registeredExtensions = this[extension::class]
+
+            @Suppress("UNCHECKED_CAST")
+            val map = when (extension.mode) {
+                FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAnnotatedMode
+                FirExtensionPoint.Mode.ALL_IN_ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAllInAnnotatedMode
+                FirExtensionPoint.Mode.ALL -> throw IllegalStateException("Extension with mode ALL can't be subscribed to meta annotation")
+            } as Multimap<AnnotationFqn, FirExtensionPoint>
+            map.put(fqName, extension)
+        }
+    }
+
     val annotations: Set<AnnotationFqn>
         get() = _annotations
     private val _annotations: MutableSet<AnnotationFqn> = mutableSetOf()
@@ -90,6 +113,8 @@ class FirExtensionPointService(
     val metaAnnotations: Set<AnnotationFqn>
         get() = _metaAnnotations
     private val _metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
+
+    private val extensionsWithMetaAnnotations: Multimap<AnnotationFqn, FirExtensionPoint> = createMultimap()
 
     class ExtensionsAccessor<P : FirExtensionPoint>(
         private val session: FirSession,

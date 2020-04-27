@@ -16,6 +16,10 @@ abstract class ComponentArrayOwner<K : Any, V : Any> {
     protected fun registerComponent(tClass: KClass<out K>, value: V) {
         componentArray[(typeRegistry.getId(tClass))] = value
     }
+
+    protected operator fun get(tClass: KClass<out K>): V {
+        return componentArray[typeRegistry.getId(tClass)]
+    }
 }
 
 
@@ -60,7 +64,7 @@ class ComponentArray<T : Any> {
         data[index] = value
     }
 
-    operator fun get(index: Int): T? {
+    operator fun get(index: Int): T {
         @Suppress("UNCHECKED_CAST")
         return data.getOrNull(index) as T
     }
