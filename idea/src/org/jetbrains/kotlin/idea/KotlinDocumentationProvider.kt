@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea
 
 import com.google.common.html.HtmlEscapers
+import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
@@ -13,7 +14,12 @@ import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.compiled.ClsMethodImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.*
@@ -156,6 +162,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
 
     companion object {
         private val LOG = Logger.getInstance(KotlinDocumentationProvider::class.java)
+        private val javaDocumentProvider = JavaDocumentationProvider()
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
             classifierNamePolicy = HtmlClassifierNamePolicy(ClassifierNamePolicy.SHORT)
@@ -270,6 +277,17 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             } else if (element is KtLightDeclaration<*, *>) {
                 val origin = element.kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
+            } else if (element is KtValueArgumentList) {
+                val referenceExpression = element.prevSibling as? KtSimpleNameExpression ?: return null
+                val calledElement = referenceExpression.mainReference.resolve()
+                if (calledElement is KtNamedFunction || calledElement is KtConstructor<*>) { // In case of Kotlin function or constructor
+                    return renderKotlinDeclaration(calledElement as KtExpression, quickNavigation)
+                } else if (calledElement is ClsMethodImpl || calledElement is PsiMethod) { // In case of java function or constructor
+                    return javaDocumentProvider.generateDoc(calledElement, referenceExpression)
+                }
+            } else if (element is KtCallExpression) {
+                val calledElement = element.referenceExpression()?.mainReference?.resolve()
+                return calledElement?.let { getTextImpl(it, originalElement, quickNavigation) }
             } else if (element.isModifier()) {
                 when (element.text) {
                     KtTokens.LATEINIT_KEYWORD.value -> return KotlinBundle.message("quick.doc.text.lateinit")
