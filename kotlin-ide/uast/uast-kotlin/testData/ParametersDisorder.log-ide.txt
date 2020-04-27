@@ -124,7 +124,8 @@ UFile (package = )
                             ULiteralExpression (value = "%i %i %i")
                         UQualifiedReferenceExpression
                             UQualifiedReferenceExpression
-                                UPolyadicExpression (value = "")
+                                UPolyadicExpression (operator = +)
+                                    ULiteralExpression (value = "")
                                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                                     UIdentifier (Identifier (chunked))
                                     USimpleNameReferenceExpression (identifier = chunked, resolvesTo = null)
