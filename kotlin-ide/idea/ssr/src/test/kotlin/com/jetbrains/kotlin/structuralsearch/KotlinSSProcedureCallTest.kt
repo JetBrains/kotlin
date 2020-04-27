@@ -24,4 +24,6 @@ class KotlinSSProcedureCallTest : KotlinSSTest() {
     fun testFunMixedSpreadVarargCall() { doTest("a(0, 1, 2, 3, 4)") }
 
     fun testFunTypeArgCall() { doTest("a<Int, String>(0, \"a\")") }
+
+    fun testFunExtensionCall() { doTest("0.a()") }
 }
