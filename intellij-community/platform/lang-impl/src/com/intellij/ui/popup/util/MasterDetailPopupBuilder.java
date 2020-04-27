@@ -302,10 +302,6 @@ public class MasterDetailPopupBuilder implements MasterController {
     throw new IllegalStateException("Incorrect chooser component: " + myChooserComponent);
   }
 
-  public SpeedSearch getSpeedSearch() {
-    return mySpeedSearch;
-  }
-
   @Override
   public ItemWrapper[] getSelectedItems() {
     Object[] values = ArrayUtilRt.EMPTY_OBJECT_ARRAY;
