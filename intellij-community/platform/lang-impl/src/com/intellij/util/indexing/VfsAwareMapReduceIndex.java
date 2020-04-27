@@ -337,7 +337,10 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
       final Map<Key, Value>[] result = new Map[]{Collections.emptyMap()};
       ValueContainer<Value> container = getData(key);
       container.forEach((id, value) -> {
-        result[0] = Collections.singletonMap(key, value);
+        boolean acceptNullValues = ((SingleEntryIndexer<?>)myIndexer).isAcceptNullValues();
+        if (value != null || acceptNullValues) {
+          result[0] = Collections.singletonMap(key, value);
+        }
         return false;
       });
       return result[0];
