@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
-import org.jetbrains.kotlin.fir.scopes.addImportingScopes
+import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -48,7 +48,8 @@ open class FirBodyResolveTransformer(
         context.file = file
         packageFqName = file.packageFqName
         return withScopeCleanup(context.fileImportsScope) {
-            context.fileImportsScope.addImportingScopes(file, session, components.scopeSession)
+            val importingScopes = createImportingScopes(file, session, components.scopeSession)
+            context.fileImportsScope += importingScopes
             file.replaceResolvePhase(transformerPhase)
             @Suppress("UNCHECKED_CAST")
             transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>

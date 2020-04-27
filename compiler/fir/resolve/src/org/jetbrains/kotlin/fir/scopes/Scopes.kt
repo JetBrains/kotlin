@@ -13,10 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.name.FqName
 
-fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
-    this += createImportingScopes(file, session, scopeSession)
-}
-
 private object FirDefaultStarImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
 private object FirDefaultSimpleImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
 private object FileImportingScopeKey : ScopeSessionKey<FirFile, ListStorageFirScope>()
