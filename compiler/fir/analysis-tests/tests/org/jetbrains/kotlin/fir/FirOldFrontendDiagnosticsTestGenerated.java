@@ -7954,6 +7954,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
         }
 
+        @TestMetadata("resolveFunInterfaceWithoutMainMethod.kt")
+        public void testResolveFunInterfaceWithoutMainMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/resolveFunInterfaceWithoutMainMethod.kt");
+        }
+
         @TestMetadata("severalConversionsForFunInterface.kt")
         public void testSeveralConversionsForFunInterface() throws Exception {
             runTest("compiler/testData/diagnostics/tests/funInterface/severalConversionsForFunInterface.kt");

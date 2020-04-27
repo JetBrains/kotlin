@@ -58,19 +58,24 @@ class FunInterfaceConstructorsSyntheticScope(
             return getTypeAliasSamConstructor(classifier)
         }
 
-        if (classifier !is ClassDescriptor) return null
-        if (!classifier.isFun) return null
-
-        return samConstructorForClassifier(classifier)
+        val classDescriptor = checkIfClassifierApplicable(classifier) ?: return null
+        return samConstructorForClassifier(classDescriptor)
     }
 
     private fun getTypeAliasSamConstructor(classifier: TypeAliasDescriptor): SamConstructorDescriptor? {
-        val classDescriptor = classifier.classDescriptor ?: return null
-        if (!classDescriptor.isFun) return null
+        val classDescriptor = checkIfClassifierApplicable(classifier.classDescriptor ?: return null) ?: return null
 
         return createTypeAliasSamConstructorFunction(
             classifier, samConstructorForClassifier(classDescriptor), samResolver, samConversionOracle
         )
+    }
+
+    private fun checkIfClassifierApplicable(classifier: ClassifierDescriptor): ClassDescriptor? {
+        if (classifier !is ClassDescriptor) return null
+        if (!classifier.isFun) return null
+        if (getSingleAbstractMethodOrNull(classifier) == null) return null
+
+        return classifier
     }
 
     private fun recordSamLookupsToClassifier(classifier: ClassifierDescriptor, location: LookupLocation) {
