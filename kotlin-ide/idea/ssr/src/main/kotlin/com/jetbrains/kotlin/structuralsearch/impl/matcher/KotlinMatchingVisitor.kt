@@ -134,12 +134,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElement<KtCallExpression>() ?: return
 
         // check callee matching
-        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)))  return
+        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression))) return
         val resolvedOther = other.resolveToCall(BodyResolveMode.PARTIAL) ?: run {
             myMatchingVisitor.result = false
             return
         }
-        if(!resolvedOther.isReallySuccess()) {
+        if (!resolvedOther.isReallySuccess()) {
             myMatchingVisitor.result = false
             return
         }
@@ -152,17 +152,18 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
         var queryIndex = 0
         var codeIndex = 0
-        while(queryIndex < queryArgs.size && codeIndex < sortedCodeArgs.size) {
+        while (queryIndex < queryArgs.size && codeIndex < sortedCodeArgs.size) {
             val queryArg = queryArgs[queryIndex]
             val codeArg = sortedCodeArgs[codeIndex]
 
             // varargs declared in call matching with one-to-one argument passing
-            if(queryArg.isSpread && !codeArg.isSpread) {
+            if (queryArg.isSpread && !codeArg.isSpread) {
                 val spreadArgExpr = queryArg.getArgumentExpression()
-                if(spreadArgExpr is KtCallExpression) {
+                if (spreadArgExpr is KtCallExpression) {
                     myMatchingVisitor.result = true
                     spreadArgExpr.valueArguments.forEach { spreadedArg ->
-                        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(spreadedArg, sortedCodeArgs[codeIndex++]))) return
+                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(spreadedArg, sortedCodeArgs[codeIndex++])))
+                            return
                     }
                     queryIndex++
                     continue
@@ -171,12 +172,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     return
                 }
             }
-            if(!queryArg.isSpread && codeArg.isSpread) {
+            if (!queryArg.isSpread && codeArg.isSpread) {
                 val spreadArgExpr = codeArg.getArgumentExpression()
-                if(spreadArgExpr is KtCallExpression) {
+                if (spreadArgExpr is KtCallExpression) {
                     myMatchingVisitor.result = true
                     (spreadArgExpr).valueArguments.forEach { spreadedArg ->
-                        if(!myMatchingVisitor.setResult(myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg))) return
+                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg))) return
                     }
                     codeIndex++
                     continue
@@ -188,9 +189,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
             // normal argument matching
             if (!myMatchingVisitor.setResult(
-                    myMatchingVisitor.match(queryArg.getArgumentExpression(), codeArg.getArgumentExpression()))
+                    myMatchingVisitor.match(queryArg.getArgumentExpression(), codeArg.getArgumentExpression())
+                )
             ) {
-                if(myMatchingVisitor.setResult(queryArg.isNamed())) { // start comparing for out of order arguments
+                if (myMatchingVisitor.setResult(queryArg.isNamed())) { // start comparing for out of order arguments
                     val queryValueArgMap = queryArgs.subList(queryIndex, expression.valueArguments.lastIndex + 1)
                         .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
                     val codeValueArgMap = sortedCodeArgs.subList(codeIndex, sortedCodeArgs.lastIndex + 1)
@@ -260,8 +262,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && property.isVar == other.isVar
                 && matchNameIdentifiers(property.nameIdentifier, other.nameIdentifier)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
-                        property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
-                ))
+            property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
+        ))
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
@@ -281,6 +283,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {
         val other = getTreeElement<KtBlockStringTemplateEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(entry.expression, other.expression)
+    }
+
+    override fun visitEscapeStringTemplateEntry(entry: KtEscapeStringTemplateEntry) {
+        val other = getTreeElement<KtEscapeStringTemplateEntry>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchText(entry, other)
     }
 
 }
