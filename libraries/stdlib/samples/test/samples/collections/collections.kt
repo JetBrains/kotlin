@@ -533,6 +533,15 @@ class Collections {
         }
 
         @Sample
+        fun mapNotNull() {
+            val strings: List<String> = listOf("12a", "45", "", "3")
+            val ints: List<Int> = strings.mapNotNull { it.toIntOrNull() }
+
+            assertPrints(ints, "[45, 3]")
+            assertPrints(ints.sum(), "48")
+        }
+
+        @Sample
         fun flatMap() {
             val list = listOf("123", "45")
             assertPrints(list.flatMap { it.toList() }, "[1, 2, 3, 4, 5]")
@@ -769,6 +778,27 @@ class Collections {
 
             val emptyList = emptyList<Int>()
             assertPrints(emptyList.elementAtOrElse(0) { "no int" }, "no int")
+        }
+
+        @Sample
+        fun find() {
+            val numbers = listOf(1, 2, 3, 4, 5, 6, 7)
+            val firstOdd = numbers.find { it % 2 != 0 }
+            val lastEven = numbers.findLast { it % 2 == 0 }
+
+            assertPrints(firstOdd, "1")
+            assertPrints(lastEven, "6")
+        }
+
+        @Sample
+        fun getOrNull() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.getOrNull(0), "1")
+            assertPrints(list.getOrNull(2), "3")
+            assertPrints(list.getOrNull(3), "null")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.getOrNull(0), "null")
         }
     }
 

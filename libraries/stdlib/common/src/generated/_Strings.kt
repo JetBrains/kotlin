@@ -44,6 +44,8 @@ public inline fun CharSequence.elementAtOrNull(index: Int): Char? {
 
 /**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
@@ -52,6 +54,8 @@ public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
@@ -102,6 +106,8 @@ public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char
 
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharSequence.getOrNull(index: Int): Char? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -970,6 +976,8 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(des
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each character in the original char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.mapNotNull
  */
 public inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
