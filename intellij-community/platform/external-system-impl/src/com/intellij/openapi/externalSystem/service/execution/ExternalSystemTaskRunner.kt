@@ -13,9 +13,11 @@ import com.intellij.execution.runners.RunContentBuilder
 import com.intellij.execution.testframework.HistoryTestRunnableState
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolder
 import org.jetbrains.concurrency.resolvedPromise
 
-internal class ExternalSystemTaskRunner : ProgramRunner<RunnerSettings> {
+class ExternalSystemTaskRunner : ProgramRunner<RunnerSettings> {
   override fun getRunnerId() = ExternalSystemConstants.RUNNER_ID
 
   override fun canRun(executorId: String, profile: RunProfile): Boolean {
@@ -36,6 +38,11 @@ internal class ExternalSystemTaskRunner : ProgramRunner<RunnerSettings> {
 
     val executionResult = state.execute(environment.executor, this) ?: return null
     val runContentDescriptor = RunContentBuilder(executionResult, environment).showRunContent(environment.contentToReuse) ?: return null
+    if (state is UserDataHolder) {
+      state.getUserData(TOOL_WINDOW_ID_KEY)?.let { id ->
+        runContentDescriptor.contentToolWindowId = id
+      }
+    }
 
     if (state is HistoryTestRunnableState) {
       return runContentDescriptor
@@ -54,5 +61,9 @@ internal class ExternalSystemTaskRunner : ProgramRunner<RunnerSettings> {
     }
     descriptor.runnerLayoutUi = runContentDescriptor.runnerLayoutUi
     return descriptor
+  }
+
+  companion object {
+    val TOOL_WINDOW_ID_KEY: Key<String> = Key.create(ExternalSystemTaskRunner::class.java.name + ".TOOL_WINDOW_ID")
   }
 }
