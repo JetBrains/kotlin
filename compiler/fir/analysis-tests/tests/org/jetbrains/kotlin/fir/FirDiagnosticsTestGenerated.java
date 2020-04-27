@@ -2168,11 +2168,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("exposedSupertype.kt")
-        public void testExposedSupertype() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedSupertype.kt");
-        }
-
         @TestMetadata("exposedFunctionParameterType.kt")
         public void testExposedFunctionParameterType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedFunctionParameterType.kt");
@@ -2186,6 +2181,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("exposedPropertyType.kt")
         public void testExposedPropertyType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedPropertyType.kt");
+        }
+
+        @TestMetadata("exposedSupertype.kt")
+        public void testExposedSupertype() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedSupertype.kt");
         }
 
         @TestMetadata("exposedTypeAlias.kt")
