@@ -15,6 +15,7 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.TIntHashSet;
 import one.util.streamex.StreamEx;
@@ -286,6 +287,13 @@ public final class CompilerReferenceServiceImpl extends CompilerReferenceService
     catch (Exception e) {
       onException(e, "inheritor count");
       throw new ReferenceIndexUnavailableException();
+    }
+  }
+
+  static class InitializationActivity implements StartupActivity, StartupActivity.DumbAware {
+    @Override
+    public void runActivity(@NotNull Project project) {
+      project.getService(CompilerReferenceService.class).projectOpened();
     }
   }
 }

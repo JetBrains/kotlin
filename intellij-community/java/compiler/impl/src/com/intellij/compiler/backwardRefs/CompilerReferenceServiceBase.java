@@ -89,7 +89,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
     myDirtyScopeHolder = new DirtyScopeHolder(this, FileDocumentManager.getInstance(), PsiDocumentManager.getInstance(project), compilationAffectedModulesSubscription);
   }
 
-   @Override
+  @Override
   public void projectOpened() {
     if (CompilerReferenceService.isEnabled()) {
       myDirtyScopeHolder.installVFSListener(myProject);
