@@ -71,16 +71,18 @@ internal class IntentionPreviewModel {
           if (start >= end) return@mapNotNull null
           text = origText.substring(start, end).trimStart('\n').trimEnd('\n').trimIndent()
           if (text.isBlank()) return@mapNotNull null
+          return@mapNotNull DiffInfo(text, fragment.startLine1, fragment.endLine1 - fragment.startLine1, true)
         }
 
-        return@mapNotNull DiffInfo(text, fragment.startLine1, fragment.endLine1, deleted)
+        return@mapNotNull DiffInfo(text, fragment.startLine1, fragment.endLine2 - fragment.startLine2, false)
       }
       if (diffs.any { info -> !info.deleted }) {
         // Do not display deleted fragments if anything is added
         diffs = diffs.filter { info -> !info.deleted }
       }
       if (diffs.isNotEmpty()) {
-        val maxLine = diffs.last().endLine - 1
+        val last = diffs.last()
+        val maxLine = last.startLine + last.length
         return diffs.map { it.createEditor(project, originalFile.fileType, maxLine) }
       }
       return emptyList()
@@ -88,7 +90,7 @@ internal class IntentionPreviewModel {
 
     private data class DiffInfo(val fileText: String,
                                 val startLine: Int,
-                                val endLine: Int,
+                                val length: Int,
                                 val deleted: Boolean) {
       fun createEditor(project: Project,
                        fileType: FileType,
