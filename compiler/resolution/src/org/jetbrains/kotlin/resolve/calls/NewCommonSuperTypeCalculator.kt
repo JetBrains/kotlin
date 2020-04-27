@@ -347,7 +347,7 @@ object NewCommonSuperTypeCalculator {
         arguments: List<TypeArgumentMarker>,
         depth: Int
     ): TypeArgumentMarker {
-        if (depth > 3) {
+        if (depth >= 0) {
             return createStarProjection(parameter)
         }
 
