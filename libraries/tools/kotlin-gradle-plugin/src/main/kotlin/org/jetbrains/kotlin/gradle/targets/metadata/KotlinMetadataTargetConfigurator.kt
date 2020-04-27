@@ -18,6 +18,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -403,7 +404,6 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         // and their dependencies metadata transformed for compilation:
         return project.files(
             project.provider {
-                val metadataTarget = compilation.target
                 val sourceSet = compilation.defaultSourceSet
 
                 val transformationTaskHolders = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
@@ -424,8 +424,8 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     transformationTaskHolders.flatMap { it.get().filesByResolution.toList() }.toMap()
 
                 val dependsOnCompilationOutputs = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
-                    val dependencyCompilation = metadataTarget.compilations.getByName(hierarchySourceSet.name)
-                    dependencyCompilation.output.classesDirs.takeIf { hierarchySourceSet != sourceSet }
+                    val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
+                    dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
                 }
 
                 val artifactView = fromFiles.incoming.artifactView { view ->
@@ -541,3 +541,7 @@ internal fun Project.filesWithUnpackedArchives(from: FileCollection, extensions:
             } else it
         }
     }).builtBy(from)
+
+internal fun Project.getMetadataCompilationForSourceSet(sourceSet: KotlinSourceSet): AbstractKotlinCompilation<*>? {
+    return multiplatformExtension.metadata().compilations.findByName(sourceSet.name)
+}

@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
-import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedCommonSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
@@ -71,7 +71,7 @@ open class KotlinNativeTarget @Inject constructor(
                     metadataJar.onlyIf { this@KotlinNativeTarget.publishable }
 
                     val metadataCompilations = hostSpecificSourceSets.mapNotNull {
-                        project.multiplatformExtension.metadata().compilations.findByName(it.name)
+                        project.getMetadataCompilationForSourceSet(it)
                     }
 
                     metadataCompilations.forEach {
