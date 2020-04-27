@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -142,7 +142,7 @@ enum class LanguageFeature(
         State.ENABLED_WITH_WARNING
     ),
 
-    MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
+    MultiPlatformProjects(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED),
 
     NewInference(sinceVersion = KOTLIN_1_4),
     // In the next block, features can be enabled only along with new inference

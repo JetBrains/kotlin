@@ -1,19 +1,66 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.project
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
-import org.jetbrains.kotlin.idea.caches.project.sourceType
 import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ModulePath
 import org.jetbrains.kotlin.resolve.ModuleStructureOracle
 import java.util.*
+
+fun findVirtualFile(file: VirtualDirectoryImpl): VirtualFile? {
+    for (child in file.children) {
+        if (child.url.endsWith(".kt")) {
+            return child
+        }
+
+        if (child is VirtualDirectoryImpl) {
+            val result = findVirtualFile(child)
+            if (result != null) {
+                return result
+            }
+        }
+    }
+
+    return null
+}
+
+fun findModuleDescriptors(
+    library: Library,
+    platform: TargetPlatform,
+    psiManager: PsiManager,
+    cacheService: KotlinCacheService
+): Map<Name, ModuleDescriptor> {
+    val descriptors = hashMapOf<Name, ModuleDescriptor>()
+
+    for (sources in listOf(*library.getFiles(OrderRootType.SOURCES))) {
+        if (sources !is VirtualDirectoryImpl) continue
+
+        val virtualFileForKt = findVirtualFile(sources) ?: continue
+        val fileViewProvider = psiManager.findViewProvider(virtualFileForKt)
+        val ktFile = fileViewProvider!!.getPsi(fileViewProvider.baseLanguage) as? KtFile ?: continue
+        val facade = cacheService.getResolutionFacade(listOf(ktFile), platform)
+
+        descriptors[facade.moduleDescriptor.name] = facade.moduleDescriptor
+    }
+
+    return descriptors
+}
 
 class IdeaModuleStructureOracle : ModuleStructureOracle {
     override fun hasImplementingModules(module: ModuleDescriptor): Boolean {
@@ -41,6 +88,29 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
 
     override fun findAllDependsOnPaths(module: ModuleDescriptor): List<ModulePath> {
         val currentPath: Stack<ModuleInfo> = Stack()
+
+        if (module.platform != null && module.getCapability(ModuleInfo.Capability) is LibrarySourceInfo) {
+            val librarySourceInfo = module.getCapability(ModuleInfo.Capability) as LibrarySourceInfo
+
+            val cacheService = KotlinCacheService.getInstance(librarySourceInfo.project)
+            val psiManager = PsiManager.getInstance(librarySourceInfo.project)
+
+            val descriptors = hashMapOf<Name, ModuleDescriptor>()
+
+            for ((name, descriptor) in findModuleDescriptors(librarySourceInfo.library, module.platform!!, psiManager, cacheService)) {
+                descriptors[name] = descriptor
+            }
+
+            for (moduleInfo in getModuleInfosFromIdeaModel(librarySourceInfo.project).filter { it.displayedName.contains("stdlib") }) {
+                if (moduleInfo is LibraryInfo) {
+                    for ((name, descriptor) in findModuleDescriptors(moduleInfo.library, module.platform!!, psiManager, cacheService)) {
+                        descriptors[name] = descriptor
+                    }
+                }
+            }
+
+            return listOf(ModulePath(descriptors.map { it.value }.toList()))
+        }
 
         return sequence<ModuleInfoPath> {
             val root = module.moduleInfo
