@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import kotlin.properties.Delegates
 
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, FunctionInterfaceAdapterExtensionFunctionDescriptor {
@@ -106,7 +107,9 @@ class SamAdapterFunctionsScope(
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
             for (function in type.memberScope.getContributedFunctions(name, location)) {
-                if (samViaSyntheticScopeDisabled && !function.shouldGenerateCandidateForVarargAfterSamAndHasVararg) continue
+                if (samViaSyntheticScopeDisabled && !function.hasNothingTypeInParameters) {
+                    if (!function.shouldGenerateCandidateForVarargAfterSamAndHasVararg) continue
+                }
 
                 val extension = extensionForFunction(function.original)?.substituteForReceiverType(type)
                 if (extension != null) {
@@ -133,6 +136,9 @@ class SamAdapterFunctionsScope(
 
     private val FunctionDescriptor.shouldGenerateCandidateForVarargAfterSamAndHasVararg
         get() = shouldGenerateCandidateForVarargAfterSam && valueParameters.lastOrNull()?.isVararg == true
+
+    private val FunctionDescriptor.hasNothingTypeInParameters
+        get() = valueParameters.any { it.type.isNothing() && !it.original.type.isNothing() }
 
     private fun FunctionDescriptor.substituteForReceiverType(receiverType: KotlinType): FunctionDescriptor? {
         val containingClass = containingDeclaration as? ClassDescriptor ?: return null
