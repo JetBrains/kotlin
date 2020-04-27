@@ -22,4 +22,6 @@ class KotlinSSProcedureCallTest : KotlinSSTest() {
 
     /** Reverse of [testFunMixedVarargCall] */
     fun testFunMixedSpreadVarargCall() { doTest("a(0, 1, 2, 3, 4)") }
+
+    fun testFunTypeArgCall() { doTest("a<Int, String>(0, \"a\")") }
 }
