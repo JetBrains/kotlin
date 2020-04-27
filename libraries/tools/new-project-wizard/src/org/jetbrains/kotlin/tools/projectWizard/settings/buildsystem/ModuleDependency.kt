@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.isIOS
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
-import kotlin.collections.buildList
+import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
+import java.nio.file.Path
 import kotlin.reflect.KClass
 
 sealed class ModuleDependencyType(
@@ -25,7 +29,11 @@ sealed class ModuleDependencyType(
     val to: KClass<out ModuleConfigurator>
 ) {
     fun accepts(from: Module, to: Module) =
-        this.from.isInstance(from.configurator) && this.to.isInstance(to.configurator)
+        this.from.isInstance(from.configurator)
+                && this.to.isInstance(to.configurator)
+                && additionalAcceptanceChecker(from, to)
+
+    open fun additionalAcceptanceChecker(from: Module, to: Module) = true
 
     open fun createDependencyIrs(from: Module, to: Module, data: ModulesToIrConversionData): List<BuildSystemIR> {
         val path = to.path
@@ -42,7 +50,12 @@ sealed class ModuleDependencyType(
         }.asSingletonList()
     }
 
-    open fun SettingsWriter.runArbitraryTask(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<Unit> =
+    open fun SettingsWriter.runArbitraryTask(
+        from: Module,
+        to: Module,
+        toModulePath: Path,
+        data: ModulesToIrConversionData
+    ): TaskResult<Unit> =
         UNIT_SUCCESS
 
     open fun Reader.createToIRs(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<List<BuildSystemIR>> =
@@ -68,18 +81,31 @@ sealed class ModuleDependencyType(
         override fun SettingsWriter.runArbitraryTask(
             from: Module,
             to: Module,
+            toModulePath: Path,
             data: ModulesToIrConversionData
         ): TaskResult<Unit> = withSettingsOf(from) {
             IOSSinglePlatformModuleConfigurator.dependentModule.reference
                 .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
-            UNIT_SUCCESS
+            val dummyFilePath = Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
+            TemplatesPlugin::addFileTemplate.execute(
+                FileTemplate(
+                    FileTemplateDescriptor("ios/dummyFile.kt", dummyFilePath),
+                    projectPath / toModulePath
+                )
+            )
+        }
+
+        override fun additionalAcceptanceChecker(from: Module, to: Module): Boolean =
+            to.iosTargetSafe() != null
+
+        private fun Module.iosTargetSafe(): Module? = subModules.firstOrNull { module ->
+            module.configurator.safeAs<NativeTargetConfigurator>()?.isIosTarget == true
         }
 
         @OptIn(ExperimentalStdlibApi::class)
         override fun Reader.createToIRs(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<List<BuildSystemIR>> {
-            val iosTargetName = to.subModules.firstOrNull { module ->
-                module.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType?.isIOS == true
-            }?.name ?: return Failure(InvalidModuleDependencyError(from, to, "Module ${to.name} should contain at least one iOS target"))
+            val iosTargetName = to.iosTargetSafe()?.name
+                ?: return Failure(InvalidModuleDependencyError(from, to, "Module ${to.name} should contain at least one iOS target"))
 
 
             return irsList {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 interface NativeTargetConfigurator : TargetConfigurator {
     val isDesktopTarget: Boolean
+    val isIosTarget: Boolean
 }
 
 class RealNativeTargetConfigurator private constructor(
@@ -24,6 +25,9 @@ class RealNativeTargetConfigurator private constructor(
     override val text: String = moduleSubType.name.capitalize()
     override val isDesktopTarget: Boolean
         get() = moduleSubType.isNativeDesktop
+
+    override val isIosTarget: Boolean
+        get() = moduleSubType.isIOS
 
     override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) irsList {
         "binaries" {
@@ -45,6 +49,7 @@ class RealNativeTargetConfigurator private constructor(
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
     override val isDesktopTarget: Boolean = true
+    override val isIosTarget: Boolean = false
 
     @NonNls
     override val id = "nativeForCurrentSystem"
