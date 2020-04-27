@@ -124,7 +124,14 @@ class ModulesToIRsConverter(
 
             with(dependencyType) {
                 @Suppress("DEPRECATION")
-                with(unsafeSettingWriter) { runArbitraryTask(module, to, data).ensure() }
+                with(unsafeSettingWriter) {
+                    runArbitraryTask(
+                        module,
+                        to,
+                        to.path.considerSingleRootModuleMode(data.isSingleRootModuleMode).asPath(),
+                        data
+                    ).ensure()
+                }
                 irsToAddToModules.getOrPut(to) { mutableListOf() } += createToIRs(module, to, data).get()
                 createDependencyIrs(module, to, data)
             }
