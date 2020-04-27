@@ -773,6 +773,27 @@ class Collections {
             val emptyList = emptyList<Int>()
             assertPrints(emptyList.elementAtOrElse(0) { "no int" }, "no int")
         }
+
+        @Sample
+        fun find() {
+            val list = listOf(1, 2, 3, 1, 2, 3)
+            assertPrints(list.find { it == 1 }, "0")
+            assertPrints(list.find { it == 4 }, "null")
+        }
+
+        @Sample
+        fun findLast() {
+            val list = listOf(1, 2, 3, 1, 2, 3)
+            assertPrints(list.findLast { it == 1 }, "3")
+            assertPrints(list.findLast { it == 4 }, "null")
+        }
+
+        @Sample
+        fun getOrNull() {
+            val array = arrayOf(1, 2, 3)
+            assertPrints(array.getOrNull(1), "2")
+            assertPrints(array.getOrNull(4), "null")
+        }
     }
 
     class Sorting {
