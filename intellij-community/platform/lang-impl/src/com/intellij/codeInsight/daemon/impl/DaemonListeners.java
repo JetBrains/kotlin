@@ -14,6 +14,7 @@ import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.cl.PluginClassLoader;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
 import com.intellij.lang.ExternalLanguageAnnotators;
@@ -40,9 +41,11 @@ import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
+import com.intellij.openapi.editor.markup.CustomHighlighterRenderer;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -356,7 +359,7 @@ public final class DaemonListeners implements Disposable {
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
-        removeAllNonPersistentHighlighters();
+        removeHighlightersOnPluginUnload(pluginDescriptor);
       }
     });
     connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) ->
@@ -573,23 +576,29 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
-  private void removeAllNonPersistentHighlighters() {
+  private void removeHighlightersOnPluginUnload(@NotNull PluginDescriptor pluginDescriptor) {
     for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getAllEditors()) {
       if (fileEditor instanceof TextEditor) {
         Editor editor = ((TextEditor)fileEditor).getEditor();
-        removeNonPersistentHighlighters(editor.getMarkupModel());
+        removeHighlightersOnPluginUnload(editor.getMarkupModel(), pluginDescriptor);
         MarkupModel documentMarkupModel = DocumentMarkupModel.forDocument(editor.getDocument(), myProject, false);
         if (documentMarkupModel != null) {
-          removeNonPersistentHighlighters(documentMarkupModel);
+          removeHighlightersOnPluginUnload(documentMarkupModel, pluginDescriptor);
         }
       }
     }
   }
 
-  private static void removeNonPersistentHighlighters(@NotNull MarkupModel model) {
+  private static void removeHighlightersOnPluginUnload(@NotNull MarkupModel model, @NotNull PluginDescriptor pluginDescriptor) {
     for (RangeHighlighter highlighter: model.getAllHighlighters()) {
       if (!(highlighter instanceof RangeHighlighterEx && ((RangeHighlighterEx)highlighter).isPersistent())) {
         model.removeHighlighter(highlighter);
+      }
+      else if (pluginDescriptor.getPluginClassLoader() instanceof PluginClassLoader) {
+        CustomHighlighterRenderer renderer = highlighter.getCustomRenderer();
+        if (renderer != null && renderer.getClass().getClassLoader() == pluginDescriptor.getPluginClassLoader()) {
+          model.removeHighlighter(highlighter);
+        }
       }
     }
   }
