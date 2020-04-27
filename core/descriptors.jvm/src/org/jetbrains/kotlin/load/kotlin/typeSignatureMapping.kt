@@ -77,7 +77,8 @@ fun <T : Any> mapType(
 
     val constructor = kotlinType.constructor
     if (constructor is IntersectionTypeConstructor) {
-        val commonSupertype = typeMappingConfiguration.commonSupertype(constructor.supertypes)
+        val intersectionType = constructor.getAlternativeType() ?:
+            typeMappingConfiguration.commonSupertype(constructor.supertypes)
         // interface In<in E>
         // open class A : In<A>
         // open class B : In<B>
@@ -85,7 +86,7 @@ fun <T : Any> mapType(
         // So replace arguments with star-projections to prevent infinite recursive mapping
         // It's not very important because such types anyway are prohibited in declarations
         return mapType(
-            commonSupertype.replaceArgumentsWithStarProjections(),
+            intersectionType.replaceArgumentsWithStarProjections(),
             factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
         )
     }
