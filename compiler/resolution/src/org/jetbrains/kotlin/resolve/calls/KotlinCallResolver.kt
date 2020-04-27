@@ -144,11 +144,17 @@ class KotlinCallResolver(
             candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
         ) {
             val candidatesWithAnnotation =
-                candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
+                candidates.filterTo(mutableSetOf()) { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
             if (candidatesWithAnnotation.isNotEmpty()) {
-                maximallySpecificCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
+                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
+                maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
+                    newCandidates,
+                    CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                    discriminateGenerics = true
+                )
+
                 if (maximallySpecificCandidates.size > 1) {
-                    maximallySpecificCandidates = candidatesWithAnnotation.toSet() // or revert to original list?
+                    maximallySpecificCandidates = candidatesWithAnnotation
                 }
             }
         }

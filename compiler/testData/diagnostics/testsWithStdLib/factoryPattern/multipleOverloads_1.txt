@@ -1,0 +1,17 @@
+package
+
+public fun takeUByteList(/*0*/ list: kotlin.collections.List<kotlin.UByte>): kotlin.Unit
+public fun test(): kotlin.Unit
+@annotations.FactoryPattern public fun </*0*/ R> kotlin.UByteArray.fooMap(/*0*/ t: (kotlin.UByte) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
+@annotations.FactoryPattern public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.fooMap(/*0*/ t: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
+@kotlin.jvm.JvmName(name = "fooMapSeq") public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.fooMap(/*0*/ t: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
+
+package annotations {
+
+    public final annotation class FactoryPattern : kotlin.Annotation {
+        public constructor FactoryPattern()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

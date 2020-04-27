@@ -30,7 +30,7 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = <!NONE_APPLICABLE!>create<!> { 1.0 }
+    val x = create { <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }
 }
 
 @FactoryPattern

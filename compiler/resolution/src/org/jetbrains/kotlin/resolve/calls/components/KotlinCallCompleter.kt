@@ -118,9 +118,11 @@ class KotlinCallCompleter(
             diagnosticHolderForLambda,
             shouldRunInIndependentContext = true
         )
-        lambdas.getValue(firstCandidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(firstAtom))
 
         val lambdaReturnType = results.lambdaReturnType ?: return candidates
+        lambdas.getValue(firstCandidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(firstAtom))
+        firstCandidate.csBuilder.addSubtypeConstraint(lambdaReturnType, firstAtom.returnType, LambdaArgumentConstraintPosition(firstAtom))
+
         while (iterator.hasNext()) {
             val (candidate, atom) = iterator.next()
             atom.setAnalyzedResults(results.returnArgumentsInfo, firstAtom.subResolvedAtoms!!)

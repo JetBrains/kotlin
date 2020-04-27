@@ -1805,6 +1805,16 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/independentResolutionInLambda.kt");
         }
 
+        @TestMetadata("multipleOverloads_1.kt")
+        public void testMultipleOverloads_1() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/multipleOverloads_1.kt");
+        }
+
+        @TestMetadata("multipleOverloads_2.kt")
+        public void testMultipleOverloads_2() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/multipleOverloads_2.kt");
+        }
+
         @TestMetadata("overloadByLambdaReturnType_disabled.kt")
         public void testOverloadByLambdaReturnType_disabled() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_disabled.kt");
