@@ -95,11 +95,8 @@ public class JavaHomeFinderBasic {
 
     Set<File> paths = new HashSet<>();
     paths.add(JdkInstaller.getInstance().defaultInstallDir());
-    ProjectJdkTable jdkTable = ApplicationManager.getApplication().getServiceIfCreated(ProjectJdkTable.class);
-    // Initialization loop is possible: the finder could be used to setup initial JDK in ProjectJdkTable.
-    // In this case, we should not query ProjectJdkTable itself
-    if (jdkTable == null) return Collections.emptySet();
-    for (Sdk jdk : jdkTable.getAllJdks()) {
+
+    for (Sdk jdk : ProjectJdkTable.getInstance().getAllJdks()) {
       if (!(jdk.getSdkType() instanceof JavaSdkType) || jdk.getSdkType() instanceof DependentSdkType) continue;
 
       String homePath = jdk.getHomePath();
