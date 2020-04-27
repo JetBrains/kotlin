@@ -25,6 +25,7 @@ import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -49,7 +50,7 @@ public class PluginTestCaseBase {
     @NotNull
     @TestOnly
     private static Sdk createMockJdk(@NotNull String name, String path) {
-        return ((JavaSdkImpl)JavaSdk.getInstance()).createMockJdk(name, path, false);
+        return IdeaTestUtil.createMockJdk(name, path, false);
     }
 
     @NotNull

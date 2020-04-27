@@ -145,9 +145,9 @@ class TrailingCommaInspection(
                 val range = createFormatterTextRange(element)
                 val settings = CodeStyle.getSettings(project).clone()
                 settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
-                CodeStyle.doWithTemporarySettings(project, settings) {
+                CodeStyle.doWithTemporarySettings(project, settings, Runnable {
                     CodeStyleManager.getInstance(project).reformatRange(element, range.startOffset, range.endOffset)
-                }
+                })
             }
         }
 
