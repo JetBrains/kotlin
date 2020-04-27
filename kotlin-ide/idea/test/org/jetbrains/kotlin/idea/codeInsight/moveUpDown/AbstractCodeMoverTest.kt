@@ -118,6 +118,4 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
             }
         }
     }
-
-    override fun getTestDataPath() = ""
 }

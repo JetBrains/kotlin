@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Paths
 
@@ -22,9 +23,10 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
         val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
         val projDirPath = Paths.get(
-            TEST_DATA_PATH,
-            "general",
-            workingDirFromAnnotation ?: getTestName(false)
+                KotlinTestUtils.getHomeDirectory(),
+                TEST_DATA_PATH,
+                "general",
+                workingDirFromAnnotation ?: getTestName(false)
         )
         originalProjectDir = projDirPath.toFile()
         workDir = copyTestDataToTmpDir(originalProjectDir)

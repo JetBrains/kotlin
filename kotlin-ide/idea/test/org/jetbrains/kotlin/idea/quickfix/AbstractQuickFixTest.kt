@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
@@ -34,11 +35,11 @@ import java.io.IOException
 abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), QuickFixTest {
     companion object {
         private val quickFixesAllowedToResolveInWriteAction = AllowedToResolveUnderWriteActionData(
-            "idea/testData/quickfix/allowResolveInWriteAction.txt",
-            """
-                # Actions that are allowed to resolve in write action. Normally this list shouldn't be extended and eventually should 
-                # be dropped. Please consider rewriting a quick-fix and remove resolve from it before adding a new entry to this list.
-            """.trimIndent()
+                "${KotlinTestUtils.getHomeDirectory()}/idea/testData/quickfix/allowResolveInWriteAction.txt",
+                """
+                    # Actions that are allowed to resolve in write action. Normally this list shouldn't be extended and eventually should 
+                    # be dropped. Please consider rewriting a quick-fix and remove resolve from it before adding a new entry to this list.
+                """.trimIndent()
         )
 
         private fun unwrapIntention(action: Any): Any {

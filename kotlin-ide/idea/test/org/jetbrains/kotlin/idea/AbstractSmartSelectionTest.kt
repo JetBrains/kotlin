@@ -21,6 +21,4 @@ abstract class AbstractSmartSelectionTest : KotlinLightCodeInsightTestCase() {
         val elements = getSmartSelectSuggestions(getFile(), getEditor().caretModel.offset, CodeInsightUtils.ElementKind.EXPRESSION)
         assertEquals(expectedResultText, elements.joinToString(separator = "\n", transform = ::getExpressionShortText))
     }
-
-    override fun getTestDataPath() = ""
 }

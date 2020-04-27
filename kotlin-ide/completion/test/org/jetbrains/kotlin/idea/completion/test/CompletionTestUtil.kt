@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 
-const val RELATIVE_COMPLETION_TEST_DATA_BASE_PATH = "kotlin/completion/testData"
+const val RELATIVE_COMPLETION_TEST_DATA_BASE_PATH = "completion/testData"
 
 val COMPLETION_TEST_DATA_BASE_PATH = KotlinTestUtils.getHomeDirectory() + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 

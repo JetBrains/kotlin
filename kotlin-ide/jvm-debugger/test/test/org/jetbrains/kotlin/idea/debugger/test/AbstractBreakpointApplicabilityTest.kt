@@ -66,6 +66,6 @@ abstract class AbstractBreakpointApplicabilityTest : KotlinLightCodeInsightFixtu
     }
 
     private fun getPath(path: String): String {
-        return path.substringAfter(PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE.drop(1), path)
+        return path.substringAfter(PluginTestCaseBase.TEST_DATA_DIR.drop(1), path)
     }
 }

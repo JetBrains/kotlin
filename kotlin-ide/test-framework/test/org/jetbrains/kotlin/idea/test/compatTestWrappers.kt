@@ -12,8 +12,11 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightIdeaTestCase
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 // BUNCH: as36, 191
 @Suppress("DEPRECATION")
@@ -24,6 +27,8 @@ abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.Light
     protected inline val editor_: Editor get() = editor
     protected inline val file_: PsiFile get() = file
     protected inline val currentEditorDataContext_: DataContext get() = currentEditorDataContext
+
+    override fun getTestDataPath(): String = ""
 
     protected fun configureFromFileText_(fileName: String, fileText: String): Document {
         return configureFromFileText(fileName, fileText, false)

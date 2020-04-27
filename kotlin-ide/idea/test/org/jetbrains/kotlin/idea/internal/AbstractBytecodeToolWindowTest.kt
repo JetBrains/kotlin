@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractBytecodeToolWindowTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun doTest(testPath: String) {

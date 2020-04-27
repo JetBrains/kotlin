@@ -31,12 +31,6 @@ public abstract class AbstractJoinLinesTest extends KotlinLightCodeInsightTestCa
         }
     }
 
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
-    }
-
     protected static Sdk getFullJavaJDK() {
         return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
     }

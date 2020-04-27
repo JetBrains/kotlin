@@ -16,7 +16,7 @@ import java.io.File
 abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath() = ""
 
 
     override fun setUp() {

@@ -149,10 +149,4 @@ public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightTes
     protected boolean isRunInWriteAction() {
         return true;
     }
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
-    }
 }

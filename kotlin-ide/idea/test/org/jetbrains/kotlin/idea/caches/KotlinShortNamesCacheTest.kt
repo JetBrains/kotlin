@@ -262,6 +262,6 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     override fun getTestDataPath(): String {
-        return "${KotlinTestUtils.getHomeDirectory()}/kotlin/idea/testData/cache/"
+        return "${KotlinTestUtils.getHomeDirectory()}/idea/testData/cache/"
     }
 }

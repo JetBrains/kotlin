@@ -106,7 +106,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
             name.startsWith("$namePrefix.") && PathUtil.getFileExtension(name).let { it == "kt" || it == "java" }
         }
 
-        myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${rootDir.path}"
+        myFixture.testDataPath = rootDir.path
 
         val fileText = FileUtil.loadFile(mainFile, true)
         val flowKind = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FLOW: ")

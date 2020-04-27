@@ -105,12 +105,6 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
 
     @NotNull
     @Override
-    protected String getTestDataPath() {
-        return "";
-    }
-
-    @NotNull
-    @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return new SimpleLightProjectDescriptor(getModuleTypeId(), getProjectJDK());
     }

@@ -59,10 +59,4 @@ public abstract class AbstractTypingIndentationTestBase extends KotlinLightCodeI
 
         KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), actualTextWithCaret);
     }
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
-    }
 }

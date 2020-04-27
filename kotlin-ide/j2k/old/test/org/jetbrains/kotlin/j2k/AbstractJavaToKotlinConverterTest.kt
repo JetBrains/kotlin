@@ -56,7 +56,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
     }
     
     protected fun addFile(fileName: String, dirName: String? = null) {
-        addFile(File("j2k/testData/$fileName"), dirName)
+        addFile(File(KotlinTestUtils.getHomeDirectory(), "j2k/old/testData/$fileName"), dirName)
     }
 
     protected fun addFile(file: File, dirName: String?): VirtualFile {

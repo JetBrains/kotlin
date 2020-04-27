@@ -292,7 +292,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     protected fun testScratchText(): String {
-        return File(testDataPath, "idea/scripting-support/testData/scratch/custom/test_scratch.kts").readText()
+        return File(testDataPath, "scripting-support/testData/scratch/custom/test_scratch.kts").readText()
     }
 
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
@@ -333,7 +333,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
                     ForTestCompileRuntime.runtimeJarForTests(),
-                    PathUtil.kotlinPathsForDistDirectory.kotlinTestPath
+                    ForTestCompileRuntime.kotlinTestJarForTests()
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

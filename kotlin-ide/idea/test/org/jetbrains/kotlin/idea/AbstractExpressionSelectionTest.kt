@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 
 @Suppress("DEPRECATION")
 abstract class AbstractExpressionSelectionTest : KotlinLightCodeInsightTestCase() {
-    override fun getTestDataPath() = ""
 
     fun doTestExpressionSelection(path: String) {
         configureByFile(path)
