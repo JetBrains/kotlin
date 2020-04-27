@@ -53,6 +53,11 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
+    fun inventNameForTemporary(prefix: String = "tmp", nameHint: String? = null): String {
+        val index = nextTemporaryIndex()
+        return if (nameHint != null) "$prefix${index}_$nameHint" else "$prefix$index"
+    }
+
     private fun createDescriptorForTemporaryVariable(
         type: KotlinType,
         nameHint: String? = null,
@@ -60,10 +65,8 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     ): IrTemporaryVariableDescriptor =
         IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier(getNameForTemporary(nameHint)), type, isMutable)
 
-    private fun getNameForTemporary(nameHint: String?): String {
-        val index = nextTemporaryIndex()
-        return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
-    }
+    private fun getNameForTemporary(nameHint: String?): String =
+        inventNameForTemporary("tmp", nameHint)
 
     fun createTemporaryVariableDeclaration(
         irType: IrType,

@@ -23,11 +23,22 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isImmutable
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
@@ -45,6 +56,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.max
 import kotlin.math.min
@@ -235,9 +248,10 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
     }
 }
 
-fun StatementGenerator.generateVarargExpressionUsing(
+private fun StatementGenerator.generateVarargExpressionUsing(
     varargArgument: VarargValueArgument,
     valueParameter: ValueParameterDescriptor,
+    resolvedCall: ResolvedCall<*>, // TODO resolvedCall is required for suspend conversions, see KT-38604
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? {
     if (varargArgument.arguments.isEmpty()) {
@@ -282,12 +296,14 @@ fun StatementGenerator.generateVarargExpressionUsing(
 
 fun StatementGenerator.generateValueArgument(
     valueArgument: ResolvedValueArgument,
-    valueParameter: ValueParameterDescriptor
-) = generateValueArgumentUsing(valueArgument, valueParameter) { generateExpression(it) }
+    valueParameter: ValueParameterDescriptor,
+    resolvedCall: ResolvedCall<*>
+) = generateValueArgumentUsing(valueArgument, valueParameter, resolvedCall) { generateExpression(it) }
 
-fun StatementGenerator.generateValueArgumentUsing(
+private fun StatementGenerator.generateValueArgumentUsing(
     valueArgument: ResolvedValueArgument,
     valueParameter: ValueParameterDescriptor,
+    resolvedCall: ResolvedCall<*>,
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? =
     when (valueArgument) {
@@ -298,13 +314,156 @@ fun StatementGenerator.generateValueArgumentUsing(
                 ?: throw AssertionError("No value argument: $valueArgument")
             val argumentExpression = valueArgument1.getArgumentExpression()
                 ?: throw AssertionError("No argument expression: $valueArgument1")
-            generateArgumentExpression(argumentExpression)
+            generateArgumentExpression(argumentExpression)?.let { expression ->
+                applySuspendConversionForValueArgumentIfRequired(expression, valueArgument1, valueParameter, resolvedCall)
+            }
         }
         is VarargValueArgument ->
-            generateVarargExpressionUsing(valueArgument, valueParameter, generateArgumentExpression)
+            generateVarargExpressionUsing(valueArgument, valueParameter, resolvedCall, generateArgumentExpression)
         else ->
             TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
     }
+
+private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
+    expression: IrExpression,
+    valueArgument: ValueArgument,
+    valueParameter: ValueParameterDescriptor,
+    resolvedCall: ResolvedCall<*>
+): IrExpression {
+    if (!context.languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion))
+        return expression
+
+    if (expression is IrBlock && expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
+        return expression
+
+    val newResolvedCall = resolvedCall as? NewResolvedCallImpl<*>
+        ?: return expression
+
+    val suspendConversionType = newResolvedCall.getExpectedTypeForSuspendConvertedArgument(valueArgument)
+        ?: return expression
+
+    val valueParameterType = if (valueParameter.isVararg) valueParameter.varargElementType!! else valueParameter.type
+
+    return wrapInSuspendConversion(expression, suspendConversionType, valueParameterType)
+}
+
+private fun StatementGenerator.wrapInSuspendConversion(
+    expression: IrExpression,
+    funType: KotlinType,
+    suspendFunType: KotlinType
+): IrExpression {
+    val irFunType = funType.toIrType()
+    val irSuspendFunType = suspendFunType.toIrType()
+
+    return irBlock(
+        expression.startOffset, expression.endOffset,
+        IrStatementOrigin.SUSPEND_CONVERSION,
+        irSuspendFunType
+    ) {
+        val irArgumentValue =
+            if (expression is IrGetValue && expression.symbol.owner.isImmutable)
+                expression.symbol.owner
+            else
+                irTemporary(expression, typeHint = funType, irType = irFunType)
+        +IrFunctionExpressionImpl(
+            startOffset, endOffset, irSuspendFunType,
+            createFunctionForSuspendConversion(startOffset, endOffset, irArgumentValue.symbol, funType, suspendFunType),
+            IrStatementOrigin.SUSPEND_CONVERSION
+        )
+    }
+}
+
+private fun StatementGenerator.createFunctionForSuspendConversion(
+    startOffset: Int,
+    endOffset: Int,
+    irCapturedValueSymbol: IrValueSymbol,
+    funType: KotlinType,
+    suspendFunType: KotlinType
+): IrSimpleFunction {
+    val irFunReturnType = funType.arguments.last().type.toIrType()
+    val suspendFunReturnType = suspendFunType.arguments.last().type
+    val irSuspendFunReturnType = suspendFunReturnType.toIrType()
+
+    val adapterFunctionDescriptor = WrappedSimpleFunctionDescriptor()
+
+    val irAdapterFun = context.symbolTable.declareSimpleFunction(
+        startOffset, endOffset,
+        IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
+        adapterFunctionDescriptor
+    ) { irAdapterSymbol ->
+        IrFunctionImpl(
+            startOffset, endOffset,
+            IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
+            irAdapterSymbol,
+            Name.identifier(scope.inventNameForTemporary("suspendConversion")),
+            Visibilities.LOCAL, Modality.FINAL,
+            irSuspendFunReturnType,
+            isInline = false, isExternal = false, isTailrec = false,
+            isSuspend = true,
+            isOperator = false, isExpect = false, isFakeOverride = false
+        )
+    }
+    adapterFunctionDescriptor.bind(irAdapterFun)
+
+    context.symbolTable.enterScope(adapterFunctionDescriptor)
+
+    irAdapterFun.valueParameters = suspendFunType.arguments
+        .take(suspendFunType.arguments.size - 1)
+        .mapIndexed { index, typeProjection ->
+            val adaptedParameterDescriptor = WrappedValueParameterDescriptor()
+            val irParameterType = typeProjection.type.toIrType()
+            context.symbolTable.declareValueParameter(
+                startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
+                adaptedParameterDescriptor,
+                irParameterType,
+            ) { irValueParameterSymbol ->
+                IrValueParameterImpl(
+                    startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
+                    irValueParameterSymbol,
+                    Name.identifier("p$index"),
+                    index,
+                    irParameterType,
+                    varargElementType = null, isCrossinline = false, isNoinline = false
+                )
+            }.also {
+                adaptedParameterDescriptor.bind(it)
+            }
+        }
+
+    val valueArgumentsCount = irAdapterFun.valueParameters.size
+    val invokeDescriptor = funType.memberScope
+        .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
+        .find { it.valueParameters.size == valueArgumentsCount }
+        ?: error("No matching operator fun 'invoke' for suspend conversion: funType=$funType, suspendFunType=$suspendFunType")
+    val invokeSymbol = context.symbolTable.referenceSimpleFunction(invokeDescriptor.original)
+
+    irAdapterFun.body = irBlockBody(startOffset, endOffset) {
+        val irAdapteeCall = IrCallImpl(
+            startOffset, endOffset, irFunReturnType,
+            invokeSymbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = valueArgumentsCount
+        )
+
+        irAdapteeCall.dispatchReceiver = irGet(irCapturedValueSymbol.owner)
+
+        this@createFunctionForSuspendConversion.context
+            .callToSubstitutedDescriptorMap[irAdapteeCall] = invokeDescriptor
+
+        for (irAdapterParameter in irAdapterFun.valueParameters) {
+            irAdapteeCall.putValueArgument(irAdapterParameter.index, irGet(irAdapterParameter))
+        }
+        if (suspendFunReturnType.isUnit()) {
+            +irAdapteeCall
+        } else {
+            +irReturn(irAdapteeCall)
+        }
+    }
+
+    context.symbolTable.leaveScope(adapterFunctionDescriptor)
+
+    return irAdapterFun
+}
 
 fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(irExpression: IrExpression, samType: KotlinType): IrExpression {
     val kotlinFunctionType = samType.getSubstitutedFunctionTypeForSamType()
@@ -392,7 +551,7 @@ fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall
     call.irValueArgumentsByIndex[0] = null
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
         val valueParameter = call.descriptor.valueParameters[index]
-        call.irValueArgumentsByIndex[index + 1] = generateValueArgument(valueArgument, valueParameter)
+        call.irValueArgumentsByIndex[index + 1] = generateValueArgument(valueArgument, valueParameter, resolvedCall)
     }
 
     return call
@@ -530,12 +689,13 @@ fun StatementGenerator.pregenerateValueArgumentsUsing(
 ) {
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
         val valueParameter = call.descriptor.valueParameters[index]
-        call.irValueArgumentsByIndex[index] = generateValueArgumentUsing(valueArgument, valueParameter, generateArgumentExpression)
+        call.irValueArgumentsByIndex[index] =
+            generateValueArgumentUsing(valueArgument, valueParameter, resolvedCall, generateArgumentExpression)
     }
 }
 
 fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
-    val call = unwrapCallableDescriptorAndTypeArguments(resolvedCall, context.extensions.samConversion)
+    val call = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
 
     call.callReceiver = generateCallReceiver(
         resolvedCall.call.callElement,
@@ -560,7 +720,7 @@ private fun unwrapSpecialDescriptor(descriptor: CallableDescriptor): CallableDes
             descriptor.getOriginalForFunctionInterfaceAdapter()?.let { unwrapSpecialDescriptor(it) } ?: descriptor
     }
 
-fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samConversion: GeneratorExtensions.SamConversion): CallBuilder {
+fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
     val candidateDescriptor = resolvedCall.candidateDescriptor
 

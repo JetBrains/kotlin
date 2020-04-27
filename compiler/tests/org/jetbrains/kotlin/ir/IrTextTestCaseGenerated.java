@@ -1246,6 +1246,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/stringTemplates.kt");
         }
 
+        @TestMetadata("suspendConversionOnArbitraryExpression.kt")
+        public void testSuspendConversionOnArbitraryExpression() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionOnArbitraryExpression.kt");
+        }
+
         @TestMetadata("temporaryInEnumEntryInitializer.kt")
         public void testTemporaryInEnumEntryInitializer() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/temporaryInEnumEntryInitializer.kt");

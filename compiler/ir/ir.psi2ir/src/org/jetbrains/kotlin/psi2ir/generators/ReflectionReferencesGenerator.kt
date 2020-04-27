@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.withScope
@@ -75,7 +76,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
         val resolvedDescriptor = resolvedCall.resultingDescriptor
 
-        val callBuilder = unwrapCallableDescriptorAndTypeArguments(resolvedCall, context.extensions.samConversion)
+        val callBuilder = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
 
         val callableReferenceType = getTypeInferredByFrontendOrFail(ktCallableReference)
         if (resolvedCall.valueArguments.isNotEmpty() ||
@@ -237,10 +238,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         this is IrGetObjectValue ||
                 this is IrGetEnumValue ||
                 this is IrConst<*> ||
-                this is IrGetValue && symbol.isBound && symbol.owner.isImmutable()
-
-    private fun IrValueDeclaration.isImmutable() =
-        this is IrValueParameter || this is IrVariable && !this.isVar
+                this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
 
     private fun putAdaptedValueArguments(
         startOffset: Int,

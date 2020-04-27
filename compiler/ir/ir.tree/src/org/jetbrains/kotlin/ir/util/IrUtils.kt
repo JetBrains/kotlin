@@ -680,3 +680,6 @@ fun SymbolTable.findOrDeclareExternalPackageFragment(descriptor: PackageFragment
 
 val IrDeclaration.isFileClass: Boolean
     get() = origin == IrDeclarationOrigin.FILE_CLASS || origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+
+val IrValueDeclaration.isImmutable: Boolean
+    get() = this is IrValueParameter || this is IrVariable && !isVar
