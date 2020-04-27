@@ -24,6 +24,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.DisposableWrapperList;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.ApiStatus;
@@ -54,7 +55,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   private final AtomicBoolean isDisposed = new AtomicBoolean(false);
   // todo [Vlad] remove the map when BuildProgressListener.onEvent(BuildEvent) method will be removed
   private final Map<Object, Object> idsMap = new ConcurrentHashMap<>();
-  private final List<BuildProgressListener> myListeners = ContainerUtil.createConcurrentList();
+  private final DisposableWrapperList<BuildProgressListener> myListeners = new DisposableWrapperList<>();
 
   public AbstractViewManager(Project project) {
     myProject = project;
@@ -82,8 +83,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
 
   @ApiStatus.Experimental
   public void addListener(@NotNull BuildProgressListener listener, @NotNull Disposable disposable) {
-    myListeners.add(listener);
-    Disposer.register(disposable,() -> myListeners.remove(listener));
+    myListeners.add(listener, disposable);
   }
 
   protected abstract @NotNull @NlsContexts.TabTitle String getViewName();
