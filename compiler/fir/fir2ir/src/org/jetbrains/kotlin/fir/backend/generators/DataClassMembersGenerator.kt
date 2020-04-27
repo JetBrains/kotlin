@@ -119,7 +119,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     (this.name == toStringName && matchesToStringSignature)
 
         fun generate(klass: FirClass<*>): List<Name> {
-            val properties = irClass.declarations.filterIsInstance<IrProperty>().map { it.descriptor }
+            val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
+            val properties = irClass.declarations
+                .filterIsInstance<IrProperty>()
+                .take(propertyParametersCount)
+                .map { it.descriptor }
             if (properties.isEmpty()) {
                 return emptyList()
             }
