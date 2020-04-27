@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -15,7 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NA
 import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativePlatformDependency.*
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -39,13 +43,18 @@ internal fun Project.setUpKotlinNativePlatformDependencies() {
     val allowCommonizer = compareVersionNumbers(kotlinVersion, "1.4") >= 0
             && isKotlinGranularMetadataEnabled
             && !isNativeDependencyPropagationEnabled // temporary fix: turn on commonizer only when native deps propagation is disabled
-            && isInIdeaSync
 
     val dependencyResolver = NativePlatformDependencyResolver(this, kotlinVersion)
 
     findSourceSetsToAddDependencies(allowCommonizer).forEach { (sourceSet: KotlinSourceSet, sourceSetDeps: Set<NativePlatformDependency>) ->
         sourceSetDeps.forEach { sourceSetDep: NativePlatformDependency ->
             dependencyResolver.addForResolve(sourceSetDep) { resolvedFiles: Set<File> ->
+                //add commonized klibs to metadata compilation
+                if (sourceSetDep is CommonizedCommon) {
+                    getMetadataCompilationForSourceSet(sourceSet)?.let { compilation ->
+                        compilation.compileDependencyFiles += project.files(resolvedFiles)
+                    }
+                }
                 resolvedFiles.forEach { resolvedFile ->
                     dependencies.add(sourceSet.implementationMetadataConfigurationName, dependencies.create(files(resolvedFile)))
                 }
