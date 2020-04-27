@@ -197,6 +197,7 @@ internal object KotlinConverter {
         is KtSuperTypeList -> unwrapElements(element.parent)
         is KtFinallySection -> unwrapElements(element.parent)
         is KtAnnotatedExpression -> unwrapElements(element.parent)
+        is KtWhenConditionWithExpression -> unwrapElements(element.parent)
         else -> element
     }
 

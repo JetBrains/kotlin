@@ -13,15 +13,18 @@ public final class AnnotatedExpressionsKt {
     public static final fun annotatedSwitch(@org.jetbrains.annotations.NotNull str: java.lang.String) : java.lang.Integer {
         return switch  {
             str.isBlank() -> {
-                yield null
+                null
+                break
             }
 
             str.isNotEmpty() != null -> {
-                yield null
+                null
+                break
             }
 
              -> {
-                yield 1
+                1
+                break
             }
 
         }

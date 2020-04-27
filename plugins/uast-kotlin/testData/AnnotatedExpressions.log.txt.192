@@ -56,8 +56,8 @@ UFile (package = )
                                         UIdentifier (Identifier (isBlank))
                                         USimpleNameReferenceExpression (identifier = isBlank, resolvesTo = null)
                                 UExpressionList (when_entry)
-                                    UYieldExpression
-                                        ULiteralExpression (value = null)
+                                    ULiteralExpression (value = null)
+                                    UBreakExpression (label = null)
                             USwitchClauseExpressionWithBody
                                 UBinaryExpression (operator = !=)
                                     UQualifiedReferenceExpression
@@ -67,9 +67,9 @@ UFile (package = )
                                             USimpleNameReferenceExpression (identifier = isNotEmpty, resolvesTo = null)
                                     ULiteralExpression (value = null)
                                 UExpressionList (when_entry)
-                                    UYieldExpression
-                                        ULiteralExpression (value = null)
+                                    ULiteralExpression (value = null)
+                                    UBreakExpression (label = null)
                             USwitchClauseExpressionWithBody
                                 UExpressionList (when_entry)
-                                    UYieldExpression
-                                        ULiteralExpression (value = 1)
+                                    ULiteralExpression (value = 1)
+                                    UBreakExpression (label = null)
