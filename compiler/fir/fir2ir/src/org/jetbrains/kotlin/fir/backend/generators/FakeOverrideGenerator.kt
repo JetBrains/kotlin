@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -47,8 +45,9 @@ internal class FakeOverrideGenerator(
         property: FirProperty,
         firOverriddenSymbol: FirPropertySymbol
     ): IrProperty {
-        val firOverriddenProperty = firOverriddenSymbol.fir
-        val overriddenProperty = declarationStorage.getCachedIrProperty(firOverriddenProperty)!!
+
+        val irSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
+        val overriddenProperty = irSymbol.owner
         getter?.apply {
             overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
         }
