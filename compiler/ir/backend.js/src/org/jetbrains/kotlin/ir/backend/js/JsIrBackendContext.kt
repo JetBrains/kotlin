@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.backend.js.utils.getInlinedClass
 import org.jetbrains.kotlin.ir.declarations.*
@@ -129,6 +130,9 @@ class JsIrBackendContext(
     override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
 
     override val mapping = JsMapping()
+
+    override val inlineClassesUtils = JsInlineClassesUtils(this)
+
     override val declarationFactory = JsDeclarationFactory(mapping)
 
     companion object {
@@ -200,6 +204,9 @@ class JsIrBackendContext(
 
             override val defaultConstructorMarker =
                 symbolTable.referenceClass(context.getJsInternalClass("DefaultConstructorMarker"))
+
+            override val ThrowIllegalStateException: IrSimpleFunctionSymbol =
+                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
 
             override val stringBuilder
                 get() = TODO("not implemented")

@@ -67,8 +67,6 @@ fun IrType.getInlinedClass(): IrClass? {
     return null
 }
 
-fun IrType.isInlined(): Boolean = this.getInlinedClass() != null
-
 tailrec fun erase(type: IrType): IrClass? {
     val classifier = type.classifierOrFail
 

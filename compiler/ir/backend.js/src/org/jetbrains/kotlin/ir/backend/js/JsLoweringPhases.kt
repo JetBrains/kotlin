@@ -294,6 +294,12 @@ private val enumUsageLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(enumEntryCreateGetInstancesFunsLoweringPhase)
 )
 
+private val externalEnumUsageLoweringPhase = makeBodyLoweringPhase(
+    ::ExternalEnumUsagesLowering,
+    name = "ExternalEnumUsagesLowering",
+    description = "Replace external enum entry accesses with field accesses"
+)
+
 private val enumEntryRemovalLoweringPhase = makeDeclarationTransformerPhase(
     ::EnumClassRemoveEntriesLowering,
     name = "EnumEntryRemovalLowering",
@@ -494,7 +500,7 @@ private val multipleCatchesLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val bridgesConstructionPhase = makeDeclarationTransformerPhase(
-    ::BridgesConstruction,
+    ::JsBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges",
     prerequisite = setOf(suspendFunctionsLoweringPhase)
@@ -652,6 +658,7 @@ val loweringList = listOf<Lowering>(
     enumEntryCreateGetInstancesFunsLoweringPhase,
     enumSyntheticFunsLoweringPhase,
     enumUsageLoweringPhase,
+    externalEnumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
     suspendFunctionsLoweringPhase,
     propertyReferenceLoweringPhase,

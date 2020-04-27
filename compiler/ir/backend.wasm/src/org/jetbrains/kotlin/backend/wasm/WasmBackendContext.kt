@@ -8,25 +8,31 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
+import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -44,10 +50,12 @@ class WasmBackendContext(
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     // Place to store declarations excluded from code generation
-    val excludedDeclarations: IrPackageFragment by lazy {
+    private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
+
+    fun getExcludedPackageFragment(fqName: FqName): IrPackageFragment = excludedDeclarations.getOrPut(fqName) {
         IrExternalPackageFragmentImpl(
             DescriptorlessExternalPackageFragmentSymbol(),
-            FqName("kotlin")
+            fqName
         )
     }
 
@@ -55,14 +63,40 @@ class WasmBackendContext(
 
     override val declarationFactory = JsDeclarationFactory(mapping)
 
-    val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    private val internalPackageFragment = IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(
-            EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
-        )
-    )
+    private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
+    // TODO: Merge with JS IR Backend context lazy file
+    val internalPackageFragment by lazy {
+        IrFileImpl(object : SourceManager.FileEntry {
+            override val name = "<implicitDeclarations>"
+            override val maxOffset = UNDEFINED_OFFSET
+
+            override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int) =
+                SourceRangeInfo(
+                    "",
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET
+                )
+
+            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
+            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+        }, internalPackageFragmentDescriptor).also {
+            irModuleFragment.files += it
+        }
+    }
+
+
+    val startFunction = internalPackageFragment.addFunction {
+        name = Name.identifier("startFunction")
+        returnType = irBuiltIns.unitType
+    }.apply {
+        body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    }
 
     override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, internalPackageFragment)
 
@@ -71,6 +105,8 @@ class WasmBackendContext(
         override val symbols: Symbols<WasmBackendContext> = wasmSymbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
+
+    override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
 
     override fun log(message: () -> String) {
         /*TODO*/

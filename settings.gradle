@@ -293,6 +293,7 @@ include ":kotlin-build-common",
         ":include:kotlin-compiler",
         ":plugins:jvm-abi-gen",
         ":plugins:jvm-abi-gen-embeddable",
+        ":wasm:ir",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
