@@ -26,4 +26,6 @@ class KotlinSSProcedureCallTest : KotlinSSTest() {
     fun testFunTypeArgCall() { doTest("a<Int, String>(0, \"a\")") }
 
     fun testFunExtensionCall() { doTest("0.a()") }
+
+    fun testFunLambdaArgCall() { doTest("a { println() }") }
 }

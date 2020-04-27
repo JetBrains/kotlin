@@ -124,10 +124,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
     }
 
+    override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
+        val other = getTreeElement<KtLambdaExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(lambdaExpression.functionLiteral, other.functionLiteral)
+                && myMatchingVisitor.match(lambdaExpression.bodyExpression, other.bodyExpression)
+    }
+
     override fun visitArgument(argument: KtValueArgument) {
         val other = getTreeElement<KtValueArgument>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
-                && myMatchingVisitor.match(argument.getArgumentName(), other.getArgumentName())
+        myMatchingVisitor.result = myMatchingVisitor.match(argument.getArgumentName(), other.getArgumentName())
+                && myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
     }
 
     override fun visitCallExpression(expression: KtCallExpression) {
@@ -150,7 +156,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val codeTypes = resolvedOther.typeArguments.values
         val codeTypeNames = codeTypes.map { it.toString() }
         val codeTypeFqNames = codeTypes.map { it.fqName.toString() }
-        if(!myMatchingVisitor.setResult(queryTypeNames == codeTypeNames || queryTypeNames == codeTypeFqNames)) return
+        if (!myMatchingVisitor.setResult(queryTypeNames == codeTypeNames || queryTypeNames == codeTypeFqNames)) return
 
         // check arguments value matching
         val queryArgs = expression.valueArguments
@@ -194,24 +200,19 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     return
                 }
             }
-
             // normal argument matching
-            if (!myMatchingVisitor.setResult(
-                    myMatchingVisitor.match(queryArg.getArgumentExpression(), codeArg.getArgumentExpression())
-                )
-            ) {
+            if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryArg, codeArg))) {
                 if (myMatchingVisitor.setResult(queryArg.isNamed())) { // start comparing for out of order arguments
-                    val queryValueArgMap = queryArgs.subList(queryIndex, expression.valueArguments.lastIndex + 1)
-                        .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
-                    val codeValueArgMap = sortedCodeArgs.subList(codeIndex, sortedCodeArgs.lastIndex + 1)
-                        .sortedBy { it.getArgumentName()?.asName }.map { it.getArgumentExpression() }
-                    queryValueArgMap.forEachIndexed { j, queryExpr ->
-                        val codeExpr = codeValueArgMap[j]
-                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryExpr, codeExpr))) return
+                    val sortQueryArgs = queryArgs.subList(queryIndex, expression.valueArguments.lastIndex + 1)
+                        .sortedBy { it.getArgumentName()?.asName }
+                    val sortCodeArgs = sortedCodeArgs.subList(codeIndex, sortedCodeArgs.lastIndex + 1)
+                        .sortedBy { it.getArgumentName()?.asName }
+                    sortQueryArgs.forEachIndexed { j, qArg ->
+                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(qArg, sortCodeArgs[j]))) return
                     }
-                    return
+                    return // result = true
                 } else {
-                    return
+                    return // result = false
                 }
             }
             queryIndex++
