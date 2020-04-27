@@ -6,11 +6,17 @@
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) {
     private val primaryConstructorParameters: List<ValueParameterDescriptor> =
@@ -44,7 +50,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                 SerializableProperty(
                     prop,
                     primaryConstructorProperties[prop] ?: false,
-                    prop.hasBackingField(bindingContext)
+                    prop.hasBackingField(bindingContext) || (prop is DeserializedPropertyDescriptor && prop.backingField != null) // workaround for TODO in .hasBackingField
                 )
             }
             .filterNot { it.transient }
@@ -56,8 +62,11 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                 else
                     SerializableProperties(supers, bindingContext).serializableProperties + first + second
             }
+            .let { unsort(serializableClass, it) }
+
         isExternallySerializable =
             serializableClass.isSerializableEnum() || primaryConstructorParameters.size == primaryConstructorProperties.size
+
     }
 
     val serializableConstructorProperties: List<SerializableProperty> =
@@ -79,5 +88,16 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
 internal fun List<SerializableProperty>.bitMaskSlotCount() = size / 32 + 1
 internal fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32
 
-internal fun BindingContext.serializablePropertiesFor(classDescriptor: ClassDescriptor): SerializableProperties =
-    this.get(SERIALIZABLE_PROPERTIES, classDescriptor) ?: SerializableProperties(classDescriptor, this)
+internal fun BindingContext.serializablePropertiesFor(classDescriptor: ClassDescriptor): SerializableProperties {
+    val props = this.get(SERIALIZABLE_PROPERTIES, classDescriptor) ?: SerializableProperties(classDescriptor, this)
+    SerializationComponentRegistrar.serializationDescriptorSerializer.putIfNeeded(classDescriptor, props)
+    return props
+}
+
+private fun unsort(descriptor: ClassDescriptor, props: List<SerializableProperty>): List<SerializableProperty> {
+    if (descriptor !is DeserializedClassDescriptor) return props
+    val correctOrder: List<Name> = descriptor.classProto.getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
+        .map { descriptor.c.nameResolver.getName(it) }
+    val propsMap = props.associateBy { it.descriptor.name }
+    return correctOrder.map { propsMap.getValue(it) }
+}

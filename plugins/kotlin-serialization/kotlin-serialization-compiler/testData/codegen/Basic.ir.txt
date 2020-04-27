@@ -200,7 +200,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           CHECKCAST
           ALOAD (2)
-          INVOKESTATIC (ListOfUsers, access$getList$p, (LListOfUsers;)Ljava/util/List;)
+          INVOKEVIRTUAL (ListOfUsers, getList, ()Ljava/util/List;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
           ALOAD (4)
           ALOAD (3)
@@ -301,8 +301,6 @@ public final class ListOfUsers : java/lang/Object {
           RETURN
         LABEL (L4)
     }
-
-    public final static java.util.List access$getList$p(ListOfUsers $this)
 
     public final java.util.List getList()
 }
@@ -488,7 +486,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;)Lkotlinx/serialization/CompositeEncoder;)
           ASTORE (4)
           ALOAD (2)
-          INVOKESTATIC (OptionalUser, access$getUser$p, (LOptionalUser;)LUser;)
+          INVOKEVIRTUAL (OptionalUser, getUser, ()LUser;)
           NEW
           DUP
         LABEL (L2)
@@ -515,7 +513,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
           ALOAD (2)
-          INVOKESTATIC (OptionalUser, access$getUser$p, (LOptionalUser;)LUser;)
+          INVOKEVIRTUAL (OptionalUser, getUser, ()LUser;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
         LABEL (L6)
           ALOAD (4)
@@ -654,8 +652,6 @@ public final class OptionalUser : java/lang/Object {
           RETURN
         LABEL (L1)
     }
-
-    public final static User access$getUser$p(OptionalUser $this)
 
     public final User getUser()
 }
@@ -869,13 +865,13 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (3)
           ICONST_0
           ALOAD (2)
-          INVOKESTATIC (User, access$getFirstName$p, (LUser;)Ljava/lang/String;)
+          INVOKEVIRTUAL (User, getFirstName, ()Ljava/lang/String;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeStringElement, (Lkotlinx/serialization/SerialDescriptor;ILjava/lang/String;)V)
           ALOAD (4)
           ALOAD (3)
           ICONST_1
           ALOAD (2)
-          INVOKESTATIC (User, access$getLastName$p, (LUser;)Ljava/lang/String;)
+          INVOKEVIRTUAL (User, getLastName, ()Ljava/lang/String;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeStringElement, (Lkotlinx/serialization/SerialDescriptor;ILjava/lang/String;)V)
           ALOAD (4)
           ALOAD (3)
@@ -1000,10 +996,6 @@ public final class User : java/lang/Object {
           RETURN
         LABEL (L6)
     }
-
-    public final static java.lang.String access$getFirstName$p(User $this)
-
-    public final static java.lang.String access$getLastName$p(User $this)
 
     public final java.lang.String getFirstName()
 

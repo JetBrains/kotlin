@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:ir.psi2ir"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
 
     runtime(kotlinStdlib())
 

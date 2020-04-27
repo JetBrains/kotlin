@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,7 +45,8 @@ class DescriptorSerializer private constructor(
     private val extension: SerializerExtension,
     val typeTable: MutableTypeTable,
     private val versionRequirementTable: MutableVersionRequirementTable?,
-    private val serializeTypeTableToFunction: Boolean
+    private val serializeTypeTableToFunction: Boolean,
+    val plugins: List<DescriptorSerializerPlugin> = emptyList()
 ) {
     private val contractSerializer = ContractSerializer()
 
@@ -151,6 +152,8 @@ class DescriptorSerializer private constructor(
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(classDescriptor))
 
         extension.serializeClass(classDescriptor, builder, versionRequirementTable, this)
+
+        plugins.forEach { it.afterClass(classDescriptor, builder, versionRequirementTable, this, extension) }
 
         writeVersionRequirementForInlineClasses(classDescriptor, builder, versionRequirementTable)
 
@@ -741,6 +744,13 @@ class DescriptorSerializer private constructor(
     )
 
     companion object {
+        private val plugins: MutableSet<DescriptorSerializerPlugin> = mutableSetOf()
+
+        @JvmStatic
+        fun registerSerializerPlugin(plugin: DescriptorSerializerPlugin) {
+            plugins.add(plugin)
+        }
+
         @JvmStatic
         fun createTopLevel(extension: SerializerExtension): DescriptorSerializer =
             DescriptorSerializer(
@@ -775,7 +785,8 @@ class DescriptorSerializer private constructor(
                 MutableTypeTable(),
                 if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
-                serializeTypeTableToFunction = false
+                serializeTypeTableToFunction = false,
+                plugins.toList()
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
                 serializer.typeParameters.intern(typeParameter)
