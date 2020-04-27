@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Toggleable;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicClearableLazyValue;
@@ -43,6 +44,7 @@ import static com.intellij.build.ExecutionNode.getEventResultIcon;
  * @author Vladislav.Soroka
  */
 public abstract class AbstractViewManager implements ViewManager, BuildProgressListener, Disposable {
+  private static final Logger LOG = Logger.getInstance(ViewManager.class);
   private static final Key<Boolean> PINNED_EXTRACTED_CONTENT = new Key<>("PINNED_EXTRACTED_CONTENT");
 
   protected final Project myProject;
@@ -52,6 +54,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   private final AtomicBoolean isDisposed = new AtomicBoolean(false);
   // todo [Vlad] remove the map when BuildProgressListener.onEvent(BuildEvent) method will be removed
   private final Map<Object, Object> idsMap = new ConcurrentHashMap<>();
+  private final List<BuildProgressListener> myListeners = ContainerUtil.createConcurrentList();
 
   public AbstractViewManager(Project project) {
     myProject = project;
@@ -75,6 +78,12 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   @Override
   public boolean isBuildContentView() {
     return true;
+  }
+
+  @ApiStatus.Experimental
+  public void addListener(@NotNull BuildProgressListener listener, @NotNull Disposable disposable) {
+    myListeners.add(listener);
+    Disposer.register(disposable,() -> myListeners.remove(listener));
   }
 
   protected abstract @NotNull @NlsContexts.TabTitle String getViewName();
@@ -110,6 +119,14 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     }
     if (buildsView != null) {
       buildsView.onEvent(buildId, event);
+    }
+
+    for (BuildProgressListener listener : myListeners) {
+      try {
+        listener.onEvent(buildId, event);
+      } catch (Exception e) {
+        LOG.warn(e);
+      }
     }
   }
 

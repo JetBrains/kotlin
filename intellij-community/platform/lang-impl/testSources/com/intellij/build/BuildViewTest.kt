@@ -4,6 +4,7 @@ package com.intellij.build
 import com.intellij.build.events.MessageEvent.Kind.ERROR
 import com.intellij.build.events.MessageEvent.Kind.INFO
 import com.intellij.build.progress.BuildProgressDescriptor
+import com.intellij.openapi.components.service
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.BuildViewTestFixture
@@ -151,5 +152,72 @@ class BuildViewTest : LightPlatformTestCase() {
     buildViewTestFixture.assertBuildViewSelectedNode("cancelled", "", false)
     buildViewTestFixture.assertBuildViewSelectedNode("Root message", "Tex of the root message console\n", false)
     buildViewTestFixture.assertBuildViewSelectedNode("Inner progress", "", false)
+  }
+
+  @Test
+  fun `test build view listeners`() {
+    val title = "A build"
+    val buildDescriptor = DefaultBuildDescriptor(Object(), title, "", System.currentTimeMillis())
+    val progressDescriptor = object : BuildProgressDescriptor {
+      override fun getBuildDescriptor(): BuildDescriptor = buildDescriptor
+      override fun getTitle(): String = title
+    }
+
+    val buildMessages = mutableListOf<String>()
+    //BuildViewManager
+    project.service<BuildViewManager>().addListener(
+      BuildProgressListener { _, event -> buildMessages.add(event.message) },
+      testRootDisposable
+    )
+
+    // @formatter:off
+    BuildViewManager
+      .createBuildProgress(project)
+      .start(progressDescriptor)
+        .output("Build greeting\n", true)
+        .message("Root message", "Text of the root message console", INFO, null)
+        .progress("Running ...")
+        .startChildProgress("Inner progress")
+          .output("inner progress output", true)
+          .fileMessage("File message1", "message1 descriptive text", INFO, FilePosition(File("aFile.java"), 0, 0))
+          .fileMessage("File message2", "message2 descriptive text", INFO, FilePosition(File("aFile.java"), 0, 0))
+        .finish()
+      .output("Build farewell", true)
+      .finish()
+    // @formatter:on
+
+    buildViewTestFixture.assertBuildViewTreeEquals(
+      """
+      -
+       -finished
+        Root message
+        -Inner progress
+         -aFile.java
+          File message1
+          File message2
+      """.trimIndent()
+    )
+
+    buildViewTestFixture.assertBuildViewSelectedNode("finished", "Build greeting\n" +
+                                                                 "Build farewell", false)
+    buildViewTestFixture.assertBuildViewSelectedNode("Inner progress", "inner progress output", false)
+    buildViewTestFixture.assertBuildViewSelectedNode("Root message", "Text of the root message console\n", false)
+    buildViewTestFixture.assertBuildViewSelectedNode("File message1",
+                                                     "aFile.java\n" +
+                                                     "message1 descriptive text",
+                                                     false
+    )
+
+    assertEquals("running..." +
+                 "Build greeting\n" +
+                 "Root message" +
+                 "Running ..." +
+                 "Inner progress" +
+                 "inner progress output" +
+                 "File message1" +
+                 "File message2" +
+                 "Inner progress" +
+                 "Build farewell" +
+                 "finished", buildMessages.joinToString(""))
   }
 }
