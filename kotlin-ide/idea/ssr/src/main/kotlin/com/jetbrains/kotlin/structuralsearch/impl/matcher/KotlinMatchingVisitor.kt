@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -134,11 +135,21 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         // check callee matching
         if(!myMatchingVisitor.setResult(myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)))  return
+        val resolvedOther = other.resolveToCall(BodyResolveMode.PARTIAL) ?: run {
+            myMatchingVisitor.result = false
+            return
+        }
+        if(!resolvedOther.isReallySuccess()) {
+            myMatchingVisitor.result = false
+            return
+        }
 
         // check arguments value matching
         val queryArgs = expression.valueArguments
-        val sortedCodeArgs = other.resolveToCall(BodyResolveMode.PARTIAL)?.valueArgumentsByIndex?.flatMap { it.arguments }
-            ?.map { it as KtValueArgument } ?: error("Could not resolve matching procedure declaration.")
+        val sortedCodeArgs = resolvedOther.valueArgumentsByIndex?.flatMap { it.arguments }?.map { it as KtValueArgument } ?: run {
+            myMatchingVisitor.result = false
+            return
+        }
         var queryIndex = 0
         var codeIndex = 0
         while(queryIndex < queryArgs.size && codeIndex < sortedCodeArgs.size) {
