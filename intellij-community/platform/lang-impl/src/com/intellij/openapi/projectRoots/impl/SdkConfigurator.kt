@@ -6,12 +6,17 @@ import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 
 class SdkConfigurator : CommandLineInspectionProjectConfigurator {
   override fun isApplicable(projectPath: Path, logger: CommandLineInspectionProgressReporter): Boolean {
     return true
+  }
+
+  override fun configureEnvironment(projectPath: Path, logger: CommandLineInspectionProgressReporter) {
+    Registry.get("unknown.sdk").setValue(false) //forbid UnknownSdkTracker post startup activity
   }
 
   override fun configureProject(project: Project,
