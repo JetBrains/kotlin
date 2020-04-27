@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.generators.tests.generator
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
 class TestGroup(
-        private val moduleRelativePath: String,
-        val testDataRoot: String,
+        private val moduleAbsolutePath: String,
+        val testDataAbsoluteRoot: String,
         val testRunnerMethodName: String,
         val additionalRunnerArguments: List<String> = emptyList(),
         val annotations: List<AnnotationModel> = emptyList()
@@ -35,7 +36,7 @@ class TestGroup(
         init: TestClass.() -> Unit
     ) {
         TestGenerator(
-                "${moduleRelativePath}/test",
+                "${moduleAbsolutePath}/test",
                 suiteTestClassName,
                 baseTestClassName,
                 TestClass(annotations).apply(init).testModels,
@@ -62,7 +63,7 @@ class TestGroup(
             skipIgnored: Boolean = false,
             deep: Int? = null
         ) {
-            val rootFile = File("$testDataRoot/$relativeRootPath")
+            val rootFile = File("$testDataAbsoluteRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
@@ -93,7 +94,9 @@ fun testGroup(
         additionalRunnerArguments: List<String> = emptyList(),
         init: TestGroup.() -> Unit
 ) {
-    TestGroup("kotlin/$moduleRelativePath", "kotlin/$testDataRootRelativePath", testRunnerMethodName, additionalRunnerArguments).init()
+    val moduleAbsolutePath = "${KotlinTestUtils.getHomeDirectory()}/$moduleRelativePath"
+    val testDataAbsolutePath = "${KotlinTestUtils.getHomeDirectory()}/$testDataRootRelativePath"
+    TestGroup(moduleAbsolutePath, testDataAbsolutePath, testRunnerMethodName, additionalRunnerArguments).init()
 }
 
 fun getDefaultSuiteTestClassName(baseTestClassName: String): String {

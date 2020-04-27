@@ -64,7 +64,8 @@ public class SimpleTestMethodModel extends TestMethodModel {
 
     @Override
     public void generateBody(@NotNull Printer p) {
-        String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
+        File fileRelativeToHome = FilesKt.relativeTo(this.file, new File(KotlinTestUtils.getHomeDirectory()));
+        String filePath = KotlinTestUtils.getFilePath(fileRelativeToHome) + (this.file.isDirectory() ? "/" : "");
         p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");");
     }
 

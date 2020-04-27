@@ -124,7 +124,6 @@ import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
-import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
@@ -1160,7 +1159,7 @@ fun main(args: Array<String>) {
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
-        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
+        actualizeMppJpsIncTestCaseDirs(testDataAbsoluteRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
 
         testClass<AbstractIncrementalJsJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)

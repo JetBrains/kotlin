@@ -221,7 +221,7 @@ public class SimpleTestClassModel extends TestClassModel {
 
     @Override
     public String getDataString() {
-        return KotlinTestUtils.getFilePath(rootFile);
+        return KotlinTestUtils.getFilePath(FilesKt.relativeTo(rootFile, new File(KotlinTestUtils.getHomeDirectory())));
     }
 
     @Nullable
@@ -266,16 +266,17 @@ public class SimpleTestClassModel extends TestClassModel {
             }
 
             String assertTestsPresentStr;
+            File rootFileRelativeToKotlinRoot = FilesKt.relativeTo(rootFile, new File(KotlinTestUtils.getHomeDirectory()));
 
             if (targetBackend == TargetBackend.ANY) {
                 assertTestsPresentStr = String.format(
                         "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument, recursive, exclude
+                        KotlinTestUtils.getFilePath(rootFileRelativeToKotlinRoot), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument, recursive, exclude
                 );
             } else {
                 assertTestsPresentStr = String.format(
                         "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                        KotlinTestUtils.getFilePath(rootFileRelativeToKotlinRoot), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
                         excludedArgument, TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
                 );
             }

@@ -35,7 +35,8 @@ class CoroutinesTestModel(
         get() = super.name + if (isLanguageVersion1_3) "_1_3" else "_1_2"
 
     override fun generateBody(p: Printer) {
-        val filePath = KotlinTestUtils.getFilePath(file) + if (file.isDirectory) "/" else ""
+        val fileRelativeToHome = file.relativeTo(File(KotlinTestUtils.getHomeDirectory()))
+        val filePath = KotlinTestUtils.getFilePath(fileRelativeToHome) + if (file.isDirectory) "/" else ""
         val packageName = if (isLanguageVersion1_3) "kotlin.coroutines" else "kotlin.coroutines.experimental"
 
         p.println(RunTestMethodWithPackageReplacementModel.METHOD_NAME, "(\"$filePath\", \"$packageName\");")

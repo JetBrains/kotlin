@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.generators.tests.generator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.collections.CollectionsKt;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -128,7 +129,7 @@ public class SingleClassTestModel extends TestClassModel {
 
     @Override
     public String getDataString() {
-        return KotlinTestUtils.getFilePath(rootFile);
+        return KotlinTestUtils.getFilePath(FilesKt.relativeTo(rootFile, new File(KotlinTestUtils.getHomeDirectory())));
     }
 
     @Nullable
@@ -166,17 +167,18 @@ public class SingleClassTestModel extends TestClassModel {
             } else {
                 excludedArgument = null;
             }
+            File rootFileRelativeToHome = FilesKt.relativeTo(rootFile, new File(KotlinTestUtils.getHomeDirectory()));
 
             if (targetBackend != TargetBackend.ANY) {
                 assertTestsPresentStr = String.format(
                         "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                        KotlinTestUtils.getFilePath(rootFileRelativeToHome), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
                         excludedArgument, TargetBackend.class.getSimpleName(), targetBackend.toString()
                 );
             } else {
                 assertTestsPresentStr = String.format(
                         "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument
+                        KotlinTestUtils.getFilePath(rootFileRelativeToHome), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument
                 );
             }
             p.println(assertTestsPresentStr);

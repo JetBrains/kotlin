@@ -157,6 +157,7 @@ public class KotlinTestUtils {
         if (current == null) {
             throw new IllegalStateException("Cannot find kotiln-ide root");
         }
+        current = current.resolve("kotlin");
         return current.toString();
     }
 

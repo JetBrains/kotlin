@@ -114,7 +114,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     private static File assertExists(@NotNull File file) {
-        File absolute = new File(KotlinTestUtils.getHomeDirectory(), file.getPath());
+        File absolute = new File(KotlinTestUtils.getHomeDirectory() + "/..", file.getPath());
         if (!absolute.exists()) {
             throw new IllegalStateException(absolute + " does not exist. Run 'gradlew dist'");
         }
