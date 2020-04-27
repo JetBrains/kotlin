@@ -259,10 +259,19 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
+        val patternTypeReference = property.typeReference
+        val codeType = other.type()
 
-        val typeMatched = when (val propertyTR = property.typeReference) {
-            null -> true // Type will be matched with delegateExpressionOrInitializer
-            else -> propertyTR.text == other.type().toString() || propertyTR.text == other.type()?.fqName.toString()
+        val typeMatched = when {
+            // type() function returns [KotlinType?]
+            codeType == null -> patternTypeReference == null
+            // Type will be matched with the delegateExpressionOrInitializer matching
+            patternTypeReference == null -> true
+            // Short typeReference name
+            myMatchingVisitor.matchText(patternTypeReference.text, codeType.toString()) -> true
+            // FQ typeReference name
+            myMatchingVisitor.matchText(patternTypeReference.text, codeType.fqName.toString()) -> true
+            else -> false
         }
 
         myMatchingVisitor.result = typeMatched
