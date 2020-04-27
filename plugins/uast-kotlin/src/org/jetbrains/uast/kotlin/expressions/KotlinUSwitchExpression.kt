@@ -72,21 +72,24 @@ class KotlinUSwitchEntry(
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions.subList(0, userExpressions.lastIndex) + object : UYieldExpression, JvmDeclarationUElementPlaceholder {
-                override val javaPsi: PsiElement? = null
-                override val sourcePsi: PsiElement? = null
-                override val psi: PsiElement?
-                    get() = null
-                override val label: String?
-                    get() = null
-                override val uastParent: UElement?
-                    get() = this@KotlinUExpressionList
-                override val annotations: List<UAnnotation>
-                    get() = emptyList()
-                override val expression: UExpression?
-                    get() = userExpressions.lastOrNull()?.sourcePsi.safeAs<KtExpression>()
-                        ?.let { KotlinConverter.convertExpression(it, this, DEFAULT_EXPRESSION_TYPES_LIST) }
-            }
+            expressions =
+                if (userExpressions.isNotEmpty())
+                    userExpressions.subList(0, userExpressions.lastIndex) + object : UYieldExpression, JvmDeclarationUElementPlaceholder {
+                        override val javaPsi: PsiElement? = null
+                        override val sourcePsi: PsiElement? = null
+                        override val psi: PsiElement?
+                            get() = null
+                        override val label: String?
+                            get() = null
+                        override val uastParent: UElement?
+                            get() = this@KotlinUExpressionList
+                        override val annotations: List<UAnnotation>
+                            get() = emptyList()
+                        override val expression: UExpression?
+                            get() = userExpressions.lastOrNull()?.sourcePsi.safeAs<KtExpression>()
+                                ?.let { KotlinConverter.convertExpression(it, this, DEFAULT_EXPRESSION_TYPES_LIST) }
+                    }
+                else emptyList()
         }
     }
 
