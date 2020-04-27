@@ -77,6 +77,7 @@ class FirCallResolver(
             name,
             result.candidates,
             result.applicability,
+            functionCall.explicitReceiver,
         )
 
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
@@ -168,6 +169,7 @@ class FirCallResolver(
             callee.name,
             reducedCandidates,
             result.applicability,
+            qualifiedAccess.explicitReceiver,
         )
 
         if (qualifiedAccess.explicitReceiver == null) {
@@ -353,6 +355,7 @@ class FirCallResolver(
         name: Name,
         candidates: Collection<Candidate>,
         applicability: CandidateApplicability,
+        explicitReceiver: FirExpression? = null,
     ): FirNamedReference {
         val source = reference.source
         return when {
@@ -377,24 +380,26 @@ class FirCallResolver(
             candidates.size == 1 -> {
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
-                when {
-                    coneSymbol is FirBackingFieldSymbol -> buildBackingFieldReference {
+                if (coneSymbol is FirBackingFieldSymbol) {
+                    return buildBackingFieldReference {
                         this.source = source
                         resolvedSymbol = coneSymbol
                     }
-
-                    coneSymbol is FirVariableSymbol && (
-                            coneSymbol !is FirPropertySymbol ||
-                                    (coneSymbol.phasedFir() as FirMemberDeclaration).typeParameters.isEmpty()
-                            )
-                    -> buildResolvedNamedReference {
-                        this.source = source
-                        this.name = name
-                        resolvedSymbol = coneSymbol
-                    }
-
-                    else -> FirNamedReferenceWithCandidate(source, name, candidate)
                 }
+                if (explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null) {
+                    if (coneSymbol is FirVariableSymbol) {
+                        if (coneSymbol !is FirPropertySymbol ||
+                            (coneSymbol.phasedFir() as FirMemberDeclaration).typeParameters.isEmpty()
+                        ) {
+                            return buildResolvedNamedReference {
+                                this.source = source
+                                this.name = name
+                                resolvedSymbol = coneSymbol
+                            }
+                        }
+                    }
+                }
+                FirNamedReferenceWithCandidate(source, name, candidate)
             }
             else -> buildErrorNamedReference {
                 this.source = source
