@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.extensionPointService
+import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -31,10 +34,13 @@ interface FirModuleResolveState {
     fun getSession(project: Project, moduleInfo: ModuleSourceInfo): FirSession {
         sessionProvider.getSession(moduleInfo)?.let { return it }
         return synchronized(moduleInfo.module) {
-            sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
+            val session = sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
                 project, moduleInfo, sessionProvider, moduleInfo.contentScope()
             ).also { moduleBasedSession ->
                 sessionProvider.sessionCache[moduleInfo] = moduleBasedSession
+            }
+            session.also {
+                it.extensionPointService.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
             }
         }
     }

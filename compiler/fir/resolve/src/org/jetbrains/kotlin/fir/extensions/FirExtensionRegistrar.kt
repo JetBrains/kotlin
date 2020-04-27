@@ -33,7 +33,11 @@ abstract class FirExtensionRegistrar {
 
     class RegisteredExtensions(
         val statusTransformerExtensions: List<FirStatusTransformerExtension.Factory>
-    )
+    ) {
+        companion object {
+            val EMPTY = RegisteredExtensions(emptyList())
+        }
+    }
 }
 
 fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {

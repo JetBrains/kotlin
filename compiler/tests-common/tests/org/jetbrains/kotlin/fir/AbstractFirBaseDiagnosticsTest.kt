@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.FirExtensionPointService
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.extensionPointService
+import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -108,7 +110,9 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         runAnalysis(testDataFile, files, firFilesPerSession)
     }
 
-    open fun registerFirExtensions(service: FirExtensionPointService) {}
+    open fun registerFirExtensions(service: FirExtensionPointService) {
+        service.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
+    }
 
     private fun mapKtFilesToFirFiles(session: FirSession, ktFiles: List<KtFile>, firFiles: MutableList<FirFile>, useLightTree: Boolean) {
         val firProvider = (session.firProvider as FirProviderImpl)

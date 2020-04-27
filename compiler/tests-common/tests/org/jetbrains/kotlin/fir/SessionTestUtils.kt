@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.extensionPointService
+import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -32,6 +35,7 @@ fun createSession(
     val provider = FirProjectSessionProvider(project)
     return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
         createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
+        it.extensionPointService.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
     }
 }
 
