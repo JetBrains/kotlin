@@ -115,7 +115,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     protected fun <E> Collection<Collection<E>>.intersectSets(): Set<E> {
         if (isEmpty()) return emptySet()
         val iterator = iterator()
-        val result = HashSet<E>(iterator.next())
+        val result = LinkedHashSet<E>(iterator.next())
         while (iterator.hasNext()) {
             result.retainAll(iterator.next())
         }
