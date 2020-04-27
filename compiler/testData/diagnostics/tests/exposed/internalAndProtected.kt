@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public open class A {
     protected open class B
 }

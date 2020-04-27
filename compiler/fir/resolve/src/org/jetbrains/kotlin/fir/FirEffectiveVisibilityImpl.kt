@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility.Permissiveness
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.types.classId
 
 sealed class FirEffectiveVisibilityImpl(
     override val name: String,
@@ -185,18 +188,27 @@ sealed class FirEffectiveVisibilityImpl(
         Permissiveness.MORE -> other
         Permissiveness.UNKNOWN -> Private
     }
+
+    companion object {
+        private fun containerRelation(first: FirRegularClass?, second: FirRegularClass?): Permissiveness =
+            if (first == null || second == null) {
+                Permissiveness.UNKNOWN
+            } else if (first == second) {
+                Permissiveness.SAME
+            } else {
+                when {
+                    first.collectSupertypes().any { it.classId == second.symbol.classId } -> Permissiveness.LESS
+                    second.collectSupertypes().any { it.classId == first.symbol.classId } -> Permissiveness.MORE
+                    else -> Permissiveness.UNKNOWN
+                }
+            }
+
+        private fun FirRegularClass.collectSupertypes() = lookupSuperTypes(
+            this as FirClass<*>,
+            lookupInterfaces = true,
+            deep = true,
+            useSiteSession = this.session
+        )
+    }
 }
 
-internal fun containerRelation(first: FirRegularClass?, second: FirRegularClass?): Permissiveness =
-    if (first == null || second == null) {
-        Permissiveness.UNKNOWN
-    } else if (first == second) {
-        Permissiveness.SAME
-        // TODO
-//    } else if (DescriptorUtils.isSubclass(first, second)) {
-//        Permissiveness.LESS
-//    } else if (DescriptorUtils.isSubclass(second, first)) {
-//        Permissiveness.MORE
-    } else {
-        Permissiveness.UNKNOWN
-    }
