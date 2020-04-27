@@ -18,6 +18,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.ui.tabs.impl.TabLabel
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import java.awt.datatransfer.StringSelection
 
 abstract class CopyPathProvider : DumbAwareAction() {
@@ -41,6 +43,10 @@ abstract class CopyPathProvider : DumbAwareAction() {
     if (project != null && getQualifiedName(project, getElementsToCopy(editor, dataContext), editor, dataContext) != null) {
       e.presentation.isEnabledAndVisible = true
       return
+    }
+
+    if (component is TabLabel) {
+      DataManager.removeDataProvider(component)
     }
 
     e.presentation.isEnabledAndVisible = false
