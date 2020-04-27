@@ -238,7 +238,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = matchNameIdentifiers(klass.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
-                && myMatchingVisitor.matchSons(klass.body, other.body)
+                && myMatchingVisitor.matchSonsInAnyOrder(klass.body, other.body)
     }
 
     override fun visitElement(element: PsiElement) {

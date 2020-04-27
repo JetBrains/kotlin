@@ -13,4 +13,10 @@ class KotlinSSClassTest : KotlinSSTest() {
         class '_a:[regex( Foo(1)* )]
         class '_b:[regex( Bar(1)* )]
     """.trimIndent()) }
+
+    fun testClassWithProperty() { doTest("""
+        class '_a {
+            lateinit var 'b
+        }
+    """.trimIndent()) }
 }
