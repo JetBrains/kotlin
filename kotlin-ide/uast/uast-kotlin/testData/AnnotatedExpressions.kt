@@ -21,3 +21,11 @@ fun foo() {
     val c = @Suppress a ?: b
 
 }
+
+fun annotatedSwitch(str: String) =
+    when {
+        @Suppress("DEPRECATION")
+        str.isBlank() -> null
+        str.isNotEmpty() != null -> null
+        else -> 1
+    }

@@ -10,4 +10,21 @@ public final class AnnotatedExpressionsKt {
             if (varae507364 != null) varae507364 else b
         }
     }
+    public static final fun annotatedSwitch(@org.jetbrains.annotations.NotNull str: java.lang.String) : java.lang.Integer {
+        return switch  {
+            str.isBlank() -> {
+                yield null
+            }
+
+            str.isNotEmpty() != null -> {
+                yield null
+            }
+
+             -> {
+                yield 1
+            }
+
+        }
+
+    }
 }
