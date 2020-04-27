@@ -826,6 +826,8 @@ public inline fun CharArray.elementAtOrNull(index: Int): Char? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
@@ -834,6 +836,8 @@ public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
@@ -842,6 +846,8 @@ public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
@@ -850,6 +856,8 @@ public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
@@ -858,6 +866,8 @@ public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
@@ -866,6 +876,8 @@ public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
@@ -874,6 +886,8 @@ public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
@@ -882,6 +896,8 @@ public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
@@ -890,6 +906,8 @@ public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
@@ -898,6 +916,8 @@ public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
@@ -906,6 +926,8 @@ public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
@@ -914,6 +936,8 @@ public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
@@ -922,6 +946,8 @@ public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
@@ -930,6 +956,8 @@ public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
@@ -938,6 +966,8 @@ public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
@@ -946,6 +976,8 @@ public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? {
@@ -954,6 +986,8 @@ public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? 
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolean? {
@@ -962,6 +996,8 @@ public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolea
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
@@ -1348,6 +1384,8 @@ public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): 
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> Array<out T>.getOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1355,6 +1393,8 @@ public fun <T> Array<out T>.getOrNull(index: Int): T? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ByteArray.getOrNull(index: Int): Byte? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1362,6 +1402,8 @@ public fun ByteArray.getOrNull(index: Int): Byte? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ShortArray.getOrNull(index: Int): Short? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1369,6 +1411,8 @@ public fun ShortArray.getOrNull(index: Int): Short? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun IntArray.getOrNull(index: Int): Int? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1376,6 +1420,8 @@ public fun IntArray.getOrNull(index: Int): Int? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun LongArray.getOrNull(index: Int): Long? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1383,6 +1429,8 @@ public fun LongArray.getOrNull(index: Int): Long? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun FloatArray.getOrNull(index: Int): Float? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1390,6 +1438,8 @@ public fun FloatArray.getOrNull(index: Int): Float? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun DoubleArray.getOrNull(index: Int): Double? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1397,6 +1447,8 @@ public fun DoubleArray.getOrNull(index: Int): Double? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun BooleanArray.getOrNull(index: Int): Boolean? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1404,6 +1456,8 @@ public fun BooleanArray.getOrNull(index: Int): Boolean? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharArray.getOrNull(index: Int): Char? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -11465,6 +11519,8 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destin
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element in the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.mapNotNull
  */
 public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
