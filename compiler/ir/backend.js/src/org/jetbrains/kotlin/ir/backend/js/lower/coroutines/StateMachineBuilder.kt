@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
@@ -14,9 +13,9 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isPure
-import org.jetbrains.kotlin.ir.backend.js.utils.getInlinedClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -69,7 +68,7 @@ class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrE
 
 class StateMachineBuilder(
     private val suspendableNodes: MutableSet<IrElement>,
-    val context: CommonBackendContext,
+    val context: JsCommonBackendContext,
     val function: IrFunctionSymbol,
     private val rootLoop: IrLoop,
     private val exceptionSymbolGetter: IrSimpleFunction,
@@ -279,7 +278,7 @@ class StateMachineBuilder(
         if (expression.isSuspend) {
             val result = lastExpression()
             val expectedType = expression.symbol.owner.returnType
-            val isInlineClassExpected = expectedType.getInlinedClass() != null
+            val isInlineClassExpected = context.inlineClassesUtils.getInlinedClass(expectedType) != null
             val continueState = SuspendState(unit)
             val unboxState = if (isInlineClassExpected) SuspendState(unit) else null
 

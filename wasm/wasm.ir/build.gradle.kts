@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    kotlin("plugin.serialization") version "1.4.10"
+    kotlin("plugin.serialization")
 }
 
 dependencies {

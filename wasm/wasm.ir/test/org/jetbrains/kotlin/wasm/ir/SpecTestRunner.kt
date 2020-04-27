@@ -11,9 +11,9 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
-import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryBuilder
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryToIR
-import org.jetbrains.kotlin.wasm.ir.convertors.WatBuilder
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -135,24 +135,6 @@ private fun runSpecTest(specTest: SpecTest, testDir: File, wastFile: File, wabtO
                 val wasmFile = File(testDir, command.filename)
                 testWasmFile(wasmFile, testDir.name)
             }
-            is SpecTest.Command.Register -> {
-            }
-            is SpecTest.Command.AssertReturn -> {
-            }
-            is SpecTest.Command.AssertTrap -> {
-            }
-            is SpecTest.Command.AssertExhaustion -> {
-            }
-            is SpecTest.Command.AssertMalformed -> {
-            }
-            is SpecTest.Command.AssertInvalid -> {
-            }
-            is SpecTest.Command.AssertUnlinkable -> {
-            }
-            is SpecTest.Command.AssertUninstantiable -> {
-            }
-            is SpecTest.Command.ActionCommand -> {
-            }
         }
     }
 }
@@ -221,7 +203,6 @@ fun testWasmFile(wasmFile: File, dirName: String) {
 
     println("Testing wasm file : ${wasmFile.absolutePath} ... ")
     val module = fileToWasmModule(wasmFile)
-    module.calculateIds()
     val kotlinTextFormat = module.toTextFormat()
     val kotlinBinaryFormat = module.toBinaryFormat()
 
@@ -248,12 +229,12 @@ fun testWasmFile(wasmFile: File, dirName: String) {
 
 fun WasmModule.toBinaryFormat(): ByteArray {
     val os = ByteArrayOutputStream()
-    WasmBinaryBuilder(os, this).appendWasmModule()
+    WasmIrToBinary(os, this).appendWasmModule()
     return os.toByteArray()
 }
 
 fun WasmModule.toTextFormat(): String {
-    val builder = WatBuilder()
+    val builder = WasmIrToText()
     builder.appendWasmModule(this)
     return builder.toString()
 }

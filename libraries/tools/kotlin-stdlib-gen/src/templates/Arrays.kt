@@ -919,6 +919,9 @@ object ArrayOps : TemplateGroupBase() {
                         """
                     }
                 }
+                on(Backend.Wasm) {
+                    body { """TODO("Wasm stdlib: $signature")""" }
+                }
             }
         }
     }
@@ -1046,6 +1049,9 @@ object ArrayOps : TemplateGroupBase() {
             return result
             """
         }
+        on(Backend.Wasm) {
+            body { """TODO("Wasm stdlib: $signature")""" }
+        }
     }
 
     val f_copyOf = fn("copyOf()") {
@@ -1154,6 +1160,9 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Native) {
                 body { "return this.copyOfNulls(newSize)" }
+                on(Backend.Wasm) {
+                    body { """TODO("Wasm stdlib: $signature")""" }
+                }
             }
         }
         specialFor(ArraysOfPrimitives, InvariantArraysOfObjects) {
@@ -1233,6 +1242,9 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Native) {
                 body { """if (size > 1) sortArray(this, 0, size)""" }
+                on(Backend.Wasm) {
+                    body { """TODO("Wasm stdlib: $signature")""" }
+                }
             }
         }
     }
@@ -1255,6 +1267,9 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.Native) {
             body { """if (size > 1) sortArrayWith(this, 0, size, comparator)""" }
+            on(Backend.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
         }
     }
 
@@ -1363,6 +1378,9 @@ object ArrayOps : TemplateGroupBase() {
                 sortArray(this, fromIndex, toIndex)
                 """
             }
+            on(Backend.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
+            }
         }
         on(Platform.JS) {
             since("1.4")
@@ -1418,6 +1436,9 @@ object ArrayOps : TemplateGroupBase() {
                 AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
                 sortArrayWith(this, fromIndex, toIndex, comparator)
                 """
+            }
+            on(Backend.Wasm) {
+                body { """TODO("Wasm stdlib: $signature")""" }
             }
         }
         on(Platform.JS) {
@@ -1623,6 +1644,9 @@ object ArrayOps : TemplateGroupBase() {
                 since("1.3")
                 body {
                     "arrayFill(this, fromIndex, toIndex, element)"
+                }
+                on(Backend.Wasm) {
+                    body { """TODO("Wasm stdlib: $signature")""" }
                 }
             }
             on(Platform.Common) {

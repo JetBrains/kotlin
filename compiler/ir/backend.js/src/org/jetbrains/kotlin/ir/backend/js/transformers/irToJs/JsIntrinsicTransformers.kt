@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.getInlinedClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -27,6 +26,7 @@ typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpres
 
 class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
     private val transformers: Map<IrSymbol, IrCallTransformer>
+    val icUtils = backendContext.inlineClassesUtils
 
     init {
         val intrinsics = backendContext.intrinsics
@@ -188,14 +188,14 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsBoxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = call.getTypeArgument(0)!!.getInlinedClass()!!
+                val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(0)!!)!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                 JsNew(context.getNameForConstructor(constructor).makeRef(), listOf(arg))
             }
 
             add(intrinsics.jsUnboxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = call.getTypeArgument(1)!!.getInlinedClass()!!
+                val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(1)!!)!!
                 val field = getInlineClassBackingField(inlineClass)
                 val fieldName = context.getNameForField(field)
                 JsNameRef(fieldName, arg)

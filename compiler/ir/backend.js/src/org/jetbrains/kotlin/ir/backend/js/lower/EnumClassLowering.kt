@@ -17,18 +17,14 @@ import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -36,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
+class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     private var IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -44,41 +40,13 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
                 val enumEntry = expression.symbol.owner
                 val klass = enumEntry.parent as IrClass
-                return if (klass.isExternal) lowerExternalEnumEntry(enumEntry, klass) else lowerEnumEntry(enumEntry)
+                if (klass.isExternal) return expression
+                return lowerEnumEntry(enumEntry, klass)
             }
         })
     }
 
-    private fun lowerExternalEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
-        context.mapping.enumEntryToInstanceField.getOrPut(enumEntry) { createFieldForEntry(enumEntry, klass) }.let {
-            JsIrBuilder.buildGetField(it.symbol, classAsReceiver(klass), null, klass.defaultType)
-        }
-
-    private fun classAsReceiver(irClass: IrClass): IrExpression {
-        val intrinsic = context.intrinsics.jsClass
-        return JsIrBuilder.buildCall(intrinsic, context.irBuiltIns.anyType, listOf(irClass.defaultType))
-    }
-
-    private fun createFieldForEntry(entry: IrEnumEntry, irClass: IrClass): IrField =
-        context.irFactory.buildField {
-            startOffset = entry.startOffset
-            endOffset = entry.endOffset
-            origin = entry.origin
-            name = entry.name
-            type = irClass.defaultType
-            isFinal = false
-            isExternal = true
-            isStatic = true
-        }.also {
-            it.parent = irClass
-
-            // TODO need a way to emerge local declarations from BodyLoweringPass
-            stageController.unrestrictDeclarationListsAccess {
-                irClass.declarations += it
-            }
-        }
-
-    private fun lowerEnumEntry(enumEntry: IrEnumEntry) =
+    private fun lowerEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
         enumEntry.getInstanceFun!!.run { JsIrBuilder.buildCall(symbol) }
 }
 
@@ -313,7 +281,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
 private val IrClass.goodEnum: Boolean
     get() = isEnumClass && !isExpect && !isEffectivelyExternal()
 
-class EnumEntryInstancesLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
 
@@ -346,7 +314,7 @@ class EnumEntryInstancesLowering(val context: JsIrBackendContext) : DeclarationT
     }
 }
 
-class EnumEntryInstancesBodyLowering(val context: JsIrBackendContext) : BodyLoweringPass {
+class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
 
@@ -370,7 +338,7 @@ class EnumEntryInstancesBodyLowering(val context: JsIrBackendContext) : BodyLowe
     }
 }
 
-class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
     private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
@@ -431,7 +399,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
         }
 }
 
-class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
     private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
@@ -477,7 +445,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext) :
         }
 }
 
-class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+class EnumSyntheticFunctionsLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
 
@@ -500,7 +468,7 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext) : Declarat
         return null
     }
 
-    private val throwISESymbol = context.throwISEsymbol
+    private val throwISESymbol = context.ir.symbols.throwISE
 
     private fun createEnumValueOfBody(valueOfFun: IrFunction, irClass: IrClass): IrBlockBody {
         val nameParameter = valueOfFun.valueParameters[0]
@@ -521,26 +489,12 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext) : Declarat
         }
     }
 
-    private fun List<IrExpression>.toArrayLiteral(arrayType: IrType, elementType: IrType): IrExpression {
-        val irVararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, elementType, this)
-
-        return IrCallImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType,
-            context.intrinsics.arrayLiteral,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 1
-        ).apply {
-            putValueArgument(0, irVararg)
-        }
-    }
-
     private fun createEnumValuesBody(valuesFun: IrFunction, irClass: IrClass): IrBlockBody {
-        val backendContext = context
         return context.createIrBuilder(valuesFun.symbol).run {
             irBlockBody {
+                val instances = irClass.enumEntries.map { irCall(it.getInstanceFun!!) }
                 +irReturn(
-                    irClass.enumEntries.map { irCall(it.getInstanceFun!!) }
-                        .toJsArrayLiteral(backendContext, valuesFun.returnType, irClass.defaultType)
+                    IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valuesFun.returnType, irClass.defaultType, instances)
                 )
             }
         }
@@ -551,7 +505,7 @@ private val IrClass.enumEntries: List<IrEnumEntry>
     get() = declarations.filterIsInstance<IrEnumEntry>()
 
 // Should be applied recursively
-class EnumClassRemoveEntriesLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+class EnumClassRemoveEntriesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         // Remove IrEnumEntry nodes from class declarations. Replace them with corresponding class declarations (if they have them).
         if (declaration is IrEnumEntry && !declaration.isExpect && !declaration.isEffectivelyExternal()) {

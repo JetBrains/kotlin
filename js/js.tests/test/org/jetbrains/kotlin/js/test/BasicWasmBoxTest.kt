@@ -9,18 +9,20 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.js.test.engines.ExternalTool
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
 import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverResultImpl
 import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
@@ -28,10 +30,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TestFiles
+import org.jetbrains.kotlin.test.*
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -48,8 +51,13 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
+    fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
+        TODO("TestWithCoroutinesPackageReplacement are not supported")
+    }
+
     fun doTest(filePath: String) {
         val file = File(filePath)
+
         val outputDir = getOutputDir(file)
         val fileContent = KotlinTestUtils.doLoadFile(file)
 
@@ -58,21 +66,31 @@ abstract class BasicWasmBoxTest(
             val testPackage = testFactory.testPackage
             val outputFileBase = outputDir.absolutePath + "/" + getTestName(true)
             val outputWatFile = outputFileBase + ".wat"
+            val outputWasmFile = outputFileBase + ".wasm"
             val outputJsFile = outputFileBase + ".js"
+
+            val languageVersionSettings = inputFiles.mapNotNull { it.languageVersionSettings }.firstOrNull()
 
             val kotlinFiles = inputFiles.filter { it.fileName.endsWith(".kt") }
             val psiFiles = createPsiFiles(kotlinFiles.map { File(it.fileName).canonicalPath }.sorted())
-            val config = createConfig()
+            val config = createConfig(languageVersionSettings)
             translateFiles(
+                file,
                 psiFiles.map(TranslationUnit::SourceFile),
                 File(outputWatFile),
+                File(outputWasmFile),
                 File(outputJsFile),
                 config,
                 testPackage,
                 TEST_FUNCTION
             )
 
-            spiderMonkey.runFile(outputJsFile)
+            ExternalTool(System.getProperty("javascript.engine.path.V8"))
+                .run(
+                    "--experimental-wasm-typed-funcref",
+                    "--experimental-wasm-gc",
+                    outputJsFile
+                )
         }
     }
 
@@ -86,26 +104,32 @@ abstract class BasicWasmBoxTest(
     }
 
     private fun translateFiles(
+        testFile: File,
         units: List<TranslationUnit>,
         outputWatFile: File,
+        outputWasmFile: File,
         outputJsFile: File,
         config: JsConfig,
         testPackage: String?,
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = getBoolean("kotlin.js.debugMode")
+        val debugMode =getBoolean("kotlin.js.debugMode")
 
         val phaseConfig = if (debugMode) {
             val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
             val dumpOutputDir = File(outputWatFile.parent, outputWatFile.nameWithoutExtension + "-irdump")
             println("\n ------ Dumping phases to file://$dumpOutputDir")
+            println("\n ------  KT file://${testFile.absolutePath}")
+            println("\n ------ WAT file://$outputWatFile")
+            println("\n ------ WASM file://$outputWasmFile")
+            println(" ------  JS file://$outputJsFile")
             PhaseConfig(
                 wasmPhases,
                 dumpToDirectory = dumpOutputDir.path,
-                toDumpStateAfter = allPhasesSet,
-                toValidateStateAfter = allPhasesSet,
-                dumpOnlyFqName = null
+                // toDumpStateAfter = allPhasesSet,
+                // toValidateStateAfter = allPhasesSet,
+                // dumpOnlyFqName = null
             )
         } else {
             PhaseConfig(wasmPhases)
@@ -124,12 +148,12 @@ abstract class BasicWasmBoxTest(
         )
 
         outputWatFile.write(compilerResult.wat)
+        outputWasmFile.writeBytes(compilerResult.wasm)
 
         val runtime = File("libraries/stdlib/wasm/runtime/runtime.js").readText()
 
         val testRunner = """
-            const wat = read(String.raw`${outputWatFile.absoluteFile}`);
-            const wasmBinary = wasmTextToBinary(wat);
+            const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
             const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime });
 
@@ -141,20 +165,11 @@ abstract class BasicWasmBoxTest(
         outputJsFile.write(runtime + "\n" + compilerResult.js + "\n" + testRunner)
     }
 
-    private fun createPsiFile(fileName: String): KtFile {
-        val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
-
-        return psiManager.findFile(file) as KtFile
-    }
-
-    private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
-
-    private fun createConfig(): JsConfig {
+    private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
+        configuration.languageVersionSettings = languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
         return JsConfig(project, configuration, null, null)
     }
 
@@ -169,11 +184,13 @@ abstract class BasicWasmBoxTest(
                 }
             }
 
+            val languageVersionSettings = parseLanguageVersionSettings(directives)
+
             val temporaryFile = File(tmpDir, "WASM_TEST/$fileName")
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            return TestFile(temporaryFile.absolutePath)
+            return TestFile(temporaryFile.absolutePath, languageVersionSettings)
         }
 
         var testPackage: String? = null
@@ -184,7 +201,7 @@ abstract class BasicWasmBoxTest(
         }
     }
 
-    private class TestFile(val fileName: String)
+    private class TestFile(val fileName: String, val languageVersionSettings: LanguageVersionSettings?)
 
     override fun createEnvironment() =
         KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)

@@ -13815,6 +13815,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/functions/recursiveIncrementCall.kt");
         }
 
+        @TestMetadata("typeParameterAsUpperBound.kt")
+        public void testTypeParameterAsUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/typeParameterAsUpperBound.kt");
+        }
+
         @TestMetadata("typeParametersInLocalFunction.kt")
         public void testTypeParametersInLocalFunction() throws Exception {
             runTest("compiler/testData/codegen/box/functions/typeParametersInLocalFunction.kt");

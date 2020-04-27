@@ -11,19 +11,27 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.ir.WasmImportPair
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
 
-fun IrAnnotationContainer.getWasmInstructionAnnotation(): String? =
-    getAnnotation(FqName("kotlin.wasm.internal.WasmInstruction"))?.getSingleConstStringArgument()
+fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
+    getAnnotation(FqName("kotlin.wasm.internal.WasmOp"))?.getSingleConstStringArgument()
 
-class WasmImportPair(val module: String, val name: String)
-@Suppress("UNCHECKED_CAST")
+fun IrAnnotationContainer.hasWasmReinterpretAnnotation(): Boolean =
+    hasAnnotation(FqName("kotlin.wasm.internal.WasmReinterpret"))
+
+fun IrAnnotationContainer.hasWasmForeignAnnotation(): Boolean =
+    hasAnnotation(FqName("kotlin.wasm.internal.WasmForeign"))
+
+fun IrAnnotationContainer.hasWasmPrimitiveAnnotation(): Boolean =
+    hasAnnotation(FqName("kotlin.wasm.internal.WasmPrimitive"))
+
 fun IrAnnotationContainer.getWasmImportAnnotation(): WasmImportPair? =
     getAnnotation(FqName("kotlin.wasm.internal.WasmImport"))?.let {
         WasmImportPair(
-            (it.getValueArgument(0) as IrConst<String>).value,
-            (it.getValueArgument(1) as IrConst<String>).value
+            (it.getValueArgument(0) as IrConst<*>).value as String,
+            (it.getValueArgument(1) as IrConst<*>).value as String
         )
     }

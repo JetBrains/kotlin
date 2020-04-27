@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.getInlinedClass
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -106,9 +105,4 @@ class LiveLocalsTransformer(
             JsIrBuilder.buildComposite(declaration.type)
         }
     }
-}
-
-internal fun needUnboxingOrUnit(fromType: IrType, toType: IrType): Boolean {
-    return (fromType.getInlinedClass() == null && toType.getInlinedClass() != null) ||
-            (fromType.isUnit() && !toType.isUnit())
 }

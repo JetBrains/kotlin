@@ -9,7 +9,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.generateStringLiteralsSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -22,8 +24,11 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
+import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
+import java.io.ByteArrayOutputStream
 
-data class WasmCompilerResult(val wat: String, val js: String)
+class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
 fun compileWasm(
     project: Project,
@@ -60,9 +65,25 @@ fun compileWasm(
     val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer)
     ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
-    deserializer.postProcess()
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
-    return IrModuleToWasm(context).generateModule(moduleFragment)
+    val compiledWasmModule = WasmCompiledModuleFragment()
+    val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule)
+    codeGenerator.generateModule(moduleFragment)
+
+    val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
+    val watGenerator = WasmIrToText()
+    watGenerator.appendWasmModule(linkedModule)
+    val wat = watGenerator.toString()
+
+    val os = ByteArrayOutputStream()
+    WasmIrToBinary(os, linkedModule).appendWasmModule()
+    val byteArray = os.toByteArray()
+
+    return WasmCompilerResult(
+        wat,
+        generateStringLiteralsSupport(compiledWasmModule.stringLiterals),
+        wasm = byteArray
+    )
 }

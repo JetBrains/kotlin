@@ -12,6 +12,7 @@ sealed class WasmType(
     override fun toString(): String = name
 }
 
+// TODO: Remove this type.
 object WasmUnreachableType : WasmType("unreachable", -0x40)
 object WasmI32 : WasmType("i32", -0x1)
 object WasmI1 : WasmType("i32", -0x1)
@@ -26,7 +27,7 @@ object WasmExternRef : WasmType("externref", -0x11)
 object WasmAnyRef : WasmType("anyref", -0x12)
 object WasmEqRef : WasmType("eqref", -0x13)
 
-class WasmRefNullType(val heapType: WasmHeapType) : WasmType("optref", -0x14)
+class WasmRefNullType(val heapType: WasmHeapType) : WasmType("ref null", -0x14)
 class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x15)
 
 @Suppress("unused")
