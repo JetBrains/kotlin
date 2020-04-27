@@ -1,11 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions
 
+import com.intellij.ide.DataManager
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.CopyReferenceUtil.getElementsToCopy
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.ide.CopyPasteManager
@@ -18,6 +17,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.ui.tabs.impl.TabLabel
 import java.awt.datatransfer.StringSelection
 
 abstract class CopyPathProvider : DumbAwareAction() {
@@ -25,6 +25,14 @@ abstract class CopyPathProvider : DumbAwareAction() {
     if (!CopyPathsAction.isCopyReferencePopupAvailable()) {
       e.presentation.isEnabledAndVisible = false
       return
+    }
+
+    val component = PlatformDataKeys.CONTEXT_COMPONENT.getData(e.dataContext)
+    if (component is TabLabel) {
+      DataManager.registerDataProvider(component) {
+        if (LangDataKeys.VIRTUAL_FILE.`is`(it)) component.info.`object` as? VirtualFile
+        else null
+      }
     }
 
     val dataContext = e.dataContext
