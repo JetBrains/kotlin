@@ -629,11 +629,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
           return modified;
         }
-
-        @Override
-        public boolean newDataIsEmpty() {
-          return newKeys.isEmpty();
-        }
       });
     }
     catch (StorageException e) {
