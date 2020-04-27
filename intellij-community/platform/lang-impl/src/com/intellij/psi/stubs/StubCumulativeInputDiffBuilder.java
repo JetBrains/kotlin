@@ -3,6 +3,7 @@ package com.intellij.psi.stubs;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.StorageException;
 import com.intellij.util.indexing.impl.DebugAssertions;
@@ -70,48 +71,30 @@ class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer,
     return false;
   }
 
-  private void updateStubIndices(@Nullable SerializedStubTree newSerializedStubTree) {
-    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> previousStubIndicesValueMap = myCurrentTree == null
-                                                                             ? Collections.emptyMap()
-                                                                             : myCurrentTree.getStubIndicesValueMap();
-    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newStubIndicesValueMap = newSerializedStubTree == null
-                                                                        ? Collections.emptyMap()
-                                                                        : newSerializedStubTree.getStubIndicesValueMap();
-    Collection<StubIndexKey<?, ?>> affectedIndexes = getAffectedIndices(previousStubIndicesValueMap, newStubIndicesValueMap);
+  private void updateStubIndices(@Nullable SerializedStubTree newTree) {
+    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> oldForwardIndex =
+      myCurrentTree == null ? Collections.emptyMap() : myCurrentTree.getStubIndicesValueMap();
+
+    Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newForwardIndex =
+      newTree == null ? Collections.emptyMap() : newTree.getStubIndicesValueMap();
+
+    Collection<StubIndexKey<?, ?>> affectedIndexes =
+      ContainerUtil.union(oldForwardIndex.keySet(), newForwardIndex.keySet());
+
     if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-      StubIndexImpl.LOG.info("stub indexes" + (newSerializedStubTree == null ? "deletion" : "update") + ": file = " + myInputId + " indexes " + affectedIndexes);
+      StubIndexImpl.LOG.info("stub indexes" + (newTree == null ? "deletion" : "update") + ": file = " + myInputId + " indexes " + affectedIndexes);
     }
-    updateStubIndices(
-      affectedIndexes,
-      myInputId,
-      previousStubIndicesValueMap,
-      newStubIndicesValueMap
-    );
-  }
 
-  private static void updateStubIndices(@NotNull Collection<StubIndexKey<?, ?>> indexKeys,
-                                        int inputId,
-                                        @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> oldStubTree,
-                                        @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newStubTree) {
-    final StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
-    for (StubIndexKey key : indexKeys) {
-      final Map<Object, StubIdList> oldMap = oldStubTree.get(key);
-      final Map<Object, StubIdList> newMap = newStubTree.get(key);
+    StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
+    //noinspection rawtypes
+    for (StubIndexKey key : affectedIndexes) {
+      // StubIdList-s are ignored.
+      Set<Object> oldKeys = oldForwardIndex.getOrDefault(key, Collections.emptyMap()).keySet();
+      Set<Object> newKeys = newForwardIndex.getOrDefault(key, Collections.emptyMap()).keySet();
 
-      final Map<Object, StubIdList> _oldMap = oldMap != null ? oldMap : Collections.emptyMap();
-      final Map<Object, StubIdList> _newMap = newMap != null ? newMap : Collections.emptyMap();
-
-      stubIndex.updateIndex(key, inputId, _oldMap, _newMap);
+      //noinspection unchecked
+      stubIndex.updateIndex(key, myInputId, oldKeys, newKeys);
     }
-  }
-
-  @NotNull
-  private static Collection<StubIndexKey<?, ?>> getAffectedIndices(@NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> oldStubTree,
-                                                             @NotNull Map<StubIndexKey<?, ?>, Map<Object, StubIdList>> newStubTree) {
-    Set<StubIndexKey<?, ?>> allIndices = new HashSet<>();
-    allIndices.addAll(oldStubTree.keySet());
-    allIndices.addAll(newStubTree.keySet());
-    return allIndices;
   }
 
   private static void reportStubTreeHashCollision(@NotNull SerializedStubTree newTree,

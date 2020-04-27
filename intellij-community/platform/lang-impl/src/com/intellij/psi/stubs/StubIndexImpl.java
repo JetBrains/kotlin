@@ -351,8 +351,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
           for (VirtualFile file : filesWithProblems) {
             updateIndex(indexKey,
                         FileBasedIndex.getFileId(file),
-                        Collections.singletonMap(key, new StubIdList()),
-                        Collections.emptyMap());
+                        Collections.singleton(key),
+                        Collections.emptySet());
           }
         }
         finally {
@@ -584,18 +584,18 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     myPreviouslyRegistered = state;
   }
 
-  public <K> void updateIndex(@NotNull StubIndexKey<K, ?> key,
+  public <K> void updateIndex(@NotNull StubIndexKey<K, ?> stubIndexKey,
                               int fileId,
-                              final @NotNull Map<K, StubIdList> oldInputData,
-                              final @NotNull Map<K, StubIdList> newInputData) {
+                              @NotNull Set<K> oldKeys,
+                              @NotNull Set<K> newKeys) {
     try {
       if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-        LOG.info("stub index '" + key + "' update: " + fileId +
-                 " old = " + Arrays.toString(oldInputData.keySet().toArray()) +
-                 " new  = " + Arrays.toString(newInputData.keySet().toArray()) +
-                 " updated_id = " + System.identityHashCode(newInputData));
+        LOG.info("stub index '" + stubIndexKey + "' update: " + fileId +
+                 " old = " + Arrays.toString(oldKeys.toArray()) +
+                 " new  = " + Arrays.toString(newKeys.toArray()) +
+                 " updated_id = " + System.identityHashCode(newKeys));
       }
-      final UpdatableIndex<K, Void, FileContent> index = getIndex(key);
+      final UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
       if (index == null) return;
       index.updateWithMap(new AbstractUpdateData<K, Void>(fileId) {
         @Override
@@ -604,27 +604,27 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                                       @NotNull RemovedKeyProcessor<? super K> removeProcessor) throws StorageException {
 
           if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-            LOG.info("iterating keys updated_id = " + System.identityHashCode(newInputData));
+            LOG.info("iterating keys updated_id = " + System.identityHashCode(newKeys));
           }
 
           boolean modified = false;
 
-          for (K oldKey : oldInputData.keySet()) {
-            if (!newInputData.containsKey(oldKey)) {
+          for (K oldKey : oldKeys) {
+            if (!newKeys.contains(oldKey)) {
               removeProcessor.process(oldKey, fileId);
               if (!modified) modified = true;
             }
           }
 
-          for (K oldKey : newInputData.keySet()) {
-            if (!oldInputData.containsKey(oldKey)) {
+          for (K oldKey : newKeys) {
+            if (!oldKeys.contains(oldKey)) {
               addProcessor.process(oldKey, null, fileId);
               if (!modified) modified = true;
             }
           }
 
           if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-            LOG.info("keys iteration finished updated_id = " + System.identityHashCode(newInputData) + "; modified = " + modified);
+            LOG.info("keys iteration finished updated_id = " + System.identityHashCode(newKeys) + "; modified = " + modified);
           }
 
           return modified;
@@ -632,7 +632,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
         @Override
         public boolean newDataIsEmpty() {
-          return newInputData.isEmpty();
+          return newKeys.isEmpty();
         }
       });
     }
