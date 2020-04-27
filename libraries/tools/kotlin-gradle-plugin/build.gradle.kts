@@ -60,13 +60,13 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
-    runtime(projectRuntimeJar(":kotlin-annotation-processing-gradle"))
-    runtime(projectRuntimeJar(":kotlin-android-extensions"))
-    runtime(projectRuntimeJar(":kotlin-compiler-runner"))
-    runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
-    runtime(projectRuntimeJar(":kotlin-scripting-compiler-impl-embeddable"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtimeOnly(projectRuntimeJar(":kotlin-annotation-processing-gradle"))
+    runtimeOnly(projectRuntimeJar(":kotlin-android-extensions"))
+    runtimeOnly(projectRuntimeJar(":kotlin-compiler-runner"))
+    runtimeOnly(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
+    runtimeOnly(projectRuntimeJar(":kotlin-scripting-compiler-impl-embeddable"))
+    runtimeOnly(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
         includeJars("asm-all", "gson", "serviceMessages", rootProject = rootProject)

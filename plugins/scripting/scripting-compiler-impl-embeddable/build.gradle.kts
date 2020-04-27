@@ -7,10 +7,10 @@ description = "Kotlin Compiler Infrastructure for Scripting for embeddable compi
 val packedJars by configurations.creating
 dependencies {
     packedJars(project(":kotlin-scripting-compiler-impl")) { isTransitive = false }
-    runtime(project(":kotlin-scripting-common"))
-    runtime(project(":kotlin-scripting-jvm"))
-    runtime(kotlinStdlib())
-    runtime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    runtimeOnly(project(":kotlin-scripting-common"))
+    runtimeOnly(project(":kotlin-scripting-jvm"))
+    runtimeOnly(kotlinStdlib())
+    runtimeOnly(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 }
 
 publish()
