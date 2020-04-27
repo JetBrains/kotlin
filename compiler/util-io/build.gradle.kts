@@ -6,7 +6,7 @@ plugins {
 description = "Kotlin/Native utils"
 
 dependencies {
-    compile(kotlinStdlib(forceBootstrap = true))
+    compile(kotlinStdlib())
 }
 
 sourceSets {
