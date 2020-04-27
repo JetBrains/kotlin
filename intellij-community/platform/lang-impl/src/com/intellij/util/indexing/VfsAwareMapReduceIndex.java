@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
@@ -236,8 +235,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
 
   @Override
   public void removeTransientDataForFile(int inputId) {
-    Lock lock = getWriteLock();
-    lock.lock();
+    getLock().writeLock().lock();
     try {
       Map<Key, Value> keyValueMap;
       synchronized (myInMemoryKeysAndValues) {
@@ -254,7 +252,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
         throw new RuntimeException(throwable);
       }
     } finally {
-      lock.unlock();
+      getLock().writeLock().unlock();
     }
   }
 
@@ -285,7 +283,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
   @Override
   public void cleanupMemoryStorage() {
     TransientChangesIndexStorage<Key, Value> memStorage = (TransientChangesIndexStorage<Key, Value>)getStorage();
-    ConcurrencyUtil.withLock(getWriteLock(), () -> {
+    ConcurrencyUtil.withLock(getLock().writeLock(), () -> {
       if (memStorage.clearMemoryMap()) {
         myModificationStamp.incrementAndGet();
       }
@@ -297,25 +295,20 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
   @Override
   public void cleanupForNextTest() {
     TransientChangesIndexStorage<Key, Value> memStorage = (TransientChangesIndexStorage<Key, Value>)getStorage();
-    ConcurrencyUtil.withLock(getReadLock(), () -> memStorage.clearCaches());
+    ConcurrencyUtil.withLock(getLock().readLock(), () -> memStorage.clearCaches());
   }
 
   @Override
   public boolean processAllKeys(@NotNull Processor<? super Key> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter idFilter) throws StorageException {
-    final Lock lock = getReadLock();
-    lock.lock();
-    try {
-      return ((VfsAwareIndexStorage<Key, Value>)myStorage).processKeys(processor, scope, idFilter);
-    }
-    finally {
-      lock.unlock();
-    }
+    return ConcurrencyUtil.withLock(getLock().readLock(), () ->
+      ((VfsAwareIndexStorage<Key, Value>)myStorage).processKeys(processor, scope, idFilter)
+    );
   }
 
   @NotNull
   @Override
   public Map<Key, Value> getIndexedFileData(int fileId) throws StorageException {
-    return ConcurrencyUtil.withLock(getReadLock(), () -> {
+    return ConcurrencyUtil.withLock(getLock().readLock(), () -> {
       try {
         return Collections.unmodifiableMap(ContainerUtil.notNullize(getNullableIndexedData(fileId)));
       }
