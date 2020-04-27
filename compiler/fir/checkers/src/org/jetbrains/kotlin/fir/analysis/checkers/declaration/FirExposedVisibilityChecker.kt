@@ -44,7 +44,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             if (superIsInterface != isInterface) {
                 continue
             }
-            val restricting = supertype.leastPermissiveDescriptor(declaration.session, classVisibility)
+            val restricting = supertype.leastPermissiveDescriptor(declaration.session, classVisibility, declaration)
             if (restricting != null) {
                 reporter.reportExposure(
                     if (isInterface) FirErrors.EXPOSED_SUPER_INTERFACE else FirErrors.EXPOSED_SUPER_CLASS,
@@ -60,7 +60,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
     private fun checkTypeAlias(declaration: FirTypeAlias, reporter: DiagnosticReporter) {
         val expandedType = declaration.expandedConeType
         val typeAliasVisibility = declaration.firEffectiveVisibility(declaration.session)
-        val restricting = expandedType?.leastPermissiveDescriptor(declaration.session, typeAliasVisibility)
+        val restricting = expandedType?.leastPermissiveDescriptor(declaration.session, typeAliasVisibility, declaration)
         if (restricting != null) {
             reporter.reportExposure(
                 FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE,
@@ -76,7 +76,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         val functionVisibility = (declaration as FirMemberDeclaration).firEffectiveVisibility(declaration.session)
         if (declaration !is FirConstructor) {
             val restricting = declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                ?.leastPermissiveDescriptor(declaration.session, functionVisibility)
+                ?.leastPermissiveDescriptor(declaration.session, functionVisibility, declaration)
             if (restricting != null) {
                 reporter.reportExposure(
                     FirErrors.EXPOSED_FUNCTION_RETURN_TYPE,
@@ -91,7 +91,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             if (i < declaration.valueParameters.size) {
                 val restricting =
                     valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                        ?.leastPermissiveDescriptor(declaration.session, functionVisibility)
+                        ?.leastPermissiveDescriptor(declaration.session, functionVisibility, declaration)
                 if (restricting != null) {
                     reporter.reportExposure(
                         FirErrors.EXPOSED_PARAMETER_TYPE,
@@ -109,7 +109,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
     private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter) {
         val propertyVisibility = declaration.firEffectiveVisibility(declaration.session)
         val restricting =
-            declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.leastPermissiveDescriptor(declaration.session, propertyVisibility)
+            declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.leastPermissiveDescriptor(declaration.session, propertyVisibility, declaration)
         if (restricting != null) {
             reporter.reportExposure(
                 FirErrors.EXPOSED_PROPERTY_TYPE,
@@ -129,7 +129,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         if (typeRef == null || memberDeclaration == null) return
         val receiverParameterType = typeRef.coneTypeSafe<ConeKotlinType>()
         val memberVisibility = memberDeclaration.firEffectiveVisibility(memberDeclaration.session)
-        val restricting = receiverParameterType?.leastPermissiveDescriptor(memberDeclaration.session, memberVisibility)
+        val restricting = receiverParameterType?.leastPermissiveDescriptor(memberDeclaration.session, memberVisibility, memberDeclaration)
         if (restricting != null) {
             reporter.reportExposure(
                 FirErrors.EXPOSED_RECEIVER_TYPE,

@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
@@ -31,8 +28,12 @@ fun FirRegularClass.firEffectiveVisibility(session: FirSession, checkPublishedAp
 fun Visibility.firEffectiveVisibility(session: FirSession, declaration: FirMemberDeclaration?): FirEffectiveVisibility =
     firEffectiveVisibility(session, normalize(), declaration)
 
-fun ConeKotlinType.leastPermissiveDescriptor(session: FirSession, base: FirEffectiveVisibility): DeclarationWithRelation? =
-    dependentDeclarations(session).leastPermissive(session, base)
+fun ConeKotlinType.leastPermissiveDescriptor(
+    session: FirSession,
+    base: FirEffectiveVisibility,
+    baseParent: FirMemberDeclaration
+): DeclarationWithRelation? =
+    dependentDeclarations(session).leastPermissive(session, base, baseParent)
 
 fun FirMemberDeclaration.firEffectiveVisibility(
     session: FirSession, visibility: Visibility = this.visibility, checkPublishedApi: Boolean = false
@@ -145,17 +146,44 @@ private fun ConeKotlinType.dependentDeclarations(
     return ownDependent + argumentDependent
 }
 
-private fun Set<DeclarationWithRelation>.leastPermissive(session: FirSession, base: FirEffectiveVisibility): DeclarationWithRelation? {
+private fun Set<DeclarationWithRelation>.leastPermissive(
+    session: FirSession,
+    base: FirEffectiveVisibility,
+    baseParent: FirMemberDeclaration
+): DeclarationWithRelation? {
     for (declarationWithRelation in this) {
         val currentVisibility = declarationWithRelation.firEffectiveVisibility(session)
         when (currentVisibility.relation(base)) {
             Permissiveness.LESS, Permissiveness.UNKNOWN -> {
                 return declarationWithRelation
             }
+            Permissiveness.PROTECTED_CHECK_REQUIRED -> {
+                if (!baseParent.isContainerSubclassOf(declarationWithRelation.declaration)) {
+                    return declarationWithRelation
+                }
+            }
             else -> {
             }
         }
     }
     return null
+}
+
+private fun FirMemberDeclaration.getContainerSupertypes() = lookupSuperTypes(
+    this.containingClass(this.session) as FirClass<*>,
+    lookupInterfaces = true,
+    deep = true,
+    useSiteSession = this.session
+)
+
+private fun FirMemberDeclaration.isContainerSubclassOf(other: FirMemberDeclaration): Boolean {
+    var clazz: FirRegularClass
+    if (other !is FirRegularClass) {
+        clazz = other.containingClass(this.session) ?: return false
+    } else {
+        clazz = other
+    }
+    val supertypes = this.getContainerSupertypes().map { it.lookupTag.classId }
+    return supertypes.contains(clazz.classId)
 }
 

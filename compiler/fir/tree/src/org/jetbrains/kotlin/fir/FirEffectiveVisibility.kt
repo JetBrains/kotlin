@@ -91,6 +91,7 @@ sealed class FirEffectiveVisibility(val name: String, val publicApi: Boolean = f
                 // Protected never can be less permissive than internal & protected
                 Permissiveness.SAME, Permissiveness.MORE -> Permissiveness.MORE
                 Permissiveness.UNKNOWN, Permissiveness.LESS -> Permissiveness.UNKNOWN
+                Permissiveness.PROTECTED_CHECK_REQUIRED -> Permissiveness.PROTECTED_CHECK_REQUIRED
             }
             is InternalOrPackage -> Permissiveness.UNKNOWN
         }
@@ -102,6 +103,7 @@ sealed class FirEffectiveVisibility(val name: String, val publicApi: Boolean = f
                 Permissiveness.SAME, Permissiveness.MORE -> this
                 Permissiveness.LESS -> other
                 Permissiveness.UNKNOWN -> ProtectedBound
+                Permissiveness.PROTECTED_CHECK_REQUIRED -> ProtectedBound
             }
             is InternalProtected -> when (relation(other)) {
                 Permissiveness.LESS -> other
@@ -148,6 +150,7 @@ sealed class FirEffectiveVisibility(val name: String, val publicApi: Boolean = f
                 // Internal & protected never can be more permissive than just protected
                 Permissiveness.SAME, Permissiveness.LESS -> Permissiveness.LESS
                 Permissiveness.UNKNOWN, Permissiveness.MORE -> Permissiveness.UNKNOWN
+                Permissiveness.PROTECTED_CHECK_REQUIRED -> Permissiveness.PROTECTED_CHECK_REQUIRED
             }
             ProtectedBound -> Permissiveness.UNKNOWN
         }
@@ -159,6 +162,7 @@ sealed class FirEffectiveVisibility(val name: String, val publicApi: Boolean = f
                 Permissiveness.SAME, Permissiveness.MORE -> this
                 Permissiveness.LESS -> other
                 Permissiveness.UNKNOWN -> InternalProtectedBound
+                Permissiveness.PROTECTED_CHECK_REQUIRED -> InternalProtectedBound
             }
             ProtectedBound -> InternalProtectedBound
         }
@@ -181,6 +185,7 @@ sealed class FirEffectiveVisibility(val name: String, val publicApi: Boolean = f
         LESS,
         SAME,
         MORE,
+        PROTECTED_CHECK_REQUIRED,
         UNKNOWN
     }
 
@@ -192,6 +197,7 @@ sealed class FirEffectiveVisibility(val name: String, val publicApi: Boolean = f
         Permissiveness.SAME, Permissiveness.LESS -> this
         Permissiveness.MORE -> other
         Permissiveness.UNKNOWN -> Private
+        Permissiveness.PROTECTED_CHECK_REQUIRED -> Private
     }
 }
 
@@ -200,13 +206,8 @@ internal fun containerRelation(first: FirRegularClass?, second: FirRegularClass?
         Permissiveness.UNKNOWN
     } else if (first == second) {
         Permissiveness.SAME
-        // TODO
-//    } else if (DescriptorUtils.isSubclass(first, second)) {
-//        Permissiveness.LESS
-//    } else if (DescriptorUtils.isSubclass(second, first)) {
-//        Permissiveness.MORE
     } else {
-        Permissiveness.UNKNOWN
+        Permissiveness.PROTECTED_CHECK_REQUIRED
     }
 
 internal fun Visibility.firEffectiveVisibilityApproximation(): FirEffectiveVisibility =
