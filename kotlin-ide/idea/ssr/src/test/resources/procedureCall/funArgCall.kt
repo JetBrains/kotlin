@@ -2,7 +2,12 @@ fun a(b: Boolean, c: Int): Boolean {
     return b && c == 0
 }
 
-fun b(): Boolean {
-    val e = <warning descr="SSR">a(true, 0)</warning>
-    return e
+fun d(e: Boolean, f: Int): Boolean {
+    return e && f == 0
+}
+
+fun g(): Boolean {
+    val h = <warning descr="SSR">a(true, 0)</warning>
+    val i = d(true, 0)
+    return h && i
 }

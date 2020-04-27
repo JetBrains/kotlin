@@ -166,9 +166,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
         var queryIndex = 0
         var codeIndex = 0
-        while (queryIndex < queryArgs.size && codeIndex < sortedCodeArgs.size) {
+        while (queryIndex < queryArgs.size) {
             val queryArg = queryArgs[queryIndex]
-            val codeArg = sortedCodeArgs[codeIndex]
+            val codeArg = sortedCodeArgs.getOrElse(codeIndex) {
+                myMatchingVisitor.result = false
+                return
+            }
 
             // varargs declared in call matching with one-to-one argument passing
             if (queryArg.isSpread && !codeArg.isSpread) {
