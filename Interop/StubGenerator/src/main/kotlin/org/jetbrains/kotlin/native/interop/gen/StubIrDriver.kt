@@ -129,7 +129,7 @@ class StubIrDriver(
             GenerationMode.SOURCE_CODE -> {
                 emitSourceCode(outKtFile(), builderResult, bridgeBuilderResult)
             }
-            GenerationMode.METADATA -> emitMetadata(builderResult, moduleName, bridgeBuilderResult.kotlinFile)
+            GenerationMode.METADATA -> emitMetadata(builderResult, moduleName, bridgeBuilderResult)
         }
     }
 
@@ -142,8 +142,9 @@ class StubIrDriver(
         return Result.SourceCode
     }
 
-    private fun emitMetadata(builderResult: StubIrBuilderResult, moduleName: String, scope: KotlinScope) =
-            Result.Metadata(StubIrMetadataEmitter(context, builderResult, moduleName, scope).emit())
+    private fun emitMetadata(
+            builderResult: StubIrBuilderResult, moduleName: String, bridgeBuilderResult: BridgeBuilderResult
+    ) = Result.Metadata(StubIrMetadataEmitter(context, builderResult, moduleName, bridgeBuilderResult).emit())
 
     private fun emitCFile(context: StubIrContext, cFile: Appendable, entryPoint: String?, nativeBridges: NativeBridges) {
         val out = { it: String -> cFile.appendln(it) }

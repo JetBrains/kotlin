@@ -13,19 +13,19 @@ class StubIrMetadataEmitter(
         private val context: StubIrContext,
         private val builderResult: StubIrBuilderResult,
         private val moduleName: String,
-        private val scope: KotlinScope
+        private val bridgeBuilderResult: BridgeBuilderResult
 ) {
     fun emit(): KlibModuleMetadata {
         val annotations = emptyList<KmAnnotation>()
-        val fragments = emitModuleFragments(scope)
+        val fragments = emitModuleFragments()
         return KlibModuleMetadata(moduleName, fragments, annotations)
     }
 
-    private fun emitModuleFragments(scope: KotlinScope): List<KmModuleFragment> =
+    private fun emitModuleFragments(): List<KmModuleFragment> =
             ModuleMetadataEmitter(
                     context.configuration.pkgName,
                     builderResult.stubs,
-                    scope
+                    bridgeBuilderResult
             ).emit().let { kmModuleFragment ->
                 // We need to create module fragment for each part of package name.
                 val pkgName = context.configuration.pkgName
@@ -46,12 +46,12 @@ class StubIrMetadataEmitter(
 internal class ModuleMetadataEmitter(
         private val packageFqName: String,
         private val module: SimpleStubContainer,
-        private val scope: KotlinScope
+        private val bridgeBuilderResult: BridgeBuilderResult
 ) {
 
     fun emit(): KmModuleFragment {
         val uniqIdProvider = StubIrUniqIdProvider(ManglingContext.Module(packageFqName))
-        val context = VisitingContext(uniqIds = uniqIdProvider)
+        val context = VisitingContext(uniqIds = uniqIdProvider, bridgeBuilderResult = bridgeBuilderResult)
         val elements = KmElements(visitor.visitSimpleStubContainer(module, context))
         return writeModule(elements)
     }
@@ -88,32 +88,37 @@ internal class ModuleMetadataEmitter(
     private data class VisitingContext(
             val container: StubContainer? = null,
             val uniqIds: StubIrUniqIdProvider,
-            val typeParametersInterner: Interner<TypeParameterStub> = Interner()
-    )
+            val typeParametersInterner: Interner<TypeParameterStub> = Interner(),
+            val bridgeBuilderResult: BridgeBuilderResult
+    ) {
+        inline fun <R> withMappingExtensions(block: MappingExtensions.() -> R) =
+                with (MappingExtensions(typeParametersInterner, bridgeBuilderResult), block)
+    }
 
     private fun isTopLevelContainer(container: StubContainer?): Boolean =
             container == null
 
     private fun getPropertyNameInScope(originalName: String, container: StubContainer?): String =
         if (isTopLevelContainer(container)) {
-            getTopLevelPropertyDeclarationName(scope, originalName)
+            getTopLevelPropertyDeclarationName(bridgeBuilderResult.kotlinFile, originalName)
         } else {
             originalName
         }
 
-    private val visitor = object : StubIrVisitor<VisitingContext, Any> {
+    private val visitor = object : StubIrVisitor<VisitingContext, Any?> {
 
         override fun visitClass(element: ClassStub, data: VisitingContext): List<KmClass> {
             val classVisitingContext = VisitingContext(
                     container = element,
                     uniqIds = data.uniqIds.createChild(element.nestedName()),
-                    typeParametersInterner = Interner(data.typeParametersInterner)
+                    typeParametersInterner = Interner(data.typeParametersInterner),
+                    bridgeBuilderResult = data.bridgeBuilderResult
             )
             val children = element.children + if (element is ClassStub.Companion) {
                 listOf(ConstructorStub(isPrimary = true, visibility = VisibilityModifier.PRIVATE, origin = StubOrigin.Synthetic.DefaultConstructor))
             } else emptyList()
-            val elements = KmElements(children.map { it.accept(this, classVisitingContext) })
-            val kmClass = with (MappingExtensions(data.typeParametersInterner)) {
+            val elements = KmElements(children.mapNotNull { it.accept(this, classVisitingContext) })
+            val kmClass = data.withMappingExtensions {
                 KmClass().also { km ->
                     element.annotations.mapTo(km.annotations) { it.map() }
                     km.flags = element.flags
@@ -137,7 +142,7 @@ internal class ModuleMetadataEmitter(
         }
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
-                with (MappingExtensions(data.typeParametersInterner)) {
+                data.withMappingExtensions {
                     KmTypeAlias(element.flags, element.alias.topLevelName).also { km ->
                         km.uniqId = data.uniqIds.uniqIdForTypeAlias(element)
                         km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
@@ -146,44 +151,52 @@ internal class ModuleMetadataEmitter(
                 }
 
         override fun visitFunction(element: FunctionStub, data: VisitingContext) =
-                with (MappingExtensions(data.typeParametersInterner)) {
-                    KmFunction(element.flags, element.name).also { km ->
-                        km.receiverParameterType = element.receiver?.type?.map()
-                        element.typeParameters.mapTo(km.typeParameters) { it.map() }
-                        element.parameters.mapTo(km.valueParameters) { it.map() }
-                        element.annotations.mapTo(km.annotations) { it.map() }
-                        km.returnType = element.returnType.map()
-                        km.uniqId = data.uniqIds.uniqIdForFunction(element)
+                data.withMappingExtensions {
+                    if (bridgeBuilderResult.nativeBridges.isSupported(element)) {
+                        KmFunction(element.flags, element.name).also { km ->
+                            km.receiverParameterType = element.receiver?.type?.map()
+                            element.typeParameters.mapTo(km.typeParameters) { it.map() }
+                            element.parameters.mapTo(km.valueParameters) { it.map() }
+                            element.annotations.mapTo(km.annotations) { it.map() }
+                            km.returnType = element.returnType.map()
+                            km.uniqId = data.uniqIds.uniqIdForFunction(element)
+                        }
+                    } else {
+                        null
                     }
                 }
 
         override fun visitProperty(element: PropertyStub, data: VisitingContext) =
-                with (MappingExtensions(data.typeParametersInterner)) {
-                    val name = getPropertyNameInScope(element.name, data.container)
-                    KmProperty(element.flags, name, element.getterFlags, element.setterFlags).also { km ->
-                        element.annotations.mapTo(km.annotations) { it.map() }
-                        km.uniqId = data.uniqIds.uniqIdForProperty(element)
-                        km.receiverParameterType = element.receiverType?.map()
-                        km.returnType = element.type.map()
-                        if (element.kind is PropertyStub.Kind.Var) {
-                            val setter = element.kind.setter
-                            setter.annotations.mapTo(km.setterAnnotations) { it.map() }
-                            // TODO: Maybe it's better to explicitly add setter parameter in stub.
-                            km.setterParameter = FunctionParameterStub("value", element.type).map()
+                data.withMappingExtensions {
+                    val kind = element.bridgeSupportedKind
+                    if (kind != null) {
+                        val name = getPropertyNameInScope(element.name, data.container)
+                        KmProperty(element.flags, name, kind.getterFlags, kind.setterFlags).also { km ->
+                            element.annotations.mapTo(km.annotations) { it.map() }
+                            km.uniqId = data.uniqIds.uniqIdForProperty(element)
+                            km.receiverParameterType = element.receiverType?.map()
+                            km.returnType = element.type.map()
+                            if (kind is PropertyStub.Kind.Var) {
+                                kind.setter.annotations.mapTo(km.setterAnnotations) { it.map() }
+                                // TODO: Maybe it's better to explicitly add setter parameter in stub.
+                                km.setterParameter = FunctionParameterStub("value", element.type).map()
+                            }
+                            km.getterAnnotations += when (kind) {
+                                is PropertyStub.Kind.Val -> kind.getter.annotations.map { it.map() }
+                                is PropertyStub.Kind.Var -> kind.getter.annotations.map { it.map() }
+                                is PropertyStub.Kind.Constant -> emptyList()
+                            }
+                            if (kind is PropertyStub.Kind.Constant) {
+                                km.compileTimeValue = kind.constant.mapToAnnotationArgument()
+                            }
                         }
-                        km.getterAnnotations += when (element.kind) {
-                            is PropertyStub.Kind.Val -> element.kind.getter.annotations.map { it.map() }
-                            is PropertyStub.Kind.Var -> element.kind.getter.annotations.map { it.map() }
-                            is PropertyStub.Kind.Constant -> emptyList()
-                        }
-                        if (element.kind is PropertyStub.Kind.Constant) {
-                            km.compileTimeValue = element.kind.constant.mapToAnnotationArgument()
-                        }
+                    } else {
+                        null
                     }
                 }
 
         override fun visitConstructor(constructorStub: ConstructorStub, data: VisitingContext) =
-                with (MappingExtensions(data.typeParametersInterner)) {
+                data.withMappingExtensions {
                     KmConstructor(constructorStub.flags).apply {
                         constructorStub.parameters.mapTo(valueParameters, { it.map() })
                         constructorStub.annotations.mapTo(annotations, { it.map() })
@@ -196,11 +209,11 @@ internal class ModuleMetadataEmitter(
         }
 
         override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: VisitingContext): List<Any> =
-                simpleStubContainer.children.map { it.accept(this, data) } +
+                simpleStubContainer.children.mapNotNull { it.accept(this, data) } +
                         simpleStubContainer.simpleContainers.flatMap { visitSimpleStubContainer(it, data) }
 
         private fun mapEnumEntry(enumEntry: EnumEntryStub, data: VisitingContext): KlibEnumEntry =
-                with (MappingExtensions(data.typeParametersInterner)) {
+                data.withMappingExtensions {
                     KlibEnumEntry(
                             name = enumEntry.name,
                             uniqId = data.uniqIds.uniqIdForEnumEntry(enumEntry, data.container as ClassStub.Enum),
@@ -216,7 +229,8 @@ internal class ModuleMetadataEmitter(
  * StubIr elements to Kotlin Metadata.
  */
 private class MappingExtensions(
-        private val typeParametersInterner: Interner<TypeParameterStub>
+        private val typeParametersInterner: Interner<TypeParameterStub>,
+        private val bridgeBuilderResult: BridgeBuilderResult
 ) {
 
     private fun flagsOfNotNull(vararg flags: Flag?): Flags =
@@ -258,25 +272,28 @@ private class MappingExtensions(
         }
 
     val PropertyStub.flags: Flags
-        get() = flagsOfNotNull(
-                Flag.IS_PUBLIC,
-                Flag.Property.IS_DECLARATION,
-                Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
-                Flag.Property.HAS_CONSTANT.takeIf { kind is PropertyStub.Kind.Constant },
-                Flag.Property.HAS_GETTER,
-                Flag.Property.HAS_SETTER.takeIf { kind is PropertyStub.Kind.Var },
-                when (kind) {
-                    is PropertyStub.Kind.Val -> null
-                    is PropertyStub.Kind.Var -> Flag.Property.IS_VAR
-                    is PropertyStub.Kind.Constant -> Flag.Property.IS_CONST
-                }
-        ) or modality.flags
+        get() {
+            val kind = bridgeSupportedKind ?: return flagsOf()
+            return flagsOfNotNull(
+                    Flag.IS_PUBLIC,
+                    Flag.Property.IS_DECLARATION,
+                    Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
+                    Flag.Property.HAS_CONSTANT.takeIf { kind is PropertyStub.Kind.Constant },
+                    Flag.Property.HAS_GETTER,
+                    Flag.Property.HAS_SETTER.takeIf { kind is PropertyStub.Kind.Var },
+                    when (kind) {
+                        is PropertyStub.Kind.Val -> null
+                        is PropertyStub.Kind.Var -> Flag.Property.IS_VAR
+                        is PropertyStub.Kind.Constant -> Flag.Property.IS_CONST
+                    }
+            ) or modality.flags
+        }
 
-    val PropertyStub.getterFlags: Flags
-        get() = when (kind) {
-            is PropertyStub.Kind.Val -> kind.getter.flags
-            is PropertyStub.Kind.Var -> kind.getter.flags
-            is PropertyStub.Kind.Constant -> kind.flags
+    val PropertyStub.Kind.getterFlags: Flags
+        get() = when (this) {
+            is PropertyStub.Kind.Val -> getter.flags
+            is PropertyStub.Kind.Var -> getter.flags
+            is PropertyStub.Kind.Constant -> flags
         }
 
     val PropertyStub.Kind.Constant.flags: Flags
@@ -294,9 +311,9 @@ private class MappingExtensions(
                 Flag.PropertyAccessor.IS_EXTERNAL.takeIf { this is PropertyAccessor.Getter.ExternalGetter }
         )
 
-    val PropertyStub.setterFlags: Flags
-        get() = if (kind !is PropertyStub.Kind.Var) flagsOf()
-        else kind.setter.flags
+    val PropertyStub.Kind.setterFlags: Flags
+        get() = if (this !is PropertyStub.Kind.Var) flagsOf()
+        else setter.flags
 
     val PropertyAccessor.Setter.flags: Flags
         get() = flagsOfNotNull(
@@ -560,4 +577,34 @@ private class MappingExtensions(
 
     private val TypeParameterStub.id: Int
         get() = typeParametersInterner.intern(this)
+
+    /**
+     * Sometimes we can't generate bridge for getter or setter.
+     * For example, it may happen due to bug in libclang which may
+     * erroneously skip `const` qualifier of global variable.
+     *
+     * In this case we should change effective property's kind to either `val`
+     * or even omit the declaration at all.
+     */
+    val PropertyStub.bridgeSupportedKind: PropertyStub.Kind?
+        get() = when (kind) {
+            is PropertyStub.Kind.Var -> {
+                val isGetterSupported = bridgeBuilderResult.nativeBridges.isSupported(kind.getter)
+                val isSetterSupported = bridgeBuilderResult.nativeBridges.isSupported(kind.setter)
+                when {
+                    isGetterSupported && isSetterSupported -> kind
+                    !isGetterSupported -> null
+                    else -> PropertyStub.Kind.Val(kind.getter)
+                }
+            }
+            is PropertyStub.Kind.Val -> {
+                val isGetterSupported = bridgeBuilderResult.nativeBridges.isSupported(kind.getter)
+                if (isGetterSupported) {
+                    kind
+                } else {
+                    null
+                }
+            }
+            is PropertyStub.Kind.Constant -> kind
+        }
 }
