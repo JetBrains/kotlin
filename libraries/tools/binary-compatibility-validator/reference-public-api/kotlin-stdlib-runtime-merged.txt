@@ -1,6 +1,20 @@
 public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
 }
 
+public final class kotlin/DeepRecursiveFunction {
+	public fun <init> (Lkotlin/jvm/functions/Function3;)V
+}
+
+public final class kotlin/DeepRecursiveKt {
+	public static final fun invoke (Lkotlin/DeepRecursiveFunction;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract class kotlin/DeepRecursiveScope {
+	public abstract fun callRecursive (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun callRecursive (Lkotlin/DeepRecursiveFunction;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun invoke (Lkotlin/DeepRecursiveFunction;Ljava/lang/Object;)Ljava/lang/Void;
+}
+
 public abstract interface annotation class kotlin/Deprecated : java/lang/annotation/Annotation {
 	public abstract fun level ()Lkotlin/DeprecationLevel;
 	public abstract fun message ()Ljava/lang/String;
