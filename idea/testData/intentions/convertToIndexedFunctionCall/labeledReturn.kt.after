@@ -1,0 +1,11 @@
+// INTENTION_TEXT: "Convert to 'forEachIndexed'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.forEachIndexed { index, s ->
+        when (s) {
+            "a" -> return@forEachIndexed
+            "b" -> return@forEachIndexed
+            else -> println(s)
+        }
+    }
+}

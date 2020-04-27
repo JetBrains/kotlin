@@ -1,0 +1,7 @@
+// INTENTION_TEXT: "Convert to 'foldRightIndexed'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.foldRightIndexed("") { index, s, acc ->
+        s + acc
+    }
+}

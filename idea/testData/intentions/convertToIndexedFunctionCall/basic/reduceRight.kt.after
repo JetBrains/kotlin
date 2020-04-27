@@ -1,0 +1,7 @@
+// INTENTION_TEXT: "Convert to 'reduceRightIndexed'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.reduceRightIndexed { index, s, acc ->
+        s + acc
+    }
+}

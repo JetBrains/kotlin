@@ -1,0 +1,7 @@
+// INTENTION_TEXT: "Convert to 'filterIndexedTo'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.filterIndexedTo(mutableListOf()) { index, s ->
+        s == "a"
+    }
+}

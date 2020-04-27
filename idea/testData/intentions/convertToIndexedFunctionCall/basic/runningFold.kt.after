@@ -1,0 +1,7 @@
+// INTENTION_TEXT: "Convert to 'runningFoldIndexed'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.runningFoldIndexed("") { index, acc, s ->
+        acc + s
+    }
+}

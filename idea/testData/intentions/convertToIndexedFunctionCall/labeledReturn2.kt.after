@@ -1,0 +1,11 @@
+// INTENTION_TEXT: "Convert to 'mapIndexed'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.mapIndexed { index, s ->
+        when (s) {
+            "a" -> return@mapIndexed 1
+            "b" -> return@mapIndexed 2
+            else -> return@mapIndexed 3
+        }
+    }
+}

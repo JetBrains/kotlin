@@ -1,0 +1,7 @@
+// INTENTION_TEXT: "Convert to 'mapIndexed'"
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    list.mapIndexed { index, s ->
+        s + s
+    }
+}

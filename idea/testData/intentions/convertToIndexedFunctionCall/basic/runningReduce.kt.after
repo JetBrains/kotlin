@@ -1,0 +1,8 @@
+// INTENTION_TEXT: "Convert to 'runningReduceIndexed'"
+// WITH_RUNTIME
+@OptIn(ExperimentalStdlibApi::class)
+fun test(list: List<String>) {
+    list.runningReduceIndexed { index, acc, s ->
+        acc + s
+    }
+}
