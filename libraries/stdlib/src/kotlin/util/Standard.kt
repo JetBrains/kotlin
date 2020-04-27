@@ -151,3 +151,19 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
         action(index)
     }
 }
+
+/**
+ * Executes the given function [action] specified number of [times].
+ *
+ * A zero-based index of current iteration is passed as a parameter to [action].
+ *
+ * @sample samples.misc.ControlFlow.repeat
+ */
+@kotlin.internal.InlineOnly
+public inline fun repeat(times: Long, action: (Long) -> Unit) {
+    contract { callsInPlace(action) }
+
+    for (index in 0L until times) {
+        action(index)
+    }
+}
