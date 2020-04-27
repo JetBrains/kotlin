@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirTowerResolverSession internal constructor(
-    val components: BodyResolveComponents,
-    implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+    private val components: BodyResolveComponents,
     private val manager: TowerResolveManager,
     private val candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
 ) {
@@ -54,7 +53,7 @@ class FirTowerResolverSession internal constructor(
     private val implicitReceiversUsableAsValues: List<ImplicitReceiver>
 
     init {
-        val (implicitReceivers, implicitReceiversUsableAsValues) = prepareImplicitReceivers(implicitReceiverValues)
+        val (implicitReceivers, implicitReceiversUsableAsValues) = prepareImplicitReceivers(components.implicitReceiverStack.receiversAsReversed())
         this.implicitReceivers = implicitReceivers
         this.implicitReceiversUsableAsValues = implicitReceiversUsableAsValues
     }

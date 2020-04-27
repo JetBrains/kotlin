@@ -17,14 +17,13 @@ class FirTowerResolver(
     private val manager = TowerResolveManager(collector)
 
     fun runResolver(
-        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
         info: CallInfo,
         collector: CandidateCollector = this.collector,
         manager: TowerResolveManager = this.manager
     ): CandidateCollector {
         val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
 
-        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager, candidateFactoriesAndCollectors)
+        val towerResolverSession = FirTowerResolverSession(components, manager, candidateFactoriesAndCollectors)
         towerResolverSession.runResolution(info)
 
         manager.runTasks()
@@ -32,13 +31,12 @@ class FirTowerResolver(
     }
 
     fun runResolverForDelegatingConstructor(
-        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
         info: CallInfo,
         constructorClassSymbol: FirClassSymbol<*>,
     ): CandidateCollector {
         val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
 
-        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager, candidateFactoriesAndCollectors)
+        val towerResolverSession = FirTowerResolverSession(components, manager, candidateFactoriesAndCollectors)
         towerResolverSession.runResolutionForDelegatingConstructor(info, constructorClassSymbol)
 
         manager.runTasks()
