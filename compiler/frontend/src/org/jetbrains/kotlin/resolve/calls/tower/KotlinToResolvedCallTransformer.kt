@@ -60,9 +60,11 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDeleg
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
@@ -620,22 +622,33 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
 
     private fun createValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> =
         LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also { result ->
+            var varargMappings: MutableList<Pair<ValueParameterDescriptor, VarargValueArgument>>? = null
             for ((originalParameter, resolvedCallArgument) in argumentMappingByOriginal) {
                 val resultingParameter = resultingDescriptor.valueParameters[originalParameter.index]
+
                 result[resultingParameter] = when (resolvedCallArgument) {
                     ResolvedCallArgument.DefaultArgument ->
                         DefaultValueArgument.DEFAULT
                     is ResolvedCallArgument.SimpleArgument -> {
                         val valueArgument = resolvedCallArgument.callArgument.psiCallArgument.valueArgument
-                        if (resultingParameter.isVararg)
-                            VarargValueArgument().apply { addArgument(valueArgument) }
-                        else
+                        if (resultingParameter.isVararg) {
+                            val vararg = VarargValueArgument().apply { addArgument(valueArgument) }
+                            if (varargMappings == null) varargMappings = SmartList()
+                            varargMappings.add(resultingParameter to vararg)
+                            continue
+                        } else
                             ExpressionValueArgument(valueArgument)
                     }
                     is ResolvedCallArgument.VarargArgument ->
                         VarargValueArgument().apply {
                             resolvedCallArgument.arguments.map { it.psiCallArgument.valueArgument }.forEach { addArgument(it) }
                         }
+                }
+            }
+
+            if (varargMappings != null) {
+                for ((parameter, argument) in varargMappings) {
+                    result[parameter] = argument
                 }
             }
         }
