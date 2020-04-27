@@ -100,13 +100,9 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *    - Only existing files. We don't compile a klib if there are no sources
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
- *
- *    - Only external libraries (not stdlib/platform libs). We add stdlib and
- *      platform libs to dependencies to get an IDE support. But the compiler
- *      uses them by default so we don't pass them to the compiler explicitly.
  */
 private fun Collection<File>.filterKlibsPassedToCompiler(project: Project) = filter {
-    (it.extension == "klib" || it.isDirectory) && it.exists() && !it.providedByCompiler(project)
+    (it.extension == "klib" || it.isDirectory) && it.exists()
 }
 
 // endregion
@@ -276,6 +272,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
             add("-Xexpect-actual-linker")
             add("-Xmetadata-klib")
             addArg("-manifest", manifestFile.get().absolutePath)
+            add("-no-default-libs")
         }
 
         addArg("-o", outputFile.get().absolutePath)
