@@ -8,10 +8,14 @@ package com.jetbrains.mobile
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.PropertiesUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.Version
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.EnvironmentUtil
 import com.intellij.util.SystemProperties
 import java.io.File
@@ -20,31 +24,36 @@ import java.nio.file.Files
 
 @Service
 class AndroidToolkit(project: Project) {
-    val home: File? = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
-        ?: readHomeFromLocalProperties(project)
+    val home: File?
+        get() = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
+            ?: homeFromLocalProperties.value
 
-    val adb: File? = home
-        ?.resolve("platform-tools")
-        ?.resolve("adb".exe)
-        ?.takeIf { it.isFile }
+    val adb: File?
+        get() = home
+            ?.resolve("platform-tools")
+            ?.resolve("adb".exe)
+            ?.takeIf { it.isFile }
 
-    val emulator: File? = home
-        ?.resolve("emulator")
-        ?.resolve("emulator".exe)
-        ?.takeIf { it.isFile }
+    val emulator: File?
+        get() = home
+            ?.resolve("emulator")
+            ?.resolve("emulator".exe)
+            ?.takeIf { it.isFile }
 
-    val buildTools: File? = home
-        ?.resolve("build-tools")
-        ?.let { tools ->
-            tools.listFiles()?.maxBy {
-                Version.parseVersion(it.name) ?: Version(0, 0, 0)
+    val buildTools: File?
+        get() = home
+            ?.resolve("build-tools")
+            ?.let { tools ->
+                tools.listFiles()?.maxBy {
+                    Version.parseVersion(it.name) ?: Version(0, 0, 0)
+                }
             }
-        }
-        ?.takeIf { it.isDirectory }
+            ?.takeIf { it.isDirectory }
 
-    val aapt: File? = buildTools
-        ?.resolve("aapt".exe)
-        ?.takeIf { it.isFile }
+    val aapt: File?
+        get() = buildTools
+            ?.resolve("aapt".exe)
+            ?.takeIf { it.isFile }
 
     val avdData: File = File(File(SystemProperties.getUserHome(), ".android"), "avd")
 
@@ -52,6 +61,13 @@ class AndroidToolkit(project: Project) {
         get() =
             if (SystemInfo.isWindows) "$this.exe"
             else this
+
+    private val homeFromLocalProperties: CachedValue<File?> = CachedValuesManager.getManager(project).createCachedValue {
+        CachedValueProvider.Result.create(
+            readHomeFromLocalProperties(project),
+            ProjectRootModificationTracker.getInstance(project) // triggered on Gradle refresh
+        )
+    }
 
     private fun readHomeFromLocalProperties(project: Project): File? {
         val basePath = project.basePath?.let { File(FileUtil.toCanonicalPath(it)) } ?: return null
