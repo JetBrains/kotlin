@@ -6133,6 +6133,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateOperatorDeclaration.kt");
                 }
 
+                @TestMetadata("provideDelegateResolutionWithStubTypes.kt")
+                public void testProvideDelegateResolutionWithStubTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateResolutionWithStubTypes.kt");
+                }
+
                 @TestMetadata("setValue.kt")
                 public void testSetValue() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/setValue.kt");

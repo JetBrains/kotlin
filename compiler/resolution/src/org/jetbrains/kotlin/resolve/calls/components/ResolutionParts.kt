@@ -439,6 +439,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     } else null
 
 
+    val inferenceSession = resolutionCallbacks.inferenceSession
     if (candidateExpectedType == null || // Nothing to convert
         convertedExpectedType != null || // Type is already converted
         isReceiver || // Receivers don't participate in conversions
@@ -452,7 +453,8 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
             expectedType,
             this,
             receiverInfo,
-            convertedArgument?.unknownIntegerType?.unwrap()
+            convertedArgument?.unknownIntegerType?.unwrap(),
+            inferenceSession
         )
 
         addResolvedKtPrimitive(resolvedAtom)
@@ -465,7 +467,8 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
                 expectedType,
                 this@resolveKotlinArgument,
                 receiverInfo,
-                convertedArgument?.unknownIntegerType?.unwrap()
+                convertedArgument?.unknownIntegerType?.unwrap(),
+                inferenceSession
             )
 
             if (!hasContradiction) {
@@ -496,7 +499,8 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
                 convertedTypeAfterSubtyping,
                 this@resolveKotlinArgument,
                 receiverInfo,
-                convertedArgument?.unknownIntegerType?.unwrap()
+                convertedArgument?.unknownIntegerType?.unwrap(),
+                inferenceSession
             )
             addResolvedKtPrimitive(resolvedAtom)
         }

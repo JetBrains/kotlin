@@ -36,9 +36,10 @@ fun resolveKtPrimitive(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
     convertedType: UnwrappedType?,
+    inferenceSession: InferenceSession?
 ): ResolvedAtom = when (argument) {
     is SimpleKotlinCallArgument ->
-        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType)
+        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType, inferenceSession)
 
     is LambdaKotlinCallArgument ->
         preprocessLambdaArgument(csBuilder, argument, expectedType, diagnosticsHolder)

@@ -83,9 +83,12 @@ class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : 
     }
 }
 
-class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument) : ResolvedAtom() {
+class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveIndependently: Boolean) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf(atom.callResult))
+        if (resolveIndependently)
+            setAnalyzedResults(listOf())
+        else
+            setAnalyzedResults(listOf(atom.callResult))
     }
 }
 

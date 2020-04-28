@@ -8182,6 +8182,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/generic.kt");
             }
 
+            @TestMetadata("genericDelegateWithNoAdditionalInfo.kt")
+            public void testGenericDelegateWithNoAdditionalInfo() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/genericDelegateWithNoAdditionalInfo.kt");
+            }
+
             @TestMetadata("hostCheck.kt")
             public void testHostCheck() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/hostCheck.kt");

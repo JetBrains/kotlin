@@ -31,6 +31,8 @@ interface InferenceSession {
             override fun computeCompletionMode(
                 candidate: KotlinResolutionCandidate
             ): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode? = null
+
+            override fun resolveReceiverIndependently(): Boolean = false
         }
     }
 
@@ -49,6 +51,7 @@ interface InferenceSession {
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
     fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean
     fun computeCompletionMode(candidate: KotlinResolutionCandidate): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode?
+    fun resolveReceiverIndependently(): Boolean
 }
 
 interface PartialCallInfo {
