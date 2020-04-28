@@ -21,11 +21,15 @@ import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
 import com.jetbrains.cidr.lang.util.events.CidrEventSpan
+import org.jetbrains.konan.KonanOCSwiftBundle
 import org.jetbrains.konan.resolve.translation.KtFileTranslator
 
 object KonanBridgeSymbolLoading {
     private const val traceCategory: String = "konan"
-    private const val traceTitle: String = "Processing Kotlin/Native targets"
+    private const val traceTitle: String = "processKonan"
+    private val indicatorText: String
+        get() = KonanOCSwiftBundle.message("processing.konan")
+
     private var lastRequestNo: Int = 0
     private var indicator: ProgressIndicator? = null
 
@@ -49,7 +53,7 @@ object KonanBridgeSymbolLoading {
         ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, indicator)
     }
 
-    private class KonanTask(project: Project) : Task.Backgroundable(project, "$traceTitle...", true) {
+    private class KonanTask(project: Project) : Task.Backgroundable(project, "$indicatorText...", true) {
         private val processed = mutableSetOf<List<OCSymbol>>()
         override fun shouldStartInBackground(): Boolean = true
         override fun onFinished(): Unit = synchronized(this) { indicator = null }
