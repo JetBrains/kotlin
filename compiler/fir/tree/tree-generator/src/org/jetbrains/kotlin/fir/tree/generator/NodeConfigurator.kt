@@ -230,7 +230,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(classLikeDeclaration, "F", "F")
             +symbol("FirClassSymbol", "F")
             +classKind
-            +superTypeRefs(withReplace = true)
+            +superTypeRefs(withReplace = true).withTransform()
             +declarations.withTransform()
             +annotations
             +scopeProvider

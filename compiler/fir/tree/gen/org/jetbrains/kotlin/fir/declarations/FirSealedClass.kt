@@ -57,5 +57,7 @@ abstract class FirSealedClass : FirRegularClass() {
 
     abstract override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirSealedClass
 
+    abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirSealedClass
+
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSealedClass
 }

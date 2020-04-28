@@ -81,8 +81,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         typeParameters.transformInplace(transformer, data)
         transformDeclarations(transformer, data)
         status = status.transformSingle(transformer, data)
-        superTypeRefs.transformInplace(transformer, data)
+        transformSuperTypeRefs(transformer, data)
         transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass {
+        superTypeRefs.transformInplace(transformer, data)
         return this
     }
 
