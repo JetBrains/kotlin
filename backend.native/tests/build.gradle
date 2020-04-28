@@ -880,9 +880,10 @@ task empty_substring(type: KonanLocalTest) {
     source = "runtime/basic/empty_substring.kt"
 }
 
-task worker_bound_reference0(type: KonanLocalTest) {
+standaloneTest("worker_bound_reference0") {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     source = "runtime/concurrent/worker_bound_reference0.kt"
+    flags = ['-tr']
 }
 
 task worker0(type: KonanLocalTest) {
