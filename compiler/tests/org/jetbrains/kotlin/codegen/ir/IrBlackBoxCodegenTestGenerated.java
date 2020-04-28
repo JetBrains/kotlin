@@ -2075,6 +2075,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noReflectionForAdaptedCallableReferences.kt");
             }
 
+            @TestMetadata("noReflectionForAdaptedCallableReferencesWithSuspendConversion.kt")
+            public void testNoReflectionForAdaptedCallableReferencesWithSuspendConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noReflectionForAdaptedCallableReferencesWithSuspendConversion.kt");
+            }
+
             @TestMetadata("reflectionForVarargAsArray.kt")
             public void testReflectionForVarargAsArray() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/reflectionForVarargAsArray.kt");

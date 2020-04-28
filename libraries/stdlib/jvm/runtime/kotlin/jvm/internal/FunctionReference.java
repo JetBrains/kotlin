@@ -26,6 +26,11 @@ public class FunctionReference extends CallableReference implements FunctionBase
      *         fun use(f: () -> Unit) {}
      *         use(::target)
      *     </pre></ul>
+     *     <ul>2 - whether suspend conversion happened, i.e.,<pre>
+     *         fun target() {}
+     *         fun useSuspend(f: suspend () -> Unit) {}
+     *         useSuspend(::target)
+     *     </pre></ul>
      * </li>
      */
     @SinceKotlin(version = "1.4")

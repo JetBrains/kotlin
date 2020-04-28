@@ -12,7 +12,6 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
@@ -528,7 +527,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     PropertyReferenceCodegen.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
                     int flags =
                             (isTopLevelCallableReference(functionReferenceTarget) ? 1 : 0) +
-                            (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor, classDescriptor) << 1);
+                            (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor) << 1);
                     iv.aconst(flags);
                     superCtorArgTypes.add(JAVA_CLASS_TYPE);
                     superCtorArgTypes.add(JAVA_STRING_TYPE);
@@ -553,8 +552,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     private static int calculateFunctionReferenceFlags(
             @NotNull ResolvedCall<?> call,
-            @NotNull FunctionDescriptor anonymousAdaptedFunction,
-            @NotNull ClassDescriptor classDescriptor
+            @NotNull FunctionDescriptor anonymousAdapterFunction
     ) {
         boolean hasVarargMappedToElement = false;
         FunctionDescriptor target = (FunctionDescriptor) call.getResultingDescriptor();
@@ -562,10 +560,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 (call.getDispatchReceiver() instanceof TransientReceiver ? 1 : 0) +
                 (call.getExtensionReceiver() instanceof TransientReceiver ? 1 : 0);
         for (int i = shift;
-             i < anonymousAdaptedFunction.getValueParameters().size() && i - shift < target.getValueParameters().size();
+             i < anonymousAdapterFunction.getValueParameters().size() && i - shift < target.getValueParameters().size();
              i++) {
             ValueParameterDescriptor targetParameter = target.getValueParameters().get(i - shift);
-            ValueParameterDescriptor adaptedParameter = anonymousAdaptedFunction.getValueParameters().get(i);
+            ValueParameterDescriptor adaptedParameter = anonymousAdapterFunction.getValueParameters().get(i);
 
             // Vararg to element conversion is happening if the target parameter is vararg (e.g. `vararg xs: Int`),
             // but the adapted parameter's type is not equal to the target parameter's type (which is `IntArray`).
@@ -577,12 +575,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         }
 
         //noinspection ConstantConditions
-        boolean hasCoercionToUnit = KotlinBuiltIns.isUnit(anonymousAdaptedFunction.getReturnType()) &&
+        boolean hasCoercionToUnit = KotlinBuiltIns.isUnit(anonymousAdapterFunction.getReturnType()) &&
                                     !KotlinBuiltIns.isUnit(target.getReturnType());
 
-        boolean hasSuspendConversion =
-                !target.isSuspend() &&
-                classDescriptor.getTypeConstructor().getSupertypes().stream().anyMatch(FunctionTypesKt::isSuspendFunctionType);
+        boolean hasSuspendConversion = !target.isSuspend() && anonymousAdapterFunction.isSuspend();
 
         return (hasVarargMappedToElement ? 1 : 0) +
                (hasSuspendConversion ? 2 : 0) +
