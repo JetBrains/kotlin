@@ -14,6 +14,7 @@ import com.intellij.psi.search.searches.ReferencesSearch.SearchParameters
 import com.intellij.util.Processor
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import org.jetbrains.konan.resolve.symbols.KtSymbolPsiWrapper
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -55,7 +56,13 @@ abstract class KotlinUsageSearcher<T : OCSymbol, E : KtDeclaration> : QueryExecu
 }
 
 internal fun SearchParameters.getUnwrappedTarget(): PsiElement =
-    elementToSearch.let { (it as? KtSymbolPsiWrapper)?.psi ?: it }
+    elementToSearch.let {
+        when (it) {
+            is KtLightElement<*, *> -> it.kotlinOrigin
+            is KtSymbolPsiWrapper -> it.psi
+            else -> null
+        } ?: it
+    }
 
 internal fun SearchParameters.duplicateWith(psi: PsiElement): SearchParameters =
     SearchParameters(psi, scopeDeterminedByUser, isIgnoreAccessScope, optimizer)
