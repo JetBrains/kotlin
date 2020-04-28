@@ -60,15 +60,17 @@ class GradleQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun applyInspectionFixes(tool: LocalInspectionTool, file: VirtualFile) {
-        invokeTestRunnable {
-            val presentation = runInspection(tool, myProject, listOf(file))
+        runInEdtAndWait {
+            invokeTestRunnable {
+                val presentation = runInspection(tool, myProject, listOf(file))
 
-            WriteCommandAction.runWriteCommandAction(myProject) {
-                val foundProblems = presentation.problemElements.values.mapNotNull { it as? ProblemDescriptorBase }
-                for (problem in foundProblems) {
-                    val fixes = problem.fixes
-                    if (fixes != null) {
-                        fixes[0].applyFix(myProject, problem)
+                WriteCommandAction.runWriteCommandAction(myProject) {
+                    val foundProblems = presentation.problemElements.values.mapNotNull { it as? ProblemDescriptorBase }
+                    for (problem in foundProblems) {
+                        val fixes = problem.fixes
+                        if (fixes != null) {
+                            fixes[0].applyFix(myProject, problem)
+                        }
                     }
                 }
             }
