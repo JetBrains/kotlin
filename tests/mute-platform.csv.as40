@@ -8,8 +8,8 @@ org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobileShared, IDEA
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testNative, IDEA-225878
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testShared, IDEA-225878
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testSharedWithQualifiedName, IDEA-225878
-org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[1: Gradle-4.9, KotlinGradlePlugin-latest stable], KT-35631
-org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], KT-35631
+"org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", KT-35631
+"org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", KT-35631
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.simpleAndroidAppWithCommonModule, KT-35225
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid, KT-35225
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleLineMarkerTestGenerated.testKotlinTestAnnotations, No line markers for test run

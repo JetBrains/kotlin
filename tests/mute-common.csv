@@ -6,8 +6,8 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTes
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces, FLAKY
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
-org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[1: Gradle-4.9, KotlinGradlePlugin-latest stable], Stable on windows
-org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], Stable on windows
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", Stable on windows
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", Stable on windows
 org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.testJvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls, Always red
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleBuildFileHighlightingTest.testKtsInJsProject, "Diagnostic's list should be empty" error
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule

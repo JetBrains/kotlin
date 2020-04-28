@@ -118,7 +118,7 @@ private fun loadMutedTests(file: File): List<MutedTest> {
     }
 }
 
-private val MUTE_LINE_PARSE_REGEXP = Regex("^([^,\\[]+)(\\[[^]]+])?(,\\s*)?([^,]+)?(,\\s*)?([^,]+)?$")
+private val MUTE_LINE_PARSE_REGEXP = Regex("^\"?([^,\\[]+)(\\[[^]]+])?\"?(,\\s*)?([^,]+)?(,\\s*)?([^,]+)?$")
 
 private fun parseMutedTest(str: String): MutedTest {
     val matchResult = MUTE_LINE_PARSE_REGEXP.matchEntire(str) ?: throw ParseError("Can't parse the line: $str")
