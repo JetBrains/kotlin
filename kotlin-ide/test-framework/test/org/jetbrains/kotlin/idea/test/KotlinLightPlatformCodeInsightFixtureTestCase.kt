@@ -17,7 +17,6 @@ import kotlin.reflect.full.findAnnotation
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
-        (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
         invalidateLibraryCache(project)
     }

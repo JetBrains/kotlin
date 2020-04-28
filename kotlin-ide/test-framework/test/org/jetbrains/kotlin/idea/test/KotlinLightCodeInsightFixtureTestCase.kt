@@ -84,7 +84,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         // when done lazily
         UnusedSymbolInspection()
 
-        (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
 
         editorTrackerProjectOpened(project)
