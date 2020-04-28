@@ -92,6 +92,12 @@ class FirCallCompletionResultsWriterTransformer(
         result.replaceTypeRef(resultType)
         result.replaceTypeArguments(typeArguments)
 
+        if (mode == Mode.DelegatedPropertyCompletion) {
+            candidateFir.transformSingle(declarationWriter, null)
+            val typeUpdater = TypeUpdaterForDelegateArguments()
+            result.transformExplicitReceiver(typeUpdater, null)
+        }
+
         return result.compose()
     }
 
