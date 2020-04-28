@@ -33,4 +33,6 @@ abstract class FirAnnotationCall : FirExpression(), FirCall {
     abstract fun replaceResolved(newResolved: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
+
+    abstract fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 }
