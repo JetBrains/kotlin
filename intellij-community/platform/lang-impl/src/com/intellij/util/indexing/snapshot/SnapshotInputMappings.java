@@ -47,13 +47,11 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
   private final CompositeHashIdEnumerator myCompositeHashIdEnumerator;
 
-  private final boolean myIsPsiBackedIndex;
   private PersistentSubIndexerRetriever<?, ?> mySubIndexerRetriever;
 
   public SnapshotInputMappings(@NotNull IndexExtension<Key, Value, FileContent> indexExtension,
                                @NotNull AbstractMapForwardIndexAccessor<Key, Value, ?> accessor) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
-    myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
 
     boolean storeOnlySingleValue = indexExtension instanceof SingleEntryFileBasedIndexExtension;
     myMapExternalizer = storeOnlySingleValue ? null : new InputMapExternalizer<>(indexExtension);
@@ -182,7 +180,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     if (content == null) {
       return 0;
     }
-    int hash = getHashOfContent((FileContentImpl)content);
+    int hash = doGetContentHash((FileContentImpl)content);
     if (myCompositeHashIdEnumerator != null) {
       int subIndexerTypeId = mySubIndexerRetriever.getFileIndexerId(content);
       return myCompositeHashIdEnumerator.enumerate(hash, subIndexerTypeId);
@@ -267,15 +265,6 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     return myContents.get(hashId);
   }
 
-  private Integer getHashOfContent(FileContentImpl content) throws IOException {
-    if (myIsPsiBackedIndex) {
-      // psi backed index should use existing psi to build index value (FileContentImpl.getPsiFileForPsiDependentIndex())
-      // so we should use different bytes to calculate hash(Id)
-      return doGetContentHash(content, true);
-    }
-    return doGetContentHash(content, false);
-  }
-
   // TODO replace it with constructor parameter
   public void setSubIndexerRetriever(@NotNull PersistentSubIndexerRetriever<?, ?> retriever) {
     assert myCompositeHashIdEnumerator != null;
@@ -283,12 +272,12 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   }
 
   @NotNull
-  private static Integer doGetContentHash(FileContentImpl content, boolean fromDocument) throws IOException {
-    com.intellij.openapi.util.Key<Integer> key = fromDocument ? ourSavedUncommittedHashIdKey : ourSavedContentHashIdKey;
+  private static Integer doGetContentHash(FileContentImpl content) throws IOException {
+    com.intellij.openapi.util.Key<Integer> key = content.isPhysicalContent() ? ourSavedContentHashIdKey : ourSavedUncommittedHashIdKey;
 
     Integer previouslyCalculatedContentHashId = content.getUserData(key);
     if (previouslyCalculatedContentHashId == null) {
-      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(content, fromDocument);
+      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(content);
       previouslyCalculatedContentHashId = IndexedHashesSupport.enumerateHash(hash);
       content.putUserData(key, previouslyCalculatedContentHashId);
     }

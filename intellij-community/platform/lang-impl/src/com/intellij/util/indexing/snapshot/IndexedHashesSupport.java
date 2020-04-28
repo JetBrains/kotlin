@@ -76,11 +76,11 @@ public class IndexedHashesSupport {
     content.setHashes(fileContentHash, documentHash != null ? documentHash : fileContentHash);
   }
 
-  public static byte @NotNull [] getOrInitIndexedHash(@NotNull FileContentImpl content, boolean fromDocument) {
-    byte[] hash = content.getHash(fromDocument);
+  public static byte @NotNull [] getOrInitIndexedHash(@NotNull FileContentImpl content) {
+    byte[] hash = content.getHash();
     if (hash == null) {
       initIndexedHash(content);
-      hash = content.getHash(fromDocument);
+      hash = content.getHash();
       LOG.assertTrue(hash != null);
     }
     return hash;
