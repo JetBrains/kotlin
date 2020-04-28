@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,7 +44,8 @@ import org.jetbrains.kotlin.name.Name
 
 class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
-    // TODO: generateInlineClassMembers
+    fun generateInlineClassMembers(klass: FirClass<*>, irClass: IrClass): List<Name> =
+        MyDataClassMethodsGenerator(irClass, klass.symbol.classId, IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate(klass)
 
     fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<Name> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.classId, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
@@ -261,6 +263,12 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 parent = irClass
                 functionDescriptor.bind(this)
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this, thisReceiverDescriptor)
+                components.irBuiltIns.anyClass.descriptor.unsubstitutedMemberScope
+                    .getContributedFunctions(this.name, NoLookupLocation.FROM_BACKEND)
+                    .singleOrNull { function -> function.name == this.name }
+                    ?.let {
+                        overriddenSymbols = listOf(components.symbolTable.referenceSimpleFunction(it))
+                    }
             }
         }
 

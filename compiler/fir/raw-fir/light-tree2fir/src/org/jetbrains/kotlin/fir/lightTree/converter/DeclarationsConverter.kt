@@ -191,13 +191,13 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
      */
-    private fun convertModifierList(modifiers: LighterASTNode): Modifier {
+    private fun convertModifierList(modifiers: LighterASTNode, isInClass: Boolean = false): Modifier {
         val modifier = Modifier()
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> modifier.annotations += convertAnnotation(it)
                 ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it)
-                is KtModifierKeywordToken -> modifier.addModifier(it)
+                is KtModifierKeywordToken -> modifier.addModifier(it, isInClass)
             }
         }
         return modifier
@@ -343,7 +343,7 @@ class DeclarationsConverter(
         var typeParameterList: LighterASTNode? = null
         classNode.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                MODIFIER_LIST -> modifiers = convertModifierList(it, isInClass = true)
                 CLASS_KEYWORD -> classKind = ClassKind.CLASS
                 INTERFACE_KEYWORD -> classKind = ClassKind.INTERFACE
                 OBJECT_KEYWORD -> classKind = ClassKind.OBJECT
@@ -379,7 +379,7 @@ class DeclarationsConverter(
                     isInner = modifiers.isInner()
                     isCompanion = modifiers.isCompanion() && classKind == ClassKind.OBJECT
                     isData = modifiers.isDataClass() && classKind != ClassKind.OBJECT
-                    isInline = modifiers.hasInline()
+                    isInline = modifiers.isInlineClass() && classKind != ClassKind.OBJECT
                 }
 
                 val classBuilder = if (status.modality == Modality.SEALED) {

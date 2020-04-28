@@ -42,6 +42,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CONSTRUCTOR_CALL 'public constructor <init> (runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>) [primary] declared in <root>.A' type=<root>.A origin=null
             runA: GET_VAR 'runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A.copy' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -74,6 +76,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A'
@@ -81,6 +85,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.hashCode' type=<root>.A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
@@ -147,6 +153,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any) [primary] declared in <root>.B' type=<root>.B origin=null
             x: GET_VAR 'x: kotlin.Any declared in <root>.B.copy' type=kotlin.Any origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.B, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.B
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -179,6 +187,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.B'
@@ -186,6 +196,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.hashCode' type=<root>.B origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.B'
