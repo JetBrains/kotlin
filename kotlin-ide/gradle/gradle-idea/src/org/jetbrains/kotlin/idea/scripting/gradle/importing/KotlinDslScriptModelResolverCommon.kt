@@ -10,6 +10,7 @@ import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.util.Pair
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
+import org.jetbrains.kotlin.gradle.KotlinDslScriptAdditionalTask
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 internal val LOG = Logger.getInstance(KotlinDslScriptModelResolverCommon::class.java)
@@ -18,6 +19,10 @@ internal val LOG = Logger.getInstance(KotlinDslScriptModelResolverCommon::class.
 abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExtension() {
     override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
         return setOf(KotlinDslScriptsModel::class.java)
+    }
+
+    override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
+        return setOf(KotlinDslScriptAdditionalTask::class.java)
     }
 
     override fun getExtraJvmArgs(): List<Pair<String, String>> {

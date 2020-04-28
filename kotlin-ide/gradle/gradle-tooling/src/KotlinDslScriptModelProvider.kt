@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.scripting.gradle.importing
+package org.jetbrains.kotlin.gradle
 
 import org.gradle.tooling.BuildController
 import org.gradle.tooling.model.Model
@@ -27,7 +27,10 @@ class KotlinDslScriptModelProvider : ProjectImportModelProvider {
                         consumer.consumeProjectModel(it, model, kotlinDslScriptModelClass)
                     }
                 } catch (e: Throwable) {
-                    consumer.consumeProjectModel(it, BrokenKotlinDslScriptsModel(e), kotlinDslScriptModelClass)
+                    consumer.consumeProjectModel(
+                        it,
+                        BrokenKotlinDslScriptsModel(e), kotlinDslScriptModelClass
+                    )
                 }
             }
         }
