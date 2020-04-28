@@ -888,6 +888,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/renameKotlinPackageFunctionFromJavaNewFacade/renameKotlinPackageFunctionFromJava.test");
     }
 
+    @TestMetadata("renameKotlinPackageWithLongType/renameKotlinPackageWithLongType.test")
+    public void testRenameKotlinPackageWithLongType_RenameKotlinPackageWithLongType() throws Exception {
+        runTest("idea/testData/refactoring/rename/renameKotlinPackageWithLongType/renameKotlinPackageWithLongType.test");
+    }
+
     @TestMetadata("renameKotlinParameterWithGetterJvmName/renameKotlinParameterWithGetterJvmName.test")
     public void testRenameKotlinParameterWithGetterJvmName_RenameKotlinParameterWithGetterJvmName() throws Exception {
         runTest("idea/testData/refactoring/rename/renameKotlinParameterWithGetterJvmName/renameKotlinParameterWithGetterJvmName.test");
