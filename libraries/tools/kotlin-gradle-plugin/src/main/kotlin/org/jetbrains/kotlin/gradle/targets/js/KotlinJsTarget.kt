@@ -51,7 +51,11 @@ constructor(
         }
 
     val disambiguationClassifierInPlatform: String?
-        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
+        get() = if (irTarget != null) {
+            disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
+        } else {
+            disambiguationClassifier
+        }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (irTarget == null)
