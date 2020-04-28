@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions
 
-import com.intellij.ide.DataManager
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.CopyReferenceUtil.getElementsToCopy
 import com.intellij.openapi.actionSystem.*
@@ -19,8 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.ui.tabs.impl.TabLabel
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 import java.awt.datatransfer.StringSelection
 
 abstract class CopyPathProvider : DumbAwareAction() {
@@ -33,12 +30,8 @@ abstract class CopyPathProvider : DumbAwareAction() {
     val dataContext = e.dataContext
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
     val project = e.project
-    if (project != null && getQualifiedName(project, getElementsToCopy(editor, dataContext), editor, dataContext) != null) {
-      e.presentation.isEnabledAndVisible = true
-      return
-    }
-
-    e.presentation.isEnabledAndVisible = false
+    e.presentation.isEnabledAndVisible = project != null
+                                         && getQualifiedName(project, getElementsToCopy(editor, dataContext), editor, dataContext) != null
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -62,9 +55,10 @@ abstract class CopyPathProvider : DumbAwareAction() {
     if (component !is TabLabel) return dataContext
 
     val file = component.info.`object`
+    if (file !is VirtualFile) return dataContext
+
     return SimpleDataContext.getSimpleContext(
-      mapOf(LangDataKeys.VIRTUAL_FILE.name to file as? VirtualFile,
-            CommonDataKeys.VIRTUAL_FILE_ARRAY.name to if (file is VirtualFile) arrayOf(file) else null),
+      mapOf(LangDataKeys.VIRTUAL_FILE.name to file, CommonDataKeys.VIRTUAL_FILE_ARRAY.name to arrayOf(file)),
       dataContext)
   }
 
