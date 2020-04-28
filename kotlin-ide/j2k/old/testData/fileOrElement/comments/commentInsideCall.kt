@@ -6,10 +6,10 @@ object Test {
         println()// Comment
 
         Test
-                // Comment1
-                .foo()
-                // Comment2
-                .indexOf("s")
+            // Comment1
+            .foo()
+            // Comment2
+            .indexOf("s")
     }
 
     fun foo(): String {

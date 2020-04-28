@@ -4,17 +4,17 @@ fun foo(arg: Any?): Int {
         is Int -> {
             return arg // 2
         }
-// 3
+        // 3
         is String -> {
             return 42 // 4
         }
-// 5
+        // 5
         null -> {
             // 6
             return 0
         }
-// 7
-// 8
+        // 7
+        // 8
         else -> return -1
     }
 }

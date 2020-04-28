@@ -3,8 +3,8 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.max()'"
 fun f(list: List<Int>) {
     val <caret>result = list
-            .asSequence()
-            .filter { it % 2 == 0 }
-            .max()
-            ?: -1
+        .asSequence()
+        .filter { it % 2 == 0 }
+        .max()
+        ?: -1
 }

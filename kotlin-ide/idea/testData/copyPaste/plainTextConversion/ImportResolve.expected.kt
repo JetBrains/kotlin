@@ -20,8 +20,10 @@ class Target {
 
     }
 
-    var ambiguousKotlin: IAmbiguousKotlin = AmbiguousKotlin() // Should not add import in case of 2 declarations in Kotlin
-    var ambiguous: IAmbiguous = Ambiguous() // Should not add import in case of ambiguous declarations in Kotlin and in Java
+    var ambiguousKotlin: IAmbiguousKotlin =
+        AmbiguousKotlin() // Should not add import in case of 2 declarations in Kotlin
+    var ambiguous: IAmbiguous =
+        Ambiguous() // Should not add import in case of ambiguous declarations in Kotlin and in Java
     var ambiguousJava: IAmbiguousJava = AmbiguousJava()  // Should not add import in case of 2 declarations in Java
 
     fun workWithStatics() {

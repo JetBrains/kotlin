@@ -6,7 +6,7 @@ import java.util.ArrayList
 fun foo(list: List<String>): List<Int> {
     val result = ArrayList<Int>()
     list
-            .filter { it.length > result.size }
-            .forEach { result.add(it.hashCode()) }
+        .filter { it.length > result.size }
+        .forEach { result.add(it.hashCode()) }
     return result
 }

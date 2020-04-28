@@ -6,6 +6,6 @@
 
 fun foo(list: List<Any>, target: MutableCollection<String>) {
     <caret>target += list
-            .asSequence()
-            .filterIsInstance<String>()
+        .asSequence()
+        .filterIsInstance<String>()
 }

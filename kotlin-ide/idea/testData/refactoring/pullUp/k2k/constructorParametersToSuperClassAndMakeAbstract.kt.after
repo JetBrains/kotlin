@@ -5,9 +5,9 @@ abstract class A(n: Int) {
 }
 
 class B(
-        // INFO: {"checked": "true", "toAbstract": "true"}
-        override val s: String,
-        // INFO: {"checked": "true", "toAbstract": "true"}
-        override val b: Boolean,
-        val i: Int
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    override val s: String,
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    override val b: Boolean,
+    val i: Int
 ) : A(1)

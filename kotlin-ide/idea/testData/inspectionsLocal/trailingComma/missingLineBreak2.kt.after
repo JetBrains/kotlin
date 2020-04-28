@@ -2,6 +2,6 @@
 // FIX: Add line break
 
 fun a(
-        i: Int,
-        b: Boolean,
+    i: Int,
+    b: Boolean,
 ) = Unit

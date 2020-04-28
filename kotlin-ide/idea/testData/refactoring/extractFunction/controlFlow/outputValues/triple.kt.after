@@ -21,7 +21,12 @@ fun foo(a: Int): Int {
     return b + c + d
 }
 
-private fun triple(b: Int, a: Int, c: Int, d: Int): Triple<Int, Int, Int> {
+private fun triple(
+    b: Int,
+    a: Int,
+    c: Int,
+    d: Int
+): Triple<Int, Int, Int> {
     var b1 = b
     var c1 = c
     var d1 = d

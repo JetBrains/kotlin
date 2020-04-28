@@ -5,8 +5,8 @@ import java.util.ArrayList
 
 fun foo(list: List<String>): MutableList<String> {
     val <caret>result = list
-            .asSequence()
-            .filter { it.length > 0 }
-            .toMutableList()
+        .asSequence()
+        .filter { it.length > 0 }
+        .toMutableList()
     return result
 }

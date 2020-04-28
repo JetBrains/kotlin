@@ -2,11 +2,11 @@
 
 fun test(list: List<Int>): List<Int> {
     return list
-            .reversed()
-            .asSequence()
-            .map { it + 1 }
-            .map { it + 1 }
-            .toList()
-            .dropLast(1)
-            .takeLast(2)
+        .reversed()
+        .asSequence()
+        .map { it + 1 }
+        .map { it + 1 }
+        .toList()
+        .dropLast(1)
+        .takeLast(2)
 }

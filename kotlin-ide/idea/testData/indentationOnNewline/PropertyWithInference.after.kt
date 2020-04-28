@@ -1,2 +1,2 @@
 val a =
-        <caret>
+    <caret>

@@ -1,4 +1,4 @@
 fun testParam(
-        <caret>
+    <caret>
 ) {
 }

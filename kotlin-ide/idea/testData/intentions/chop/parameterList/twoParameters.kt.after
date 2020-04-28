@@ -1,5 +1,5 @@
 fun foo(
-        p: Int,
-<caret>        c: Char
+    p: Int,
+<caret>    c: Char
 ) {
 }

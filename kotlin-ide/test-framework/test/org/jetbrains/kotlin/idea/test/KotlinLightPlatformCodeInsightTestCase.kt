@@ -13,4 +13,14 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsightTestCase() {
     protected inline val project_: Project get() = project
     protected inline val editor_: Editor get() = editor
+
+    override fun setUp() {
+        super.setUp()
+        enableKotlinOfficialCodeStyle(project_)
+    }
+
+    override fun tearDown() {
+        disableKotlinOfficialCodeStyle(project_)
+        super.tearDown()
+    }
 }

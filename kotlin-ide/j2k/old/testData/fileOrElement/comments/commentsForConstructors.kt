@@ -12,7 +12,7 @@ internal class A// this is a primary constructor
 // end of secondary constructor 1 body
 
 internal class B// this constructor will disappear
-(private val x: Int) // end of constructor body
+    (private val x: Int) // end of constructor body
 {
 
     fun foo() {}

@@ -3,7 +3,7 @@
 fun test() {
     foo@ while (true) {
         while (true) {
-         <caret>   break@foo
+            break@<caret>foo
         }
     }
 }

@@ -5,4 +5,4 @@ interface A1
 open class B1
 
 class Simpleclass() : B1(),
-        <caret>A1
+    <caret>A1

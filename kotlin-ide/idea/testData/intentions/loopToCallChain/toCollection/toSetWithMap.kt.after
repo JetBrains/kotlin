@@ -5,7 +5,7 @@ import java.util.HashSet
 
 fun foo(map: Map<Int, String>): Collection<Int> {
     val <caret>result = map.values
-            .map { it.length }
-            .toSet()
+        .map { it.length }
+        .toSet()
     return result
 }

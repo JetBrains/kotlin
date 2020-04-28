@@ -1,7 +1,7 @@
 fun a(
-        l0: /*T1@*/MutableListIterator</*T0@*/Int>,
-        l1: /*T3@*/MutableListIterator</*T2@*/Int>,
-        l2: /*T5@*/MutableListIterator</*T4@*/Int>
+    l0: /*T1@*/MutableListIterator</*T0@*/Int>,
+    l1: /*T3@*/MutableListIterator</*T2@*/Int>,
+    l2: /*T5@*/MutableListIterator</*T4@*/Int>
 ) {
     l0/*T1@MutableListIterator<T0@Int>*/.add(1/*LIT*/)
     l1/*T3@MutableListIterator<T2@Int>*/.remove()

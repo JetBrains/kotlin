@@ -1,2 +1,2 @@
 fun test() =
-        <caret>
+    <caret>

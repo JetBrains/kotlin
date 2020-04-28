@@ -4,7 +4,7 @@
 fun foo(list: List<String>): String? {
     var index2 = 0
     return list
-            .asSequence()
-            .filterIndexed { index1, s -> s.length <= index1 && s.length >= index2++ }
-            .firstOrNull()
+        .asSequence()
+        .filterIndexed { index1, s -> s.length <= index1 && s.length >= index2++ }
+        .firstOrNull()
 }

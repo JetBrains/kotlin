@@ -4,9 +4,9 @@
 fun getMaxLineWidth(lineCount: Int): Float {
     var max_width = 0.0f
     <caret>(0..lineCount - 1)
-            .asSequence()
-            .filter { getLineWidth(it) > max_width }
-            .forEach { max_width = getLineWidth(it) }
+        .asSequence()
+        .filter { getLineWidth(it) > max_width }
+        .forEach { max_width = getLineWidth(it) }
     return max_width
 }
 

@@ -2,8 +2,8 @@
 // FIX: Fix comma position
 
 val x = {
-    x: Comparable<Comparable<Number>>,
-    y: String,
+        x: Comparable<Comparable<Number>>,
+        y: String,
     ->
     val a = 42
 }

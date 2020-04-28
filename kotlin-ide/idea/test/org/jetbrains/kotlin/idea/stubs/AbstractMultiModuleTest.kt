@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,12 +23,13 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -41,6 +42,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     override fun setUp() {
         super.setUp()
+        enableKotlinOfficialCodeStyle(project)
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
@@ -62,6 +64,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     override fun tearDown() {
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        disableKotlinOfficialCodeStyle(project)
         super.tearDown()
     }
 

@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 
 fun test(list: List<Int>) {
-    val filterIndexedTo: MutableList<Int> = list.asSequence().filter { it > 1 }.filterIndexedTo(mutableListOf()) { index, it -> true }
+    val filterIndexedTo: MutableList<Int> = list.asSequence().filter { it > 1 }
+        .filterIndexedTo(mutableListOf()) { index, it -> true }
 }
