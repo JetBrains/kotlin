@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -65,24 +66,24 @@ public class PluginTestCaseBase {
 
     @NotNull
     public static Sdk mockJdk() {
-        return getSdk("compiler/testData/mockJDK/jre", "Mock JDK");
+        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.8/jre", "Mock JDK");
     }
 
     @NotNull
     public static Sdk mockJdk6() {
-        return getSdk("compiler/testData/mockJDK/jre", "1.6");
+        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.8/jre", "1.6");
     }
 
     @NotNull
     public static Sdk mockJdk8() {
         // Using JDK 6, but with version 1.8
-        return getSdk("compiler/testData/mockJDK/jre", "1.8");
+        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.8/jre", "1.8");
     }
 
     @TestOnly
     @NotNull
     public static Sdk mockJdk9() {
-        return getSdk("compiler/testData/mockJDK9/jre", "9");
+        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.9/jre", "9");
     }
 
     @NotNull
