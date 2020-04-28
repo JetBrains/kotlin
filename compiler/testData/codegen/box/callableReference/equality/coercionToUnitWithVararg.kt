@@ -16,12 +16,17 @@ fun target(x: Int, vararg ys: String): Int = x + ys.size
 fun captureVararg1(fn: (Int, String) -> Unit): Any = fn
 fun captureVararg0(fn: (Int) -> Unit): Any = fn
 
+fun captureNoVararg(fn: (Int, Array<String>) -> Int): Any = fn
+fun captureNoVarargCoerced(fn: (Int, Array<String>) -> Unit): Any = fn
+
 fun box(): String {
     checkEqual(captureVararg1(::target), captureVararg1(::target))
     checkEqual(captureVararg0(::target), captureVararg0(::target))
     checkEqual(captureVararg1(::target), captureVararg1FromOtherFile())
 
     checkNotEqual(captureVararg1(::target), captureVararg0(::target))
+
+    checkNotEqual(captureNoVararg(::target), captureNoVarargCoerced(::target))
 
     return "OK"
 }

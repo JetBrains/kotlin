@@ -1,6 +1,7 @@
 // !LANGUAGE: +SuspendConversion
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR, JS_IR
+// ^ TODO fix suspend coercion for bound function references in JVM_IR
 // FILE: suspendCovnersion.kt
 
 fun checkNotEqual(x: Any, y: Any) {

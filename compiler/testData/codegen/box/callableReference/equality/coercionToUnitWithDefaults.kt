@@ -16,6 +16,7 @@ fun target(x: Int, y: String = "", z: String = ""): Int = x
 fun captureNoDefaults(fn: (Int, String, String) -> Unit): Any = fn
 fun captureOneDefault(fn: (Int, String) -> Unit): Any = fn
 fun captureAllDefaults(fn: (Int) -> Unit): Any = fn
+fun captureOneDefaultWithoutCoercionToUnit(fn: (Int, String) -> Int): Any = fn
 
 fun box(): String {
     checkEqual(captureNoDefaults(::target), captureNoDefaults(::target))
@@ -25,6 +26,8 @@ fun box(): String {
 
     checkNotEqual(captureNoDefaults(::target), captureOneDefault(::target))
     checkNotEqual(captureNoDefaults(::target), captureAllDefaults(::target))
+
+    checkNotEqual(captureOneDefault(::target), captureOneDefaultWithoutCoercionToUnit(::target))
 
     return "OK"
 }
