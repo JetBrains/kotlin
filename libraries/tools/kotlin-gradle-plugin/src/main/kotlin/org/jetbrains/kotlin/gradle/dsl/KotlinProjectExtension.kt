@@ -196,8 +196,11 @@ open class KotlinJsProjectExtension :
         "Needed for IDE import using the MPP import mechanism",
         level = DeprecationLevel.HIDDEN
     )
-    fun getTargets() =
-        target.project.container(KotlinTarget::class.java).apply { add(target) }
+    fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
+        _target?.let { target ->
+            target.project.container(KotlinTarget::class.java)
+                .apply { add(target) }
+        }
 }
 
 open class KotlinCommonProjectExtension : KotlinSingleJavaTargetExtension() {
