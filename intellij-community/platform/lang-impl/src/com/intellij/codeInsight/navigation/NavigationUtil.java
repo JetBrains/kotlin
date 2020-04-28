@@ -28,6 +28,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.NlsContexts.PopupTitle;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -63,14 +64,14 @@ public final class NavigationUtil {
   }
 
   @NotNull
-  public static JBPopup getPsiElementPopup(PsiElement @NotNull [] elements, String title) {
+  public static JBPopup getPsiElementPopup(PsiElement @NotNull [] elements, @PopupTitle String title) {
     return getPsiElementPopup(elements, new DefaultPsiElementCellRenderer(), title);
   }
 
   @NotNull
   public static JBPopup getPsiElementPopup(PsiElement @NotNull [] elements,
                                            @NotNull final PsiElementListCellRenderer<? super PsiElement> renderer,
-                                           final String title) {
+                                           @PopupTitle String title) {
     return getPsiElementPopup(elements, renderer, title, element -> {
       Navigatable descriptor = EditSourceUtil.getDescriptor(element);
       if (descriptor != null && descriptor.canNavigate()) {
@@ -83,7 +84,7 @@ public final class NavigationUtil {
   @NotNull
   public static <T extends PsiElement> JBPopup getPsiElementPopup(T @NotNull [] elements,
                                                                   @NotNull final PsiElementListCellRenderer<? super T> renderer,
-                                                                  final String title,
+                                                                  @PopupTitle String title,
                                                                   @NotNull final PsiElementProcessor<? super T> processor) {
     return getPsiElementPopup(elements, renderer, title, processor, null);
   }
@@ -91,7 +92,7 @@ public final class NavigationUtil {
   @NotNull
   public static <T extends PsiElement> JBPopup getPsiElementPopup(T @NotNull [] elements,
                                                                   @NotNull final PsiElementListCellRenderer<? super T> renderer,
-                                                                  @Nullable final String title,
+                                                                  @Nullable @PopupTitle String title,
                                                                   @NotNull final PsiElementProcessor<? super T> processor,
                                                                   @Nullable final T initialSelection) {
     assert elements.length > 0 : "Attempted to show a navigation popup with zero elements";
@@ -249,7 +250,7 @@ public final class NavigationUtil {
   }
 
   @NotNull
-  public static JBPopup getRelatedItemsPopup(final List<? extends GotoRelatedItem> items, String title) {
+  public static JBPopup getRelatedItemsPopup(final List<? extends GotoRelatedItem> items, @PopupTitle String title) {
     return getRelatedItemsPopup(items, title, false);
   }
 
@@ -260,7 +261,7 @@ public final class NavigationUtil {
    *                              {@code false} by default
    */
   @NotNull
-  public static JBPopup getRelatedItemsPopup(final List<? extends GotoRelatedItem> items, String title, boolean showContainingModules) {
+  public static JBPopup getRelatedItemsPopup(final List<? extends GotoRelatedItem> items, @PopupTitle String title, boolean showContainingModules) {
     List<Object> elements = new ArrayList<>(items.size());
     //todo[nik] move presentation logic to GotoRelatedItem class
     final Map<PsiElement, GotoRelatedItem> itemsMap = new HashMap<>();
