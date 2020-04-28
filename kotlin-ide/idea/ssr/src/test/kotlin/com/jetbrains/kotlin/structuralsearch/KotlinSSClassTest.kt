@@ -5,37 +5,33 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClass() { doTest("class A") }
 
-    fun testInterface() { doTest("interface A") }
+    fun testClassConstr() { doTest("class A(b: Int, c: String)") }
 
-    fun testDataClass() { doTest("data class A") }
+    fun testClassConstrDiffType() { doTest("class A(b: Int, c: String)") }
 
-    fun testEnumClass() { doTest("enum class A") }
+    fun testClassConstrDefaultValue() { doTest("class '_(b: Int, c: String = \"a\")") }
 
-    fun testInnerClass() { doTest("inner class B") }
+    fun testInterface() { doTest("interface '_") }
 
-    fun testSealedClass() { doTest("sealed class A") }
+    fun testDataClass() { doTest("data class '_") }
 
-    fun testClassWithAbstractModifier() { doTest("abstract class A") }
+    fun testEnumClass() { doTest("enum class '_") }
 
-    fun testClassWithOpenModifier() { doTest("open class A") }
+    fun testInnerClass() { doTest("inner class '_") }
 
-    fun testClassWithPublicModifier() { doTest("public class A") }
+    fun testSealedClass() { doTest("sealed class '_") }
 
-    fun testClassWithInternalModifier() { doTest("internal class A") }
+    fun testClassAbstractModifier() { doTest("abstract class '_") }
 
-    fun testClassWithPrivateModifier() { doTest("private class A") }
+    fun testClassOpenModifier() { doTest("open class '_") }
 
-    fun testClassWithoutAbstractModifier() { doTest("abstract class A") }
+    fun testClassPublicModifier() { doTest("public class '_") }
 
-    fun testClassWithoutOpenModifier() { doTest("open class A") }
+    fun testClassInternalModifier() { doTest("internal class '_") }
 
-    fun testClassWithoutPublicModifier() { doTest("public class A") }
+    fun testClassPrivateModifier() { doTest("private class '_") }
 
-    fun testClassWithoutInternalModifier() { doTest("internal class A") }
-
-    fun testClassWithoutPrivateModifier() { doTest("private class A") }
-
-    fun testClassWithProperty() {
+    fun testClassProperty() {
         doTest(
             """
             class '_a {
@@ -45,7 +41,7 @@ class KotlinSSClassTest : KotlinSSTest() {
         )
     }
 
-    fun testClassWithVarIdentifier() { doTest("class '_:[regex( Foo.* )]") }
+    fun testClassVarIdentifier() { doTest("class '_:[regex( Foo.* )]") }
 
     fun testTwoClasses() {
         doTest(
@@ -55,6 +51,4 @@ class KotlinSSClassTest : KotlinSSTest() {
             """
         )
     }
-
-
 }

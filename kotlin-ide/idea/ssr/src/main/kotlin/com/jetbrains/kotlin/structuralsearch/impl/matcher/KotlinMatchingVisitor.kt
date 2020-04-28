@@ -233,10 +233,43 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
+    override fun visitTypeParameter(parameter: KtTypeParameter) {
+        val other = getTreeElement<KtTypeParameter>() ?: return
+        myMatchingVisitor.result = matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
+    }
+
+    override fun visitParameter(parameter: KtParameter) {
+        val other = getTreeElement<KtParameter>() ?: return
+        myMatchingVisitor.result = matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(parameter.typeReference, other.typeReference)
+                && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
+    }
+
+    override fun visitTypeParameterList(list: KtTypeParameterList) {
+        val other = getTreeElement<KtTypeParameterList>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(
+            list.parameters.toTypedArray(), other.parameters.toTypedArray()
+        )
+    }
+
+    override fun visitParameterList(list: KtParameterList) {
+        val other = getTreeElement<KtParameterList>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(
+            list.parameters.toTypedArray(), other.parameters.toTypedArray()
+        )
+    }
+
+    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
+        val other = getTreeElement<KtPrimaryConstructor>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
+                && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
+    }
+
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
+        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor))) return
         myMatchingVisitor.result = matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
-                && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
+                && myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.matchSonsInAnyOrder(klass.body, other.body)
     }
