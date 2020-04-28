@@ -11,6 +11,8 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.externalSystem.ExternalSystemUiAware;
 import com.intellij.openapi.externalSystem.action.ExternalSystemActionUtil;
 import com.intellij.openapi.externalSystem.action.ExternalSystemViewGearAction;
@@ -56,6 +58,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.util.List;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -98,10 +101,27 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     String notificationId = "notification.group.id." + StringUtil.toLowerCase(externalSystemId.getId());
     NotificationGroup registeredGroup = NotificationGroup.findRegisteredGroup(notificationId);
     myNotificationGroup = registeredGroup != null ? registeredGroup : NotificationGroup.toolWindowGroup(notificationId, toolWindowId);
+
+    Predicate<ExternalSystemViewContributor> contributorPredicate =
+      c -> ProjectSystemId.IDE.equals(c.getSystemId()) || myExternalSystemId.equals(c.getSystemId());
     myViewContributors = Arrays.stream(ExternalSystemViewContributor.EP_NAME.getExtensions())
-                               .filter(c -> ProjectSystemId.IDE.equals(c.getSystemId()) ||
-                                            myExternalSystemId.equals(c.getSystemId()))
-                               .collect(Collectors.toList());
+      .filter(contributorPredicate)
+      .collect(Collectors.toList());
+    ExternalSystemViewContributor.EP_NAME.addExtensionPointListener(new ExtensionPointListener<ExternalSystemViewContributor>() {
+      @Override
+      public void extensionAdded(@NotNull ExternalSystemViewContributor extension, @NotNull PluginDescriptor pluginDescriptor) {
+        if (contributorPredicate.test(extension)) {
+          myViewContributors.add(extension);
+        }
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull ExternalSystemViewContributor extension, @NotNull PluginDescriptor pluginDescriptor) {
+        if (contributorPredicate.test(extension)) {
+          myViewContributors.remove(extension);
+        }
+      }
+    }, this);
 
     setName(myExternalSystemId.getReadableName() + " tool window");
   }
@@ -630,6 +650,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
   @Override
   public void dispose() {
     this.listeners.clear();
+    this.myViewContributors.clear();
     this.myStructure = null;
     this.myTree = null;
   }

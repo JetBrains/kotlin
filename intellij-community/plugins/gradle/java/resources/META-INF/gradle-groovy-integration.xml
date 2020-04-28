@@ -1,7 +1,9 @@
 <idea-plugin>
   <extensionPoints>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.resolve.contributor" interface="org.jetbrains.plugins.gradle.service.resolve.GradleMethodContextContributor"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.pluginDescriptions" interface="org.jetbrains.plugins.gradle.codeInsight.GradlePluginDescriptionsExtension"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.resolve.contributor" interface="org.jetbrains.plugins.gradle.service.resolve.GradleMethodContextContributor"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.pluginDescriptions" interface="org.jetbrains.plugins.gradle.codeInsight.GradlePluginDescriptionsExtension"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">

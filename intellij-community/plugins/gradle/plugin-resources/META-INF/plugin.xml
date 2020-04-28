@@ -22,15 +22,23 @@
   <resource-bundle>messages.GradleBundle</resource-bundle>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectResolve" interface="org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectModelContributor" interface="org.jetbrains.plugins.gradle.service.project.ProjectModelContributor"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.taskManager" interface="org.jetbrains.plugins.gradle.service.task.GradleTaskManagerExtension"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.settingsControlProvider" interface="org.jetbrains.plugins.gradle.service.settings.GradleSettingsControlProvider"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.importCustomizer" interface="org.jetbrains.plugins.gradle.service.project.GradleImportCustomizer"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.executionEnvironmentProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleExecutionEnvironmentProvider"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectResolve" interface="org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectModelContributor" interface="org.jetbrains.plugins.gradle.service.project.ProjectModelContributor"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName= "org.jetbrains.plugins.gradle.taskManager" interface="org.jetbrains.plugins.gradle.service.task.GradleTaskManagerExtension"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.settingsControlProvider" interface="org.jetbrains.plugins.gradle.service.settings.GradleSettingsControlProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.importCustomizer" interface="org.jetbrains.plugins.gradle.service.project.GradleImportCustomizer"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.executionEnvironmentProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleExecutionEnvironmentProvider"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.orderEnumerationHandlerFactory"
-                    interface="org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler$FactoryImpl"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.issueChecker" interface="org.jetbrains.plugins.gradle.issue.GradleIssueChecker"/>
+                    interface="org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler$FactoryImpl"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.issueChecker" interface="org.jetbrains.plugins.gradle.issue.GradleIssueChecker"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
@@ -140,24 +148,24 @@
 
     <action id="Gradle.RefreshDependencies" class="org.jetbrains.plugins.gradle.action.GradleRefreshProjectDependenciesAction"/>
 
-    <group>
+    <group id="Gradle.View.ActionsToolbar.LeftPanel">
       <separator/>
       <reference id="Gradle.ExecuteTask"/>
       <add-to-group group-id="ExternalSystemView.ActionsToolbar.LeftPanel"/>
     </group>
 
-    <group>
+    <group id="Gradle.View.ActionsToolbar.RightPanel">
       <reference id="Gradle.ToggleOfflineAction"/>
       <add-to-group group-id="ExternalSystemView.ActionsToolbar.RightPanel" anchor="before"
                     relative-to-action="ExternalSystem.ToggleAutoReload"/>
     </group>
 
-    <group>
+    <group id="Gradle.View.ProjectMenu">
       <reference id="Gradle.OpenProjectCompositeConfiguration"/>
       <add-to-group group-id="ExternalSystemView.ProjectMenu"/>
     </group>
 
-    <group>
+    <group id="Gradle.View.BaseProjectMenu">
       <separator/>
       <reference id="Gradle.RefreshDependencies"/>
       <separator/>
