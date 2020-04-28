@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.JarFile;
 
@@ -62,23 +64,23 @@ public final class BuildProcessClasspathManager {
       final IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
       LOG.assertTrue(plugin != null, pluginId);
 
-      final File baseFile = plugin.getPath();
-      if (baseFile.isFile()) {
-        classpath.add(baseFile.getPath());
+      Path baseFile = plugin.getPluginPath();
+      if (Files.isRegularFile(baseFile)) {
+        classpath.add(baseFile.toString());
       }
-      else if (baseFile.isDirectory()) {
+      else if (Files.isDirectory(baseFile)) {
         outer:
         for (String relativePath : StringUtil.split(serverPlugin.getClasspath(), ";")) {
-          File jarFile = new File(baseFile, "lib/" + relativePath);
-          if (jarFile.exists()) {
-            classpath.add(jarFile.getPath());
+          Path jarFile = baseFile.resolve("lib/" + relativePath);
+          if (Files.exists(jarFile)) {
+            classpath.add(jarFile.toString());
             continue;
           }
 
           // ... 'plugin run configuration': all module output are copied to 'classes' folder
-          File classesDir = new File(baseFile, "classes");
-          if (classesDir.isDirectory()) {
-            classpath.add(classesDir.getPath());
+          Path classesDir = baseFile.resolve("classes");
+          if (Files.isDirectory(classesDir)) {
+            classpath.add(classesDir.toString());
             continue;
           }
 
@@ -89,13 +91,13 @@ public final class BuildProcessClasspathManager {
             if (OLD_TO_NEW_MODULE_NAME.containsKey(moduleName)) {
               moduleName = OLD_TO_NEW_MODULE_NAME.get(moduleName);
             }
-            File baseOutputDir = baseFile.getParentFile();
-            if (baseOutputDir.getName().equals("test")) {
-              baseOutputDir = new File(baseOutputDir.getParentFile(), "production");
+            Path baseOutputDir = baseFile.getParent();
+            if (baseOutputDir.getFileName().toString().equals("test")) {
+              baseOutputDir = baseOutputDir.getParent().resolve("production");
             }
-            File moduleDir = new File(baseOutputDir, moduleName);
-            if (moduleDir.isDirectory()) {
-              classpath.add(moduleDir.getPath());
+            Path moduleDir = baseOutputDir.resolve(moduleName);
+            if (Files.isDirectory(moduleDir)) {
+              classpath.add(moduleDir.toString());
               continue;
             }
             // ... try "<plugin-dir>/lib/<jar-name>", assuming that <jar-name> is a module library committed to VCS
