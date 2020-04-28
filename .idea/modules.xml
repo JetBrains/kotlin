@@ -267,6 +267,7 @@
     <module old-name="editor-ui-ex" new-name="intellij.platform.editor.ex" />
     <module old-name="editorconfig" new-name="intellij.editorconfig" />
     <module old-name="educational-python" new-name="intellij.edu.pycharm" />
+    <module old-name="ejb-api" new-name="intellij.javaee.ejb" />
     <module old-name="ejb-impl" new-name="intellij.javaee.ejb.impl" />
     <module old-name="ejb-tests" new-name="intellij.javaee.ejb.tests" />
     <module old-name="el" new-name="intellij.javaee.el" />
@@ -405,9 +406,9 @@
     <module old-name="javac-ref-scanner-8" new-name="intellij.java.jps.javacRefScanner8" />
     <module old-name="javac2" new-name="intellij.java.compiler.antTasks" />
     <module old-name="javacvs-src" new-name="intellij.vcs.cvs.javacvs" />
-    <module old-name="javaee-api" new-name="intellij.javaee" />
+    <module old-name="javaee-api" new-name="intellij.javaee.platform" />
     <module old-name="javaee-extensions" new-name="intellij.javaee.extensions" />
-    <module old-name="javaee-impl" new-name="intellij.javaee.impl" />
+    <module old-name="javaee-impl" new-name="intellij.javaee.platform.impl" />
     <module old-name="javaee-jps-plugin" new-name="intellij.javaee.jps" />
     <module old-name="javaee-rt" new-name="intellij.javaee.rt" />
     <module old-name="javaee_oss_servers" new-name="intellij.javaee.appServers.content" />
@@ -1360,7 +1361,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/javaFX/sceneBuilder/intellij.javaFX.sceneBuilder.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/javaFX/sceneBuilder/intellij.javaFX.sceneBuilder.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/java-http-clients/intellij.javaHttpClients.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/java-http-clients/intellij.javaHttpClients.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/java-sql-apis/intellij.javaSqlApis.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/java-sql-apis/intellij.javaSqlApis.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-impl/intellij.javaee.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-impl/intellij.javaee.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-app-server-integration/intellij.javaee.app.servers.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-app-server-integration/intellij.javaee.app.servers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-app-server-integration/intellij.javaee.app.servers.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-app-server-integration/intellij.javaee.app.servers.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee_oss_servers/common/intellij.javaee.appServers.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee_oss_servers/common/intellij.javaee.appServers.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee_oss_servers/common-cloud/intellij.javaee.appServers.cloud.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee_oss_servers/common-cloud/intellij.javaee.appServers.cloud.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee_oss_servers/common-cloud-independent/intellij.javaee.appServers.cloud.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee_oss_servers/common-cloud-independent/intellij.javaee.appServers.cloud.rt.iml" />
@@ -1402,17 +1404,18 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/webSphere/webSphereClient/intellij.javaee.appServers.websphere.agent.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/webSphere/webSphereClient/intellij.javaee.appServers.websphere.agent.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/webSphere/jps-plugin/intellij.javaee.appServers.websphere.jps.iml" filepath="$PROJECT_DIR$/intellij/plugins/webSphere/jps-plugin/intellij.javaee.appServers.websphere.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/webSphere/testSource/intellij.javaee.appServers.websphere.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/webSphere/testSource/intellij.javaee.appServers.websphere.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-application/intellij.javaee.application.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-application/intellij.javaee.application.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/batch/batch-core/intellij.javaee.batch.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/batch/batch-core/intellij.javaee.batch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/bean-validation/bv-core/intellij.javaee.beanValidation.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/bean-validation/bv-core/intellij.javaee.beanValidation.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/bean-validation/bv-tests/intellij.javaee.beanValidation.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/bean-validation/bv-tests/intellij.javaee.beanValidation.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/cdi/cdi-core/intellij.javaee.cdi.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/cdi/cdi-core/intellij.javaee.cdi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/cdi/cdi-tests/intellij.javaee.cdi.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/cdi/cdi-tests/intellij.javaee.cdi.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/coverage/intellij.javaee.coverage.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/coverage/intellij.javaee.coverage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/ejb/intellij.javaee.ejb.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/ejb/intellij.javaee.ejb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/ejb/intellij.javaee.ejb.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/ejb/intellij.javaee.ejb.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/ejb/intellij.javaee.ejb.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/ejb/intellij.javaee.ejb.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/el/intellij.javaee.el.iml" filepath="$PROJECT_DIR$/intellij/plugins/el/intellij.javaee.el.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/extensions/intellij.javaee.extensions.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/extensions/intellij.javaee.extensions.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-impl/intellij.javaee.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-impl/intellij.javaee.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/jasper/intellij.javaee.jasper.v2.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/jasper/intellij.javaee.jasper.v2.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/jasper/intellij.javaee.jasper.v21.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/jasper/intellij.javaee.jasper.v21.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/jasper/intellij.javaee.jasper.v23.java8.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/jasper/intellij.javaee.jasper.v23.java8.rt.iml" />
@@ -1439,6 +1442,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/IntelliLang/intellij.javaee.langInjection.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/IntelliLang/intellij.javaee.langInjection.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/persistence/intellij.javaee.persistence.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/persistence/intellij.javaee.persistence.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/persistence/intellij.javaee.persistence.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/persistence/intellij.javaee.persistence.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-platform/javaee-impl/intellij.javaee.platform.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-platform/javaee-impl/intellij.javaee.platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-platform/javaee-impl/intellij.javaee.platform.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-platform/javaee-impl/intellij.javaee.platform.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-rt/intellij.javaee.rt.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/core/javaee-rt/intellij.javaee.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/tapestry/core/intellij.javaee.tapestry.iml" filepath="$PROJECT_DIR$/intellij/contrib/tapestry/core/intellij.javaee.tapestry.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/tapestry/tests/intellij.javaee.tapestry.tests.iml" filepath="$PROJECT_DIR$/intellij/contrib/tapestry/tests/intellij.javaee.tapestry.tests.iml" />
