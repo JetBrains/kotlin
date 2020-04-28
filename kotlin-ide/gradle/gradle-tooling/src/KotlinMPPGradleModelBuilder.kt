@@ -354,7 +354,12 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getDisambiguationClassifier = targetClass.getMethodOrNull("getDisambiguationClassifier") ?: return null
         val platformId = (getPlatformType.invoke(gradleTarget) as? Named)?.name ?: return null
         val platform = KotlinPlatform.byId(platformId) ?: return null
-        val disambiguationClassifier = getDisambiguationClassifier(gradleTarget) as? String
+        val useDisambiguationClassifier =
+            targetClass.getMethodOrNull("getUseDisambiguitionClassifierAsSourcesetNamePreffix")?.invoke(gradleTarget) as? Boolean ?: true
+        val disambiguationClassifier = if (useDisambiguationClassifier)
+            getDisambiguationClassifier(gradleTarget) as? String
+        else
+            null
         val getPreset = targetClass.getMethodOrNull("getPreset")
         val targetPresetName: String?
         targetPresetName = try {
