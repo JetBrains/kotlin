@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.extensionPointService
 import org.jetbrains.kotlin.fir.extensions.fqName
+import org.jetbrains.kotlin.fir.extensions.hasExtensions
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
@@ -28,8 +29,9 @@ class FirPluginAnnotationsResolveTransformer(private val scopeSession: ScopeSess
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val extensionPointService = file.session.extensionPointService
+        if (!extensionPointService.hasExtensions) return file.compose()
+        file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val newAnnotations = file.resolveAnnotations(extensionPointService.annotations, extensionPointService.metaAnnotations)
         if (newAnnotations.isNotEmpty()) {
             for (annotationClass in newAnnotations) {

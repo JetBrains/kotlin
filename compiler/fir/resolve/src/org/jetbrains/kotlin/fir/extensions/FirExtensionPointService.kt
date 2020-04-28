@@ -52,6 +52,7 @@ class FirExtensionPointService(
         get() = Companion
 
     fun <P : FirExtensionPoint> registerExtensions(extensionClass: KClass<P>, extensionFactories: List<FirExtensionPoint.Factory<P>>) {
+        registeredExtensionsSize += extensionFactories.size
         val extensions = extensionFactories.map { it.create(session) }
 
         val extensionsWithAllMode = mutableListOf<P>()
@@ -116,6 +117,9 @@ class FirExtensionPointService(
 
     private val extensionsWithMetaAnnotations: Multimap<AnnotationFqn, FirExtensionPoint> = createMultimap()
 
+    var registeredExtensionsSize: Int = 0
+        private set
+
     class ExtensionsAccessor<P : FirExtensionPoint>(
         private val session: FirSession,
         private val extensions: FirRegisteredExtension<P>
@@ -153,3 +157,6 @@ fun FirAnnotationCall.fqName(session: FirSession): FqName? {
     val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
     return symbol.classId.asSingleFqName()
 }
+
+val FirExtensionPointService.hasExtensions: Boolean
+    get() = registeredExtensionsSize > 0
