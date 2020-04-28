@@ -76,11 +76,11 @@ public class OptimizeImportsAction extends AnAction {
         final boolean hasChanges;
         if (moduleContext != null) {
           text = CodeInsightBundle.message("process.scope.module", moduleContext.getName());
-          hasChanges = FormatChangedTextUtil.hasChanges(moduleContext);
+          hasChanges = VcsFacade.getInstance().hasChanges(moduleContext);
         }
         else {
           text = CodeInsightBundle.message("process.scope.project", projectContext.getPresentableUrl());
-          hasChanges = FormatChangedTextUtil.hasChanges(projectContext);
+          hasChanges = VcsFacade.getInstance().hasChanges(projectContext);
         }
         Boolean isProcessVcsChangedText = isProcessVcsChangedText(project, text, hasChanges);
         if (isProcessVcsChangedText == null) {
@@ -116,7 +116,7 @@ public class OptimizeImportsAction extends AnAction {
     boolean processOnlyVcsChangedFiles = false;
     if (!ApplicationManager.getApplication().isUnitTestMode() && file == null && dir != null) {
       String message = CodeInsightBundle.message("process.scope.directory", dir.getName());
-      OptimizeImportsDialog dialog = new OptimizeImportsDialog(project, message, FormatChangedTextUtil.hasChanges(dir));
+      OptimizeImportsDialog dialog = new OptimizeImportsDialog(project, message, VcsFacade.getInstance().hasChanges(dir));
       dialog.show();
       if (!dialog.isOK()) {
         return;

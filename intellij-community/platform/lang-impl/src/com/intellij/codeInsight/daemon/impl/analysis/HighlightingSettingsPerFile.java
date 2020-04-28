@@ -2,6 +2,7 @@
 
 package com.intellij.codeInsight.daemon.impl.analysis;
 
+import com.intellij.codeInsight.actions.VcsFacade;
 import com.intellij.lang.Language;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.DumbService;
@@ -18,7 +19,6 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.messages.MessageBus;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class HighlightingSettingsPerFile extends HighlightingLevelManager implem
 
   public HighlightingSettingsPerFile(@NotNull Project project, @NotNull MessageBus bus) {
     myBus = bus;
-    vcsIgnoreFileNames = VcsUtil.getVcsIgnoreFileNames(project);
+    vcsIgnoreFileNames = VcsFacade.getInstance().getVcsIgnoreFileNames(project);
   }
 
   public static HighlightingSettingsPerFile getInstance(Project project){

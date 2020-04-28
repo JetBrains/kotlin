@@ -36,10 +36,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vcs.VcsDataKeys;
-import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeList;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.impl.VirtualFileManagerImpl;
 import com.intellij.psi.*;
@@ -51,10 +47,8 @@ import com.intellij.usages.ConfigurableUsageTarget;
 import com.intellij.usages.FindUsagesProcessPresentation;
 import com.intellij.usages.UsageView;
 import com.intellij.usages.UsageViewPresentation;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.PatternUtil;
 import com.intellij.util.Processor;
-import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -114,26 +108,10 @@ public class FindInProjectUtil {
       }
     }
 
-    if (directoryName == null && module == null && project != null) {
-      ChangeList changeList = ArrayUtil.getFirstElement(dataContext.getData(VcsDataKeys.CHANGE_LISTS));
-      if (changeList == null) {
-        Change change = ArrayUtil.getFirstElement(dataContext.getData(VcsDataKeys.CHANGES));
-        changeList = change == null ? null : ChangeListManager.getInstance(project).getChangeList(change);
-      }
-
-      if (changeList != null) {
-        String changeListName = changeList.getName();
-        DefaultSearchScopeProviders.ChangeLists changeListsScopeProvider =
-          SearchScopeProvider.EP_NAME.findExtension(DefaultSearchScopeProviders.ChangeLists.class);
-        if (changeListsScopeProvider != null) {
-          SearchScope changeListScope = ContainerUtil.find(changeListsScopeProvider.getSearchScopes(project, dataContext),
-                                                           scope -> scope.getDisplayName().equals(changeListName));
-          if (changeListScope != null) {
-            model.setCustomScope(true);
-            model.setCustomScopeName(changeListScope.getDisplayName());
-            model.setCustomScope(changeListScope);
-          }
-        }
+    if (directoryName == null) {
+      for (FindInProjectExtension extension : FindInProjectExtension.EP_NAME.getExtensionList()) {
+        boolean success = extension.initModelFromContext(model, dataContext);
+        if (success) break;
       }
     }
 

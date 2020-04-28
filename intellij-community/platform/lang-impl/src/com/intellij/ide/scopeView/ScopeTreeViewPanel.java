@@ -29,6 +29,8 @@ import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.module.Module;
@@ -41,7 +43,6 @@ import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vcs.FileStatusListener;
 import com.intellij.openapi.vcs.FileStatusManager;
-import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -65,6 +66,7 @@ import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.UiNotifyConnector;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.ApiStatus;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,8 +80,10 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Set;
 
 /**
  * @deprecated This class is no longer used in IntelliJ IDEA and will be removed. The Scope view is implemented via the ScopeViewPane class.
@@ -171,8 +175,7 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
     PsiManager.getInstance(myProject).addPsiTreeChangeListener(myPsiTreeChangeAdapter);
     connection.subscribe(ProblemListener.TOPIC, new MyProblemListener());
-    connection.subscribe(ChangeListListener.TOPIC, new MyChangesListListener());
-    FileStatusManager.getInstance(myProject).addFileStatusListener(myFileStatusListener, myProject);
+    FileStatusManager.getInstance(myProject).addFileStatusListener(myFileStatusListener, this);
   }
 
   @Override
@@ -873,59 +876,6 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
 
   private boolean isTreeShowing() {
     return myTree.isShowing() || ApplicationManager.getApplication().isUnitTestMode();
-  }
-
-  private class MyChangesListListener extends ChangeListAdapter {
-    @Override
-    public void changeListAdded(ChangeList list) {
-      fireListeners(list, null);
-    }
-
-    @Override
-    public void changeListRemoved(ChangeList list) {
-      fireListeners(list, null);
-    }
-
-    @Override
-    public void changeListRenamed(ChangeList list, String oldName) {
-      fireListeners(list, oldName);
-    }
-
-    private void fireListeners(ChangeList list, @Nullable String oldName) {
-      AbstractProjectViewPane pane = ProjectView.getInstance(myProject).getCurrentProjectViewPane();
-      if (pane == null || !ScopeViewPane.ID.equals(pane.getId())) {
-        return;
-      }
-      final String subId = pane.getSubId();
-      if (!list.getName().equals(subId) && (oldName == null || !oldName.equals(subId))) {
-        return;
-      }
-      ApplicationManager.getApplication().invokeLater(() -> myDependencyValidationManager.fireScopeListeners(), myProject.getDisposed());
-    }
-
-    @Override
-    public void changesRemoved(Collection<Change> changes, ChangeList fromList) {
-      final String name = fromList.getName();
-      final Set<VirtualFile> files = new HashSet<>();
-      collectFiles(changes, files);
-      for (VirtualFile file : files) {
-        removeNode(file, name);
-      }
-    }
-
-    @Override
-    public void changesAdded(Collection<Change> changes, ChangeList toList) {
-      final String name = toList.getName();
-      final Set<VirtualFile> files = new HashSet<>();
-      collectFiles(changes, files);
-      for (VirtualFile file : files) {
-        addNode(file, name);
-      }
-    }
-
-    private void collectFiles(Collection<? extends Change> changes, Set<? super VirtualFile> files) {
-      ChangesUtil.getAfterRevisionsFiles(changes.stream()).forEach(files::add);
-    }
   }
 
   private class SortingExpandListener implements TreeWillExpandListener {

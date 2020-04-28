@@ -88,6 +88,7 @@ public final class AnalyzeStacktraceUtil {
     ConsoleViewUtil.enableReplaceActionForConsoleViewEditor(console.getEditor());
     console.getEditor().getSettings().setCaretRowShown(true);
     toolbarActions.add(ActionManager.getInstance().getAction("AnalyzeStacktraceToolbar"));
+
     RunContentManager.getInstance(project).showRunContent(executor, descriptor);
     consoleView.allowHeavyFilters();
     if (consoleFactory == null) {

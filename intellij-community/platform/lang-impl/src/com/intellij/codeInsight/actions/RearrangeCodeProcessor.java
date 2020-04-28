@@ -108,7 +108,7 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
     }
 
     if (processChangedTextOnly) {
-      return FormatChangedTextUtil.getInstance().getChangedTextRanges(myProject, file);
+      return VcsFacade.getInstance().getChangedTextRanges(myProject, file);
     }
 
     return new SmartList<>(file.getTextRange());

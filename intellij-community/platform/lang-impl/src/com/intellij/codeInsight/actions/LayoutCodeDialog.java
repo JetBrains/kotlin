@@ -9,14 +9,12 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.arrangement.Rearranger;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public class LayoutCodeDialog extends DialogWrapper {
-  private final Project myProject;
   private final PsiFile myFile;
   private final boolean myTextSelected;
   private final String myHelpId;
@@ -37,7 +35,6 @@ public class LayoutCodeDialog extends DialogWrapper {
   public LayoutCodeDialog(@NotNull Project project, @NotNull PsiFile file, boolean textSelected, String helpId) {
     super(project, true);
     myFile = file;
-    myProject = project;
     myTextSelected = textSelected;
     myHelpId = helpId;
 
@@ -65,7 +62,7 @@ public class LayoutCodeDialog extends DialogWrapper {
       mySelectedTextRadioButton.setToolTipText(CodeInsightBundle.message("tooltip.no.text.selected.in.editor"));
     }
 
-    final boolean fileHasChanges = FormatChangedTextUtil.hasChanges(myFile);
+    final boolean fileHasChanges = VcsFacade.getInstance().hasChanges(myFile);
     if (myFile.getVirtualFile() instanceof LightVirtualFile) {
       myOnlyVCSChangedTextRb.setVisible(false);
     }
@@ -113,10 +110,10 @@ public class LayoutCodeDialog extends DialogWrapper {
 
   @Nullable
   private String getChangesNotAvailableHint() {
-    if (!VcsUtil.isFileUnderVcs(myProject, VcsUtil.getFilePath(myFile.getVirtualFile()))) {
+    if (!VcsFacade.getInstance().isFileUnderVcs(myFile)) {
       return "File not under VCS root";
     }
-    else if (!FormatChangedTextUtil.hasChanges(myFile)) {
+    else if (!VcsFacade.getInstance().hasChanges(myFile)) {
       return "File was not changed since last revision";
     }
     return null;

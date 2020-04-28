@@ -64,8 +64,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.vcs.*;
-import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
@@ -81,7 +79,6 @@ import com.intellij.util.ThreeState;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -402,8 +399,11 @@ public final class DaemonListeners implements Disposable {
     if (file instanceof PsiCodeFragment) return true;
     if (ScratchUtil.isScratch(virtualFile)) return listeners.canUndo(virtualFile);
     if (!ModuleUtilCore.projectContainsFile(project, virtualFile, false)) return false;
-    ThreeState vcs = listeners.mayChangeBasedOnVcsStatus(virtualFile);
-    if (vcs != ThreeState.UNSURE) return vcs.toBoolean();
+
+    for (SilentChangeVetoer extension : SilentChangeVetoer.EP_NAME.getExtensionList()) {
+      ThreeState result = extension.canChangeFileSilently(project, virtualFile);
+      if (result != ThreeState.UNSURE) return result.toBoolean();
+    }
 
     return listeners.canUndo(virtualFile);
   }
@@ -421,26 +421,6 @@ public final class DaemonListeners implements Disposable {
       }
     }
     return false;
-  }
-
-  @NotNull
-  private ThreeState mayChangeBasedOnVcsStatus(@NotNull VirtualFile virtualFile) {
-    AbstractVcs activeVcs = ProjectLevelVcsManager.getInstance(myProject).getVcsFor(virtualFile);
-    if (activeVcs == null) return ThreeState.UNSURE;
-
-    FilePath path = VcsUtil.getFilePath(virtualFile);
-    boolean vcsIsThinking = !VcsDirtyScopeManager.getInstance(myProject).whatFilesDirty(Collections.singletonList(path)).isEmpty();
-    if (vcsIsThinking) return ThreeState.UNSURE; // do not modify file which is in the process of updating
-
-    FileStatus status = FileStatusManager.getInstance(myProject).getStatus(virtualFile);
-    if (status == FileStatus.UNKNOWN) return ThreeState.UNSURE;
-    if (status == FileStatus.MERGE ||
-        status == FileStatus.MERGED_WITH_CONFLICTS ||
-        status == FileStatus.MERGED_WITH_BOTH_CONFLICTS ||
-        status == FileStatus.MERGED_WITH_PROPERTY_CONFLICTS) {
-      return ThreeState.NO;
-    }
-    return ThreeState.fromBoolean(status != FileStatus.NOT_CHANGED);
   }
 
   private class MyApplicationListener implements ApplicationListener {

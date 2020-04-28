@@ -42,7 +42,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.FileStatusManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.*;
@@ -1284,7 +1284,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
   @NotNull
   private static String getVcsStatus(Project project, VirtualFile file) {
-    FileStatus status = ChangeListManager.getInstance(project).getStatus(file);
+    FileStatus status = FileStatusManager.getInstance(project).getStatus(file);
     return status != FileStatus.NOT_CHANGED ?
            "<p><span class='grayed'>VCS Status:</span> <span color='" + ColorUtil.toHex(status.getColor()) + "'>" + status.getText() + "</span>" :
            "";

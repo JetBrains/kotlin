@@ -5,8 +5,12 @@ package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -55,5 +59,13 @@ public class OtherScopeItemPresenter implements ModelScopeItemPresenter {
     }
 
     return 0;
+  }
+
+  @Override
+  public @Nullable ModelScopeItem tryCreate(@NotNull Project project,
+                                            @NotNull AnalysisScope scope,
+                                            @Nullable Module module,
+                                            @Nullable PsiElement context) {
+    return OtherScopeItem.tryCreate(scope);
   }
 }

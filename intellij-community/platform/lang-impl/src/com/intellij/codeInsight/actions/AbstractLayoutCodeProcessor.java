@@ -252,7 +252,7 @@ public abstract class AbstractLayoutCodeProcessor {
   @NotNull
   private List<PsiFile> getChangedFilesFromContext() {
     List<PsiDirectory> dirs = getAllSearchableDirsFromContext();
-    return FormatChangedTextUtil.getChangedFilesFromDirs(myProject, dirs);
+    return VcsFacade.getInstance().getChangedFilesFromDirs(myProject, dirs);
   }
 
   private List<PsiDirectory> getAllSearchableDirsFromContext() {

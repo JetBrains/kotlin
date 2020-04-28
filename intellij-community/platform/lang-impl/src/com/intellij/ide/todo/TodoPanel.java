@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.impl.VisibilityWatcher;
 import com.intellij.psi.PsiDocumentManager;
@@ -62,7 +61,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavigator, DataProvider, Disposable {
+public abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavigator, DataProvider, Disposable {
   protected static final Logger LOG = Logger.getInstance(TodoPanel.class);
 
   protected Project myProject;
@@ -741,7 +740,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
   private final class MyPreviewAction extends ToggleAction {
 
     MyPreviewAction() {
-      super(VcsBundle.messagePointer("action.ToggleAction.text.preview.source"), Presentation.NULL_STRING, AllIcons.Actions.PreviewDetails);
+      super(IdeBundle.messagePointer("todo.panel.preview.source.action.text"), Presentation.NULL_STRING, AllIcons.Actions.PreviewDetails);
     }
 
     @Override

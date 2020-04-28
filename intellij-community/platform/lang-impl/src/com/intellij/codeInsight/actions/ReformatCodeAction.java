@@ -128,7 +128,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
       processingScope = TextRangeType.SELECTED_TEXT;
     }
     else if (processingScope == TextRangeType.VCS_CHANGED_TEXT) {
-      if (FormatChangedTextUtil.getInstance().isChangeNotTrackedForFile(project, file)) {
+      if (VcsFacade.getInstance().isChangeNotTrackedForFile(project, file)) {
         processingScope = TextRangeType.WHOLE_FILE;
       }
     }
@@ -147,7 +147,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
       project,
       CodeInsightBundle.message("process.reformat.code"),
       CodeInsightBundle.message("process.scope.directory", dir.getVirtualFile().getPath()),
-      FormatChangedTextUtil.hasChanges(dir)
+      VcsFacade.getInstance().hasChanges(dir)
     );
 
     boolean enableIncludeDirectoriesCb = dir.getSubdirectories().length > 0;
@@ -334,8 +334,8 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
     final String text = module != null ? CodeInsightBundle.message("process.scope.module", module.getModuleFilePath())
                                        : CodeInsightBundle.message("process.scope.project", project.getPresentableUrl());
 
-    final boolean enableOnlyVCSChangedRegions = module != null ? FormatChangedTextUtil.hasChanges(module)
-                                                               : FormatChangedTextUtil.hasChanges(project);
+    final boolean enableOnlyVCSChangedRegions = module != null ? VcsFacade.getInstance().hasChanges(module)
+                                                               : VcsFacade.getInstance().hasChanges(project);
 
     LayoutProjectCodeDialog dialog =
       new LayoutProjectCodeDialog(project, CodeInsightBundle.message("process.reformat.code"), text, enableOnlyVCSChangedRegions);

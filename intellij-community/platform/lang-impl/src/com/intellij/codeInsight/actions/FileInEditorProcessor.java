@@ -95,7 +95,7 @@ public class FileInEditorProcessor {
       myProcessor = new OptimizeImportsProcessor(myProject, myFile);
     }
 
-    if (myProcessChangesTextOnly && !FormatChangedTextUtil.hasChanges(myFile)) {
+    if (myProcessChangesTextOnly && !VcsFacade.getInstance().hasChanges(myFile)) {
       myNoChangesDetected = true;
     }
 

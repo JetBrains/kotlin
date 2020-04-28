@@ -47,7 +47,7 @@ public class ReformatFilesDialog extends DialogWrapper implements ReformatFilesO
     super(project, true);
     myLastRunSettings = new LastRunReformatCodeOptionsProvider(PropertiesComponent.getInstance());
 
-    boolean canTargetVcsChanges = FormatChangedTextUtil.hasChanges(files, project);
+    boolean canTargetVcsChanges = VcsFacade.getInstance().hasChanges(files, project);
     myOnlyChangedText.setEnabled(canTargetVcsChanges);
     myOnlyChangedText.setSelected(canTargetVcsChanges && myLastRunSettings.getLastTextRangeType() == VCS_CHANGED_TEXT);
     myOptimizeImports.setSelected(myLastRunSettings.getLastOptimizeImports());

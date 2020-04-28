@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class BaseAnalysisActionDialog extends DialogWrapper {
@@ -67,11 +65,9 @@ public class BaseAnalysisActionDialog extends DialogWrapper {
                                                    @NotNull AnalysisScope scope,
                                                    @Nullable Module module,
                                                    @Nullable PsiElement context) {
-    return Stream.of(new ProjectScopeItem(project),
-                     new CustomScopeItem(project, context),
-                     VcsScopeItem.createIfHasVCS(project),
-                     ModuleScopeItem.tryCreate(module),
-                     OtherScopeItem.tryCreate(scope)).filter(x -> x != null).collect(Collectors.toList());
+    return ContainerUtil.mapNotNull(
+      ModelScopeItemPresenter.EP_NAME.getExtensionList(),
+      presenter -> presenter.tryCreate(project, scope, module, context));
   }
 
   public BaseAnalysisActionDialog(@NotNull String title,

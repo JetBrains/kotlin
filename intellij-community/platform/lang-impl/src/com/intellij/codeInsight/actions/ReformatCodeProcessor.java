@@ -102,7 +102,7 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
 
         EditorScrollingPositionKeeper.perform(document, true, () -> {
           if (processChangedTextOnly) {
-            ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(fileToProcess);
+            ChangedRangesInfo info = VcsFacade.getInstance().getChangedRangesInfo(fileToProcess);
             if (info != null) {
               assertFileIsValid(fileToProcess);
               CodeStyleManager.getInstance(myProject).reformatTextWithContext(fileToProcess, info);
@@ -155,7 +155,7 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
 
   private void prepareUserNotificationMessage(@NotNull Document document, @NotNull CharSequence before) {
     LOG.assertTrue(getInfoCollector() != null);
-    int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, before);
+    int number = VcsFacade.getInstance().calculateChangedLinesNumber(document, before);
     if (number > 0) {
       String message = "formatted " + number + " line" + (number > 1 ? "s" : "");
       getInfoCollector().setReformatCodeNotification(message);

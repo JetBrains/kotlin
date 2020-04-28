@@ -7,7 +7,11 @@ import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.ModelScopeItemView;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -27,6 +31,14 @@ public interface ModelScopeItemPresenter {
   List<JComponent> getAdditionalComponents(JRadioButton button, ModelScopeItem model, Disposable dialogDisposable);
 
   boolean isApplicable(ModelScopeItem model);
+
+  @Nullable
+  default ModelScopeItem tryCreate(@NotNull Project project,
+                                   @NotNull AnalysisScope scope,
+                                   @Nullable Module module,
+                                   @Nullable PsiElement context) {
+    return null;
+  }
 
   @NotNull
   static List<ModelScopeItemView> createOrderedViews(List<? extends ModelScopeItem> models, Disposable dialogDisposable) {

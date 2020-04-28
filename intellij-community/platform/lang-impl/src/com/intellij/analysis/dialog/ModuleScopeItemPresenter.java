@@ -6,7 +6,11 @@ package com.intellij.analysis.dialog;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -37,5 +41,13 @@ public class ModuleScopeItemPresenter implements ModelScopeItemPresenter {
   @Override
   public boolean isApplicable(ModelScopeItem model) {
     return model instanceof ModuleScopeItem;
+  }
+
+  @Override
+  public @Nullable ModelScopeItem tryCreate(@NotNull Project project,
+                                            @NotNull AnalysisScope scope,
+                                            @Nullable Module module,
+                                            @Nullable PsiElement context) {
+    return ModuleScopeItem.tryCreate(module);
   }
 }
