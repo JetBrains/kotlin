@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cli
 
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.Companion.predefinedTargets
 
 internal object NativeTargetsOptionType : OptionType<List<KonanTarget>>("targets", "Comma-separated list of hardware targets") {
-    private val hostManager = HostManager()
-
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<List<KonanTarget>> {
         val targetNames = rawValue.split(',')
         if (targetNames.isEmpty()) onError("No hardware targets specified: $rawValue")
 
-        val targets = targetNames.mapTo(HashSet<KonanTarget>()) { targetName ->
-            hostManager.targets[targetName] ?: onError("Unknown hardware target: $targetName")
+        val targets = targetNames.mapTo(HashSet()) { targetName ->
+            predefinedTargets[targetName] ?: onError("Unknown hardware target: $targetName")
         }.toList()
 
         return Option(this, targets)

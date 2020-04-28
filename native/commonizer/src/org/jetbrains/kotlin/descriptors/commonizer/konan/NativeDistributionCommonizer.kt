@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVe
 import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
@@ -80,17 +81,19 @@ class NativeDistributionCommonizer(
         val stdlib = loadLibrary(stdlibPath)
 
         return targets.associate { target ->
-            val platformLibsPath = repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-                .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
-                .resolve(target.name)
+            val inputTarget = InputTarget(target.name, target)
 
-            val platformLibs = platformLibsPath.takeIf { it.isDirectory }
+            val platformLibs = inputTarget.platformLibrariesSource
+                .takeIf { it.isDirectory }
                 ?.listFiles()
                 ?.takeIf { it.isNotEmpty() }
                 ?.map { loadLibrary(it) }
-                ?: logger.fatal("no platform libraries found for target $target in $platformLibsPath")
+                .orEmpty()
 
-            InputTarget(target.name, target) to NativeDistributionLibraries(stdlib, platformLibs)
+            if (platformLibs.isEmpty())
+                logger.warning("no platform libraries found for target $target, this target will be excluded from commonization")
+
+            inputTarget to NativeDistributionLibraries(stdlib, platformLibs)
         }
     }
 
@@ -119,15 +122,18 @@ class NativeDistributionCommonizer(
         return library
     }
 
-    private fun commonize(librariesByTargets: Map<InputTarget, NativeDistributionLibraries>): CommonizationPerformed {
+    private fun commonize(librariesByTargets: Map<InputTarget, NativeDistributionLibraries>): Result {
         val statsCollector = if (withStats) NativeStatsCollector(targets, destination) else null
         statsCollector.use {
             val parameters = Parameters(statsCollector).apply {
                 librariesByTargets.forEach { (target, libraries) ->
+                    if (libraries.platformLibs.isEmpty()) return@forEach
+
                     val provider = NativeDistributionModulesProvider(
                         storageManager = LockBasedStorageManager("Target $target"),
                         libraries = libraries
                     )
+
                     addTarget(
                         TargetProvider(
                             target = target,
@@ -139,20 +145,53 @@ class NativeDistributionCommonizer(
                 }
             }
 
-            val result = runCommonization(parameters)
-            return when (result) {
-                is NothingToCommonize -> logger.fatal("too few targets specified: ${librariesByTargets.keys}")
-                is CommonizationPerformed -> result
-            }
+            return runCommonization(parameters)
         }
     }
 
     private fun saveModules(
         originalLibrariesByTargets: Map<InputTarget, NativeDistributionLibraries>,
-        result: CommonizationPerformed
+        result: Result
     ) {
         // optimization: stdlib and endorsed libraries effectively remain the same across all Kotlin/Native targets,
         // so they can be just copied to the new destination without running serializer
+        copyCommonStandardLibraries()
+
+        when (result) {
+            is NothingToCommonize -> {
+                // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
+                // In such case commonizer will do nothing and return a special result value 'NothingToCommonize'.
+                // So, let's just copy platform libraries from those target where they are to the new destination.
+                originalLibrariesByTargets.keys.forEach(::copyTargetAsIs)
+            }
+
+            is CommonizationPerformed -> {
+                val serializer = KlibMetadataMonolithicSerializer(
+                    languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+                    metadataVersion = KlibMetadataVersion.INSTANCE,
+                    skipExpects = false
+                )
+
+                // 'targetsToCopy' are some targets with empty set of platform libraries
+                val targetsToCopy = originalLibrariesByTargets.keys - result.concreteTargets
+                targetsToCopy.forEach(::copyTargetAsIs)
+
+                val targetsToSerialize = result.concreteTargets + result.commonTarget
+                targetsToSerialize.forEach { target ->
+                    val newModules = result.modulesByTargets.getValue(target)
+
+                    val manifestProvider = when (target) {
+                        is InputTarget -> originalLibrariesByTargets.getValue(target)
+                        is OutputTarget -> CommonNativeManifestDataProvider(originalLibrariesByTargets.values)
+                    }
+
+                    serializeTarget(target, newModules, manifestProvider, serializer)
+                }
+            }
+        }
+    }
+
+    private fun copyCommonStandardLibraries() {
         if (copyStdlib || copyEndorsedLibs) {
             repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
                 .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
@@ -168,50 +207,38 @@ class NativeDistributionCommonizer(
                     libraryOrigin.copyRecursively(libraryDestination)
                 }
         }
+    }
 
-        val commonManifestProvider = CommonNativeManifestDataProvider(originalLibrariesByTargets.values)
+    private fun copyTargetAsIs(target: InputTarget) {
+        val librariesDestination = target.librariesDestination
+        librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
-        val serializer = KlibMetadataMonolithicSerializer(
-            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = KlibMetadataVersion.INSTANCE,
-            skipExpects = false
-        )
+        val librariesSource = target.platformLibrariesSource
+        if (librariesSource.isDirectory) librariesSource.copyRecursively(librariesDestination)
+    }
 
-        fun serializeTarget(target: Target) {
-            val libsDestination: File
-            val manifestProvider: NativeManifestDataProvider
+    private fun serializeTarget(
+        target: Target,
+        newModules: Collection<ModuleDescriptor>,
+        manifestProvider: NativeManifestDataProvider,
+        serializer: KlibMetadataMonolithicSerializer
+    ) {
+        val librariesDestination = target.librariesDestination
 
-            when (target) {
-                is InputTarget -> {
-                    libsDestination = destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(target.konanTarget!!.name)
-                    manifestProvider = originalLibrariesByTargets.getValue(target)
-                }
-                is OutputTarget -> {
-                    libsDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-                    manifestProvider = commonManifestProvider
-                }
-            }
+        for (newModule in newModules) {
+            val libraryName = newModule.name
 
-            val newModules = result.modulesByTargets.getValue(target)
+            if (!shouldBeSerialized(libraryName))
+                continue
 
-            for (newModule in newModules) {
-                val libraryName = newModule.name
+            val metadata = serializer.serializeModule(newModule)
+            val plainName = libraryName.asString().removePrefix("<").removeSuffix(">")
 
-                if (!shouldBeSerialized(libraryName))
-                    continue
+            val manifestData = manifestProvider.getManifest(plainName)
+            val libraryDestination = librariesDestination.resolve(plainName)
 
-                val metadata = serializer.serializeModule(newModule)
-                val plainName = libraryName.asString().removePrefix("<").removeSuffix(">")
-
-                val manifestData = manifestProvider.getManifest(plainName)
-                val libraryDestination = libsDestination.resolve(plainName)
-
-                writeLibrary(metadata, manifestData, libraryDestination)
-            }
+            writeLibrary(metadata, manifestData, libraryDestination)
         }
-
-        result.concreteTargets.forEach(::serializeTarget)
-        result.commonTarget.let(::serializeTarget)
     }
 
     private fun writeLibrary(
@@ -232,6 +259,17 @@ class NativeDistributionCommonizer(
         manifestData.applyTo(library.base as BaseWriterImpl)
         library.commit()
     }
+
+    private val InputTarget.platformLibrariesSource: File
+        get() = repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
+            .resolve(name)
+
+    private val Target.librariesDestination: File
+        get() = when (this) {
+            is InputTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
+            is OutputTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+        }
 
     private companion object {
         fun shouldBeSerialized(libraryName: Name) =
