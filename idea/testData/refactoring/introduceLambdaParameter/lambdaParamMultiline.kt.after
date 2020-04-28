@@ -7,7 +7,7 @@ fun foo(a: Int, s: String, i: (Int) -> Int): Int {
 fun test() {
     foo(1, "2") { a ->
         a
-                .plus(1)
-                .plus(2)
+            .plus(1)
+            .plus(2)
     }
 }

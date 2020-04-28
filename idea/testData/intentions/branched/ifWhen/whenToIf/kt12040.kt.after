@@ -1,7 +1,8 @@
 fun foo(a: Int) {
     if (a
-            // some comment
-            == 0) bar(a)
+        // some comment
+        == 0
+    ) bar(a)
 
     // another comment
     else if (a == 1) bar(a)

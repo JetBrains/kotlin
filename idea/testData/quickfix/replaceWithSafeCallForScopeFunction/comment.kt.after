@@ -2,8 +2,8 @@
 // WITH_RUNTIME
 fun foo(a: String?) {
     val b = a // comment1
-            // comment2
-            ?.let {
-                it.length
-            }
+        // comment2
+        ?.let {
+            it.length
+        }
 }

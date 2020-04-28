@@ -3,8 +3,8 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().flatMap{}.filter{}.mapIndexedTo(){}'"
 fun foo(list: List<String>, target: MutableCollection<Int>) {
     <caret>list
-            .asSequence()
-            .flatMap { it.indices.asSequence() }
-            .filter { it != 10 }
-            .mapIndexedTo(target) { i, j -> i + j }
+        .asSequence()
+        .flatMap { it.indices.asSequence() }
+        .filter { it != 10 }
+        .mapIndexedTo(target) { i, j -> i + j }
 }

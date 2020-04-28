@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().flatMapTo(){}'"
 fun foo(list: List<String>, target: MutableList<String>) {
     <caret>list
-            .asSequence()
-            .flatMapTo(target) { it.lines().asSequence() }
+        .asSequence()
+        .flatMapTo(target) { it.lines().asSequence() }
 }

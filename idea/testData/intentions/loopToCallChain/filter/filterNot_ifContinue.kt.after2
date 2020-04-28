@@ -3,8 +3,8 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterNot{}.map{}.firstOrNull()'"
 fun foo(list: List<String>): Int? {
     <caret>return list
-            .asSequence()
-            .filterNot { it.isEmpty() }
-            .map { it.length }
-            .firstOrNull()
+        .asSequence()
+        .filterNot { it.isEmpty() }
+        .map { it.length }
+        .firstOrNull()
 }

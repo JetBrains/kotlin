@@ -36,9 +36,9 @@ internal class CustomerBuilder {
 object User {
     fun main() {
         val customer = CustomerBuilder()
-                .WithFirstName("Homer")
-                .WithLastName("Simpson")
-                .Build()
+            .WithFirstName("Homer")
+            .WithLastName("Simpson")
+            .Build()
         println(customer.firstName)
         println(customer.lastName)
     }

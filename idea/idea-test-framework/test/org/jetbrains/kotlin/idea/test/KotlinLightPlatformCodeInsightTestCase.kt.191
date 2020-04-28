@@ -15,4 +15,13 @@ abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsight
     protected inline val project_: Project get() = LightPlatformTestCase.getProject()
     protected inline val editor_: Editor get() = LightPlatformCodeInsightTestCase.getEditor()
 
+    override fun setUp() {
+        super.setUp()
+        enableKotlinOfficialCodeStyle(project_)
+    }
+
+    override fun tearDown() {
+        disableKotlinOfficialCodeStyle(project_)
+        super.tearDown()
+    }
 }

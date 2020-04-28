@@ -2,6 +2,6 @@
 
 fun test() {
     foo@ while (true) {
-        <caret>continue@foo
+        continue@<caret>foo
     }
 }

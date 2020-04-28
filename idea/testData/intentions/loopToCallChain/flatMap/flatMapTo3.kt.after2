@@ -4,8 +4,8 @@
 fun foo(list: List<String>): List<String> {
     val target = createCollection()
     <caret>list
-            .asSequence()
-            .flatMapTo(target) { it.lines().asSequence() }
+        .asSequence()
+        .flatMapTo(target) { it.lines().asSequence() }
     return target
 }
 

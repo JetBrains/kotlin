@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().map{}.forEachIndexed{}'"
 fun foo(list: List<String>) {
     list
-            .asSequence()
-            .map { it.substring(1) }
-            .forEachIndexed { index, s1 -> println(s1.hashCode() * index) }
+        .asSequence()
+        .map { it.substring(1) }
+        .forEachIndexed { index, s1 -> println(s1.hashCode() * index) }
 }

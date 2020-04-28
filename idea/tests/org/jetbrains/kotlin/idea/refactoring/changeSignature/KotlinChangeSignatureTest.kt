@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
 import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
@@ -62,18 +63,23 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
+    override fun setUp() {
+        super.setUp()
+        CodeStyle.getSettings(project).clearCodeStyleSettings()
+    }
+
     override fun tearDown() {
         files = emptyList()
         psiFiles = PsiFile.EMPTY_ARRAY
         super.tearDown()
     }
 
-    lateinit var files: List<String>
-    lateinit var psiFiles: Array<PsiFile>
+    private lateinit var files: List<String>
+    private lateinit var psiFiles: Array<PsiFile>
 
     private fun findCallers(method: PsiMethod): LinkedHashSet<PsiMethod> {
-        val root = KotlinMethodNode(method, HashSet(), project, Runnable { })
-        return (0..root.childCount - 1).flatMapTo(LinkedHashSet<PsiMethod>()) {
+        val root = KotlinMethodNode(method, HashSet(), project) { }
+        return (0 until root.childCount).flatMapTo(LinkedHashSet<PsiMethod>()) {
             (root.getChildAt(it) as KotlinMethodNode).member.toLightMethods()
         }
     }
@@ -83,7 +89,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         var i = 0
         indexLoop@ while (true) {
             for (extension in EXTENSIONS) {
-                val extraFileName = getTestName(false) + "Before" + (if (i > 0) "." + i else "") + extension
+                val extraFileName = getTestName(false) + "Before" + (if (i > 0) ".$i" else "") + extension
                 val extraFile = File(testDataPath + extraFileName)
                 if (extraFile.exists()) {
                     fileList.add(extraFileName)
@@ -159,7 +165,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         val project = method.project
 
         var newName = method.name
-        var newReturnType = method.returnType ?: PsiType.VOID
+        var newReturnType: PsiType = method.returnType ?: PsiType.VOID
         val newParameters = ArrayList<ParameterInfoImpl>()
         val parameterPropagationTargets = LinkedHashSet<PsiMethod>()
 
@@ -343,7 +349,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testGenericFunctions() {
-        doTest() {
+        doTest {
             newVisibility = Visibilities.PUBLIC
 
             newParameters[0].name = "_x1"
@@ -618,9 +624,10 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testFqNameShortening() {
         doTest {
-            val newParameter = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", KotlinTypeInfo(false, BUILT_INS.anyType)).apply {
-                currentTypeInfo = KotlinTypeInfo(false, null, "kotlin.String")
-            }
+            val newParameter =
+                KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", KotlinTypeInfo(false, BUILT_INS.anyType)).apply {
+                    currentTypeInfo = KotlinTypeInfo(false, null, "kotlin.String")
+                }
             addParameter(newParameter)
         }
     }
@@ -936,7 +943,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         doTest { newParameters[1].name = "b" }
     }
 
-    fun testConvertParameterToReceiverAddParens() {
+    fun testConvertParameterToReceiverAddParents() {
         doTest { receiverParameterInfo = newParameters[0] }
     }
 
@@ -1126,7 +1133,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 )
             )
 
-            primaryPropagationTargets = listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
+            primaryPropagationTargets =
+                listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
         }
     }
 
@@ -1144,7 +1152,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 )
             )
 
-            primaryPropagationTargets = listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
+            primaryPropagationTargets =
+                listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
         }
     }
 
@@ -1182,7 +1191,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 )
             )
 
-            primaryPropagationTargets = listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
+            primaryPropagationTargets =
+                listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
         }
     }
 
@@ -1491,7 +1501,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testReturnTypeViaCodeFragment() {
         doTest {
             newName = "bar"
-            newReturnTypeInfo = resolveType("A<T, U>", true, true)
+            newReturnTypeInfo = resolveType("A<T, U>", isCovariant = true, forPreview = true)
         }
     }
 

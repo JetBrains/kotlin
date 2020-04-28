@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.test.findFileWithCaret
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -43,7 +43,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
         val inspections = parseInspectionsToEnable(virtualFile.path, actionFileText).toTypedArray()
         enableInspectionTools(*inspections)
 
-        CommandProcessor.getInstance().executeCommand(project, {
+        project.executeCommand("") {
             var expectedErrorMessage = ""
             try {
                 val actionHint = ActionHint.parse(actionFile, actionFileText)
@@ -51,15 +51,24 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
                 val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                expectedErrorMessage = InTextDirectivesUtils.findListWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ")
-                    .joinToString(separator = "\n")
+                expectedErrorMessage = InTextDirectivesUtils.findListWithPrefixes(
+                    actionFileText,
+                    "// SHOULD_FAIL_WITH: "
+                ).joinToString(separator = "\n")
 
                 TypeAccessibilityChecker.testLog = StringBuilder()
                 val log = try {
                     AbstractQuickFixMultiFileTest.doAction(
-                        text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
+                        text,
+                        file,
+                        editor,
+                        actionShouldBeAvailable,
+                        actionFileName,
+                        this::availableActions,
+                        this::doHighlighting,
                         InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
                     )
+
                     TypeAccessibilityChecker.testLog.toString()
                 } finally {
                     TypeAccessibilityChecker.testLog = null
@@ -94,7 +103,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                     compareToExpected(dirPath)
                 }
             }
-        }, "", "")
+        }
     }
 
     private fun compareToExpected(directory: String) {

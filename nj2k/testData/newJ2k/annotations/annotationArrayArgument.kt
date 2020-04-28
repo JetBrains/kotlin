@@ -4,7 +4,11 @@ annotation class Ann(vararg val value: Inner, val test1: Array<InnerParam> = [In
 annotation class Inner
 annotation class InnerParam(val value: KClass<*>)
 
-@Ann(value = [Inner(), Inner()], test1 = [InnerParam(C::class)])
+@Ann(
+    value = [Inner(), Inner()], test1 = [InnerParam(
+        C::class
+    )]
+)
 class C
 
 @Ann(Inner(), Inner())

@@ -3,8 +3,8 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().mapIndexed{}.max()'"
 fun getMaxLineWidth(list: List<Double>): Double {
     val <caret>max = list
-            .mapIndexed { i, item -> item * i }
-            .max()
-            ?: 0.0
+        .mapIndexed { i, item -> item * i }
+        .max()
+        ?: 0.0
     return max
 }

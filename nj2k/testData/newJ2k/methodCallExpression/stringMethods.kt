@@ -66,16 +66,18 @@ internal class A {
         val s = "test string"
         s == "test"
         s.equals(
-                "tesT", ignoreCase = true)
+            "tesT", ignoreCase = true
+        )
         s.compareTo("Test", ignoreCase = true)
         s.regionMatches(
-                0,
-                "TE",
-                0,
-                2, ignoreCase = true)
+            0,
+            "TE",
+            0,
+            2, ignoreCase = true
+        )
         s.regionMatches(0, "st", 1, 2)
         s.replace("\\w+".toRegex(), "---")
-                .replaceFirst("([s-t])".toRegex(), "A$1")
+            .replaceFirst("([s-t])".toRegex(), "A$1")
         /* TODO
         s.matches("\\w+");
         useSplit(s.split("\\s+"));
@@ -102,9 +104,9 @@ internal class A {
         3.14.toString()
         Any().toString()
         String.format(
-                Locale.FRENCH,
-                "Je ne mange pas %d jours",
-                6
+            Locale.FRENCH,
+            "Je ne mange pas %d jours",
+            6
         )
         String.format("Operation completed with %s", "success")
         val chars = charArrayOf('a', 'b', 'c')

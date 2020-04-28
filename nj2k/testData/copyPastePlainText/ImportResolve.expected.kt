@@ -18,9 +18,11 @@ class Target {
 
     fun acceptJavaClass(tbi: ToBeImportedJava?) {}
 
-    var ambiguousKotlin: IAmbiguousKotlin = AmbiguousKotlin() // Should not add import in case of 2 declarations in Kotlin
+    var ambiguousKotlin: IAmbiguousKotlin =
+        AmbiguousKotlin() // Should not add import in case of 2 declarations in Kotlin
 
-    var ambiguous: IAmbiguous = Ambiguous() // Should not add import in case of ambiguous declarations in Kotlin and in Java
+    var ambiguous: IAmbiguous =
+        Ambiguous() // Should not add import in case of ambiguous declarations in Kotlin and in Java
 
     var ambiguousJava: IAmbiguousJava = AmbiguousJava() // Should not add import in case of 2 declarations in Java
 

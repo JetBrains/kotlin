@@ -5,9 +5,9 @@ import java.util.ArrayList
 
 fun foo(list: List<String>): List<Int> {
     val result = list
-            .asSequence()
-            .filter { it.length > 0 }
-            .map { it.hashCode() }
-            .toList()
+        .asSequence()
+        .filter { it.length > 0 }
+        .map { it.hashCode() }
+        .toList()
     return result
 }

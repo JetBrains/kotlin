@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().map{}.sum()'"
 fun foo(list: List<Int>): Long {
     val <caret>s = list
-            .map { it.toLong() }
-            .sum()
+        .map { it.toLong() }
+        .sum()
     return s
 }

@@ -1,3 +1,3 @@
 val a: (String) -> String = {
-    <caret>some ->
+        <caret>some ->
 }

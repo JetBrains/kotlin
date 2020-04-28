@@ -3,8 +3,8 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().mapIndexed{}.sum()'"
 fun foo(list: List<Any>): Int {
     val s = list
-            .mapIndexed { index, item -> getShort(index, item) }
-            .sum()
+        .mapIndexed { index, item -> getShort(index, item) }
+        .sum()
     return s
 }
 

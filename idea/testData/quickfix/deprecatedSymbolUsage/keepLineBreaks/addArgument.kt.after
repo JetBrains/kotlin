@@ -9,7 +9,8 @@ interface X {
 
 fun foo(x: X) {
     x.newFun(
-            1,
-            2,
-            0)
+        1,
+        2,
+        0
+    )
 }

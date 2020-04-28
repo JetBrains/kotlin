@@ -4,11 +4,11 @@
 fun foo(list: List<String>, o: Any): Int? {
     if (o is Int) {
         return list
-                .asSequence()
-                .map { it.length + o }
-                .filter { it > 0 }
-                .map { it * o.hashCode() }
-                .firstOrNull()
+            .asSequence()
+            .map { it.length + o }
+            .filter { it > 0 }
+            .map { it * o.hashCode() }
+            .firstOrNull()
     }
     return 0
 }

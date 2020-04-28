@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.COMPILER_ARGUMENTS_DIRECTIVE
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.JVM_TARGET_DIRECTIVE
@@ -76,6 +77,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun setUp() {
         super.setUp()
+
+        enableKotlinOfficialCodeStyle(project)
         // We do it here to avoid possible initialization problems
         // UnusedSymbolInspection() calls IDEA UnusedDeclarationInspection() in static initializer,
         // which in turn registers some extensions provoking "modifications aren't allowed during highlighting"
@@ -101,7 +104,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun tearDown() {
         LoggedErrorProcessor.restoreDefaultProcessor()
-
+        disableKotlinOfficialCodeStyle(project)
         super.tearDown()
 
         if (exceptions.isNotEmpty()) {
@@ -310,6 +313,14 @@ fun configureCodeStyleAndRun(
     } finally {
         codeStyleSettings.clearCodeStyleSettings()
     }
+}
+
+fun enableKotlinOfficialCodeStyle(project: Project) {
+    KotlinStyleGuideCodeStyle.apply(CodeStyle.getSettings(project))
+}
+
+fun disableKotlinOfficialCodeStyle(project: Project) {
+    CodeStyle.getSettings(project)
 }
 
 private fun rollbackCompilerOptions(project: Project, module: Module, removeFacet: Boolean) {
