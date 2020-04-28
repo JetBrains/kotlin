@@ -725,6 +725,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FieldSubstitution.kt");
         }
 
+        @TestMetadata("FlexiblePrimitiveOverloading.kt")
+        public void testFlexiblePrimitiveOverloading() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FlexiblePrimitiveOverloading.kt");
+        }
+
         @TestMetadata("flexibleTypeAliases.kt")
         public void testFlexibleTypeAliases() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/flexibleTypeAliases.kt");

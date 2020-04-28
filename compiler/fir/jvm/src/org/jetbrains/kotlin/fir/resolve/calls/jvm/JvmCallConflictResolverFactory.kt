@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 
 object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
         typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents
-    ) = ConeCompositeConflictResolver(
-        ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, components),
-        ConeEquivalentCallConflictResolver(TypeSpecificityComparator.NONE, components)
-    )
+    ): ConeCompositeConflictResolver {
+        val specificityComparator = JvmTypeSpecificityComparator(components.ctx)
+        return ConeCompositeConflictResolver(
+            ConeOverloadConflictResolver(specificityComparator, components),
+            ConeEquivalentCallConflictResolver(specificityComparator, components)
+        )
+    }
 
 }

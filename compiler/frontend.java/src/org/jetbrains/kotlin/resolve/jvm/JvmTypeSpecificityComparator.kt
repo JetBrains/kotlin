@@ -18,9 +18,15 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
-class JvmTypeSpecificityComparator(val context: TypeSystemInferenceExtensionContextDelegate) : TypeSpecificityComparator {
+/**
+ * We should use delegate context for DI in old frontend. For the FIR we don't have context delegate, so we should use parent class.
+ */
+class JvmTypeSpecificityComparatorDelegate(override val context: TypeSystemInferenceExtensionContextDelegate) : JvmTypeSpecificityComparator(context)
+
+open class JvmTypeSpecificityComparator(open val context: TypeSystemInferenceExtensionContext) : TypeSpecificityComparator {
 
     override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean = with(context) {
         val simpleGeneral = general.asSimpleType()

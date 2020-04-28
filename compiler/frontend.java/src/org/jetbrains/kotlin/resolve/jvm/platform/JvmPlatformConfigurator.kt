@@ -102,7 +102,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<InlinePlatformCompatibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
-        container.useImpl<JvmTypeSpecificityComparator>()
+        container.useImpl<JvmTypeSpecificityComparatorDelegate>()
         container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionOracle>()
