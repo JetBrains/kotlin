@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.ExternalSystem
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalSystemTaskActivator;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.externalSystem.util.Order;
+import com.intellij.openapi.util.NlsContexts.Tooltip;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -348,11 +349,11 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
     setNameAndTooltip(getName(), null);
   }
 
-  protected void setNameAndTooltip(String name, @Nullable String tooltip) {
+  protected void setNameAndTooltip(String name, @Nullable @Tooltip String tooltip) {
     setNameAndTooltip(name, tooltip, (String)null);
   }
 
-  protected void setNameAndTooltip(String name, @Nullable String tooltip, @Nullable String hint) {
+  protected void setNameAndTooltip(String name, @Nullable @Tooltip String tooltip, @Nullable String hint) {
     final boolean ignored = isIgnored();
     final SimpleTextAttributes textAttributes = ignored ? SimpleTextAttributes.GRAYED_ITALIC_ATTRIBUTES : getPlainAttributes();
     setNameAndTooltip(name, tooltip, textAttributes);
@@ -361,7 +362,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
     }
   }
 
-  protected void setNameAndTooltip(String name, @Nullable String tooltip, SimpleTextAttributes attributes) {
+  protected void setNameAndTooltip(String name, @Nullable @Tooltip String tooltip, SimpleTextAttributes attributes) {
     clearColoredText();
     addColoredFragment(name, prepareAttributes(attributes));
     final String s = (tooltip != null ? tooltip + "\n\r" : "") + StringUtil.join(myErrors, "\n\r");
