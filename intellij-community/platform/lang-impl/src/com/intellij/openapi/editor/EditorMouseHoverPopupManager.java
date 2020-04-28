@@ -583,12 +583,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       JPanel p = new JPanel(new CombinedPopupLayout(c1, c2));
       p.setBorder(null);
       if (c1 != null) p.add(c1);
-      if (c2 != null) {
-        p.add(c2);
-        popupBridge.performOnCancel(() -> {
-          Disposer.dispose(c2);
-        });
-      }
+      if (c2 != null) p.add(c2);
       return p;
     }
 
@@ -722,6 +717,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       });
       popupBridge.performWhenAvailable(component::setHint);
       EditorUtil.disposeWithEditor(editor, component);
+      popupBridge.performOnCancel(() -> Disposer.dispose(component));
       return component;
     }
   }
