@@ -483,6 +483,12 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     final JBTextArea textComponent = new JBTextArea();
     textComponent.setRows(isMultiline() ? 2 : 1);
     textComponent.setColumns(32);
+    if (search) {
+      textComponent.getAccessibleContext().setAccessibleName(FindBundle.message("find.search.accessible.name"));
+    }
+    else {
+      textComponent.getAccessibleContext().setAccessibleName(FindBundle.message("find.replace.accessible.name"));
+    }
     SearchTextArea textArea = new SearchTextArea(textComponent, search);
     if (search) {
       myExtraSearchButtons.clear();

@@ -587,12 +587,14 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     mySearchComponent = new JBTextArea();
     mySearchComponent.setColumns(25);
     mySearchComponent.setRows(1);
+    mySearchComponent.getAccessibleContext().setAccessibleName(FindBundle.message("find.search.accessible.name"));
     myReplaceComponent = new JBTextArea();
     myReplaceComponent.setColumns(25);
     myReplaceComponent.setRows(1);
+    myReplaceComponent.getAccessibleContext().setAccessibleName(FindBundle.message("find.replace.accessible.name"));
     mySearchTextArea = new SearchTextArea(mySearchComponent, true);
     myReplaceTextArea = new SearchTextArea(myReplaceComponent, false);
-    mySearchTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
+     mySearchTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
     myReplaceTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
     AnAction caseSensitiveAction = createAction("find.popup.case.sensitive",
                                       "CaseSensitive",
@@ -1799,6 +1801,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
         myUsageRenderer.setBackground(color);
         myFileAndLineNumber.setBackground(color);
       }
+      getAccessibleContext().setAccessibleName(FindBundle.message("find.popup.found.element.accesible.name", myUsageRenderer.getAccessibleContext().getAccessibleName(), myFileAndLineNumber.getAccessibleContext().getAccessibleName()));
       return this;
     }
   }
