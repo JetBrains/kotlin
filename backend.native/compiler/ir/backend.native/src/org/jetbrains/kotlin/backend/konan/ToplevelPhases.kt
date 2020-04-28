@@ -143,7 +143,7 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val translator = Psi2IrTranslator(config.configuration.languageVersionSettings,
                     Psi2IrConfiguration(false), KonanIdSignaturer(KonanManglerDesc))
-            val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
+            val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable = symbolTable)
 
             val pluginExtensions = IrGenerationExtension.getInstances(config.project)
 
