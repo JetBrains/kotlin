@@ -36,6 +36,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             <class: T>: kotlin.Any
             x: GET_VAR 'x: T of <root>.Test1 declared in <root>.Test1.copy' type=T of <root>.Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test1<T of <root>.Test1>, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test1<T of <root>.Test1>
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -68,6 +70,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test1<T of <root>.Test1>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test1<T of <root>.Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test1'
@@ -84,6 +88,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
                 $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]' type=T of <root>.Test1 origin=null
                   receiver: GET_VAR '<this>: <root>.Test1<T of <root>.Test1> declared in <root>.Test1.hashCode' type=<root>.Test1<T of <root>.Test1> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test1<T of <root>.Test1>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test1<T of <root>.Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test1'
@@ -130,6 +136,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             <class: T>: kotlin.Any
             x: GET_VAR 'x: T of <root>.Test2 declared in <root>.Test2.copy' type=T of <root>.Test2 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test2<T of <root>.Test2>, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test2<T of <root>.Test2>
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -162,6 +170,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test2'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test2<T of <root>.Test2>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test2<T of <root>.Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test2'
@@ -169,6 +179,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.hashCode' type=<root>.Test2<T of <root>.Test2> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test2<T of <root>.Test2>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test2<T of <root>.Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test2'
@@ -215,6 +227,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             <class: T>: kotlin.Any
             x: GET_VAR 'x: kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3.copy' type=kotlin.collections.List<T of <root>.Test3> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test3<T of <root>.Test3>, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test3<T of <root>.Test3>
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -247,6 +261,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test3'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test3<T of <root>.Test3>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test3'
@@ -254,6 +270,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.hashCode' type=<root>.Test3<T of <root>.Test3> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test3<T of <root>.Test3>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test3'
@@ -298,6 +316,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.collections.List<kotlin.String>) [primary] declared in <root>.Test4' type=<root>.Test4 origin=null
             x: GET_VAR 'x: kotlin.collections.List<kotlin.String> declared in <root>.Test4.copy' type=kotlin.collections.List<kotlin.String> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test4, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test4
       VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -330,6 +350,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test4'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test4) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test4'
@@ -337,6 +359,8 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.hashCode' type=<root>.Test4 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test4) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test4'

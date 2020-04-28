@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.CLASS_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.FUNCTION_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INLINE_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INHERITANCE_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.MEMBER_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MODIFIER
@@ -31,9 +32,15 @@ class Modifier(
 ) {
     val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
-    fun addModifier(modifier: LighterASTNode) {
+    fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
         val tokenType = modifier.tokenType
         when {
+            INLINE_MODIFIER.contains(tokenType) -> {
+                if (isInClass)
+                    this.classModifiers += ClassModifier.valueOf(modifier.toString().toUpperCase())
+                else
+                    this.functionModifiers += FunctionModifier.valueOf(modifier.toString().toUpperCase())
+            }
             CLASS_MODIFIER.contains(tokenType) -> this.classModifiers += ClassModifier.valueOf(modifier.toString().toUpperCase())
             MEMBER_MODIFIER.contains(tokenType) -> this.memberModifiers += MemberModifier.valueOf(modifier.toString().toUpperCase())
             VISIBILITY_MODIFIER.contains(tokenType) -> this.visibilityModifiers +=
@@ -57,6 +64,10 @@ class Modifier(
 
     fun isDataClass(): Boolean {
         return classModifiers.contains(ClassModifier.DATA)
+    }
+
+    fun isInlineClass(): Boolean {
+        return classModifiers.contains(ClassModifier.INLINE)
     }
 
     fun isInner(): Boolean {
