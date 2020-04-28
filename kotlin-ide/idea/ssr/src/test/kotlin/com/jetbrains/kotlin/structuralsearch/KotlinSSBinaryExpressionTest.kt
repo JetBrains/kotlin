@@ -6,9 +6,11 @@ class KotlinSSBinaryExpressionTest : KotlinSSTest() {
     fun testBinaryExpression() { doTest("1 + 2 - 3") }
 
     fun testTwoBinaryExpressions() {
-        doTest("""
+        doTest(
+            """
             a = 1
             b = 2
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 }

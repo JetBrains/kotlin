@@ -9,10 +9,14 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassWithOpenModifier() { doTest("open class Foo") }
 
-    fun testTwoClasses() { doTest("""
-        class '_a:[regex( Foo(1)* )]
-        class '_b:[regex( Bar(1)* )]
-    """.trimIndent()) }
+    fun testTwoClasses() {
+        doTest(
+            """
+            class '_a:[regex( Foo(1)* )]
+            class '_b:[regex( Bar(1)* )]
+            """.trimIndent()
+        )
+    }
 
     fun testClassWithProperty() { doTest("""
         class '_a {
