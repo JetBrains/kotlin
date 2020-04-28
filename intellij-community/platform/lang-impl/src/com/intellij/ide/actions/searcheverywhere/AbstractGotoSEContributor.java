@@ -6,6 +6,8 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.actions.QualifiedNameProviderUtil;
 import com.intellij.ide.actions.SearchEverywherePsiRenderer;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.ide.util.gotoByName.*;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
@@ -17,6 +19,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -37,6 +40,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -85,27 +89,52 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
   private final GlobalSearchScope myProjectScope;
 
   protected final SmartPsiElementPointer<PsiElement> myPsiContext;
-  protected final List<ScopeDescriptor> myScopeDescriptors = new ArrayList<>();
 
   protected AbstractGotoSEContributor(@NotNull AnActionEvent event) {
     myProject = event.getRequiredData(CommonDataKeys.PROJECT);
     PsiElement context = GotoActionBase.getPsiContext(event);
     myPsiContext = context != null ? SmartPointerManager.getInstance(myProject).createSmartPsiElementPointer(context) : null;
     myEverywhereScope = GlobalSearchScope.everythingScope(myProject);
-    ScopeChooserCombo.processScopes(
-      myProject, event.getDataContext(),
-      ScopeChooserCombo.OPT_LIBRARIES | ScopeChooserCombo.OPT_EMPTY_SCOPES,
-      new CommonProcessors.CollectProcessor<>(myScopeDescriptors));
+    List<ScopeDescriptor> scopeDescriptors = createScopes();
     GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
     if (myEverywhereScope.equals(projectScope)) {
       // just get the second scope, i.e. Attached Directories in DataGrip
-      ScopeDescriptor secondScope = JBIterable.from(myScopeDescriptors)
+      ScopeDescriptor secondScope = JBIterable.from(scopeDescriptors)
         .filter(o -> !o.scopeEquals(myEverywhereScope) && !o.scopeEquals(null))
         .first();
       projectScope = secondScope != null ? (GlobalSearchScope)secondScope.getScope() : myEverywhereScope;
     }
     myProjectScope = projectScope;
-    myScopeDescriptor = getInitialSelectedScope();
+    myScopeDescriptor = getInitialSelectedScope(scopeDescriptors);
+
+    myProject.getMessageBus().connect(this).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void pluginUnloaded(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+        myScopeDescriptor = getInitialSelectedScope(createScopes());
+      }
+    });
+  }
+
+  private List<ScopeDescriptor> createScopes() {
+    DataContext context = createContext();
+    List<ScopeDescriptor> res = new ArrayList<>();
+    ScopeChooserCombo.processScopes(
+      myProject, context,
+      ScopeChooserCombo.OPT_LIBRARIES | ScopeChooserCombo.OPT_EMPTY_SCOPES,
+      new CommonProcessors.CollectProcessor<>(res));
+
+    return res;
+  }
+
+  private DataContext createContext() {
+    DataContext parentContext = myProject == null ? null : SimpleDataContext.getProjectContext(myProject);
+    PsiElement context = myPsiContext != null ? myPsiContext.getElement() : null;
+    PsiFile file = context == null ? null : context.getContainingFile();
+
+    Map<String, Object> map = new HashMap<>();
+    map.put(CommonDataKeys.PSI_ELEMENT.getName(), context);
+    map.put(CommonDataKeys.PSI_FILE.getName(), file);
+    return SimpleDataContext.getSimpleContext(map, parentContext);
   }
 
   @Nullable
@@ -154,7 +183,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
 
         @Override
         boolean processScopes(@NotNull Processor<? super ScopeDescriptor> processor) {
-          return ContainerUtil.process(myScopeDescriptors, processor);
+          return ContainerUtil.process(createScopes(), processor);
         }
 
         @Override
@@ -195,11 +224,11 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
   }
 
   @NotNull
-  private ScopeDescriptor getInitialSelectedScope() {
+  private ScopeDescriptor getInitialSelectedScope(List<ScopeDescriptor> scopeDescriptors) {
     String selectedScope = myProject == null ? null : getSelectedScopes(myProject).get(getClass().getSimpleName());
     if (Registry.is("search.everywhere.show.scopes") && Registry.is("search.everywhere.sticky.scopes") &&
         StringUtil.isNotEmpty(selectedScope)) {
-      for (ScopeDescriptor descriptor : myScopeDescriptors) {
+      for (ScopeDescriptor descriptor : scopeDescriptors) {
         if (!selectedScope.equals(descriptor.getDisplayName()) || descriptor.scopeEquals(null)) continue;
         return descriptor;
       }

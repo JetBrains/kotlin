@@ -83,6 +83,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     contributors.sort(Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
 
     mySearchEverywhereUI = createView(myProject, contributors);
+    contributors.forEach(c -> Disposer.register(mySearchEverywhereUI, c));
     mySearchEverywhereUI.switchToContributor(contributorID);
 
     myHistoryIterator = myHistoryList.getIterator(contributorID);
