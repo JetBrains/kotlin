@@ -319,7 +319,7 @@ task detectJarCollision(type: CollisionDetector) {
                                                     "metadata.jvm", "descriptors", "descriptors.jvm", "descriptors.runtime",
                                                     "deserialization", "util.runtime", "type-system", "cones", "resolve",
                                                     "tree", "psi2fir", "fir2ir", "java", "kotlin-build-common", "lightTree",
-                                                    "jvm", "checkers", "fir-common", "light-tree2fir"])
+                                                    "jvm", "checkers", "fir-common", "light-tree2fir", "fir-serialization"])
     }
 }
 
