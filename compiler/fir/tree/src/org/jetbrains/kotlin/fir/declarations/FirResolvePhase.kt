@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import java.util.*
-
 enum class FirResolvePhase {
     RAW_FIR,
     IMPORTS,
@@ -18,7 +16,12 @@ enum class FirResolvePhase {
     IMPLICIT_TYPES_BODY_RESOLVE,
     BODY_RESOLVE;
 
-    val requiredToLaunch: FirResolvePhase get() = if (this in bodyResolvePhases) STATUS else values()[ordinal - 1]
+    val requiredToLaunch: FirResolvePhase
+        get() = when (this) {
+            RAW_FIR -> RAW_FIR
+            IMPLICIT_TYPES_BODY_RESOLVE, BODY_RESOLVE -> STATUS
+            else -> values()[ordinal - 1]
+        }
 
     val next: FirResolvePhase get() = values()[ordinal + 1]
 
@@ -26,7 +29,5 @@ enum class FirResolvePhase {
         // Short-cut
         val DECLARATIONS = STATUS
         val ANALYZED_DEPENDENCIES = BODY_RESOLVE
-
-        private val bodyResolvePhases = EnumSet.copyOf(setOf(IMPLICIT_TYPES_BODY_RESOLVE, BODY_RESOLVE))
     }
 }
