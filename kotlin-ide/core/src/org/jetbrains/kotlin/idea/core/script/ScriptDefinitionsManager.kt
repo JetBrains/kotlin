@@ -198,7 +198,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
         val newExtensions = getKnownFilenameExtensions().filter {
             fileTypeManager.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
-        }.toList()
+        }.toSet()
 
         if (newExtensions.any()) {
             // Register new file extensions
