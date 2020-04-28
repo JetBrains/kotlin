@@ -116,6 +116,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElement<KtTypeReference>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference.typeElement, other.typeElement)
+                // If typeReference or other isn't fully qualified, matches the last REFERENCE_EXPRESSION
+                || (typeReference.firstChild.children.size == 1 || other.firstChild.children.size == 1)
+                && myMatchingVisitor.match(typeReference.firstChild.lastChild, other.firstChild.lastChild)
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
@@ -343,6 +346,13 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitEscapeStringTemplateEntry(entry: KtEscapeStringTemplateEntry) {
         val other = getTreeElement<KtEscapeStringTemplateEntry>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(entry, other)
+    }
+
+    override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
+        val other = getTreeElement<KtBinaryExpressionWithTypeRHS>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.operationReference, other.operationReference)
+                && myMatchingVisitor.match(expression.left, other.left)
+                && myMatchingVisitor.match(expression.right, other.right)
     }
 
 }
