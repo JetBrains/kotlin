@@ -1,1 +1,1 @@
-<warning descr="SSR">open class Foo</warning>
+<warning descr="SSR">open class A</warning>
