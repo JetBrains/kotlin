@@ -223,7 +223,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
-    private fun matchNameIdentifiers(el1: PsiElement?, el2: PsiElement?): Boolean {
+    private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
         if (el1 == null || el2 == null) return el1 == el2
         val context = myMatchingVisitor.matchContext
         val pattern = context.pattern
@@ -235,8 +235,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
-        myMatchingVisitor.result = matchNameIdentifiers(klass.nameIdentifier, other.nameIdentifier)
-                && myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
+        myMatchingVisitor.result = matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.matchSonsInAnyOrder(klass.body, other.body)
     }
@@ -281,7 +281,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
-                && matchNameIdentifiers(property.nameIdentifier, other.nameIdentifier)
+                && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
@@ -293,12 +293,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
-        myMatchingVisitor.result = myMatchingVisitor.matchText(entry, myMatchingVisitor.element)
+        myMatchingVisitor.result = matchTextOrVariable(entry, myMatchingVisitor.element)
     }
 
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
         val other = getTreeElement<KtSimpleNameStringTemplateEntry>() ?: return
-        myMatchingVisitor.result = matchNameIdentifiers(entry.expression, other.expression)
+        myMatchingVisitor.result = matchTextOrVariable(entry.expression, other.expression)
     }
 
     override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {
@@ -308,7 +308,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitEscapeStringTemplateEntry(entry: KtEscapeStringTemplateEntry) {
         val other = getTreeElement<KtEscapeStringTemplateEntry>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchText(entry, other)
+        myMatchingVisitor.result = matchTextOrVariable(entry, other)
     }
 
 }
