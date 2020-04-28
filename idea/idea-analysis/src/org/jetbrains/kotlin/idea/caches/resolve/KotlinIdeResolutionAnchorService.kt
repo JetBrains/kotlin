@@ -12,23 +12,25 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleResolverTracker
+import org.jetbrains.kotlin.analyzer.moduleInfo
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
-import org.jetbrains.kotlin.idea.project.useAnchorServices
-import org.jetbrains.kotlin.resolve.AnchorProvider
+import org.jetbrains.kotlin.idea.project.libraryToSourceAnalysisEnabled
+import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 
 @State(name = "KotlinIdeAnchorService", storages = [Storage("anchors.xml")])
-class KotlinIdeAnchorService(
+class KotlinIdeResolutionAnchorService(
     val project: Project
-) : AnchorProvider(), 
-    PersistentStateComponent<KotlinIdeAnchorService.State> {
+) : ResolutionAnchorProvider, 
+    PersistentStateComponent<KotlinIdeResolutionAnchorService.State> {
 
     data class State(
         var moduleNameToAnchorName: Map<String, String> = emptyMap()
     )
+    
+    private val logger = logger<KotlinIdeResolutionAnchorService>()
 
     @JvmField
     var myState: State = State()
@@ -50,7 +52,7 @@ class KotlinIdeAnchorService(
     }
     
     private fun notFoundModule(moduleName: String): Nothing? {
-        logger<KotlinIdeAnchorService>().warn("Module <${moduleName}> not found in project model")
+        logger.warn("Module <${moduleName}> not found in project model")
         return null
     }
 
@@ -58,13 +60,6 @@ class KotlinIdeAnchorService(
         get() = project.cacheInvalidatingOnRootModifications {
             buildMapping()
         }
-
-    private fun getAnchorModuleDescriptorIfAny(moduleInfo: ModuleInfo): ModuleDescriptor? {
-        val mapped = moduleToAnchor[moduleInfo] ?: return null
-        return KotlinCacheService.getInstance(project)
-            .getResolutionFacadeByModuleInfo(mapped, mapped.platform)
-            ?.moduleDescriptor
-    }
 
     @Synchronized
     override fun getState(): State = myState
@@ -75,11 +70,12 @@ class KotlinIdeAnchorService(
     }
 
     @Synchronized
-    override fun getAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? {
-        if (!project.useAnchorServices) return null
-        val resolver = ModuleResolverTracker.getInstance(project)
-            .findResolverForProjectByModuleDescriptor(moduleDescriptor)
-            ?: return null
-        return getAnchorModuleDescriptorIfAny(resolver.moduleInfoForModuleDescriptor(moduleDescriptor))
+    override fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? {
+        if (!project.libraryToSourceAnalysisEnabled) return null
+        val moduleInfo = moduleDescriptor.moduleInfo ?: return null
+        val mapped = moduleToAnchor[moduleInfo] ?: return null
+        return KotlinCacheService.getInstance(project)
+            .getResolutionFacadeByModuleInfo(mapped, mapped.platform)
+            ?.moduleDescriptor
     }
 }

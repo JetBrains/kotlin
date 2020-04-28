@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.AnchorProvider
+import org.jetbrains.kotlin.resolve.RESOLUTION_ANCHOR_PROVIDER_CAPABILITY
+import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
@@ -23,7 +24,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    protected val anchorProvider: AnchorProvider = AnchorProvider.Default,
+    protected val resolutionAnchorProvider: ResolutionAnchorProvider = ResolutionAnchorProvider.Default,
 ) : ResolverForProject<M>() {
 
     protected class ModuleData(
@@ -56,14 +57,6 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     abstract fun modulesContent(module: M): ModuleContent<M>
     abstract fun builtInsForModule(module: M): KotlinBuiltIns
     abstract fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: M): ResolverForModule
-    
-    protected open fun registerModuleDescriptorUpdate(
-        newDescriptor: ModuleDescriptor,
-        oldDescriptor: ModuleDescriptor?,
-    ) {
-        // Nothing by default 
-    }
-
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
             return null
@@ -71,7 +64,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         return resolverForModuleDescriptor(doGetDescriptorForModule(moduleInfo))
     }
 
-    override fun tryGetResolverForModuleWithAnchorCheck(targetModuleInfo: M, referencingModuleInfo: M): ResolverForModule? =
+    override fun tryGetResolverForModuleWithResolutionAnchorFallback(targetModuleInfo: M, referencingModuleInfo: M): ResolverForModule? =
         tryGetResolverForModule(targetModuleInfo)
 
     private fun setupModuleDescriptor(module: M, moduleDescriptor: ModuleDescriptorImpl) {
@@ -158,8 +151,6 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             }
             if (moduleData.isOutOfDate()) {
                 moduleData = recreateModuleDescriptor(moduleFromThisResolver)
-            } else {
-                registerModuleDescriptorUpdate(moduleData.moduleDescriptor, null)
             }
             moduleData.moduleDescriptor
         }
@@ -176,9 +167,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
 
         val moduleData = createModuleDescriptor(module)
         descriptorByModule[module] = moduleData
-        
-        registerModuleDescriptorUpdate(moduleData.moduleDescriptor, oldDescriptor)
-        
+
         return moduleData
     }
 
@@ -188,9 +177,8 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             projectContext.storageManager,
             builtInsForModule(module),
             module.platform,
-            module.capabilities,
+            module.capabilities + listOf(RESOLUTION_ANCHOR_PROVIDER_CAPABILITY to resolutionAnchorProvider),
             module.stableName,
-            anchorProvider
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)

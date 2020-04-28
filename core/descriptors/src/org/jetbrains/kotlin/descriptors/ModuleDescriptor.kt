@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.AnchorProvider
 
 interface ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
@@ -62,6 +61,4 @@ interface ModuleDescriptor : DeclarationDescriptor {
     val isValid: Boolean
 
     fun assertValid()
-
-    val anchorProvider: AnchorProvider
 }

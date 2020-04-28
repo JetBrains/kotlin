@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.caches.resolve.CompositeAnalyzerServices
 import org.jetbrains.kotlin.caches.resolve.CompositeResolverForModuleFactory
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.AnchorProvider
+import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -53,7 +54,7 @@ class IdeaResolverForProject(
     fallbackModificationTracker,
     delegateResolver,
     ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java),
-    ServiceManager.getService(projectContext.project, AnchorProvider::class.java)
+    ServiceManager.getService(projectContext.project, ResolutionAnchorProvider::class.java)
 ) {
     private val builtInsCache: BuiltInsCache =
         (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
@@ -149,32 +150,32 @@ class IdeaResolverForProject(
         }
     }
 
-    override fun registerModuleDescriptorUpdate(
-        newDescriptor: ModuleDescriptor,
-        oldDescriptor: ModuleDescriptor?
-    ) {
-        ModuleResolverTracker
-            .getInstance(projectContext.project)
-            .safeAs<IdeaModuleResolverTrackerImpl>()
-            ?.registerModuleUpdate(newDescriptor, oldDescriptor, this)
-    }
-
-    override fun tryGetResolverForModuleWithAnchorCheck(
+    override fun tryGetResolverForModuleWithResolutionAnchorFallback(
         targetModuleInfo: IdeaModuleInfo,
         referencingModuleInfo: IdeaModuleInfo,
     ): ResolverForModule? {
         tryGetResolverForModule(targetModuleInfo)?.let { return it }
 
+        return getResolverForProjectUsingResolutionAnchor(targetModuleInfo, referencingModuleInfo)
+    }
+    
+    private fun getResolverForProjectUsingResolutionAnchor(
+        targetModuleInfo: IdeaModuleInfo, 
+        referencingModuleInfo: IdeaModuleInfo
+    ): ResolverForModule? {
         val moduleDescriptorOfReferencingModule = descriptorByModule[referencingModuleInfo]?.moduleDescriptor
             ?: error("$referencingModuleInfo is not contained in this resolver, which means incorrect use of anchor-aware search")
-        
-        val anchorModuleDescriptor = anchorProvider.getAnchor(moduleDescriptorOfReferencingModule) ?: return null
-        
-        val moduleResolverTracker = 
-            ModuleResolverTracker.getInstance(projectContext.project).safeAs<IdeaModuleResolverTrackerImpl>() ?: return null
-        
-        return moduleResolverTracker.findResolverForProjectByModuleDescriptor(anchorModuleDescriptor)
-            ?.tryGetResolverForModule(targetModuleInfo)
+
+        val anchorModuleInfo = resolutionAnchorProvider.getResolutionAnchor(moduleDescriptorOfReferencingModule)?.moduleInfo ?: return null
+
+        val resolverForProjectFromAnchorModule = KotlinCacheService.getInstance(projectContext.project)
+            .getResolutionFacadeByModuleInfo(anchorModuleInfo, anchorModuleInfo.platform)
+            ?.getResolverForProject()
+            ?: return null
+
+        if (resolverForProjectFromAnchorModule !is IdeaResolverForProject) return null
+
+        return resolverForProjectFromAnchorModule.tryGetResolverForModule(targetModuleInfo)
     }
 }
 
