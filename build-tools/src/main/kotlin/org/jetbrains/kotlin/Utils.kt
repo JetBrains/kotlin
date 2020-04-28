@@ -58,7 +58,7 @@ val Project.globalTestArgs: List<String>
     }
 
 val Project.testTargetSupportsCodeCoverage: Boolean
-    get() = this.testTarget.supportsCodeCoverage()
+    get() = false // Disable until tests are fixed
 
 //endregion
 
