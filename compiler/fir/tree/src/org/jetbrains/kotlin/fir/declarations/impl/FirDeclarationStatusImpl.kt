@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
-import org.jetbrains.kotlin.fir.firEffectiveVisibilityApproximation
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -22,7 +21,7 @@ open class FirDeclarationStatusImpl(
 ) : FirPureAbstractElement(), FirDeclarationStatus {
     override val source: FirSourceElement? get() = null
     override val effectiveVisibility: FirEffectiveVisibility
-        get() = visibility.firEffectiveVisibilityApproximation()
+        get() = FirEffectiveVisibility.Default
     protected var flags: Int = 0
 
     private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0

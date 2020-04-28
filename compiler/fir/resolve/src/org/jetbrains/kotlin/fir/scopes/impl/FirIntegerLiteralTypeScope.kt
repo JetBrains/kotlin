@@ -76,7 +76,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         FirILTTypeRefPlaceHolder(isUnsigned),
         receiverTypeRef = null,
         ALL_OPERATORS.getValue(name),
-        FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, FirEffectiveVisibility.Public, Modality.FINAL),
+        FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, FirEffectiveVisibilityImpl.Public, Modality.FINAL),
         symbol
     ).apply {
         resolvePhase = FirResolvePhase.BODY_RESOLVE

@@ -21,10 +21,10 @@ FILE: exposedPropertyType.kt
 
             public final static enum entry A: R|A.AInnerProtectedEnum|
             public final static enum entry B: R|A.AInnerProtectedEnum|
-            public final static fun values(): R|kotlin/Array<A.AInnerProtectedEnum>| {
+            public[protected] final static fun values(): R|kotlin/Array<A.AInnerProtectedEnum>| {
             }
 
-            public final static fun valueOf(value: R|kotlin/String|): R|A.AInnerProtectedEnum| {
+            public[protected] final static fun valueOf(value: R|kotlin/String|): R|A.AInnerProtectedEnum| {
             }
 
         }

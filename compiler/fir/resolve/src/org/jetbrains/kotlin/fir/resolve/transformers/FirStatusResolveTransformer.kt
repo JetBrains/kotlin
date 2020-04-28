@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirEffectiveVisibility
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.firEffectiveVisibility
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -171,7 +168,7 @@ private class FirStatusResolveTransformer(
 private val <F : FirClass<F>> FirClass<F>.effectiveVisibility: FirEffectiveVisibility
     get() = when (this) {
         is FirRegularClass -> status.effectiveVisibility
-        is FirAnonymousObject -> FirEffectiveVisibility.Local
+        is FirAnonymousObject -> FirEffectiveVisibilityImpl.Local
         else -> error("Unknown kind of class: ${this::class}")
     }
 
@@ -187,7 +184,9 @@ fun FirDeclaration.resolveStatus(
     containingClass: FirClass<*>?,
     isLocal: Boolean
 ): FirDeclarationStatus {
-    if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
+    if (status.visibility == Visibilities.UNKNOWN || status.modality == null ||
+        status.effectiveVisibility == FirEffectiveVisibility.Default
+    ) {
         val visibility = when (status.visibility) {
             Visibilities.UNKNOWN -> when {
                 isLocal -> Visibilities.LOCAL
@@ -197,7 +196,8 @@ fun FirDeclaration.resolveStatus(
             else -> status.visibility
         }
         val modality = status.modality ?: resolveModality(containingClass)
-        val containerEffectiveVisibility = containingClass?.effectiveVisibility ?: FirEffectiveVisibility.Public
+        val containerEffectiveVisibility = containingClass?.effectiveVisibility?.takeIf { it !is FirEffectiveVisibility.Default }
+            ?: FirEffectiveVisibilityImpl.Public
         val effectiveVisibility =
             visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
         return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)

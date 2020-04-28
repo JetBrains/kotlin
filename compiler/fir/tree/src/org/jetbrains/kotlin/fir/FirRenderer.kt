@@ -174,7 +174,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             Visibilities.UNKNOWN -> return "public?"
             else -> toString()
         }
-        if (effectiveVisibility == null) return itself
+        if (effectiveVisibility == null || effectiveVisibility == FirEffectiveVisibility.Default) return itself
         val effectiveAsVisibility = effectiveVisibility.toVisibility()
         if (effectiveAsVisibility == this) return itself
         if (effectiveAsVisibility == Visibilities.PRIVATE && this == Visibilities.PRIVATE_TO_THIS) return itself
