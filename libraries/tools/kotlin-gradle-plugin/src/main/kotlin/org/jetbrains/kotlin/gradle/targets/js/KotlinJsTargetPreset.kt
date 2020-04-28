@@ -88,6 +88,9 @@ class KotlinJsSingleTargetPreset(
     project,
     kotlinPluginVersion
 ) {
+
+    override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = false
+
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
         irPreset?.let {
