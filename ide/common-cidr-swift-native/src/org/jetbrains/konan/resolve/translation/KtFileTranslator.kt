@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.MostlySingularMultiMap
 import com.jetbrains.cidr.lang.CLanguageKind
+import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
@@ -75,6 +76,9 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
     }
 
     companion object {
+        @JvmField
+        val PRELOADED_LANGUAGE_KINDS: Collection<OCLanguageKind> = listOf(CLanguageKind.OBJ_C, SwiftLanguageKind)
+
         @JvmStatic
         val OCInclusionContext.isKtTranslationSupported: Boolean
             get() = languageKind.let { it == SwiftLanguageKind || it is CLanguageKind }

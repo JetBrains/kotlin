@@ -30,7 +30,7 @@ class KonanBridgeFileManager(private val project: Project) {
         (PsiManager.getInstance(project) as? PsiManagerImpl)?.addTreeChangePreprocessor(ModificationListener())
     }
 
-    fun forTarget(target: KonanTarget, name: String): KonanBridgeVirtualFile {
+    fun forTarget(target: KonanTarget, name: String = target.run { "$productModuleName/$productModuleName.h" }): KonanBridgeVirtualFile {
         val modificationStamp = KtModificationCount.getInstance(project).get()
         synchronized(myLock) {
             val map = if (myActualFiles == null || myStamp < modificationStamp) {

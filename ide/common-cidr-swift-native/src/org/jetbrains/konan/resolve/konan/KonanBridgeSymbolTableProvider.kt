@@ -56,6 +56,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         indicator: ProgressIndicator,
         allFiles: Collection<VirtualFile>
     ): OCSymbolTablesBuildingActivity.AdditionalTaskProvider<*>? {
+        KonanBridgeSymbolLoading.runWhenSmart(project) // konan bridging symbols require file indexes
         return null
     }
 }
