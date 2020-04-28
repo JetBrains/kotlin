@@ -14,10 +14,12 @@ import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
+import com.intellij.structuralsearch.plugin.ui.Configuration
 import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -63,6 +65,10 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         for (element in blockContent) print(DebugUtil.psiToString(element, false))
         return blockContent
     }
+
+    override fun getPredefinedTemplates(): Array<Configuration> = KotlinPredefinedConfigurations.createPredefinedTemplates()
+
+    override fun getDefaultFileType(fileType: LanguageFileType?): LanguageFileType = fileType ?: KotlinFileType.INSTANCE
 
     companion object {
 
