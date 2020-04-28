@@ -14,6 +14,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -87,6 +88,10 @@ private class ResolutionFacadeWithDebugInfo(
         return wrapExceptions({ ResolvingWhat(listOf(element), serviceClass = serviceClass) }) {
             delegate.tryGetFrontendService(element, serviceClass)
         }
+    }
+
+    override fun getResolverForProject(): ResolverForProject<out ModuleInfo> {
+        return delegate.getResolverForProject()
     }
 
     override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {

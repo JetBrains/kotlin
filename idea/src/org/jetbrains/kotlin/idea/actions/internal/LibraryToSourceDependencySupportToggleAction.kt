@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.project.KotlinAnchorSupportForLibraryAnalysisComponent
-import org.jetbrains.kotlin.idea.project.useAnchorServices
+import org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisComponent
+import org.jetbrains.kotlin.idea.project.libraryToSourceAnalysisEnabled
 
-class AnchorSupportForLibraryAnalysisToggleAction : ToggleAction(
-    KotlinBundle.message("toggle.anchor.support.for.library.analysis"),
+class LibraryToSourceDependencySupportToggleAction : ToggleAction(
+    KotlinBundle.message("toggle.library.to.source.dependency.support"),
     KotlinBundle.message("enable.components.for.library.to.source.analysis.in.kotlin"),
     null
 ) {
     override fun isSelected(e: AnActionEvent): Boolean =
-        e.project?.useAnchorServices == true
+        e.project?.libraryToSourceAnalysisEnabled == true
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
         e.project?.let {
-            KotlinAnchorSupportForLibraryAnalysisComponent.setState(it, state)
+            KotlinLibraryToSourceAnalysisComponent.setState(it, state)
         }
     }
 

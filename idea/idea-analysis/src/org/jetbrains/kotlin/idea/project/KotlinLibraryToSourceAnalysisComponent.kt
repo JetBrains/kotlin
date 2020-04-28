@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.idea.project
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.project.Project
 
-object KotlinAnchorSupportForLibraryAnalysisComponent {
-    private const val anchorSupportOption = "kotlin.use.anchor.services"
+object KotlinLibraryToSourceAnalysisComponent {
+    private const val libraryToSourceAnalysisOption = "kotlin.library.to.source.analysis"
 
     @JvmStatic
     fun setState(project: Project, isEnabled: Boolean) {
-        PropertiesComponent.getInstance(project).setValue(anchorSupportOption, isEnabled, false)
+        PropertiesComponent.getInstance(project).setValue(libraryToSourceAnalysisOption, isEnabled, false)
     }
 
     @JvmStatic
     fun isEnabled(project: Project): Boolean =
-        PropertiesComponent.getInstance(project).getBoolean(anchorSupportOption)
+        PropertiesComponent.getInstance(project).getBoolean(libraryToSourceAnalysisOption)
 }
 
-val Project.useAnchorServices: Boolean
-    get() = KotlinAnchorSupportForLibraryAnalysisComponent.isEnabled(this)
+val Project.libraryToSourceAnalysisEnabled: Boolean
+    get() = KotlinLibraryToSourceAnalysisComponent.isEnabled(this)

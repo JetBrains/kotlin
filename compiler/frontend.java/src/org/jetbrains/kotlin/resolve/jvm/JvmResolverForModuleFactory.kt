@@ -70,7 +70,7 @@ class JvmResolverForModuleFactory(
 
             @Suppress("UNCHECKED_CAST")
             val resolverForReferencedModule = referencedClassModule?.let { 
-                resolverForProject.tryGetResolverForModuleWithAnchorCheck(it as M, moduleInfo)
+                resolverForProject.tryGetResolverForModuleWithResolutionAnchorFallback(it as M, moduleInfo)
             }
 
             val resolverForModule = resolverForReferencedModule?.takeIf {

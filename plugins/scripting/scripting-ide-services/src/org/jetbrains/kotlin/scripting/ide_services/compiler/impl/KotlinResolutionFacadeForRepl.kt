@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -47,6 +49,10 @@ class KotlinResolutionFacadeForRepl(
     }
 
     override fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T? {
+        throw UnsupportedOperationException()
+    }
+
+    override fun getResolverForProject(): ResolverForProject<out ModuleInfo> {
         throw UnsupportedOperationException()
     }
 

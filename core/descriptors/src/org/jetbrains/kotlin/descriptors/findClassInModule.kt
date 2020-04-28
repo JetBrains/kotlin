@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.RESOLUTION_ANCHOR_PROVIDER_CAPABILITY
 
 fun ModuleDescriptor.findClassifierAcrossModuleDependencies(classId: ClassId): ClassifierDescriptor? = withAnchorFallback {
     val packageViewDescriptor = getPackage(classId.packageFqName)
@@ -39,7 +40,7 @@ fun ModuleDescriptor.findClassifierAcrossModuleDependencies(classId: ClassId): C
 private inline fun ModuleDescriptor.withAnchorFallback(
     crossinline doSearch: ModuleDescriptor.() -> ClassifierDescriptor? 
 ): ClassifierDescriptor? {
-    val anchor = anchorProvider.getAnchor(this)
+    val anchor = getCapability(RESOLUTION_ANCHOR_PROVIDER_CAPABILITY)?.getResolutionAnchor(this)
     return if (anchor == null) doSearch() else doSearch() ?: anchor.doSearch()
 }
 
