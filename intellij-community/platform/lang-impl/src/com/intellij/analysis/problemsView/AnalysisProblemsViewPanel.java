@@ -15,6 +15,7 @@ import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.NlsContexts.PopupTitle;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -234,7 +235,7 @@ public abstract class AnalysisProblemsViewPanel extends SimpleToolWindowPanel im
     group.addAction(action);
   }
 
-  protected void createAndShowPopup(@NotNull final String title, @NotNull final JPanel jPanel) {
+  protected void createAndShowPopup(@NotNull @PopupTitle String title, @NotNull final JPanel jPanel) {
     final Rectangle visibleRect = myTable.getVisibleRect();
     final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x + visibleRect.x, myTable.getLocationOnScreen().y + visibleRect.y);
 

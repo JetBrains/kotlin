@@ -15,6 +15,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.NlsContexts.PopupTitle;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
@@ -84,7 +85,7 @@ public abstract class LRUPopupBuilder<T> {
 
   @NotNull
   public static ListPopup forFileLanguages(@NotNull Project project,
-                                           @NotNull String title,
+                                           @NotNull @PopupTitle String title,
                                            @Nullable Language selection,
                                            @NotNull Consumer<? super Language> onChosen) {
     return languagePopupBuilder(project, title).
@@ -95,7 +96,7 @@ public abstract class LRUPopupBuilder<T> {
   }
 
   @NotNull
-  public static LRUPopupBuilder<Language> languagePopupBuilder(@NotNull Project project, @NotNull String title) {
+  public static LRUPopupBuilder<Language> languagePopupBuilder(@NotNull Project project, @NotNull @PopupTitle String title) {
     return new LRUPopupBuilder<Language>(project, title) {
       @Override
       public String getDisplayName(Language language) {
