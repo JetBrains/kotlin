@@ -62,17 +62,17 @@ class NativeDistributionCommonizer(
 
     private fun checkPreconditions() {
         if (!repository.isDirectory)
-            logger.fatal("repository does not exist: $repository")
+            logger.fatal("Repository does not exist: $repository")
 
         when (targets.size) {
-            0 -> logger.fatal("no targets specified")
-            1 -> logger.fatal("too few targets specified: $targets")
+            0 -> logger.fatal("No targets specified")
+            1 -> logger.fatal("Too few targets specified: $targets")
         }
 
         when {
             !destination.exists() -> destination.mkdirs()
-            !destination.isDirectory -> logger.fatal("output already exists: $destination")
-            destination.walkTopDown().any { it != destination } -> logger.fatal("output is not empty: $destination")
+            !destination.isDirectory -> logger.fatal("Output already exists: $destination")
+            destination.walkTopDown().any { it != destination } -> logger.fatal("Output is not empty: $destination")
         }
     }
 
@@ -91,7 +91,7 @@ class NativeDistributionCommonizer(
                 .orEmpty()
 
             if (platformLibs.isEmpty())
-                logger.warning("no platform libraries found for target $target, this target will be excluded from commonization")
+                logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
 
             inputTarget to NativeDistributionLibraries(stdlib, platformLibs)
         }
@@ -99,7 +99,7 @@ class NativeDistributionCommonizer(
 
     private fun loadLibrary(location: File): KotlinLibrary {
         if (!location.isDirectory)
-            logger.fatal("library not found: $location")
+            logger.fatal("Library not found: $location")
 
         val library = resolveSingleFileKlib(
             libraryFile = KFile(location.path),
@@ -108,14 +108,14 @@ class NativeDistributionCommonizer(
         )
 
         if (library.versions.metadataVersion == null)
-            logger.fatal("library does not have metadata version specified in manifest: $location")
+            logger.fatal("Library does not have metadata version specified in manifest: $location")
 
         val metadataVersion = library.metadataVersion
         if (metadataVersion?.isCompatible() != true)
             logger.fatal(
                 """
-                library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $location,
-                please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
+                Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $location
+                Please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
                 """.trimIndent()
             )
 
