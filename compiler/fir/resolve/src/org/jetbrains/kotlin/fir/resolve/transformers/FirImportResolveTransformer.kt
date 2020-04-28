@@ -18,14 +18,16 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirImportResolveTransformer() : FirAbstractTreeTransformer<Nothing?>(phase = FirResolvePhase.IMPORTS) {
+open class FirImportResolveTransformer protected constructor(phase: FirResolvePhase) : FirAbstractTreeTransformer<Nothing?>(phase) {
+    constructor() : this(FirResolvePhase.IMPORTS)
+
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     private lateinit var symbolProvider: FirSymbolProvider
 
-    override lateinit var session: FirSession
+    final override lateinit var session: FirSession
 
     constructor(session: FirSession) : this() {
         this.session = session
@@ -43,6 +45,8 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer<Nothing?>(phase
     override fun transformImport(import: FirImport, data: Nothing?): CompositeTransformResult<FirImport> {
         val fqName = import.importedFqName?.takeUnless { it.isRoot } ?: return import.compose()
 
+        if (!fqName.isAcceptable) return import.compose()
+
         if (import.isAllUnder) {
             return transformImportForFqName(fqName, import)
         }
@@ -50,6 +54,9 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer<Nothing?>(phase
         val parentFqName = fqName.parent()
         return transformImportForFqName(parentFqName, import)
     }
+
+    protected open val FqName.isAcceptable: Boolean
+        get() = true
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): CompositeTransformResult<FirImport> {
         val (packageFqName, relativeClassFqName) = resolveToPackageOrClass(symbolProvider, fqName) ?: return delegate.compose()

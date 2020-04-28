@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 enum class FirResolvePhase {
     RAW_FIR,
+    ANNOTATIONS_FOR_PLUGINS, // run only if some extensions are registered
     IMPORTS,
     SUPER_TYPES,
     SEALED_CLASS_INHERITORS,
@@ -19,6 +20,7 @@ enum class FirResolvePhase {
     val requiredToLaunch: FirResolvePhase
         get() = when (this) {
             RAW_FIR -> RAW_FIR
+            IMPORTS -> RAW_FIR
             IMPLICIT_TYPES_BODY_RESOLVE, BODY_RESOLVE -> STATUS
             else -> values()[ordinal - 1]
         }

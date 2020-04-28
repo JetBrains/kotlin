@@ -138,15 +138,9 @@ class FirExtensionPointService(
             }
         }
 
-        private val FirAnnotationCall.fqName: FqName?
-            get() {
-                val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
-                return symbol.classId.asSingleFqName()
-            }
-
         private fun collectExtensions(result: MutableSet<P>, declaration: FirAnnotationContainer, extensions: Multimap<AnnotationFqn, P>) {
             for (annotation in declaration.annotations) {
-                val fqName = annotation.fqName ?: continue
+                val fqName = annotation.fqName(session) ?: continue
                 result += extensions[fqName]
             }
         }
@@ -154,3 +148,8 @@ class FirExtensionPointService(
 }
 
 val FirSession.extensionPointService: FirExtensionPointService by FirSession.sessionComponentAccessor()
+
+fun FirAnnotationCall.fqName(session: FirSession): FqName? {
+    val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
+    return symbol.classId.asSingleFqName()
+}
