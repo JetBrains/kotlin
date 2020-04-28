@@ -21,12 +21,16 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
     protected open fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<T>): String? =
         target.targetName
 
+    // This function is used in IDE import in order to indicate that sourceSetName=disambiguitionClassifier+compilationName
+    protected open fun useDisambiguitionClassifierAsSourcesetNamePreffix() = true
+
     abstract protected fun instantiateTarget(name: String): R
 
     override fun createTarget(name: String): R {
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
+            useDisambiguitionClassifierAsSourcesetNamePreffix = useDisambiguitionClassifierAsSourcesetNamePreffix()
             preset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)
