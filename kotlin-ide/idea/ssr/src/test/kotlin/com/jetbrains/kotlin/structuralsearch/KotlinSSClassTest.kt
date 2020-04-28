@@ -7,9 +7,15 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testInterface() { doTest("interface A") }
 
-    fun testClassWithAbstractModifier() { doTest("abstract class A") }
+    fun testDataClass() { doTest("data class A") }
 
-    fun testClassWithInnerModifier() { doTest("inner class B") }
+    fun testEnumClass() { doTest("enum class A") }
+
+    fun testInnerClass() { doTest("inner class B") }
+
+    fun testSealedClass() { doTest("sealed class A") }
+
+    fun testClassWithAbstractModifier() { doTest("abstract class A") }
 
     fun testClassWithOpenModifier() { doTest("open class A") }
 
@@ -20,8 +26,6 @@ class KotlinSSClassTest : KotlinSSTest() {
     fun testClassWithPrivateModifier() { doTest("private class A") }
 
     fun testClassWithoutAbstractModifier() { doTest("abstract class A") }
-
-    fun testClassWithoutInnerModifier() { doTest("inner class B") }
 
     fun testClassWithoutOpenModifier() { doTest("open class A") }
 
