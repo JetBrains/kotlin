@@ -69,10 +69,12 @@ object KonanBridgeSymbolLoading {
             var i = 0
             val total = (konanTargets.size * KtFileTranslator.PRELOADED_LANGUAGE_KINDS.size).toDouble()
             for (target in konanTargets) {
+                indicator.text2 = target.productModuleName
                 val bridgeFile = bridgeFileManager.forTarget(target)
                 val config = OCInclusionContextUtil.getResolveRootAndActiveConfiguration(bridgeFile, project).configuration ?: continue
                 val bridgePsiFile = PsiManager.getInstance(project).findFile(bridgeFile) as? KonanBridgePsiFile ?: continue
                 for (kind in KtFileTranslator.PRELOADED_LANGUAGE_KINDS) {
+                    indicator.text2 = "${target.productModuleName} (${kind.shortDisplayName})"
                     val context = OCInclusionContext.beforePCHFileContext(config, kind, bridgePsiFile)
                     val bridgingTable = FileSymbolTable.forFile(bridgeFile, context) ?: continue
                     processSymbols(bridgingTable.contents, context)
