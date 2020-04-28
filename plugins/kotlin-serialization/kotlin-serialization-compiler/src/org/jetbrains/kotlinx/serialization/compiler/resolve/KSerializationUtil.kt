@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -213,7 +214,7 @@ internal fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDesc
 }
 
 internal fun ClassDescriptor.needSerializerFactory(): Boolean {
-    if (this.platform?.isNative() != true) return false
+    if (!(this.platform?.isNative() == true || this.platform.isJs())) return false
     val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
     if (serializableClass.isSerializableObject) return true
     if (serializableClass.declaredTypeParameters.isEmpty()) return false
