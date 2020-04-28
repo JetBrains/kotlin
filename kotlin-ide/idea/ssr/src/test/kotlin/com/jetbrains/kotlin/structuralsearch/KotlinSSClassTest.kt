@@ -11,6 +11,8 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassConstrDefaultValue() { doTest("class '_(b: Int, c: String = \"a\")") }
 
+    fun testClassTypeArgs() { doTest("class A<T, R>(val a: T, val b: R, val c: T)") }
+
     fun testInterface() { doTest("interface '_") }
 
     fun testDataClass() { doTest("data class '_") }
