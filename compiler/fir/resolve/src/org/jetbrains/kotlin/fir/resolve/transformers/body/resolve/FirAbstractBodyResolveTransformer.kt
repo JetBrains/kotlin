@@ -41,19 +41,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             return phasedFir(requiredPhase)
         }
 
-    protected inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
-        val sizeBefore = scopes.size
-        return try {
-            l()
-        } finally {
-            val size = scopes.size
-            assert(size >= sizeBefore)
-            repeat(size - sizeBefore) {
-                scopes.let { it.removeAt(it.size - 1) }
-            }
-        }
-    }
-
     protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
         return context.withLocalScopesCleanup(l)
     }

@@ -98,3 +98,16 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
         )
     }
 }
+
+inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
+    val sizeBefore = scopes.size
+    return try {
+        l()
+    } finally {
+        val size = scopes.size
+        assert(size >= sizeBefore)
+        repeat(size - sizeBefore) {
+            scopes.let { it.removeAt(it.size - 1) }
+        }
+    }
+}
