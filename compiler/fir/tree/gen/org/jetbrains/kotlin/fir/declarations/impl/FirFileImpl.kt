@@ -41,12 +41,17 @@ internal class FirFileImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFileImpl {
         transformAnnotations(transformer, data)
         imports.transformInplace(transformer, data)
-        declarations.transformInplace(transformer, data)
+        transformDeclarations(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFileImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirFileImpl {
+        declarations.transformInplace(transformer, data)
         return this
     }
 
