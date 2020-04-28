@@ -355,4 +355,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.right, other.right)
     }
 
+    override fun visitIsExpression(expression: KtIsExpression) {
+        val other = getTreeElement<KtIsExpression>() ?: return
+        myMatchingVisitor.result = expression.isNegated == other.isNegated
+                && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
+                && myMatchingVisitor.match(expression.typeReference, other.typeReference)
+    }
+
 }
