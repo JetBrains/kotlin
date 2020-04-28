@@ -81,6 +81,10 @@ public class GradleInstallationManager {
     GRADLE_ENV_PROPERTY_NAME = System.getProperty("gradle.home.env.key", "GRADLE_HOME");
   }
 
+  public static GradleInstallationManager getInstance() {
+    return ServiceManager.getService(GradleInstallationManager.class);
+  }
+
   @Nullable private Ref<File> myCachedGradleHomeFromPath;
 
   /**
