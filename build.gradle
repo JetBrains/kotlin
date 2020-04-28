@@ -216,7 +216,8 @@ dependencies {
     distPack project(':Interop:Indexer')
     distPack project(':Interop:StubGenerator')
     distPack project(':backend.native')
-    distPack project(':utilities')
+    distPack project(':utilities:cli-runner')
+    distPack project(':utilities:basic-utils')
     distPack project(':klib')
     distPack project(path: ':endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
     distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"

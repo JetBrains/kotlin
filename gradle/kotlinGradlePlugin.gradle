@@ -25,6 +25,7 @@ configurations {
     kotlinCompilerClasspath
 }
 project.repositories {
+    maven { url buildKotlinCompilerRepo }
     maven {
         url kotlinCompilerRepo
     }
