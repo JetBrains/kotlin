@@ -145,6 +145,8 @@ internal class ProjectResolutionFacade(
     internal fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
         return cachedResolverForProject.descriptorForModule(ideaModuleInfo)
     }
+    
+    internal fun getResolverForProject(): ResolverForProject<IdeaModuleInfo> = cachedResolverForProject
 
     internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }

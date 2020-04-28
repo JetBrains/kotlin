@@ -90,7 +90,7 @@
 
         <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"/>
 
-        <action id="AnchorSupportForLibraryAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.AnchorSupportForLibraryAnalysisToggleAction"/>
+        <action id="LibraryToSourceDependencySupportToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.LibraryToSourceDependencySupportToggleAction"/>
 
         <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"/>
 
@@ -195,11 +195,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheServiceImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.resolve.AnchorProvider"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinIdeAnchorService"/>
-
-    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.ModuleResolverTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleResolverTrackerImpl"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.ResolutionAnchorProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinIdeResolutionAnchorService"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateService"
                     serviceImplementation="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateServiceImpl"/>
