@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirEffectiveVisibility
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.firEffectiveVisibility
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -171,8 +169,13 @@ fun FirDeclaration.resolveStatus(
         }
         val modality = status.modality ?: resolveModality(containingClass)
         val containerEffectiveVisibility = containingClass?.effectiveVisibility ?: FirEffectiveVisibility.Public
+        val visibilityBuffer = visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration)
         val effectiveVisibility =
-            visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
+            visibilityBuffer.lowerBound(
+                containerEffectiveVisibility,
+                visibilityBuffer.collectContainerSupertypes(containerEffectiveVisibility),
+                containerEffectiveVisibility.collectContainerSupertypes(visibilityBuffer)
+            )
         return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)
     }
     return status

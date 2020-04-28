@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.name.ClassId
 
 fun firEffectiveVisibility(
     session: FirSession,
@@ -31,10 +32,9 @@ fun Visibility.firEffectiveVisibility(session: FirSession, declaration: FirMembe
 
 fun ConeKotlinType.leastPermissiveDescriptor(
     session: FirSession,
-    base: FirEffectiveVisibility,
-    baseParent: FirMemberDeclaration
+    base: FirEffectiveVisibility
 ): DeclarationWithRelation? =
-    dependentDeclarations(session).leastPermissive(session, base, baseParent)
+    dependentDeclarations(session).leastPermissive(session, base)
 
 fun FirMemberDeclaration.firEffectiveVisibility(
     session: FirSession, visibility: Visibility = this.visibility, checkPublishedApi: Boolean = false
@@ -55,7 +55,7 @@ private fun lowerBound(vararg elements: FirEffectiveVisibility): FirEffectiveVis
     }
     var result = elements[0]
     for (el in elements) {
-        result = result.lowerBound(el)
+        result = result.lowerBound(el, result.collectContainerSupertypes(el), el.collectContainerSupertypes(result))
     }
     return result
 }
@@ -149,20 +149,17 @@ private fun ConeKotlinType.dependentDeclarations(
 
 private fun Set<DeclarationWithRelation>.leastPermissive(
     session: FirSession,
-    base: FirEffectiveVisibility,
-    baseParent: FirMemberDeclaration
+    base: FirEffectiveVisibility
 ): DeclarationWithRelation? {
     for (declarationWithRelation in this) {
         val currentVisibility = declarationWithRelation.firEffectiveVisibility(session)
-        when (currentVisibility.relation(base)) {
+        when (currentVisibility.relation(
+            base,
+            currentVisibility.collectContainerSupertypes(base),
+            base.collectContainerSupertypes(currentVisibility)
+        )) {
             Permissiveness.LESS, Permissiveness.UNKNOWN -> {
                 return declarationWithRelation
-            }
-            Permissiveness.PROTECTED_CHECK_REQUIRED -> {
-                val otherContainer = declarationWithRelation.declaration.containingClass() ?: return declarationWithRelation
-                if (!baseParent.isContainerSubclassOf(otherContainer)) {
-                    return declarationWithRelation
-                }
             }
             else -> {
             }
@@ -171,26 +168,18 @@ private fun Set<DeclarationWithRelation>.leastPermissive(
     return null
 }
 
-private fun FirMemberDeclaration.isContainerSubclassOf(other: FirRegularClass): Boolean {
-    if (this.containingClass()?.classId == other.classId) return true
-    val containers = this.collectContainers()
-    val supertypes = mutableListOf<ConeClassLikeType>()
-    containers.forEach { supertypes.addAll(it.collectSupertypes()) }
-    return supertypes.map { it.classId }.contains(other.classId)
-}
-
-private fun FirMemberDeclaration.collectContainers(): MutableList<FirRegularClass> {
-    val containers = mutableListOf<FirRegularClass>()
-    val container = this.containingClass() ?: return containers
-    containers.add(container)
-    containers.addAll(container.collectContainers())
-    return containers
-}
-
-private fun FirRegularClass.collectSupertypes() = lookupSuperTypes(
+fun FirRegularClass.collectSupertypes() = lookupSuperTypes(
     this as FirClass<*>,
     lookupInterfaces = true,
     deep = true,
     useSiteSession = this.session
 )
+
+fun FirEffectiveVisibility.collectContainerSupertypes(other: FirEffectiveVisibility): List<ClassId?>? =
+    if (this.needSupertypes(other)) {
+        this.getContainerClass()?.collectSupertypes()?.map { it.classId }
+    } else {
+        null
+    }
+
 
