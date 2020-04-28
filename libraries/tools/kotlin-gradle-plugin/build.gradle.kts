@@ -11,6 +11,10 @@ plugins {
     id("jps-compatible")
 }
 
+configure<GradlePluginDevelopmentExtension> {
+    isAutomatedPublishing = false
+}
+
 publish()
 
 val jarContents by configurations.creating
