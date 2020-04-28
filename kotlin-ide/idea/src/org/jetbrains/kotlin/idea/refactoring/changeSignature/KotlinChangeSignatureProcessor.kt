@@ -30,6 +30,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplicitReceiverUsage
@@ -135,6 +136,7 @@ class KotlinChangeSignatureProcessor(
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         try {
             super.performRefactoring(usages)
+            performDelayedRefactoringRequests(myProject)
         } finally {
             changeInfo.invalidate()
         }
