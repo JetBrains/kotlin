@@ -236,7 +236,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
         myMatchingVisitor.result = matchNameIdentifiers(klass.nameIdentifier, other.nameIdentifier)
-                && myMatchingVisitor.match(klass.getClassKeyword(), other.getClassKeyword())
+                && myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.matchSonsInAnyOrder(klass.body, other.body)
     }

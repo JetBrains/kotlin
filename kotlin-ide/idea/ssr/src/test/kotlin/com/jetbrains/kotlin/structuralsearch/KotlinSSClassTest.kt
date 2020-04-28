@@ -5,6 +5,8 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClass() { doTest("class A") }
 
+    fun testInterface() { doTest("interface A") }
+
     fun testClassWithAbstractModifier() { doTest("abstract class A") }
 
     fun testClassWithInnerModifier() { doTest("inner class B") }
