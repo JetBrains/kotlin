@@ -11,6 +11,9 @@ dependencies {
 
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijDep()) { includeJars("slf4j-api-1.7.25") }
+    Platform[193].orLower {
+        compile(project(":idea:idea-gradle-tooling-api"))
+    }
 }
 
 sourceSets {

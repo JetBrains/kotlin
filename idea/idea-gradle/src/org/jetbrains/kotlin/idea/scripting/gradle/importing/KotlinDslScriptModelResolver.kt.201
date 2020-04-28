@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import org.jetbrains.plugins.gradle.model.ClassSetImportModelProvider
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
+import org.jetbrains.kotlin.gradle.KotlinDslScriptAdditionalTask
+import org.jetbrains.kotlin.gradle.KotlinDslScriptModelProvider
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 import org.jetbrains.plugins.gradle.service.project.ModifiableGradleProjectModel

@@ -13,6 +13,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
+import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider

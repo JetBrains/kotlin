@@ -9,6 +9,8 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
+import org.jetbrains.kotlin.gradle.KotlinDslScriptAdditionalTask
+import org.jetbrains.kotlin.gradle.KotlinDslScriptModelProvider
 import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.model.ClassSetBuildImportModelProvider
