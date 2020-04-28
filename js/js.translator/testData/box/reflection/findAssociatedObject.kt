@@ -93,5 +93,9 @@ fun box(): String {
 
     if ((A::class.getAssociatedObjectByAssociated2() as I2).foo() != 20) return "fail 10"
 
+    if (Int::class.findAssociatedObject<Associated1>() != null) return "fail 11"
+
+    if (10::class.findAssociatedObject<Associated2>() != null) return "fail 12"
+
     return "OK"
 }
