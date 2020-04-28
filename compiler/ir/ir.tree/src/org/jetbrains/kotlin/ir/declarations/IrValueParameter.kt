@@ -32,5 +32,7 @@ interface IrValueParameter : IrValueDeclaration, IrSymbolDeclaration<IrValuePara
 
     var defaultValue: IrExpressionBody?
 
+    var variableNameHint: String?
+
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter
 }

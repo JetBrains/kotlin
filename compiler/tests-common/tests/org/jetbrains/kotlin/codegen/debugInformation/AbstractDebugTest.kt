@@ -149,6 +149,8 @@ abstract class AbstractDebugTest : CodegenTestCase() {
             ).toTypedArray()
         )
 
+        updateConfigurationByDirectivesInTestFiles(files, myEnvironment.configuration)
+        
         loadMultiFiles(files)
         val classBuilderFactory =
             OriginCollectingClassBuilderFactory(ClassBuilderMode.FULL)

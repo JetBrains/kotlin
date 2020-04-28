@@ -10,11 +10,11 @@ fun box() {
 // IGNORE_BACKEND: JVM_IR
 // LOCAL VARIABLES
 // TestKt:6:
-// someClass:3: a:double, b:double
+// someClass:3: F:a:double, F:b:double, LV:a:double, LV:b:double
 // TestKt:6:
-// TestKt:7: a:someClass
-// someClass:3: a:double, b:double
-// someClass.copy(double, double)+9: a:double, b:double
+// TestKt:7: LV:a:someClass
+// someClass:3: F:a:double, F:b:double, LV:a:double, LV:b:double
+// someClass.copy(double, double)+9: F:a:double, F:b:double, LV:a:double, LV:b:double
 // someClass.copy$default(someClass, double, double, int, java.lang.Object)+30:
-// TestKt:7: a:someClass
-// TestKt:8: a:someClass, b:someClass
+// TestKt:7: LV:a:someClass
+// TestKt:8: LV:a:someClass, LV:b:someClass

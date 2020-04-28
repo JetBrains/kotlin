@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.getNameForDestructuredParameterOrNull
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val renameAnonymousParametersLowering = makeIrFilePhase(
@@ -80,6 +84,15 @@ private class RenameAnonymousParametersLowering(val context: JvmBackendContext) 
                 return Name.identifier("\$noName_${it.index}")
             }
         }
+
+        descriptor.safeAs<ReceiverParameterDescriptor>()?.let {
+            if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+                this.variableNameHint?.let {
+                    return Name.identifier("\$this\$$it")
+                }
+            }
+        }
+
         return null
     }
 }

@@ -12,8 +12,8 @@ fun box() {
 // IGNORE_BACKEND: JVM_IR
 // LOCAL VARIABLES
 // TestKt:6:
-// TestKt:8: map:java.util.Collections$SingletonMap
-// TestKt:7: map:java.util.Collections$SingletonMap
-// TestKt:9: map:java.util.Collections$SingletonMap, a:java.lang.String, b:java.lang.String
-// TestKt:7: map:java.util.Collections$SingletonMap
-// TestKt:11: map:java.util.Collections$SingletonMap
+// TestKt:8: LV:map:java.util.Collections$SingletonMap
+// TestKt:7: LV:map:java.util.Collections$SingletonMap
+// TestKt:9: LV:map:java.util.Collections$SingletonMap, LV:a:java.lang.String, LV:b:java.lang.String
+// TestKt:7: LV:map:java.util.Collections$SingletonMap
+// TestKt:11: LV:map:java.util.Collections$SingletonMap
