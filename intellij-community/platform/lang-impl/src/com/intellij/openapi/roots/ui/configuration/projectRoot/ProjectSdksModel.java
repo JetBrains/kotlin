@@ -95,7 +95,9 @@ public class ProjectSdksModel implements SdkModel {
 
   public void reset(@Nullable Project project) {
     myProjectSdks.clear();
-    final Sdk[] projectSdks = ProjectJdkTable.getInstance().getAllJdks();
+    ProjectJdkTable jdkTable = ProjectJdkTable.getInstance();
+    jdkTable.preconfigure();
+    final Sdk[] projectSdks = jdkTable.getAllJdks();
     for (Sdk sdk : projectSdks) {
       try {
         Sdk editable = (Sdk)sdk.clone();
