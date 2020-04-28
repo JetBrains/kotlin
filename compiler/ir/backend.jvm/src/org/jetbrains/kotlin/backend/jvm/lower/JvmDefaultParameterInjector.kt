@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 
 class JvmDefaultParameterInjector(context: JvmBackendContext) :
-    DefaultParameterInjector(context, skipInline = false, skipExternalMethods = false) {
+    DefaultParameterInjector(context, skipInline = false, skipExternalMethods = false, createStaticDefaultStubs = true) {
 
     override val context: JvmBackendContext get() = super.context as JvmBackendContext
 

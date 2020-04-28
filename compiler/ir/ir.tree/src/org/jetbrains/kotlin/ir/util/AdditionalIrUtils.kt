@@ -112,7 +112,7 @@ val IrDeclaration.fileEntry: SourceManager.FileEntry
         }
     }
 
-fun IrClass.companionObject() = this.declarations.singleOrNull {it is IrClass && it.isCompanion }
+fun IrClass.companionObject() = this.declarations.singleOrNull {it is IrClass && it.isCompanion } as? IrClass
 
 val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingPropertySymbol?.owner?.getter
 

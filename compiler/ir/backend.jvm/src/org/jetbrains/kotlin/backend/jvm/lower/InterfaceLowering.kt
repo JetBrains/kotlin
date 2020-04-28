@@ -64,6 +64,10 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         val jvmDefaultMode = context.state.jvmDefaultMode
         // There are 6 cases for functions on interfaces:
         loop@ for (function in irClass.functions) {
+            // Ignore lowered JvmStatic functions
+            if (function.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER)
+                continue
+
             when {
                 /**
                  * 1) They are plain abstract interface functions, in which case we leave them:

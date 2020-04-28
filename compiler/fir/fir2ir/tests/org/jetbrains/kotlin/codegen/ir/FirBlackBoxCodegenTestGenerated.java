@@ -16202,6 +16202,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/jvmStatic/default.kt");
         }
 
+        @TestMetadata("defaultArgumentWithCall.kt")
+        public void testDefaultArgumentWithCall() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/defaultArgumentWithCall.kt");
+        }
+
         @TestMetadata("defaultCrossFile.kt")
         public void testDefaultCrossFile() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/defaultCrossFile.kt");

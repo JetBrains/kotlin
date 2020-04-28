@@ -114,7 +114,7 @@ class JvmBackendContext(
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
-    val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val jvmStaticDispatchReceivers = mutableMapOf<IrFunctionSymbol, IrValueParameter>()
 
     val inlineClassReplacements = MemoizedInlineClassReplacements()
 

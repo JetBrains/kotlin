@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 
-class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) : DefaultArgumentStubGenerator(context, false, false) {
+class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) :
+    DefaultArgumentStubGenerator(context, skipInlineMethods = false, skipExternalMethods = false, createStaticDefaultStubs = true) {
     override fun IrBlockBodyBuilder.selectArgumentOrDefault(
         defaultFlag: IrExpression,
         parameter: IrValueParameter,

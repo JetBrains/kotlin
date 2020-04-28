@@ -59,35 +59,28 @@ private class JvmStaticAnnotationLowering(val context: JvmBackendContext) : IrEl
 
 private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        val companion = irClass.declarations.find {
-            it is IrClass && it.isCompanion
-        } as? IrClass ?: return
+        val companion = irClass.companionObject() ?: return
 
-        companion.declarations
-            // In case of companion objects, proxy functions for '$default' methods for @JvmStatic functions with default parameters
-            // are not created in the host class.
-            .filter { isJvmStaticFunction(it) && it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
-            .forEach { declaration ->
-                val jvmStaticFunction = declaration as IrSimpleFunction
-                if (jvmStaticFunction.isExternal) {
-                    // We move external functions to the enclosing class and potentially add accessors there.
-                    // The JVM backend also adds accessors in the companion object, but these are superfluous.
-                    val staticExternal = irClass.addFunction {
-                        updateFrom(jvmStaticFunction)
-                        name = jvmStaticFunction.name
-                        returnType = jvmStaticFunction.returnType
-                    }.apply {
-                        copyTypeParametersFrom(jvmStaticFunction)
-                        extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
-                        valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
-                        annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
-                    }
-                    companion.declarations.remove(jvmStaticFunction)
-                    companion.addProxy(staticExternal, companion, isStatic = false)
-                } else {
-                    irClass.addProxy(jvmStaticFunction, companion)
+        companion.functions.filter(::isJvmStaticFunction).toList().forEach { jvmStaticFunction ->
+            if (jvmStaticFunction.isExternal) {
+                // We move external functions to the enclosing class and potentially add accessors there.
+                // The JVM backend also adds accessors in the companion object, but these are superfluous.
+                val staticExternal = irClass.addFunction {
+                    updateFrom(jvmStaticFunction)
+                    name = jvmStaticFunction.name
+                    returnType = jvmStaticFunction.returnType
+                }.apply {
+                    copyTypeParametersFrom(jvmStaticFunction)
+                    extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
+                    valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+                    annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
                 }
+                companion.declarations.remove(jvmStaticFunction)
+                companion.addProxy(staticExternal, companion, isStatic = false)
+            } else {
+                irClass.addProxy(jvmStaticFunction, companion)
             }
+        }
     }
 
     private fun IrClass.addProxy(target: IrSimpleFunction, companion: IrClass, isStatic: Boolean = true) =
@@ -107,7 +100,9 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
                 dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             }
             extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
-            valueParameters = target.valueParameters.map { it.copyTo(this) }
+            // In case of companion objects, proxy functions for '$default' methods for @JvmStatic functions with default parameters
+            // are not created in the host class.
+            valueParameters = target.valueParameters.map { it.copyTo(this, defaultValue = null) }
             annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
             val proxy = this
@@ -133,11 +128,15 @@ private class SingletonObjectJvmStaticLowering(
     override fun lower(irClass: IrClass) {
         if (!irClass.isObject || irClass.isCompanion) return
 
-        irClass.declarations.filter(::isJvmStaticFunction).forEach {
-            val jvmStaticFunction = it as IrSimpleFunction
+        irClass.functions.filter(::isJvmStaticFunction).forEach { jvmStaticFunction ->
             // dispatch receiver parameter is already null for synthetic property annotation methods
-            jvmStaticFunction.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
+            val oldDispatchReceiverParameter = jvmStaticFunction.dispatchReceiverParameter
+                ?: context.jvmStaticDispatchReceivers[jvmStaticFunction.symbol]
+            if (oldDispatchReceiverParameter != null) {
                 jvmStaticFunction.dispatchReceiverParameter = null
+                jvmStaticFunction.valueParameters.forEach {
+                    it.defaultValue?.replaceThisByStaticReference(context.declarationFactory, irClass, oldDispatchReceiverParameter)
+                }
                 jvmStaticFunction.body = jvmStaticFunction.body?.replaceThisByStaticReference(
                     context.declarationFactory,
                     irClass,
@@ -146,12 +145,11 @@ private class SingletonObjectJvmStaticLowering(
             }
         }
     }
-
 }
 
 private fun IrFunction.isJvmStaticInSingleton(): Boolean {
     val parentClass = parent as? IrClass ?: return false
-    return isJvmStaticFunction(this) && parentClass.isObject && !parentClass.isCompanion
+    return this is IrSimpleFunction && isJvmStaticFunction(this) && parentClass.isObject && !parentClass.isCompanion
 }
 
 private class MakeCallsStatic(
@@ -165,7 +163,12 @@ private class MakeCallsStatic(
             val callee = expression.symbol.owner as IrSimpleFunction
             val newCallee = if (!callee.isInCurrentModule()) {
                 callee.copyRemovingDispatchReceiver()       // TODO: cache these
-            } else callee
+            } else {
+                // We need to remember the original dispatch receiver parameter in order to lower the function later.
+                callee.dispatchReceiverParameter?.let { context.jvmStaticDispatchReceivers[expression.symbol] = it }
+                callee.dispatchReceiverParameter = null
+                callee
+            }
 
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 // OldReceiver has to be evaluated for its side effects.
@@ -202,9 +205,6 @@ private class MakeCallsStatic(
         }
 }
 
-private fun isJvmStaticFunction(declaration: IrDeclaration): Boolean =
-    declaration is IrSimpleFunction &&
-            (declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
-                    declaration.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true) &&
-            declaration.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
-
+fun isJvmStaticFunction(declaration: IrSimpleFunction): Boolean =
+    (declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) || declaration.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true)
+            && declaration.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
