@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.SimpleType
 class WasmSymbols(
     context: WasmBackendContext,
     private val symbolTable: SymbolTable
-) : Symbols<WasmBackendContext>(context, symbolTable) {
+) : Symbols<WasmBackendContext>(context, context.irBuiltIns, symbolTable) {
 
     override val ThrowNullPointerException
         get() = TODO()

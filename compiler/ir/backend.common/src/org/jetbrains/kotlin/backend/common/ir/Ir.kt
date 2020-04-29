@@ -48,7 +48,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
  */
-open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, private val builtIns: KotlinBuiltIns, private val symbolTable: ReferenceSymbolTable) {
+open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected val builtIns: KotlinBuiltIns, private val symbolTable: ReferenceSymbolTable) {
     protected fun builtInsPackage(vararg packageNameSegments: String) =
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
@@ -231,8 +231,8 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, private val 
 
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable: SymbolTable) :
-    BuiltinSymbolsBase(context.irBuiltIns, context.builtIns, symbolTable) {
+abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) :
+    BuiltinSymbolsBase(irBuiltIns, context.builtIns, symbolTable) {
     abstract val ThrowNullPointerException: IrFunctionSymbol
     abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
     abstract val ThrowTypeCastException: IrFunctionSymbol
