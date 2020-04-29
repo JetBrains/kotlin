@@ -238,7 +238,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
         val other = getTreeElement<KtTypeParameter>() ?: return
-        myMatchingVisitor.result = matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
+        myMatchingVisitor.result = matchTextOrVariable(parameter.firstChild, other.firstChild) // match generic
+                && myMatchingVisitor.match(parameter.extendsBound, other.extendsBound)
     }
 
     override fun visitParameter(parameter: KtParameter) {
@@ -250,7 +251,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
         val other = getTreeElement<KtTypeParameterList>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(
             list.parameters.toTypedArray(), other.parameters.toTypedArray()
         )
     }
