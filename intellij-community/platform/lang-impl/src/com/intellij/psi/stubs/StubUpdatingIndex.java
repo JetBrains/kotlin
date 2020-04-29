@@ -160,6 +160,9 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
 
   @Nullable
   public SerializedStubTree findPrebuiltSerializedStubTree(@NotNull FileContent fileContent) {
+    if (!Registry.is("use.prebuilt.indices")) {
+      return null;
+    }
     PrebuiltStubsProvider prebuiltStubsProvider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(fileContent.getFileType());
     if (prebuiltStubsProvider == null) {
       return null;

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.RecursionManager;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -252,6 +253,9 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
 
   @Override
   protected boolean isPrebuilt(@NotNull VirtualFile virtualFile) {
+    if (!Registry.is("use.prebuilt.indices")) {
+      return false;
+    }
     StubUpdatingIndex stubUpdatingIndex = FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex.class);
     if (stubUpdatingIndex == null) {
       return false;
