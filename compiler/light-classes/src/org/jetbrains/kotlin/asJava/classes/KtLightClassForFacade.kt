@@ -263,21 +263,16 @@ open class KtLightClassForFacade constructor(
 
             if (sources.isEmpty()) return null
 
-            val ultraLightEnabled =
-                !KtUltraLightSupport.forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)
-
             val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, fqName, searchScope)
             val stubValue = CachedValuesManager.getManager(project)
                 .createCachedValue(stubProvider, false)
 
             val manager = PsiManager.getInstance(project)
 
-            val ultraLightClass = if (ultraLightEnabled)
-                LightClassGenerationSupport.getInstance(project)
-                    .createUltraLightClassForFacade(manager, fqName, stubValue, sources)
-            else null
-
-            return ultraLightClass ?: KtLightClassForFacade(manager, fqName, stubValue, sources)
+            return if (!KtUltraLightSupport.forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true))
+                LightClassGenerationSupport.getInstance(project).createUltraLightClassForFacade(manager, fqName, stubValue, sources)
+                    ?: error { "Unable to create UL class for facade" }
+            else KtLightClassForFacade(manager, fqName, stubValue, sources)
         }
 
         fun createForFacade(

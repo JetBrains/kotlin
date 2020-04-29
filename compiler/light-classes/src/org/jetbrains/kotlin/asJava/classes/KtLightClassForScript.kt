@@ -209,7 +209,8 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
             }
 
             if (!forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)) {
-                LightClassGenerationSupport.getInstance(script.project).createUltraLightClassForScript(script)?.let { return it }
+                return LightClassGenerationSupport.getInstance(script.project).createUltraLightClassForScript(script)
+                    ?: error("UL class cannot be created for script")
             }
 
             return KtLightClassForScript(script)
