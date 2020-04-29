@@ -1,21 +1,13 @@
-// FILE: annotations.kt
+import org.jetbrains.kotlin.fir.allopen.AllOpen
 
-package allopen
-
-annotation class Open
-
-// FILE: main.kt
-
-import allopen.Open
-
-@Open
+@AllOpen
 class A {
     fun foo() {
 
     }
 }
 
-@Open
+@AllOpen
 class B : A() {
     override fun foo() {
 

@@ -1,12 +1,5 @@
-FILE: annotations.kt
-    public final annotation class Open : R|kotlin/Annotation| {
-        public constructor(): R|allopen/Open| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-FILE: main.kt
-    @R|allopen/Open|() public open class A : R|kotlin/Any| {
+FILE: simple.kt
+    @R|org/jetbrains/kotlin/fir/allopen/AllOpen|() public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -15,7 +8,7 @@ FILE: main.kt
         }
 
     }
-    @R|allopen/Open|() public open class B : R|A| {
+    @R|org/jetbrains/kotlin/fir/allopen/AllOpen|() public open class B : R|A| {
         public constructor(): R|B| {
             super<R|A|>()
         }
