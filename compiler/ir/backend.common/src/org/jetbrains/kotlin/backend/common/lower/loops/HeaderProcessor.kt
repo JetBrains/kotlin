@@ -66,8 +66,13 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     override val consumesLoopVariableComponents = false
 
     val inductionVariable: IrVariable
-    val stepVariable: IrVariable
-    val stepVariableForIncrement: IrVariable?
+
+    protected val stepVariable: IrVariable?
+    protected val stepVariableForIncrement: IrVariable?
+    val stepExpression: IrExpression
+        // Always copy `stepExpression` is it may be used multiple times.
+        get() = field.deepCopyWithSymbols()
+
     protected val lastVariableIfCanCacheLast: IrVariable?
     protected val lastExpression: IrExpression
         // Always copy `lastExpression` is it may be used in multiple conditions.
@@ -89,7 +94,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             //
             // In the above example, if first() is a Long and last() is an Int, this creates a
             // LongProgression so last() should be cast to a Long.
-            inductionVariable = scope.createTemporaryVariable(
+            inductionVariable = scope.createTmpVariable(
                 headerInfo.progressionType.castElementIfNecessary(headerInfo.first, context),
                 nameHint = "inductionVariable",
                 isMutable = true
@@ -102,7 +107,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             val last = ensureNotNullable(headerInfo.progressionType.castElementIfNecessary(headerInfo.last, context))
 
             lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
-                scope.createTemporaryVariable(
+                scope.createTmpVariable(
                     last,
                     nameHint = "last"
                 )
@@ -110,25 +115,28 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
 
             lastExpression = if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else last
 
-            stepVariable =
-                scope.createTemporaryVariable(
+            val stepType = headerInfo.progressionType.stepType(context.irBuiltIns)
+            val (tmpStepVar, tmpStepExpression) =
+                createTemporaryVariableIfNecessary(
                     ensureNotNullable(headerInfo.progressionType.castStepIfNecessary(headerInfo.step, context)),
                     nameHint = "step",
-                    irType = headerInfo.progressionType.stepType(context.irBuiltIns)
+                    irType = stepType
                 )
+            stepVariable = tmpStepVar
+            stepExpression = tmpStepExpression
 
             stepVariableForIncrement = when (headerInfo.progressionType) {
                 ProgressionType.UINT_PROGRESSION -> {
-                    val castFun = context.ir.symbols.toUIntByExtensionReceiver.getValue(stepVariable.type.toKotlinType())
-                    scope.createTemporaryVariable(
-                        irCall(castFun).apply { extensionReceiver = irGet(stepVariable) },
+                    val castFun = context.ir.symbols.toUIntByExtensionReceiver.getValue(stepType.toKotlinType())
+                    scope.createTmpVariable(
+                        irCall(castFun).apply { extensionReceiver = stepExpression },
                         nameHint = "stepForIncrement"
                     )
                 }
                 ProgressionType.ULONG_PROGRESSION -> {
-                    val castFun = context.ir.symbols.toULongByExtensionReceiver.getValue(stepVariable.type.toKotlinType())
-                    scope.createTemporaryVariable(
-                        irCall(castFun).apply { extensionReceiver = irGet(stepVariable) },
+                    val castFun = context.ir.symbols.toULongByExtensionReceiver.getValue(stepType.toKotlinType())
+                    scope.createTmpVariable(
+                        irCall(castFun).apply { extensionReceiver = stepExpression },
                         nameHint = "stepForIncrement"
                     )
                 }
@@ -147,17 +155,20 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
-        val stepVariableToUse = stepVariableForIncrement ?: stepVariable
+        val stepExpressionToUse = stepVariableForIncrement?.let { irGet(stepVariableForIncrement) } ?: stepExpression
+        // NOTE: We cannot use `stepExpression.type` below because it may be of type `Nothing`. This happens in the case of an illegal step
+        // where the "step" is actually a `throw IllegalArgumentException(...)`.
+        val stepType = stepVariableForIncrement?.type ?: headerInfo.progressionType.stepType(context.irBuiltIns)
         val plusFun = elementType.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type == stepVariableToUse.type
+                    it.valueParameters[0].type == stepType
         }
         irSetVar(
             inductionVariable.symbol, irCallOp(
                 plusFun.symbol, plusFun.returnType,
                 irGet(inductionVariable),
-                irGet(stepVariableToUse)
+                stepExpressionToUse
             )
         )
     }
@@ -230,18 +241,17 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                     //   // (use `<` if last is exclusive)
                     //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
                     val stepTypeClassifier = progressionType.stepClassifier(builtIns)
-                    val isLong = progressionType == ProgressionType.LONG_PROGRESSION
                     context.oror(
                         context.andand(
                             irCall(builtIns.greaterFunByOperandType.getValue(stepTypeClassifier)).apply {
-                                putValueArgument(0, irGet(stepVariable))
+                                putValueArgument(0, stepExpression)
                                 putValueArgument(1, if (progressionType.isLong) irLong(0) else irInt(0))
                             },
                             conditionForIncreasing()
                         ),
                         context.andand(
                             irCall(builtIns.lessFunByOperandType.getValue(stepTypeClassifier)).apply {
-                                putValueArgument(0, irGet(stepVariable))
+                                putValueArgument(0, stepExpression)
                                 putValueArgument(1, if (progressionType.isLong) irLong(0) else irInt(0))
                             },
                             conditionForDecreasing()
@@ -287,7 +297,7 @@ internal class ProgressionLoopHeader(
         with(builder) {
             // loopVariable is used in the loop condition if it can overflow. If no loopVariable was provided, create one.
             this@ProgressionLoopHeader.loopVariable = if (headerInfo.canOverflow && loopVariable == null) {
-                scope.createTemporaryVariable(
+                scope.createTmpVariable(
                     irGet(inductionVariable),
                     nameHint = "loopVariable",
                     isMutable = true
@@ -443,13 +453,13 @@ internal class WithIndexLoopHeader(
             if (nestedLoopHeader is NumericForLoopHeader<*> &&
                 nestedLoopHeader.inductionVariable.type.isInt() &&
                 nestedLoopHeader.inductionVariable.initializer?.constLongValue == 0L &&
-                nestedLoopHeader.stepVariable.initializer?.constLongValue == 1L
+                nestedLoopHeader.stepExpression.constLongValue == 1L
             ) {
                 indexVariable = nestedLoopHeader.inductionVariable
                 ownsIndexVariable = false
                 incrementIndexStatement = null
             } else {
-                indexVariable = scope.createTemporaryVariable(
+                indexVariable = scope.createTmpVariable(
                     irInt(0),
                     nameHint = "index",
                     isMutable = true
