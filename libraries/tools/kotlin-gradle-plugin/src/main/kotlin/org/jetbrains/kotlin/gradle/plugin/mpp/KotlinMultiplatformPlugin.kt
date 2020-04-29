@@ -269,7 +269,11 @@ class KotlinMultiplatformPlugin(
                 testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
             }
 
-            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, target.targetName)
+            val targetName = if (target is KotlinNativeTarget)
+                target.konanTarget.name
+            else
+                target.platformType.name
+            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
         }
 
         UnusedSourceSetsChecker.checkSourceSets(project)
