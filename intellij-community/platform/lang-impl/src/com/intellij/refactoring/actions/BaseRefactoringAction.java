@@ -212,7 +212,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
     PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
     Language[] languages = dataContext.getData(LangDataKeys.CONTEXT_LANGUAGES);
-    if (element == null || !isAvailableForLanguage(element.getLanguage())) {
+    if (element == null|| element instanceof SyntheticElement || !isAvailableForLanguage(element.getLanguage())) {
       if (file == null || editor == null) {
         return null;
       }
