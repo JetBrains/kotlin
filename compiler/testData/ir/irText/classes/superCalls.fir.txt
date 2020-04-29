@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/superCalls.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.String declared in <root>.Derived'
-            CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' type=kotlin.String origin=GET_PROPERTY
+            CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' superQualifier='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-bar>' type=<root>.Derived origin=null
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
       overridden:
