@@ -75,7 +75,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
       ServiceViewItem serviceNode = JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node ->
         contributorClass.isInstance(node.getRootContributor()) ? new ArrayList<>(myModel.getChildren(node)) : null)
         .withRoots(roots)
-        .traverse(TreeTraversal.PLAIN_BFS)
+        .traverse(ServiceModel.NOT_LOADED_LAST_BFS)
         .filter(node -> node.getValue().equals(service))
         .first();
       if (serviceNode != null) {
