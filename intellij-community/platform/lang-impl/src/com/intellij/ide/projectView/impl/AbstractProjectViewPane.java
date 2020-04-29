@@ -94,7 +94,6 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
   private DnDTarget myDropTarget;
   private DnDSource myDragSource;
-  private DnDManager myDndManager;
 
   private void queueUpdateByProblem() {
     if (Registry.is("projectView.showHierarchyErrors")) {
@@ -221,16 +220,13 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
   @Override
   public void dispose() {
-    if (myDndManager != null) {
-      if (myDropTarget != null) {
-        myDndManager.unregisterTarget(myDropTarget, myTree);
-        myDropTarget = null;
-      }
-      if (myDragSource != null) {
-        myDndManager.unregisterSource(myDragSource, myTree);
-        myDragSource = null;
-      }
-      myDndManager = null;
+    if (myDropTarget != null) {
+      DnDManager.getInstance().unregisterTarget(myDropTarget, myTree);
+      myDropTarget = null;
+    }
+    if (myDragSource != null) {
+      DnDManager.getInstance().unregisterSource(myDragSource, myTree);
+      myDragSource = null;
     }
     setTreeBuilder(null);
     myTree = null;
@@ -702,9 +698,9 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
         }
       };
       myDragSource = new MyDragSource();
-      myDndManager = DnDManager.getInstance();
-      myDndManager.registerSource(myDragSource, myTree);
-      myDndManager.registerTarget(myDropTarget, myTree);
+      DnDManager dndManager = DnDManager.getInstance();
+      dndManager.registerSource(myDragSource, myTree);
+      dndManager.registerTarget(myDropTarget, myTree);
     }
   }
 
