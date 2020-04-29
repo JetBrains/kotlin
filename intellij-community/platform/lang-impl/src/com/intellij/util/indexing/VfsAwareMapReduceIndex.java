@@ -132,7 +132,8 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
   protected InputData<Key, Value> mapInput(int inputId, @Nullable FileContent content) {
     InputData<Key, Value> data;
     boolean containsSnapshotData = true;
-    if (mySnapshotInputMappings != null && content != null) {
+    boolean isPhysical = content instanceof FileContentImpl && ((FileContentImpl)content).isPhysicalContent();
+    if (mySnapshotInputMappings != null && isPhysical) {
       try {
         data = mySnapshotInputMappings.readData(content);
         if (data != null) {
@@ -146,7 +147,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
       }
     }
     data = super.mapInput(inputId, content);
-    if (!containsSnapshotData && !UpdatableSnapshotInputMappingIndex.ignoreMappingIndexUpdate(content)) {
+    if (!containsSnapshotData) {
       try {
         return ((UpdatableSnapshotInputMappingIndex<Key, Value, FileContent>)mySnapshotInputMappings).putData(content, data);
       }

@@ -86,6 +86,9 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   @Nullable
   @Override
   public InputData<Key, Value> readData(@NotNull FileContent content) throws IOException {
+    if (!((FileContentImpl)content).isPhysicalContent()) {
+      throw new IllegalArgumentException("Non-physical data are not allowed.");
+    }
     int hashId = getHashId(content);
 
     Map<Key, Value> data = doReadData(hashId);
@@ -273,18 +276,15 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
   @NotNull
   private static Integer doGetContentHash(FileContentImpl content) throws IOException {
-    com.intellij.openapi.util.Key<Integer> key = content.isPhysicalContent() ? ourSavedContentHashIdKey : ourSavedUncommittedHashIdKey;
-
-    Integer previouslyCalculatedContentHashId = content.getUserData(key);
+    Integer previouslyCalculatedContentHashId = content.getUserData(ourContentHashIdKey);
     if (previouslyCalculatedContentHashId == null) {
       byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(content);
       previouslyCalculatedContentHashId = IndexedHashesSupport.enumerateHash(hash);
-      content.putUserData(key, previouslyCalculatedContentHashId);
+      content.putUserData(ourContentHashIdKey, previouslyCalculatedContentHashId);
     }
     return previouslyCalculatedContentHashId;
   }
-  private static final com.intellij.openapi.util.Key<Integer> ourSavedContentHashIdKey = com.intellij.openapi.util.Key.create("saved.content.hash.id");
-  private static final com.intellij.openapi.util.Key<Integer> ourSavedUncommittedHashIdKey = com.intellij.openapi.util.Key.create("saved.uncommitted.hash.id");
+  private static final com.intellij.openapi.util.Key<Integer> ourContentHashIdKey = com.intellij.openapi.util.Key.create("saved.content.hash.id");
 
 
   private StringBuilder buildDiff(Map<Key, Value> data, Map<Key, Value> contentData) {

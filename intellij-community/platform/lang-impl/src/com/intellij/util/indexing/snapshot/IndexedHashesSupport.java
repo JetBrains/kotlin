@@ -2,14 +2,10 @@
 package com.intellij.util.indexing.snapshot;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileContent;
@@ -68,12 +64,8 @@ public class IndexedHashesSupport {
   }
 
   public static void initIndexedHash(@NotNull FileContentImpl content) {
-    boolean binary = content.getFileTypeWithoutSubstitution().isBinary();
-
-    byte[] fileContentHash = calculateIndexedHashForFileContent(content, binary);
-    byte[] documentHash = binary ? null : calculateIndexedHashForDocument(content);
-
-    content.setHashes(fileContentHash, documentHash != null ? documentHash : fileContentHash);
+    byte[] fileContentHash = calculateIndexedHashForFileContent(content);
+    content.setHashes(fileContentHash);
   }
 
   public static byte @NotNull [] getOrInitIndexedHash(@NotNull FileContentImpl content) {
@@ -106,39 +98,19 @@ public class IndexedHashesSupport {
     return mergeIndexedHash(contentHash, binary ? null : virtualFile.getCharset());
   }
 
-  private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content, boolean binary) {
-    byte[] contentHash = null;
-    if (content.isPhysicalContent()) {
-      contentHash = PersistentFSImpl.getContentHashIfStored(content.getFile());
-    }
-
+  private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content) {
+    byte[] contentHash = PersistentFSImpl.getContentHashIfStored(content.getFile());
     if (contentHash == null) {
       contentHash = calculateContentHash(content);
       // todo store content hash in FS
     }
 
-    return mergeIndexedHash(contentHash, binary ? null : content.getCharset());
+    boolean isBinary = content.getFileTypeWithoutSubstitution().isBinary();
+    return mergeIndexedHash(contentHash, isBinary ? null : content.getCharset());
   }
 
   private static byte[] calculateContentHash(@NotNull FileContent content) {
     return DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, content.getContent());
-  }
-
-  private static byte @Nullable [] calculateIndexedHashForDocument(@NotNull FileContentImpl content) {
-    Document document = FileDocumentManager.getInstance().getCachedDocument(content.getFile());
-    if (document != null) {  // if document is not committed
-      PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(content.getProject());
-
-      if (psiDocumentManager.isUncommited(document)) {
-        PsiFile file = psiDocumentManager.getCachedPsiFile(document);
-
-        if (file != null) {
-          Charset charset = content.getCharset();
-          return mergeIndexedHash(DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, file.getText().getBytes(charset)), charset);
-        }
-      }
-    }
-    return null;
   }
 
   private static byte @NotNull [] mergeIndexedHash(byte @NotNull [] binaryContentHash,

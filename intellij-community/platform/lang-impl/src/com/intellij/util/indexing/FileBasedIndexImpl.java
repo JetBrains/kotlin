@@ -53,7 +53,6 @@ import com.intellij.util.indexing.memory.InMemoryIndexStorage;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
-import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashMap;
@@ -958,9 +957,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
           else {
             newFc = new FileContentImpl(vFile, contentText, currentDocStamp);
-            if (FileBasedIndex.ourSnapshotMappingsEnabled) {
-              newFc.putUserData(UpdatableSnapshotInputMappingIndex.FORCE_IGNORE_MAPPING_INDEX_UPDATE, Boolean.TRUE);
-            }
             document.putUserData(ourFileContentKey, new WeakReference<>(newFc));
           }
 
