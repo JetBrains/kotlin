@@ -2,6 +2,7 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiModifier
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
@@ -660,6 +662,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             assertEquals("""
                 function1 -> PsiType:void
                 function2 -> PsiType:T
+                function2CharSequence -> PsiType:T extends PsiType:CharSequence
                 function3 -> PsiType:void
                 function4 -> PsiType:T
                 function5 -> PsiType:int
@@ -669,7 +672,18 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 function9 -> PsiType:T
                 function10 -> PsiType:T
                 function11 -> PsiType:T
-            """.trimIndent(), methods.joinToString("\n") { m -> m.name + " -> " + m.returnType.toString() })
+                function11CharSequence -> PsiType:T extends PsiType:CharSequence
+            """.trimIndent(), methods.joinToString("\n") { m ->
+                buildString {
+                    append(m.name).append(" -> ")
+                    append(m.returnType)
+                    m.returnType.safeAs<PsiClassType>()?.resolve()?.extendsList?.referencedTypes?.takeIf { it.isNotEmpty() }?.let { e ->
+                        append(" extends ")
+                        append(e.joinToString { it.toString() })
+                    }
+
+                }
+            })
             for (method in methods.drop(3)) {
                 assertEquals("assert return types comparable for '${method.name}'", method.returnType, method.returnType)
             }
