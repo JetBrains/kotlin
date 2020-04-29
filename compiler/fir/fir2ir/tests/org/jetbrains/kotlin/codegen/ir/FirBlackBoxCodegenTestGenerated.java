@@ -14522,6 +14522,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
         }
 
+        @TestMetadata("samTypeParameter.kt")
+        public void testSamTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/samTypeParameter.kt");
+        }
+
         @TestMetadata("samUnboundTypeParameter.kt")
         public void testSamUnboundTypeParameter() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/samUnboundTypeParameter.kt");
