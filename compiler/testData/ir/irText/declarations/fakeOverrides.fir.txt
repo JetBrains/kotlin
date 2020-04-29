@@ -73,6 +73,8 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val]
+        overridden:
+          public abstract fun <get-bar> (): kotlin.Int declared in <root>.IBar
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>.Test1'

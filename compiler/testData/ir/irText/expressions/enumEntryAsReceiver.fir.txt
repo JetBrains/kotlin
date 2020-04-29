@@ -37,6 +37,8 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                         $this: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
             correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
+            overridden:
+              public abstract fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X
             $this: VALUE_PARAMETER name:<this> type:<root>.X.B
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X.B'

@@ -122,6 +122,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                   GET_VAR 'x0: kotlin.String declared in <root>.otherImpl' type=kotlin.String origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.String
                 correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+                overridden:
+                  public abstract fun <get-x> (): kotlin.String declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.otherImpl.<no name provided>'
@@ -133,6 +135,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                   GET_VAR 'y0: kotlin.Int declared in <root>.otherImpl' type=kotlin.Int origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
+                overridden:
+                  public abstract fun <get-y> (): kotlin.Int declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
@@ -140,6 +144,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-y>' type=<root>.otherImpl.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, <set-?>:kotlin.Int) returnType:kotlin.Unit
                 correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
+                overridden:
+                  public abstract fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
                 BLOCK_BODY
