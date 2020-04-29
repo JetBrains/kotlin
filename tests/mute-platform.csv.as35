@@ -1,11 +1,11 @@
 Test key, Issue, State (optional: MUTE or FAIL)
-org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers
-org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleMigrateTest.testMigrateStdlib, Can't get migration information
-org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGenerated.testPreferFromJdk, Class from JDK is not prioritized
-org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testSoSuspendableCallInFunFromOtherStepping, Super FLAKY on Android Studio (can be reproduced locally)
-org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOverForce.testSofSuspendableCallInFun, Super FLAKY on Android Studio (can be reproduced locally)
-org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, Class from JDK is not prioritized
-org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator
-org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator2
-org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator3
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLazyResolvers,,
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testRecomputeResolversOnChange,,
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleMigrateTest.testMigrateStdlib, Can't get migration information,
+org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGenerated.testPreferFromJdk, Class from JDK is not prioritized,
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testSoSuspendableCallInFunFromOtherStepping, Super FLAKY on Android Studio (can be reproduced locally),
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOverForce.testSofSuspendableCallInFun, Super FLAKY on Android Studio (can be reproduced locally),
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, Class from JDK is not prioritized,
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator,,
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator2,,
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.ToKotlinClasses.testIterableAndIterator3,,

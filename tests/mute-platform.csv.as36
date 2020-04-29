@@ -1,26 +1,26 @@
 Test key, Issue, State (optional: MUTE or FAIL)
-org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.
-org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testUsingKotlinPackageDeclarations, ERROR: Access to tree elements not allowed.
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobile, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobileShared, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testNative, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testShared, KT-35368
-org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testSharedWithQualifiedName, KT-35368
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, NPE during import
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testKotlinAndroidPluginDetection, NPE during import
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleMigrateTest.testMigrateStdlib, Can't get migration information
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Common.StaticMembers.testJavaStaticMethodsFromImports, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast1, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast2, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties1, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties2, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testNullableReceiver, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSafeCall, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919
-org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
-org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGenerated.testPreferFromJdk, Class from JDK is not prioritized
-org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testSoSuspendableCallInFunFromOtherStepping, Super FLAKY on Android Studio (can be reproduced locally)
-org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOverForce.testSofSuspendableCallInFun, Super FLAKY on Android Studio (can be reproduced locally)
-org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, Class from JDK is not prioritized
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleKtsImportTest.testError, KT-37864
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.,
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testUsingKotlinPackageDeclarations, ERROR: Access to tree elements not allowed.,
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobile, KT-35368,
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobileShared, KT-35368,
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testNative, KT-35368,
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testShared, KT-35368,
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testSharedWithQualifiedName, KT-35368,
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, NPE during import,
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testKotlinAndroidPluginDetection, NPE during import,
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleMigrateTest.testMigrateStdlib, Can't get migration information,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Common.StaticMembers.testJavaStaticMethodsFromImports, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast1, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast2, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties1, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testSyntheticJavaProperties2, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testNullableReceiver, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSafeCall, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919,
+org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGenerated.testPreferFromJdk, Class from JDK is not prioritized,
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testSoSuspendableCallInFunFromOtherStepping, Super FLAKY on Android Studio (can be reproduced locally),
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOverForce.testSofSuspendableCallInFun, Super FLAKY on Android Studio (can be reproduced locally),
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, Class from JDK is not prioritized,
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleKtsImportTest.testError, KT-37864,
