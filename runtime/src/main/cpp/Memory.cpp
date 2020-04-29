@@ -20,7 +20,7 @@
 #include <cstddef> // for offsetof
 
 // Allow concurrent global cycle collector.
-#define USE_CYCLIC_GC 1
+#define USE_CYCLIC_GC 0
 
 #include "Alloc.h"
 #include "KAssert.h"
