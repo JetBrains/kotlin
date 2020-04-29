@@ -1,4 +1,4 @@
-FILE: simple.kt
+FILE: simpleAnnotation.kt
     @R|org/jetbrains/kotlin/fir/allopen/AllOpen|() public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
