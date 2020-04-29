@@ -609,24 +609,24 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
-            val progression = scope.createTmpVariable(expression, nameHint = "progression")
-            val progressionClass = progression.type.getClass()!!
+            val (progressionVar, progressionExpression) = createTemporaryVariableIfNecessary(expression, nameHint = "progression")
+            val progressionClass = progressionExpression.type.getClass()!!
             val first = irCall(progressionClass.symbol.getPropertyGetter("first")!!).apply {
-                dispatchReceiver = irGet(progression)
+                dispatchReceiver = progressionExpression
             }
             val last = irCall(progressionClass.symbol.getPropertyGetter("last")!!).apply {
-                dispatchReceiver = irGet(progression)
+                dispatchReceiver = progressionExpression.deepCopyWithSymbols()
             }
             val step = irCall(progressionClass.symbol.getPropertyGetter("step")!!).apply {
-                dispatchReceiver = irGet(progression)
+                dispatchReceiver = progressionExpression.deepCopyWithSymbols()
             }
 
             ProgressionHeaderInfo(
-                ProgressionType.fromIrType(progression.type, symbols)!!,
+                ProgressionType.fromIrType(progressionExpression.type, symbols)!!,
                 first,
                 last,
                 step,
-                additionalVariables = listOf(progression),
+                additionalVariables = listOfNotNull(progressionVar),
                 direction = ProgressionDirection.UNKNOWN
             )
         }

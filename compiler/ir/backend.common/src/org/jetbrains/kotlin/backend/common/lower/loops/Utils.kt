@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.functions
@@ -75,9 +79,12 @@ internal val IrExpression.constLongValue: Long?
  *
  * This helps reduce local variable usage.
  */
-internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(expression: IrExpression, nameHint: String? = null) =
+internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
+    expression: IrExpression, nameHint: String? = null,
+    irType: IrType? = null
+): Pair<IrVariable?, IrExpression> =
     if (expression.canHaveSideEffects) {
-        scope.createTmpVariable(expression, nameHint = nameHint).let { Pair(it, irGet(it)) }
+        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
     }
