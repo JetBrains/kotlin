@@ -37,6 +37,19 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassPrivateModifier() { doTest("private class '_") }
 
+    fun testClassInit() {
+        doTest(
+            """
+            class '_ {
+                init {
+                    val a = 3
+                    println(a)
+                }
+            }
+            """
+        )
+    }
+
     fun testClassProperty() {
         doTest(
             """

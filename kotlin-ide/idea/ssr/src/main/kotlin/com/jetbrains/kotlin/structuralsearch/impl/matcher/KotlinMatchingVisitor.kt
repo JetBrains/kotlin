@@ -270,6 +270,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
     }
 
+    override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
+        val other = getTreeElement<KtAnonymousInitializer>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(initializer.body, other.body)
+    }
+
+    override fun visitClassBody(classBody: KtClassBody) {
+        val other = getTreeElement<KtClassBody>()
+        myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(classBody, other)
+    }
+
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
@@ -277,7 +287,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.match(klass.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
-                && myMatchingVisitor.matchSonsInAnyOrder(klass.body, other.body)
+                && myMatchingVisitor.match(klass.body, other.body)
     }
 
     override fun visitElement(element: PsiElement) {
