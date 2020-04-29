@@ -364,38 +364,28 @@ class KotlinTypeMapper @JvmOverloads constructor(
         // and, more importantly, returns 'kotlin.Any' (so that it can return as a reference value or a special COROUTINE_SUSPENDED object).
         // This also causes boxing of primitives and inline class values.
         // If we have a function returning an inline class value that is mapped to a reference type, we want to avoid boxing.
-        // However, we have to do that consistently both on declaration site and on call site in case of covariant overrides.
+        // However, we have to do that consistently both on declaration site and on call site.
 
         if (!functionDescriptor.isSuspend) return null
 
         val originalSuspendFunction = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
         val originalReturnType = originalSuspendFunction.returnType!!
+
         if (!originalReturnType.isInlineClassType()) return null
 
-        if (!originalReturnType.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn()) {
-            return originalSuspendFunction.module.builtIns.nullableAnyType
+        // Force boxing for primitives
+        if (AsmUtil.isPrimitive(mapType(originalReturnType))) {
+            return functionDescriptor.builtIns.nullableAnyType
         }
 
-        // Lambdas, callable references, and function literals implicitly override corresponding generic method from a base class.
-        // NB we don't have suspend function literals so far, but we support it in back-end, just in case.
-        if (isFunctionLiteral(originalSuspendFunction) || isFunctionExpression(originalSuspendFunction)) {
-            return originalSuspendFunction.module.builtIns.nullableAnyType
+        // Force boxing for nullable inline class types with nullable underlying type
+        if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) {
+            return functionDescriptor.builtIns.nullableAnyType
         }
 
-        // NB JVM view of a Kotlin function overrides JVM views of corresponding overridden functions
-        val originalOverridden = getAllOverriddenDeclarations(functionDescriptor).map {
-            it.unwrapInitialDescriptorForSuspendFunction().original
-        }
-        if (originalOverridden.any { !it.returnType!!.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn() }) {
-            return originalSuspendFunction.module.builtIns.nullableAnyType
-        }
-
+        // Don't box other inline classes
         return originalReturnType
     }
-
-    private fun KotlinType.isInlineClassTypeSafeToKeepUnboxedOnSuspendFunReturn(): Boolean =
-        isInlineClassType() && !AsmUtil.isPrimitive(mapType(this)) && (!isMarkedNullable || !isNullableUnderlyingType())
-
 
     @JvmOverloads
     fun mapToCallableMethod(
@@ -410,7 +400,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             val owner = mapOwner(descriptor)
             val originalDescriptor = descriptor.original
             return CallableMethod(
-                owner, owner, { mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).descriptor }, method, INVOKESPECIAL,
+                owner, owner, { mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION) }, method, INVOKESPECIAL,
                 null, null, null, null, null, originalDescriptor.returnType, isInterfaceMethod = false, isDefaultMethodInInterface = false
             )
         }
@@ -571,7 +561,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         return CallableMethod(
             owner, ownerForDefaultImpl,
-            { mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)).descriptor },
+            { mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)) },
             signature, invokeOpcode, thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType,
             calleeType, returnKotlinType,
             if (jvmTarget >= JvmTarget.JVM_1_8) isInterfaceMember else invokeOpcode == INVOKEINTERFACE,
@@ -663,11 +653,16 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
         }
 
-        val suffix = getInlineClassSignatureManglingSuffix(descriptor)
-        if (suffix != null) {
-            newName += suffix
-        } else if (kind === OwnerKind.ERASED_INLINE_CLASS) {
-            newName += JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
+        // Skip inline class mangling for property reference signatures,
+        // so that we don't have to repeat the same logic in reflection
+        // in case of properties without getter methods.
+        if (kind !== OwnerKind.PROPERTY_REFERENCE_SIGNATURE || descriptor.isPropertyWithGetterSignaturePresent()) {
+            val suffix = getManglingSuffixBasedOnKotlinSignature(descriptor)
+            if (suffix != null) {
+                newName += suffix
+            } else if (kind === OwnerKind.ERASED_INLINE_CLASS) {
+                newName += JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
+            }
         }
 
         newName = sanitizeNameIfNeeded(newName, languageVersionSettings)
@@ -966,12 +961,12 @@ class KotlinTypeMapper @JvmOverloads constructor(
         // implicitly override generic 'invoke' from a corresponding base class.
         if ((isFunctionExpression(descriptor) || isFunctionLiteral(descriptor)) && returnType.isInlineClassType()) return true
 
-        return isJvmPrimitiveOrInlineClass(returnType) &&
-                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitiveOrInlineClass(it.returnType!!) }
+        return isJvmPrimitive(returnType) &&
+                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitive(it.returnType!!) }
     }
 
-    private fun isJvmPrimitiveOrInlineClass(kotlinType: KotlinType) =
-        KotlinBuiltIns.isPrimitiveType(kotlinType) || kotlinType.isInlineClassType()
+    private fun isJvmPrimitive(kotlinType: KotlinType) =
+        KotlinBuiltIns.isPrimitiveType(kotlinType)
 
     private fun isBoxMethodForInlineClass(descriptor: FunctionDescriptor): Boolean {
         val containingDeclaration = descriptor.containingDeclaration

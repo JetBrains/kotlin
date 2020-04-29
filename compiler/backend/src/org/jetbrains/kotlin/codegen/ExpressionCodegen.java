@@ -220,6 +220,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
+    public KotlinTypeMapper getTypeMapper() {
+        return typeMapper;
+    }
+
+    @NotNull
     public ObjectLiteralResult generateObjectLiteral(@NotNull KtObjectLiteralExpression literal) {
         KtObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 

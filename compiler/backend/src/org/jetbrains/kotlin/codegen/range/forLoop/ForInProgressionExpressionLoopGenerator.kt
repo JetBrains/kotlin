@@ -31,8 +31,12 @@ class ForInProgressionExpressionLoopGenerator(
         v.dup()
         v.dup()
 
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType, incrementType, incrementVar)
+        val firstName = rangeKotlinType.getPropertyGetterName("first")
+        val lastName = rangeKotlinType.getPropertyGetterName("last")
+        val stepName = rangeKotlinType.getPropertyGetterName("step")
+
+        generateRangeOrProgressionProperty(asmLoopRangeType, firstName, asmElementType, loopParameterType, loopParameterVar)
+        generateRangeOrProgressionProperty(asmLoopRangeType, lastName, asmElementType, asmElementType, endVar)
+        generateRangeOrProgressionProperty(asmLoopRangeType, stepName, incrementType, incrementType, incrementVar)
     }
 }

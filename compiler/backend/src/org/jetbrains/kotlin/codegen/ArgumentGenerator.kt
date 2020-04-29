@@ -35,10 +35,10 @@ abstract class ArgumentGenerator {
      * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
      */
     open fun generate(
-            valueArgumentsByIndex: List<ResolvedValueArgument>,
-            actualArgs: List<ResolvedValueArgument>,
-            // may be null for a constructor of an object literal
-            calleeDescriptor: CallableDescriptor?
+        valueArgumentsByIndex: List<ResolvedValueArgument>,
+        actualArgs: List<ResolvedValueArgument>,
+        // may be null for a constructor of an object literal
+        calleeDescriptor: CallableDescriptor?
     ): DefaultCallArgs {
         assert(valueArgumentsByIndex.size == actualArgs.size) {
             "Value arguments collection should have same size, but ${valueArgumentsByIndex.size} != ${actualArgs.size}"
@@ -50,9 +50,9 @@ abstract class ArgumentGenerator {
             ArgumentAndDeclIndex(it, arg2Index[it]!!)
         }.toMutableList()
 
-        valueArgumentsByIndex.withIndex().forEach {
-            if (it.value is DefaultValueArgument) {
-                actualArgsWithDeclIndex.add(it.index, ArgumentAndDeclIndex(it.value, it.index))
+        for ((index, value) in valueArgumentsByIndex.withIndex()) {
+            if (value is DefaultValueArgument) {
+                actualArgsWithDeclIndex.add(index, ArgumentAndDeclIndex(value, index))
             }
         }
 
@@ -70,8 +70,7 @@ abstract class ArgumentGenerator {
                 is DefaultValueArgument -> {
                     if (calleeDescriptor?.defaultValueFromJava(declIndex) == true) {
                         generateDefaultJava(declIndex, argument)
-                    }
-                    else {
+                    } else {
                         defaultArgs.mark(declIndex)
                         generateDefault(declIndex, argument)
                     }
@@ -116,11 +115,11 @@ abstract class ArgumentGenerator {
 }
 
 private fun CallableDescriptor.defaultValueFromJava(index: Int): Boolean = DFS.ifAny(
-        listOf(this),
-        { current -> current.original.overriddenDescriptors.map { it.original } },
-        { descriptor ->
-            descriptor.original.overriddenDescriptors.isEmpty() &&
-            descriptor is JavaCallableMemberDescriptor &&
-            descriptor.valueParameters[index].declaresDefaultValue()
-        }
+    listOf(this),
+    { current -> current.original.overriddenDescriptors.map { it.original } },
+    { descriptor ->
+        descriptor.original.overriddenDescriptors.isEmpty() &&
+                descriptor is JavaCallableMemberDescriptor &&
+                descriptor.valueParameters[index].declaresDefaultValue()
+    }
 )

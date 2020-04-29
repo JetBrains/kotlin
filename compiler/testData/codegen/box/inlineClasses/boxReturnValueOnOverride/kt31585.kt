@@ -8,7 +8,7 @@ enum class RequestFields {
     ENUM_ONE
 }
 
-data class RequestInputParameters(
+class RequestInputParameters(
     private val backingMap: Map<RequestFields, FieldValue>
 ) : Map<RequestFields, FieldValue> by backingMap
 

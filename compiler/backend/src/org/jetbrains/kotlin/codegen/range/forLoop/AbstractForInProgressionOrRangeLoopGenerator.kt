@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -28,6 +32,8 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
 
     private var loopParameter: StackValue? = null
 
+    protected val rangeKotlinType = bindingContext.getType(forExpression.loopRange!!)!!
+
     init {
         assert(
             asmElementType.sort == Type.INT ||
@@ -36,7 +42,7 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
                     asmElementType.sort == Type.CHAR ||
                     asmElementType.sort == Type.LONG
         ) {
-            "Unexpected range element type: " + asmElementType
+            "Unexpected range element type: $asmElementType"
         }
     }
 
@@ -48,7 +54,7 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
 
     protected fun checkPostCondition(loopExit: Label) {
         assert(endVar != -1) {
-            "endVar must be allocated, endVar = " + endVar
+            "endVar must be allocated, endVar = $endVar"
         }
         loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
@@ -64,4 +70,14 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
 
     protected fun loopParameter(): StackValue =
         loopParameter ?: StackValue.local(loopParameterVar, loopParameterType).also { loopParameter = it }
+
+    protected fun KotlinType.getPropertyGetterName(propertyName: String): String {
+        // In case of unsigned ranges, getter methods for corresponding range/progression properties would be mangled.
+        val propertyDescriptor = memberScope.getContributedVariables(Name.identifier(propertyName), NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?: throw AssertionError("No '$propertyName' in member scope of type $this")
+        val getter = propertyDescriptor.getter
+            ?: throw AssertionError("Property has no getter: $propertyDescriptor")
+        return codegen.typeMapper.mapFunctionName(getter, OwnerKind.IMPLEMENTATION)
+    }
 }

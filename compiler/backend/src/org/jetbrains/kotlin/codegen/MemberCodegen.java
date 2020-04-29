@@ -467,7 +467,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 Name.special("<clinit>"), SYNTHESIZED, KotlinSourceElementKt.toSourceElement(element));
         clInit.initialize(null, null, Collections.emptyList(), Collections.emptyList(),
                           DescriptorUtilsKt.getModule(descriptor).getBuiltIns().getUnitType(),
-                          null, Visibilities.PRIVATE);
+                          Modality.FINAL, Visibilities.PRIVATE);
         return clInit;
     }
 

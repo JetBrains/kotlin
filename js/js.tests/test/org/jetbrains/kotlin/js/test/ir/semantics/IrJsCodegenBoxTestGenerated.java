@@ -11118,6 +11118,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/kt37998.kt");
         }
 
+        @TestMetadata("kt38680.kt")
+        public void testKt38680() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680.kt");
+        }
+
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");
