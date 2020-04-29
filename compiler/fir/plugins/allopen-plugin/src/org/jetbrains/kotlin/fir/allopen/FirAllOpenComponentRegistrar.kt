@@ -10,5 +10,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
+        +::AllOpenClassGenerator
     }
 }

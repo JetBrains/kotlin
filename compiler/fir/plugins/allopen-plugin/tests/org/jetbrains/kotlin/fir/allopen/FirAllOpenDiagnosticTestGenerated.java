@@ -28,6 +28,24 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/plugins/allopen-plugin/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("compiler/fir/plugins/allopen-plugin/testData/classGen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassGen extends AbstractFirAllOpenDiagnosticTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInClassGen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/plugins/allopen-plugin/testData/classGen"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/plugins/allopen-plugin/testData/classGen/simple.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/plugins/allopen-plugin/testData/status")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
