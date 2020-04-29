@@ -855,6 +855,21 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testSuperclassNotAccessibleFromInterface() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
         }
+
+        @TestMetadata("annotationClassMember.kt")
+        public void testAnnotationClassMember() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationClassMember.kt");
+        }
+
+        @TestMetadata("localAnnotationClass.kt")
+        public void testLocalAnnotationClass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localAnnotationClass.kt");
+        }
+
+        @TestMetadata("valOnAnnotationParameter.kt")
+        public void testValOnAnnotationParameter() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/valOnAnnotationParameter.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions")

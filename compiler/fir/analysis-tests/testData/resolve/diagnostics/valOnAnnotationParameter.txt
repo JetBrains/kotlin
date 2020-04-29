@@ -1,0 +1,11 @@
+FILE: valOnAnnotationParameter.kt
+    public final annotation class A : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
