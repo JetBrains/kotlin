@@ -111,7 +111,7 @@ public fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
         }
         try {
             Files.createDirectories(target)
-        } catch (e: FileAlreadyExistsException) {
+        } catch (_: FileAlreadyExistsException) {
             // File already exists and is not a directory
             Files.delete(target)
             Files.createDirectories(target)
@@ -273,7 +273,8 @@ public fun Path.deleteRecursively(): Boolean = walkBottomUp().fold(true, { res, 
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
+@kotlin.internal.InlineOnly
+public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
 
 /**
  * Check if this path is a file.
@@ -282,7 +283,8 @@ public fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this,
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
+@kotlin.internal.InlineOnly
+public inline fun Path.isFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
 
 /**
  * Check if this path is a directory.
@@ -293,21 +295,24 @@ public fun Path.isFile(vararg options: LinkOption): Boolean = Files.isRegularFil
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.isDirectory(this, *options)
+@kotlin.internal.InlineOnly
+public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.isDirectory(this, *options)
 
 /**
  * Check if this path exists and is a symbolic link.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
+@kotlin.internal.InlineOnly
+public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
 
 /**
  * Check if this path exists and is executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isExecutable(): Boolean = Files.isExecutable(this)
+@kotlin.internal.InlineOnly
+public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
 
 /**
  * Check if this path is considered hidden.
@@ -317,28 +322,32 @@ public fun Path.isExecutable(): Boolean = Files.isExecutable(this)
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isHidden(): Boolean = Files.isHidden(this)
+@kotlin.internal.InlineOnly
+public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
 
 /**
  * Check if this path exists and is readable.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isReadable(): Boolean = Files.isReadable(this)
+@kotlin.internal.InlineOnly
+public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
 
 /**
  * Check that this path exists and is writable.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isWritable(): Boolean = Files.isWritable(this)
+@kotlin.internal.InlineOnly
+public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 
 /**
  * Check if this path points to the same file or directory as [other].
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this, other)
+@kotlin.internal.InlineOnly
+public inline fun Path.isSameFile(other: Path): Boolean = Files.isSameFile(this, other)
 
 /**
  * Return a list of the files and directories in this directory.

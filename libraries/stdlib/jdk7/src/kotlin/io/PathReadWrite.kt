@@ -175,7 +175,8 @@ public inline fun Path.readBytes(): ByteArray {
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.writeBytes(array: ByteArray, vararg options: OpenOption): Unit {
+@kotlin.internal.InlineOnly
+public inline fun Path.writeBytes(array: ByteArray, vararg options: OpenOption): Unit {
     Files.write(this, array, *options)
 }
 
@@ -186,7 +187,8 @@ public fun Path.writeBytes(array: ByteArray, vararg options: OpenOption): Unit {
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.appendBytes(array: ByteArray): Unit {
+@kotlin.internal.InlineOnly
+public inline fun Path.appendBytes(array: ByteArray): Unit {
     writeBytes(array, StandardOpenOption.APPEND)
 }
 
