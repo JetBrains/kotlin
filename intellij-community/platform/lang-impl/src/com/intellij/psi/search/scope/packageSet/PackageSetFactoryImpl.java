@@ -41,8 +41,7 @@ public class PackageSetFactoryImpl extends PackageSetFactory {
       List<PackageSet> sets = new ArrayList<>();
       PackageSet set = parseIntersection();
       sets.add(set);
-      while (true) {
-        if (myLexer.getTokenType() != ScopeTokenTypes.OROR) break;
+      while (myLexer.getTokenType() == ScopeTokenTypes.OROR) {
         myLexer.advance();
         sets.add(parseIntersection());
       }
@@ -53,8 +52,7 @@ public class PackageSetFactoryImpl extends PackageSetFactory {
       PackageSet set = parseTerm();
       List<PackageSet> sets = new ArrayList<>();
       sets.add(set);
-      while (true) {
-        if (myLexer.getTokenType() != ScopeTokenTypes.ANDAND) break;
+      while (myLexer.getTokenType() == ScopeTokenTypes.ANDAND) {
         myLexer.advance();
         sets.add(parseTerm());
       }
