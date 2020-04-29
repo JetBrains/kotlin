@@ -176,6 +176,28 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     return javadocTask
 }
 
+fun Project.modularJar(body: Jar.() -> Unit): TaskProvider<Jar> {
+    val modularJar = configurations.maybeCreate("modularJar").apply {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+    }
+
+    val modularJarTask = getOrCreateTask<Jar>("modularJar") {
+        archiveClassifier.set("modular")
+
+        body()
+    }
+
+    addArtifact("modularJar", modularJarTask)
+    addArtifact("archives", modularJarTask)
+
+    val javaComponent = components.findByName("java") as AdhocComponentWithVariants
+    javaComponent.addVariantsFromConfiguration(modularJar) { }
+
+    return modularJarTask
+}
+
 
 fun Project.standardPublicJars() {
     runtimeJar()

@@ -39,12 +39,6 @@ embedded.isTransitive = false
 configurations.getByName("compileOnly").extendsFrom(embedded)
 val mainJar by configurations.creating
 
-val modularJar by configurations.creating {
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-    }
-}
-
 dependencies {
     compile(kotlinStdlib())
 
@@ -220,9 +214,10 @@ val result by task<Jar> {
     callGroovy("manifestAttributes", manifest, project, "Main", true)
 }
 
-val modularJarTask by task<Jar> {
+javadocJar()
+
+modularJar {
     dependsOn(intermediate)
-    archiveClassifier.set("modular")
     from {
         zipTree(intermediate.get().singleOutputFile())
     }
@@ -244,12 +239,4 @@ artifacts {
             builtBy(result)
         }
     }
-
-    add("archives", modularJarTask)
-    add(modularJar.name, modularJarTask)
 }
-
-val javaComponent = components.findByName("java") as AdhocComponentWithVariants
-javaComponent.addVariantsFromConfiguration(modularJar) { }
-
-javadocJar()
