@@ -60,18 +60,15 @@ UFile (package = org.jetbrains.uast.kotlin)
                                         USimpleNameReferenceExpression (identifier = a)
                                         ULiteralExpression (value = 5)
                                     UReturnExpression
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "5")
+                                        ULiteralExpression (value = "5")
                                 UIfExpression
                                     UBinaryExpression (operator = >)
                                         USimpleNameReferenceExpression (identifier = a)
                                         ULiteralExpression (value = 0)
                                     UReturnExpression
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "1")
+                                        ULiteralExpression (value = "1")
                                     UReturnExpression
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "2")
+                                        ULiteralExpression (value = "2")
                 UDeclarationsExpression
                     ULocalVariable (name = lam5)
                         ULambdaExpression
@@ -80,8 +77,7 @@ UFile (package = org.jetbrains.uast.kotlin)
                             UBlockExpression
                                 UReturnExpression
                                     UBinaryExpression (operator = +)
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "a")
+                                        ULiteralExpression (value = "a")
                                         USimpleNameReferenceExpression (identifier = a)
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                     UIdentifier (Identifier (bar))

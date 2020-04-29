@@ -86,7 +86,7 @@ class KotlinUSwitchEntry(
                         override val annotations: List<UAnnotation>
                             get() = emptyList()
                         override val expression: UExpression?
-                            get() = userExpressions.lastOrNull()?.sourcePsi.safeAs<KtExpression>()
+                            get() = userExpressions.lastOrNull()?.sourcePsi?.let { it.safeAs<KtExpression>() ?: it.parent.safeAs() }
                                 ?.let { KotlinConverter.convertExpression(it, this, DEFAULT_EXPRESSION_TYPES_LIST) }
                     }
                 else emptyList()
