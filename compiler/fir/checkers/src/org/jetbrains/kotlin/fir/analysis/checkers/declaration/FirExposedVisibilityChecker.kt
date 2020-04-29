@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -29,8 +30,13 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             is FirTypeAlias -> checkTypeAlias(declaration, reporter)
             is FirProperty -> checkProperty(declaration, reporter)
             is FirFunction<*> -> checkFunction(declaration, reporter)
-            is FirRegularClass -> checkSupertypes(declaration, reporter)
+            is FirRegularClass -> checkClass(declaration, reporter)
         }
+    }
+
+    private fun checkClass(declaration: FirRegularClass, reporter: DiagnosticReporter) {
+        checkSupertypes(declaration, reporter)
+        checkParameterBounds(declaration, reporter)
     }
 
     private fun checkSupertypes(declaration: FirRegularClass, reporter: DiagnosticReporter) {
@@ -53,6 +59,24 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
                     restricting.firEffectiveVisibility(declaration.session),
                     supertypeRef.source ?: declaration.source
                 )
+            }
+        }
+    }
+
+    private fun checkParameterBounds(declaration: FirRegularClass, reporter: DiagnosticReporter) {
+        val classVisibility = declaration.firEffectiveVisibility(declaration.session)
+        for (parameter in declaration.typeParameters) {
+            for (bound in parameter.symbol.fir.bounds) {
+                val restricting = bound.coneTypeSafe<ConeKotlinType>()?.leastPermissiveDescriptor(declaration.session, classVisibility)
+                if (restricting != null) {
+                    reporter.reportExposure(
+                        FirErrors.EXPOSED_TYPE_PARAMETER_BOUND,
+                        restricting,
+                        classVisibility,
+                        restricting.firEffectiveVisibility(declaration.session),
+                        bound.source
+                    )
+                }
             }
         }
     }
