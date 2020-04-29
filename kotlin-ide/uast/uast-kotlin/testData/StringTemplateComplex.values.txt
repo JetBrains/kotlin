@@ -2,27 +2,20 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
     UClass (name = StringTemplateComplexKt) [public final class StringTemplateComplexKt {...}]
         UField (name = muchRecur) [@org.jetbrains.annotations.NotNull private static final var muchRecur: java.lang.String = "abc"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
-            UPolyadicExpression (operator = +) ["abc"] = "abc"
-                UPolyadicExpression (operator = +) ["abc"] = "abc"
-                    UPolyadicExpression (operator = +) ["abc"] = "abc"
-                        UPolyadicExpression (operator = +) ["abc"] = "abc"
-                            ULiteralExpression (value = "abc") ["abc"] = "abc"
+            ULiteralExpression (value = "abc") ["abc"] = "abc"
         UField (name = case4) [@org.jetbrains.annotations.NotNull private static final var case4: java.lang.String = "a " + "literal" + " z"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UPolyadicExpression (operator = +) ["a " + "literal" + " z"] = "a literal z"
                 ULiteralExpression (value = "a ") ["a "] = "a "
-                UPolyadicExpression (operator = +) ["literal"] = "literal"
-                    ULiteralExpression (value = "literal") ["literal"] = "literal"
+                ULiteralExpression (value = "literal") ["literal"] = "literal"
                 ULiteralExpression (value = " z") [" z"] = " z"
         UField (name = case5) [@org.jetbrains.annotations.NotNull private static final var case5: java.lang.String = "a " + "literal" + " " + "literal" + " z"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UPolyadicExpression (operator = +) ["a " + "literal" + " " + "literal" + " z"] = "a literal literal z"
                 ULiteralExpression (value = "a ") ["a "] = "a "
-                UPolyadicExpression (operator = +) ["literal"] = "literal"
-                    ULiteralExpression (value = "literal") ["literal"] = "literal"
+                ULiteralExpression (value = "literal") ["literal"] = "literal"
                 ULiteralExpression (value = " ") [" "] = " "
-                UPolyadicExpression (operator = +) ["literal"] = "literal"
-                    ULiteralExpression (value = "literal") ["literal"] = "literal"
+                ULiteralExpression (value = "literal") ["literal"] = "literal"
                 ULiteralExpression (value = " z") [" z"] = " z"
         UField (name = literalInLiteral) [@org.jetbrains.annotations.NotNull private static final var literalInLiteral: java.lang.String = "a " + "literal" + case4 + " z"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
@@ -47,8 +40,7 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
                 ULiteralExpression (value = " z") [" z"] = " z"
         UField (name = empty) [@org.jetbrains.annotations.NotNull private static final var empty: java.lang.String = ""]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
-            UPolyadicExpression (operator = +) [""] = ""
-                ULiteralExpression (value = "") [""] = ""
+            ULiteralExpression (value = "") [""] = ""
         UMethod (name = getMuchRecur) [public static final fun getMuchRecur() : java.lang.String = UastEmptyExpression]
         UMethod (name = getCase4) [public static final fun getCase4() : java.lang.String = UastEmptyExpression]
         UMethod (name = getCase5) [public static final fun getCase5() : java.lang.String = UastEmptyExpression]
@@ -61,21 +53,18 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
                 ULiteralExpression (value = 0) [0] = 0
             UBlockExpression [{...}] = Nothing
                 UReturnExpression [return i] = Nothing
-                    UPolyadicExpression (operator = +) [i] = Undetermined
-                        USimpleNameReferenceExpression (identifier = i) [i] = Undetermined
+                    USimpleNameReferenceExpression (identifier = i) [i] = Undetermined
         UMethod (name = foo) [public static final fun foo() : void {...}]
             UBlockExpression [{...}] = Undetermined
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(baz)] = external println(baz)(external baz())
                     UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
                     USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] = external println(baz)(external baz())
-                    UPolyadicExpression (operator = +) [baz] = external baz()
-                        USimpleNameReferenceExpression (identifier = baz) [baz] = external baz()
+                    USimpleNameReferenceExpression (identifier = baz) [baz] = external baz()
                 UDeclarationsExpression [var template1: java.lang.String = simpleForTemplate()] = Undetermined
                     ULocalVariable (name = template1) [var template1: java.lang.String = simpleForTemplate()]
-                        UPolyadicExpression (operator = +) [simpleForTemplate()] = external simpleForTemplate()()
-                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [simpleForTemplate()] = external simpleForTemplate()()
-                                UIdentifier (Identifier (simpleForTemplate)) [UIdentifier (Identifier (simpleForTemplate))]
-                                USimpleNameReferenceExpression (identifier = simpleForTemplate, resolvesTo = null) [simpleForTemplate] = external simpleForTemplate()()
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [simpleForTemplate()] = external simpleForTemplate()()
+                            UIdentifier (Identifier (simpleForTemplate)) [UIdentifier (Identifier (simpleForTemplate))]
+                            USimpleNameReferenceExpression (identifier = simpleForTemplate, resolvesTo = null) [simpleForTemplate] = external simpleForTemplate()()
                 UDeclarationsExpression [var template2: java.lang.String = "." + simpleForTemplate()] = Undetermined
                     ULocalVariable (name = template2) [var template2: java.lang.String = "." + simpleForTemplate()]
                         UPolyadicExpression (operator = +) ["." + simpleForTemplate()] = Undetermined

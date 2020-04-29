@@ -317,7 +317,7 @@ internal object KotlinConverter {
         }
     }
 
-    var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", true)
+    var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", false)
         @TestOnly
         set(value) {
             field = value

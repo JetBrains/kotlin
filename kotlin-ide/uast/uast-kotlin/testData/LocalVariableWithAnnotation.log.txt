@@ -5,6 +5,5 @@ UFile (package = )
                 UDeclarationsExpression
                     ULocalVariable (name = bar)
                         UAnnotation (fqName = TestAnnotation)
-                        UPolyadicExpression (operator = +)
-                            ULiteralExpression (value = "lorem ipsum")
+                        ULiteralExpression (value = "lorem ipsum")
     UClass (name = TestAnnotation)

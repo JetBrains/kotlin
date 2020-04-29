@@ -9,24 +9,19 @@ UFile (package = )
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
                             UIdentifier (Identifier (listOf))
                             USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
-                            UPolyadicExpression (operator = +)
-                                ULiteralExpression (value = "1")
-                            UPolyadicExpression (operator = +)
-                                ULiteralExpression (value = "2")
+                            ULiteralExpression (value = "1")
+                            ULiteralExpression (value = "2")
                 USwitchExpression
                     USimpleNameReferenceExpression (identifier = string)
                     UExpressionList (when)
                         USwitchClauseExpressionWithBody
-                            UPolyadicExpression (operator = +)
-                                ULiteralExpression (value = "aaaa")
+                            ULiteralExpression (value = "aaaa")
                             UExpressionList (when_entry)
                                 UYieldExpression
                                     UReturnExpression
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "bindingContext")
+                                        ULiteralExpression (value = "bindingContext")
                         USwitchClauseExpressionWithBody
-                            UPolyadicExpression (operator = +)
-                                ULiteralExpression (value = "empty-switch")
+                            ULiteralExpression (value = "empty-switch")
                             UExpressionList (when_entry)
                         USwitchClauseExpressionWithBody
                             UExpressionList (when_entry)

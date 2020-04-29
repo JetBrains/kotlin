@@ -10,6 +10,5 @@ UFile (package = test.pkg)
                         USimpleNameReferenceExpression (identifier = DeprecationLevel)
                         USimpleNameReferenceExpression (identifier = HIDDEN)
                 UNamedExpression (name = message)
-                    UPolyadicExpression (operator = +)
-                        ULiteralExpression (value = "nothing")
+                    ULiteralExpression (value = "nothing")
             UBlockExpression

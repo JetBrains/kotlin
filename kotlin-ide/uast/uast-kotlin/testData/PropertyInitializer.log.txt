@@ -2,8 +2,7 @@ UFile (package = )
     UClass (name = TestPropertyInitializer)
         UField (name = withSetter)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-            UPolyadicExpression (operator = +)
-                ULiteralExpression (value = "/sdcard")
+            ULiteralExpression (value = "/sdcard")
         UMethod (name = getWithSetter)
             UBlockExpression
                 UReturnExpression

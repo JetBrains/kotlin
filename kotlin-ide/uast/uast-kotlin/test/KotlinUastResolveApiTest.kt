@@ -103,7 +103,7 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
 
         TestCase.assertEquals(PsiType.VOID, functionCall.getExpressionType())
 
-        val firstArgument = main.findElementByText<UElement>("\"1\"")
+        val firstArgument = main.findElementByText<UElement>("1")
         val firstParameter = functionCall.getArgumentForParameter(0)
         TestCase.assertEquals(firstArgument, firstParameter)
     }
@@ -144,7 +144,7 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
 
         TestCase.assertEquals(PsiType.VOID, functionCall.getExpressionType())
 
-        val firstArgument = main.findElementByText<UElement>("\"1\"")
+        val firstArgument = main.findElementByText<UElement>("1")
         val firstParameter = functionCall.getArgumentForParameter(0)
         TestCase.assertEquals(firstArgument, firstParameter)
     }
