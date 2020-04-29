@@ -256,7 +256,9 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
     try {
       PrebuiltStubsProvider provider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(virtualFile.getFileType());
       if (provider != null) {
-        canBePrebuilt = provider.findStub(FileContentImpl.createByFile(virtualFile)) != null;
+        SerializationManagerEx serializationManager = SerializationManagerEx.getInstanceEx();
+        StubForwardIndexExternalizer<?> ideUsedExternalizer = StubForwardIndexExternalizer.getIdeUsedExternalizer();
+        canBePrebuilt = provider.findStub(FileContentImpl.createByFile(virtualFile), serializationManager, ideUsedExternalizer) != null;
       }
     }
     catch (Exception e) {

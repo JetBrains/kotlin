@@ -138,7 +138,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
           if (Registry.is("use.prebuilt.indices")) {
             PrebuiltStubsProvider prebuiltStubsProvider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(inputData.getFileType());
             if (prebuiltStubsProvider != null) {
-              serializedStubTree = prebuiltStubsProvider.findStub(inputData);
+              serializedStubTree = prebuiltStubsProvider.findStub(inputData, mySerializationManager, myStubIndexesExternalizer);
               if (PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
                 Stub stub = StubTreeBuilder.buildStubTree(inputData);
                 if (serializedStubTree != null && stub != null) {
