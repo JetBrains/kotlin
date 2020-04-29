@@ -6,13 +6,13 @@
 package org.jetbrains.uast.kotlin.psi
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightMethodBuilder
-import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.impl.light.LightParameterListBuilder
-import com.intellij.psi.impl.light.LightTypeParameterBuilder
+import com.intellij.psi.impl.light.*
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.UastErrorType
@@ -30,7 +30,12 @@ internal class UastFakeLightMethod(original: KtFunction, containingClass: PsiCla
                         p.name ?: "__no_name__",
                         this,
                         i
-                    )
+                    ).apply {
+                        p.extendsBound?.getType()
+                            ?.toPsiType(this@UastFakeLightMethod, original, false)
+                            ?.safeAs<PsiClassType>()
+                            ?.let { extendsList.addReference(it) }
+                    }
                 )
             }
         }
