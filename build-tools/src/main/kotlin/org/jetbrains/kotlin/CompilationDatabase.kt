@@ -7,11 +7,8 @@ package org.jetbrains.kotlin
 
 import java.io.File
 import javax.inject.Inject
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.list
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import org.gradle.api.GradleException
+import com.google.gson.annotations.Expose
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.DefaultTask
@@ -20,13 +17,14 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.HostManager
+import java.io.FileReader
+import java.io.FileWriter
 
-@Serializable
-private data class Entry(
-    val directory: String,
-    val file: String,
-    val arguments: List<String>,
-    val output: String
+internal data class Entry(
+    @Expose val directory: String,
+    @Expose val file: String,
+    @Expose val arguments: List<String>,
+    @Expose val output: String
 ) {
     companion object {
         fun create(
@@ -43,14 +41,12 @@ private data class Entry(
             )
         }
 
-        fun writeListTo(file: File, entries: List<Entry>) {
-            val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
-            file.writeText(json.stringify(Entry.serializer().list, entries))
+        fun writeListTo(file: File, entries: List<Entry>) = FileWriter(file).use {
+            gson.toJson(entries, it)
         }
 
-        fun readListFrom(file: File): List<Entry> {
-            val json = Json(JsonConfiguration.Stable)
-            return json.parse(Entry.serializer().list, file.readText())
+        fun readListFrom(file: File): Array<Entry> = FileReader(file).use{
+            gson.fromJson(it, Array<Entry>::class.java)
         }
     }
 }
