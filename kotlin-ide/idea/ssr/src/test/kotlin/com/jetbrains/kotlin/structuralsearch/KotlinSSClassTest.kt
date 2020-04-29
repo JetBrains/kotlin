@@ -9,6 +9,8 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassSingleInheritance() { doTest("class '_ : A") }
 
+    fun testClassDelegation() { doTest("class '_(b: B) : A by b") }
+
     fun testClassConstr() { doTest("class A(b: Int, c: String)") }
 
     fun testClassConstrDiffType() { doTest("class A(b: Int, c: String)") }
