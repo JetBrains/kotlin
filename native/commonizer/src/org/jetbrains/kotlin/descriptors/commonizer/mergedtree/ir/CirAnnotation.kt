@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
-import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
@@ -63,6 +64,12 @@ internal fun checkSupportedInCommonization(constantValue: ConstantValue<*>, loca
         is FloatValue,
         is EnumValue -> {
             // OK
+        }
+        is AnnotationValue -> {
+            if (constantValue.value.fqName?.isUnderStandardKotlinPackages != true)
+                error("Only ${constantValue::class.java} const values from Kotlin standard packages are supported, $constantValue at ${location()}")
+
+            Unit
         }
         is ArrayValue -> {
             constantValue.value.forEachIndexed { index, innerConstantValue ->
