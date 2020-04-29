@@ -304,7 +304,8 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
                     languageVersionSettings,
                     symbolTable,
                     typeTranslator,
-                    irBuiltIns
+                    irBuiltIns,
+                    linker = irLinker
                 )
             )
         }

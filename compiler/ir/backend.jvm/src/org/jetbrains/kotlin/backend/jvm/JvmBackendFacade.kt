@@ -40,22 +40,6 @@ object JvmBackendFacade {
         val functionFactory = IrFunctionFactory(psi2irContext.irBuiltIns, psi2irContext.symbolTable)
         psi2irContext.irBuiltIns.functionFactory = functionFactory
 
-        for (extension in pluginExtensions) {
-            psi2ir.addPostprocessingStep { module ->
-                extension.generate(
-                    module,
-                    IrPluginContext(
-                        psi2irContext.moduleDescriptor,
-                        psi2irContext.bindingContext,
-                        psi2irContext.languageVersionSettings,
-                        psi2irContext.symbolTable,
-                        psi2irContext.typeTranslator,
-                        psi2irContext.irBuiltIns
-                    )
-                )
-            }
-        }
-
         val stubGenerator = DeclarationStubGenerator(
             psi2irContext.moduleDescriptor, psi2irContext.symbolTable, psi2irContext.irBuiltIns.languageVersionSettings, extensions
         )
@@ -68,6 +52,24 @@ object JvmBackendFacade {
             stubGenerator,
             mangler
         )
+
+        for (extension in pluginExtensions) {
+            psi2ir.addPostprocessingStep { module ->
+                extension.generate(
+                    module,
+                    IrPluginContext(
+                        psi2irContext.moduleDescriptor,
+                        psi2irContext.bindingContext,
+                        psi2irContext.languageVersionSettings,
+                        psi2irContext.symbolTable,
+                        psi2irContext.typeTranslator,
+                        psi2irContext.irBuiltIns,
+                        linker = irLinker
+                    )
+                )
+            }
+        }
+
         val dependencies = psi2irContext.moduleDescriptor.allDependencyModules.map {
             val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
