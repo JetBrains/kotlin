@@ -429,7 +429,7 @@ class FindInProjectTask {
       final List<VirtualFile> hits = new ArrayList<>();
       FileBasedIndex.getInstance().ignoreDumbMode(() -> {
         FileBasedIndex.getInstance().getFilesWithKey(TrigramIndex.INDEX_ID, keys, Processors.cancelableCollectProcessor(hits), scope);
-      }, myProject, DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE);
+      }, DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE);
 
       for (VirtualFile hit : hits) {
         if (myFileMask.value(hit)) {
