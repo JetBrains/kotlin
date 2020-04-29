@@ -3454,11 +3454,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         public void testNoReflectionInClassPath() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/noReflectionInClassPath.kt");
         }
-
-        @TestMetadata("typeOfWithNonReifiedParameter.kt")
-        public void testTypeOfWithNonReifiedParameter() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/typeOfWithNonReifiedParameter.kt");
-        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/regression")
