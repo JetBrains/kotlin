@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // Super calls to Throwable properties are not supported
 // IGNORE_BACKEND: JS_IR
 
