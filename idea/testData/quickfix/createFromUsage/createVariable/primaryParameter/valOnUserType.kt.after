@@ -4,5 +4,5 @@
 class A<T>(val n: T, val foo: A<Int>)
 
 fun test() {
-    val a: A<Int> = A(1, ).foo
+    val a: A<Int> = A(1,).foo
 }
