@@ -5,6 +5,10 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClass() { doTest("class A") }
 
+    fun testClassDoubleInheritance() { doTest("class '_ : A, B()") }
+
+    fun testClassSingleInheritance() { doTest("class '_ : A") }
+
     fun testClassConstr() { doTest("class A(b: Int, c: String)") }
 
     fun testClassConstrDiffType() { doTest("class A(b: Int, c: String)") }

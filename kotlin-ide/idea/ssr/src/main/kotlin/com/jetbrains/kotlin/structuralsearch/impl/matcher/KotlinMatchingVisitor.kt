@@ -280,6 +280,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(classBody, other)
     }
 
+    override fun visitSuperTypeListEntry(specifier: KtSuperTypeListEntry) {
+        val other = getTreeElement<KtSuperTypeListEntry>()
+        myMatchingVisitor.result = matchTextOrVariable(specifier, other)
+    }
+
+    override fun visitSuperTypeList(list: KtSuperTypeList) {
+        val other = getTreeElement<KtSuperTypeList>()
+        myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(list, other)
+    }
+
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
@@ -287,6 +297,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.match(klass.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
+                && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
     }
 
