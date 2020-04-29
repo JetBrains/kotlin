@@ -85,7 +85,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   private final Project myProject;
   private final ExcludedEntriesConfiguration myExcludesConfiguration;
 
-  private final Collection<BackendCompiler> myRegisteredCompilers = new ArrayList<>();
+  private volatile Collection<BackendCompiler> myRegisteredCompilers = Collections.emptyList();
   private JavacCompiler JAVAC_EXTERNAL_BACKEND;
   private final Perl5Matcher myPatternMatcher = new Perl5Matcher();
 
@@ -433,39 +433,55 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
     }
 
     JAVAC_EXTERNAL_BACKEND = new JavacCompiler(myProject);
-    myRegisteredCompilers.add(JAVAC_EXTERNAL_BACKEND);
+    myRegisteredCompilers = collectCompilers(Collections.emptySet());
 
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      if (EclipseCompiler.isInitialized()) {
-        final EclipseCompiler eclipse = new EclipseCompiler(myProject);
-        myRegisteredCompilers.add(eclipse);
-      }
+    BackendCompiler.EP_NAME.getPoint(myProject).addChangeListener(() -> {
+      Collection<BackendCompiler> currentCompilers = myRegisteredCompilers;
+      myRegisteredCompilers = collectCompilers(
+        currentCompilers.stream().flatMap(c -> c.getCompilableFileTypes().stream()).collect(Collectors.toSet())
+      );
+    }, myProject);
+  }
+
+  @NotNull
+  private List<BackendCompiler> collectCompilers(Set<FileType> typesBefore) {
+    final List<BackendCompiler> compilers = new ArrayList<>();
+    compilers.add(JAVAC_EXTERNAL_BACKEND);
+    if (EclipseCompiler.isInitialized() || ApplicationManager.getApplication().isUnitTestMode()) {
+      compilers.add(new EclipseCompiler(myProject));
     }
+    compilers.addAll(Arrays.asList(BackendCompiler.EP_NAME.getExtensions(myProject)));
 
-    final Set<FileType> types = new HashSet<>();
-    for (BackendCompiler compiler : BackendCompiler.EP_NAME.getExtensions(myProject)) {
-      myRegisteredCompilers.add(compiler);
-      types.addAll(compiler.getCompilableFileTypes());
+    final Set<FileType> typesToAdd = new HashSet<>();
+    final Set<FileType> typesToRemove = new HashSet<>(typesBefore);
+    for (BackendCompiler compiler : compilers) {
+      Set<FileType> compilerTypes = compiler.getCompilableFileTypes();
+      typesToAdd.addAll(compilerTypes);
+      typesToRemove.removeAll(compilerTypes);
     }
-
+    typesToAdd.removeAll(typesBefore);
     final CompilerManager compilerManager = CompilerManager.getInstance(myProject);
-    for (FileType type : types) {
+    for (FileType type : typesToRemove) {
+      compilerManager.removeCompilableFileType(type);
+    }
+    for (FileType type : typesToAdd) {
       compilerManager.addCompilableFileType(type);
     }
 
     myDefaultJavaCompiler = JAVAC_EXTERNAL_BACKEND;
-    for (BackendCompiler compiler : myRegisteredCompilers) {
+    for (BackendCompiler compiler : compilers) {
       if (compiler.getId().equals(myState.DEFAULT_COMPILER)) {
         myDefaultJavaCompiler = compiler;
         break;
       }
     }
     myState.DEFAULT_COMPILER = myDefaultJavaCompiler.getId();
+    return compilers;
   }
 
   public Collection<BackendCompiler> getRegisteredJavaCompilers() {
     createCompilers();
-    return myRegisteredCompilers;
+    return Collections.unmodifiableCollection(myRegisteredCompilers);
   }
 
   public String[] getResourceFilePatterns() {
