@@ -12,12 +12,6 @@ val archives = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION)
 
 default.extendsFrom(archives)
 
-plugins.apply("maven")
-
-convention.getPlugin(MavenPluginConvention::class.java).also {
-    it.conf2ScopeMappings.addMapping(MavenPlugin.RUNTIME_PRIORITY, archives, Conf2ScopeMappingContainer.RUNTIME)
-}
-
 node {
     version = "11.9.0"
     download = true
@@ -100,4 +94,6 @@ artifacts {
     }
 }
 
-publish()
+publish {
+    artifact(jar)
+}
