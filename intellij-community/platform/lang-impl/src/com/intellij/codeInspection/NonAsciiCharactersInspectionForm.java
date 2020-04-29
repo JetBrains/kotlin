@@ -18,6 +18,7 @@ package com.intellij.codeInspection;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ReflectionUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Map;
@@ -30,20 +31,22 @@ class NonAsciiCharactersInspectionForm {
   private JBCheckBox myAlienIdentifiers;
   JPanel myPanel;
   private JBCheckBox myFilesContainingBOM;
+  private JBCheckBox myDifferentLanguagesInStrings;
   private final Map<JCheckBox, String> myBindings = new THashMap<>();
 
-  NonAsciiCharactersInspectionForm(NonAsciiCharactersInspection inspection) {
+  NonAsciiCharactersInspectionForm(@NotNull NonAsciiCharactersInspection inspection) {
     myInspection = inspection;
     bind(myASCIIIdentifiers, "CHECK_FOR_NOT_ASCII_IDENTIFIER_NAME");
     bind(myASCIIStringLiterals, "CHECK_FOR_NOT_ASCII_STRING_LITERAL");
     bind(myASCIIComments, "CHECK_FOR_NOT_ASCII_COMMENT");
     bind(myAlienIdentifiers, "CHECK_FOR_DIFFERENT_LANGUAGES_IN_IDENTIFIER_NAME");
+    bind(myDifferentLanguagesInStrings, "CHECK_FOR_DIFFERENT_LANGUAGES_IN_STRING");
     bind(myFilesContainingBOM, "CHECK_FOR_FILES_CONTAINING_BOM");
 
     reset();
   }
 
-  private void bind(JCheckBox checkBox, String property) {
+  private void bind(@NotNull JCheckBox checkBox, @NotNull String property) {
     myBindings.put(checkBox, property);
     reset(checkBox, property);
     checkBox.addChangeListener(__ -> {
@@ -52,7 +55,7 @@ class NonAsciiCharactersInspectionForm {
     });
   }
 
-  private void reset(JCheckBox checkBox, String property) {
+  private void reset(@NotNull JCheckBox checkBox, @NotNull String property) {
     checkBox.setSelected(ReflectionUtil.getField(myInspection.getClass(), myInspection, boolean.class, property));
   }
 
