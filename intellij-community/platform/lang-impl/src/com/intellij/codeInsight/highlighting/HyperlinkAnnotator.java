@@ -1,12 +1,14 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.highlighting;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.ide.IdeBundle;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -34,8 +36,20 @@ public class HyperlinkAnnotator implements Annotator {
             holder.getCurrentAnnotationSession().putUserData(messageKey, message);
           }
           TextRange range = reference.getRangeInElement().shiftRight(element.getTextRange().getStartOffset());
-          holder.newAnnotation(HighlightSeverity.INFORMATION, message).range(range)
-          .textAttributes(CodeInsightColors.INACTIVE_HYPERLINK_ATTRIBUTES).create();
+          holder.newAnnotation(HighlightSeverity.INFORMATION, message)
+            .range(range)
+            .textAttributes(CodeInsightColors.INACTIVE_HYPERLINK_ATTRIBUTES)
+            .create();
+        }
+        else if (reference instanceof HighlightedReference) {
+          TextRange rangeInElement = reference.getRangeInElement();
+          if (rangeInElement.isEmpty()) continue;
+
+          TextRange range = rangeInElement.shiftRight(element.getTextRange().getStartOffset());
+          holder.newSilentAnnotation(HighlightInfoType.HIGHLIGHTED_REFERENCE_SEVERITY)
+            .range(range)
+            .textAttributes(DefaultLanguageHighlighterColors.HIGHLIGHTED_REFERENCE)
+            .create();
         }
       }
     }
