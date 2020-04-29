@@ -98,11 +98,11 @@ internal class ModuleMetadataEmitter(
     private fun isTopLevelContainer(container: StubContainer?): Boolean =
             container == null
 
-    private fun getPropertyNameInScope(originalName: String, container: StubContainer?): String =
+    private fun getPropertyNameInScope(property: PropertyStub, container: StubContainer?): String =
         if (isTopLevelContainer(container)) {
-            getTopLevelPropertyDeclarationName(bridgeBuilderResult.kotlinFile, originalName)
+            getTopLevelPropertyDeclarationName(bridgeBuilderResult.kotlinFile, property)
         } else {
-            originalName
+            property.name
         }
 
     private val visitor = object : StubIrVisitor<VisitingContext, Any?> {
@@ -170,7 +170,7 @@ internal class ModuleMetadataEmitter(
                 data.withMappingExtensions {
                     val kind = element.bridgeSupportedKind
                     if (kind != null) {
-                        val name = getPropertyNameInScope(element.name, data.container)
+                        val name = getPropertyNameInScope(element, data.container)
                         KmProperty(element.flags, name, kind.getterFlags, kind.setterFlags).also { km ->
                             element.annotations.mapTo(km.annotations) { it.map() }
                             km.uniqId = data.uniqIds.uniqIdForProperty(element)

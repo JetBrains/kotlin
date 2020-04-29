@@ -33,7 +33,7 @@ interface KotlinScope {
      * @return the string to be used as a name in the declaration of the property in current scope,
      * or `null` if the property with given name can't be declared.
      */
-    fun declareProperty(name: String): String?
+    fun declareProperty(receiver: String?, name: String): String?
 
     val mappingBridgeGenerator: MappingBridgeGenerator
 }
@@ -314,14 +314,16 @@ abstract class KotlinFile(
         return topLevelName
     }
 
-    override fun declareProperty(name: String): String? =
-            if (name in declaredProperties || name in namesToBeDeclared || name in importedNameToPkg) {
-                null
-                // TODO: using original global name should be preferred to importing the clashed name.
-            } else {
-                declaredProperties.add(name)
-                name
-            }
+    override fun declareProperty(receiver: String?, name: String): String? {
+        val fullName = receiver?.let { "$it.${name}" } ?: name
+        return if (fullName in declaredProperties || name in namesToBeDeclared || name in importedNameToPkg) {
+            null
+            // TODO: using original global name should be preferred to importing the clashed name.
+        } else {
+            declaredProperties.add(fullName)
+            name
+        }
+    }
 
     fun buildImports(): List<String> = importedNameToPkg.mapNotNull { (name, pkg) ->
         if (pkg == "kotlin" || pkg == "kotlinx.cinterop") {
@@ -334,6 +336,11 @@ abstract class KotlinFile(
 
 }
 
+internal fun getTopLevelPropertyDeclarationName(scope: KotlinScope, property: PropertyStub): String {
+    val receiverName = property.receiverType?.underlyingTypeFqName
+    return getTopLevelPropertyDeclarationName(scope, receiverName, property.name)
+}
+
 // Try to use the provided name. If failed, mangle it with underscore and try again:
-internal tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, name: String): String =
-        scope.declareProperty(name) ?: getTopLevelPropertyDeclarationName(scope, name + "_")
+private tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, receiver: String?, name: String): String =
+        scope.declareProperty(receiver, name) ?: getTopLevelPropertyDeclarationName(scope, receiver, name + "_")

@@ -87,3 +87,14 @@ fun ConstantStub.determineConstantAnnotationClassifier(): Classifier = when (thi
         else -> error("Real constant with unexpected size of $size.")
     }
 }.let { Classifier.topLevel(cinteropInternalPackage, "ConstantValue").nested(it) }
+
+/**
+ * Returns the original name of the given type.
+ */
+val StubType.underlyingTypeFqName: String
+    get() = when (this) {
+        is ClassifierStubType -> classifier.fqName
+        is AbbreviatedType -> underlyingType.underlyingTypeFqName
+        is FunctionalType -> classifier.fqName
+        is TypeParameterType -> name
+    }
