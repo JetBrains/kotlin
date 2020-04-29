@@ -252,18 +252,17 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
 
   @Override
   protected boolean isPrebuilt(@NotNull VirtualFile virtualFile) {
-    boolean canBePrebuilt = false;
+    StubUpdatingIndex stubUpdatingIndex = FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex.class);
+    if (stubUpdatingIndex == null) {
+      return false;
+    }
     try {
-      PrebuiltStubsProvider provider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(virtualFile.getFileType());
-      if (provider != null) {
-        SerializationManagerEx serializationManager = SerializationManagerEx.getInstanceEx();
-        StubForwardIndexExternalizer<?> ideUsedExternalizer = StubForwardIndexExternalizer.getIdeUsedExternalizer();
-        canBePrebuilt = provider.findStub(FileContentImpl.createByFile(virtualFile), serializationManager, ideUsedExternalizer) != null;
-      }
+      FileContent fileContent = FileContentImpl.createByFile(virtualFile);
+      SerializedStubTree prebuiltStub = stubUpdatingIndex.findPrebuiltSerializedStubTree(fileContent);
+      return prebuiltStub != null;
     }
-    catch (Exception e) {
-      // pass
+    catch (Exception ignored) {
     }
-    return canBePrebuilt;
+    return false;
   }
 }

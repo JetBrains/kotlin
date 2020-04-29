@@ -6,32 +6,35 @@ object IndexDataPresenter {
 
   fun <V> getPresentableIndexValue(value: V): String {
     return if (value is SerializedStubTree) {
-      buildString {
-        appendln("Stub tree:")
-        appendln(stubToString(value.stub))
-
-        val stubIndicesValueMap: Map<StubIndexKey<*, *>, Map<Any, StubIdList>> = try {
-          value.stubIndicesValueMap
-        }
-        catch (e: Exception) {
-          appendln("Failed-to-read stub tree forward index: (message = ${e.message}) (exception class = ${e.javaClass.simpleName})")
-          return@buildString
-        }
-
-        appendln("Stub tree forward index:")
-        for ((stubIndexKey, stubIndexValues) in stubIndicesValueMap) {
-          appendln("    ${stubIndexKey.name}")
-          for ((key, stubIdList) in stubIndexValues) {
-            val stubIds = (0 until stubIdList.size()).map { stubIdList[it] }
-            appendln("        $key -> " + stubIds.joinToString())
-          }
-        }
-      }
+      getPresentableSerializedStubTree(value)
     }
     else {
       value.toString()
     }
   }
+
+  fun getPresentableSerializedStubTree(value: SerializedStubTree): String =
+    buildString {
+      appendln("Stub tree:")
+      appendln(getPresentableStub(value.stub, "  "))
+
+      val stubIndicesValueMap: Map<StubIndexKey<*, *>, Map<Any, StubIdList>> = try {
+        value.stubIndicesValueMap
+      }
+      catch (e: Exception) {
+        appendln("Failed-to-read stub tree forward index: (message = ${e.message}) (exception class = ${e.javaClass.simpleName})")
+        return@buildString
+      }
+
+      appendln("Stub tree forward index:")
+      for ((stubIndexKey, stubIndexValues) in stubIndicesValueMap) {
+        appendln("    ${stubIndexKey.name}")
+        for ((key, stubIdList) in stubIndexValues) {
+          val stubIds = (0 until stubIdList.size()).map { stubIdList[it] }
+          appendln("        $key -> " + stubIds.joinToString())
+        }
+      }
+    }
 
   fun <K, V> getPresentableKeyValueMap(keyValueMap: Map<K, V>): String {
     if (keyValueMap.isEmpty()) {
@@ -44,7 +47,7 @@ object IndexDataPresenter {
     }
   }
 
-  private fun stubToString(node: Stub, indent: String = "  "): String =
+  fun getPresentableStub(node: Stub, indent: String): String =
     buildString {
       append(indent)
       val stubType = node.stubType
@@ -57,7 +60,7 @@ object IndexDataPresenter {
       }
       append('\n')
       for (child in node.childrenStubs) {
-        appendln(stubToString(child, indent + "  "))
+        appendln(getPresentableStub(child, indent + "  "))
       }
     }
 

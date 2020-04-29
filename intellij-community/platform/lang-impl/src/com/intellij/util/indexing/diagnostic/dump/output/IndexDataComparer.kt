@@ -13,7 +13,7 @@ object IndexDataComparer {
     }
   }
 
-  private fun areStubTreesTheSame(
+  fun areStubTreesTheSame(
     expectedTree: SerializedStubTree,
     actualTree: SerializedStubTree
   ): Boolean {
