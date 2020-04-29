@@ -1931,6 +1931,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");
         }
 
+        @TestMetadata("recursiveFlexibleAssertions.kt")
+        public void testRecursiveFlexibleAssertions() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/recursiveFlexibleAssertions.kt");
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

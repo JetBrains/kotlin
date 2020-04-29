@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// !WITH_NEW_INFERENCE
 
 interface RecursiveGeneric<T : RecursiveGeneric<T, U>, U>
 

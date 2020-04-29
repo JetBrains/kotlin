@@ -10228,11 +10228,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/possibleCycleOnConstraints.kt");
             }
 
-            @TestMetadata("recursiveTypes.kt")
-            public void testRecursiveTypes() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes.kt");
-            }
-
             @TestMetadata("reportAboutUnresolvedReferenceAsUnresolved.kt")
             public void testReportAboutUnresolvedReferenceAsUnresolved() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");
@@ -11268,6 +11263,79 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("selfCall.kt")
                 public void testSelfCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns/selfCall.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RecursiveTypes extends AbstractDiagnosticsUsingJavacTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInRecursiveTypes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("multirecursion.kt")
+                public void testMultirecursion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/multirecursion.kt");
+                }
+
+                @TestMetadata("recursiveInIn.kt")
+                public void testRecursiveInIn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveInIn.kt");
+                }
+
+                @TestMetadata("recursiveInInv.kt")
+                public void testRecursiveInInv() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveInInv.kt");
+                }
+
+                @TestMetadata("recursiveInOut.kt")
+                public void testRecursiveInOut() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveInOut.kt");
+                }
+
+                @TestMetadata("recursiveInvIn.kt")
+                public void testRecursiveInvIn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveInvIn.kt");
+                }
+
+                @TestMetadata("recursiveInvOut.kt")
+                public void testRecursiveInvOut() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveInvOut.kt");
+                }
+
+                @TestMetadata("recursiveOutIn.kt")
+                public void testRecursiveOutIn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveOutIn.kt");
+                }
+
+                @TestMetadata("recursiveOutInv.kt")
+                public void testRecursiveOutInv() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveOutInv.kt");
+                }
+
+                @TestMetadata("recursiveOutOut.kt")
+                public void testRecursiveOutOut() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveOutOut.kt");
+                }
+
+                @TestMetadata("recursiveTypeWithNonStarResult.kt")
+                public void testRecursiveTypeWithNonStarResult() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveTypeWithNonStarResult.kt");
+                }
+
+                @TestMetadata("recursiveTypes.kt")
+                public void testRecursiveTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveTypes.kt");
+                }
+
+                @TestMetadata("twoTypeConstructors.kt")
+                public void testTwoTypeConstructors() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/twoTypeConstructors.kt");
                 }
             }
 

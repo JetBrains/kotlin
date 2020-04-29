@@ -45,8 +45,8 @@ fun case_2() {
     val x = select(Case2_1(), Case2_2(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*>}>} & {Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*>}>}?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*>}>} & {Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*>}>}?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<*>} & {Interface3 & InterfaceWithTypeParameter1<*>}?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<*>} & {Interface3 & InterfaceWithTypeParameter1<*>}?")!>x<!>.ip1test1()
     }
 }
 
@@ -58,9 +58,9 @@ fun case_3() {
     val x = select(Case3_1(), Case3_2(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>} & {Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>}?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>} & {Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>}?")!>x<!>.ip1test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>} & {Interface3 & InterfaceWithTypeParameter1<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>}?")!>x<!>.ip1test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>} & {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>} & {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>} & {Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}?")!>x<!>.ip1test2()
     }
 }
 
@@ -72,9 +72,9 @@ fun case_4() {
     val x = select(Case4_1(), Case4_2(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>} & {InterfaceWithTypeParameter1<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>}?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>} & {InterfaceWithTypeParameter1<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>}?")!>x<!>.ip1test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>} & {InterfaceWithTypeParameter1<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}> & InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>}?")!>x<!>.ip1test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>} & {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>} & {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>} & {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}?")!>x<!>.ip1test2()
     }
 }
 
@@ -100,9 +100,9 @@ fun case_6() {
     val x = select(Case6_1<Int>(), Case6_2<Float>(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>>} & {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>>}?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>>} & {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>>}?")!>x<!>.ip1test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>>} & {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>}>>}?")!>x<!>.ip1test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>}>>} & {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>}>>?}")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>}>>} & {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>}>>?}")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>}>>} & {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out {Comparable<*> & Number}>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out {InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>}>>?}")!>x<!>.ip1test2()
     }
 }
 

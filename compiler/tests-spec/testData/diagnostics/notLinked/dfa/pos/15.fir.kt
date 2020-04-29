@@ -45,8 +45,8 @@ fun case_2() {
     val x = select(Case2_1(), Case2_2(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*>> & Interface3? & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*>>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*>> & Interface3? & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*>>?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<*> & Interface3? & InterfaceWithTypeParameter1<*>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<*> & Interface3? & InterfaceWithTypeParameter1<*>?")!>x<!>.ip1test1()
     }
 }
 
@@ -58,9 +58,9 @@ fun case_3() {
     val x = select(Case3_1(), Case3_2(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & Interface3? & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>? & InterfaceWithTypeParameter2<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & Interface3? & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>? & InterfaceWithTypeParameter2<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>?")!>x<!>.ip1test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & Interface3? & InterfaceWithTypeParameter1<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>? & InterfaceWithTypeParameter2<out Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>?")!>x<!>.ip1test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*> & Interface3? & InterfaceWithTypeParameter1<*>? & InterfaceWithTypeParameter2<*>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*> & Interface3? & InterfaceWithTypeParameter1<*>? & InterfaceWithTypeParameter2<*>?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*> & Interface3? & InterfaceWithTypeParameter1<*>? & InterfaceWithTypeParameter2<*>?")!>x<!>.ip1test2()
     }
 }
 
@@ -72,9 +72,9 @@ fun case_4() {
     val x = select(Case4_1(), Case4_2(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>?")!>x<!>.ip1test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>?")!>x<!>.ip1test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*> & InterfaceWithTypeParameter1<*>? & InterfaceWithTypeParameter2<*>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*> & InterfaceWithTypeParameter1<*>? & InterfaceWithTypeParameter2<*>?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*> & InterfaceWithTypeParameter1<*>? & InterfaceWithTypeParameter2<*>?")!>x<!>.ip1test2()
     }
 }
 
@@ -100,9 +100,9 @@ fun case_6() {
     val x = select(Case6_1<Int>(), Case6_2<Float>(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<*>>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<*>>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<*>>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<*>>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>>?")!>x<!>.ip1test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<*>>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<*>>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter2<*>>>?")!>x<!>.ip1test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>>>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>>>?")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>> & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>>> & InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<out kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>>? & InterfaceWithTypeParameter2<out InterfaceWithTypeParameter2<out InterfaceWithTypeParameter1<out InterfaceWithTypeParameter2<*>> & InterfaceWithTypeParameter2<*>>>?")!>x<!>.ip1test2()
     }
 }
 
@@ -114,8 +114,8 @@ fun case_7() {
     val x = select(Case7_1<Int, Float>(), Case7_2<Char, String>(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<*> & java.io.Serializable>, out Inv<out kotlin.Comparable<*> & java.io.Serializable>> & InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<*> & java.io.Serializable>, out Inv<out kotlin.Comparable<*> & java.io.Serializable>>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<*> & java.io.Serializable>, out Inv<out kotlin.Comparable<*> & java.io.Serializable>> & InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<*> & java.io.Serializable>, out Inv<out kotlin.Comparable<*> & java.io.Serializable>>?")!>x<!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable>, out Inv<out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>> & InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable>, out Inv<out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable>, out Inv<out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>> & InterfaceWithTwoTypeParameters<out Inv<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable>, out Inv<out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>>?")!>x<!>.ip2test()
     }
 }
 
@@ -127,24 +127,24 @@ fun case_8() {
     val x = select(Case8_1<Int, Float>(), Case8_2<Char, String>(), null)
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>x<!>.test1()
-        val y = <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>x<!>.test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>x<!>.test1()
+        val y = <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>x<!>.test2()
         if (y != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>?")!>y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>?")!>y<!>.test1()
-            val z = <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>?")!>y<!>.test2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>y<!>.test1()
+            val z = <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable, out kotlin.Comparable<kotlin.Float & kotlin.Char> & java.io.Serializable>?")!>y<!>.test2()
             if (z != null) {
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable & kotlin.Comparable<kotlin.Int & kotlin.String>? & java.io.Serializable?")!>z<!>.funNullableAny()
             }
         }
     }

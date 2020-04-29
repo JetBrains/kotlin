@@ -1,0 +1,85 @@
+package
+
+public fun test(): kotlin.Unit
+
+public abstract class AbstractAssert</*0*/ SELF : AbstractAssert<SELF!, ACTUAL!>!, /*1*/ ACTUAL : kotlin.Any!> {
+    public constructor AbstractAssert</*0*/ SELF : AbstractAssert<SELF!, ACTUAL!>!, /*1*/ ACTUAL : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class AbstractCharSequenceAssert</*0*/ SELF : AbstractCharSequenceAssert<SELF!, ACTUAL!>!, /*1*/ ACTUAL : kotlin.CharSequence!> : AbstractAssert<SELF!, ACTUAL!>, EnumerableAssert<SELF!, kotlin.Char!> {
+    public constructor AbstractCharSequenceAssert</*0*/ SELF : AbstractCharSequenceAssert<SELF!, ACTUAL!>!, /*1*/ ACTUAL : kotlin.CharSequence!>()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class AbstractIterableAssert</*0*/ SELF : AbstractIterableAssert<SELF!, ACTUAL!, ELEMENT!, ELEMENT_ASSERT!>!, /*1*/ ACTUAL : kotlin.collections.(Mutable)Iterable<ELEMENT!>!, /*2*/ ELEMENT : kotlin.Any!, /*3*/ ELEMENT_ASSERT : AbstractAssert<ELEMENT_ASSERT!, ELEMENT!>!> : AbstractAssert<SELF!, ACTUAL!>, ObjectEnumerableAssert<SELF!, ELEMENT!> {
+    public constructor AbstractIterableAssert</*0*/ SELF : AbstractIterableAssert<SELF!, ACTUAL!, ELEMENT!, ELEMENT_ASSERT!>!, /*1*/ ACTUAL : kotlin.collections.(Mutable)Iterable<ELEMENT!>!, /*2*/ ELEMENT : kotlin.Any!, /*3*/ ELEMENT_ASSERT : AbstractAssert<ELEMENT_ASSERT!, ELEMENT!>!>()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class AbstractListAssert</*0*/ SELF : AbstractListAssert<SELF!, ACTUAL!, ELEMENT!, ELEMENT_ASSERT!>!, /*1*/ ACTUAL : List!, /*2*/ ELEMENT : kotlin.Any!, /*3*/ ELEMENT_ASSERT : AbstractAssert<ELEMENT_ASSERT!, ELEMENT!>!> : AbstractIterableAssert<SELF!, ACTUAL!, ELEMENT!, ELEMENT_ASSERT!>, IndexedObjectEnumerableAssert<SELF!, ELEMENT!> {
+    public constructor AbstractListAssert</*0*/ SELF : AbstractListAssert<SELF!, ACTUAL!, ELEMENT!, ELEMENT_ASSERT!>!, /*1*/ ACTUAL : List!, /*2*/ ELEMENT : kotlin.Any!, /*3*/ ELEMENT_ASSERT : AbstractAssert<ELEMENT_ASSERT!, ELEMENT!>!>()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun isNotEmpty(): SELF!
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class AbstractStringAssert</*0*/ SELF : AbstractStringAssert<SELF!>!> : AbstractCharSequenceAssert<SELF!, kotlin.String!> {
+    public constructor AbstractStringAssert</*0*/ SELF : AbstractStringAssert<SELF!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun isEqualTo(/*0*/ expected: kotlin.String!): SELF!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Assertions {
+    public constructor Assertions()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ ELEMENT : kotlin.Any!> assertThat(/*0*/ actual: (kotlin.collections.MutableList<out ELEMENT!>..kotlin.collections.List<ELEMENT!>?)): ListAssert<ELEMENT!>!
+    public open fun assertThat(/*0*/ actual: kotlin.String!): AbstractStringAssert<*>!
+}
+
+public interface EnumerableAssert</*0*/ SELF : EnumerableAssert<SELF!, ELEMENT!>!, /*1*/ ELEMENT : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IndexedObjectEnumerableAssert</*0*/ SELF : IndexedObjectEnumerableAssert<SELF!, ELEMENT!>!, /*1*/ ELEMENT : kotlin.Any!> : ObjectEnumerableAssert<SELF!, ELEMENT!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ListAssert</*0*/ ELEMENT : kotlin.Any!> : AbstractListAssert<ListAssert<ELEMENT!>!, List!, ELEMENT!, ObjectAssert!> {
+    public constructor ListAssert</*0*/ ELEMENT : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun isNotEmpty(): ListAssert<ELEMENT!>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ObjectEnumerableAssert</*0*/ SELF : ObjectEnumerableAssert<SELF!, ELEMENT!>!, /*1*/ ELEMENT : kotlin.Any!> : EnumerableAssert<SELF!, ELEMENT!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class StringAssert : AbstractStringAssert<StringAssert!> {
+    public constructor StringAssert()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEqualTo(/*0*/ expected: kotlin.String!): StringAssert!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
