@@ -283,11 +283,10 @@ public final class ListOfUsers : java/lang/Object {
         LABEL (L1)
         LINENUMBER (12)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
-          ICONST_0
           ILOAD (1)
           ICONST_1
           IAND
-          IF_ICMPNE (L2)
+          IFNE (L2)
           NEW
           DUP
           LDC (list)
@@ -620,11 +619,10 @@ public final class OptionalUser : java/lang/Object {
         LABEL (L1)
         LINENUMBER (9)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
-          ICONST_0
           ILOAD (1)
           ICONST_1
           IAND
-          IF_ICMPNE (L2)
+          IFNE (L2)
           ALOAD (0)
           NEW
           DUP
@@ -968,11 +966,10 @@ public final class User : java/lang/Object {
         LABEL (L1)
         LINENUMBER (6)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
-          ICONST_0
           ILOAD (1)
           ICONST_1
           IAND
-          IF_ICMPNE (L2)
+          IFNE (L2)
           NEW
           DUP
           LDC (firstName)
@@ -985,11 +982,10 @@ public final class User : java/lang/Object {
         LABEL (L3)
         LINENUMBER (7)
         LINENUMBER (6)
-          ICONST_0
           ILOAD (1)
           ICONST_2
           IAND
-          IF_ICMPNE (L4)
+          IFNE (L4)
           NEW
           DUP
           LDC (lastName)
