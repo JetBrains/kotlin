@@ -4,6 +4,9 @@ package com.intellij.openapi.externalSystem.service.project.manage;
 import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.configurationStore.SettingsSavingComponentJavaAdapter;
 import com.intellij.ide.SaveAndSyncHandler;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManagerEx;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -25,6 +28,7 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.serialization.ObjectSerializer;
 import com.intellij.serialization.SerializationException;
 import com.intellij.serialization.VersionedFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -75,6 +79,18 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
   public ExternalProjectsDataStorage(@NotNull Project project) {
     myProject = project;
+    ApplicationManager.getApplication().getMessageBus().connect(project).
+      subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+        @Override
+        public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+          ObjectSerializer.getInstance().clearBindingCache();
+        }
+
+        @Override
+        public void pluginUnloaded(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+          load();
+        }
+      });
   }
 
   public synchronized void load() {
