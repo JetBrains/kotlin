@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2017 Dave Griffith, Bas Leijdekkers
+ * Copyright 2003-2020 Dave Griffith, Bas Leijdekkers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,10 +61,8 @@ public class TodoCommentInspection extends LocalInspectionTool {
 
   private static List<TextRange> getTodoRanges(@NotNull PsiFile file) {
     final TodoIndexPatternProvider todoIndexPatternProvider = TodoIndexPatternProvider.getInstance();
-    assert todoIndexPatternProvider != null;
-    final Collection<IndexPatternOccurrence> occurrences = IndexPatternSearch.search(file, todoIndexPatternProvider,
-                                                                                     TodoConfiguration.getInstance().isMultiLine())
-                                                                             .findAll();
+    final Collection<IndexPatternOccurrence> occurrences =
+      IndexPatternSearch.search(file, todoIndexPatternProvider, TodoConfiguration.getInstance().isMultiLine()).findAll();
     return occurrences.stream()
                       .map(occurrence -> {
                         TextRange mainRange = occurrence.getTextRange();
