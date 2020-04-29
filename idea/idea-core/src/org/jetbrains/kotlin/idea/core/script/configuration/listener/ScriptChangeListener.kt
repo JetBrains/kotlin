@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.psi.KtFile
  * @see DefaultScriptConfigurationManager for more details.
  */
 abstract class ScriptChangeListener(protected val project: Project) {
-    val default: DefaultScriptingSupport = TODO()
+    val default: DefaultScriptingSupport
+        get() = DefaultScriptingSupport.getInstance(project)
 
     abstract fun editorActivated(vFile: VirtualFile)
     abstract fun documentChanged(vFile: VirtualFile)

@@ -94,7 +94,7 @@ interface ScriptConfigurationManager {
     /**
      * Clear all caches and re-highlighting opened scripts
      */
-    fun clearConfigurationCachesAndRehighlight()
+    fun updateScriptDefinitions()
 
     ///////////////
     // classpath roots info:

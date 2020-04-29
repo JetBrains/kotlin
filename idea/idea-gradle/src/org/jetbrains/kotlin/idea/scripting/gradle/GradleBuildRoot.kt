@@ -23,15 +23,24 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
 sealed class GradleBuildRoot {
-    class Unlinked : GradleBuildRoot()
+    abstract val pathPrefix: String
+
+    abstract class Unlinked : GradleBuildRoot()
+
+    class UnlinkedUnknown(override val pathPrefix: String) : Unlinked()
+
+    class UnlinkedLegacy(override val pathPrefix: String) : Unlinked()
+
+    class UnlinkedSupported(override val pathPrefix: String) : Unlinked()
 
     abstract class Linked : GradleBuildRoot() {
-        val importing = false
+        @Volatile
+        var importing = false
     }
 
-    class Legacy : Linked()
+    class Legacy(override val pathPrefix: String) : Linked()
 
-    class New : Linked()
+    class New(override val pathPrefix: String) : Linked()
 
     class Imported(
         val project: Project,
@@ -39,6 +48,8 @@ sealed class GradleBuildRoot {
         val context: GradleKtsContext,
         val data: GradleImportedBuildRootData
     ) : Linked() {
+        override val pathPrefix: String = dir.path
+
         fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
             val javaHome = context.javaHome
             javaHome?.let { builder.addSdk(it) }
@@ -53,22 +64,33 @@ sealed class GradleBuildRoot {
                 builder.classes.addAll(data.templateClasspath)
             }
 
+            val root = ScriptInfoRoot(this, scriptDefinition)
+
             data.models.forEach {
-                builder.scripts[it.file] = ScriptInfo(this, scriptDefinition, it)
+                builder.scripts[it.file] = ScriptInfo(root, it)
 
                 builder.classes.addAll(it.classPath)
                 builder.sources.addAll(it.sourcePath)
             }
         }
 
-        class ScriptInfo(
+        /**
+         * Common info between scripts (to save bits inside ScriptInfo)
+         */
+        data class ScriptInfoRoot(
             val buildRoot: Imported,
-            val scriptDefinition: ScriptDefinition?,
+            val scriptDefinition: ScriptDefinition?
+        )
+
+        data class ScriptInfo(
+            val root: ScriptInfoRoot,
             val model: KotlinDslScriptModel
         ) : ScriptClassRootsCache.LightScriptInfo() {
+            val buildRoot get() = root.buildRoot
+
             override fun buildConfiguration(): ScriptCompilationConfigurationWrapper? {
                 val javaHome = buildRoot.context.javaHome
-                val scriptDefinition = scriptDefinition
+                val scriptDefinition = root.scriptDefinition
 
                 val scriptFile = File(model.file)
                 val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!

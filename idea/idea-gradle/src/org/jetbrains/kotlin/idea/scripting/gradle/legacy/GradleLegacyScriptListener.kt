@@ -9,17 +9,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
-import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
-import org.jetbrains.kotlin.idea.scripting.gradle.isInAffectedGradleProjectFiles
-import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
+import org.jetbrains.kotlin.idea.scripting.gradle.*
 
-open class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(project) {
-    init {
-        // start GradleScriptInputsWatcher to track changes in gradle-configuration related files
-        project.service<GradleScriptInputsWatcher>().startWatching()
-    }
-
+class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(project) {
     override fun isApplicable(vFile: VirtualFile): Boolean {
         return isGradleKotlinScript(vFile)
     }

@@ -85,6 +85,12 @@ class ScriptClassRootsCache(
             return getProjectJdkTableSafe().allJdks.find { it.homeDirectory == javaHomeVF }
         }
 
+        fun addSdkByName(sdkName: String) {
+            val sdk = getProjectJdkTableSafe().allJdks.find { it.name == sdkName } ?: defaultSdk ?: return
+            val homePath = sdk.homePath ?: return
+            sdks[homePath] = sdk
+        }
+
         private fun getScriptDefaultSdk(): Sdk? {
             val projectSdk = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
             if (projectSdk != null) return projectSdk
@@ -162,10 +168,47 @@ class ScriptClassRootsCache(
     fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
         scriptsDependenciesCache[file]?.classFilesScope ?: GlobalSearchScope.EMPTY_SCOPE
 
-    fun hasNewRoots(old: ScriptClassRootsCache): Boolean {
+    fun hasInvalidSdk(project: Project) =
+        sdks.any { (home, sdk) ->
+            Builder(project).addSdk(File(home)) != sdk
+        }
+
+    fun diff(old: ScriptClassRootsCache): Updates =
+        Updates(
+            hasNewRoots(old),
+            getChangedScripts(old)
+        )
+
+    private fun hasNewRoots(old: ScriptClassRootsCache): Boolean {
         return classes.any { it !in old.classes }
                 || sources.any { it !in old.sources }
                 || sdks.any { it.key !in old.sdks }
+    }
+
+    private fun getChangedScripts(old: ScriptClassRootsCache): Set<String> {
+        val changed = mutableSetOf<String>()
+
+        scripts.forEach {
+            if (old.scripts[it.key] != it.value) {
+                changed.add(it.key)
+            }
+        }
+
+        old.scripts.forEach {
+            if (it.key !in scripts) {
+                changed.add(it.key)
+            }
+        }
+
+        return changed
+    }
+
+    class Updates(
+        val hasNewRoots: Boolean,
+        val updatedScripts: Set<String>
+    ) {
+        val changed: Boolean
+            get() = hasNewRoots || updatedScripts.isNotEmpty()
     }
 }
 

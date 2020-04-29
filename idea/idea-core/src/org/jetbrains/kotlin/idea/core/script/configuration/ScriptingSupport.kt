@@ -6,25 +6,14 @@
 package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElementFinder
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
-import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 abstract class ScriptingSupport {
     abstract class Provider {
         abstract fun clearCaches()
+        abstract fun isApplicable(file: VirtualFile): Boolean
         abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
         abstract fun collectConfigurations(builder: ScriptClassRootsCache.Builder)
 

@@ -20,7 +20,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
@@ -40,8 +39,8 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : DefaultScriptingSupportBase(manager) {
     // TODO public for tests
     val backgroundExecutor: BackgroundExecutor =
-        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager.rootsUpdater)
-        else DefaultBackgroundExecutor(project, manager.rootsUpdater)
+        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager.updater)
+        else DefaultBackgroundExecutor(project, manager.updater)
 
     private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
@@ -166,7 +165,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return null
         val scriptDefinition = file.findScriptDefinition() ?: return null
 
-        manager.rootsUpdater.update {
+        manager.updater.update {
             if (!loader.shouldRunInBackground(scriptDefinition)) {
                 loader.loadDependencies(false, file, scriptDefinition, loadingContext)
             } else {
@@ -240,7 +239,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                             onClick = {
                                 saveReports(file, newResult.reports)
                                 file.removeScriptDependenciesNotificationPanel(project)
-                                manager.rootsUpdater.update {
+                                manager.updater.update {
                                     setAppliedConfiguration(file, newResult)
                                 }
                             }
@@ -271,6 +270,11 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                 EditorNotifications.getInstance(project).updateAllNotifications()
             }
         }
+    }
+
+    companion object {
+        fun getInstance(project: Project) =
+            (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager).default
     }
 }
 
@@ -327,7 +331,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         if (cached != null) return cached.configuration
 
         val ktFile = project.getKtFile(virtualFile, preloadedKtFile) ?: return null
-        manager.rootsUpdater.update {
+        manager.updater.update {
             reloadOutOfDateConfiguration(ktFile, isFirstLoad = true)
         }
 
@@ -350,7 +354,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
         var upToDate = true
-        manager.rootsUpdater.update {
+        manager.updater.update {
             files.forEach { file ->
                 val virtualFile = file.originalFile.virtualFile
                 if (virtualFile != null) {
@@ -375,17 +379,13 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         file: VirtualFile,
         newConfigurationSnapshot: ScriptConfigurationSnapshot?
     ) {
-        manager.rootsUpdater.checkInTransaction()
+        manager.updater.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
         debug(file) { "configuration changed = $newConfiguration" }
 
         if (newConfiguration != null) {
-            manager.rootsUpdater.invalidate()
+            manager.updater.invalidate(file)
             cache.setApplied(file, newConfigurationSnapshot)
-        }
-
-        ScriptingSupportHelper.updateHighlighting(project) {
-            it == file
         }
     }
 
@@ -405,7 +405,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         val virtualFile = file.virtualFile
         if (cache[virtualFile]?.isUpToDate(project, virtualFile, file) == true) return
 
-        manager.rootsUpdater.update {
+        manager.updater.update {
             reloadOutOfDateConfiguration(file, forceSync = true, loadEvenWillNotBeApplied = true)
         }
     }
