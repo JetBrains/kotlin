@@ -38,16 +38,17 @@ object IndexDataPresenter {
 
   fun <K, V> getPresentableKeyValueMap(keyValueMap: Map<K, V>): String {
     if (keyValueMap.isEmpty()) {
-      return "[]"
+      return "{empty map}"
     }
     return buildString {
       for ((key, value) in keyValueMap) {
-        appendln("$key -> ${getPresentableIndexValue(value)}")
+        appendln(key)
+        appendln(getPresentableIndexValue(value).withIndent("  "))
       }
     }
   }
 
-  fun getPresentableStub(node: Stub, indent: String): String =
+  private fun getPresentableStub(node: Stub, indent: String): String =
     buildString {
       append(indent)
       val stubType = node.stubType
@@ -60,8 +61,9 @@ object IndexDataPresenter {
       }
       append('\n')
       for (child in node.childrenStubs) {
-        appendln(getPresentableStub(child, indent + "  "))
+        appendln(getPresentableStub(child, "$indent  "))
       }
     }
 
+  private fun String.withIndent(indent: String) = lineSequence().joinToString(separator = "\n") { "$indent$it" }
 }

@@ -1,15 +1,70 @@
 package com.intellij.util.indexing.diagnostic.dump.output
 
 import com.intellij.psi.stubs.*
+import com.intellij.util.containers.hash.EqualityPolicy
+import com.intellij.util.containers.hash.LinkedHashMap
+import com.intellij.util.indexing.FileBasedIndexExtension
+import com.intellij.util.indexing.SingleEntryFileBasedIndexExtension
 
 object IndexDataComparer {
 
-  fun <V> areValuesTheSame(currentValue: V, storedValue: V): Boolean {
-    return if (currentValue is SerializedStubTree) {
-      areStubTreesTheSame(storedValue as SerializedStubTree, currentValue as SerializedStubTree)
+  fun <K, V> areIndexedDataOfFileTheSame(
+    extension: FileBasedIndexExtension<K, V>,
+    expectedData: Map<K, V>,
+    actualData: Map<K, V>
+  ): Boolean {
+    if (expectedData.isEmpty() && actualData.isEmpty()) {
+      return true
     }
-    else {
-      currentValue == storedValue
+    if (expectedData.size != actualData.size) {
+      return false
+    }
+    if (extension is SingleEntryFileBasedIndexExtension) {
+      // Do not check keys equality. There is no contract that keys should be file IDs, or any specific value, in general.
+      val expectedValue = expectedData.values.first()
+      val actualValue = actualData.values.first()
+      return areValuesTheSame(extension, expectedValue, actualValue)
+    }
+
+    val keyDescriptor = extension.keyDescriptor
+
+    val expectedMap = LinkedHashMap<K, V>(keyDescriptor)
+    expectedMap.putAll(expectedData)
+
+    val actualMap = LinkedHashMap<K, V>(keyDescriptor)
+    actualMap.putAll(actualData)
+
+    for ((expectedKey, expectedValue) in expectedMap) {
+      val actualValue = actualMap[expectedKey]
+      if (!areValuesTheSame(extension, expectedValue, actualValue)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  private fun <V> areValuesTheSame(
+    extension: FileBasedIndexExtension<*, *>,
+    expectedValue: V?,
+    actualValue: V?
+  ): Boolean {
+    if (expectedValue == null || actualValue == null) {
+      return expectedValue == null && actualValue == null
+    }
+    if (expectedValue is SerializedStubTree) {
+      if (actualValue !is SerializedStubTree) {
+        return false
+      }
+      val currentStubTree = runCatching { expectedValue.stubIndicesValueMap; expectedValue }.getOrNull() as? SerializedStubTree ?: return false
+      val actualStubTree = runCatching { actualValue.stubIndicesValueMap; actualValue }.getOrNull() as? SerializedStubTree ?: return false
+      return areStubTreesTheSame(currentStubTree, actualStubTree)
+    }
+    val valueExternalizer = extension.valueExternalizer
+    return if (valueExternalizer is EqualityPolicy<*>) {
+      @Suppress("UNCHECKED_CAST")
+      (valueExternalizer as EqualityPolicy<V>).isEqual(expectedValue, actualValue)
+    } else {
+      expectedValue == actualValue
     }
   }
 
