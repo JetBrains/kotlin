@@ -1,30 +1,22 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
@@ -38,26 +30,42 @@ class SerializableIrGenerator(
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
+    private fun IrClass.getSuperClassOrAny(): IrClass {
+        val superClasses = superTypes.mapNotNull { it.classOrNull }.map { it.owner }
+
+        return superClasses.singleOrNull { it.kind == ClassKind.CLASS } ?: compilerContext.irBuiltIns.anyClass.owner
+    }
+
+    private fun IrClass.hasSerializableAnnotationWithoutArgs(): Boolean {
+        val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return false
+
+        for (i in 0 until annot.valueArgumentsCount) {
+            if (annot.getValueArgument(i) != null) return false
+        }
+
+        return true
+    }
+
+    private val IrClass.isInternalSerializable: Boolean get() = kind == ClassKind.CLASS && hasSerializableAnnotationWithoutArgs()
+
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
-        irClass.contributeConstructor(constructorDescriptor, overwriteValueParameters = true) { ctor ->
+        irClass.contributeConstructor(constructorDescriptor) { ctor ->
             val transformFieldInitializer = buildInitializersRemapping(irClass)
 
             // Missing field exception parts
-            val exceptionCtor =
-                serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
-                    .unsubstitutedPrimaryConstructor!!
-            val exceptionCtorRef = compilerContext.symbolTable.referenceConstructor(exceptionCtor)
-            val exceptionType = exceptionCtor.returnType.toIrType()
+            val exceptionFqn = getSerializationPackageFqn(MISSING_FIELD_EXC)
+            val exceptionCtorRef = compilerContext.referenceConstructors(exceptionFqn).single { it.owner.isPrimary }
+            val exceptionType = exceptionCtorRef.owner.returnType
 
             val serializableProperties = properties.serializableProperties
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
             val seenVars = (0 until seenVarsOffset).map { ctor.valueParameters[it] }
 
             val thiz = irClass.thisReceiver!!
-            val superClass = irClass.descriptor.getSuperClassOrAny()
+            val superClass = irClass.getSuperClassOrAny()
             var startPropOffset: Int = 0
             when {
-                KotlinBuiltIns.isAny(superClass) -> generateAnySuperConstructorCall(toBuilder = this@contributeConstructor)
+                superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@contributeConstructor)
                 superClass.isInternalSerializable -> {
                     startPropOffset = generateSuperSerializableCall(superClass, ctor.valueParameters, seenVarsOffset)
                 }
@@ -108,22 +116,23 @@ class SerializableIrGenerator(
                 }
         }
 
-    private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor) {
-        val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
-            ?: throw IllegalArgumentException("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
-        val ctorRef = compilerContext.symbolTable.referenceConstructor(suitableCtor)
+    private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: IrClass) {
+        val ctorRef = superClass.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.valueParameters.isEmpty() }
+            ?: error("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
+
+
         val call = IrDelegatingConstructorCallImpl(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            ctorRef
+            ctorRef.symbol
         )
         call.insertTypeArgumentsForSuperClass(superClass)
         +call
     }
 
-    private fun IrDelegatingConstructorCallImpl.insertTypeArgumentsForSuperClass(superClass: ClassDescriptor) {
-        val superTypeCallArguments = (irClass.superTypes.find { it.classOrNull?.descriptor == superClass } as? IrSimpleType)?.arguments
+    private fun IrDelegatingConstructorCallImpl.insertTypeArgumentsForSuperClass(superClass: IrClass) {
+        val superTypeCallArguments = (irClass.superTypes.find { it.classOrNull == superClass.symbol } as IrSimpleType?)?.arguments
         superTypeCallArguments?.forEachIndexed { index, irTypeArgument ->
             val argType =
                 irTypeArgument as? IrTypeProjection ?: throw IllegalStateException("Star projection in immediate argument for supertype")
@@ -133,13 +142,13 @@ class SerializableIrGenerator(
 
     // returns offset in serializable properties array
     private fun IrBlockBodyBuilder.generateSuperSerializableCall(
-        superClass: ClassDescriptor,
+        superClass: IrClass,
         allValueParameters: List<IrValueParameter>,
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = compilerContext.symbolTable.serializableSyntheticConstructor(superClass)
-        val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
+        val superCtorRef = serializableSyntheticConstructor(superClass)
+        val superProperties = bindingContext.serializablePropertiesFor(superClass.descriptor).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
                     allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +

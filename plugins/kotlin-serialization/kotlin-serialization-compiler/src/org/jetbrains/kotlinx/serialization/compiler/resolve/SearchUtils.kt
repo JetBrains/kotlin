@@ -63,8 +63,14 @@ internal fun Annotations.findAnnotationKotlinTypeValue(
 internal fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor =
     module.findClassAcrossModuleDependencies(ClassId(SerializationPackages.packageFqName, SerialEntityNames.SERIAL_CTOR_MARKER_NAME))!!
 
+internal fun getInternalPackageFqn(classSimpleName: String): FqName =
+    SerializationPackages.internalPackageFqName.child(Name.identifier(classSimpleName))
+
 internal fun ModuleDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
     getFromPackage(SerializationPackages.internalPackageFqName, classSimpleName)
+
+internal fun getSerializationPackageFqn(classSimpleName: String): FqName =
+    SerializationPackages.packageFqName.child(Name.identifier(classSimpleName))
 
 internal fun ModuleDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
     getFromPackage(SerializationPackages.packageFqName, classSimpleName)
