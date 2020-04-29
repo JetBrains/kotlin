@@ -88,22 +88,24 @@ class FirExtensionPointService(
         )
     }
 
-    fun registerUserDefinedAnnotation(annotation: FirRegularClass) {
-        require(annotation.classKind == ClassKind.ANNOTATION_CLASS)
-        val fqName = annotation.symbol.classId.asSingleFqName()
-        _annotations += fqName
-        val extensions = extensionsWithMetaAnnotations[fqName]
-        if (extensions.isEmpty()) return
-        for (extension in extensions) {
-            val registeredExtensions = this[extension::class]
+    fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotations: Collection<FirRegularClass>) {
+        for (annotation in annotations) {
+            require(annotation.classKind == ClassKind.ANNOTATION_CLASS)
+            val fqName = annotation.symbol.classId.asSingleFqName()
+            _annotations += fqName
+            val extensions = extensionsWithMetaAnnotations[metaAnnotation]
+            if (extensions.isEmpty()) return
+            for (extension in extensions) {
+                val registeredExtensions = this[extension::class]
 
-            @Suppress("UNCHECKED_CAST")
-            val map = when (extension.mode) {
-                FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAnnotatedMode
-                FirExtensionPoint.Mode.ALL_IN_ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAllInAnnotatedMode
-                FirExtensionPoint.Mode.ALL -> throw IllegalStateException("Extension with mode ALL can't be subscribed to meta annotation")
-            } as Multimap<AnnotationFqn, FirExtensionPoint>
-            map.put(fqName, extension)
+                @Suppress("UNCHECKED_CAST")
+                val map = when (extension.mode) {
+                    FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAnnotatedMode
+                    FirExtensionPoint.Mode.ALL_IN_ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAllInAnnotatedMode
+                    FirExtensionPoint.Mode.ALL -> throw IllegalStateException("Extension with mode ALL can't be subscribed to meta annotation")
+                } as Multimap<AnnotationFqn, FirExtensionPoint>
+                map.put(fqName, extension)
+            }
         }
     }
 
