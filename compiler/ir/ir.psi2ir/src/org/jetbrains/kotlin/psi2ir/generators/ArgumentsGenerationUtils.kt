@@ -620,14 +620,18 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
 
     for (i in underlyingValueParameters.indices) {
         val underlyingValueParameter = underlyingValueParameters[i]
-        val originalUnderlyingParameterType = underlyingValueParameter.original.type
 
         if (expectSamConvertedArgumentToBeAvailableInResolvedCall && resolvedCall is NewResolvedCallImpl<*>) {
             // TODO support SAM conversion of varargs
             val argument = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments?.singleOrNull() ?: continue
             resolvedCall.getExpectedTypeForSamConvertedArgument(argument) ?: continue
         } else {
-            if (!context.extensions.samConversion.isSamType(originalUnderlyingParameterType)) continue
+            // When the method is `f(T)` with `T` = a SAM type, the substituted type is a SAM while the original is not;
+            // when the method is `f(X<T>)` with `T` = `out V` where `X` is a SAM type, the substituted type is `Nothing`
+            // while the original is a SAM interface. Thus, if *either* of those is a SAM type then it's fine.
+            if (!samConversion.isSamType(underlyingValueParameter.type) &&
+                !samConversion.isSamType(underlyingValueParameter.original.type)
+            ) continue
             if (!originalValueParameters[i].type.isFunctionTypeOrSubtype) continue
         }
 
@@ -640,7 +644,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         val substitutedSamType = typeSubstitutor.substitute(samKotlinType, Variance.INVARIANT)
             ?: throw AssertionError(
                 "Failed to substitute value argument type in SAM conversion: " +
-                        "underlyingParameterType=$originalUnderlyingParameterType, " +
+                        "underlyingParameterType=${underlyingValueParameter.type}, " +
                         "substitutionContext=$substitutionContext"
             )
 
