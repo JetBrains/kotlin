@@ -96,7 +96,7 @@ class FirExtensionPointService(
             val extensions = extensionsWithMetaAnnotations[metaAnnotation]
             if (extensions.isEmpty()) return
             for (extension in extensions) {
-                val registeredExtensions = this[extension::class]
+                val registeredExtensions = this[extension.extensionType]
 
                 @Suppress("UNCHECKED_CAST")
                 val map = when (extension.mode) {

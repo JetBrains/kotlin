@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import kotlin.reflect.KClass
 
 typealias AnnotationFqn = FqName
 
@@ -18,6 +19,8 @@ abstract class FirExtensionPoint(val session: FirSession) {
     abstract val metaAnnotations: Set<AnnotationFqn>
 
     abstract val mode: Mode
+
+    internal abstract val extensionType: KClass<out FirExtensionPoint>
 
     fun interface Factory<P : FirExtensionPoint> {
         fun create(session: FirSession): P

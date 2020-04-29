@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import kotlin.reflect.KClass
 
 abstract class FirStatusTransformerExtension(session: FirSession) : FirExtensionPoint(session) {
     companion object {
@@ -21,6 +22,8 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
 
     final override val name: FirExtensionPointName
         get() = NAME
+
+    final override val extensionType: KClass<out FirExtensionPoint> = FirStatusTransformerExtension::class
 
     abstract fun transformStatus(declaration: FirDeclaration, status: FirDeclarationStatus): FirDeclarationStatus
 

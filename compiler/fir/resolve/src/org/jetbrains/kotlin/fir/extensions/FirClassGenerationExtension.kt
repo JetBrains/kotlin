@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import kotlin.reflect.KClass
 
 /*
  * TODO:
@@ -25,6 +26,8 @@ abstract class FirClassGenerationExtension(session: FirSession) : FirExtensionPo
         get() = NAME
 
     final override val mode: Mode = Mode.ANNOTATED_ELEMENT
+
+    final override val extensionType: KClass<out FirExtensionPoint> = FirClassGenerationExtension::class
 
     abstract fun <T> generateClass(
         containingFile: FirFile,
