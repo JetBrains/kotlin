@@ -109,12 +109,12 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
 
     fun testLoadAndSaveOldNativePlatformOldNativeFacet() = doTestLoadAndSaveProjectWithFacetConfig(
         "platform=\"Native \"",
-        "platform=\"Native (general) \" allPlatforms=\"Native [general]\""
+        "platform=\"Native (general) \" allPlatforms=\"Native []/Native [general]\""
     )
 
     fun testLoadAndSaveOldNativePlatformNewNativeFacet() = doTestLoadAndSaveProjectWithFacetConfig(
         "platform=\"Native \" allPlatforms=\"Native []\"",
-        "platform=\"Native (general) \" allPlatforms=\"Native [general]\""
+        "platform=\"Native (general) \" allPlatforms=\"Native []/Native [general]\""
     )
 
     //TODO(auskov): test parsing common target platform with multiple versions of java, add parsing common platforms
@@ -125,7 +125,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
 
     fun testLoadAndSaveProjectHMPPFacetConfig() = doTestLoadAndSaveProjectWithFacetConfig(
         "platform=\"Common (experimental) \" allPlatforms=\"JS []/JVM [1.6]/Native []\"",
-        "platform=\"Common (experimental) \" allPlatforms=\"JS []/JVM [1.6]/Native [general]\""
+        "platform=\"Common (experimental) \" allPlatforms=\"JS []/JVM [1.6]/Native []/Native [general]\""
     )
 
     fun testApiVersionWithoutLanguageVersion() {
