@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -53,6 +51,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.CallableReferenceUtilKt.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.initDefaultSourceMappingIfNeeded;
@@ -408,68 +407,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                PropertyReferenceCodegen.generateCallableReferenceSignature(iv, descriptor, state);
+                CallableReferenceUtilKt.generateCallableReferenceSignature(iv, descriptor, state);
                 iv.areturn(JAVA_STRING_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getSignature", element);
             }
         }
-    }
-
-    // Returns false if null was generated.
-    public static boolean generateCallableReferenceDeclarationContainerClass(
-            @NotNull InstructionAdapter iv,
-            @NotNull CallableDescriptor descriptor,
-            @NotNull GenerationState state
-    ) {
-        KotlinTypeMapper typeMapper = state.getTypeMapper();
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-
-        if (container instanceof ClassDescriptor) {
-            // TODO: would it work for arrays?
-            SimpleType containerKotlinType = ((ClassDescriptor) container).getDefaultType();
-            Type containerType = typeMapper.mapClass((ClassDescriptor) container);
-            putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper);
-        }
-        else if (container instanceof PackageFragmentDescriptor) {
-            iv.aconst(typeMapper.mapOwner(descriptor));
-        }
-        else if (descriptor instanceof VariableDescriptorWithAccessors) {
-            iv.aconst(state.getBindingContext().get(
-                    CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, ((VariableDescriptorWithAccessors) descriptor)
-            ));
-        }
-        else {
-            iv.aconst(null);
-            return false;
-        }
-
-        return true;
-    }
-
-    public static void generateCallableReferenceDeclarationContainer(
-            @NotNull InstructionAdapter iv,
-            @NotNull CallableDescriptor descriptor,
-            @NotNull GenerationState state
-    ) {
-        if (!generateCallableReferenceDeclarationContainerClass(iv, descriptor, state)) return;
-
-        if (isTopLevelCallableReference(descriptor)) {
-            // Note that this name is not used in reflection. There should be the name of the referenced declaration's module instead,
-            // but there's no nice API to obtain that name here yet
-            // TODO: write the referenced declaration's module name and use it in reflection
-            iv.aconst(state.getModuleName());
-            iv.invokestatic(REFLECTION, "getOrCreateKotlinPackage",
-                            Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE, getType(Class.class), getType(String.class)), false);
-        }
-        else {
-            wrapJavaClassIntoKClass(iv);
-        }
-    }
-
-    public static boolean isTopLevelCallableReference(@NotNull CallableDescriptor descriptor) {
-        return descriptor instanceof LocalVariableDescriptor
-               ? DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) == null
-               : descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
     @NotNull
@@ -511,8 +453,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             if (superClassAsmType.equals(LAMBDA) || functionReferenceTarget != null ||
                 CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())
             ) {
-                int arity = calculateArity();
-                iv.iconst(arity);
+                iv.iconst(CodegenUtilKt.getArity(funDescriptor));
                 superCtorArgTypes.add(Type.INT_TYPE);
                 if (shouldHaveBoundReferenceReceiver) {
                     CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(
@@ -524,9 +465,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     assert functionReferenceTarget != null : "No function reference target: " + funDescriptor;
                     generateCallableReferenceDeclarationContainerClass(iv, functionReferenceTarget, state);
                     iv.aconst(functionReferenceTarget.getName().asString());
-                    PropertyReferenceCodegen.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
+                    CallableReferenceUtilKt.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
                     int flags =
-                            (isTopLevelCallableReference(functionReferenceTarget) ? 1 : 0) +
+                            getCallableReferenceTopLevelFlag(functionReferenceTarget) +
                             (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor) << 1);
                     iv.aconst(flags);
                     superCtorArgTypes.add(JAVA_CLASS_TYPE);
@@ -583,13 +524,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         return (hasVarargMappedToElement ? 1 : 0) +
                (hasSuspendConversion ? 2 : 0) +
                ((hasCoercionToUnit ? 1 : 0) << 2);
-    }
-
-    protected int calculateArity() {
-        int arity = funDescriptor.getValueParameters().size();
-        if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
-        if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
-        return arity;
     }
 
     @NotNull

@@ -663,21 +663,21 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
             List<Type> superCtorArgTypes = new ArrayList<>();
             if (generateClassIntCtorCall) {
-                ClosureCodegen.generateCallableReferenceDeclarationContainerClass(iv, property, state);
+                CallableReferenceUtilKt.generateCallableReferenceDeclarationContainerClass(iv, property, state);
                 superCtorArgTypes.add(JAVA_CLASS_TYPE);
             } else {
                 // TODO: generate the container once and save to a local field instead (KT-10495)
-                ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
+                CallableReferenceUtilKt.generateCallableReferenceDeclarationContainer(iv, property, state);
                 superCtorArgTypes.add(K_DECLARATION_CONTAINER_TYPE);
             }
 
             iv.aconst(property.getName().asString());
-            PropertyReferenceCodegen.generateCallableReferenceSignature(iv, property, state);
+            CallableReferenceUtilKt.generateCallableReferenceSignature(iv, property, state);
             superCtorArgTypes.add(JAVA_STRING_TYPE);
             superCtorArgTypes.add(JAVA_STRING_TYPE);
 
             if (generateClassIntCtorCall) {
-                iv.aconst(ClosureCodegen.isTopLevelCallableReference(property) ? 1 : 0);
+                iv.aconst(CallableReferenceUtilKt.getCallableReferenceTopLevelFlag(property));
                 superCtorArgTypes.add(Type.INT_TYPE);
             }
 

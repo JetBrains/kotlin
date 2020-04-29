@@ -125,7 +125,7 @@ abstract class AbstractCoroutineCodegen(
             iv.load(0, AsmTypes.OBJECT_TYPE)
             val hasArityParameter = !languageVersionSettings.isReleaseCoroutines() || passArityToSuperClass
             if (hasArityParameter) {
-                iv.iconst(if (passArityToSuperClass) calculateArity() else 0)
+                iv.iconst(if (passArityToSuperClass) funDescriptor.arity else 0)
             }
 
             iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
