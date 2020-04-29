@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -394,14 +397,52 @@ internal class ComparingDeclarationsVisitor(
         visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Receiver parameter annotations"))
     }
 
-
     private fun visitAnnotations(expected: Annotations?, actual: Annotations?, context: Context) {
         if (expected === actual || (expected?.isEmpty() != false && actual?.isEmpty() != false)) return
 
-        val expectedAnnotationFqNames: Set<FqName?> = expected?.mapTo(HashSet()) { it.fqName } ?: emptySet()
-        val actualAnnotationFqNames: Set<FqName?> = actual?.mapTo(HashSet()) { it.fqName } ?: emptySet()
+        fun AnnotationDescriptor.getMandatoryFqName(): FqName = fqName ?: context.fail("No FQ name for annotation $this")
 
-        context.assertSetsEqual(expectedAnnotationFqNames, actualAnnotationFqNames, "annotations")
+        val expectedAnnotations: Map<FqName, AnnotationDescriptor> = expected?.associateBy { it.getMandatoryFqName() }.orEmpty()
+        val actualAnnotations: Map<FqName, AnnotationDescriptor> = actual?.associateBy { it.getMandatoryFqName() }.orEmpty()
+
+        context.assertSetsEqual(expectedAnnotations.keys, actualAnnotations.keys, "annotation FQ names")
+
+        for (annotationFqName in expectedAnnotations.keys) {
+            val expectedAnnotation = expectedAnnotations.getValue(annotationFqName)
+            val actualAnnotation = actualAnnotations.getValue(annotationFqName)
+
+            visitAnnotation(expectedAnnotation, actualAnnotation, context.nextLevel("Annotation $annotationFqName"))
+        }
+    }
+
+    private fun visitAnnotation(expected: AnnotationDescriptor, actual: AnnotationDescriptor, context: Context) {
+        visitType(expected.type, actual.type, context.nextLevel("annotation type"))
+
+        val expectedValueArguments: Map<Name, ConstantValue<*>> = expected.allValueArguments
+        val actualValueArguments: Map<Name, ConstantValue<*>> = actual.allValueArguments
+
+        context.assertSetsEqual(expectedValueArguments.keys, actualValueArguments.keys, "annotation value argument names")
+
+        for (name in expectedValueArguments.keys) {
+            val expectedValueArgument = expectedValueArguments.getValue(name)
+            checkConstantSupportedInCommonization(
+                constantValue = expectedValueArgument,
+                constantName = name,
+                owner = expected,
+                onError = { context.fail(it) }
+            )
+
+            val actualValueArgument = actualValueArguments.getValue(name)
+            checkConstantSupportedInCommonization(
+                constantValue = actualValueArgument,
+                constantName = name,
+                owner = actual,
+                onError = { context.fail(it) }
+            )
+
+            context.assertEquals(expectedValueArgument::class, actualValueArgument::class, "annotation value argument classe")
+            context.assertEquals(expectedValueArgument.value, actualValueArgument.value, "annotation value argument value")
+        }
     }
 
     private fun visitType(expected: KotlinType?, actual: KotlinType?, context: Context) {
@@ -452,8 +493,7 @@ internal class ComparingDeclarationsVisitor(
             fail(
                 buildString {
                     append("Comparing $subject:\n")
-                    append("$expected is not equal to $actual\n")
-                    append(this@assertEquals.toString())
+                    append("\"$expected\" is not equal to \"$actual\"\n")
                 }
             )
     }
@@ -472,15 +512,25 @@ internal class ComparingDeclarationsVisitor(
         if (expectedMinusActual.isNotEmpty() || actualMinusExpected.isNotEmpty())
             fail(
                 buildString {
-                    append("Comparing $subject:\n")
-                    append("$expected is not equal to $actual\n")
-                    append("Expected size: ${expected.size}\n")
-                    append("Actual size: ${actual.size}\n")
-                    append("Expected minus actual: $expectedMinusActual\n")
-                    append("Actual minus expected: $actualMinusExpected\n")
-                    append(this@assertSetsEqual.toString())
+                    appendLine("Comparing $subject:")
+                    appendLine("$expected is not equal to $actual")
+                    appendLine("Expected size: ${expected.size}")
+                    appendLine("Actual size: ${actual.size}")
+                    appendLine("Expected minus actual: $expectedMinusActual")
+                    appendLine("Actual minus expected: $actualMinusExpected")
                 }
             )
+    }
+
+    private fun Context.fail(message: String): Nothing {
+        kotlin.test.fail(
+            buildString {
+                if (message.isNotEmpty()) {
+                    if (message.last() != '\n') appendLine(message) else append(message)
+                }
+                append(this@fail.toString())
+            }
+        )
     }
 
     override fun visitPackageViewDescriptor(expected: PackageViewDescriptor, context: Context) =
