@@ -143,6 +143,10 @@ abstract class AbstractDiagnosticCollector(
             visitWithDeclaration(file)
         }
 
+        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+            visitWithDeclaration(anonymousInitializer)
+        }
+
         private fun visitWithDeclaration(declaration: FirDeclaration) {
             declaration.runComponents()
             withDeclaration(declaration) {

@@ -16,8 +16,8 @@ annotation class Foo {
     }
 
 
-    constructor(s: Int) {}
-    init {}
-    fun function() {}
-    val property get() = Unit
+    <!ANNOTATION_CLASS_MEMBER!>constructor(s: Int) {}<!>
+    <!ANNOTATION_CLASS_MEMBER!>init {}<!>
+    <!ANNOTATION_CLASS_MEMBER!>fun function() {}<!>
+    <!ANNOTATION_CLASS_MEMBER!>val property get() = Unit<!>
 }
