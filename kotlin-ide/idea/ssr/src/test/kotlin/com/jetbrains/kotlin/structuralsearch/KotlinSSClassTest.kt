@@ -15,7 +15,7 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassTypeArgsExtBound() { doTest("class '_<'_, '_ : List<*>>(val a: T, val b: R, val c: T)") }
 
-    fun testClassTypeArgsVariance() { doTest("class '_<out T>") }
+    fun testClassTypeArgsVariance() { doTest("class '_<out V>") }
 
     fun testInterface() { doTest("interface '_") }
 
