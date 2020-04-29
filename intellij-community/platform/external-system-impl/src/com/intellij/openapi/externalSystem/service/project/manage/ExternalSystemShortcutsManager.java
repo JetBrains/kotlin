@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
@@ -24,7 +25,6 @@ import java.util.List;
  * @author Vladislav.Soroka
  */
 public class ExternalSystemShortcutsManager implements Disposable {
-
   private static final String ACTION_ID_PREFIX = "ExternalSystem_";
   @NotNull
   private final Project myProject;
@@ -35,7 +35,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
   }
 
   public void init() {
-    myProject.getMessageBus().connect(this).subscribe(KeymapManagerListener.TOPIC, new KeymapManagerListener() {
+    ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(KeymapManagerListener.TOPIC, new KeymapManagerListener() {
       @Override
       public void activeKeymapChanged(Keymap keymap) {
         fireShortcutsUpdated();
