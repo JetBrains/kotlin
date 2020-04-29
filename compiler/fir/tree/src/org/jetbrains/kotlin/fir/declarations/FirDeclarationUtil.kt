@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -16,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import java.lang.IllegalStateException
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
@@ -89,4 +93,18 @@ val FirClass<*>.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSaf
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
     return declarations.filterIsInstance<FirEnumEntry>()
+}
+
+fun FirFile.addDeclaration(declaration: FirDeclaration) {
+    require(this is FirFileImpl)
+    declarations += declaration
+}
+
+fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
+    @Suppress("LiftReturnOrAssignment")
+    when (this) {
+        is FirClassImpl -> declarations += declaration
+        is FirSealedClassImpl -> declarations += declaration
+        else -> throw IllegalStateException()
+    }
 }

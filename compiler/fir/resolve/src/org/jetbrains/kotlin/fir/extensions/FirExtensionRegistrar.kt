@@ -15,8 +15,14 @@ abstract class FirExtensionRegistrar {
     )
 
     protected inner class ExtensionRegistrarContext {
+        @JvmName("plusStatusTransformerExtension")
         operator fun ((FirSession) -> FirStatusTransformerExtension).unaryPlus() {
             statusTransformerExtensions += FirStatusTransformerExtension.Factory { this.invoke(it) }
+        }
+
+        @JvmName("plusClassGenerationExtension")
+        operator fun ((FirSession) -> FirClassGenerationExtension).unaryPlus() {
+            classGenerationExtensions += FirClassGenerationExtension.Factory { this.invoke(it) }
         }
     }
 
@@ -25,21 +31,25 @@ abstract class FirExtensionRegistrar {
     fun configure(): RegisteredExtensions {
         ExtensionRegistrarContext().configurePlugin()
         return RegisteredExtensions(
-            statusTransformerExtensions
+            statusTransformerExtensions,
+            classGenerationExtensions
         )
     }
 
     private val statusTransformerExtensions: MutableList<FirStatusTransformerExtension.Factory> = mutableListOf()
+    private val classGenerationExtensions: MutableList<FirClassGenerationExtension.Factory> = mutableListOf()
 
     class RegisteredExtensions(
-        val statusTransformerExtensions: List<FirStatusTransformerExtension.Factory>
+        val statusTransformerExtensions: List<FirStatusTransformerExtension.Factory>,
+        val classGenerationExtensions: List<FirClassGenerationExtension.Factory>
     ) {
         companion object {
-            val EMPTY = RegisteredExtensions(emptyList())
+            val EMPTY = RegisteredExtensions(emptyList(), emptyList())
         }
     }
 }
 
 fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
     registerExtensions(FirStatusTransformerExtension::class, extensions.statusTransformerExtensions)
+    registerExtensions(FirClassGenerationExtension::class, extensions.classGenerationExtensions)
 }
