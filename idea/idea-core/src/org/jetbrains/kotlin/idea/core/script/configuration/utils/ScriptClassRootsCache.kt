@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
+import java.lang.ref.WeakReference
 
 class ScriptClassRootsCache(
     val scripts: Map<String, LightScriptInfo>,
@@ -30,10 +31,13 @@ class ScriptClassRootsCache(
     val sdks: Map<String, Sdk?>
 ) {
     abstract class LightScriptInfo {
+        @Volatile
+        var heavyCache: WeakReference<HeavyScriptInfo>? = null
+
         abstract fun buildConfiguration(): ScriptCompilationConfigurationWrapper?
     }
 
-    private class HeavyScriptInfo(
+    class HeavyScriptInfo(
         val scriptConfiguration: ScriptCompilationConfigurationWrapper,
         val classFilesScope: GlobalSearchScope,
         val sdk: Sdk?
@@ -116,6 +120,43 @@ class ScriptClassRootsCache(
 
     fun contains(file: VirtualFile): Boolean = file.path in scripts
 
+    private fun getHeavyScriptInfo(file: String): HeavyScriptInfo? {
+        val lightScriptInfo = getLightScriptInfo(file) ?: return null
+        val heavy0 = lightScriptInfo.heavyCache
+        if (heavy0 != null) return heavy0.get()
+        synchronized(lightScriptInfo) {
+            val heavy1 = lightScriptInfo.heavyCache
+            if (heavy1 != null) return heavy1.get()
+            val heavy2 = computeHeavy(lightScriptInfo)
+            lightScriptInfo.heavyCache = WeakReference(heavy2)
+            return heavy2
+        }
+    }
+
+    private fun computeHeavy(lightScriptInfo: LightScriptInfo): HeavyScriptInfo? {
+        val configuration = lightScriptInfo.buildConfiguration() ?: return null
+
+        val roots = configuration.dependenciesClassPath
+        val sdk = sdks[configuration.javaHome?.canonicalPath]
+
+        @Suppress("FoldInitializerAndIfToElvis")
+        if (sdk == null) {
+            return HeavyScriptInfo(
+                configuration,
+                NonClasspathDirectoriesScope.compose(ScriptConfigurationManager.toVfsRoots(roots)),
+                null
+            )
+        }
+
+        return HeavyScriptInfo(
+            configuration,
+            NonClasspathDirectoriesScope.compose(
+                sdk.rootProvider.getFiles(OrderRootType.CLASSES).toList() + ScriptConfigurationManager.toVfsRoots(roots)
+            ),
+            sdk
+        )
+    }
+
     val firstScriptSdk: Sdk? = sdks.values.firstOrNull()
 
     val allDependenciesClassFiles: List<VirtualFile> by lazy {
@@ -134,39 +175,14 @@ class ScriptClassRootsCache(
         NonClasspathDirectoriesScope.compose(allDependenciesSources)
     }
 
-    private val scriptsDependenciesCache: MutableMap<VirtualFile, HeavyScriptInfo> =
-        ConcurrentFactoryMap.createWeakMap { file ->
-            val configuration = scripts[file.path]?.buildConfiguration() ?: return@createWeakMap null
-
-            val roots = configuration.dependenciesClassPath
-            val sdk = sdks[configuration.javaHome?.canonicalPath]
-
-            @Suppress("FoldInitializerAndIfToElvis")
-            if (sdk == null) {
-                return@createWeakMap HeavyScriptInfo(
-                    configuration,
-                    NonClasspathDirectoriesScope.compose(ScriptConfigurationManager.toVfsRoots(roots)),
-                    null
-                )
-            }
-
-            return@createWeakMap HeavyScriptInfo(
-                configuration,
-                NonClasspathDirectoriesScope.compose(
-                    sdk.rootProvider.getFiles(OrderRootType.CLASSES).toList() + ScriptConfigurationManager.toVfsRoots(roots)
-                ),
-                sdk
-            )
-        }
-
     fun getScriptConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? =
-        scriptsDependenciesCache[file]?.scriptConfiguration
+        getHeavyScriptInfo(file.path)?.scriptConfiguration
 
     fun getScriptSdk(file: VirtualFile): Sdk? =
-        scriptsDependenciesCache[file]?.sdk
+        getHeavyScriptInfo(file.path)?.sdk
 
     fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
-        scriptsDependenciesCache[file]?.classFilesScope ?: GlobalSearchScope.EMPTY_SCOPE
+        getHeavyScriptInfo(file.path)?.classFilesScope ?: GlobalSearchScope.EMPTY_SCOPE
 
     fun hasInvalidSdk(project: Project) =
         sdks.any { (home, sdk) ->
