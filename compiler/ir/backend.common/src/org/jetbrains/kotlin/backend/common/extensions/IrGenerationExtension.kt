@@ -25,11 +25,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class IrPluginContext(
+open class IrPluginContext(
+    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
     val moduleDescriptor: ModuleDescriptor,
+    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
     val bindingContext: BindingContext,
     val languageVersionSettings: LanguageVersionSettings,
+    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
     val symbolTable: ReferenceSymbolTable,
+    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
     val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     private val linker: IrDeserializer,
