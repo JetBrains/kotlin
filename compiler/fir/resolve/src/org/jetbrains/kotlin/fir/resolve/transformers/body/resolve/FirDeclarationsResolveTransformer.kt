@@ -323,41 +323,52 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
 
-        val notAnalyzed = regularClass.resolvePhase < transformerPhase
 
         return withTypeParametersOf(regularClass) {
-            if (notAnalyzed) {
-                dataFlowAnalyzer.enterClass()
-            }
-            val oldConstructorScope = primaryConstructorParametersScope
-            val oldContainingClass = containingClass
-            primaryConstructorParametersScope = null
-            containingClass = regularClass
-            val type = regularClass.defaultType()
-            val result = withLabelAndReceiverType(regularClass.name, regularClass, type) {
-                val constructor = regularClass.declarations.firstOrNull() as? FirConstructor
-                if (constructor?.isPrimary == true) {
-                    primaryConstructorParametersScope = FirLocalScope().let {
-                        var scope = it
-                        constructor.valueParameters.forEach { scope = scope.storeVariable(it) }
-                        scope
-                    }
-                }
-                transformDeclarationContent(regularClass, data).single as FirRegularClass
-            }
-            if (notAnalyzed) {
-                if (!implicitTypeOnly) {
-                    val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
-                    result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
-                } else {
-                    dataFlowAnalyzer.exitClass()
-                }
-            }
-            containingClass = oldContainingClass
-            primaryConstructorParametersScope = oldConstructorScope
-            @Suppress("UNCHECKED_CAST")
-            result.compose()
+            doTransformRegularClass(regularClass, data)
         }
+    }
+
+    private fun doTransformRegularClass(
+        regularClass: FirRegularClass,
+        data: ResolutionMode
+    ): CompositeTransformResult.Single<FirRegularClass> {
+        val notAnalyzed = regularClass.resolvePhase < transformerPhase
+
+        if (notAnalyzed) {
+            dataFlowAnalyzer.enterClass()
+        }
+
+        val oldConstructorScope = primaryConstructorParametersScope
+        val oldContainingClass = containingClass
+        primaryConstructorParametersScope = null
+        containingClass = regularClass
+        val type = regularClass.defaultType()
+        val result = withLabelAndReceiverType(regularClass.name, regularClass, type) {
+            val constructor = regularClass.declarations.firstOrNull() as? FirConstructor
+            if (constructor?.isPrimary == true) {
+                primaryConstructorParametersScope = FirLocalScope().let {
+                    var scope = it
+                    constructor.valueParameters.forEach { scope = scope.storeVariable(it) }
+                    scope
+                }
+            }
+            transformDeclarationContent(regularClass, data).single as FirRegularClass
+        }
+
+        if (notAnalyzed) {
+            if (!implicitTypeOnly) {
+                val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
+                result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+            } else {
+                dataFlowAnalyzer.exitClass()
+            }
+        }
+
+        containingClass = oldContainingClass
+        primaryConstructorParametersScope = oldConstructorScope
+        return (@Suppress("UNCHECKED_CAST")
+        result.compose())
     }
 
     override fun transformAnonymousObject(
