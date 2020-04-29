@@ -66,22 +66,27 @@ private class FirStatusResolveTransformer(
 
     override fun transformDeclaration(declaration: FirDeclaration, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
         declaration.replaceResolvePhase(transformerPhase)
-        return if (declaration is FirCallableDeclaration<*>) {
-            when (declaration) {
-                is FirProperty -> {
-                    declaration.getter?.let { transformPropertyAccessor(it, data) }
-                    declaration.setter?.let { transformPropertyAccessor(it, data) }
-                }
-                is FirFunction<*> -> {
-                    // Should we do it here?
-                    for (valueParameter in declaration.valueParameters) {
-                        transformValueParameter(valueParameter, data)
+        return when (declaration) {
+            is FirCallableDeclaration<*> -> {
+                when (declaration) {
+                    is FirProperty -> {
+                        declaration.getter?.let { transformPropertyAccessor(it, data) }
+                        declaration.setter?.let { transformPropertyAccessor(it, data) }
+                    }
+                    is FirFunction<*> -> {
+                        for (valueParameter in declaration.valueParameters) {
+                            transformValueParameter(valueParameter, data)
+                        }
                     }
                 }
+                declaration.compose()
             }
-            declaration.compose()
-        } else {
-            transformElement(declaration, data)
+            is FirPropertyAccessor -> {
+                declaration.compose()
+            }
+            else -> {
+                transformElement(declaration, data)
+            }
         }
     }
 
