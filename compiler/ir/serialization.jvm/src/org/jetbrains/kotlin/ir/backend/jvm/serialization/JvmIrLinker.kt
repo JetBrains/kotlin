@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrExtensionGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.load.java.descriptors.*
@@ -76,11 +75,11 @@ class JvmIrLinker(currentModule: ModuleDescriptor?, logger: LoggingContext, buil
     }
 
 
-    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>, extensions: Collection<IrExtensionGenerator>): IrModuleDeserializer =
-        JvmCurrentModuleDeserializer(moduleFragment, dependencies, extensions)
+    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
+        JvmCurrentModuleDeserializer(moduleFragment, dependencies)
 
-    private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>, extensions: Collection<IrExtensionGenerator>) :
-        CurrentModuleDeserializer(moduleFragment, dependencies, symbolTable, extensions) {
+    private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>) :
+        CurrentModuleDeserializer(moduleFragment, dependencies) {
         override fun declareIrSymbol(symbol: IrSymbol) {
             val descriptor = symbol.descriptor
 

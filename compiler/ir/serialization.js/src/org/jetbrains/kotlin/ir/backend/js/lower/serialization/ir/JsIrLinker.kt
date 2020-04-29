@@ -36,12 +36,8 @@ class JsIrLinker(
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy) :
         KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy)
 
-    override fun createCurrentModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-        dependencies: Collection<IrModuleDeserializer>,
-        extensions: Collection<IrExtensionGenerator>
-    ): IrModuleDeserializer {
-        val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies, extensions)
+    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
+        val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
         icData?.let {
             return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it) { lib ->
                 JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, lib, currentModuleDeserializer.strategy)

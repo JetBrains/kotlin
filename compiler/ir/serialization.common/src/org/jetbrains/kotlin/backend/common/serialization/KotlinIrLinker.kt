@@ -491,6 +491,7 @@ abstract class KotlinIrLinker(
         moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
+        if (!symbol.isBound) return null
         return descriptor
     }
 
@@ -521,15 +522,15 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
-    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>, extensions: Collection<IrExtensionGenerator>): IrModuleDeserializer =
-        CurrentModuleDeserializer(moduleFragment, dependencies, symbolTable, extensions)
+    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
+        CurrentModuleDeserializer(moduleFragment, dependencies)
 
     override fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrExtensionGenerator>) {
         if (moduleFragment != null) {
             val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
                 deserializersForModules[it] ?: error("No deserializer found for $it")
             }
-            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies, extensions)
+            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies)
             deserializersForModules[moduleFragment.descriptor] =
                 maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
         }
