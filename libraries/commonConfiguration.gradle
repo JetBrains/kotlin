@@ -115,8 +115,11 @@ ext.signPom = { Project project, MavenDeployer deployer ->
     }
 }
 
-ext.configurePublishing = { Project project ->
-    ArtifactsKt.publish(project, false)
+ext.configurePublishing = { Project project, configure = { } ->
+    ArtifactsKt.publish(project, false) { publication ->
+        configure.delegate = publication
+        configure()
+    }
 }
 
 ext.configureLegacyPublishing = { Project project ->
@@ -186,11 +189,24 @@ ext.configureLegacyPublishing = { Project project ->
 
 allprojects { project ->
     project.ext.configureSourcesJar = { lambda = {} ->
-        ArtifactsKt.sourcesJar(project, lambda)
+        ArtifactsKt.sourcesJar(project) { task ->
+            lambda.delegate = task
+            lambda()
+        }
     }
 
     project.ext.configureJavadocJar = { lambda = {} ->
-        ArtifactsKt.javadocJar(project, lambda)
+        ArtifactsKt.javadocJar(project) { task ->
+            lambda.delegate = task
+            lambda()
+        }
+    }
+
+    project.ext.configureModularJar = { lambda = {} ->
+        ArtifactsKt.modularJar(project) { task ->
+            lambda.delegate = task
+            lambda()
+        }
     }
 
     dependencies.ext.kotlinStdlib = { suffix ->
