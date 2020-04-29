@@ -87,9 +87,7 @@ public class AutomaticRenamingDialog extends DialogWrapper {
 
     myShouldRename = new boolean[myRenames.length];
     if (renamer.isSelectedByDefault()) {
-      for (int i = 0; i < myShouldRename.length; i++) {
-        myShouldRename[i] = true;
-      }
+      Arrays.fill(myShouldRename, true);
     }
 
     myTableModel = new MyTableModel(renamer.allowChangeSuggestedName());
@@ -164,16 +162,12 @@ public class AutomaticRenamingDialog extends DialogWrapper {
     columnModel.getColumn(NEW_NAME_COLUMN).setCellEditor(new StringTableCellEditor(myProject));
 
     mySelectAllButton.addActionListener(e -> {
-      for (int i = 0; i < myShouldRename.length; i++) {
-        myShouldRename[i] = true;
-      }
+      Arrays.fill(myShouldRename, true);
       fireDataChanged();
     });
 
     myUnselectAllButton.addActionListener(e -> {
-      for (int i = 0; i < myShouldRename.length; i++) {
-        myShouldRename[i] = false;
-      }
+      Arrays.fill(myShouldRename, false);
       fireDataChanged();
     });
 
@@ -333,12 +327,11 @@ public class AutomaticRenamingDialog extends DialogWrapper {
     }
 
     @Override
-    public Class getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(int columnIndex) {
       switch (columnIndex) {
         case CHECK_COLUMN:
           return Boolean.class;
         case OLD_NAME_COLUMN:
-          return String.class;
         case NEW_NAME_COLUMN:
           return String.class;
         default:
@@ -350,7 +343,7 @@ public class AutomaticRenamingDialog extends DialogWrapper {
     public String getColumnName(int column) {
       switch (column) {
         case OLD_NAME_COLUMN:
-          return RefactoringBundle.message("automatic.renamer.enity.name.column", myRenamer.entityName());
+          return RefactoringBundle.message("automatic.renamer.entity.name.column", myRenamer.entityName());
         case NEW_NAME_COLUMN:
           return RefactoringBundle.message("automatic.renamer.rename.to.column");
         default:
