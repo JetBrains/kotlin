@@ -13,7 +13,6 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.FieldPanel
 import com.intellij.openapi.util.NlsContexts
@@ -75,7 +74,7 @@ fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, desc
   chooserDescriptor.title = title
   chooserDescriptor.withFileFilter {
     ConfigImportHelper.isSettingsFile(it) ||
-    it.findNioPath()?.let { p -> ConfigImportHelper.isConfigDirectory(p) } == true
+    it.toPathOrNull()?.let { p -> ConfigImportHelper.isConfigDirectory(p) } == true
   }
 
   var initialDir: VirtualFile?
