@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.konan.NativePlatform
-import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.platform.konan.legacySerializeToString
+import org.jetbrains.kotlin.platform.konan.*
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -110,23 +107,8 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
 // TODO: Introduce new version of facet serialization. See https://youtrack.jetbrains.com/issue/KT-38235
 //  This is necessary to avoid having too much custom logic for platform serialization.
 fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
-    val platformNames = getAttributeValue("allPlatforms")?.split('/')?.toSet()
-    if (platformNames != null && platformNames.isNotEmpty()) {
-        val knownSimplePlatforms = HashMap<String, SimplePlatform>() // serialization presentation to simple platform
-
-        // first, collect serialization presentations for every known simple platform
-        CommonPlatforms.allSimplePlatforms
-            .flatMap { it.componentPlatforms }
-            .forEach { knownSimplePlatforms[it.serializeToString()] = it }
-
-        // next, add legacy aliases for some of the simple platforms; ex: unspecifiedNativePlatform
-        NativePlatformUnspecifiedTarget.let { knownSimplePlatforms[it.legacySerializeToString()] = it }
-
-        val simplePlatforms = platformNames.mapNotNull(knownSimplePlatforms::get)
-        if (simplePlatforms.isNotEmpty()) return TargetPlatform(simplePlatforms.toSet())
-
-        // empty set of simple platforms is not allowed, in such case fallback to legacy algorithm
-    }
+    val targetPlatform = getAttributeValue("allPlatforms").deserializeTargetPlatformByComponentPlatforms()
+    if (targetPlatform != null) return targetPlatform
 
     // failed to read list of all platforms. Fallback to legacy algorithm
     val platformName = getAttributeValue("platform") as String
@@ -326,10 +308,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     //  This is necessary to avoid having too much custom logic for platform serialization.
     targetPlatform?.let { targetPlatform ->
         element.setAttribute("platform", targetPlatform.oldFashionedDescription)
-        element.setAttribute(
-            "allPlatforms",
-            targetPlatform.componentPlatforms.map { it.serializeToString() }.sorted().joinToString(separator = "/")
-        )
+        element.setAttribute("allPlatforms", targetPlatform.serializeComponentPlatforms())
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
@@ -457,5 +436,51 @@ fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
         writeV2Config(element)
     } else {
         writeLatestConfig(element)
+    }
+}
+
+private fun TargetPlatform.serializeComponentPlatforms(): String {
+    val componentPlatforms = componentPlatforms
+    val componentPlatformNames = componentPlatforms.mapTo(ArrayList()) { it.serializeToString() }
+
+    // workaround for old Kotlin IDE plugins, KT-38634
+    if (componentPlatforms.any { it is NativePlatform })
+        componentPlatformNames.add(NativePlatformUnspecifiedTarget.legacySerializeToString())
+
+    return componentPlatformNames.sorted().joinToString("/")
+}
+
+private fun String?.deserializeTargetPlatformByComponentPlatforms(): TargetPlatform? {
+    val componentPlatformNames = this?.split('/')?.toSet()
+    if (componentPlatformNames == null || componentPlatformNames.isEmpty())
+        return null
+
+    val knownComponentPlatforms = HashMap<String, SimplePlatform>() // "serialization presentation" to "simple platform name"
+
+    // first, collect serialization presentations for every known simple platform
+    CommonPlatforms.allSimplePlatforms
+        .flatMap { it.componentPlatforms }
+        .forEach { knownComponentPlatforms[it.serializeToString()] = it }
+
+    // next, add legacy aliases for some of the simple platforms; ex: unspecifiedNativePlatform
+    NativePlatformUnspecifiedTarget.let { knownComponentPlatforms[it.legacySerializeToString()] = it }
+
+    val componentPlatforms = componentPlatformNames.mapNotNull(knownComponentPlatforms::get).toSet()
+    return when (componentPlatforms.size) {
+        0 -> {
+            // empty set of component platforms is not allowed, in such case fallback to legacy algorithm
+            null
+        }
+        1 -> TargetPlatform(componentPlatforms)
+        else -> {
+            // workaround for old Kotlin IDE plugins, KT-38634
+            if (componentPlatforms.any { it is NativePlatformUnspecifiedTarget }
+                && componentPlatforms.any { it is NativePlatformWithTarget }
+            ) {
+                TargetPlatform(componentPlatforms - NativePlatformUnspecifiedTarget)
+            } else {
+                TargetPlatform(componentPlatforms)
+            }
+        }
     }
 }
