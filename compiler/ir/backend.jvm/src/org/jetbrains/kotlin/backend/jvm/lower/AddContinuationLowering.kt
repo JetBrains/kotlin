@@ -95,13 +95,15 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
-                if (expression.isSuspend && expression.isLambdaOrAdaptedCallableReference() && expression !in inlineReferences) {
+                if (expression.isSuspend && expression.shouldBeTreatedAsSuspendLambda() && expression !in inlineReferences) {
                     suspendLambdas[expression] = SuspendLambdaInfo(expression)
                 }
             }
 
-            private fun IrFunctionReference.isLambdaOrAdaptedCallableReference() =
-                origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+            private fun IrFunctionReference.shouldBeTreatedAsSuspendLambda() =
+                origin == IrStatementOrigin.LAMBDA ||
+                        origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE ||
+                        origin == IrStatementOrigin.SUSPEND_CONVERSION
         })
 
         for (lambda in suspendLambdas.values) {

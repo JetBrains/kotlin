@@ -456,7 +456,12 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         if (suspendFunReturnType.isUnit()) {
             +irAdapteeCall
         } else {
-            +irReturn(irAdapteeCall)
+            +IrReturnImpl(
+                startOffset, endOffset,
+                context.irBuiltIns.nothingType,
+                irAdapterFun.symbol,
+                irAdapteeCall
+            )
         }
     }
 
