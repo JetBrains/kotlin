@@ -188,8 +188,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
                 perfScriptDependenciesBuildGradleKts(stat)
                 perfScriptDependenciesIdeaBuildGradleKts(stat)
-                perfScriptDependenciesJpsGradleKts(stat)
-                perfScriptDependenciesVersionGradleKts(stat)
+//                perfScriptDependenciesJpsGradleKts(stat)
+//                perfScriptDependenciesVersionGradleKts(stat)
             }
         }
     }
@@ -202,8 +202,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
                 perfFileAnalysisBuildGradleKts(stat)
                 perfFileAnalysisIdeaBuildGradleKts(stat)
-                perfFileAnalysisJpsGradleKts(stat)
-                perfFileAnalysisVersionGradleKts(stat)
+//                perfFileAnalysisJpsGradleKts(stat)
+//                perfFileAnalysisVersionGradleKts(stat)
             }
         }
     }
