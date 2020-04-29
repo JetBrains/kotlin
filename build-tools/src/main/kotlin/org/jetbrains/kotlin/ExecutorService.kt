@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin
 
+import com.google.gson.annotations.Expose
 import groovy.lang.Closure
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
@@ -320,6 +318,8 @@ private fun sshExecutor(project: Project): ExecutorService = object : ExecutorSe
     }
 }
 
+internal data class DeviceTarget(@Expose val name: String, @Expose val udid: String, @Expose val state: String, @Expose val type: String)
+
 private fun deviceLauncher(project: Project) = object : ExecutorService {
     private val xcProject = Paths.get(project.testOutputRoot, "launcher")
 
@@ -421,12 +421,10 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         }
         return out.toString().run {
             check(isNotEmpty())
-            @Serializable
-            data class DeviceTarget(val name: String, val udid: String, val state: String, val type: String)
             split("\n")
                     .filter { it.isNotEmpty() }
-                    .map { Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true))
-                            .parse(DeviceTarget.serializer(), it)
+                    .map {
+                        gson.fromJson(it, DeviceTarget::class.java)
                     }
                     .first {
                         it.type == "device" && deviceName?.run { this == it.name } ?: true

@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
+import com.google.gson.annotations.Expose
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Xcode
 import kotlin.math.min
@@ -25,9 +23,7 @@ private fun compareStringsAsVersions(version1: String, version2: String): Int {
 /**
  * Returns parsed output of `xcrun simctl list runtimes -j`.
  */
-private fun Xcode.getSimulatorRuntimeDescriptors(): List<SimulatorRuntimeDescriptor> =
-     Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true, useArrayPolymorphism = true))
-             .parse(ListRuntimesReport.serializer(), this.simulatorRuntimes).runtimes
+private fun Xcode.getSimulatorRuntimeDescriptors(): List<SimulatorRuntimeDescriptor> = gson.fromJson(simulatorRuntimes, ListRuntimesReport::class.java).runtimes
 
 /**
  * Returns first available simulator runtime for [target] with at least [osMinVersion] OS version.
@@ -45,21 +41,19 @@ fun Xcode.getLatestSimulatorRuntimeFor(target: KonanTarget, osMinVersion: String
 }
 
 // Result of `xcrun simctl list runtimes -j`.
-@Serializable
 data class ListRuntimesReport(
-        val runtimes: List<SimulatorRuntimeDescriptor>
+        @Expose val runtimes: List<SimulatorRuntimeDescriptor>
 )
 
-@Serializable
 data class SimulatorRuntimeDescriptor(
-        val version: String,
+        @Expose val version: String,
         // bundlePath field may not exist in the old Xcode (prior to 10.3).
-        val bundlePath: String? = null,
-        val isAvailable: Boolean? = null,
-        val availability: String? = null,
-        val name: String,
-        val identifier: String,
-        val buildversion: String
+        @Expose val bundlePath: String? = null,
+        @Expose val isAvailable: Boolean? = null,
+        @Expose val availability: String? = null,
+        @Expose val name: String,
+        @Expose val identifier: String,
+        @Expose val buildversion: String
 ) {
     /**
      * Different Xcode/macOS combinations give different fields that checks

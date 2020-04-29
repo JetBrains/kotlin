@@ -11,9 +11,14 @@ plugins {
     // We explicitly configure versions of plugins in settings.gradle.kts.
     // due to https://github.com/gradle/gradle/issues/1697.
     id("kotlin")
-    id("kotlinx-serialization")
     groovy
     `java-gradle-plugin`
+}
+
+buildscript {
+    dependencies {
+        classpath("com.google.code.gson:gson:2.8.6")
+    }
 }
 
 val rootProperties = Properties().apply {

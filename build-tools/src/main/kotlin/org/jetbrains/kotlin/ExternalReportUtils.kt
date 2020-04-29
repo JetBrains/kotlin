@@ -1,29 +1,26 @@
 package org.jetbrains.kotlin
 
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
+
+import com.google.gson.annotations.*
+import com.google.gson.*
+import com.google.gson.stream.JsonReader
 import java.io.File
 import java.io.FileReader
 import java.io.PrintWriter
 
 
-@Serializable
-data class ExternalTestReport(val statistics: Statistics, val groups: List<KonanTestGroupReport>)
+data class ExternalTestReport(@Expose val statistics: Statistics, @Expose val groups: List<KonanTestGroupReport>)
 
-@ImplicitReflectionSerializer
 fun saveReport(reportFileName: String, statistics: Statistics, groups:List<KonanTestGroupReport>){
     File(reportFileName).apply {
         parentFile.mkdirs()
         PrintWriter(this).use {
-            it.append(Json.stringify(ExternalTestReport(statistics, groups)))
+            it.append(gson.toJson(ExternalTestReport(statistics, groups)))
         }
     }
 }
 
-@ImplicitReflectionSerializer
-fun loadReport(reportFileName: String) : ExternalTestReport = FileReader(reportFileName).use {
-        return@use Json.parse<ExternalTestReport>(it.readText())
-    }
+internal val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()!!
+fun loadReport(reportFileName: String) : ExternalTestReport = JsonReader(FileReader(reportFileName)).use {
+    gson.fromJson(it, ExternalTestReport::class.java)
+}

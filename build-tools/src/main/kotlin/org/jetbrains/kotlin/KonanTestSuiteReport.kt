@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin
 
+import com.google.gson.annotations.Expose
 import java.io.PrintWriter
 import java.io.StringWriter
-import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 
 enum class TestStatus {
@@ -12,12 +12,11 @@ enum class TestStatus {
     SKIPPED
 }
 
-@Serializable
 data class Statistics(
-        var passed: Int = 0,
-        var failed: Int = 0,
-        var error: Int = 0,
-        var skipped: Int = 0) {
+        @Expose var passed: Int = 0,
+        @Expose var failed: Int = 0,
+        @Expose var error: Int = 0,
+        @Expose var skipped: Int = 0) {
 
 
     fun pass(count: Int = 1) { passed += count }
@@ -41,14 +40,12 @@ val Statistics.total: Int
 
 class TestFailedException(msg:String) : RuntimeException(msg)
 
-@Serializable
-data class KonanTestGroupReport(val name: String, val suites: List<KonanTestSuiteReport>)
 
-@Serializable
-data class KonanTestSuiteReport(val name: String, val tests: List<KonanTestCaseReport>)
+data class KonanTestGroupReport(@Expose val name: String, val suites: List<KonanTestSuiteReport>)
 
-@Serializable
-data class KonanTestCaseReport(val name: String, val status: TestStatus, val comment: String? = null)
+data class KonanTestSuiteReport(@Expose val name: String, val tests: List<KonanTestCaseReport>)
+
+data class KonanTestCaseReport(@Expose val name: String, @Expose val status: TestStatus, @Expose val comment: String? = null)
 
 class KonanTestSuiteReportEnvironment(val name: String, val project: Project, val statistics: Statistics) {
     private val tc = if (Tc.enabled) TeamCityTestPrinter(project) else null

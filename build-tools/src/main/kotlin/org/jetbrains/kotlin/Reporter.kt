@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin
 
 import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory
-import kotlinx.serialization.ImplicitReflectionSerializer
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -64,7 +63,6 @@ open class Reporter : DefaultTask() {
     @Input
     lateinit var reportHome: String
 
-    @ImplicitReflectionSerializer
     @TaskAction
     fun report() {
 
@@ -74,11 +72,13 @@ open class Reporter : DefaultTask() {
             "${reportJson.statistics.report}\n ${reportEpilogue()}"
 
         project.logger.info(report)
-        sendTextToSlack(report)
+        if (doSlackSending())
+            sendTextToSlack(report)
     }
-
-
 }
+
+private fun DefaultTask.doSlackSending() = !project.hasProperty("build.reporter.noSlack")
+        || !project.property("build.reporter.noSlack").toString().toBoolean()
 
 open class NightlyReporter: DefaultTask() {
     @Input
@@ -88,7 +88,6 @@ open class NightlyReporter: DefaultTask() {
     @Input
     lateinit var externalWindowsReport:String
 
-    @ImplicitReflectionSerializer
     @TaskAction
     fun report() {
         val externalMacosJsonReport = loadReport("${project.rootDir.absolutePath}/$externalMacosReport")
@@ -104,6 +103,7 @@ open class NightlyReporter: DefaultTask() {
             appendln(reportEpilogue())
         }
         project.logger.info(report)
-        sendTextToSlack(report)
+        if (doSlackSending())
+            sendTextToSlack(report)
     }
 }
