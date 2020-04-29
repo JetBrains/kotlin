@@ -12,7 +12,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 public class FrameSearcherTest {
 
-  private static char ELLIPSIS = '\u2026';
+  private static final char ELLIPSIS = '\u2026';
 
   @Test
   public void findAllMatchesAtFrame() {
@@ -46,7 +46,7 @@ public class FrameSearcherTest {
   }
 
 
-  private class MockSmartStringSearcher implements FrameSearcher.SmartStringSearcher {
+  private static class MockSmartStringSearcher implements FrameSearcher.SmartStringSearcher {
 
     @Override
     public FindResult findString(String frameText, int offset, FindModel ijFindModel) {
