@@ -25,6 +25,8 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
           GET_VAR 'x: T of <root>.Derived1 declared in <root>.Derived1.<init>' type=T of <root>.Derived1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Derived1<T of <root>.Derived1>) returnType:T of <root>.Derived1
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
+        overridden:
+          public abstract fun <get-bar> (): T of <root>.Base declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): T of <root>.Derived1 declared in <root>.Derived1'
@@ -32,6 +34,8 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
               receiver: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-bar>' type=<root>.Derived1<T of <root>.Derived1> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:FINAL <> ($this:<root>.Derived1<T of <root>.Derived1>, <set-?>:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
+        overridden:
+          public abstract fun <set-bar> (<set-?>: T of <root>.Base): kotlin.Unit declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Derived1
         BLOCK_BODY

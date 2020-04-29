@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
@@ -454,11 +456,7 @@ class Fir2IrDeclarationStorage(
             }
         }
         if (!created.isFakeOverride && simpleFunction?.isOverride == true && thisReceiverOwner != null) {
-            thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, created).forEach {
-                if (it is IrSimpleFunctionSymbol) {
-                    created.overriddenSymbols += it
-                }
-            }
+            created.populateOverriddenSymbols(thisReceiverOwner)
         }
         functionCache[function] = created
         return created
@@ -575,6 +573,14 @@ class Fir2IrDeclarationStorage(
                     parent = irParent
                 }
                 correspondingPropertySymbol = correspondingProperty.symbol
+                val isOverride = when (propertyAccessor) {
+                    is FirDefaultPropertyAccessor -> property.isOverride
+                    is FirPropertyAccessorImpl -> propertyAccessor.status.isOverride
+                    else -> false
+                }
+                if (!isFakeOverride && isOverride && thisReceiverOwner != null) {
+                    populateOverriddenSymbols(thisReceiverOwner)
+                }
             }
         }
     }
@@ -587,6 +593,7 @@ class Fir2IrDeclarationStorage(
         name: Name,
         isFinal: Boolean,
         firInitializerExpression: FirExpression?,
+        thisReceiverOwner: IrClass?,
         type: IrType? = null
     ): IrField {
         val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType()
@@ -601,6 +608,9 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).also {
                 it.correspondingPropertySymbol = this@createBackingField.symbol
+                if (!isFakeOverride && property.isOverride && thisReceiverOwner != null) {
+                    it.populateOverriddenSymbols(thisReceiverOwner)
+                }
             }
         }
     }
@@ -656,7 +666,8 @@ class Fir2IrDeclarationStorage(
                         ) {
                             backingField = createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                                property.fieldVisibility, property.name, property.isVal, initializer, type
+                                property.fieldVisibility, property.name, property.isVal, initializer,
+                                thisReceiverOwner, type
                             ).also { field ->
                                 if (initializer is FirConstExpression<*>) {
                                     // TODO: Normally we shouldn't have error type here
@@ -667,7 +678,8 @@ class Fir2IrDeclarationStorage(
                         } else if (delegate != null) {
                             backingField = createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                                property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate
+                                property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate,
+                                thisReceiverOwner
                             )
                         }
                         if (irParent != null) {
@@ -924,6 +936,21 @@ class Fir2IrDeclarationStorage(
                 getIrVariableSymbol(firDeclaration)
             }
         }
+    }
+
+    private fun IrSimpleFunction.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
+        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this).forEach {
+            if (it is IrSimpleFunctionSymbol) {
+                overriddenSymbols += it
+            }
+        }
+    }
+
+    private fun IrField.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
+        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this)
+            .filterIsInstance<IrFieldSymbol>().singleOrNull()?.let {
+                overriddenSymbols = listOf(it)
+            }
     }
 
     companion object {

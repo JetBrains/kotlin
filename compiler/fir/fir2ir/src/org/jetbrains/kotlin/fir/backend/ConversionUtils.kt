@@ -304,18 +304,50 @@ private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
     target: IrDeclaration,
     result: MutableList<IrSymbol>
 ): List<IrSymbol> {
+    val targetIsPropertyAccessor = target is IrFunction && target.isPropertyAccessor
     for (declaration in declarations) {
+        if (declaration.isFakeOverride || declaration is IrConstructor) {
+            continue
+        }
         when {
             declaration is IrFunction && target is IrFunction ->
-                if (declaration !is IrConstructor &&
-                    !declaration.isFakeOverride &&
-                    declaration.descriptor.modality != Modality.FINAL &&
+                if (declaration.descriptor.modality != Modality.FINAL &&
                     !Visibilities.isPrivate(declaration.visibility) &&
                     isOverriding(irBuiltIns, target, declaration)
                 ) {
                     result.add(declaration.symbol)
                 }
-            // TODO: property lookup to set overriddenSymbols for IrProperty (and accessors)?
+            declaration is IrProperty && (target is IrField || targetIsPropertyAccessor) -> {
+                val backingField = declaration.backingField
+                if (target is IrField && backingField != null) {
+                    if (!backingField.isFinal && !backingField.isStatic &&
+                        !Visibilities.isPrivate(backingField.visibility) &&
+                        isOverriding(irBuiltIns, target, backingField)
+                    ) {
+                        result.add(backingField.symbol)
+                    }
+                }
+                if (targetIsPropertyAccessor) {
+                    val getter = declaration.getter
+                    if (getter != null) {
+                        if (getter.descriptor.modality != Modality.FINAL &&
+                            !Visibilities.isPrivate(getter.visibility) &&
+                            isOverriding(irBuiltIns, target, getter)
+                        ) {
+                            result.add(getter.symbol)
+                        }
+                    }
+                    val setter = declaration.setter
+                    if (setter != null) {
+                        if (setter.descriptor.modality != Modality.FINAL &&
+                            !Visibilities.isPrivate(setter.visibility) &&
+                            isOverriding(irBuiltIns, target, setter)
+                        ) {
+                            result.add(setter.symbol)
+                        }
+                    }
+                }
+            }
         }
     }
     // Stop traversing upwards if we find matching overridden symbols at this level.
@@ -327,8 +359,8 @@ private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
 
 fun isOverriding(
     irBuiltIns: IrBuiltIns,
-    target: IrFunction,
-    superCandidate: IrFunction
+    target: IrDeclaration,
+    superCandidate: IrDeclaration
 ): Boolean {
     val typeCheckerContext = IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext
     fun equalTypes(first: IrType, second: IrType): Boolean {
@@ -340,16 +372,25 @@ fun isOverriding(
 
     }
 
-    return target.name == superCandidate.name &&
+    return when {
+        target is IrFunction && superCandidate is IrFunction -> {
             // Not checking the return type (they should match each other if everything other match, otherwise it's a compilation error)
-            target.extensionReceiverParameter?.type?.let {
-                val superCandidateReceiverType = superCandidate.extensionReceiverParameter?.type
-                superCandidateReceiverType != null && equalTypes(it, superCandidateReceiverType)
-            } != false &&
-            target.valueParameters.size == superCandidate.valueParameters.size &&
-            target.valueParameters.zip(superCandidate.valueParameters).all { (targetParameter, superCandidateParameter) ->
-                equalTypes(targetParameter.type, superCandidateParameter.type)
-            }
+            target.name == superCandidate.name &&
+                    target.extensionReceiverParameter?.type?.let {
+                        val superCandidateReceiverType = superCandidate.extensionReceiverParameter?.type
+                        superCandidateReceiverType != null && equalTypes(it, superCandidateReceiverType)
+                    } != false &&
+                    target.valueParameters.size == superCandidate.valueParameters.size &&
+                    target.valueParameters.zip(superCandidate.valueParameters).all { (targetParameter, superCandidateParameter) ->
+                        equalTypes(targetParameter.type, superCandidateParameter.type)
+                    }
+        }
+        target is IrField && superCandidate is IrField -> {
+            // Not checking the field type (they should match each other if everything other match, otherwise it's a compilation error)
+            target.name == superCandidate.name
+        }
+        else -> false
+    }
 }
 
 private val nameToOperationConventionOrigin = mutableMapOf(
