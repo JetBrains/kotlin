@@ -60,7 +60,8 @@ public class CompilerManagerImpl extends CompilerManager {
 
   private final Project myProject;
 
-  private final List<Compiler> myCompilers = new ArrayList<>();
+  private final Map<Compiler, String> myCompilers = new HashMap<>();
+  private static final String NO_FACTORY_ID = "";
 
   private final List<CompileTask> myBeforeTasks = new ArrayList<>();
   private final List<CompileTask> myAfterTasks = new ArrayList<>();
@@ -85,11 +86,13 @@ public class CompilerManagerImpl extends CompilerManager {
     for (CompilerFactory factory : CompilerFactory.EP_NAME.getExtensionList(project)) {
       Compiler[] compilers = factory.createCompilers(this);
       if (compilers != null) {
+        String factoryId = getFactoryId(factory);
         for (Compiler compiler : compilers) {
-          addCompiler(compiler);
+          addCompiler(compiler, factoryId);
         }
       }
     }
+    CompilerFactory.EP_NAME.getPoint(myProject).addChangeListener(this::updateFactoryCompilers, myProject);
 
     addCompilableFileType(StdFileTypes.JAVA);
 
@@ -133,7 +136,11 @@ public class CompilerManagerImpl extends CompilerManager {
 
   @Override
   public final void addCompiler(@NotNull Compiler compiler) {
-    myCompilers.add(compiler);
+    addCompiler(compiler, NO_FACTORY_ID);
+  }
+
+  private void addCompiler(@NotNull Compiler compiler, @NotNull final String factoryId) {
+    myCompilers.put(compiler, factoryId);
     // supporting file instrumenting compilers and validators for external build
     // Since these compilers are IDE-specific and use PSI, it is ok to run them before and after the build in the IDE
     if (compiler instanceof SourceInstrumentingCompiler) {
@@ -144,6 +151,10 @@ public class CompilerManagerImpl extends CompilerManager {
     }
   }
 
+  private static String getFactoryId(@Nullable CompilerFactory factory) {
+    return factory == null? NO_FACTORY_ID : factory.getClass().getName();
+  }
+
   @Override
   @Deprecated
   public void addTranslatingCompiler(@NotNull TranslatingCompiler compiler, Set<FileType> inputTypes, Set<FileType> outputTypes) {
@@ -152,7 +163,7 @@ public class CompilerManagerImpl extends CompilerManager {
 
   @Override
   public final void removeCompiler(@NotNull Compiler compiler) {
-    if (myCompilers.remove(compiler)) {
+    if (myCompilers.remove(compiler) != null) {
       for (List<CompileTask> tasks : Arrays.asList(myBeforeTasks, myAfterTasks)) {
         tasks.removeIf(
           task -> task instanceof FileProcessingCompilerAdapterTask && ((FileProcessingCompilerAdapterTask)task).getCompiler() == compiler
@@ -164,7 +175,7 @@ public class CompilerManagerImpl extends CompilerManager {
   @Override
   public <T  extends Compiler> T @NotNull [] getCompilers(@NotNull Class<T> compilerClass) {
     final List<T> compilers = new ArrayList<>(myCompilers.size());
-    for (final Compiler item : ContainerUtil.concat(myCompilers, Compiler.EP_NAME.getExtensions(myProject))) {
+    for (final Compiler item : ContainerUtil.concat(myCompilers.keySet(), Compiler.EP_NAME.getExtensions(myProject))) {
       T concreteCompiler = ObjectUtils.tryCast(item, compilerClass);
       if (concreteCompiler != null) {
         compilers.add(concreteCompiler);
@@ -177,6 +188,41 @@ public class CompilerManagerImpl extends CompilerManager {
     }
     final T[] array = ArrayUtil.newArray(compilerClass, compilers.size());
     return compilers.toArray(array);
+  }
+
+  private void updateFactoryCompilers() {
+    Set<String> factoriesBefore = new HashSet<>(myCompilers.values());
+    factoriesBefore.remove(NO_FACTORY_ID);
+
+    Set<String> toRemove = new HashSet<>(factoriesBefore);
+    Map<String, CompilerFactory> factories = new HashMap<>();
+    for (CompilerFactory factory : CompilerFactory.EP_NAME.getExtensionList(myProject)) {
+      String id = getFactoryId(factory);
+      factories.put(id, factory);
+      toRemove.remove(id);
+    }
+
+    if (!toRemove.isEmpty()) {
+      List<Compiler> compilersToRemove = new ArrayList<>();
+      for (Map.Entry<Compiler, String> entry : myCompilers.entrySet()) {
+        if (toRemove.contains(entry.getValue())) {
+          compilersToRemove.add(entry.getKey());
+        }
+      }
+      for (Compiler compiler : compilersToRemove) {
+        removeCompiler(compiler);
+      }
+    }
+    
+    factories.keySet().removeAll(factoriesBefore);
+    for (Map.Entry<String, CompilerFactory> entry : factories.entrySet()) {
+      Compiler[] compilers = entry.getValue().createCompilers(this);
+      if (compilers != null) {
+        for (Compiler compiler : compilers) {
+          addCompiler(compiler, entry.getKey());
+        }
+      }
+    }
   }
 
   @Override
