@@ -25,7 +25,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        return assertExists(new File("dependencies/repo/org/jetbrains/kotlin/kotlin-stdlib/1.4-SNAPSHOT/kotlin-stdlib-1.4-SNAPSHOT.jar"));
+        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib.jar"));
     }
 
     @NotNull
@@ -55,7 +55,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File reflectJarForTests() {
-        return assertExists(new File("dependencies/repo/org/jetbrains/kotlin/kotlin-reflect/1.4-SNAPSHOT/kotlin-reflect-1.4-SNAPSHOT.jar"));
+        return assertExists(new File("dist/kotlinc/lib/kotlin-reflect.jar"));
     }
 
     @NotNull
@@ -64,7 +64,7 @@ public class ForTestCompileRuntime {
     }
 
     public static @NotNull File kotlinCompilerJarForTests() {
-        return assertExists(new File("dependencies/repo/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4-SNAPSHOT/kotlin-compiler-for-ide-1.4-SNAPSHOT.jar"));
+        return assertExists(new File("dist/kotlinc/lib/kotlin-compiler.jar"));
     }
 
     @NotNull
