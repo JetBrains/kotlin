@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
-import org.jetbrains.kotlin.codegen.AsmUtil.unboxType
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.NumberCompare
 import org.jetbrains.kotlin.codegen.ObjectCompare
@@ -135,20 +135,27 @@ class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val 
     }
 }
 
-class PrimitiveToBoxedComparison(
+class PrimitiveToObjectComparison(
     val op: IElementType,
     private val boxedValue: MaterialValue,
-    private val loadOther: () -> MaterialValue
+    private val useNullCheck: Boolean,
+    private val primitiveType: Type,
+    private val loadOther: () -> MaterialValue,
 ) : BooleanValue(boxedValue.codegen) {
 
     override fun jumpIfFalse(target: Label) {
         val compareLabel = Label()
         mv.dup()
-        mv.ifnonnull(compareLabel)
+        if (useNullCheck) {
+            mv.ifnonnull(compareLabel)
+        } else {
+            mv.instanceOf(AsmUtil.boxType(primitiveType))
+            mv.ifne(compareLabel)
+        }
         mv.pop()
         mv.goTo(target)
         mv.mark(compareLabel)
-        val unboxedValue = boxedValue.materializedAt(unboxType(boxedValue.type), boxedValue.irType)
+        val unboxedValue = boxedValue.materializedAt(primitiveType, boxedValue.irType)
         BooleanComparison(op, unboxedValue, loadOther()).jumpIfFalse(target)
     }
 
@@ -156,11 +163,16 @@ class PrimitiveToBoxedComparison(
         val compareLabel = Label()
         val endLabel = Label()
         mv.dup()
-        mv.ifnonnull(compareLabel)
+        if (useNullCheck) {
+            mv.ifnonnull(compareLabel)
+        } else {
+            mv.instanceOf(AsmUtil.boxType(primitiveType))
+            mv.ifne(compareLabel)
+        }
         mv.pop()
         mv.goTo(endLabel)
         mv.mark(compareLabel)
-        val unboxedValue = boxedValue.materializedAt(unboxType(boxedValue.type), boxedValue.irType)
+        val unboxedValue = boxedValue.materializedAt(primitiveType, boxedValue.irType)
         BooleanComparison(op, unboxedValue, loadOther()).jumpIfTrue(target)
         mv.mark(endLabel)
     }
