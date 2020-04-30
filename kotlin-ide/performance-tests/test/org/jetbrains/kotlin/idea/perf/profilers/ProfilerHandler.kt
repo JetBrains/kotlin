@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.perf.profilers
 
-import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.idea.perf.profilers.async.AsyncProfilerHandler
+import org.jetbrains.kotlin.idea.perf.profilers.yk.YKProfilerHandler
 import org.jetbrains.kotlin.idea.testFramework.logMessage
 
 interface ProfilerHandler {
@@ -19,21 +19,13 @@ interface ProfilerHandler {
 
         @Synchronized
         fun getInstance(): ProfilerHandler {
-            if (instance == null) {
-                if (!SystemInfo.isWindows) {
-                    try {
-                        instance = AsyncProfilerHandler()
-                    } catch (e: Throwable) {
-                        logMessage { "asyncProfiler not found" }
-                    }
-                }
+            return instance ?: run {
+                val handler =
+                    doOrLog("asyncProfiler not found") { AsyncProfilerHandler() }
+                        ?: doOrLog("yourKit not found") { YKProfilerHandler() } ?: DummyProfilerHandler
+                instance = handler
+                return handler
             }
-
-            if (instance == null) {
-                // fallback to dummy
-                instance = DummyProfilerHandler
-            }
-            return instance!!
         }
     }
 
@@ -43,4 +35,21 @@ object DummyProfilerHandler : ProfilerHandler {
     override fun startProfiling(activityName: String, options: List<String>) {}
 
     override fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String>) {}
+}
+
+internal fun <T> doOrLog(message: String, block: () -> T?): T? {
+    return try {
+        block()
+    } catch (e: Throwable) {
+        logMessage { message }
+        null
+    }
+}
+
+internal fun <T> doOrThrow(message: String, block: () -> T): T {
+    return try {
+        block()
+    } catch (e: Throwable) {
+        throw Exception(message)
+    } ?: throw Exception(message)
 }

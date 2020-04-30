@@ -9,12 +9,22 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
+import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
 import org.jetbrains.kotlin.idea.testFramework.logMessage
 import java.io.File
+import java.lang.reflect.Method
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.*
 
+/**
+ * To use AsyncProfilerHandler:
+ * - it has to be running on GNU/Linux or MacOSX (as async-profiler does NOT work on Windows)
+ * - env variable ASYNC_PROFILER_HOME has to be specified and points to async-profiler installation
+ * - ${ASYNC_PROFILER_HOME}/build/async-profiler.jar has to be in a classpath (done by gradle task)
+ *
+ * AsyncProfiler could be downloaded from https://github.com/jvm-profiling-tools/async-profiler/releases/
+ */
 internal class AsyncProfilerHandler : ProfilerHandler {
 
     private val asyncProfiler: Any
@@ -59,23 +69,30 @@ internal class AsyncProfilerHandler : ProfilerHandler {
     }
 
     companion object {
-        const val AGENT_FILE_NAME = "libasyncProfiler.so"
-        private val asyncLibClass: Class<*> = Class.forName("one.profiler.AsyncProfiler")!!
-        private val executeMethod = asyncLibClass.getMethod("execute", String::class.java)
+        private val asyncLibClass: Class<*> =
+            doOrThrow("async-profiler.jar is not in a classpath") { Class.forName("one.profiler.AsyncProfiler") }
+        private val executeMethod: Method =
+            doOrThrow("one.profiler.AsyncProfiler#execute(String) not found") { asyncLibClass.getMethod("execute", String::class.java) }
+
+        private const val AGENT_FILE_NAME = "libasyncProfiler.so"
         private var extractedFile: File? = null
 
         private fun asyncLib(): File {
-            if (extractedFile == null) {
-                extractedFile = File("${System.getenv("ASYNC_PROFILER_HOME")}/build/$AGENT_FILE_NAME")
+            val osName = when {
+                SystemInfo.isLinux -> "linux"
+                SystemInfo.isMac -> "macos"
+                else -> error("AsyncProfiler does not support OS ${SystemInfo.OS_NAME}")
             }
+
+            extractedFile = extractedFile ?: File("${System.getenv("ASYNC_PROFILER_HOME")}/build/$AGENT_FILE_NAME")
             if (extractedFile == null || !extractedFile!!.exists()) {
                 val extracted = FileUtil.createTempFile("extracted_$AGENT_FILE_NAME", null, true)
-                val osName = if (SystemInfo.isLinux) "linux" else "macos"
+
                 val inputStream = asyncLibClass.getResourceAsStream("/binaries/$osName/$AGENT_FILE_NAME")
                 Files.copy(inputStream, extracted.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 extractedFile = extracted
             }
-            return extractedFile!!
+            return extractedFile ?: error("Unable to lookup $AGENT_FILE_NAME")
         }
 
     }
