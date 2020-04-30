@@ -281,13 +281,6 @@ boolean isExcluded(String dir) {
     // List of tests that fail due to unresolved compiler bugs
     def excluded = [ ]
 
-    if (project.twoStageEnabled) {
-        excluded += [
-                "codegen/box/closures/captureInSuperConstructorCall", "codegen/box/enum",  // KT-33207.
-                "codegen/box/objects" // KT-33267.
-        ]
-    }
-
     boolean result = false
     excluded.forEach {
         if (dir.endsWith(it.replace("/", File.separator))) {
@@ -3763,12 +3756,6 @@ if (PlatformInfo.isAppleTarget(project)) {
 
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
-
-        if (twoStageEnabled) {
-            // Without this flag the test fails in the two-stage mode due to KT-33160.
-            // TODO: Remove this flag when the bug is fixed.
-            flags += "-nodefaultlibs"
-        }
 
         doBeforeBuild {
             mkdir(buildDir)
