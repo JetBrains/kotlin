@@ -659,8 +659,8 @@ class RawFirBuilder(
                     isActual = classOrObject.hasActualModifier()
                     isInner = classOrObject.hasModifier(INNER_KEYWORD)
                     isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
-                    isData = (classOrObject as? KtClass)?.isData() == true
-                    isInline = (classOrObject as? KtClass)?.hasModifier(INLINE_KEYWORD) == true
+                    isData = classOrObject.hasModifier(DATA_KEYWORD)
+                    isInline = classOrObject.hasModifier(INLINE_KEYWORD)
                 }
                 withCapturedTypeParameters {
                     if (!status.isInner) context.capturedTypeParameters = context.capturedTypeParameters.clear()

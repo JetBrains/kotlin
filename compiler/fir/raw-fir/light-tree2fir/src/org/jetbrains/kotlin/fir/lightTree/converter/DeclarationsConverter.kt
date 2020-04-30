@@ -378,8 +378,8 @@ class DeclarationsConverter(
                     isActual = modifiers.hasActual()
                     isInner = modifiers.isInner()
                     isCompanion = modifiers.isCompanion() && classKind == ClassKind.OBJECT
-                    isData = modifiers.isDataClass() && classKind != ClassKind.OBJECT
-                    isInline = modifiers.isInlineClass() && classKind != ClassKind.OBJECT
+                    isData = modifiers.isDataClass()
+                    isInline = modifiers.isInlineClass()
                 }
 
                 val classBuilder = if (status.modality == Modality.SEALED) {
