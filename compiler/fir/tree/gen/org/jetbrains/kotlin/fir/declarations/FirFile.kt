@@ -23,6 +23,7 @@ abstract class FirFile : FirPureAbstractElement(), FirAnnotationContainer, FirDe
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
     abstract val name: String

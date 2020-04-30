@@ -25,6 +25,7 @@ interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStatement, 
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
+    override val origin: FirDeclarationOrigin
     override val typeParameters: List<FirTypeParameterRef>
     override val symbol: FirClassSymbol<F>
     val classKind: ClassKind

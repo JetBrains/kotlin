@@ -26,6 +26,7 @@ abstract class FirTypeParameter : FirPureAbstractElement(), FirTypeParameterRef,
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
     abstract val name: Name
     abstract override val symbol: FirTypeParameterSymbol
     abstract val variance: Variance

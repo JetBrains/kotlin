@@ -30,6 +30,9 @@ class FirSyntheticPropertyAccessor(
     override val session: FirSession
         get() = delegate.session
 
+    override val origin: FirDeclarationOrigin
+        get() = FirDeclarationOrigin.Synthetic
+
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef
 

@@ -70,3 +70,4 @@ val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
 
 val dslBuilderAnnotationType = generatedType("builder", "FirBuilderDsl")
 val firImplementationDetailType = generatedType("FirImplementationDetail")
+val declarationOriginType = generatedType("declarations", "FirDeclarationOrigin")

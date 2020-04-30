@@ -51,6 +51,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val body: FirBlock?
         get() = null
 
+    override val origin: FirDeclarationOrigin
+        get() = FirDeclarationOrigin.Java
+
     override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
@@ -181,6 +184,13 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
 
     @Deprecated("Modification of 'receiverTypeRef' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
     override var receiverTypeRef: FirTypeRef?
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'origin' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()

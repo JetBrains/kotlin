@@ -54,6 +54,8 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         symbol.bind(this)
     }
 
+    override val origin: FirDeclarationOrigin
+        get() = FirDeclarationOrigin.Java
 
     override val companionObject: FirRegularClass?
         get() = null
@@ -175,6 +177,13 @@ internal class FirJavaClassBuilder : AbstractFirRegularClassBuilder, FirAnnotati
 
     @Deprecated("Modification of 'controlFlowGraphReference' has no impact for FirClassImplBuilder", level = DeprecationLevel.HIDDEN)
     override var controlFlowGraphReference: FirControlFlowGraphReference
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'origin' has no impact for FirJavaClassBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()

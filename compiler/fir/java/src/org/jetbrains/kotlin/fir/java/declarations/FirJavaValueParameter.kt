@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
@@ -36,6 +37,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     source,
     session,
     resolvePhase,
+    FirDeclarationOrigin.Java,
     returnTypeRef,
     name,
     symbol,
@@ -100,6 +102,12 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
             throw IllegalStateException()
         }
 
+    @Deprecated("Modification of 'origin' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
 }
 
 inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit): FirJavaValueParameter {

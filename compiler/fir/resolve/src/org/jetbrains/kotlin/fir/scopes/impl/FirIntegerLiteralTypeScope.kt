@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
@@ -52,6 +49,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
                 val valueParameterName = Name.identifier("arg")
                 valueParameters += buildValueParameter {
                     source = null
+                    origin = FirDeclarationOrigin.Synthetic
                     session = this@FirIntegerLiteralTypeScope.session
                     returnTypeRef = FirILTTypeRefPlaceHolder(isUnsigned)
                     this.name = valueParameterName
@@ -107,6 +105,7 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     source,
     session,
     resolvePhase = FirResolvePhase.BODY_RESOLVE,
+    FirDeclarationOrigin.Synthetic,
     returnTypeRef,
     receiverTypeRef,
     typeParameters = mutableListOf(),

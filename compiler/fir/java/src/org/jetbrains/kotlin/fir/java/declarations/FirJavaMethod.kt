@@ -58,6 +58,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     source,
     session,
     resolvePhase,
+    FirDeclarationOrigin.Java,
     returnTypeRef,
     receiverTypeRef,
     valueParameters,
@@ -81,6 +82,13 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
     var modality: Modality? = null
     var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+
+    @Deprecated("Modification of 'origin' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaMethod {

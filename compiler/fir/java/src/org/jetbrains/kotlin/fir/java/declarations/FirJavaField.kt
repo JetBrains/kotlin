@@ -53,6 +53,9 @@ class FirJavaField @FirImplementationDetail constructor(
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
 
+    override val origin: FirDeclarationOrigin
+        get() = FirDeclarationOrigin.Java
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         return this
@@ -160,6 +163,13 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isEnumEntry
         )
     }
+
+    @Deprecated("Modification of 'origin' has no impact for FirJavaFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
 }
 
 @OptIn(ExperimentalContracts::class)
