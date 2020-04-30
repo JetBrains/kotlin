@@ -84,24 +84,29 @@ public abstract class CompilerManager {
    * Registers the type as a compilable type so that Compile action will be enabled on files of this type.
    *
    * @param type the type for which the Compile action is enabled.
+   * @deprecated use {@link CompilableFileTypesProvider} extension point to register compilable file types
    */
+  @Deprecated
   public abstract void addCompilableFileType(@NotNull FileType type);
 
   /**
    * Unregisters the type as a compilable type so that Compile action will be disabled on files of this type.
    *
    * @param type the type for which the Compile action is disabled.
+   * @deprecated use {@link CompilableFileTypesProvider} extension point to register compilable file types
    */
+  @Deprecated
   public abstract void removeCompilableFileType(@NotNull FileType type);
 
   /**
    * Checks if files of the specified type can be compiled by one of registered compilers.
    * If the compiler can process files of certain type, it should register this file type within
    * the CompilerManager as a compilable file type.
+   * Preferably register compilable file types with the CompilableFileTypesProvider extension point
    *
    * @param type the type to check.
    * @return true if the file type is compilable, false otherwise.
-   * @see com.intellij.openapi.compiler.CompilerManager#addCompilableFileType(FileType)
+   * @see com.intellij.openapi.compiler.CompilableFileTypesProvider#getCompilableFileTypes()
    */
   public abstract boolean isCompilableFileType(@NotNull FileType type);
 

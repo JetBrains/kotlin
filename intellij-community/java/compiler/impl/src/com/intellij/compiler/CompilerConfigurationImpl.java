@@ -9,7 +9,6 @@ import com.intellij.compiler.impl.javaCompiler.javac.JavacCompiler;
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.options.ExcludeEntryDescription;
 import com.intellij.openapi.compiler.options.ExcludedEntriesConfiguration;
@@ -19,7 +18,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.ModuleListener;
@@ -86,7 +84,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   private final ExcludedEntriesConfiguration myExcludesConfiguration;
 
   private volatile Collection<BackendCompiler> myRegisteredCompilers = Collections.emptyList();
-  private JavacCompiler JAVAC_EXTERNAL_BACKEND;
+  private final JavacCompiler JAVAC_EXTERNAL_BACKEND;
   private final Perl5Matcher myPatternMatcher = new Perl5Matcher();
 
   {
@@ -107,6 +105,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   public CompilerConfigurationImpl(@NotNull Project project) {
     myProject = project;
     myExcludesConfiguration = createExcludedEntriesConfiguration(project);
+    JAVAC_EXTERNAL_BACKEND = new JavacCompiler(myProject);
     MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
@@ -128,8 +127,10 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
     });
 
     if (!project.isDefault()) {
-      StartupManager.getInstance(project).runAfterOpened(() -> createCompilers());
+      // initial state
+      StartupManager.getInstance(project).runAfterOpened(() -> {myRegisteredCompilers = collectCompilers();});
     }
+    BackendCompiler.EP_NAME.getPoint(project).addChangeListener(() -> {myRegisteredCompilers = collectCompilers();}, project);
   }
 
   // Overridden in Upsource
@@ -423,50 +424,17 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   }
 
   public JavacCompiler getJavacCompiler() {
-    createCompilers();
     return JAVAC_EXTERNAL_BACKEND;
   }
 
-  private void createCompilers() {
-    if (JAVAC_EXTERNAL_BACKEND != null) {
-      return;
-    }
-
-    JAVAC_EXTERNAL_BACKEND = new JavacCompiler(myProject);
-    myRegisteredCompilers = collectCompilers(Collections.emptySet());
-
-    BackendCompiler.EP_NAME.getPoint(myProject).addChangeListener(() -> {
-      Collection<BackendCompiler> currentCompilers = myRegisteredCompilers;
-      myRegisteredCompilers = collectCompilers(
-        currentCompilers.stream().flatMap(c -> c.getCompilableFileTypes().stream()).collect(Collectors.toSet())
-      );
-    }, myProject);
-  }
-
   @NotNull
-  private List<BackendCompiler> collectCompilers(Set<FileType> typesBefore) {
+  private List<BackendCompiler> collectCompilers() {
     final List<BackendCompiler> compilers = new ArrayList<>();
     compilers.add(JAVAC_EXTERNAL_BACKEND);
     if (EclipseCompiler.isInitialized() || ApplicationManager.getApplication().isUnitTestMode()) {
       compilers.add(new EclipseCompiler(myProject));
     }
-    compilers.addAll(Arrays.asList(BackendCompiler.EP_NAME.getExtensions(myProject)));
-
-    final Set<FileType> typesToAdd = new HashSet<>();
-    final Set<FileType> typesToRemove = new HashSet<>(typesBefore);
-    for (BackendCompiler compiler : compilers) {
-      Set<FileType> compilerTypes = compiler.getCompilableFileTypes();
-      typesToAdd.addAll(compilerTypes);
-      typesToRemove.removeAll(compilerTypes);
-    }
-    typesToAdd.removeAll(typesBefore);
-    final CompilerManager compilerManager = CompilerManager.getInstance(myProject);
-    for (FileType type : typesToRemove) {
-      compilerManager.removeCompilableFileType(type);
-    }
-    for (FileType type : typesToAdd) {
-      compilerManager.addCompilableFileType(type);
-    }
+    compilers.addAll(BackendCompiler.EP_NAME.getExtensions(myProject));
 
     myDefaultJavaCompiler = JAVAC_EXTERNAL_BACKEND;
     for (BackendCompiler compiler : compilers) {
@@ -480,8 +448,11 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   }
 
   public Collection<BackendCompiler> getRegisteredJavaCompilers() {
-    createCompilers();
-    return Collections.unmodifiableCollection(myRegisteredCompilers);
+    Collection<BackendCompiler> compilers = myRegisteredCompilers;
+    if (compilers.isEmpty()) {
+      compilers = collectCompilers();
+    }
+    return Collections.unmodifiableCollection(compilers);
   }
 
   public String[] getResourceFilePatterns() {
@@ -933,7 +904,9 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   }
 
   public BackendCompiler getDefaultCompiler() {
-    createCompilers();
+    if (myRegisteredCompilers.isEmpty()) {
+      collectCompilers(); // this will properly initialize myDefaultJavaCompiler
+    }
     return myDefaultJavaCompiler;
   }
 
