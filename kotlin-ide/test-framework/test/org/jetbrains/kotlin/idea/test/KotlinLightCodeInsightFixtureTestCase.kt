@@ -72,7 +72,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
     override fun getTestDataPath(): String {
-        val relativeToKotlinIdeRoot = this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
+        val relativeToKotlinIdeRoot = this::class.findAnnotation<TestMetadata>()?.value ?: return super.getTestDataPath()
         return Paths.get(KotlinTestUtils.getHomeDirectory(), relativeToKotlinIdeRoot).toString()
     }
 

@@ -12,6 +12,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import java.io.File
+import java.nio.file.Paths
 import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
@@ -37,5 +38,8 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String = this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
+    override fun getTestDataPath(): String {
+        val relativeToKotlinIdeRoot = this::class.findAnnotation<TestMetadata>()?.value ?: return super.getTestDataPath()
+        return Paths.get(KotlinTestUtils.getHomeDirectory(), relativeToKotlinIdeRoot).toString()
+    }
 }
