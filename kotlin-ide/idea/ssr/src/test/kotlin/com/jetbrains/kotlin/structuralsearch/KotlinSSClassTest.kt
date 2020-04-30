@@ -31,11 +31,11 @@ class KotlinSSClassTest : KotlinSSTest() {
         )
     }
 
-    fun testClassTypeArgs() { doTest("class '_<T, R>(val a: T, val b: R, val c: T)") }
+    fun testClassTypeParam() { doTest("class '_<T, R>(val a: T, val b: R, val c: T)") }
 
-    fun testClassTypeArgsExtBound() { doTest("class '_<'_, '_ : List<*>>(val a: T, val b: R, val c: T)") }
+    fun testClassTypeParamExtBound() { doTest("class '_<'_, '_ : List<*>>(val a: T, val b: R, val c: T)") }
 
-    fun testClassTypeArgsVariance() { doTest("class '_<out V>") }
+    fun testClassTypeParamVariance() { doTest("class '_<out V>") }
 
     fun testInterface() { doTest("interface '_") }
 

@@ -5,9 +5,11 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -23,10 +25,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
-    fun GlobalMatchingVisitor.matchSequentially(elements: List<PsiElement>, elements2: List<PsiElement>) =
+    private fun GlobalMatchingVisitor.matchSequentially(elements: List<PsiElement>, elements2: List<PsiElement>) =
         matchSequentially(elements.toTypedArray(), elements2.toTypedArray())
 
-    fun GlobalMatchingVisitor.matchInAnyOrder(elements: List<PsiElement>, elements2: List<PsiElement>) =
+    private fun GlobalMatchingVisitor.matchInAnyOrder(elements: List<PsiElement>, elements2: List<PsiElement>) =
         matchInAnyOrder(elements.toTypedArray(), elements2.toTypedArray())
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
@@ -85,8 +87,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             }
         } else {
             if (other is KtSimpleNameExpression) {
-                myMatchingVisitor.result =
-                    myMatchingVisitor.matchText(referencedNameElement, other.getReferencedNameElement())
+                myMatchingVisitor.result = myMatchingVisitor.matchText(referencedNameElement, other.getReferencedNameElement())
             }
         }
     }
@@ -320,6 +321,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
+    }
+
+    override fun visitNamedFunction(function: KtNamedFunction) {
+        val other = getTreeElement<KtNamedFunction>() ?: return
+        myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(function.modifierList, other.modifierList)
+                && myMatchingVisitor.match(function.typeReference, other.typeReference)
+                && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
+                && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
+                && myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
     }
 
     override fun visitElement(element: PsiElement) {
