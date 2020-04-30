@@ -6,6 +6,9 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A download suggestion to fix a missing SDK by downloading it
  * @see com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
@@ -40,4 +43,13 @@ public interface UnknownSdkDownloadableSdkFix {
    */
   @NotNull
   SdkDownloadTask createTask(@NotNull ProgressIndicator indicator);
+
+  /**
+   * Relative extra paths for including in sdk roots.
+   * @see com.intellij.openapi.projectRoots.SdkModificator#addRoot
+   */
+  @NotNull
+  default List<String> extraJars() {
+    return Collections.emptyList();
+  }
 }

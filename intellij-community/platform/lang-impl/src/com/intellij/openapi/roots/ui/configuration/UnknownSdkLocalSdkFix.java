@@ -4,6 +4,9 @@ package com.intellij.openapi.roots.ui.configuration;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Locally detected SDK to fix immediately
  */
@@ -38,4 +41,13 @@ public interface UnknownSdkLocalSdkFix {
    */
   @NotNull
   String getSuggestedSdkName();
+
+  /**
+   * Relative extra paths for including in sdk roots.
+   * @see com.intellij.openapi.projectRoots.SdkModificator#addRoot
+   */
+  @NotNull
+  default List<String> getExtraJars() {
+    return Collections.emptyList();
+  }
 }

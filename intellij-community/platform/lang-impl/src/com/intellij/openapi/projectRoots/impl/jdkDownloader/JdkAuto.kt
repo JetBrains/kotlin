@@ -33,6 +33,9 @@ private class JdkAutoHint: BaseState() {
   val name by string()
   val path by string()
   val version by string()
+
+  @get:XCollection
+  val includeJars by list<String>()
 }
 
 private class JdkAutoHints : BaseState() {
@@ -124,6 +127,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
           override fun getExistingSdkHome(): String = path
           override fun getVersionString(): String = version
           override fun getSuggestedSdkName() = sdkType.suggestSdkName(null, hint.path)
+          override fun getExtraJars() = hint.includeJars
           override fun toString() = "resolved to hint $version, $path"
         }
       }
@@ -149,6 +153,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
         return object: UnknownSdkDownloadableSdkFix {
           override fun getVersionString() = jdkToDownload.versionString
           override fun getPresentableVersionString() = jdkToDownload.presentableVersionString
+          override fun extraJars() = resolveHint(sdk)?.includeJars ?: mutableListOf()
 
           override fun getDownloadDescription() = jdkToDownload.fullPresentationText
 
@@ -187,8 +192,14 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
 
         fun List<JavaLocalSdkFix>.pickBestMatch() = this.maxBy { it.version }
 
-        return tryUsingExistingSdk(req, sdk.sdkType, indicator).pickBestMatch()
-               ?: lazyLocalJdks.filter { req.matches(it) }.pickBestMatch()
+        val localSdkFix = tryUsingExistingSdk(req, sdk.sdkType, indicator).pickBestMatch()
+                          ?: lazyLocalJdks.filter { req.matches(it) }.pickBestMatch()
+
+        if (localSdkFix != null) {
+          localSdkFix.includeJars = resolveHint(sdk)?.includeJars ?: mutableListOf()
+        }
+
+        return localSdkFix
       }
 
       private fun tryUsingExistingSdk(req: JdkRequirement, sdkType: SdkType, indicator: ProgressIndicator): List<JavaLocalSdkFix> {
@@ -217,9 +228,12 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
   private class JavaLocalSdkFix(val homeDir: String,
                                 val version: JavaVersion,
                                 val suggestedName: String) : UnknownSdkLocalSdkFix {
+    var includeJars = emptyList<String>()
+
     override fun getExistingSdkHome() = homeDir
     override fun getVersionString() = JdkVersionDetector.formatVersionString(version)
     override fun getPresentableVersionString() = version.toFeatureMinorUpdateString()
     override fun getSuggestedSdkName() : String = suggestedName
+    override fun getExtraJars() = includeJars
   }
 }
