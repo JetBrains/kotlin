@@ -38,36 +38,14 @@ class KotlinNothingValueExceptionLowering(
                 //      call ThrowKotlinNothingValueException(): Nothing
                 //  }: Nothing
                 //
-                // Changing type of 'foo' to 'kotlin.Unit' is requires so that the 'ThrowKotlinNothingValueException(): Nothing'
-                // is not considered dead code and is not removed.
-                // Note that type 'kotlin.Nothing' might be inferred in some cases of projected types.
-                // See KT-30330 for an example of such code where call of type 'kotlin.Nothing' terminates and produces some value
-                // (although doing so by subverting the type system).
                 backendContext.createIrBuilder(parent, expression.startOffset, expression.endOffset).run {
                     irBlock(expression, null, context.irBuiltIns.nothingType) {
-                        +super.visitCall(changeTypeToUnit(expression))
+                        +super.visitCall(expression)
                         +irCall(backendContext.ir.symbols.ThrowKotlinNothingValueException)
                     }
                 }
             } else {
                 super.visitCall(expression)
-            }
-
-        private fun changeTypeToUnit(call: IrCall): IrCall =
-            IrCallImpl(
-                call.startOffset, call.endOffset,
-                backendContext.irBuiltIns.unitType,
-                call.symbol,
-                call.typeArgumentsCount, call.valueArgumentsCount, call.origin, call.superQualifierSymbol
-            ).also { newCall ->
-                for (i in 0 until call.typeArgumentsCount) {
-                    newCall.putTypeArgument(i, call.getTypeArgument(i))
-                }
-                newCall.dispatchReceiver = call.dispatchReceiver
-                newCall.extensionReceiver = call.extensionReceiver
-                for (i in 0 until call.valueArgumentsCount) {
-                    newCall.putValueArgument(i, call.getValueArgument(i))
-                }
             }
     }
 }
