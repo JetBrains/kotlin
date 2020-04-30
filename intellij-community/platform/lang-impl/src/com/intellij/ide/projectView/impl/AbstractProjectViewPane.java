@@ -131,6 +131,12 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   private void rebuildCompletely() {
     updateFromRoot(true).waitFor(5000);
     myReadTreeState.clear(); // cleanup cached tree paths
+    JTree tree = getTree();
+    if (tree != null) {
+      tree.clearSelection();
+      tree.setAnchorSelectionPath(null);
+      tree.setLeadSelectionPath(null);
+    }
   }
 
   /**
