@@ -325,7 +325,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile)
         }
 
-        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
+        fixture.testDataPath = mainFile.parent
 
 
         val mainFileName = mainFile.name

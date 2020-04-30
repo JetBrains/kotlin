@@ -71,7 +71,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             }
 
             with(myFixture) {
-                testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
+                testDataPath = srcDir.path
 
                 val afterFiles =
                     srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" }

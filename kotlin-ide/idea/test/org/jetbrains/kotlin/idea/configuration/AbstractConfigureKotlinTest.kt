@@ -140,7 +140,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     companion object {
-        private val BASE_PATH = "idea/testData/configuration/"
+        private val BASE_PATH = "${KotlinTestUtils.getHomeDirectory()}/idea/testData/configuration/"
         private val TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR"
         protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy {
             object : KotlinJavaModuleConfigurator() {

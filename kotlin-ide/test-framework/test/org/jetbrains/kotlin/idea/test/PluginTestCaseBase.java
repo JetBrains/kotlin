@@ -37,15 +37,14 @@ import org.jetbrains.kotlin.test.TestJdkKind;
 import java.io.File;
 
 public class PluginTestCaseBase {
-    public static final String TEST_DATA_DIR = "idea/testData";
-    public static final String TEST_DATA_PROJECT_RELATIVE = "/" + TEST_DATA_DIR;
+    public static final String TEST_DATA_DIR = KotlinTestUtils.getHomeDirectory() + "/idea/testData";
 
     private PluginTestCaseBase() {
     }
 
     @NotNull
     public static String getTestDataPathBase() {
-        return KotlinTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
+        return TEST_DATA_DIR;
     }
 
     @NotNull
