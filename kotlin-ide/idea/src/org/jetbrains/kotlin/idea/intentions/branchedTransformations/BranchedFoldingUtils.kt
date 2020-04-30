@@ -192,9 +192,10 @@ object BranchedFoldingUtils {
                 lhs = left!!.copy() as KtExpression
                 op = operationReference.text
             }
+
             val rhs = right!!
             if (rhs is KtLambdaExpression && this.parent !is KtBlockExpression) {
-                replace(psiFactory.createExpressionByPattern("{ $0 }", rhs))
+                replace(psiFactory.createSingleStatementBlock(rhs))
             } else {
                 replace(rhs)
             }
