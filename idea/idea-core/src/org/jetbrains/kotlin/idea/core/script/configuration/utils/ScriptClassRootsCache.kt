@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.core.script.LOG
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.classpathEntryToVfs
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
 import java.lang.ref.Reference
@@ -34,14 +35,14 @@ class ScriptClassRootsCache(
     private val nonModulesSdks: Collection<Sdk>,
     val customDefinitionsUsed: Boolean
 ) {
-    abstract class LightScriptInfo {
+    abstract class LightScriptInfo(val definition: ScriptDefinition?) {
         @Volatile
         var heavyCache: Reference<HeavyScriptInfo>? = null
 
         abstract fun buildConfiguration(): ScriptCompilationConfigurationWrapper?
     }
 
-    class DirectScriptInfo(val result: ScriptCompilationConfigurationWrapper) : LightScriptInfo() {
+    class DirectScriptInfo(val result: ScriptCompilationConfigurationWrapper) : LightScriptInfo(null) {
         override fun buildConfiguration(): ScriptCompilationConfigurationWrapper = result
     }
 

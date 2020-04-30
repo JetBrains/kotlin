@@ -9,10 +9,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
@@ -74,23 +76,24 @@ sealed class GradleBuildRoot {
             val javaHome = context.javaHome
             javaHome?.let { builder.addSdk(it) }
 
-            val anyScript = data.models.firstOrNull()?.let {
-                LocalFileSystem.getInstance().findFileByPath(it.file)
-            }
+            val definitions = ScriptDefinitionContributor.EP_NAME.getExtensions(project)
+                .filterIsInstance<GradleScriptDefinitionsContributor>()
+                .single().definitions.toList()
 
-            val scriptDefinition: ScriptDefinition? = anyScript?.findScriptDefinition(project)
+            val root = ScriptInfoRoot(this)
 
-            if (scriptDefinition != null) {
-                builder.classes.addAll(data.templateClasspath)
-            }
+            builder.classes.addAll(data.templateClasspath)
+            data.models.forEach { script ->
+                val vFile = LocalFileSystem.getInstance().findFileByPath(script.file)
+                val def = if (vFile != null) {
+                    val src = VirtualFileScriptSource(vFile)
+                    definitions.firstOrNull { it.isScript(src) }
+                } else null
 
-            val root = ScriptInfoRoot(this, scriptDefinition)
+                builder.scripts[script.file] = ScriptInfo(root, def, script)
 
-            data.models.forEach {
-                builder.scripts[it.file] = ScriptInfo(root, it)
-
-                builder.classes.addAll(it.classPath)
-                builder.sources.addAll(it.sourcePath)
+                builder.classes.addAll(script.classPath)
+                builder.sources.addAll(script.sourcePath)
             }
         }
 
@@ -98,36 +101,55 @@ sealed class GradleBuildRoot {
          * Common info between scripts (to save bits inside ScriptInfo)
          */
         data class ScriptInfoRoot(
-            val buildRoot: Imported,
-            val scriptDefinition: ScriptDefinition?
+            val buildRoot: Imported
         )
 
-        data class ScriptInfo(
+        class ScriptInfo(
             val root: ScriptInfoRoot,
+            scriptDefinition: ScriptDefinition?,
             val model: KotlinDslScriptModel
-        ) : ScriptClassRootsCache.LightScriptInfo() {
+        ) : ScriptClassRootsCache.LightScriptInfo(scriptDefinition) {
             val buildRoot get() = root.buildRoot
 
             override fun buildConfiguration(): ScriptCompilationConfigurationWrapper? {
                 val javaHome = buildRoot.context.javaHome
-                val scriptDefinition = root.scriptDefinition
 
                 val scriptFile = File(model.file)
                 val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
 
-                if (scriptDefinition == null) return null
+                if (definition == null) return null
 
                 return ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
                     VirtualFileScriptSource(virtualFile),
-                    scriptDefinition.compilationConfiguration.with {
+                    definition.compilationConfiguration.with {
                         if (javaHome != null) {
                             jvm.jdkHome(javaHome)
                         }
                         defaultImports(model.imports)
                         dependencies(JvmDependency(model.classPath.map { File(it) }))
                         ide.dependenciesSources(JvmDependency(model.sourcePath.map { File(it) }))
-                    }.adjustByDefinition(scriptDefinition)
+                    }.adjustByDefinition(definition)
                 )
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (javaClass != other?.javaClass) return false
+
+                other as ScriptInfo
+
+                if (root != other.root) return false
+                if (model != other.model) return false
+                if (definition != other.definition) return false
+
+                return true
+            }
+
+            override fun hashCode(): Int {
+                var result = root.hashCode()
+                result = 31 * result + model.hashCode()
+                result = 31 * result + definition.hashCode()
+                return result
             }
         }
     }
