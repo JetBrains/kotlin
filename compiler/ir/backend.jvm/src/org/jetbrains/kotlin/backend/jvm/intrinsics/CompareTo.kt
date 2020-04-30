@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
+import org.jetbrains.kotlin.codegen.AsmUtil.unboxType
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.NumberCompare
 import org.jetbrains.kotlin.codegen.ObjectCompare
@@ -68,7 +69,7 @@ object CompareTo : IntrinsicMethod() {
     }
 }
 
-class IntegerZeroComparison(val op: IElementType, val a: MaterialValue): BooleanValue(a.codegen) {
+class IntegerZeroComparison(val op: IElementType, val a: MaterialValue) : BooleanValue(a.codegen) {
     override fun jumpIfFalse(target: Label) {
         mv.visitJumpInsn(Opcodes.IFNE, target)
     }
@@ -131,6 +132,41 @@ class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val 
     override fun discard() {
         b.discard()
         a.discard()
+    }
+}
+
+class PrimitiveToBoxedComparison(
+    val op: IElementType,
+    private val boxedValue: MaterialValue,
+    private val loadOther: () -> MaterialValue
+) : BooleanValue(boxedValue.codegen) {
+
+    override fun jumpIfFalse(target: Label) {
+        val compareLabel = Label()
+        mv.dup()
+        mv.ifnonnull(compareLabel)
+        mv.pop()
+        mv.goTo(target)
+        mv.mark(compareLabel)
+        val unboxedValue = boxedValue.materializedAt(unboxType(boxedValue.type), boxedValue.irType)
+        BooleanComparison(op, unboxedValue, loadOther()).jumpIfFalse(target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        val compareLabel = Label()
+        val endLabel = Label()
+        mv.dup()
+        mv.ifnonnull(compareLabel)
+        mv.pop()
+        mv.goTo(endLabel)
+        mv.mark(compareLabel)
+        val unboxedValue = boxedValue.materializedAt(unboxType(boxedValue.type), boxedValue.irType)
+        BooleanComparison(op, unboxedValue, loadOther()).jumpIfTrue(target)
+        mv.mark(endLabel)
+    }
+
+    override fun discard() {
+        boxedValue.discard()
     }
 }
 

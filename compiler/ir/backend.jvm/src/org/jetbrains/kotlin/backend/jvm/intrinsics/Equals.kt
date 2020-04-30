@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isIntegerConst
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.isNullable
@@ -80,6 +82,38 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         val leftType = with(codegen) { a.asmType }
         val rightType = with(codegen) { b.asmType }
         val opToken = expression.origin
+
+        fun loadOther(expression: IrExpression, type: Type): () -> MaterialValue {
+            return if (expression.hasNoSideEffects()) {
+                { expression.accept(codegen, data).materializedAt(type, expression.type) }
+            } else {
+                val aValue = expression.accept(codegen, data).materializedAt(type, expression.type)
+                val local = codegen.frameMap.enterTemp(type)
+                codegen.mv.store(local, type)
+                ({
+                    codegen.mv.load(local, type)
+                    codegen.frameMap.leaveTemp(type)
+                    aValue
+                })
+            }
+        }
+
+        if ((opToken == IrStatementOrigin.EQEQ || opToken == IrStatementOrigin.EXCLEQ) &&
+            (AsmUtil.isIntOrLongPrimitive(leftType) || AsmUtil.isIntOrLongPrimitive(rightType)) &&
+            (AsmUtil.isBoxedTypeOf(leftType, rightType) || AsmUtil.isBoxedTypeOf(rightType, leftType))
+        ) {
+            val leftIsPrimitive = AsmUtil.isIntOrLongPrimitive(leftType)
+            return if (leftIsPrimitive) {
+                val loadOther = loadOther(a, leftType)
+                val boxedValue = b.accept(codegen, data).materializedAt(rightType, b.type)
+                PrimitiveToBoxedComparison(operator, boxedValue, loadOther)
+            } else {
+                val boxedValue = a.accept(codegen, data).materializedAt(leftType, a.type)
+                val loadOther = loadOther(b, rightType)
+                PrimitiveToBoxedComparison(operator, boxedValue, loadOther)
+            }
+        }
+
         val aIsEnum = a.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
         val bIsEnum = b.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
         val useEquals = opToken !== IrStatementOrigin.EQEQEQ && opToken !== IrStatementOrigin.EXCLEQEQ &&

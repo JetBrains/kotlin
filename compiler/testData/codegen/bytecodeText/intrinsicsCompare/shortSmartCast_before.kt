@@ -18,10 +18,10 @@ fun less5(a: Any?, b: Any?) = if (a is Short && b is Short) a < b else true
 // 0 IF_ICMPGE
 
 // JVM_IR_TEMPLATES
-// 0 Intrinsics\.areEqual
+// 3 Intrinsics\.areEqual
 // 0 Intrinsics\.compare
-// 8 INVOKEVIRTUAL java/lang/Short\.shortValue \(\)S
-// 4 INVOKEVIRTUAL java/lang/Number\.shortValue \(\)S
+// 4 INVOKEVIRTUAL java/lang/Short\.shortValue \(\)S
+// 2 INVOKEVIRTUAL java/lang/Number\.intValue \(\)I
 // 0 IFGE
 // 3 IF_ICMPGE
-// 3 IF_ICMPNE
+// 0 IF_ICMPNE
