@@ -50,7 +50,8 @@ internal fun checkContentEntryConsistency(entry: ContentEntry) {
   assertThat(entry.excludeFolderUrls).containsExactly(*entry.excludeFolders.map { it.url }.toTypedArray())
 }
 
-internal fun commitModifiableRootModel(model: ModifiableRootModel): ModuleRootManager {
+internal fun commitModifiableRootModel(model: ModifiableRootModel, assertChanged: Boolean = true): ModuleRootManager {
+  assertThat(model.isChanged).isEqualTo(assertChanged)
   checkModuleRootModelConsistency(model)
   runWriteActionAndWait { model.commit() }
   val moduleRootManager = ModuleRootManager.getInstance(model.module)

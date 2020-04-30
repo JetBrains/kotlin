@@ -43,6 +43,10 @@ class SdkInRootModelTest {
     val committed = commitModifiableRootModel(model)
     assertThat(committed.isSdkInherited).isFalse()
     assertThat(committed.sdk).isEqualTo(sdk)
+
+    val cleared = commitModifiableRootModel(createModifiableModel(module).also { it.clear() }, assertChanged = false)
+    assertThat(cleared.isSdkInherited).isFalse()
+    assertThat(cleared.sdk).isEqualTo(sdk)
   }
 
   @Test
@@ -57,6 +61,10 @@ class SdkInRootModelTest {
     val committed = commitModifiableRootModel(model)
     assertThat(committed.isSdkInherited).isTrue()
     assertThat(committed.sdk).isEqualTo(sdk)
+
+    val cleared = commitModifiableRootModel(createModifiableModel(module).also { it.clear() })
+    assertThat(cleared.isSdkInherited).isFalse()
+    assertThat(cleared.sdk).isEqualTo(sdk)
   }
 
   @Test

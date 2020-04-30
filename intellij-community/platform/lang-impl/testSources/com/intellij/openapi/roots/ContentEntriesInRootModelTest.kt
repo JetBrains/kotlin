@@ -48,7 +48,7 @@ class ContentEntriesInRootModelTest {
     assertThat(entryInModel.ownerModule).isSameAs(module)
     assertThat(entryInModel.rootModel).isSameAs(model)
 
-    val committed = commitModifiableRootModel(model)
+    val committed = commitModifiableRootModel(model, assertChanged = false)
     assertThat(committed.contentEntries).isEmpty()
     assertThat(committed.module).isSameAs(module)
     assertThat(committed.sdk).isNull()
@@ -220,5 +220,18 @@ class ContentEntriesInRootModelTest {
     assertThat(model.contentRoots).containsExactly(contentRoot1)
     val committed = commitModifiableRootModel(model)
     assertThat(committed.contentRoots).containsExactly(contentRoot1)
+  }
+
+  @Test
+  fun clear() {
+    val contentRoot = projectModel.baseProjectDir.newVirtualDirectory("content1")
+    ModuleRootModificationUtil.addContentRoot(module, contentRoot)
+    val model = createModifiableModel(module)
+    model.clear()
+    assertThat(model.contentEntries).isEmpty()
+    val committed = commitModifiableRootModel(model)
+    assertThat(committed.contentEntries).isEmpty()
+    val moduleSourceEntry = committed.orderEntries.single() as ModuleSourceOrderEntry
+    assertThat(moduleSourceEntry.ownerModule).isSameAs(module)
   }
 }
