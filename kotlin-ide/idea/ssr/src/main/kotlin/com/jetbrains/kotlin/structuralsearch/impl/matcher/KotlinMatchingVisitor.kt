@@ -219,10 +219,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                         .sortedBy { it.getArgumentName()?.asName }
                     val sortCodeArgs = sortedCodeArgs.subList(codeIndex, sortedCodeArgs.lastIndex + 1)
                         .sortedBy { it.getArgumentName()?.asName }
-                    sortQueryArgs.forEachIndexed { j, qArg ->
-                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(qArg, sortCodeArgs[j]))) return
-                    }
-                    return // result = true
+                    myMatchingVisitor.result = myMatchingVisitor.matchSequentially(sortQueryArgs, sortCodeArgs)
+                    return
                 } else {
                     return // result = false
                 }
