@@ -25,22 +25,42 @@ import kotlin.script.experimental.jvm.jvm
 sealed class GradleBuildRoot {
     abstract val pathPrefix: String
 
-    abstract class Unlinked : GradleBuildRoot()
-
-    class UnlinkedUnknown(override val pathPrefix: String) : Unlinked()
-
-    class UnlinkedLegacy(override val pathPrefix: String) : Unlinked()
-
-    class UnlinkedSupported(override val pathPrefix: String) : Unlinked()
+    /**
+     * Add Gradle Project
+     * for other scripts too
+     *
+     * definitely not precompiled scripts (it is detected as in sources roots)
+     * may be also included scripts not returned by gradle: todo proper notification
+     */
+    class Unlinked(override val pathPrefix: String) : GradleBuildRoot()
 
     abstract class Linked : GradleBuildRoot() {
         @Volatile
         var importing = false
     }
 
+    /**
+     * Notification: please update to Gradle 6.0
+     * default loader, cases:
+     * - not loaded: todo: Notification: Load configration to get code insights
+     * - loaded, not up-to-date: Notifaction: Reload configuraiton
+     * - loaded, up-to-date: Nothing
+     */
     class Legacy(override val pathPrefix: String) : Linked()
 
+    /**
+     * not imported:
+     *  Notification: Import Gradle project to get code insights
+     * during import:
+     * - todo: disable action on importing. don't miss failed import
+     * - pause analyzing, todo: change status text to: importing gradle project
+     *
+     * todo:
+     *  detect precompiled scripts (in sources roots)
+     */
     class New(override val pathPrefix: String) : Linked()
+
+    // precompiled scripts not detected by gradle
 
     class Imported(
         val project: Project,
