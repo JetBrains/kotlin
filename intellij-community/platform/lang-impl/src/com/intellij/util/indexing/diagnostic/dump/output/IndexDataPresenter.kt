@@ -59,7 +59,6 @@ object IndexDataPresenter {
       if (node is ObjectStubBase<*>) {
         append(" (id = ").append(node.stubId).append(")")
       }
-      append('\n')
       for (child in node.childrenStubs) {
         appendln(getPresentableStub(child, "$indent  "))
       }
