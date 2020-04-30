@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companio
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
-import java.lang.ref.WeakReference
+import java.lang.ref.Reference
+import java.lang.ref.SoftReference
 
 class ScriptClassRootsCache(
     val scripts: Map<String, LightScriptInfo>,
@@ -35,7 +36,7 @@ class ScriptClassRootsCache(
 ) {
     abstract class LightScriptInfo {
         @Volatile
-        var heavyCache: WeakReference<HeavyScriptInfo>? = null
+        var heavyCache: Reference<HeavyScriptInfo>? = null
 
         abstract fun buildConfiguration(): ScriptCompilationConfigurationWrapper?
     }
@@ -150,13 +151,13 @@ class ScriptClassRootsCache(
 
     private fun getHeavyScriptInfo(file: String): HeavyScriptInfo? {
         val lightScriptInfo = getLightScriptInfo(file) ?: return null
-        val heavy0 = lightScriptInfo.heavyCache
-        if (heavy0 != null) return heavy0.get()
+        val heavy0 = lightScriptInfo.heavyCache?.get()
+        if (heavy0 != null) return heavy0
         synchronized(lightScriptInfo) {
-            val heavy1 = lightScriptInfo.heavyCache
-            if (heavy1 != null) return heavy1.get()
+            val heavy1 = lightScriptInfo.heavyCache?.get()
+            if (heavy1 != null) return heavy1
             val heavy2 = computeHeavy(lightScriptInfo)
-            lightScriptInfo.heavyCache = WeakReference(heavy2)
+            lightScriptInfo.heavyCache = SoftReference(heavy2)
             return heavy2
         }
     }
