@@ -5642,6 +5642,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/whenToAssignment/cascadeWhen.kt");
             }
 
+            @TestMetadata("differentVariablesWithSame.kt")
+            public void testDifferentVariablesWithSame() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/whenToAssignment/differentVariablesWithSame.kt");
+            }
+
             @TestMetadata("innerWhenTransformed.kt")
             public void testInnerWhenTransformed() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/whenToAssignment/innerWhenTransformed.kt");
