@@ -128,9 +128,25 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-        val other = getTreeElement<KtDotQualifiedExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
-                && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
+        val other = myMatchingVisitor.element
+
+        // Regular matching
+        if (other is KtDotQualifiedExpression) {
+            myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+                    && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
+            return
+        }
+
+        val context = myMatchingVisitor.matchContext
+        val pattern = context.pattern
+        val handler = pattern.getHandler(expression.receiverExpression)
+
+        // Match "'_?.'_"-like patterns
+        myMatchingVisitor.result = handler is SubstitutionHandler
+                && handler.minOccurs == 0
+                && other.parent !is KtDotQualifiedExpression
+                && other.parent !is KtReferenceExpression
+                && myMatchingVisitor.match(expression.receiverExpression, other)
     }
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
