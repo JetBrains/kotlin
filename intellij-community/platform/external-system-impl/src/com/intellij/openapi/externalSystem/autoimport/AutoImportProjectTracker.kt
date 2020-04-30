@@ -10,11 +10,14 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.ExtensionPointUtil
+import com.intellij.openapi.externalSystem.ExternalSystemManager
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.update.PriorityEatUpdate
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
@@ -155,6 +158,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     val projectData = ProjectData(projectStatus, activationProperty, projectAware, settingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
+    registerProjectAwareDisposable(projectAware)
     projectDataMap[projectId] = projectData
 
     val id = "ProjectSettingsTracker: ${projectData.projectAware.projectId.readableName}"
@@ -167,6 +171,17 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     Disposer.register(parentDisposable, Disposable { notificationAware.notificationExpire(projectId) })
 
     loadState(projectId, projectData)
+  }
+
+  private fun registerProjectAwareDisposable(projectAware: ExternalSystemProjectAware) {
+    val projectId = projectAware.projectId
+    val projectAwareDisposable: Disposable? = if (projectAware is Disposable) projectAware
+    else ExternalSystemApiUtil.getManager(projectId.systemId)?.run {
+      ExtensionPointUtil.createExtensionDisposable(this, ExternalSystemManager.EP_NAME)
+    }
+    if (projectAwareDisposable != null) {
+      Disposer.register(projectAwareDisposable, Disposable { remove(projectId) })
+    }
   }
 
   override fun activate(id: ExternalSystemProjectId) {
