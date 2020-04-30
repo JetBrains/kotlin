@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
@@ -63,6 +64,7 @@ class FirTypeDeserializer(
                 }
                 builders += FirTypeParameterBuilder().apply {
                     session = this@FirTypeDeserializer.session
+                    origin = FirDeclarationOrigin.Library
                     this.name = name
                     this.symbol = symbol
                     variance = proto.variance.convertVariance()

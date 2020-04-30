@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -37,6 +38,7 @@ class FirClonableSymbolProvider(session: FirSession, scopeProvider: FirScopeProv
 
     private val klass = buildClassImpl {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+        origin = FirDeclarationOrigin.Library
         this.session = session
         status = FirDeclarationStatusImpl(
             Visibilities.PUBLIC,
@@ -46,6 +48,7 @@ class FirClonableSymbolProvider(session: FirSession, scopeProvider: FirScopeProv
         declarations += buildSimpleFunction {
             this.session = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            origin = FirDeclarationOrigin.Library
             returnTypeRef = buildResolvedTypeRef {
                 type = session.builtinTypes.anyType.type
             }

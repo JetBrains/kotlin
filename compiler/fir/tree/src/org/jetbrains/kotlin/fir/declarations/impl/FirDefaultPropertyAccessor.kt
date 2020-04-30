@@ -107,6 +107,7 @@ class FirDefaultPropertySetter(
         buildDefaultSetterValueParameter builder@{
             this@builder.source = source
             this@builder.session = session
+            this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
             this@builder.symbol = FirVariableSymbol(CallableId(FqName.ROOT, Name.special("<default-setter-parameter>")))
         }

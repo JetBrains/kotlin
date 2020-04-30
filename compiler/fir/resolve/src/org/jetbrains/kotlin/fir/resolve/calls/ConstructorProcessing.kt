@@ -235,6 +235,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
         buildConstructor {
             source = this@factory.source
             this.session = session
+            origin = FirDeclarationOrigin.FakeOverride
             returnTypeRef = this@factory.returnTypeRef.withReplacedConeType(newReturnType)
             receiverTypeRef = this@factory.receiverTypeRef
             status = this@factory.status
@@ -248,6 +249,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
                         buildValueParameter {
                             source = valueParameter.source
                             this.session = session
+                            origin = FirDeclarationOrigin.FakeOverride
                             returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newParameterType)
                             name = valueParameter.name
                             symbol = FirVariableSymbol(valueParameter.symbol.callableId)

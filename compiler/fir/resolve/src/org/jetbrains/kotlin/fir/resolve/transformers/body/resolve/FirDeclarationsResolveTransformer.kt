@@ -566,6 +566,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                 val name = Name.identifier("it")
                                 buildValueParameter {
                                     session = this@FirDeclarationsResolveTransformer.session
+                                    origin = FirDeclarationOrigin.Source
                                     returnTypeRef = buildResolvedTypeRef { type = singleParameterType }
                                     this.name = name
                                     symbol = FirVariableSymbol(name)

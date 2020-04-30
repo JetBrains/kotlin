@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -96,6 +97,7 @@ abstract class AbstractFirUseSiteMemberScope(
         FirSimpleFunctionBuilder().apply {
             source = firSimpleFunction.source
             session = firSimpleFunction.session
+            origin = FirDeclarationOrigin.FakeOverride
             returnTypeRef = firSimpleFunction.returnTypeRef
             receiverTypeRef = firSimpleFunction.receiverTypeRef
             name = firSimpleFunction.name
@@ -107,6 +109,7 @@ abstract class AbstractFirUseSiteMemberScope(
         FirValueParameterBuilder().apply {
             source = parameter.source
             session = parameter.session
+            origin = FirDeclarationOrigin.FakeOverride
             returnTypeRef = parameter.returnTypeRef
             name = parameter.name
             symbol = FirVariableSymbol(parameter.symbol.callableId)

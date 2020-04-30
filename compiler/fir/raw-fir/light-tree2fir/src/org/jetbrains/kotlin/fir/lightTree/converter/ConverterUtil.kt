@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -112,6 +113,7 @@ fun generateDestructuringBlock(
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
             statements += buildProperty {
                 this.session = session
+                origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.returnTypeRef
                 name = entry.name
                 initializer = buildComponentCall {

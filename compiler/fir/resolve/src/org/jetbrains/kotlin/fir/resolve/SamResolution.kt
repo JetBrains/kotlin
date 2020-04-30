@@ -124,6 +124,7 @@ class FirSamResolverImpl(
             FirTypeParameterBuilder().apply {
                 source = declaredTypeParameter.source
                 session = firSession
+                origin = FirDeclarationOrigin.SamConstructor
                 name = declaredTypeParameter.name
                 this.symbol = FirTypeParameterSymbol()
                 variance = Variance.INVARIANT
@@ -155,6 +156,7 @@ class FirSamResolverImpl(
         return buildSimpleFunction {
             session = firSession
             name = classId.shortClassName
+            origin = FirDeclarationOrigin.SamConstructor
             status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
                 isExpect = firRegularClass.isExpect
                 isActual = firRegularClass.isActual
@@ -182,6 +184,7 @@ class FirSamResolverImpl(
 
             valueParameters += buildValueParameter {
                 session = firSession
+                origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
                     source = firRegularClass.source
                     type = substitutedFunctionType

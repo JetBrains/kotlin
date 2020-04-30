@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirWhenSubject
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -104,6 +105,7 @@ internal fun generateDestructuringBlock(
             statements += buildProperty {
                 source = entrySource
                 this.session = session
+                origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
                 this.name = name
                 initializer = buildComponentCall {

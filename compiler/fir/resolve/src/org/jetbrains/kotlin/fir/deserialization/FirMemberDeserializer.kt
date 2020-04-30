@@ -151,6 +151,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(proto.typeParameterList)
         return buildTypeAlias {
             session = c.session
+            origin = FirDeclarationOrigin.Library
             this.name = name
             status = FirDeclarationStatusImpl(ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)), Modality.FINAL).apply {
                 isExpect = Flags.IS_EXPECT_CLASS.get(flags)
@@ -176,6 +177,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val isVar = Flags.IS_VAR.get(flags)
         return buildProperty {
             session = c.session
+            origin = FirDeclarationOrigin.Library
             returnTypeRef = proto.returnType(c.typeTable).toTypeRef(local)
             receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local)
             name = callableName
@@ -196,9 +198,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
-            getter = FirDefaultPropertyGetter(null, c.session, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags)))
+            getter = FirDefaultPropertyGetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags)))
             setter = if (isVar) {
-                FirDefaultPropertySetter(null, c.session, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags)))
+                FirDefaultPropertySetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags)))
             } else null
             this.containerSource = c.containerSource
             this.initializer = if (Flags.HAS_CONSTANT.get(flags)) {
@@ -227,6 +229,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val simpleFunction = buildSimpleFunction {
             session = c.session
+            origin = FirDeclarationOrigin.Library
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
             receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local)
             name = callableName
@@ -283,6 +286,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             FirConstructorBuilder()
         }.apply {
             session = c.session
+            origin = FirDeclarationOrigin.Library
             returnTypeRef = delegatedSelfType
             status = FirDeclarationStatusImpl(ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)), Modality.FINAL).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
@@ -317,6 +321,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val name = c.nameResolver.getName(proto.name)
             buildValueParameter {
                 session = c.session
+                origin = FirDeclarationOrigin.Library
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name
                 symbol = FirVariableSymbol(name)

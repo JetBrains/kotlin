@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
@@ -62,6 +63,7 @@ fun FirAnonymousFunction.copy(
     receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
     source: FirSourceElement? = this.source,
     session: FirSession = this.session,
+    origin: FirDeclarationOrigin = this.origin,
     returnTypeRef: FirTypeRef = this.returnTypeRef,
     valueParameters: List<FirValueParameter> = this.valueParameters,
     body: FirBlock? = this.body,
@@ -74,6 +76,7 @@ fun FirAnonymousFunction.copy(
     return buildAnonymousFunction {
         this.source = source
         this.session = session
+        this.origin = origin
         this.returnTypeRef = returnTypeRef
         this.receiverTypeRef = receiverTypeRef
         symbol = this@copy.symbol

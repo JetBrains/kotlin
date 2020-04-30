@@ -127,6 +127,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     buildErrorFunction {
                         source = baseSource
                         session = this@BaseFirBuilder.baseSession
+                        origin = FirDeclarationOrigin.Source
                         diagnostic = ConeSimpleDiagnostic(message, kind)
                         symbol = FirErrorFunctionSymbol()
                     }
@@ -695,6 +696,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 val componentFunction = buildSimpleFunction {
                     source = parameterSource
                     session = this@DataClassMembersGenerator.session
+                    origin = FirDeclarationOrigin.Source
                     returnTypeRef = firProperty.returnTypeRef
                     receiverTypeRef = null
                     this.name = name
@@ -714,6 +716,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 buildSimpleFunction {
                     source = this@DataClassMembersGenerator.source.toFirSourceElement()
                     session = this@DataClassMembersGenerator.session
+                    origin = FirDeclarationOrigin.Source
                     returnTypeRef = classTypeRef
                     name = copyName
                     status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
@@ -724,6 +727,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         valueParameters += buildValueParameter {
                             source = parameterSource
                             session = this@DataClassMembersGenerator.session
+                            origin = FirDeclarationOrigin.Source
                             returnTypeRef = firProperty.returnTypeRef
                             name = propertyName
                             symbol = FirVariableSymbol(propertyName)

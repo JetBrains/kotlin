@@ -231,6 +231,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     }
                     metadata = FirMetadataSource.Function(
                         buildSimpleFunction {
+                            origin = FirDeclarationOrigin.Synthetic
                             this.name = name
                             this.symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, name))
                             this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
@@ -245,6 +246,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                                 this.valueParameters.add(
                                     buildValueParameter {
                                         this.name = irValueParameter.name
+                                        origin = FirDeclarationOrigin.Synthetic
                                         this.session = components.session
                                         this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                                         this.symbol = FirVariableSymbol(irValueParameter.name)

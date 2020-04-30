@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -280,6 +281,7 @@ fun generateTemporaryVariable(
     buildProperty {
         this.source = source
         this.session = session
+        origin = FirDeclarationOrigin.Source
         returnTypeRef = typeRef ?: buildImplicitTypeRef {
             this.source = source
         }
@@ -386,6 +388,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
             this.session = session
+            origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
             isGetter = true
             status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
@@ -412,11 +415,13 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         setter = buildPropertyAccessor {
             this.session = session
+            origin = FirDeclarationOrigin.Source
             returnTypeRef = session.builtinTypes.unitType
             isGetter = false
             status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
             val parameter = buildValueParameter {
                 this.session = session
+                origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
                 name = DELEGATED_SETTER_PARAM
                 symbol = FirVariableSymbol(this@generateAccessorsByDelegate.name)

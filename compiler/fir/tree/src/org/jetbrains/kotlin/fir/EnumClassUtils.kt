@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -31,6 +32,7 @@ private val VALUE = Name.identifier("value")
 fun AbstractFirRegularClassBuilder.generateValuesFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
     declarations += buildSimpleFunction {
         source = this@generateValuesFunction.source
+        origin = FirDeclarationOrigin.Source
         this.session = session
         returnTypeRef = buildResolvedTypeRef {
             source = this@generateValuesFunction.source
@@ -55,6 +57,7 @@ fun AbstractFirRegularClassBuilder.generateValuesFunction(session: FirSession, p
 fun AbstractFirRegularClassBuilder.generateValueOfFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
     declarations += buildSimpleFunction {
         source = this@generateValueOfFunction.source
+        origin = FirDeclarationOrigin.Source
         this.session = session
         returnTypeRef = buildResolvedTypeRef {
             source = this@generateValueOfFunction.source
@@ -71,6 +74,7 @@ fun AbstractFirRegularClassBuilder.generateValueOfFunction(session: FirSession, 
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
         valueParameters += buildValueParameter vp@{
             source = this@generateValueOfFunction.source
+            origin = FirDeclarationOrigin.Source
             this@vp.session = session
             returnTypeRef = FirImplicitStringTypeRef(source)
             name = VALUE

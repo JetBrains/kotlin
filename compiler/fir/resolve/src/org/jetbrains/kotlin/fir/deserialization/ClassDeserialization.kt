@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -84,6 +85,7 @@ fun deserializeClassToSymbol(
         )
     classBuilder.apply {
         this.session = session
+        origin = FirDeclarationOrigin.Library
         name = classId.shortClassName
         this.status = status
         classKind = ProtoEnumFlags.classKind(kind)
@@ -132,6 +134,7 @@ fun deserializeClassToSymbol(
                 val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
                 val property = buildEnumEntry {
                     this.session = session
+                    origin = FirDeclarationOrigin.Library
                     returnTypeRef = buildResolvedTypeRef { type = enumType }
                     name = enumEntryName
                     this.symbol = FirVariableSymbol(CallableId(classId, enumEntryName))
@@ -200,6 +203,7 @@ private fun AbstractFirRegularClassBuilder.addCloneForArrayIfNeeded(classId: Cla
     }
     declarations += buildSimpleFunction {
         session = this@addCloneForArrayIfNeeded.session
+        origin = FirDeclarationOrigin.Library
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         returnTypeRef = buildResolvedTypeRef {
             val typeArguments = if (classId.shortClassName == ARRAY) {

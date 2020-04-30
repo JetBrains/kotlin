@@ -168,6 +168,7 @@ class FirClassSubstitutionScope(
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
                 session = typeParameter.session
+                origin = FirDeclarationOrigin.FakeOverride
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()
                 variance = typeParameter.variance
@@ -285,6 +286,7 @@ class FirClassSubstitutionScope(
             return buildSimpleFunction {
                 source = baseFunction.source
                 this.session = session
+                origin = FirDeclarationOrigin.FakeOverride
                 returnTypeRef = baseFunction.returnTypeRef.withReplacedReturnType(newReturnType)
                 receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
                 name = baseFunction.name
@@ -298,6 +300,7 @@ class FirClassSubstitutionScope(
                     buildValueParameter {
                         source = valueParameter.source
                         this.session = session
+                        origin = FirDeclarationOrigin.FakeOverride
                         returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                         name = valueParameter.name
                         symbol = FirVariableSymbol(valueParameter.symbol.callableId)
@@ -355,6 +358,7 @@ class FirClassSubstitutionScope(
             buildProperty {
                 source = baseProperty.source
                 this.session = session
+                origin = FirDeclarationOrigin.FakeOverride
                 returnTypeRef = baseProperty.returnTypeRef.withReplacedReturnType(newReturnType)
                 receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
                 name = baseProperty.name
@@ -384,6 +388,7 @@ class FirClassSubstitutionScope(
             buildField {
                 source = baseField.source
                 this.session = session
+                origin = FirDeclarationOrigin.FakeOverride
                 returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
                 name = baseField.name
                 this.symbol = symbol
@@ -428,6 +433,7 @@ class FirClassSubstitutionScope(
             return buildConstructor {
                 source = baseConstructor.source
                 this.session = session
+                origin = FirDeclarationOrigin.FakeOverride
                 returnTypeRef = baseConstructor.returnTypeRef.withReplacedReturnType(newReturnType)
                 receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(newReceiverType)
                 status = baseConstructor.status
@@ -440,6 +446,7 @@ class FirClassSubstitutionScope(
                     buildValueParameter {
                         source = valueParameter.source
                         this.session = session
+                        origin = FirDeclarationOrigin.FakeOverride
                         returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                         name = valueParameter.name
                         symbol = FirVariableSymbol(valueParameter.symbol.callableId)

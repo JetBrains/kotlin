@@ -195,6 +195,7 @@ class JavaClassEnhancementScope(
             buildValueParameter {
                 source = valueParameter.source
                 session = this@JavaClassEnhancementScope.session
+                origin = FirDeclarationOrigin.Enhancement
                 returnTypeRef = newTypeRef
                 this.name = valueParameter.name
                 symbol = FirVariableSymbol(this.name)
@@ -211,8 +212,6 @@ class JavaClassEnhancementScope(
                 val symbol = FirConstructorSymbol(methodId)
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
-                        source = firMethod.source
-                        session = this@JavaClassEnhancementScope.session
                         returnTypeRef = newReturnTypeRef
                         status = FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL).apply {
                             isExpect = false
@@ -223,14 +222,15 @@ class JavaClassEnhancementScope(
                     }
                 } else {
                     FirConstructorBuilder().apply {
-                        source = firMethod.source
-                        session = this@JavaClassEnhancementScope.session
                         returnTypeRef = newReturnTypeRef
                         status = firMethod.status
                         this.symbol = symbol
                     }
                 }.apply {
+                    source = firMethod.source
+                    session = this@JavaClassEnhancementScope.session
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                    origin = FirDeclarationOrigin.Enhancement
                     this.valueParameters += newValueParameters
                     this.typeParameters += firMethod.typeParameters
                 }
@@ -239,6 +239,7 @@ class JavaClassEnhancementScope(
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
                     session = this@JavaClassEnhancementScope.session
+                    origin = FirDeclarationOrigin.Enhancement
                     returnTypeRef = newReturnTypeRef
                     receiverTypeRef = newReceiverTypeRef
                     this.name = name!!

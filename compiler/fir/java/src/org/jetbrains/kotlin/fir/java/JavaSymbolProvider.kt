@@ -12,6 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
@@ -95,6 +96,7 @@ class JavaSymbolProvider(
     ): FirTypeParameter {
         return FirTypeParameterBuilder().apply {
             this.session = this@JavaSymbolProvider.session
+            origin = FirDeclarationOrigin.Java
             this.name = this@toFirTypeParameter.name
             symbol = firSymbol
             variance = INVARIANT

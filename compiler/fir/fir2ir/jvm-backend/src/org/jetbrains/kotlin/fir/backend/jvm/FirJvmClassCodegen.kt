@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.writeSyntheticClassMetadata
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
@@ -55,6 +56,7 @@ class FirJvmClassCodegen(
         val function = this
         return buildAnonymousFunction {
             session = function.session
+            origin = FirDeclarationOrigin.Source
             symbol = FirAnonymousFunctionSymbol()
             returnTypeRef = function.returnTypeRef
             receiverTypeRef = function.receiverTypeRef
