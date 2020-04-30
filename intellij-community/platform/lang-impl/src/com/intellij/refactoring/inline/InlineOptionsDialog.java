@@ -3,6 +3,9 @@ package com.intellij.refactoring.inline;
 
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts.BorderTitle;
+import com.intellij.openapi.util.NlsContexts.Label;
+import com.intellij.openapi.util.NlsContexts.RadioButton;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReference;
@@ -136,10 +139,15 @@ public abstract class InlineOptionsDialog extends RefactoringDialog implements I
     return myElement.isWritable();
   }
 
+  @Label
   protected abstract String getNameLabelText();
+  @BorderTitle
   protected abstract String getBorderTitle();
+  @RadioButton
   protected abstract String getInlineAllText();
+  @RadioButton
   protected String getKeepTheDeclarationText() {return null;}
+  @RadioButton
   protected abstract String getInlineThisText();
   protected abstract boolean isInlineThis();
   protected boolean canInlineThisOnly() {

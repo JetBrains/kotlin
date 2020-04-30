@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.RefactoringActionHandler;
@@ -236,6 +237,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     }
   }
 
+  @NlsActions.ActionText
   @Nullable
   protected String getActionName(@NotNull DataContext dataContext) {
     return null;

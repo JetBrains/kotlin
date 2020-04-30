@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
+import com.intellij.openapi.util.NlsContexts.Label;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,6 +61,7 @@ public abstract class LibraryType<P extends LibraryProperties> extends LibraryPr
   /**
    * @return text to show in 'New Library' popup. Return {@code null} if the type should not be shown in the 'New Library' popup
    */
+  @Label
   @Nullable
   public abstract String getCreateActionName();
 
