@@ -12,6 +12,8 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.compiler.util.InspectionValidator;
 import com.intellij.openapi.compiler.util.InspectionValidatorWrapper;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -83,16 +85,32 @@ public class CompilerManagerImpl extends CompilerManager {
     myProject = project;
     myEventPublisher = project.getMessageBus().syncPublisher(CompilerTopics.COMPILATION_STATUS);
     // predefined compilers
-    for (CompilerFactory factory : CompilerFactory.EP_NAME.getExtensionList(project)) {
-      Compiler[] compilers = factory.createCompilers(this);
-      if (compilers != null) {
-        String factoryId = getFactoryId(factory);
-        for (Compiler compiler : compilers) {
-          addCompiler(compiler, factoryId);
+    CompilerFactory.EP_NAME.getPoint(myProject).addExtensionPointListener(new ExtensionPointListener<CompilerFactory>() {
+      @Override
+      public void extensionAdded(@NotNull CompilerFactory factory, @NotNull PluginDescriptor pluginDescriptor) {
+        Compiler[] compilers = factory.createCompilers(CompilerManagerImpl.this);
+        if (compilers != null) {
+          String factoryId = getFactoryId(factory);
+          for (Compiler compiler : compilers) {
+            addCompiler(compiler, factoryId);
+          }
         }
       }
-    }
-    CompilerFactory.EP_NAME.getPoint(myProject).addChangeListener(this::updateFactoryCompilers, myProject);
+
+      @Override
+      public void extensionRemoved(@NotNull CompilerFactory factory, @NotNull PluginDescriptor pluginDescriptor) {
+        List<Compiler> compilersToRemove = new ArrayList<>();
+        String factoryId = getFactoryId(factory);
+        for (Map.Entry<Compiler, String> entry : myCompilers.entrySet()) {
+          if (factoryId.equals(entry.getValue())) {
+            compilersToRemove.add(entry.getKey());
+          }
+        }
+        for (Compiler compiler : compilersToRemove) {
+          removeCompiler(compiler);
+        }
+      }
+    }, true, myProject);
 
     addCompilableFileType(StdFileTypes.JAVA);
 
@@ -188,41 +206,6 @@ public class CompilerManagerImpl extends CompilerManager {
     }
     final T[] array = ArrayUtil.newArray(compilerClass, compilers.size());
     return compilers.toArray(array);
-  }
-
-  private void updateFactoryCompilers() {
-    Set<String> factoriesBefore = new HashSet<>(myCompilers.values());
-    factoriesBefore.remove(NO_FACTORY_ID);
-
-    Set<String> toRemove = new HashSet<>(factoriesBefore);
-    Map<String, CompilerFactory> factories = new HashMap<>();
-    for (CompilerFactory factory : CompilerFactory.EP_NAME.getExtensionList(myProject)) {
-      String id = getFactoryId(factory);
-      factories.put(id, factory);
-      toRemove.remove(id);
-    }
-
-    if (!toRemove.isEmpty()) {
-      List<Compiler> compilersToRemove = new ArrayList<>();
-      for (Map.Entry<Compiler, String> entry : myCompilers.entrySet()) {
-        if (toRemove.contains(entry.getValue())) {
-          compilersToRemove.add(entry.getKey());
-        }
-      }
-      for (Compiler compiler : compilersToRemove) {
-        removeCompiler(compiler);
-      }
-    }
-    
-    factories.keySet().removeAll(factoriesBefore);
-    for (Map.Entry<String, CompilerFactory> entry : factories.entrySet()) {
-      Compiler[] compilers = entry.getValue().createCompilers(this);
-      if (compilers != null) {
-        for (Compiler compiler : compilers) {
-          addCompiler(compiler, entry.getKey());
-        }
-      }
-    }
   }
 
   @Override
