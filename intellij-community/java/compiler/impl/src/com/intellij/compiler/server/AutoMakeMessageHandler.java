@@ -122,7 +122,7 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
         final CompilerMessage msg = myContext.createAndAddMessage(category, message.getText(), url, (int)line, (int)column, null);
         if (category == CompilerMessageCategory.ERROR || kind == CmdlineRemoteProto.Message.BuilderMessage.CompileMessage.Kind.JPS_INFO) {
           if (category == CompilerMessageCategory.ERROR) {
-            ReadAction.run(() -> informWolf(myProject, message));
+            ReadAction.run(() -> informWolf(message));
           }
           if (msg != null) {
             ProblemsView.getInstance(myProject).addMessage(msg, sessionId);
@@ -186,9 +186,9 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
     }
   }
 
-  private void informWolf(Project project, CmdlineRemoteProto.Message.BuilderMessage.CompileMessage message) {
+  private void informWolf(CmdlineRemoteProto.Message.BuilderMessage.@NotNull CompileMessage message) {
     final String srcPath = message.getSourceFilePath();
-    if (srcPath != null && !project.isDisposed()) {
+    if (srcPath != null && !myProject.isDisposed()) {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(srcPath);
       if (vFile != null) {
         final int line = (int)message.getLine();
