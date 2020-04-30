@@ -408,7 +408,8 @@ fun IrExpression.hasNoSideEffects() =
     this is IrFunctionExpression ||
             (this is IrCallableReference && dispatchReceiver == null && extensionReceiver == null) ||
             this is IrClassReference ||
-            this is IrConst<*>
+            this is IrConst<*> ||
+            this is IrGetValue
 
 fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(ktElement.startOffsetSkippingComments, ktElement.endOffset, call, origin)
