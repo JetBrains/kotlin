@@ -1,0 +1,10 @@
+// HIGHLIGHT: INFORMATION
+fun test(): Int {
+    return foo {
+        bar()
+    }
+}
+
+fun foo(f: () -> Int) = f()
+
+fun bar() = 1
