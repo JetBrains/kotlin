@@ -209,7 +209,7 @@ class ScopeTowerLevel(
             }
         }
         return when {
-            candidate !is FirBackingFieldSymbol -> null
+            candidate !is FirBackingFieldSymbol && candidate !is FirPropertySymbol -> null
             candidate.callableId.classId != null -> {
                 bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
                     implicitReceiverValue.type.classId == holderId

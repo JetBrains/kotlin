@@ -11,7 +11,7 @@ FILE: inner.kt
 
         public final fun bar(): R|kotlin/Unit| {
             lval i: R|Owner.Inner| = this@R|/Owner|.R|/Owner.Inner.Inner|()
-            R|<local>/i|.R|/Owner.Inner.baz|()
+            this@R|/Owner|.R|<local>/i|.R|/Owner.Inner.baz|()
         }
 
         public final fun err(): R|kotlin/Unit| {
@@ -29,7 +29,7 @@ FILE: inner.kt
 
             public final fun gau(): R|kotlin/Unit| {
                 lval o: R|Owner| = R|/Owner.Owner|()
-                R|<local>/o|.R|/Owner.foo|()
+                this@R|/Owner.Inner|.R|<local>/o|.R|/Owner.foo|()
                 this@R|/Owner|.R|/Owner.foo|()
                 this@R|/Owner|.R|/Owner.foo|()
                 this@R|/Owner.Inner|.<Unresolved name: err>#()

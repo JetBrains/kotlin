@@ -54,7 +54,7 @@ FILE: CallBasedInExpressionGenerator.kt
 
                 private final fun invokeFunction(v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
                     lval result: <ERROR TYPE REF: Unresolved name: invokeFunction> = this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: invokeFunction>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|.<Unresolved name: call>#, this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|, <Unresolved name: none>#())
-                    R|<local>/result|.<Unresolved name: put>#(R|<local>/result|.<Unresolved name: type>#, R|<local>/result|.<Unresolved name: kotlinType>#, R|<local>/v|)
+                    this@R|/anonymous|.R|<local>/result|.<Unresolved name: put>#(this@R|/anonymous|.R|<local>/result|.<Unresolved name: type>#, this@R|/anonymous|.R|<local>/result|.<Unresolved name: kotlinType>#, R|<local>/v|)
                 }
 
             }

@@ -45,18 +45,18 @@ FILE: objectInnerClass.kt
 
         public[local] final fun caseForBase(): R|kotlin/Unit| {
             lval base: R|<anonymous>.Base| = this@R|/anonymous|.R|/<anonymous>.Base.Base|(R|/B.B|())
-            R|<local>/base|.R|/<anonymous>.Base.baseFun|()
-            R|<local>/base|.R|/<anonymous>.Base.property|
-            (this@R|/anonymous|, R|<local>/base|).R|/anonymous.hoo|()
+            this@R|/anonymous|.R|<local>/base|.R|/<anonymous>.Base.baseFun|()
+            this@R|/anonymous|.R|<local>/base|.R|/<anonymous>.Base.property|
+            (this@R|/anonymous|, this@R|/anonymous|.R|<local>/base|).R|/anonymous.hoo|()
         }
 
         public[local] final fun caseForChild(): R|kotlin/Unit| {
             lval child: R|<anonymous>.Child| = this@R|/anonymous|.R|/<anonymous>.Child.Child|(R|/B.B|())
-            R|<local>/child|.R|/<anonymous>.Base.baseFun|()
-            R|<local>/child|.R|/<anonymous>.Base.property|
-            R|<local>/child|.R|/<anonymous>.Child.foo|()
-            (this@R|/anonymous|, R|<local>/child|).R|/anonymous.hoo|()
-            (this@R|/anonymous|, R|<local>/child|).R|/anonymous.voo|()
+            this@R|/anonymous|.R|<local>/child|.R|/<anonymous>.Base.baseFun|()
+            this@R|/anonymous|.R|<local>/child|.R|/<anonymous>.Base.property|
+            this@R|/anonymous|.R|<local>/child|.R|/<anonymous>.Child.foo|()
+            (this@R|/anonymous|, this@R|/anonymous|.R|<local>/child|).R|/anonymous.hoo|()
+            (this@R|/anonymous|, this@R|/anonymous|.R|<local>/child|).R|/anonymous.voo|()
         }
 
     }
@@ -106,16 +106,16 @@ FILE: objectInnerClass.kt
 
         public final fun caseForBase(): R|kotlin/Unit| {
             lval base: R|Case2.Base| = this@R|/Case2|.R|/Case2.Base.Base|(R|/B.B|())
-            R|<local>/base|.R|/Case2.Base.baseFun|()
-            R|<local>/base|.R|/Case2.Base.property|
-            (this@R|/Case2|, R|<local>/base|).R|/Case2.hoo|()
+            this@R|/Case2|.R|<local>/base|.R|/Case2.Base.baseFun|()
+            this@R|/Case2|.R|<local>/base|.R|/Case2.Base.property|
+            (this@R|/Case2|, this@R|/Case2|.R|<local>/base|).R|/Case2.hoo|()
         }
 
         public final fun caseForChild(): R|kotlin/Unit| {
             lval child: R|anonymous| = this@R|/Case2|.R|/Case2.x|
-            R|<local>/child|.R|/Case2.Base.baseFun|()
-            R|<local>/child|.R|/Case2.Base.property|
-            (this@R|/Case2|, R|<local>/child|).R|/Case2.hoo|()
+            this@R|/Case2|.R|<local>/child|.R|/Case2.Base.baseFun|()
+            this@R|/Case2|.R|<local>/child|.R|/Case2.Base.property|
+            (this@R|/Case2|, this@R|/Case2|.R|<local>/child|).R|/Case2.hoo|()
         }
 
     }
@@ -170,18 +170,18 @@ FILE: objectInnerClass.kt
 
             public[local] final fun caseForBase(): R|kotlin/Unit| {
                 lval base: R|Case3.<anonymous>.Base| = R|/Case3.<anonymous>.Base.Base|(R|/B.B|())
-                R|<local>/base|.R|/Case3.<anonymous>.Base.baseFun|()
-                R|<local>/base|.R|/Case3.<anonymous>.Base.property|
-                (this@R|/anonymous|, R|<local>/base|).R|/anonymous.hoo|()
+                this@R|/anonymous|.R|<local>/base|.R|/Case3.<anonymous>.Base.baseFun|()
+                this@R|/anonymous|.R|<local>/base|.R|/Case3.<anonymous>.Base.property|
+                (this@R|/anonymous|, this@R|/anonymous|.R|<local>/base|).R|/anonymous.hoo|()
             }
 
             public[local] final fun caseForChild(): R|kotlin/Unit| {
                 lval child: R|Case3.<anonymous>.Child| = R|/Case3.<anonymous>.Child.Child|(R|/B.B|())
-                R|<local>/child|.R|/Case3.<anonymous>.Base.baseFun|()
-                R|<local>/child|.R|/Case3.<anonymous>.Base.property|
-                R|<local>/child|.R|/Case3.<anonymous>.Child.foo|()
-                (this@R|/anonymous|, R|<local>/child|).R|/anonymous.hoo|()
-                (this@R|/anonymous|, R|<local>/child|).R|/anonymous.voo|()
+                this@R|/anonymous|.R|<local>/child|.R|/Case3.<anonymous>.Base.baseFun|()
+                this@R|/anonymous|.R|<local>/child|.R|/Case3.<anonymous>.Base.property|
+                this@R|/anonymous|.R|<local>/child|.R|/Case3.<anonymous>.Child.foo|()
+                (this@R|/anonymous|, this@R|/anonymous|.R|<local>/child|).R|/anonymous.hoo|()
+                (this@R|/anonymous|, this@R|/anonymous|.R|<local>/child|).R|/anonymous.voo|()
             }
 
         }

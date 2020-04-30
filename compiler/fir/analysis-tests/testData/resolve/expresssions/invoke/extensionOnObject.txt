@@ -13,7 +13,7 @@ FILE: extensionOnObject.kt
         public final fun f(op: R|X.() -> kotlin/Unit|): R|kotlin/Unit| {
             R|<local>/op|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(Q|X|)
             lval x: R|X| = Q|X|
-            R|<local>/op|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/x|)
+            R|<local>/op|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Y|.R|<local>/x|)
         }
 
     }

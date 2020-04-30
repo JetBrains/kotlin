@@ -18,12 +18,12 @@ FILE: nestedClassNameClash.kt
 
         public final fun test_0(): R|kotlin/Unit| {
             lval result: R|Foo.Result| = R|/materialize|<R|Foo.Result|>()
-            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+            this@R|/Foo|.R|/Foo.saveResult|(this@R|/Foo|.R|<local>/result|)
         }
 
         public final fun test_1(): R|kotlin/Unit| {
             lval results: R|kotlin/collections/List<Foo.Result>| = R|/listOf|<R|Foo.Result|>()
-            this@R|/Foo|.R|/Foo.saveResults|(R|<local>/results|)
+            this@R|/Foo|.R|/Foo.saveResults|(this@R|/Foo|.R|<local>/results|)
         }
 
         public final fun test_2(results: R|kotlin/collections/List<Foo.Result>|): R|kotlin/Unit| {
@@ -36,12 +36,12 @@ FILE: nestedClassNameClash.kt
 
         public final fun test_4(): R|kotlin/Unit| {
             lval result: R|Foo.Result| = this@R|/Foo|.R|/Foo.getResult|()
-            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+            this@R|/Foo|.R|/Foo.saveResult|(this@R|/Foo|.R|<local>/result|)
         }
 
         public final fun test_5(): R|kotlin/Unit| {
             lval result: R|Foo.Result| = R|/Foo.Result.Result|()
-            this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
+            this@R|/Foo|.R|/Foo.saveResult|(this@R|/Foo|.R|<local>/result|)
         }
 
         private final fun getResult(): R|Foo.Result| {

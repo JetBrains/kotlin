@@ -33,7 +33,7 @@ FILE: delegateWithLambda.kt
                 }
             }
 
-            ^ R|<local>/y|
+            ^ this@R|/Test|.R|<local>/y|
         }
         )
             public get(): R|kotlin/String| {
