@@ -579,6 +579,7 @@ tasks {
 
     register("firAllTest") {
         dependsOn(
+            ":dist",
             ":compiler:fir:raw-fir:psi2fir:test",
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
