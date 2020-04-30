@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -1274,7 +1275,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
                     diType        = element.type.diType(context, codegen.llvmTargetData),
-                    name          = element.descriptor.name,
+                    name          = element.debugNameConversion(),
                     file          = file,
                     line          = locationInfo.line,
                     location      = location)
@@ -1283,7 +1284,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
                     diType        = element.type.diType(context, codegen.llvmTargetData),
-                    name          = element.descriptor.name,
+                    name          = element.debugNameConversion(),
                     argNo         = function.allParameters.indexOf(element) + 1,
                     file          = file,
                     line          = locationInfo.line,
@@ -2487,6 +2488,24 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             code()
         }
     }
+}
+
+private fun IrValueParameter.debugNameConversion() = descriptor.name.debugNameConversion()
+
+private fun IrVariable.debugNameConversion() = descriptor.name.debugNameConversion()
+
+private val thisName = Name.special("<this>")
+private val underscoreThisName = Name.identifier("_this")
+/**
+ * HACK: this is workaround for GH-2316, to let IDE some how operate with this.
+ * We're experiencing issue with libclang which is used as compiler of expression in lldb
+ * for current state support Kotlin in lldb:
+ *   1. <this> isn't accepted by libclang as valid variable name.
+ *   2. this is reserved name and compiled in special way.
+ */
+private fun Name.debugNameConversion(): Name = when(this) {
+    thisName -> underscoreThisName
+    else -> this
 }
 
 class NoContextFound : Throwable()
