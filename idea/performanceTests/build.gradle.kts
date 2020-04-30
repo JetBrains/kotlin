@@ -67,7 +67,14 @@ javadocJar()
 apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
 
 projectTest(taskName = "performanceTest") {
-    classpath += files("${System.getenv("ASYNC_PROFILER_HOME")}/build/async-profiler.jar")
+    val currentOs = org.gradle.internal.os.OperatingSystem.current()
+
+    if (!currentOs.isWindows) {
+        System.getenv("ASYNC_PROFILER_HOME")?.let { asyncProfilerHome ->
+            classpath += files("$asyncProfilerHome/build/async-profiler.jar")
+        }
+    }
+
     workingDir = rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
@@ -80,6 +87,19 @@ projectTest(taskName = "performanceTest") {
         "-XX:+UseCompressedOops",
         "-XX:+UseConcMarkSweepGC"
     )
+
+    System.getenv("YOURKIT_PROFILER_HOME")?.let {yourKitHome ->
+        when {
+            currentOs.isLinux -> {
+                jvmArgs("-agentpath:$yourKitHome/bin/linux-x86-64/libyjpagent.so")
+                classpath += files("$yourKitHome/lib/yjp-controller-api-redist.jar")
+            }
+            currentOs.isMacOsX -> {
+                jvmArgs("-agentpath:$yourKitHome/Contents/Resources/bin/mac/libyjpagent.dylib")
+                classpath += files("$yourKitHome/Contents/Resources/lib/yjp-controller-api-redist.jar")
+            }
+        }
+    }
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
