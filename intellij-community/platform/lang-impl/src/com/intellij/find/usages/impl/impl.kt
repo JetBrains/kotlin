@@ -13,7 +13,9 @@ import com.intellij.openapi.util.ClassExtension
 import com.intellij.psi.PsiFile
 import com.intellij.usages.Usage
 import com.intellij.util.Query
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Internal
 fun symbolSearchTargets(file: PsiFile, offset: Int): List<SearchTarget> {
   val targetSymbols = targetSymbols(file, offset)
   if (targetSymbols.isEmpty()) {
@@ -56,10 +58,11 @@ internal fun symbolUsageHandler(project: Project, symbol: Symbol): UsageHandler<
   return DefaultSymbolUsageHandler(project, symbol)
 }
 
+@ApiStatus.Internal
 fun <O> buildQuery(project: Project,
-                            target: SearchTarget,
-                            handler: UsageHandler<O>,
-                            allOptions: AllSearchOptions<O>): Query<out Usage> {
+                   target: SearchTarget,
+                   handler: UsageHandler<O>,
+                   allOptions: AllSearchOptions<O>): Query<out Usage> {
   val (options, textSearch, customOptions) = allOptions
   val usageQuery = handler.buildSearchQuery(options, customOptions)
   if (textSearch != true) {

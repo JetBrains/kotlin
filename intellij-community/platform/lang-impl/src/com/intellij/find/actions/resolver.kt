@@ -57,7 +57,7 @@ internal fun findShowUsages(project: Project, dataContext: DataContext, popupTit
   }
 }
 
-fun allTargets(project: Project, targets: Collection<SearchTarget>, oldTargets: Array<out UsageTarget>): List<TargetVariant> {
+private fun allTargets(project: Project, targets: Collection<SearchTarget>, oldTargets: Array<out UsageTarget>): List<TargetVariant> {
   val allTargets = ArrayList<TargetVariant>()
   targets.mapTo(allTargets, TargetVariant::New)
   for (usageTarget in oldTargets) {
