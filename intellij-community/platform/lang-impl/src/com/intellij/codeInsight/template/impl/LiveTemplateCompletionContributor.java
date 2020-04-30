@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.completion.*;
@@ -60,7 +60,7 @@ public class LiveTemplateCompletionContributor extends CompletionContributor imp
                                     @NotNull CompletionResultSet result) {
         ProgressManager.checkCanceled();
         final PsiFile file = parameters.getPosition().getContainingFile();
-        if (file instanceof PsiPlainTextFile && parameters.getEditor().getComponent().getParent() instanceof EditorTextField) {
+        if (file instanceof PsiPlainTextFile && EditorTextField.managesEditor(parameters.getEditor())) {
           return;
         }
 
