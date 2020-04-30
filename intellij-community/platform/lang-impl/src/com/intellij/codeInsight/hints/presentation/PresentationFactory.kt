@@ -345,6 +345,30 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
     return SequencePresentation(seq)
   }
 
+  fun button(default: InlayPresentation, clicked: InlayPresentation, clickListener: ClickListener?, hoverListener: HoverListener?) : InlayPresentation {
+    val defaultOrClicked: BiStatePresentation = object : BiStatePresentation({ default }, { clicked }, false) {
+      override val width: Int
+        get() = max(default.width, clicked.width)
+
+      override val height: Int
+        get() = max(default.height, clicked.height)
+    }
+    return object : StaticDelegatePresentation(defaultOrClicked) {
+      override fun mouseClicked(event: MouseEvent, translated: Point) {
+        clickListener?.onClick(event, translated)
+        defaultOrClicked.flipState()
+      }
+
+      override fun mouseMoved(event: MouseEvent, translated: Point) {
+        hoverListener?.onHover(event, translated)
+      }
+
+      override fun mouseExited() {
+        hoverListener?.onHoverFinished()
+      }
+    }
+  }
+
   private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation =
     AttributesTransformerPresentation(base, transformer)
 
