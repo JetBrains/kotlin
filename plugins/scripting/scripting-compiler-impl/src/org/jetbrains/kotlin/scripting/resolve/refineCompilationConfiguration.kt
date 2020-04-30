@@ -135,6 +135,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
 
         override val javaHome: File?
             get() = configuration?.get(ScriptCompilationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jvm.jdkHome)
+                ?: configuration?.get(ScriptingHostConfiguration.jvm.jdkHome)
 
         override val defaultImports: List<String>
             get() = configuration?.get(ScriptCompilationConfiguration.defaultImports).orEmpty()
