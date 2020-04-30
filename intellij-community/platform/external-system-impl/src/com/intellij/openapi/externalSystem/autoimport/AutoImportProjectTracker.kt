@@ -175,9 +175,16 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
 
   private fun registerProjectAwareDisposable(projectAware: ExternalSystemProjectAware) {
     val projectId = projectAware.projectId
-    val projectAwareDisposable: Disposable? = if (projectAware is Disposable) projectAware
-    else ExternalSystemApiUtil.getManager(projectId.systemId)?.run {
-      ExtensionPointUtil.createExtensionDisposable(this, ExternalSystemManager.EP_NAME)
+    val projectAwareDisposable: Disposable?
+    if (projectAware is Disposable) {
+      projectAwareDisposable = projectAware
+    }
+    else {
+      projectAwareDisposable = ExternalSystemApiUtil.getManager(projectId.systemId)?.run {
+        val disposable = ExtensionPointUtil.createExtensionDisposable(this, ExternalSystemManager.EP_NAME)
+        Disposer.register(project, disposable)
+        return@run disposable
+      }
     }
     if (projectAwareDisposable != null) {
       Disposer.register(projectAwareDisposable, Disposable { remove(projectId) })
