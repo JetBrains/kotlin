@@ -2090,6 +2090,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/manyDefaultsAndVararg.kt");
             }
 
+            @TestMetadata("noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt")
+            public void testNoAdaptedReferencesIfNoOptimizedReferencesEnabled() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt");
+            }
+
             @TestMetadata("noReflectionForAdaptedCallableReferences.kt")
             public void testNoReflectionForAdaptedCallableReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noReflectionForAdaptedCallableReferences.kt");

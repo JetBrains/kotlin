@@ -124,10 +124,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val useOptimizedSuperClass =
             context.state.generateOptimizedCallableReferenceSuperClasses
 
-        private val adaptedReferenceOriginalTarget: IrFunction?
-        private val adapteeCall: IrFunctionAccessExpression?
-
-        init {
+        private val adapteeCall: IrFunctionAccessExpression? =
             if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
                 // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
                 // applied to a call. That call's target is the original function which we need to get owner/name/signature.
@@ -144,24 +141,26 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 if (call !is IrFunctionAccessExpression) {
                     throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${callee.render()}")
                 }
-                adapteeCall = call
-                adaptedReferenceOriginalTarget = call.symbol.owner
+                call
             } else {
-                adapteeCall = null
-                adaptedReferenceOriginalTarget = null
+                null
             }
-        }
+
+        private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
+        private val isAdaptedReference = adaptedReferenceOriginalTarget != null
 
         private val needToGenerateSamEqualsHashCodeMethods =
             samSuperType != null &&
                     samSuperType.getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
-                    (adaptedReferenceOriginalTarget != null || !isLambda)
+                    (isAdaptedReference || !isLambda)
 
         private val superType =
             samSuperType ?: when {
-                adaptedReferenceOriginalTarget != null -> context.ir.symbols.adaptedFunctionReference
                 isLambda -> context.ir.symbols.lambdaClass
-                useOptimizedSuperClass -> context.ir.symbols.functionReferenceImpl
+                useOptimizedSuperClass -> when {
+                    isAdaptedReference -> context.ir.symbols.adaptedFunctionReference
+                    else -> context.ir.symbols.functionReferenceImpl
+                }
                 else -> context.ir.symbols.functionReference
             }.defaultType
 
@@ -258,7 +257,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
             SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) { receiver ->
                 val internalClass = when {
-                    adaptedReferenceOriginalTarget != null -> backendContext.ir.symbols.adaptedFunctionReference
+                    isAdaptedReference -> backendContext.ir.symbols.adaptedFunctionReference
                     else -> backendContext.ir.symbols.functionReferenceImpl
                 }
                 val constructor = internalClass.owner.constructors.single {
@@ -299,7 +298,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     context.irBuiltIns.anyClass.owner.constructors.single()
                 } else {
                     val expectedArity =
-                        if (isLambda && adaptedReferenceOriginalTarget == null) 1
+                        if (isLambda && !isAdaptedReference) 1
                         else 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
                     superType.getClass()!!.constructors.single {
                         it.valueParameters.size == expectedArity
@@ -327,12 +326,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             if (boundReceiver != null) {
                 call.putValueArgument(index++, generateBoundReceiver())
             }
-            val callableReferenceTarget = when {
-                adaptedReferenceOriginalTarget != null -> adaptedReferenceOriginalTarget
-                !isLambda && useOptimizedSuperClass -> callee
-                else -> null
-            }
-            if (callableReferenceTarget != null) {
+            if (!isLambda && useOptimizedSuperClass) {
+                val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
                 val owner = calculateOwnerKClass(callableReferenceTarget.parent, backendContext)
                 call.putValueArgument(index++, kClassToJavaClass(owner, backendContext))
                 call.putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
