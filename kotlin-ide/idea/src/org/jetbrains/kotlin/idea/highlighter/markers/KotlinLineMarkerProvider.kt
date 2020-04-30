@@ -144,7 +144,7 @@ interface TestableLineMarkerNavigator {
     fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor?
 }
 
-private val SUBCLASSED_CLASS = MarkerType(
+val SUBCLASSED_CLASS = MarkerType(
     "SUBCLASSED_CLASS",
     { getPsiClass(it)?.let(::getSubclassedClassTooltip) },
     object : LineMarkerNavigator() {
@@ -155,7 +155,7 @@ private val SUBCLASSED_CLASS = MarkerType(
         }
     })
 
-private val OVERRIDDEN_FUNCTION = object : MarkerType(
+val OVERRIDDEN_FUNCTION = object : MarkerType(
     "OVERRIDDEN_FUNCTION",
     { getPsiMethod(it)?.let(::getOverriddenMethodTooltip) },
     object : LineMarkerNavigator() {
@@ -176,7 +176,7 @@ private val OVERRIDDEN_FUNCTION = object : MarkerType(
     }
 }
 
-private val OVERRIDDEN_PROPERTY = object : MarkerType(
+val OVERRIDDEN_PROPERTY = object : MarkerType(
     "OVERRIDDEN_PROPERTY",
     { it?.let { getOverriddenPropertyTooltip(it.parent as KtNamedDeclaration) } },
     object : LineMarkerNavigator() {

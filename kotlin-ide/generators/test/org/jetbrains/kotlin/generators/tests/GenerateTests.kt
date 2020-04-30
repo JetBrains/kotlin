@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.*
+import org.jetbrains.kotlin.idea.codeInsight.codevision.AbstractKotlinCodeVisionProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
@@ -802,6 +803,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractPostfixTemplateProviderTest> {
             model("codeInsight/postfix")
+        }
+
+        testClass<AbstractKotlinCodeVisionProviderTest> {
+            model("codeInsight/codeVision")
         }
 
         testClass<AbstractScriptConfigurationHighlightingTest> {

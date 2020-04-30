@@ -3378,6 +3378,9 @@
     <stripTrailingSpacesFilterFactory implementation="org.jetbrains.kotlin.idea.editor.KotlinStripTrailingSpacesFilterFactory"/>
 
     <navbar implementation="org.jetbrains.kotlin.idea.navigationToolbar.KotlinNavBarModelExtension" order="first"/>
+
+    <statistics.counterUsagesCollector groupId="kotlin.code.vision" version="1"/>
+    <codeInsight.inlayProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.codevision.KotlinCodeVisionProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
