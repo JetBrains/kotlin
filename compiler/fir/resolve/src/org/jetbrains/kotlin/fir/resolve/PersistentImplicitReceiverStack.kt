@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.context
+package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
-import org.jetbrains.kotlin.fir.resolve.PersistentSetMultimap
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
