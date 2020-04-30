@@ -28,8 +28,8 @@ class ContinuationHolder private constructor(val context: DefaultExecutionContex
                 if (coroutineStackFrame != null)
                     consumer.add(coroutineStackFrame)
             }
-            val lastRestoredFrame = continuationStack.coroutineStack.last()
-            return findCoroutineInformation(lastRestoredFrame.baseContinuationImpl.coroutineOwner, consumer)
+            val lastRestoredFrame = continuationStack.coroutineStack.lastOrNull()
+            return findCoroutineInformation(lastRestoredFrame?.baseContinuationImpl?.coroutineOwner, consumer)
         } catch (e: Exception) {
             log.error("Error while looking for stack frame.", e)
         }
