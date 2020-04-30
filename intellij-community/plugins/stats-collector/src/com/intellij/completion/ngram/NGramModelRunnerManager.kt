@@ -6,13 +6,14 @@ import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.intellij.psi.SmartPsiElementPointer
 
 class NGramModelRunnerManager {
 
   private val myModelRunners: MutableMap<Language, ModelRunnerWithCache> = mutableMapOf()
 
-  fun processFile(file: PsiFile, language: Language) {
-    myModelRunners.getOrPut(language, { ModelRunnerWithCache() }).processFile(file)
+  fun processFile(filePointer: SmartPsiElementPointer<PsiFile>, language: Language) {
+    myModelRunners.getOrPut(language, { ModelRunnerWithCache() }).processFile(filePointer)
   }
 
   fun getModelRunnerForLanguage(language: Language): ModelRunner? {

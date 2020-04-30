@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.SmartPointerManager
 
 class NGramFileListener(private val project: Project) : FileEditorManagerListener.Before {
 
@@ -16,9 +17,11 @@ class NGramFileListener(private val project: Project) : FileEditorManagerListene
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return
     val language = psiFile.language
     if (NGram.isSupported(language)) {
+      val filePointer = SmartPointerManager.createPointer(psiFile)
       ApplicationManager.getApplication().executeOnPooledThread {
         DumbService.getInstance(project).runReadActionInSmartMode {
-          ServiceManager.getService(project, NGramModelRunnerManager::class.java).processFile(psiFile, language)
+          ServiceManager.getService(project, NGramModelRunnerManager::class.java).processFile(filePointer, language)
+          SmartPointerManager.getInstance(project).removePointer(filePointer)
         }
       }
     }
