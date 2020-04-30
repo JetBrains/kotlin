@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.index.PrebuiltIndexProvider;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
@@ -135,17 +136,18 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       @Nullable
       public SerializedStubTree computeValue(@NotNull final FileContent inputData, @NotNull StubBuilderType type) {
         try {
-          SerializedStubTree result = null;
           if (Registry.is("use.prebuilt.indices")) {
-            result = findPrebuiltSerializedStubTree(inputData);
+            SerializedStubTree prebuiltTree = findPrebuiltSerializedStubTree(inputData);
+            if (prebuiltTree != null && PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
+              assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
+              return prebuiltTree;
+            }
           }
-          if (result == null) {
-            result = buildSerializedStubTree(inputData, type);
+          SerializedStubTree builtTree = buildSerializedStubTree(inputData, type);
+          if (builtTree != null && DebugAssertions.DEBUG) {
+            assertRebuiltTreeMatchesActualTree(inputData, type, builtTree);
           }
-          if (result != null && DebugAssertions.DEBUG) {
-            assertRebuiltTreeMatchesActualTree(inputData, type, result);
-          }
-          return result;
+          return builtTree;
         }
         catch (ProcessCanceledException pce) {
           throw pce;
