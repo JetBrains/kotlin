@@ -13,6 +13,8 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassConstrPrim() { doTest("class A(b: Int, c: String)") }
 
+    fun testClassConstrPrimModifier() { doTest("class '_ private constructor()") }
+
     fun testClassConstrPrimDiffType() { doTest("class A(b: Int, c: String)") }
 
     fun testClassConstrPrimDefaultValue() { doTest("class '_(b: Int, c: String = \"a\")") }
@@ -24,6 +26,20 @@ class KotlinSSClassTest : KotlinSSTest() {
                 var c: String? = null
 
                 constructor(b: Int, c: String) : this(b) {
+                    this.c = c
+                }
+            }
+            """
+        )
+    }
+
+    fun testClassConstrSecModifier() {
+        doTest(
+            """
+            class '_(val b: Int) {
+                var c: String? = null
+
+                private constructor(b: Int, c: String) : this(b) {
                     this.c = c
                 }
             }

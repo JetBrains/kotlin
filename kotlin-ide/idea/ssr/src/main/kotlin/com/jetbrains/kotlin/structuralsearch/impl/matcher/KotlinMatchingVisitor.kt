@@ -279,7 +279,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
         val other = getTreeElement<KtSecondaryConstructor>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
+        myMatchingVisitor.result = myMatchingVisitor.match(constructor.modifierList, other.modifierList)
+                && myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(constructor.getDelegationCallOrNull(), other.getDelegationCallOrNull())
                 && myMatchingVisitor.match(constructor.bodyExpression, other.bodyExpression)
@@ -287,7 +288,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
         val other = getTreeElement<KtPrimaryConstructor>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
+        myMatchingVisitor.result = myMatchingVisitor.match(constructor.modifierList, other.modifierList)
+                && myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
     }
 
