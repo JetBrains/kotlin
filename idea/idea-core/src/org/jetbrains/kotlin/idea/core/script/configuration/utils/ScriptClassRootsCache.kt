@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.utils
 
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.NonClasspathDirectoriesScope
-import com.intellij.util.containers.ConcurrentFactoryMap
+import com.intellij.psi.search.NonClasspathDirectoriesScope.compose
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.LOG
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.classpathEntryToVfs
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
@@ -28,7 +29,8 @@ class ScriptClassRootsCache(
     val scripts: Map<String, LightScriptInfo>,
     val classes: Set<String>,
     val sources: Set<String>,
-    val sdks: Map<String, Sdk?>
+    val sdks: Map<String, Sdk?>,
+    private val nonModulesSdks: Collection<Sdk>
 ) {
     abstract class LightScriptInfo {
         @Volatile
@@ -37,15 +39,15 @@ class ScriptClassRootsCache(
         abstract fun buildConfiguration(): ScriptCompilationConfigurationWrapper?
     }
 
+    class DirectScriptInfo(val result: ScriptCompilationConfigurationWrapper) : LightScriptInfo() {
+        override fun buildConfiguration(): ScriptCompilationConfigurationWrapper = result
+    }
+
     class HeavyScriptInfo(
         val scriptConfiguration: ScriptCompilationConfigurationWrapper,
         val classFilesScope: GlobalSearchScope,
         val sdk: Sdk?
     )
-
-    class DirectScriptInfo(val result: ScriptCompilationConfigurationWrapper) : LightScriptInfo() {
-        override fun buildConfiguration(): ScriptCompilationConfigurationWrapper = result
-    }
 
     class Builder(val project: Project) {
         private val defaultSdk = getScriptDefaultSdk()
@@ -55,6 +57,19 @@ class ScriptClassRootsCache(
 
         val classes = mutableSetOf<String>()
         val sources = mutableSetOf<String>()
+
+        fun build(): ScriptClassRootsCache {
+            val nonIndexedSdks = collectNonIndexedSdks()
+            return ScriptClassRootsCache(scripts, classes, sources, sdks, nonIndexedSdks)
+        }
+
+        fun collectNonIndexedSdks(): MutableSet<Sdk> {
+            val nonIndexedSdks = sdks.values.filterNotNullTo(mutableSetOf())
+            ModuleManager.getInstance(project).modules.map {
+                nonIndexedSdks.remove(ModuleRootManager.getInstance(it).sdk)
+            }
+            return nonIndexedSdks
+        }
 
         fun add(
             vFile: VirtualFile,
@@ -68,7 +83,12 @@ class ScriptClassRootsCache(
             scripts[vFile.path] = DirectScriptInfo(configuration)
         }
 
-        fun build() = ScriptClassRootsCache(scripts, classes, sources, sdks)
+        fun add(other: Builder) {
+            classes.addAll(other.classes)
+            sources.addAll(other.sources)
+            sdks.putAll(other.sdks)
+            scripts.putAll(other.scripts)
+        }
 
         fun addSdk(javaHome: File?): Sdk? {
             if (javaHome == null) return defaultSdk
@@ -139,41 +159,35 @@ class ScriptClassRootsCache(
         val roots = configuration.dependenciesClassPath
         val sdk = sdks[configuration.javaHome?.canonicalPath]
 
-        @Suppress("FoldInitializerAndIfToElvis")
-        if (sdk == null) {
-            return HeavyScriptInfo(
-                configuration,
-                NonClasspathDirectoriesScope.compose(ScriptConfigurationManager.toVfsRoots(roots)),
-                null
-            )
+        return if (sdk == null) {
+            HeavyScriptInfo(configuration, compose(toVfsRoots(roots)), null)
+        } else {
+            val sdkClasses = sdk.rootProvider.getFiles(OrderRootType.CLASSES).toList()
+            HeavyScriptInfo(configuration, compose(sdkClasses + toVfsRoots(roots)), sdk)
         }
-
-        return HeavyScriptInfo(
-            configuration,
-            NonClasspathDirectoriesScope.compose(
-                sdk.rootProvider.getFiles(OrderRootType.CLASSES).toList() + ScriptConfigurationManager.toVfsRoots(roots)
-            ),
-            sdk
-        )
     }
 
     val firstScriptSdk: Sdk? = sdks.values.firstOrNull()
 
-    val allDependenciesClassFiles: List<VirtualFile> by lazy {
-        classes.mapNotNull { StandardFileSystems.local().findFileByPath(it) }
+    val allDependenciesClassFiles: List<VirtualFile>
+
+    val allDependenciesSources: List<VirtualFile>
+
+    init {
+        allDependenciesClassFiles = mutableSetOf<VirtualFile>().also { result ->
+            nonModulesSdks.forEach { result.addAll(it.rootProvider.getFiles(OrderRootType.CLASSES)) }
+            classes.mapNotNull { classpathEntryToVfs(File(it)) }
+        }.toList()
+
+        allDependenciesSources = mutableSetOf<VirtualFile>().also { result ->
+            nonModulesSdks.forEach { result.addAll(it.rootProvider.getFiles(OrderRootType.SOURCES)) }
+            sources.mapNotNullTo(result) { classpathEntryToVfs(File(it)) }
+        }.toList()
     }
 
-    val allDependenciesSources: List<VirtualFile> by lazy {
-        sources.mapNotNull { StandardFileSystems.local().findFileByPath(it) }
-    }
+    val allDependenciesClassFilesScope = compose(allDependenciesClassFiles)
 
-    val allDependenciesClassFilesScope by lazy {
-        NonClasspathDirectoriesScope.compose(allDependenciesClassFiles)
-    }
-
-    val allDependenciesSourcesScope by lazy {
-        NonClasspathDirectoriesScope.compose(allDependenciesSources)
-    }
+    val allDependenciesSourcesScope = compose(allDependenciesSources)
 
     fun getScriptConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? =
         getHeavyScriptInfo(file.path)?.scriptConfiguration
@@ -184,10 +198,12 @@ class ScriptClassRootsCache(
     fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
         getHeavyScriptInfo(file.path)?.classFilesScope ?: GlobalSearchScope.EMPTY_SCOPE
 
-    fun hasInvalidSdk(project: Project) =
-        sdks.any { (home, sdk) ->
-            Builder(project).addSdk(File(home)) != sdk
-        }
+    fun hasInvalidSdk(project: Project): Boolean {
+        val builder = Builder(project)
+        if (sdks.any { (home, sdk) -> builder.addSdk(File(home)) != sdk }) return true
+        if (builder.collectNonIndexedSdks() == nonModulesSdks) return false
+        return false
+    }
 
     fun diff(old: ScriptClassRootsCache): Updates =
         Updates(

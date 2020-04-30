@@ -57,8 +57,7 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
             ?: default.isConfigurationLoadingInProgress(file)
 
     @Volatile
-    private var classpathRoots: ScriptClassRootsCache =
-        ScriptClassRootsStorage.getInstance(project).load()
+    private var classpathRoots: ScriptClassRootsCache = recreateRootsCache()
 
     fun getLightScriptInfo(file: String): ScriptClassRootsCache.LightScriptInfo? =
         classpathRoots.getLightScriptInfo(file)

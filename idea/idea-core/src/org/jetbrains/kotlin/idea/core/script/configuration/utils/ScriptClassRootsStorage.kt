@@ -9,6 +9,13 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 
+/**
+ * Actually, this storage is required only for before Gradle 6.0.
+ * For projects starting from Gradle 6.0, [org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider]
+ * will also store all roots in FS, and will overwrite this one shrotly after start.
+ *
+ * Btw, this is still useful for projects without custom scripting support.
+ */
 @State(
     name = "ScriptClassRootsStorage",
     storages = [Storage(StoragePathMacros.CACHE_FILE)]
@@ -26,19 +33,18 @@ class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<S
         XmlSerializerUtil.copyBean(state, this)
     }
 
-    fun save(roots: ScriptClassRootsCache) {
+    fun save(roots: ScriptClassRootsCache.Builder) {
         classpath = roots.classes
         sources = roots.sources
         sdks = roots.sdks.keys.toSet()
     }
 
-    fun load(): ScriptClassRootsCache =
-        ScriptClassRootsCache.Builder(project).let {
-            it.sources.addAll(sources)
-            it.classes.addAll(classpath)
-            sdks.forEach(it::addSdkByName)
-            it.build()
-        }
+    fun load(builder: ScriptClassRootsCache.Builder) {
+        builder.sources.addAll(sources)
+        builder.classes.addAll(classpath)
+        sdks.forEach(builder::addSdkByName)
+        builder.build()
+    }
 
     companion object {
         fun getInstance(project: Project): ScriptClassRootsStorage =

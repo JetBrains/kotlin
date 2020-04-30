@@ -24,8 +24,6 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.slf4j.LoggerFactory
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
@@ -110,20 +108,28 @@ fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings
     return gradleSettings.getLinkedProjectsSettings()
 }
 
-class RootsIndex<T : Any> {
+class RootsIndex {
     private val log = LoggerFactory.getLogger(RootsIndex::class.java)
 
-    internal val map = HashMap<String, T>()
-    val values: Collection<T>
-        get() = map.values
+    private val buildRoots = HashMap<String, GradleBuildRoot>()
+    private val scripts = HashMap<String, GradleBuildRoot>()
+    val values: Collection<GradleBuildRoot>
+        get() = buildRoots.values
 
     @Synchronized
-    operator fun get(dir: String) = map[dir]
+    fun rebuildProjectRoots() {
+        values.forEach {
+            it.
+        }
+    }
 
     @Synchronized
-    fun findRoot(path: String): T? {
-        var max: Pair<String, T>? = null
-        map.entries.forEach {
+    fun getBuildRoot(dir: String) = buildRoots[dir]
+
+    @Synchronized
+    fun findNearestRoot(path: String): GradleBuildRoot? {
+        var max: Pair<String, GradleBuildRoot>? = null
+        buildRoots.entries.forEach {
             if (path.startsWith(it.key) && (max == null || it.key.length > max!!.first.length)) {
                 max = it.key to it.value
             }
@@ -133,12 +139,14 @@ class RootsIndex<T : Any> {
 
     @Synchronized
     operator fun set(prefix: String, value: T) {
-        val old = map.put(prefix, value)
+        val old = buildRoots.put(prefix, value)
+        rebuildProjectRoots()
         log.info("{}: {} -> {}", prefix, old, value)
     }
 
     @Synchronized
-    fun remove(prefix: String) = map.remove(prefix)?.also {
+    fun remove(prefix: String) = buildRoots.remove(prefix)?.also {
+        rebuildProjectRoots()
         log.info("{}: removed", prefix)
     }
 }

@@ -415,7 +415,19 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
     }
 
     fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
-        cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
+        // todo: drop the hell below
+        // keep this one only:
+        // cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
+
+        // own builder for saving to storage
+        val ownBuilder = ScriptClassRootsCache.Builder(project)
+        val rootsStorage = ScriptClassRootsStorage.getInstance(project)
+
+        rootsStorage.load(ownBuilder)
+        cache.allApplied().forEach { (vFile, configuration) -> ownBuilder.add(vFile, configuration) }
+        rootsStorage.save(ownBuilder)
+
+        builder.add(ownBuilder)
     }
 }
 

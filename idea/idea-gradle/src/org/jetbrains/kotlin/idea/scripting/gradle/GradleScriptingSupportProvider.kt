@@ -80,7 +80,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         if (!isGradleKotlinScript(file)) return null
 
         val path = file.localPath
-        val found = roots.findRoot(path)
+        val found = roots.findNearestRoot(path)
         if (found != null) return found
 
         return findNewScriptBuildRoot(path)
@@ -180,7 +180,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         }
 
     fun markImportingInProgress(workingDir: String) {
-        val linked = roots[workingDir] as? GradleBuildRoot.Linked
+        val linked = roots.getBuildRoot(workingDir) as? GradleBuildRoot.Linked
         if (linked != null) {
             linked.importing = true
         } else {
@@ -196,7 +196,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     fun update(build: KotlinDslGradleBuildSync) {
         val settings = getGradleProjectSettings(build.workingDir) ?: return
 
-        (roots[build.workingDir] as? GradleBuildRoot.Linked)?.importing = false
+        (roots.getBuildRoot(build.workingDir) as? GradleBuildRoot.Linked)?.importing = false
 
         if (!kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().version)) {
             roots[build.workingDir] = GradleBuildRoot.Legacy(build.workingDir)
@@ -205,7 +205,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
 
         // fast path for linked gradle builds without .gradle.kts support
         if (build.models.isEmpty()) {
-            val root = roots.findRoot(build.workingDir) ?: return
+            val root = roots.findNearestRoot(build.workingDir) ?: return
             if (root is GradleBuildRoot.Imported && root.data.models.isEmpty()) return
         }
 
@@ -241,7 +241,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             data
         )
 
-        val oldSupport = roots.findRoot(externalProjectPath)
+        val oldSupport = roots.findNearestRoot(externalProjectPath)
         if (oldSupport != null) {
             hideNotificationForProjectImport(project)
         }
