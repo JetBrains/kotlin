@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRoot
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
@@ -30,6 +31,10 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
     private val plugins = ScriptingSupport.Provider.EPN.getPoint(project).extensionList
 
     val default = DefaultScriptingSupport(this)
+
+    fun tryGetScriptDefinitionFast(locationId: String): ScriptDefinition? {
+        return classpathRoots.getLightScriptInfo(locationId)?.definition
+    }
 
     private fun getOrLoadConfiguration(
         virtualFile: VirtualFile,
