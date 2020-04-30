@@ -28,8 +28,6 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
 
     class Top(depth: Int) : WithDepth(70, depth)
 
-    class Static(depth: Int) : WithDepth(80, depth)
-
     object Last : TowerGroupKind(Integer.MAX_VALUE)
 
     override fun compareTo(other: TowerGroupKind): Int {
@@ -71,8 +69,6 @@ private constructor(
 
         fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
 
-        fun Static(depth: Int) = kindOf(TowerGroupKind.Static(depth))
-
         val Last = kindOf(TowerGroupKind.Last)
     }
 
@@ -87,8 +83,6 @@ private constructor(
     val InvokeExtension get() = kindOf(TowerGroupKind.InvokeExtension)
 
     fun Top(depth: Int) = kindOf(TowerGroupKind.Top(depth))
-
-    fun Static(depth: Int) = kindOf(TowerGroupKind.Static(depth))
 
     // Treating `a.foo()` common calls as more prioritized than `a.foo.invoke()`
     // It's not the same as TowerGroupKind because it's not about tower levels, but rather a different dimension semantically.
