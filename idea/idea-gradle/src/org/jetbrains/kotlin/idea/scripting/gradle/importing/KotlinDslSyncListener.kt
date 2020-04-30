@@ -13,15 +13,18 @@ import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
+    private val workingDirs = hashMapOf<ExternalSystemTaskId, String>()
+
     override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
         if (!isGradleProjectImport(id)) return
         if (workingDir == null) return
 
         gradleState.isSyncInProgress = true
+        workingDirs[id] = workingDir
 
         val project = id.findProject() ?: return
 
-        project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
+        project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(id)
     }
 
     override fun onEnd(id: ExternalSystemTaskId) {
@@ -29,6 +32,7 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
 
         gradleState.isSyncInProgress = false
 
+        val workingDir = workingDirs.remove(id) ?: return
         val project = id.findProject() ?: return
 
         @Suppress("DEPRECATION")
@@ -37,6 +41,7 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
         val sync = project.kotlinGradleDslSync.remove(id)
         if (sync != null) {
             // For Gradle 6.0 or higher
+            sync.workingDir = workingDir
             saveScriptModels(project, sync)
         }
     }
@@ -45,6 +50,8 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
         if (!isGradleProjectImport(id)) return
 
         gradleState.isSyncInProgress = false
+
+        workingDirs.remove(id)
 
         val project = id.findProject() ?: return
 
