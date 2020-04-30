@@ -58,7 +58,7 @@ class FirJvmClassCodegen(
             symbol = FirAnonymousFunctionSymbol()
             returnTypeRef = function.returnTypeRef
             receiverTypeRef = function.receiverTypeRef
-            isLambda = false
+            isLambda = (function as? FirAnonymousFunction)?.isLambda == true
             valueParameters.addAll(function.valueParameters)
             typeParameters.addAll(function.typeParameters.filterIsInstance<FirTypeParameter>())
         }
