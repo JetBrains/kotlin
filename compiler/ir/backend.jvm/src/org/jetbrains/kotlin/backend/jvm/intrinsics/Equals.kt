@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
@@ -98,19 +99,25 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             }
         }
 
+        // Avoid boxing for `primitive == object` and `boxed primitive == primitive` where we know
+        // what comparison means. The optimization does not apply to `object == primitive` as equals
+        // could be overridden for the object.
         if ((opToken == IrStatementOrigin.EQEQ || opToken == IrStatementOrigin.EXCLEQ) &&
-            (AsmUtil.isIntOrLongPrimitive(leftType) || AsmUtil.isIntOrLongPrimitive(rightType)) &&
-            (AsmUtil.isBoxedTypeOf(leftType, rightType) || AsmUtil.isBoxedTypeOf(rightType, leftType))
+            ((AsmUtil.isIntOrLongPrimitive(leftType) && !AsmUtil.isPrimitive(rightType)) ||
+                    (AsmUtil.isIntOrLongPrimitive(rightType) && AsmUtil.isBoxedTypeOf(leftType, rightType)))
         ) {
             val leftIsPrimitive = AsmUtil.isIntOrLongPrimitive(leftType)
+            val primitiveType = if (leftIsPrimitive) leftType else rightType
+            val nonPrimitiveType = if (leftIsPrimitive) rightType else leftType
+            val useNullCheck = AsmUtil.isBoxedTypeOf(nonPrimitiveType, primitiveType)
             return if (leftIsPrimitive) {
                 val loadOther = loadOther(a, leftType)
                 val boxedValue = b.accept(codegen, data).materializedAt(rightType, b.type)
-                PrimitiveToBoxedComparison(operator, boxedValue, loadOther)
+                PrimitiveToObjectComparison(operator, boxedValue, useNullCheck, primitiveType, loadOther)
             } else {
                 val boxedValue = a.accept(codegen, data).materializedAt(leftType, a.type)
                 val loadOther = loadOther(b, rightType)
-                PrimitiveToBoxedComparison(operator, boxedValue, loadOther)
+                PrimitiveToObjectComparison(operator, boxedValue, useNullCheck, primitiveType, loadOther)
             }
         }
 
