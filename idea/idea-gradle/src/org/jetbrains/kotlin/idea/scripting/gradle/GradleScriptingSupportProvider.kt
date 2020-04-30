@@ -48,7 +48,6 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     override fun isApplicable(file: VirtualFile): Boolean {
         val buildRoot = findScriptBuildRoot(file) ?: return false
         if (buildRoot is GradleBuildRoot.Legacy) return false
-        if (buildRoot is GradleBuildRoot.UnlinkedLegacy) return false
         return true
     }
 
@@ -130,7 +129,7 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     }
 
     private fun detectUnlinkedGradleBuildRoot(file: String): GradleBuildRoot.Unlinked =
-        GradleBuildRoot.UnlinkedUnknown(file)
+        GradleBuildRoot.Unlinked(file)
 
     init {
         getGradleProjectSettings(project).forEach {

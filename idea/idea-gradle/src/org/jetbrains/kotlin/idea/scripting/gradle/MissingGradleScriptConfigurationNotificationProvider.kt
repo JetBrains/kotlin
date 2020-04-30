@@ -29,7 +29,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
         if (file.fileType != KotlinFileType.INSTANCE) return null
 
         return when (GradleScriptingSupportProvider.getInstance(project).findScriptBuildRoot(file)) {
-            is GradleBuildRoot.UnlinkedSupported -> EditorNotificationPanel().apply {
+            is GradleBuildRoot.Unlinked -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
 
                 val linkProjectText = KotlinIdeaGradleBundle.message("action.label.text.load.script.configuration")
