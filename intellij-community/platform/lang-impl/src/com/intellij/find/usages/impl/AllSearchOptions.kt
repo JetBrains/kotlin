@@ -3,7 +3,7 @@ package com.intellij.find.usages.impl
 
 import com.intellij.find.usages.UsageOptions
 
-internal data class AllSearchOptions<O>(
+data class AllSearchOptions<O>(
   val options: UsageOptions,
   val textSearch: Boolean?,
   val customOptions: O

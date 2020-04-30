@@ -14,7 +14,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.usages.Usage
 import com.intellij.util.Query
 
-internal fun symbolSearchTargets(file: PsiFile, offset: Int): List<SearchTarget> {
+fun symbolSearchTargets(file: PsiFile, offset: Int): List<SearchTarget> {
   val targetSymbols = targetSymbols(file, offset)
   if (targetSymbols.isEmpty()) {
     return emptyList()
@@ -56,7 +56,7 @@ internal fun symbolUsageHandler(project: Project, symbol: Symbol): UsageHandler<
   return DefaultSymbolUsageHandler(project, symbol)
 }
 
-internal fun <O> buildQuery(project: Project,
+fun <O> buildQuery(project: Project,
                             target: SearchTarget,
                             handler: UsageHandler<O>,
                             allOptions: AllSearchOptions<O>): Query<out Usage> {

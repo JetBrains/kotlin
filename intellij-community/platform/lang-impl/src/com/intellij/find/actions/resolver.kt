@@ -57,7 +57,7 @@ internal fun findShowUsages(project: Project, dataContext: DataContext, popupTit
   }
 }
 
-private fun allTargets(project: Project, targets: Collection<SearchTarget>, oldTargets: Array<out UsageTarget>): List<TargetVariant> {
+fun allTargets(project: Project, targets: Collection<SearchTarget>, oldTargets: Array<out UsageTarget>): List<TargetVariant> {
   val allTargets = ArrayList<TargetVariant>()
   targets.mapTo(allTargets, TargetVariant::New)
   for (usageTarget in oldTargets) {
@@ -92,7 +92,7 @@ private fun searchTargets(dataContext: DataContext): List<SearchTarget> {
   return symbolSearchTargets(file, offset)
 }
 
-private sealed class TargetVariant {
+public sealed class TargetVariant {
   class New(val target: SearchTarget) : TargetVariant()
   class Old(val target: UsageTarget) : TargetVariant()
 }
