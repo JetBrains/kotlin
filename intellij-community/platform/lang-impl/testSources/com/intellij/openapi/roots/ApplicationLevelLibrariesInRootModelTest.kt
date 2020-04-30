@@ -3,10 +3,11 @@ package com.intellij.openapi.roots
 
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTable
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 
-class ProjectLevelLibrariesInRootModelTest : LibrariesFromLibraryTableInRootModelTestCase() {
+class ApplicationLevelLibrariesInRootModelTest : LibrariesFromLibraryTableInRootModelTestCase() {
   override val libraryTable: LibraryTable
-    get() = projectModel.projectLibraryTable
+    get() = LibraryTablesRegistrar.getInstance().libraryTable
 
-  override fun createLibrary(name: String): Library = projectModel.addProjectLevelLibrary(name)
+  override fun createLibrary(name: String): Library = projectModel.addApplicationLevelLibrary(name)
 }
