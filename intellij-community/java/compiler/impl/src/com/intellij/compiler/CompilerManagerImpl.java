@@ -56,7 +56,8 @@ import java.util.stream.Collectors;
 
 // cannot be final - extended by Bazel plugin
 public class CompilerManagerImpl extends CompilerManager {
-  private static final ProjectExtensionPointName<CompileTaskBean> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compiler.task");
+  private static final ProjectExtensionPointName<CompilerFactory> COMPILER_FACTORY_EP = new ProjectExtensionPointName<>("com.intellij.compilerFactory");
+  private static final ProjectExtensionPointName<CompileTaskBean> COMPILER_TASK_EP = new ProjectExtensionPointName<>("com.intellij.compiler.task");
 
   private static final Logger LOG = Logger.getInstance(CompilerManagerImpl.class);
 
@@ -85,7 +86,7 @@ public class CompilerManagerImpl extends CompilerManager {
     myProject = project;
     myEventPublisher = project.getMessageBus().syncPublisher(CompilerTopics.COMPILATION_STATUS);
     // predefined compilers
-    CompilerFactory.EP_NAME.getPoint(myProject).addExtensionPointListener(new ExtensionPointListener<CompilerFactory>() {
+    COMPILER_FACTORY_EP.getPoint(myProject).addExtensionPointListener(new ExtensionPointListener<CompilerFactory>() {
       @Override
       public void extensionAdded(@NotNull CompilerFactory factory, @NotNull PluginDescriptor pluginDescriptor) {
         Compiler[] compilers = factory.createCompilers(CompilerManagerImpl.this);
@@ -256,7 +257,7 @@ public class CompilerManagerImpl extends CompilerManager {
 
   private @NotNull List<CompileTask> getExtensionsTasks(@NotNull CompileTaskBean.CompileTaskExecutionPhase phase) {
     List<CompileTask> list = new ArrayList<>();
-    EP_NAME.processWithPluginDescriptor(myProject, (ext, pluginDescriptor) -> {
+    COMPILER_TASK_EP.processWithPluginDescriptor(myProject, (ext, pluginDescriptor) -> {
       if (ext.executionPhase == phase) {
         list.add(ext.getInstance(myProject, pluginDescriptor));
       }
