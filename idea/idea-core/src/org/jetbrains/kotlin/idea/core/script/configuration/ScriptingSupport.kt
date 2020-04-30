@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile
 
 abstract class ScriptingSupport {
     abstract class Provider {
-        abstract fun clearCaches()
+        abstract fun updateScriptDefinitions()
         abstract fun isApplicable(file: VirtualFile): Boolean
         abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
         abstract fun collectConfigurations(builder: ScriptClassRootsCache.Builder)

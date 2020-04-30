@@ -410,7 +410,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         }
     }
 
-    fun clearCaches() {
+    fun updateScriptDefinitions() {
         cache.clear()
     }
 

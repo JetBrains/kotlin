@@ -118,9 +118,9 @@ class RootsIndex {
 
     @Synchronized
     fun rebuildProjectRoots() {
-        values.forEach {
-            it.
-        }
+//        values.forEach {
+//            it.
+//        }
     }
 
     @Synchronized
@@ -138,7 +138,7 @@ class RootsIndex {
     }
 
     @Synchronized
-    operator fun set(prefix: String, value: T) {
+    operator fun set(prefix: String, value: GradleBuildRoot) {
         val old = buildRoots.put(prefix, value)
         rebuildProjectRoots()
         log.info("{}: {} -> {}", prefix, old, value)

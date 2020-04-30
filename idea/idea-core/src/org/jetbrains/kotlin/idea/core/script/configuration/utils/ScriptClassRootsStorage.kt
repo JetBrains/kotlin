@@ -43,7 +43,6 @@ class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<S
         builder.sources.addAll(sources)
         builder.classes.addAll(classpath)
         sdks.forEach(builder::addSdkByName)
-        builder.build()
     }
 
     companion object {

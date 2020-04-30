@@ -16,11 +16,9 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.isNonScript
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
@@ -76,19 +74,18 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         return new.diff(old)
     }
 
-    private fun clearCaches() {
-        default.clearCaches()
-        plugins.forEach {
-            it.clearCaches()
-        }
-
-        updater.ensureUpdateScheduled()
-    }
-
     override fun updateScriptDefinitions() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        clearCaches()
+        default.updateScriptDefinitions()
+
+        if (classpathRoots.customDefinitionsUsed) {
+            plugins.forEach {
+                it.updateScriptDefinitions()
+            }
+
+            updater.ensureUpdateScheduled()
+        }
     }
 
     init {

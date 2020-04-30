@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -37,12 +36,12 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
     private val updater
         get() = manager.updater
 
-    val roots = RootsIndex<GradleBuildRoot>()
+    val roots = RootsIndex()
 
     ////////////
     /// ScriptingSupport.Provider implementation:
 
-    override fun clearCaches() {
+    override fun updateScriptDefinitions() {
         // nothing related to script definition and project roots are cached
     }
 
@@ -96,10 +95,11 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
 
     private fun updateBuildRoot(rootPath: String) {
         val settings = getGradleProjectSettings(rootPath) ?: return
-        val newRoot = updater.update {
-            loadLinkedRoot(settings)
-        }
+        val newRoot = loadLinkedRoot(settings)
         roots[newRoot.pathPrefix] = newRoot
+        if (newRoot is GradleBuildRoot.Imported) {
+            updater.ensureUpdateScheduled()
+        }
     }
 
     private fun loadScriptBuildRoot(scriptPath: String): GradleBuildRoot {
@@ -133,12 +133,8 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
         GradleBuildRoot.UnlinkedUnknown(file)
 
     init {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            updater.update {
-                getGradleProjectSettings(project).forEach {
-                    roots[it.externalProjectPath] = loadLinkedRoot(it)
-                }
-            }
+        getGradleProjectSettings(project).forEach {
+            roots[it.externalProjectPath] = loadLinkedRoot(it)
         }
 
         // subscribe to gradle build unlink
@@ -209,21 +205,18 @@ class GradleScriptingSupportProvider(val project: Project) : ScriptingSupport.Pr
             if (root is GradleBuildRoot.Imported && root.data.models.isEmpty()) return
         }
 
-        manager.updater.update {
-            val templateClasspath = findTemplateClasspath(build) ?: return
-            val data = GradleImportedBuildRootData(templateClasspath, build.models)
-            val newSupport = tryCreateImportedRoot(build.workingDir) { data } ?: return
-            KotlinDslScriptModels.write(newSupport.dir, data)
-            roots[build.workingDir] = newSupport
-        }
+        val templateClasspath = findTemplateClasspath(build) ?: return
+        val data = GradleImportedBuildRootData(templateClasspath, build.models)
+        val newSupport = tryCreateImportedRoot(build.workingDir) { data } ?: return
+        KotlinDslScriptModels.write(newSupport.dir, data)
+        roots[build.workingDir] = newSupport
+        manager.updater.ensureUpdateScheduled()
     }
 
     private fun tryCreateImportedRoot(
         externalProjectPath: String,
         dataProvider: (buildRoot: VirtualFile) -> GradleImportedBuildRootData?
     ): GradleBuildRoot.Imported? {
-        updater.invalidate()
-
         val gradleExeSettings =
             ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
                 project,

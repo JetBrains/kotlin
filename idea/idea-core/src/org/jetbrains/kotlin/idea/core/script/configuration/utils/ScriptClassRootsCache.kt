@@ -30,7 +30,8 @@ class ScriptClassRootsCache(
     val classes: Set<String>,
     val sources: Set<String>,
     val sdks: Map<String, Sdk?>,
-    private val nonModulesSdks: Collection<Sdk>
+    private val nonModulesSdks: Collection<Sdk>,
+    val customDefinitionsUsed: Boolean
 ) {
     abstract class LightScriptInfo {
         @Volatile
@@ -57,10 +58,11 @@ class ScriptClassRootsCache(
 
         val classes = mutableSetOf<String>()
         val sources = mutableSetOf<String>()
+        private var customDefinitionsUsed: Boolean = false
 
         fun build(): ScriptClassRootsCache {
             val nonIndexedSdks = collectNonIndexedSdks()
-            return ScriptClassRootsCache(scripts, classes, sources, sdks, nonIndexedSdks)
+            return ScriptClassRootsCache(scripts, classes, sources, sdks, nonIndexedSdks, customDefinitionsUsed)
         }
 
         fun collectNonIndexedSdks(): MutableSet<Sdk> {
@@ -69,6 +71,10 @@ class ScriptClassRootsCache(
                 nonIndexedSdks.remove(ModuleRootManager.getInstance(it).sdk)
             }
             return nonIndexedSdks
+        }
+
+        fun useCustomScriptDefinition() {
+            customDefinitionsUsed = true
         }
 
         fun add(
@@ -81,6 +87,8 @@ class ScriptClassRootsCache(
             configuration.dependenciesSources.forEach { sources.add(it.absolutePath) }
 
             scripts[vFile.path] = DirectScriptInfo(configuration)
+
+            useCustomScriptDefinition()
         }
 
         fun add(other: Builder) {
@@ -176,7 +184,7 @@ class ScriptClassRootsCache(
     init {
         allDependenciesClassFiles = mutableSetOf<VirtualFile>().also { result ->
             nonModulesSdks.forEach { result.addAll(it.rootProvider.getFiles(OrderRootType.CLASSES)) }
-            classes.mapNotNull { classpathEntryToVfs(File(it)) }
+            classes.mapNotNullTo(result) { classpathEntryToVfs(File(it)) }
         }.toList()
 
         allDependenciesSources = mutableSetOf<VirtualFile>().also { result ->
@@ -201,7 +209,7 @@ class ScriptClassRootsCache(
     fun hasInvalidSdk(project: Project): Boolean {
         val builder = Builder(project)
         if (sdks.any { (home, sdk) -> builder.addSdk(File(home)) != sdk }) return true
-        if (builder.collectNonIndexedSdks() == nonModulesSdks) return false
+        if (builder.collectNonIndexedSdks() != nonModulesSdks) return true
         return false
     }
 
