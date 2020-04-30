@@ -29,6 +29,7 @@ import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.util.application.executeOnPooledThread
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
@@ -82,9 +83,15 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     private val scriptDefinitionsCacheLock = ReentrantLock()
     private val scriptDefinitionsCache = SLRUMap<String, ScriptDefinition>(10, 10)
 
+    val configurations = (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager)
+
     override fun findDefinition(script: SourceCode): ScriptDefinition? {
         val locationId = script.locationId ?: return null
         if (nonScriptId(locationId)) return null
+
+        val fastPath = configurations.tryGetScriptDefinitionFast(locationId)
+        if (fastPath != null) return fastPath
+
         if (!isReady()) return null
 
         val cached = scriptDefinitionsCacheLock.withLock { scriptDefinitionsCache.get(locationId) }
