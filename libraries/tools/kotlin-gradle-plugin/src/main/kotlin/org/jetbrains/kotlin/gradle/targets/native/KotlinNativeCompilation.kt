@@ -97,8 +97,14 @@ class KotlinNativeCompilation(
         get() = compileKotlinTask.kotlinOptions
 }
 
-class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, konanTarget: KonanTarget, name: String) :
-    AbstractKotlinNativeCompilation(target, konanTarget, name),
+class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :
+    AbstractKotlinNativeCompilation(
+        target,
+        // TODO: this will end up as '-target' argument passed to K2Native, which is wrong.
+        // Rewrite this when we'll compile native-shared source-sets against commonized platform libs
+        konanTargets.first(),
+        name
+    ),
     KotlinMetadataCompilation<KotlinCommonOptions> {
 
     override val friendArtifacts: FileCollection
