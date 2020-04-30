@@ -17,17 +17,22 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.PairProcessor
 import com.intellij.util.ref.DebugReflectionUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.j2k.getContainingClass
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 import org.junit.Assert
 import kotlin.test.assertFails
 
@@ -56,7 +61,6 @@ object UltraLightChecker {
 
     fun allClasses(file: KtFile): List<KtClassOrObject> =
         SyntaxTraverser.psiTraverser(file).filter(KtClassOrObject::class.java).toList()
-
 
     fun checkFacadeEquivalence(
         fqName: FqName,
@@ -90,6 +94,25 @@ object UltraLightChecker {
         checkClassEquivalenceByRendering(gold, ultraLightClass)
 
         return ultraLightClass
+    }
+
+    fun checkScriptEquivalence(script: KtScript): KtLightClass {
+
+        val ultraLightScript: KtLightClass?
+
+        val oldForceFlag = KtUltraLightSupport.forceUsingOldLightClasses
+        try {
+            KtUltraLightSupport.forceUsingOldLightClasses = false
+            ultraLightScript = KotlinAsJavaSupport.getInstance(script.project).getLightClassForScript(script)
+            TestCase.assertTrue(ultraLightScript is KtUltraLightClassForScript)
+            ultraLightScript!!
+            val gold = KtLightClassForScript.createNoCache(script, forceUsingOldLightClasses = true)
+            checkClassEquivalenceByRendering(gold, ultraLightScript)
+        } finally {
+            KtUltraLightSupport.forceUsingOldLightClasses = oldForceFlag
+        }
+
+        return ultraLightScript!!
     }
 
     private fun checkClassEquivalenceByRendering(gold: PsiClass?, ultraLightClass: PsiClass) {

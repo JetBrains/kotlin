@@ -128,8 +128,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
         if (element.shouldNotBeVisibleAsLightClass() ||
-            element is KtEnumEntry ||
-            element.containingKtFile.safeIsScript()
+            element is KtEnumEntry
         ) {
             return null
         }
@@ -149,6 +148,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             }
         }
     }
+
+    override fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript? =
+        KtUltraLightClassForScript(script, support = KtUltraLightSupportImpl(script))
 
     private fun KtFile.hasAlias(shortName: Name?): Boolean {
         if (shortName == null) return false

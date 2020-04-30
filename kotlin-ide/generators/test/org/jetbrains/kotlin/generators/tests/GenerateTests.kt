@@ -913,7 +913,9 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractUltraLightClassLoadingTest> {
             model("compiler/asJava/ultraLightClasses", pattern = KT_OR_KTS)
         }
-
+        testClass<AbstractUltraLightScriptLoadingTest> {
+            model("compiler/asJava/ultraLightScripts", pattern = KT_OR_KTS)
+        }
         testClass<AbstractUltraLightFacadeClassTest> {
             model("compiler/asJava/ultraLightFacades", pattern = KT_OR_KTS)
         }
