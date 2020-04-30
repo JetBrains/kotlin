@@ -5,6 +5,7 @@ import com.intellij.util.containers.hash.EqualityPolicy
 import com.intellij.util.containers.hash.LinkedHashMap
 import com.intellij.util.indexing.FileBasedIndexExtension
 import com.intellij.util.indexing.SingleEntryFileBasedIndexExtension
+import java.util.*
 
 object IndexDataComparer {
 
@@ -28,11 +29,40 @@ object IndexDataComparer {
 
     val keyDescriptor = extension.keyDescriptor
 
-    val expectedMap = LinkedHashMap<K, V>(keyDescriptor)
-    expectedMap.putAll(expectedData)
+    // Use LinkedHashMaps with custom equality policy to compare keys.
+    // LinkedHashMap does not support null values.
 
+    val expectedMap = LinkedHashMap<K, V>(keyDescriptor)
     val actualMap = LinkedHashMap<K, V>(keyDescriptor)
-    actualMap.putAll(actualData)
+
+    val expectedKeysForNullValue = Collections.newSetFromMap(LinkedHashMap<K, Boolean>(keyDescriptor))
+    val actualKeysForNullValue = Collections.newSetFromMap(LinkedHashMap<K, Boolean>(keyDescriptor))
+
+    for ((key, value) in expectedMap) {
+      if (value == null) {
+        expectedKeysForNullValue += key
+      } else {
+        expectedMap[key] = value
+      }
+    }
+
+    for ((key, value) in actualMap) {
+      if (value == null) {
+        actualKeysForNullValue += key
+      } else {
+        actualMap[key] = value
+      }
+    }
+
+    if (expectedKeysForNullValue.size != actualKeysForNullValue.size) {
+      return false
+    }
+
+    for (key in expectedKeysForNullValue) {
+      if (!actualKeysForNullValue.contains(key)) {
+        return false
+      }
+    }
 
     for ((expectedKey, expectedValue) in expectedMap) {
       val actualValue = actualMap[expectedKey]
