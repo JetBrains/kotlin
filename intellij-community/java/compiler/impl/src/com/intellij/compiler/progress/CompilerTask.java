@@ -247,6 +247,7 @@ public final class CompilerTask extends Task.Backgroundable {
   }
 
   private void informWolf(final CompilerMessage message) {
+    if (myProject.isDisposed()) return;
     WolfTheProblemSolver wolf = WolfTheProblemSolver.getInstance(myProject);
     VirtualFile file = getVirtualFile(message);
     wolf.queue(file);
