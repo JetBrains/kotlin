@@ -9,11 +9,11 @@
 package kotlin.collections
 
 import java.util.Comparator
-import java.util.LinkedHashMap
 import java.util.Properties
 import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
+import kotlin.collections.builders.MapBuilder
 
 
 /**
@@ -25,6 +25,43 @@ import java.util.concurrent.ConcurrentMap
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    return build(createMapBuilder<K, V>().apply(builderAction))
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    return build(createMapBuilder<K, V>(capacity).apply(builderAction))
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <K, V> createMapBuilder(): MutableMap<K, V> {
+    return MapBuilder()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <K, V> createMapBuilder(capacity: Int): MutableMap<K, V> {
+    return MapBuilder(capacity)
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
+    return (builder as MapBuilder<K, V>).build()
+}
 
 
 /**
@@ -111,13 +148,3 @@ internal actual fun mapCapacity(expectedSize: Int): Int = when {
     else -> Int.MAX_VALUE
 }
 private const val INT_MAX_POWER_OF_TWO: Int = 1 shl (Int.SIZE_BITS - 2)
-
-/**
- * Checks a collection builder function capacity argument.
- * Does nothing, capacity is validated in List/Set/Map constructor
- */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@PublishedApi
-@kotlin.internal.InlineOnly
-internal actual inline fun checkBuilderCapacity(capacity: Int) {}

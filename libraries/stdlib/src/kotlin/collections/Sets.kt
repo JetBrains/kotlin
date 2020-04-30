@@ -10,7 +10,6 @@
 package kotlin.collections
 
 import kotlin.contracts.*
-import kotlin.collections.builders.*
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -126,8 +125,14 @@ public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return SetBuilder<E>().apply(builderAction).build()
+    return buildSetInternal(builderAction)
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() -> Unit): Set<E>
 
 /**
  * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
@@ -149,8 +154,14 @@ public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.()
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return SetBuilder<E>(capacity).apply(builderAction).build()
+    return buildSetInternal(capacity, builderAction)
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal expect inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E>
 
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */

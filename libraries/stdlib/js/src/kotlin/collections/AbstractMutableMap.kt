@@ -30,6 +30,10 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         override val value: V get() = _value
 
         override fun setValue(newValue: V): V {
+            // Should check if the map containing this entry is mutable.
+            // However, to not increase entry memory footprint it might be worthwhile not to check it here and
+            // force subclasses that implement `build()` (freezing) operation to implement their own `MutableEntry`.
+//            this@AbstractMutableMap.checkIsMutable()
             val oldValue = this._value
             this._value = newValue
             return oldValue
@@ -67,6 +71,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override fun remove(element: K): Boolean {
+                        checkIsMutable()
                         if (containsKey(element)) {
                             this@AbstractMutableMap.remove(element)
                             return true
@@ -75,6 +80,8 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override val size: Int get() = this@AbstractMutableMap.size
+
+                    override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
                 }
             }
             return _keys!!
@@ -83,6 +90,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
     actual abstract override fun put(key: K, value: V): V?
 
     actual override fun putAll(from: Map<out K, V>) {
+        checkIsMutable()
         for ((key, value) in from) {
             put(key, value)
         }
@@ -117,12 +125,15 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override fun hashCode(): Int = AbstractList.orderedHashCode(this)
+
+                    override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
                 }
             }
             return _values!!
         }
 
     actual override fun remove(key: K): V? {
+        checkIsMutable()
         val iter = entries.iterator()
         while (iter.hasNext()) {
             val entry = iter.next()
@@ -136,4 +147,10 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         return null
     }
 
+
+    /**
+     * This method is called every time when a mutating method is called on this mutable map.
+     * Mutable maps that are built (frozen) must throw `UnsupportedOperationException`.
+     */
+    internal open fun checkIsMutable(): Unit {}
 }

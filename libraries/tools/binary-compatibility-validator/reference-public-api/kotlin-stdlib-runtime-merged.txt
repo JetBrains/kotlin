@@ -2082,6 +2082,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static synthetic fun binarySearch$default (Ljava/util/List;Ljava/lang/Object;Ljava/util/Comparator;IIILjava/lang/Object;)I
 	public static final fun binarySearchBy (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;)I
 	public static synthetic fun binarySearchBy$default (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
+	public static final fun build (Ljava/util/List;)Ljava/util/List;
 	public static final fun chunked (Ljava/lang/Iterable;I)Ljava/util/List;
 	public static final fun chunked (Ljava/lang/Iterable;ILkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun collectionSizeOrDefault (Ljava/lang/Iterable;I)I
@@ -2089,6 +2090,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun contains (Ljava/lang/Iterable;Ljava/lang/Object;)Z
 	public static final fun count (Ljava/lang/Iterable;)I
 	public static final fun count (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
+	public static final fun createListBuilder ()Ljava/util/List;
+	public static final fun createListBuilder (I)Ljava/util/List;
 	public static final fun distinct (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun distinctBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun drop (Ljava/lang/Iterable;I)Ljava/util/List;
@@ -2369,7 +2372,10 @@ public final class kotlin/collections/MapsKt {
 	public static final fun any (Ljava/util/Map;)Z
 	public static final fun any (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun asSequence (Ljava/util/Map;)Lkotlin/sequences/Sequence;
+	public static final fun build (Ljava/util/Map;)Ljava/util/Map;
 	public static final fun count (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)I
+	public static final fun createMapBuilder ()Ljava/util/Map;
+	public static final fun createMapBuilder (I)Ljava/util/Map;
 	public static final fun emptyMap ()Ljava/util/Map;
 	public static final fun filter (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun filterKeys (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
@@ -2434,6 +2440,9 @@ public final class kotlin/collections/MapsKt {
 }
 
 public final class kotlin/collections/SetsKt {
+	public static final fun build (Ljava/util/Set;)Ljava/util/Set;
+	public static final fun createSetBuilder ()Ljava/util/Set;
+	public static final fun createSetBuilder (I)Ljava/util/Set;
 	public static final fun emptySet ()Ljava/util/Set;
 	public static final fun hashSetOf ([Ljava/lang/Object;)Ljava/util/HashSet;
 	public static final fun linkedSetOf ([Ljava/lang/Object;)Ljava/util/LinkedHashSet;
@@ -2503,72 +2512,6 @@ public abstract class kotlin/collections/UShortIterator : java/util/Iterator, ko
 	public final fun next-Mh2AYeg ()S
 	public abstract fun nextUShort-Mh2AYeg ()S
 	public fun remove ()V
-}
-
-public final class kotlin/collections/builders/ListBuilder : kotlin/collections/AbstractMutableList, java/util/List, java/util/RandomAccess, kotlin/jvm/internal/markers/KMutableList {
-	public fun <init> ()V
-	public fun <init> (I)V
-	public fun add (ILjava/lang/Object;)V
-	public fun add (Ljava/lang/Object;)Z
-	public fun addAll (ILjava/util/Collection;)Z
-	public fun addAll (Ljava/util/Collection;)Z
-	public final fun build ()Ljava/util/List;
-	public fun clear ()V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun get (I)Ljava/lang/Object;
-	public fun getSize ()I
-	public fun hashCode ()I
-	public fun indexOf (Ljava/lang/Object;)I
-	public fun isEmpty ()Z
-	public fun iterator ()Ljava/util/Iterator;
-	public fun lastIndexOf (Ljava/lang/Object;)I
-	public fun listIterator ()Ljava/util/ListIterator;
-	public fun listIterator (I)Ljava/util/ListIterator;
-	public fun remove (Ljava/lang/Object;)Z
-	public fun removeAll (Ljava/util/Collection;)Z
-	public fun removeAt (I)Ljava/lang/Object;
-	public fun retainAll (Ljava/util/Collection;)Z
-	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
-	public fun subList (II)Ljava/util/List;
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlin/collections/builders/MapBuilder : java/util/Map, kotlin/jvm/internal/markers/KMutableMap {
-	public fun <init> ()V
-	public fun <init> (I)V
-	public final fun build ()Ljava/util/Map;
-	public fun clear ()V
-	public fun containsKey (Ljava/lang/Object;)Z
-	public fun containsValue (Ljava/lang/Object;)Z
-	public final fun entrySet ()Ljava/util/Set;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun get (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun getEntries ()Ljava/util/Set;
-	public fun getKeys ()Ljava/util/Set;
-	public fun getSize ()I
-	public fun getValues ()Ljava/util/Collection;
-	public fun hashCode ()I
-	public fun isEmpty ()Z
-	public final fun keySet ()Ljava/util/Set;
-	public fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-	public fun putAll (Ljava/util/Map;)V
-	public fun remove (Ljava/lang/Object;)Ljava/lang/Object;
-	public final fun size ()I
-	public fun toString ()Ljava/lang/String;
-	public final fun values ()Ljava/util/Collection;
-}
-
-public final class kotlin/collections/builders/SetBuilder : kotlin/collections/AbstractMutableSet, java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
-	public fun <init> ()V
-	public fun <init> (I)V
-	public fun add (Ljava/lang/Object;)Z
-	public final fun build ()Ljava/util/Set;
-	public fun clear ()V
-	public fun contains (Ljava/lang/Object;)Z
-	public fun getSize ()I
-	public fun isEmpty ()Z
-	public fun iterator ()Ljava/util/Iterator;
-	public fun remove (Ljava/lang/Object;)Z
 }
 
 public final class kotlin/collections/unsigned/UArraysKt {

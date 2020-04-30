@@ -5,19 +5,19 @@
 
 package kotlin.collections.builders
 
-@PublishedApi
 internal class ListBuilder<E> private constructor(
     private var array: Array<E>,
     private var offset: Int,
     private var length: Int,
     private var isReadOnly: Boolean,
-    private val backing: ListBuilder<E>?
+    private val backing: ListBuilder<E>?,
+    private val root: ListBuilder<E>?
 ) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
 
     constructor() : this(10)
 
     constructor(initialCapacity: Int) : this(
-        arrayOfUninitializedElements(initialCapacity), 0, 0, false, null)
+        arrayOfUninitializedElements(initialCapacity), 0, 0, false, null, null)
 
     fun build(): List<E> {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
@@ -127,7 +127,7 @@ internal class ListBuilder<E> private constructor(
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
         AbstractList.checkRangeIndexes(fromIndex, toIndex, length)
-        return ListBuilder(array, offset + fromIndex, toIndex - fromIndex, isReadOnly, this)
+        return ListBuilder(array, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -155,7 +155,7 @@ internal class ListBuilder<E> private constructor(
     // ---------------------------- private ----------------------------
 
     private fun checkIsMutable() {
-        if (isReadOnly) throw UnsupportedOperationException()
+        if (isReadOnly || root != null && root.isReadOnly) throw UnsupportedOperationException()
     }
 
     private fun ensureExtraCapacity(n: Int) {
@@ -277,9 +277,8 @@ internal class ListBuilder<E> private constructor(
         }
 
         override fun set(element: E) {
-            list.checkIsMutable()
             check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
-            list.array[list.offset + lastIndex] = element
+            list.set(lastIndex, element)
         }
 
         override fun add(element: E) {

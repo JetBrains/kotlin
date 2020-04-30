@@ -16,6 +16,8 @@ import kotlin.collections.MutableMap.MutableEntry
  *
  * This implementation makes no guarantees regarding the order of enumeration of [keys], [values] and [entries] collections.
  */
+// Classes that extend HashMap and implement `build()` (freezing) operation
+// have to make sure mutating methods check `checkIsMutable`.
 public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K, V> {
 
     private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {

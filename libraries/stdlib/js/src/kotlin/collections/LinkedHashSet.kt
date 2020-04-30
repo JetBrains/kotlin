@@ -43,6 +43,14 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
 
     actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
+    @PublishedApi
+    internal fun build(): Set<E> {
+        (map as LinkedHashMap<E, Any>).build()
+        return this
+    }
+
+    internal override fun checkIsMutable(): Unit = map.checkIsMutable()
+
 //    public override fun clone(): Any {
 //        return LinkedHashSet(this)
 //    }
