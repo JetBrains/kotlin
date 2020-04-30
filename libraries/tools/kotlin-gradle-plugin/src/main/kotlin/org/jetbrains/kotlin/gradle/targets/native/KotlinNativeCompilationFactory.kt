@@ -26,11 +26,11 @@ class KotlinNativeCompilationFactory(
 
 class KotlinSharedNativeCompilationFactory(
     val target: KotlinMetadataTarget,
-    val konanTarget: KonanTarget
+    val konanTargets: List<KonanTarget>
 ): KotlinCompilationFactory<KotlinSharedNativeCompilation> {
     override val itemClass: Class<KotlinSharedNativeCompilation>
         get() = KotlinSharedNativeCompilation::class.java
 
     override fun create(name: String): KotlinSharedNativeCompilation =
-        KotlinSharedNativeCompilation(target, konanTarget, name)
+        KotlinSharedNativeCompilation(target, konanTargets, name)
 }
