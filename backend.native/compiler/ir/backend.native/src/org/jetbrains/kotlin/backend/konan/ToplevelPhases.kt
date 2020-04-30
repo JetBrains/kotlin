@@ -355,6 +355,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
                                 typeOperatorPhase then
                                 bridgesPhase then
                                 autoboxPhase then
+                                kotlinNothingValueExceptionPhase then
                                 returnsInsertionPhase
                 ),
         actions = setOf(defaultDumper, ::moduleValidationCallback)

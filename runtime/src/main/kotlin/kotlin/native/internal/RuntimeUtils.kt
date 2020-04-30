@@ -35,6 +35,11 @@ fun ThrowTypeCastException(): Nothing {
 }
 
 @ExportForCppRuntime
+fun ThrowKotlinNothingValueException(): Nothing {
+    throw KotlinNothingValueException()
+}
+
+@ExportForCppRuntime
 fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
     throw RuntimeException("Unexpected receiver type: " + (klass.qualifiedName ?: "noname"))
 }

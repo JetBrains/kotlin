@@ -171,6 +171,12 @@ internal val stringConcatenationPhase = makeKonanFileLoweringPhase(
         description = "String concatenation lowering"
 )
 
+internal val kotlinNothingValueExceptionPhase = makeKonanFileLoweringPhase(
+        ::KotlinNothingValueExceptionLowering,
+        name = "KotlinNothingValueException",
+        description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
+)
+
 internal val enumConstructorsPhase = makeKonanFileLoweringPhase(
         ::EnumConstructorsLowering,
         name = "EnumConstructors",
