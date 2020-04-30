@@ -11,11 +11,25 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassDelegation() { doTest("class '_(b: B) : A by b") }
 
-    fun testClassConstr() { doTest("class A(b: Int, c: String)") }
+    fun testClassConstrPrim() { doTest("class A(b: Int, c: String)") }
 
-    fun testClassConstrDiffType() { doTest("class A(b: Int, c: String)") }
+    fun testClassConstrPrimDiffType() { doTest("class A(b: Int, c: String)") }
 
-    fun testClassConstrDefaultValue() { doTest("class '_(b: Int, c: String = \"a\")") }
+    fun testClassConstrPrimDefaultValue() { doTest("class '_(b: Int, c: String = \"a\")") }
+
+    fun testClassConstrSec() {
+        doTest(
+            """
+            class '_(val b: Int) {
+                var c: String? = null
+
+                constructor(b: Int, c: String) : this(b) {
+                    this.c = c
+                }
+            }
+            """
+        )
+    }
 
     fun testClassTypeArgs() { doTest("class '_<T, R>(val a: T, val b: R, val c: T)") }
 

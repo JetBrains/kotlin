@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
-
     /**
      * Casts the current code element to [T], sets [myMatchingVisitor].result to false else.
      */
@@ -23,6 +22,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             null
         }
     }
+
+    fun GlobalMatchingVisitor.matchSequentially(elements: List<PsiElement>, elements2: List<PsiElement>) =
+        matchSequentially(elements.toTypedArray(), elements2.toTypedArray())
+
+    fun GlobalMatchingVisitor.matchInAnyOrder(elements: List<PsiElement>, elements2: List<PsiElement>) =
+        matchInAnyOrder(elements.toTypedArray(), elements2.toTypedArray())
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
         val other = getTreeElement<KtArrayAccessExpression>() ?: return
@@ -253,15 +258,30 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitTypeParameterList(list: KtTypeParameterList) {
         val other = getTreeElement<KtTypeParameterList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(
-            list.parameters.toTypedArray(), other.parameters.toTypedArray()
+            list.parameters, other.parameters
         )
     }
 
     override fun visitParameterList(list: KtParameterList) {
         val other = getTreeElement<KtParameterList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(
-            list.parameters.toTypedArray(), other.parameters.toTypedArray()
+            list.parameters, other.parameters
         )
+    }
+
+    override fun visitConstructorDelegationCall(call: KtConstructorDelegationCall) {
+        val other = getTreeElement<KtConstructorDelegationCall>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
+                && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
+                && myMatchingVisitor.match(call.valueArgumentList, other.valueArgumentList)
+    }
+
+    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
+        val other = getTreeElement<KtSecondaryConstructor>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
+                && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
+                && myMatchingVisitor.match(constructor.getDelegationCallOrNull(), other.getDelegationCallOrNull())
+                && myMatchingVisitor.match(constructor.bodyExpression, other.bodyExpression)
     }
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
@@ -276,17 +296,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitClassBody(classBody: KtClassBody) {
-        val other = getTreeElement<KtClassBody>()
+        val other = getTreeElement<KtClassBody>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(classBody, other)
     }
 
     override fun visitSuperTypeListEntry(specifier: KtSuperTypeListEntry) {
-        val other = getTreeElement<KtSuperTypeListEntry>()
+        val other = getTreeElement<KtSuperTypeListEntry>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(specifier, other)
     }
 
     override fun visitSuperTypeList(list: KtSuperTypeList) {
-        val other = getTreeElement<KtSuperTypeList>()
+        val other = getTreeElement<KtSuperTypeList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(list, other)
     }
 
@@ -297,6 +317,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.match(klass.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
+                && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
     }
@@ -384,5 +405,4 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
                 && myMatchingVisitor.match(expression.typeReference, other.typeReference)
     }
-
 }
