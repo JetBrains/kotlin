@@ -24,6 +24,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.impl.java.stubs.ClsStubPsiFactory
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.SourceTreeToPsiMap
 import com.intellij.psi.impl.source.tree.TreeElement
@@ -41,7 +44,7 @@ import java.lang.ref.Reference
 open class FakeFileForLightClass(
     val ktFile: KtFile,
     private val lightClass: () -> KtLightClass,
-    private val stub: () -> PsiClassHolderFileStub<*>,
+    private val stub: () -> PsiClassHolderFileStub<*>?,
     private val packageFqName: FqName = ktFile.packageFqName
 ) : ClsFileImpl(ktFile.viewProvider) {
 
@@ -50,7 +53,14 @@ open class FakeFileForLightClass(
 
     override fun getPackageName() = packageFqName.asString()
 
-    override fun getStub() = stub()
+    private fun createFakeJavaFileStub(): PsiJavaFileStub {
+        val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
+        javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
+        javaFileStub.psi = this
+        return javaFileStub
+    }
+
+    override fun getStub() = stub() ?: createFakeJavaFileStub()
 
     override fun getClasses() = arrayOf(lightClass())
 

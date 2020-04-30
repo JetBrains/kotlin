@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPrope
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
+import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
@@ -1016,7 +1017,9 @@ fun main(args: Array<String>) {
         testClass<AbstractUltraLightClassLoadingTest> {
             model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
         }
-
+        testClass<AbstractUltraLightScriptLoadingTest> {
+            model("asJava/ultraLightScripts", pattern = KT_OR_KTS)
+        }
         testClass<AbstractUltraLightFacadeClassTest> {
             model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
         }

@@ -6,31 +6,30 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.testFramework.LightProjectDescriptor
+import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
+import org.jetbrains.kotlin.idea.perf.UltraLightChecker.checkDescriptorsLeak
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-abstract class AbstractUltraLightClassSanityTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractUltraLightScriptLoadingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun doTest(testDataPath: String) {
-        val ioFile = File(testDataPath)
-        if (ioFile.name == "AllOpenAnnotatedClasses.kt") {
-            return //tests allopen compiler plugin that we don't have in this test
-        }
-
-        val sourceText = ioFile.readText()
+        val sourceText = File(testDataPath).readText()
         val file = myFixture.addFileToProject(testDataPath, sourceText) as KtFile
 
         UltraLightChecker.checkForReleaseCoroutine(sourceText, module)
 
-        if (file.safeIsScript()) {
-            ScriptConfigurationManager.updateScriptDependenciesSynchronously(file)
-        }
+        TestCase.assertNotNull(file.script)
+        val script = file.script!!
 
-        UltraLightChecker.checkClassEquivalence(file)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(file)
+
+        val ultraLightClass = UltraLightChecker.checkScriptEquivalence(script)
+        checkDescriptorsLeak(ultraLightClass)
     }
 }
