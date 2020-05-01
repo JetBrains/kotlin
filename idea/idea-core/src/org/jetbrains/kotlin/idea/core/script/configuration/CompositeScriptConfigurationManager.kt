@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.ProjectTopics
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -116,7 +117,11 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
             return classpathRoots
         }
 
-        getOrLoadConfiguration(file)
+        try {
+            default.getOrLoadConfiguration(file, null)
+        } catch (e: Throwable) {
+            logger<ScriptConfigurationManager>().error("Cannot get configuration synchronously", e)
+        }
 
         return this.classpathRoots
     }
