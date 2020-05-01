@@ -44,10 +44,12 @@ class GradleBuildRootIndex {
     fun getBuildByProjectDir(projectDir: String) = byProjectDir[projectDir]
 
     @Synchronized
-    operator fun set(prefix: String, value: GradleBuildRoot.Linked) {
+    fun add(value: GradleBuildRoot.Linked): GradleBuildRoot.Linked? {
+        val prefix = value.pathPrefix
         val old = byWorkingDir.put(prefix, value)
         rebuildProjectRoots()
         log.info("$prefix: $old -> $value")
+        return old
     }
 
     @Synchronized

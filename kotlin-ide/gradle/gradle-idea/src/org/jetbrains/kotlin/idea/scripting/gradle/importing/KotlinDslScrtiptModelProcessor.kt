@@ -105,6 +105,7 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
     val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()
+    var failed = false
 }
 
 fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
