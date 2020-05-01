@@ -1,11 +1,11 @@
 package com.intellij.util.indexing.diagnostic.dump.output
 
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.ObjectStubBase
+import com.intellij.psi.stubs.SerializedStubTree
+import com.intellij.psi.stubs.Stub
 import com.intellij.util.containers.hash.EqualityPolicy
-import com.intellij.util.containers.hash.LinkedHashMap
 import com.intellij.util.indexing.FileBasedIndexExtension
 import com.intellij.util.indexing.SingleEntryFileBasedIndexExtension
-import java.util.*
 
 object IndexDataComparer {
 
@@ -27,45 +27,11 @@ object IndexDataComparer {
       return areValuesTheSame(extension, expectedValue, actualValue)
     }
 
-    val keyDescriptor = extension.keyDescriptor
-
-    // Use LinkedHashMaps with custom equality policy to compare keys.
-    // LinkedHashMap does not support null values.
-
-    val expectedMap = LinkedHashMap<K, V>(keyDescriptor)
-    val actualMap = LinkedHashMap<K, V>(keyDescriptor)
-
-    val expectedKeysForNullValue = Collections.newSetFromMap(LinkedHashMap<K, Boolean>(keyDescriptor))
-    val actualKeysForNullValue = Collections.newSetFromMap(LinkedHashMap<K, Boolean>(keyDescriptor))
-
-    for ((key, value) in expectedMap) {
-      if (value == null) {
-        expectedKeysForNullValue += key
-      } else {
-        expectedMap[key] = value
-      }
-    }
-
-    for ((key, value) in actualMap) {
-      if (value == null) {
-        actualKeysForNullValue += key
-      } else {
-        actualMap[key] = value
-      }
-    }
-
-    if (expectedKeysForNullValue.size != actualKeysForNullValue.size) {
+    if (expectedData.keys != actualData.keys) {
       return false
     }
-
-    for (key in expectedKeysForNullValue) {
-      if (!actualKeysForNullValue.contains(key)) {
-        return false
-      }
-    }
-
-    for ((expectedKey, expectedValue) in expectedMap) {
-      val actualValue = actualMap[expectedKey]
+    for ((expectedKey, expectedValue) in expectedData) {
+      val actualValue = actualData[expectedKey] ?: return false
       if (!areValuesTheSame(extension, expectedValue, actualValue)) {
         return false
       }
@@ -98,50 +64,11 @@ object IndexDataComparer {
     }
   }
 
-  fun areStubTreesTheSame(
-    expectedTree: SerializedStubTree,
-    actualTree: SerializedStubTree
-  ): Boolean {
+  fun areStubTreesTheSame(expectedTree: SerializedStubTree, actualTree: SerializedStubTree): Boolean {
     if (!areStubsTheSame(expectedTree.stub, actualTree.stub)) {
       return false
     }
-
-    val expectedForwardIndex: MutableMap<StubIndexKey<*, *>, MutableMap<Any, StubIdList>> = expectedTree.stubIndicesValueMap
-    val actualForwardIndex: Map<StubIndexKey<*, *>, Map<Any, StubIdList>> = actualTree.stubIndicesValueMap
-
-    // StubIndexKey-s don't have equals()\hashCode() implementations, so we have to compare them by names.
-    // Create helper mappings from names to StubIndexKey-s preserving the keys identity.
-    val expectedStubIndexKeyNameToKey: Map<String, StubIndexKey<*, *>> = expectedForwardIndex.keys.associateBy { it.name }
-    val actualStubIndexKeyNameToKey: Map<String, StubIndexKey<*, *>> = actualForwardIndex.keys.associateBy { it.name }
-    if (expectedStubIndexKeyNameToKey.keys != actualStubIndexKeyNameToKey.keys) {
-      return false
-    }
-
-    for (keyName in expectedStubIndexKeyNameToKey.keys) {
-      val expectedStubIndexKey = expectedStubIndexKeyNameToKey.getValue(keyName)
-      val actualStubIndexKey = actualStubIndexKeyNameToKey.getValue(keyName)
-
-      val expectedKeyValues: Map<Any, StubIdList> = expectedForwardIndex.getValue(expectedStubIndexKey)
-      val actualKeyValues: Map<Any, StubIdList> = actualForwardIndex.getValue(actualStubIndexKey)
-      if (expectedKeyValues.size != actualKeyValues.size) {
-        return false
-      }
-
-      // Do not use .equals() to compare [oneKeyValues] and [twoKeyValues]
-      // Their internal implementation is THashMap<Any, StubIdList>
-      // with customized [TObjectHashingStrategy] for keys.
-      // But [THashMap.equals()] does not check equality
-      // via the [TObjectHashingStrategy.equals()] but uses the standard Object.equals().
-      // Thus, we need to manually check for each key of the first map that the same key
-      // in the second map is present (and under the hood the hashing equality will be taken into account).
-      for ((expectedKey: Any, expectedStubList: StubIdList) in expectedKeyValues) {
-        val actualStubList = actualKeyValues[expectedKey] ?: return false
-        if (expectedStubList != actualStubList) {
-          return false
-        }
-      }
-    }
-    return true
+    return expectedTree.stubIndicesValueMap == actualTree.stubIndicesValueMap
   }
 
   private fun areStubsTheSame(expectedStub: Stub, actualStub: Stub): Boolean {
