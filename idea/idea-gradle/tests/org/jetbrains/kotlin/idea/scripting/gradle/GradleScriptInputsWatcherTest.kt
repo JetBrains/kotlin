@@ -233,13 +233,13 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
     }
 
     private fun assertConfigurationUpToDate(file: KtFile) {
-        scriptConfigurationManager.updater.ensureUpToDatedConfigurationSuggested(file)
+        scriptConfigurationManager.default.ensureUpToDatedConfigurationSuggested(file)
         assertNoBackgroundTasks()
         assertNoLoading()
     }
 
     private fun assertConfigurationUpdateWasDone(file: KtFile) {
-        scriptConfigurationManager.updater.ensureUpToDatedConfigurationSuggested(file)
+        scriptConfigurationManager.default.ensureUpToDatedConfigurationSuggested(file)
         assertAndDoAllBackgroundTasks()
         assertSingleLoading()
     }

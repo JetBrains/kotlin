@@ -163,10 +163,10 @@ class ScriptConfigurationLoadingTest : AbstractScriptConfigurationLoadingTest() 
 
     fun testLoadingForUsagesSearch() {
         assertAndLoadInitialConfiguration()
-        assertTrue(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
+        assertTrue(scriptConfigurationManager.default.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
 
         changeContents("A")
-        assertFalse(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
+        assertFalse(scriptConfigurationManager.default.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
     }
 
     fun testReportsOnAutoApply() {
