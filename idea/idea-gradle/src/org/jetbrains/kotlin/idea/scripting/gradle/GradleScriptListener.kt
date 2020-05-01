@@ -17,16 +17,20 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
         project.service<GradleScriptInputsWatcher>().startWatching()
     }
 
-    override fun isApplicable(vFile: VirtualFile): Boolean {
-        return GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
-    }
+    override fun isApplicable(vFile: VirtualFile) = GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
 
-    override fun editorActivated(vFile: VirtualFile) {
-        // do nothing
-    }
+    override fun editorActivated(vFile: VirtualFile) = checkUpToDate(vFile)
 
-    override fun documentChanged(vFile: VirtualFile) {
+    override fun documentChanged(vFile: VirtualFile) = checkUpToDate(vFile)
 
-        GradleBuildRootsManager.getInstance(project).getScriptInfo(vFile)?.model?.inputs
+    fun checkUpToDate(vFile: VirtualFile) {
+        val upToDate = GradleBuildRootsManager.getInstance(project)
+            .getScriptInfo(vFile)?.model?.inputs?.isUpToDate(project, vFile) ?: return
+
+        if (upToDate) {
+            hideNotificationForProjectImport(project)
+        } else {
+            showNotificationForProjectImport(project)
+        }
     }
 }

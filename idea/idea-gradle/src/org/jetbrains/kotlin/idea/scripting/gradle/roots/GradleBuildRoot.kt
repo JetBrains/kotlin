@@ -9,13 +9,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleImportedBuildRootData
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKtsContext
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
-import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -43,7 +41,6 @@ sealed class GradleBuildRoot {
         abstract val pathPrefix: String
 
         open val projectRoots: Collection<String> get() = listOf()
-        open val importedScripts: Collection<String> get() = listOf()
     }
 
     /**
@@ -80,14 +77,11 @@ sealed class GradleBuildRoot {
         override val projectRoots: Collection<String>
             get() = data.projectRoots
 
-        override val importedScripts: Collection<String>
-            get() = data.models.map { it.file }
-
         fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
             val javaHome = context.javaHome
             javaHome?.let { builder.addSdk(it) }
 
-            val definitions = GradleScriptDefinitionsContributor.definitions
+            val definitions = GradleScriptDefinitionsContributor.getDefinitions(project)
 
             builder.classes.addAll(data.templateClasspath)
             data.models.forEach { script ->

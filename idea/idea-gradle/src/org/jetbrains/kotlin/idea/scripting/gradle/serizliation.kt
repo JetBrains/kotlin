@@ -17,7 +17,7 @@ import java.io.DataInputStream
 import java.io.DataOutput
 
 internal object KotlinDslScriptModels {
-    private val attribute = FileAttribute("kotlin-dsl-script-models", 3, false)
+    private val attribute = FileAttribute("kotlin-dsl-script-models", 4, false)
 
     fun read(buildRoot: VirtualFile): GradleImportedBuildRootData? {
         return attribute.readAttribute(buildRoot)?.use {
@@ -42,6 +42,7 @@ internal object KotlinDslScriptModels {
 
 internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleImportedBuildRootData) {
     val strings = StringsPool.writer(output)
+    strings.addStrings(data.projectRoots)
     strings.addStrings(data.templateClasspath)
     data.models.forEach {
         strings.addString(it.file)
@@ -50,6 +51,7 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleImported
         strings.addStrings(it.imports)
     }
     strings.writeHeader()
+    strings.writeStringIds(data.projectRoots)
     strings.writeStringIds(data.templateClasspath)
     output.writeList(data.models) {
         strings.writeStringId(it.file)
@@ -64,6 +66,7 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleImported
 internal fun readKotlinDslScriptModels(input: DataInputStream): GradleImportedBuildRootData {
     val strings = StringsPool.reader(input)
 
+    val projectRoots = strings.readStrings()
     val templateClasspath = strings.readStrings()
 
     val models = input.readList {
@@ -77,7 +80,7 @@ internal fun readKotlinDslScriptModels(input: DataInputStream): GradleImportedBu
         )
     }
 
-    return GradleImportedBuildRootData(templateClasspath, models)
+    return GradleImportedBuildRootData(projectRoots, templateClasspath, models)
 }
 
 private object StringsPool {

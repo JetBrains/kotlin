@@ -14,11 +14,8 @@ import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfig
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.*
-import org.jetbrains.kotlin.idea.scripting.gradle.KotlinDslScriptModels
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslGradleBuildSync
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.settings.*
@@ -100,21 +97,16 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
 
     class ScriptUnderRoot(
         val root: GradleBuildRoot?,
-        val kind: ScriptKind
+        val script: GradleBuildRoot.Imported.ScriptInfo? = null
     )
-
-    enum class ScriptKind {
-        previosulyImported,
-        definnetlyWillAppearAfterImport,
-        unknown
-    }
 
     fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? {
         if (!isGradleKotlinScript(gradleKtsFile)) return null
 
         val filePath = gradleKtsFile.path
-        val imported = getScriptInfo(gradleKtsFile)?.buildRoot
-        if (imported != null) return ScriptUnderRoot(imported, ScriptKind.previosulyImported)
+        val scriptInfo = getScriptInfo(gradleKtsFile)
+        val imported = scriptInfo?.buildRoot
+        if (imported != null) return ScriptUnderRoot(imported, scriptInfo)
 
         if (gradleKtsFile.name == "build.gradle.kts" ||
             gradleKtsFile.name == "settings.gradle.kts" ||
@@ -122,26 +114,17 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         ) {
             // build|settings|init.gradle.kts scripts should be located near gradle project root only
             val gradleBuild = roots.byProjectDir[gradleKtsFile.parent.localPath]
-            if (gradleBuild != null) return ScriptUnderRoot(
-                gradleBuild,
-                ScriptKind.definnetlyWillAppearAfterImport
-            )
+            if (gradleBuild != null) return ScriptUnderRoot(gradleBuild)
         }
 
         // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
         // or just random files with ".gradle.kts" ending
 
-        // try find nearest linked gradle project settings first
+        // try find nearest linked legacy gradle project settings first
         val found = roots.findNearestRoot(filePath)
-        if (found != null) return ScriptUnderRoot(
-            found,
-            ScriptKind.unknown
-        )
+        if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
 
-        return ScriptUnderRoot(
-            GradleBuildRoot.Unlinked(),
-            ScriptKind.unknown
-        )
+        return ScriptUnderRoot(GradleBuildRoot.Unlinked())
     }
 
 
@@ -161,8 +144,8 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
 
         if (old is GradleBuildRoot.Legacy) return
 
-        val templateClasspath = findTemplateClasspath(build) ?: return
-        val data = GradleImportedBuildRootData(templateClasspath, build.projectRoots, build.models)
+        val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
+        val data = GradleImportedBuildRootData(build.projectRoots, templateClasspath, build.models)
         val newSupport = tryCreateImportedRoot(build.workingDir) { data } ?: return
         KotlinDslScriptModels.write(newSupport.dir, data)
         roots[build.workingDir] = newSupport
@@ -236,7 +219,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
 
         val knownAsSupported = this !is GradleBuildRoot.Legacy
         val shouldBeSupported = kotlinDslScriptsModelImportSupported(actualSettings.resolveGradleVersion().version)
-        return knownAsSupported != shouldBeSupported
+        return knownAsSupported == shouldBeSupported
     }
 
     private fun updateBuildRoot(rootPath: String): GradleBuildRoot.Linked? {
@@ -300,14 +283,6 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         }
 
         return newSupport
-    }
-
-    private fun findTemplateClasspath(build: KotlinDslGradleBuildSync): List<String>? {
-        val anyScript = VfsUtil.findFile(Paths.get(build.models.first().file), true)!!
-        // todo: find definition according to build.workingDir
-        val definition = anyScript.findScriptDefinition(project) ?: return null
-        return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()
-            ?.templateClasspath?.map { it.path }
     }
 
     companion object {
