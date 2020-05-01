@@ -22,7 +22,7 @@ class KotlinExtraSteppingFilter : ExtraSteppingFilter {
 
         val debugProcess = context.debugProcess ?: return false
         val positionManager = KotlinPositionManager(debugProcess)
-        val location = context.frameProxy?.location() ?: return false
+        val location = context.frameProxy?.safeLocation() ?: return false
         return runReadAction {
             shouldFilter(positionManager, location)
         }

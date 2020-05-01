@@ -26,6 +26,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.sun.jdi.VMDisconnectedException
 import com.sun.jdi.request.StepRequest
 import org.intellij.lang.annotations.MagicConstant
+import org.jetbrains.kotlin.idea.debugger.safeLocation
 import java.lang.reflect.Field
 
 internal class RequestHintWithMethodFilter(
@@ -63,7 +64,7 @@ internal class RequestHintWithMethodFilter(
 
             if (filter != null && frameProxy != null && filter !is BreakpointStepMethodFilter) {
                 /*NODE: Debugger API. Base implementation works only for smart step into, and calls filter only if !isTheSameFrame(context). */
-                if (filter.locationMatches(context.debugProcess, frameProxy.location())) {
+                if (filter.locationMatches(context.debugProcess, frameProxy.safeLocation())) {
                     targetMethodMatched = true
                     return filter.onReached(context, this)
                 }
