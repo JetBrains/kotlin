@@ -76,7 +76,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     @Suppress("UNUSED")
     fun isConfigurationOutOfDate(file: VirtualFile): Boolean {
         val script = getScriptInfo(file) ?: return false
-        return script.model.inputs.isUpToDate(project, file)
+        return !script.model.inputs.isUpToDate(project, file)
     }
 
     override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
