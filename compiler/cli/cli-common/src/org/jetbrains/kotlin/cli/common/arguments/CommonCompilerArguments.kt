@@ -89,9 +89,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xskip-metadata-version-check",
-        description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
+        description = "Allow to load classes with bad metadata version and pre-release classes"
     )
     var skipMetadataVersionCheck: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xskip-prerelease-check", description = "Allow to load pre-release classes")
+    var skipPrereleaseCheck: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xallow-kotlin-package",
@@ -340,6 +343,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
+            put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             val experimentalFqNames = experimental?.toList().orEmpty()
             if (experimentalFqNames.isNotEmpty()) {

@@ -140,7 +140,8 @@ where advanced options include:
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
-  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
+  -Xskip-metadata-version-check Allow to load classes with bad metadata version and pre-release classes
+  -Xskip-prerelease-check    Allow to load pre-release classes
   -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xuse-fir                  Compile using Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-mixed-named-arguments Enable Support named arguments in their own position even if the result appears as mixed

@@ -10,6 +10,9 @@ object AnalysisFlags {
     val skipMetadataVersionCheck by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
+    val skipPrereleaseCheck by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
     val multiPlatformDoNotCheckActual by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

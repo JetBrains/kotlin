@@ -9,6 +9,9 @@ interface DeserializationConfiguration {
     val skipMetadataVersionCheck: Boolean
         get() = false
 
+    val skipPrereleaseCheck: Boolean
+        get() = false
+
     val reportErrorsOnPreReleaseDependencies: Boolean
         get() = false
 
