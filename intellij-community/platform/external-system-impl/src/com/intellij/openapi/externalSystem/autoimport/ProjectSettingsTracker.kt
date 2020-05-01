@@ -201,7 +201,7 @@ class ProjectSettingsTracker(
         status.markModified(currentTime(), modificationType)
       }
       else {
-        status.markDirty(currentTime())
+        status.markDirty(currentTime(), modificationType)
       }
     }
 
@@ -215,7 +215,12 @@ class ProjectSettingsTracker(
           if (!hasChanges(newSettingsFilesCRC)) {
             status.markReverted(currentTime())
           }
-          projectTracker.scheduleChangeProcessing()
+          if (applyChangesOperation.isOperationCompleted()) {
+            projectTracker.scheduleChangeProcessing()
+          }
+          else {
+            projectTracker.scheduleProjectNotificationUpdate()
+          }
         }
       }
     }

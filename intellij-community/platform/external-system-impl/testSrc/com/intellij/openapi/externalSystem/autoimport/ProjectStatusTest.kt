@@ -130,4 +130,32 @@ class ProjectStatusTest {
     status.markModified(120, INTERNAL) as Dirty
     assertEquals(INTERNAL, status.getModificationType())
   }
+
+  @Test
+  fun `test tracking status after failed import`() {
+    val status = ProjectStatus()
+
+    status.markModified(10, INTERNAL) as Modified
+    status.markSynchronized(20) as Synchronized
+    status.markBroken(30) as Broken
+
+    assertFalse(status.isUpToDate())
+    assertFalse(status.isDirty())
+
+    status.markModified(40) as Dirty
+    status.markReverted(50) as Dirty
+    status.markSynchronized(60) as Synchronized
+    status.markBroken(70) as Broken
+
+    assertFalse(status.isUpToDate())
+    assertFalse(status.isDirty())
+
+    status.markReverted(80) as Broken
+    status.markSynchronized(90) as Synchronized
+    status.markModified(110) as Modified
+    status.markBroken(100) as Dirty
+
+    assertFalse(status.isUpToDate())
+    assertTrue(status.isDirty())
+  }
 }

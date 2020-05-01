@@ -1,11 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings.AutoReloadType.*
+import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.FAILURE
+import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
+import com.intellij.openapi.externalSystem.autoimport.MockProjectAware.RefreshCollisionPassType
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.util.Parallel.Companion.parallel
-import com.sun.media.jfxmedia.logging.Logger.setLevel
-import org.apache.log4j.Level
 import org.junit.Test
 import java.io.File
 
@@ -453,23 +456,23 @@ class AutoImportTest : AutoImportTestCase() {
 
       settingsFile.replaceContentInIoFile("println 'hello'")
       assertState(refresh = 2, notified = false, event = "external change")
-      setRefreshStatus(ExternalSystemRefreshStatus.FAILURE)
+      setRefreshStatus(FAILURE)
       settingsFile.replaceStringInIoFile("hello", "hi")
       assertState(refresh = 3, notified = true, event = "external change with failure refresh")
       refreshProject()
       assertState(refresh = 4, notified = true, event = "failure project refresh")
-      setRefreshStatus(ExternalSystemRefreshStatus.SUCCESS)
+      setRefreshStatus(SUCCESS)
       refreshProject()
       assertState(refresh = 5, notified = false, event = "project refresh")
 
       settingsFile.replaceString("hi", "hello")
       assertState(refresh = 5, notified = true, event = "modify")
-      setRefreshStatus(ExternalSystemRefreshStatus.FAILURE)
+      setRefreshStatus(FAILURE)
       refreshProject()
       assertState(refresh = 6, notified = true, event = "failure project refresh")
       settingsFile.replaceString("hello", "hi")
       assertState(refresh = 6, notified = true, event = "try to revert changes after failure refresh")
-      setRefreshStatus(ExternalSystemRefreshStatus.SUCCESS)
+      setRefreshStatus(SUCCESS)
       refreshProject()
       assertState(refresh = 7, notified = false, event = "project refresh")
     }
@@ -505,38 +508,38 @@ class AutoImportTest : AutoImportTestCase() {
 
   fun `test disabling of auto-import`() {
     var state = simpleTest("settings.groovy") { settingsFile ->
-      assertState(refresh = 1, enabled = true, notified = false, event = "register project without cache")
-      disableAutoReloadExternalChanges()
-      assertState(refresh = 1, enabled = false, notified = false, event = "disable project auto-import")
+      assertState(refresh = 1, autoReloadType = SELECTIVE, notified = false, event = "register project without cache")
+      setAutoReloadType(NONE)
+      assertState(refresh = 1, autoReloadType = NONE, notified = false, event = "disable project auto-import")
       settingsFile.replaceContentInIoFile("println 'hello'")
-      assertState(refresh = 1, enabled = false, notified = true, event = "modification with disabled auto-import")
+      assertState(refresh = 1, autoReloadType = NONE, notified = true, event = "modification with disabled auto-import")
     }
     state = simpleTest("settings.groovy", state = state) { settingsFile ->
       // Open modified project with disabled auto-import for external changes
-      assertState(refresh = 0, enabled = false, notified = true, event = "register modified project")
+      assertState(refresh = 0, autoReloadType = NONE, notified = true, event = "register modified project")
       refreshProject()
-      assertState(refresh = 1, enabled = false, notified = false, event = "refresh project")
+      assertState(refresh = 1, autoReloadType = NONE, notified = false, event = "refresh project")
 
       // Checkout git branch, that has additional linked project
       withLinkedProject("module/settings.groovy") { moduleSettingsFile ->
-        assertState(refresh = 0, enabled = false, notified = true, event = "register project without cache with disabled auto-import")
+        assertState(refresh = 0, autoReloadType = NONE, notified = true, event = "register project without cache with disabled auto-import")
         moduleSettingsFile.replaceContentInIoFile("println 'hello'")
-        assertState(refresh = 0, enabled = false, notified = true, event = "modification with disabled auto-import")
+        assertState(refresh = 0, autoReloadType = NONE, notified = true, event = "modification with disabled auto-import")
       }
-      assertState(refresh = 1, enabled = false, notified = false, event = "remove modified linked project")
+      assertState(refresh = 1, autoReloadType = NONE, notified = false, event = "remove modified linked project")
 
-      enableAutoReloadExternalChanges()
-      assertState(refresh = 1, enabled = true, notified = false, event = "enable auto-import for project without modifications")
-      disableAutoReloadExternalChanges()
-      assertState(refresh = 1, enabled = false, notified = false, event = "disable project auto-import")
+      setAutoReloadType(SELECTIVE)
+      assertState(refresh = 1, autoReloadType = SELECTIVE, notified = false, event = "enable auto-import for project without modifications")
+      setAutoReloadType(NONE)
+      assertState(refresh = 1, autoReloadType = NONE, notified = false, event = "disable project auto-import")
 
       settingsFile.replaceStringInIoFile("hello", "hi")
-      assertState(refresh = 1, enabled = false, notified = true, event = "modification with disabled auto-import")
-      enableAutoReloadExternalChanges()
-      assertState(refresh = 2, enabled = true, notified = false, event = "enable auto-import for modified project")
+      assertState(refresh = 1, autoReloadType = NONE, notified = true, event = "modification with disabled auto-import")
+      setAutoReloadType(SELECTIVE)
+      assertState(refresh = 2, autoReloadType = SELECTIVE, notified = false, event = "enable auto-import for modified project")
     }
     simpleTest("settings.groovy", state = state) {
-      assertState(refresh = 0, enabled = true, notified = false, event = "register project with correct cache")
+      assertState(refresh = 0, autoReloadType = SELECTIVE, notified = false, event = "register project with correct cache")
     }
   }
 
@@ -594,7 +597,6 @@ class AutoImportTest : AutoImportTestCase() {
 
   @Test
   fun `test merging of refreshes with different nature`() {
-    Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport").setLevel(Level.DEBUG)
     simpleTest("settings.groovy") { settingsFile ->
       assertState(1, notified = false, event = "register project without cache")
 
@@ -612,6 +614,104 @@ class AutoImportTest : AutoImportTestCase() {
       }
 
       assertState(refresh = 2, notified = false, event = "modification")
+    }
+  }
+
+  @Test
+  fun `test enabling-disabling internal-external changes importing`() {
+    simpleModificationTest {
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 0, notified = true, autoReloadType = SELECTIVE, event = "internal modification")
+
+      refreshProject()
+      assertState(refresh = 1, notified = false, autoReloadType = SELECTIVE, event = "refresh project")
+
+      modifySettingsFile(EXTERNAL)
+      assertState(refresh = 2, notified = false, autoReloadType = SELECTIVE, event = "external modification")
+
+      setAutoReloadType(ALL)
+
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 3, notified = false, autoReloadType = ALL, event = "internal modification with enabled auto-reload")
+
+      modifySettingsFile(EXTERNAL)
+      assertState(refresh = 4, notified = false, autoReloadType = ALL, event = "external modification with enabled auto-reload")
+
+      setAutoReloadType(NONE)
+
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 4, notified = true, autoReloadType = NONE, event = "internal modification with disabled auto-reload")
+
+      modifySettingsFile(EXTERNAL)
+      assertState(refresh = 4, notified = true, autoReloadType = NONE, event = "external modification with disabled auto-reload")
+
+      setAutoReloadType(SELECTIVE)
+      assertState(refresh = 4, notified = true, autoReloadType = SELECTIVE,
+                  event = "enable auto-reload external changes with internal and external modifications")
+
+      setAutoReloadType(ALL)
+      assertState(refresh = 5, notified = false, autoReloadType = ALL, event = "enable auto-reload of any changes")
+
+      setAutoReloadType(NONE)
+
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 5, notified = true, autoReloadType = NONE, event = "internal modification with disabled auto-reload")
+
+      modifySettingsFile(EXTERNAL)
+      assertState(refresh = 5, notified = true, autoReloadType = NONE, event = "external modification with disabled auto-reload")
+
+      setAutoReloadType(ALL)
+      assertState(refresh = 6, notified = false, autoReloadType = ALL, event = "enable auto-reload of any changes")
+    }
+  }
+
+  @Test
+  fun `test failure auto-reload with enabled auto-reload of any changes`() {
+    simpleModificationTest {
+      setAutoReloadType(ALL)
+      setRefreshStatus(FAILURE)
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 1, notified = true, autoReloadType = ALL, event = "failure modification with enabled auto-reload")
+
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 2, notified = true, autoReloadType = ALL, event = "failure modification with enabled auto-reload")
+
+      setRefreshStatus(SUCCESS)
+      refreshProject()
+      assertState(refresh = 3, notified = false, autoReloadType = ALL, event = "refresh project")
+
+      setRefreshStatus(FAILURE)
+      onceDuringRefresh {
+        setRefreshStatus(SUCCESS)
+        modifySettingsFile(INTERNAL)
+      }
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 5, notified = false, autoReloadType = ALL, event = "success modification after failure")
+    }
+  }
+
+  @Test
+  fun `test up-to-date promise after modifications with enabled auto-import`() {
+    simpleModificationTest {
+      for (collisionPassType in RefreshCollisionPassType.values()) {
+        resetAssertionCounters()
+
+        setRefreshCollisionPassType(collisionPassType)
+
+        setAutoReloadType(SELECTIVE)
+        onceDuringRefresh {
+          modifySettingsFile(EXTERNAL)
+        }
+        modifySettingsFile(EXTERNAL)
+        assertState(refresh = 2, notified = false, autoReloadType = SELECTIVE, event = "auto-reload inside reload ($collisionPassType)")
+
+        setAutoReloadType(ALL)
+        onceDuringRefresh {
+          modifySettingsFile(INTERNAL)
+        }
+        modifySettingsFile(INTERNAL)
+        assertState(refresh = 4, notified = false, autoReloadType = ALL, event = "auto-reload inside reload ($collisionPassType)")
+      }
     }
   }
 }
