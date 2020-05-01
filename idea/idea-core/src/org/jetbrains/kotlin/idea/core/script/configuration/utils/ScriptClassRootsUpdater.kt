@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupportHelpe
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Utility for postponing indexing of new roots to the end of some bulk operation.
@@ -78,6 +80,7 @@ class ScriptClassRootsUpdater(
         ensureUpdateScheduled()
     }
 
+    private val syncLock = ReentrantLock()
     private var scheduledUpdate: ProgressIndicator? = null
 
     @Synchronized
@@ -88,30 +91,47 @@ class ScriptClassRootsUpdater(
         }
     }
 
-    fun doUpdate() {
-        val updates = manager.collectRootsAndCheckNew()
-
-        if (!updates.changed) return
-
-        ProgressManager.checkCanceled()
-
-        if (updates.hasNewRoots) {
-            notifyRootsChanged()
+    /**
+     * Used from legacy FS cache only, don't use
+     */
+    @Synchronized
+    fun updateSynchronously() {
+        syncLock.withLock {
+            scheduledUpdate?.cancel()
+            doUpdate(false)
         }
+    }
 
-        PsiElementFinder.EP.findExtensionOrFail(KotlinScriptDependenciesClassFinder::class.java, project)
-            .clearCache()
+    fun doUpdate(underProgressManager: Boolean = true) {
+        syncLock.withLock {
+            val updates = manager.collectRootsAndCheckNew()
 
-        ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+            if (!updates.changed) return
 
-        if (updates.updatedScripts.isNotEmpty()) {
-            ScriptingSupportHelper.updateHighlighting(project) {
-                it.path in updates.updatedScripts
+            try {
+                ProgressManager.checkCanceled()
+
+                if (updates.hasNewRoots) {
+                    notifyRootsChanged()
+                }
+
+                PsiElementFinder.EP.findExtensionOrFail(KotlinScriptDependenciesClassFinder::class.java, project)
+                    .clearCache()
+
+                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+
+                if (updates.updatedScripts.isNotEmpty()) {
+                    ScriptingSupportHelper.updateHighlighting(project) {
+                        it.path in updates.updatedScripts
+                    }
+                }
+            } catch (cancel: ProcessCanceledException) {
+                if (underProgressManager) throw cancel
+            } finally {
+                synchronized(this) {
+                    scheduledUpdate = null
+                }
             }
-        }
-
-        synchronized(this) {
-            scheduledUpdate = null
         }
     }
 
