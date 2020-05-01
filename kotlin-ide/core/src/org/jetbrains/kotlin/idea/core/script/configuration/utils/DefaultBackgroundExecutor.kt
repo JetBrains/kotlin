@@ -15,6 +15,7 @@ import com.intellij.util.containers.HashSetQueue
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
+import javax.swing.SwingUtilities
 
 /**
  * Sequentially loads script configuration in background.
@@ -227,9 +228,12 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
-                run()
-            })
+            // executeOnPooledThread requires read lock, and we may fail to acquire it
+            SwingUtilities.invokeLater {
+                BackgroundTaskUtil.executeOnPooledThread(project, {
+                    run()
+                })
+            }
         }
 
         override fun close() {
